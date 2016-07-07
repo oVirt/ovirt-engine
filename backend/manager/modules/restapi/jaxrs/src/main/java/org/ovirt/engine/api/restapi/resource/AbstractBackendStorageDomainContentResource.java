@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -63,9 +64,10 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
 
     protected HashMap<Guid, Guid> getDiskToDestinationMap(Action action) {
         HashMap<Guid, Guid> diskToDestinationMap = new HashMap<>();
-        if (action.isSetVm() && action.getVm().isSetDisks() && action.getVm().getDisks().isSetDisks()) {
-            for (Disk disk : action.getVm().getDisks().getDisks()) {
-                if (disk.isSetId() && disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
+        if (action.isSetVm() && action.getVm().isSetDiskAttachments() && action.getVm().getDiskAttachments().isSetDiskAttachments()) {
+            for (DiskAttachment diskAttachment : action.getVm().getDiskAttachments().getDiskAttachments()) {
+                Disk disk = diskAttachment.getDisk();
+                if (disk != null && disk.isSetId() && disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
                         && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
                     diskToDestinationMap.put(Guid.createGuidFromStringDefaultEmpty(disk.getId()),
                             Guid.createGuidFromStringDefaultEmpty(disk.getStorageDomains().getStorageDomains().get(0).getId()));

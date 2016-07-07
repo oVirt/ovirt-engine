@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VirtioScsi;
@@ -52,7 +52,15 @@ public class BackendTemplatesResource
     extends AbstractBackendCollectionResource<Template, VmTemplate>
     implements TemplatesResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "tags", "permissions", "watchdogs", "graphicsconsoles"};
+    static final String[] SUB_COLLECTIONS = {
+        "cdroms",
+        "diskattachments",
+        "graphicsconsoles",
+        "nics",
+        "permissions",
+        "tags",
+        "watchdogs",
+    };
 
     public static final String CLONE_PERMISSIONS = "clone_permissions";
 
@@ -167,12 +175,13 @@ public class BackendTemplatesResource
 
     protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {
         HashMap<Guid, DiskImage> destinationTemplateDiskMap = null;
-        if (vm.isSetDisks() && vm.getDisks().isSetDisks()) {
+        if (vm.isSetDiskAttachments() && vm.getDiskAttachments().isSetDiskAttachments()) {
             destinationTemplateDiskMap = new HashMap<>();
             Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> vmSourceDisks = queryVmDisksMap(vm);
 
-            for (Disk disk : vm.getDisks().getDisks()) {
-                if (!disk.isSetId()) {
+            for (DiskAttachment diskAttachment : vm.getDiskAttachments().getDiskAttachments()) {
+                Disk disk = diskAttachment.getDisk();
+                if (disk == null || !disk.isSetId()) {
                     continue;
                 }
 

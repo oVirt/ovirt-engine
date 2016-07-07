@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResource.SUB_COLLECTIONS;
+
 import java.util.List;
 import javax.ws.rs.core.Response;
 
@@ -13,6 +15,7 @@ import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.TemplateCdromsResource;
+import org.ovirt.engine.api.resource.TemplateDiskAttachmentsResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateNicsResource;
 import org.ovirt.engine.api.resource.TemplateResource;
@@ -41,8 +44,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendTemplateResource
     extends AbstractBackendActionableResource<Template, VmTemplate>
     implements TemplateResource {
-
-    static final String[] SUB_COLLECTIONS = {"disks", "nics", "cdroms", "tags", "permissions", "watchdogs", "graphicsconsoles"};
 
     public BackendTemplateResource(String id) {
         super(id, Template.class, VmTemplate.class, SUB_COLLECTIONS);
@@ -104,9 +105,14 @@ public class BackendTemplateResource
         return inject(new BackendTemplateCdromsResource(guid));
     }
 
-    @Override
     public TemplateDisksResource getDisksResource() {
         return inject(new BackendTemplateDisksResource(guid));
+    }
+
+    @Override
+    public TemplateDiskAttachmentsResource getDiskAttachmentsResource() {
+        // TODO: Implement this.
+        return null;
     }
 
     @Override
