@@ -46,7 +46,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Arrays.asList(getStorageDevice("sda", null))), null));
+                null, Collections.singletonList(getStorageDevice("sda", null))), null));
         prepareMocks(cmd, VDSStatus.Up);
         assertTrue(cmd.validate());
     }
@@ -96,7 +96,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Arrays.asList(storageDevice)), null));
+                null, Collections.singletonList(storageDevice)), null));
         prepareMocks(cmd, VDSStatus.Up);
         assertFalse(cmd.validate());
     }
