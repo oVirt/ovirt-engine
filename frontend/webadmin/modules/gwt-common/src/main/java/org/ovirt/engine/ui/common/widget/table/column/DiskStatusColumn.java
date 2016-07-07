@@ -28,8 +28,7 @@ public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
             }
         }
 
-        boolean isDiskPlugged = disk.getPlugged() != null && disk.getPlugged().booleanValue();
-        return isDiskPlugged ? resources.upImage() : resources.downImage();
+        return disk.getPlugged() ? resources.upImage() : resources.downImage();
     }
 
     @Override
@@ -44,8 +43,7 @@ public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
             }
         }
 
-        boolean isDiskPlugged = disk.getPlugged() != null && disk.getPlugged().booleanValue();
-        tooltipContent = isDiskPlugged ? constants.active() : constants.inactive();
+        tooltipContent = disk.getPlugged() ? constants.active() : constants.inactive();
         return SafeHtmlUtils.fromString(tooltipContent);
     }
 }
