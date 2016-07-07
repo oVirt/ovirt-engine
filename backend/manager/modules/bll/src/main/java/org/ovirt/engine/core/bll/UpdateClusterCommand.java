@@ -166,16 +166,19 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     private boolean updateVms() {
+        final boolean compatibilityVersionUnchanged = Objects.equals(
+                oldGroup.getCompatibilityVersion(),
+                getParameters().getCluster().getCompatibilityVersion());
+        if (compatibilityVersionUnchanged) {
+            return true;
+        }
+
         List<VM> vmList = getVmDao().getAllForCluster(getParameters().getCluster().getId());
-        Cluster oldCluster = getClusterDao().get(getCluster().getId());
 
         for (VM vm : vmList) {
             if (!vm.isExternalVm() && !vm.isHostedEngine()) {
                 VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
-                if (!Objects.equals(oldCluster.getCompatibilityVersion(),
-                        getParameters().getCluster().getCompatibilityVersion())) {
-                    updateParams.setClusterLevelChangeToVersion(getParameters().getCluster().getCompatibilityVersion());
-                }
+                updateParams.setClusterLevelChangeToVersion(getParameters().getCluster().getCompatibilityVersion());
 
                 VdcReturnValueBase result = runInternalAction(
                         VdcActionType.UpdateVm,
