@@ -15,7 +15,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
@@ -140,7 +140,7 @@ public class BackendVmPoolResource
                 vm.setUseLatestVersion(incoming.isUseLatestTemplateVersion());
             }
 
-            final AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size);
+            final AddVmPoolParameters parameters = new AddVmPoolParameters(entity, vm, size);
             parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));
             return parameters;
         }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
@@ -457,8 +457,8 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         vm.setStateless(false);
         vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
 
-        AddVmPoolWithVmsParameters param =
-                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity());
+        AddVmPoolParameters param =
+                new AddVmPoolParameters(pool, vm, model.getNumOfDesktops().getEntity());
 
         param.setStorageDomainId(Guid.Empty);
         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()

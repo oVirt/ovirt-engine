@@ -9,21 +9,21 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddVmPoolCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
+public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
 
     @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
 
     @Override
-    protected AddVmPoolCommand<AddVmPoolWithVmsParameters> createCommand() {
-        AddVmPoolWithVmsParameters param =
-                new AddVmPoolWithVmsParameters(vmPools, testVm, VM_COUNT);
+    protected AddVmPoolCommand<AddVmPoolParameters> createCommand() {
+        AddVmPoolParameters param =
+                new AddVmPoolParameters(vmPools, testVm, VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
-        AddVmPoolCommand<AddVmPoolWithVmsParameters> command =
-                spy(new AddVmPoolCommand<AddVmPoolWithVmsParameters>(
+        AddVmPoolCommand<AddVmPoolParameters> command =
+                spy(new AddVmPoolCommand<AddVmPoolParameters>(
                         param, CommandContext.createContext(param.getSessionId())) {
                     @Override
                     protected void initUser() {

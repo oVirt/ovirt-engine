@@ -14,7 +14,7 @@ import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -70,7 +70,7 @@ public class BackendVmPoolsResource
 
         int size = pool.isSetSize() ? pool.getSize() : 1;
 
-        AddVmPoolWithVmsParameters params = new AddVmPoolWithVmsParameters(entity, vm, size);
+        AddVmPoolParameters params = new AddVmPoolParameters(entity, vm, size);
         params.setConsoleEnabled(!getConsoleDevicesForEntity(template.getId()).isEmpty());
         params.setVirtioScsiEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, template.getId()).isEmpty());
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());

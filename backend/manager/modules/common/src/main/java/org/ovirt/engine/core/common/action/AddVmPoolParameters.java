@@ -14,8 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
-        implements HasGraphicsDevices {
+public class AddVmPoolParameters extends VmPoolOperationParameters implements HasGraphicsDevices {
     private static final long serialVersionUID = 4826143612049185740L;
 
     @Valid
@@ -30,10 +29,10 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
     private String vmLargeIcon;
 
-    public AddVmPoolWithVmsParameters() {
+    public AddVmPoolParameters() {
     }
 
-    public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int vmsCount) {
+    public AddVmPoolParameters(VmPool vmPool, VM vm, int vmsCount) {
         super(vmPool);
         graphicsDevices = new HashMap<>();
         this.vmStaticData = vm.getStaticData();

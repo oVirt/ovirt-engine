@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -61,7 +61,7 @@ import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
-public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommandTest {
+public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxVmNameLength, 64),
@@ -122,9 +122,9 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     /**
      * The command under test.
      */
-    protected CommonVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command;
+    protected CommonVmPoolCommand<AddVmPoolParameters> command;
 
-    protected abstract CommonVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand();
+    protected abstract CommonVmPoolCommand<AddVmPoolParameters> createCommand();
 
     @Test
     public void validateSufficientSpaceOnDestinationDomains() {

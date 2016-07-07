@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>
+public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoolCommand<T>
         implements QuotaVdsDependent {
 
     /**

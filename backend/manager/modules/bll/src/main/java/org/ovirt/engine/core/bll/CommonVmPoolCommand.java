@@ -31,7 +31,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -67,7 +67,7 @@ import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
  * already exists - the number is increased. For example if vm_8 exists - vm_9 will be created instead of it.
  */
 
-public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends VmPoolCommandBase<T>
+public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends VmPoolCommandBase<T>
         implements QuotaStorageDependent {
 
     @Inject
@@ -94,11 +94,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected CommonVmPoolWithVmsCommand(Guid commandId) {
+    protected CommonVmPoolCommand(Guid commandId) {
         super(commandId);
     }
 
-    public CommonVmPoolWithVmsCommand(T parameters, CommandContext commandContext) {
+    public CommonVmPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmPool(parameters.getVmPool());
         setClusterId(getVmPool().getClusterId());

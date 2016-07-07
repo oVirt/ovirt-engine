@@ -6,17 +6,17 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 
-public class UpdateVmPoolCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
+public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
 
     @Override
-    protected UpdateVmPoolCommand<AddVmPoolWithVmsParameters> createCommand() {
-        AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
+    protected UpdateVmPoolCommand<AddVmPoolParameters> createCommand() {
+        AddVmPoolParameters param = new AddVmPoolParameters(vmPools, testVm,
                 VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
-        UpdateVmPoolCommand<AddVmPoolWithVmsParameters> command =
-                spy(new UpdateVmPoolCommand<AddVmPoolWithVmsParameters>(
+        UpdateVmPoolCommand<AddVmPoolParameters> command =
+                spy(new UpdateVmPoolCommand<AddVmPoolParameters>(
                         param, CommandContext.createContext(param.getSessionId())) {
 
                     @Override
