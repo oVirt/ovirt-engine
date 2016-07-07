@@ -34,6 +34,8 @@ import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Initialization;
@@ -251,8 +253,8 @@ public class BackendVmsResource extends
         // and not List of Disks, as this is a GWT serialization limitation,
         // and this parameter class serves GWT clients as well.
         HashMap<Guid, DiskImage> diskImagesByImageId = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
-        if (vm.isSetDisks()) {
-            prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesByImageId);
+        if (vm.isSetDiskAttachments()) {
+            prepareImagesForCloneFromSnapshotParams(vm.getDiskAttachments(), diskImagesByImageId);
         }
         return cloneVmFromSnapshot(vmConfiguration,
                 vm,
@@ -308,13 +310,16 @@ public class BackendVmsResource extends
         return vmConfiguration;
     }
 
-    private void prepareImagesForCloneFromSnapshotParams(Disks disks,
+    private void prepareImagesForCloneFromSnapshotParams(DiskAttachments disksAttachments,
             Map<Guid, DiskImage> imagesFromConfiguration) {
-        if (disks.getDisks() != null) {
-            for (Disk disk : disks.getDisks()) {
-                DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getImageId()));
-                DiskImage diskImage = (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk, diskImageFromConfig);
-                imagesFromConfiguration.put(diskImage.getId(), diskImage);
+        if (disksAttachments.getDiskAttachments() != null) {
+            for (DiskAttachment diskAttachment : disksAttachments.getDiskAttachments()) {
+                Disk disk = diskAttachment.getDisk();
+                if (disk != null && disk.isSetImageId()) {
+                    DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getImageId()));
+                    DiskImage diskImage = (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk, diskImageFromConfig);
+                    imagesFromConfiguration.put(diskImage.getId(), diskImage);
+                }
             }
         }
     }
@@ -369,7 +374,7 @@ public class BackendVmsResource extends
 
     private Response cloneVmFromTemplate(VmStatic staticVm, Vm vm, VmTemplate template, InstanceType instanceType, Cluster cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
-        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), template.getId()));
+        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDiskAttachments(), template.getId()));
         params.setVmPayload(getPayload(vm));
 
         addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
@@ -445,28 +450,31 @@ public class BackendVmsResource extends
         return isCompatibleWithCluster;
     }
 
-    private HashMap<Guid, DiskImage> getDisksToClone(Disks disks, Guid templateId) {
+    private HashMap<Guid, DiskImage> getDisksToClone(DiskAttachments diskAttachments, Guid templateId) {
         HashMap<Guid, DiskImage> disksMap = new HashMap<>();
 
-        if (disks != null && disks.isSetDisks() && disks.getDisks().size() > 0){
+        if (diskAttachments != null && diskAttachments.isSetDiskAttachments() && diskAttachments.getDiskAttachments().size() > 0){
             HashMap<Guid, DiskImage> templatesDisksMap = getTemplateDisks(templateId);
-            for (Disk disk : disks.getDisks()) {
-                DiskImage templateDisk = templatesDisksMap.get(asGuid(disk.getId()));
-                if( templateDisk != null ) {
-                    // when disk profile isn't specified, and disks are cloned to another storage
-                    // domain then the original disk, disk profile is cleared since template disk
-                    // disk profile isn't matching destination storage domain.
-                    if (!disk.isSetDiskProfile()
+            for (DiskAttachment diskAttachment : diskAttachments.getDiskAttachments()) {
+                Disk disk = diskAttachment.getDisk();
+                if (disk != null && disk.isSetId()) {
+                    DiskImage templateDisk = templatesDisksMap.get(asGuid(disk.getId()));
+                    if (templateDisk != null) {
+                        // when disk profile isn't specified, and disks are cloned to another storage
+                        // domain then the original disk, disk profile is cleared since template disk
+                        // disk profile isn't matching destination storage domain.
+                        if (!disk.isSetDiskProfile()
                             && disk.isSetStorageDomains()
                             && disk.getStorageDomains().isSetStorageDomains()
                             && disk.getStorageDomains().getStorageDomains().get(0).isSetId()
                             && !Objects.equals(disk.getStorageDomains().getStorageDomains().get(0).getId(),
-                                    Objects.toString(templateDisk.getStorageIds().get(0), null))) {
-                        templateDisk.setDiskProfileId(null);
+                            Objects.toString(templateDisk.getStorageIds().get(0), null))) {
+                            templateDisk.setDiskProfileId(null);
+                        }
+                        disksMap.put(templateDisk.getId(), map(disk, templateDisk));
+                    } else {
+                        throw new WebApplicationException(Response.Status.NOT_FOUND);
                     }
-                    disksMap.put(templateDisk.getId(), map(disk, templateDisk));
-                } else {
-                    throw new WebApplicationException(Response.Status.NOT_FOUND);
                 }
             }
         }
@@ -493,7 +501,7 @@ public class BackendVmsResource extends
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setStorageDomainId(storageDomainId);
-        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), template.getId()));
+        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDiskAttachments(), template.getId()));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(params);
         addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
@@ -573,9 +581,9 @@ public class BackendVmsResource extends
 
     private void addInlineDisks(Vm vm) {
         Guid vmId = asGuid(vm.getId());
-        BackendVmDisksResource disksResource = inject(new BackendVmDisksResource(vmId));
-        Disks disks = disksResource.list();
-        vm.setDisks(disks);
+        BackendDiskAttachmentsResource disksAttachmentsResource = inject(new BackendDiskAttachmentsResource(vmId));
+        DiskAttachments diskAttachments = disksAttachmentsResource.list();
+        vm.setDiskAttachments(diskAttachments);
     }
 
     protected Vms mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {

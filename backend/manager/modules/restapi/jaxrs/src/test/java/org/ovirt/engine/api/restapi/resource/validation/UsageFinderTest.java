@@ -39,11 +39,11 @@ public class UsageFinderTest extends Assert {
     @Test
     public void testAdd() {
         try {
-            UriInfo uriInfo = mockUri("vms", "00000001-0001-0001-0001-000000000011", "disks");
+            UriInfo uriInfo = mockUri("vms", "00000001-0001-0001-0001-000000000011", "nics");
             Request request = mockRequest("POST");
             control.replay();
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
-            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/api/model#services/vm-disks/methods/add", fault.getDetail());
+            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/api/model#services/vm-nics/methods/add", fault.getDetail());
         } catch (ClassNotFoundException | IOException | URISyntaxException e) {
             fail();
         }
@@ -65,11 +65,11 @@ public class UsageFinderTest extends Assert {
     @Test
     public void testUpdateWithNonGuidId() {
         try {
-            UriInfo uriInfo = mockUri("vms", "00000001-0001-0001-0001-000000000011", "disks", "116"); //LUN id.
+            UriInfo uriInfo = mockUri("vms", "00000001-0001-0001-0001-000000000011", "nics", "116"); //LUN id.
             Request request = mockRequest("PUT");
             control.replay();
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
-            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/api/model#services/vm-disk/methods/update", fault.getDetail());
+            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/api/model#services/vm-nic/methods/update", fault.getDetail());
         } catch (URISyntaxException | ClassNotFoundException | IOException e) {
             fail();
         }

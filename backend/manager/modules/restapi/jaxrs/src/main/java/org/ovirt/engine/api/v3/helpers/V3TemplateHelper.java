@@ -21,20 +21,20 @@ import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.v3.types.V3Link;
-import org.ovirt.engine.api.v3.types.V3VM;
+import org.ovirt.engine.api.v3.types.V3Template;
 
-public class V3VmHelper {
+public class V3TemplateHelper {
 
     public static Response addDisksLinkToResponse(Response response) {
-        if (response.getEntity() instanceof V3VM) {
-            V3VM vm = (V3VM) response.getEntity();
-            addDisksLink(vm);
+        if (response.getEntity() instanceof V3Template) {
+            V3Template template = (V3Template) response.getEntity();
+            addDisksLink(template);
         }
         return response;
     }
 
-    public static V3VM addDisksLink(V3VM vm) {
-        if (vm == null) {
+    public static V3Template addDisksLink(V3Template template) {
+        if (template == null) {
             return null;
         }
 
@@ -46,9 +46,9 @@ public class V3VmHelper {
             buffer.append(current.getVersion());
         }
         buffer.append(current.getPath());
-        if (!current.getPath().endsWith(vm.getId())) {
+        if (!current.getPath().endsWith(template.getId())) {
             buffer.append("/");
-            buffer.append(vm.getId());
+            buffer.append(template.getId());
         }
         buffer.append("/disks");
         String href = buffer.toString();
@@ -57,8 +57,8 @@ public class V3VmHelper {
         V3Link link = new V3Link();
         link.setRel("disks");
         link.setHref(href);
-        vm.getLinks().add(link);
+        template.getLinks().add(link);
 
-        return vm;
+        return template;
     }
 }

@@ -18,13 +18,15 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
-import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.v3.V3Adapter;
+import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3VM;
 
@@ -81,8 +83,13 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
             to.setDescription(from.getDescription());
         }
         if (from.isSetDisks()) {
-            to.setDisks(new Disks());
-            to.getDisks().getDisks().addAll(adaptIn(from.getDisks().getDisks()));
+            DiskAttachments toAttachments = new DiskAttachments();
+            for (V3Disk fromDisk : from.getDisks().getDisks()) {
+                DiskAttachment toAttachment = new DiskAttachment();
+                toAttachment.setDisk(adaptIn(fromDisk));
+                toAttachments.getDiskAttachments().add(toAttachment);
+            }
+            to.setDiskAttachments(toAttachments);
         }
         if (from.isSetDisplay()) {
             to.setDisplay(adaptIn(from.getDisplay()));

@@ -31,6 +31,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3TemplateHelper;
 import org.ovirt.engine.api.v3.types.V3Permissions;
 import org.ovirt.engine.api.v3.types.V3Template;
 import org.ovirt.engine.api.v3.types.V3Templates;
@@ -55,12 +56,14 @@ public class V3TemplatesServer extends V3Server<TemplatesResource> {
                 matrix.putSingle("clone_permissions", String.valueOf(true));
             }
         }
-        return adaptAdd(getDelegate()::add, template);
+        return V3TemplateHelper.addDisksLinkToResponse(adaptAdd(getDelegate()::add, template));
     }
 
     @GET
     public V3Templates list() {
-        return adaptList(getDelegate()::list);
+        V3Templates templates = adaptList(getDelegate()::list);
+        templates.getTemplates().stream().forEach(V3TemplateHelper::addDisksLink);
+        return templates;
     }
 
     @Path("{id}")

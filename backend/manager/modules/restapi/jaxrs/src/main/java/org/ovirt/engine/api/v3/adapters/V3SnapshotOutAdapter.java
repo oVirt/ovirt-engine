@@ -18,10 +18,13 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
+import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3CdRoms;
 import org.ovirt.engine.api.v3.types.V3CustomProperties;
+import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Disks;
 import org.ovirt.engine.api.v3.types.V3Floppies;
 import org.ovirt.engine.api.v3.types.V3KatelloErrata;
@@ -93,9 +96,16 @@ public class V3SnapshotOutAdapter implements V3Adapter<Snapshot, V3Snapshot> {
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());
         }
-        if (from.isSetDisks()) {
-            to.setDisks(new V3Disks());
-            to.getDisks().getDisks().addAll(adaptOut(from.getDisks().getDisks()));
+        if (from.isSetDiskAttachments()) {
+            V3Disks toDisks = new V3Disks();
+            for (DiskAttachment fromDiskAttachment : from .getDiskAttachments().getDiskAttachments()) {
+                Disk fromDisk = fromDiskAttachment.getDisk();
+                if (fromDisk != null) {
+                    V3Disk toDisk = adaptOut(fromDisk);
+                    toDisks.getDisks().add(toDisk);
+                }
+            }
+            to.setDisks(toDisks);
         }
         if (from.isSetDisplay()) {
             to.setDisplay(adaptOut(from.getDisplay()));

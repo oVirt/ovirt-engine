@@ -6,6 +6,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -108,23 +109,26 @@ public class BackendStorageDomainVmResource
     private void setVolumesTypeFormat(Action action) {
         if (action.isSetVm()) {
             Vm modelVm = action.getVm();
-            if (!modelVm.isSetDisks()) {
+            if (!modelVm.isSetDiskAttachments()) {
                 return;
             }
             Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> entityDisks = getDiskMap();
-            for (Disk modelDisk : modelVm.getDisks().getDisks()) {
-                validateParameters(modelDisk, "id");
-                Guid modelDiskId = Guid.createGuidFromString(modelDisk.getId());
-                DiskImage entityDisk = (DiskImage) entityDisks.get(modelDiskId);
-                if (entityDisk == null) {
-                    continue;
-                }
-                if (modelDisk.isSetFormat()) {
-                    VolumeFormat entityDiskFormat = DiskMapper.map(modelDisk.getFormat(), null);
-                    entityDisk.setVolumeFormat(entityDiskFormat);
-                }
-                if (modelDisk.isSetSparse()) {
-                    entityDisk.setVolumeType(modelDisk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
+            for (DiskAttachment modelDiskAttachment : modelVm.getDiskAttachments().getDiskAttachments()) {
+                Disk modelDisk = modelDiskAttachment.getDisk();
+                if (modelDisk != null) {
+                    validateParameters(modelDisk, "id");
+                    Guid modelDiskId = Guid.createGuidFromString(modelDisk.getId());
+                    DiskImage entityDisk = (DiskImage) entityDisks.get(modelDiskId);
+                    if (entityDisk == null) {
+                        continue;
+                    }
+                    if (modelDisk.isSetFormat()) {
+                        VolumeFormat entityDiskFormat = DiskMapper.map(modelDisk.getFormat(), null);
+                        entityDisk.setVolumeFormat(entityDiskFormat);
+                    }
+                    if (modelDisk.isSetSparse()) {
+                        entityDisk.setVolumeType(modelDisk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
+                    }
                 }
             }
         }
