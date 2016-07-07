@@ -15,7 +15,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -197,9 +198,11 @@ public class BackendStorageDomainVmResourceTest
         action.setCluster(cluster);
         action.setClone(false);
         Vm vm = new Vm();
-        Disks disks = new Disks();
-        disks.getDisks().add(new Disk());
-        vm.setDisks(disks);
+        DiskAttachments diskAttachments = new DiskAttachments();
+        DiskAttachment diskAttachment = new DiskAttachment();
+        diskAttachment.setDisk(new Disk());
+        diskAttachments.getDiskAttachments().add(diskAttachment);
+        vm.setDiskAttachments(diskAttachments);
         action.setVm(vm);
 
         control.replay();

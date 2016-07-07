@@ -68,12 +68,14 @@ POST /storagedomains/{storagedomain:id}/vms/{vm:id}/import;collapse_snapshots=tr
     <name>mycluster</name>
   </cluster>
   <vm>
-    <disks>
-      <disk id="792f8ca8-3932-429b-9660-006ba144bc72">
-        <format>raw</format>
-        <sparse>false</sparse>
-      </disk>
-    </disks>
+    <disk_attachments>
+      <disk_attachment>
+        <disk id="792f8ca8-3932-429b-9660-006ba144bc72">
+          <format>raw</format>
+          <sparse>false</sparse>
+        </disk>
+      </disk_attachment>
+    </disk_attachments>
   </vm>
 </action>
 ----
@@ -1612,6 +1614,7 @@ moved to the enclosing `network_attachment`:
     ...
   </reported_configurations>
 </network_attachment>
+----
 
 === Replaced `capabilities` with `clusterlevels`
 
@@ -1668,4 +1671,108 @@ This will return the details of that version:
   </cpu_types>
   ...
 </cluster_level>
+----
+
+=== Replaced `disks` with `diskattachments`
+
+In version 3 of the API virtual machines and templates had a `disks`
+collection containing all the information of the disks attached to them.
+In version 4 of the API these `disks` collections have been removed and
+replaced with a new `diskattachments` collection that will contain only
+the references to the disk and the attributes that are specific of the
+relationship between disks and the virtual machine or template that they
+are attached to: `interface` and `bootable`.
+
+To find what disks are attached to a virtual machine, for example, send
+a request like this:
+
+[source]
+----
+GET /vms/{vm:id}/diskattachments
+----
+
+That will return a response like this:
+
+[source,xml]
+----
+<disk_attachments>
+  <disk_attachment href="/vms/123/diskattachments/456" id="456">
+    <bootable>false</bootable>
+    <interface>virtio</interface>
+    <disk href="/disks/456" id="456"/>
+    <vm href="/vms/123" id="123"/>
+  </disk_attachment>
+  ...
+<disk_attachments>
+----
+
+To find the rest of the details of the disk, follow the link provided.
+
+Adding disks to a virtual machine or template uses the new
+`disk_attachment` element as well:
+request like this:
+
+[source]
+----
+POST /vms/123/diskattachments
+----
+
+With the following body if the disk doesn't exist and you want to create
+it:
+
+[source,xml]
+----
+<disk_attachment>
+  <bootable>false</bootable>
+  <interface>virtio</interface>
+  <disk>
+    <description>My disk</description>
+    <format>cow</format>
+    <name>mydisk</name>
+    <provisioned_size>1048576</provisioned_size>
+    <storage_domains>
+      <storage_domain>
+        <name>mydata</name>
+      </storage_domain>
+    </storage_domains>
+  </disk>
+</disk_attachment>
+----
+
+Or with the following body if the disk already exists, and you just want
+to attach it to the virtual machine:
+
+[source,xml]
+----
+<disk_attachment>
+  <bootable>false</bootable>
+  <interface>virtio</interface>
+  <disk id="456"/>
+</disk_attachment>
+----
+
+Take into account that the `vm.disks` and `template.disks` attribtes
+have `disk_attachments` for all usages. For example, when creating a
+template the `vm.disks` element was used to indicate in which storage
+domain to create the disks of the template. This usage has also been
+replaced by `vm.disk_attachments`, so the request to creaate a template
+with disks in specific storage domains will now look like this:
+
+[source,xml]
+----
+<template>
+  <name>mytemplate</name>
+  <vm id="123">
+    <disk_attachments>
+      <disk_attachment>
+        <disk id="456">
+          <storage_domains>
+            <storage_domain id="789"/>
+          </storage_domains>
+        </disk>
+      </disk_attachment>
+      ...
+    </disk_attachments>
+  </vm>
+</template>
 ----

@@ -20,7 +20,8 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.CustomProperties;
-import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.Floppies;
 import org.ovirt.engine.api.model.KatelloErrata;
 import org.ovirt.engine.api.model.Nics;
@@ -37,6 +38,7 @@ import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.api.v3.V3Adapter;
+import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Snapshot;
 
 public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
@@ -97,8 +99,13 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.setDescription(from.getDescription());
         }
         if (from.isSetDisks()) {
-            to.setDisks(new Disks());
-            to.getDisks().getDisks().addAll(adaptIn(from.getDisks().getDisks()));
+            DiskAttachments toAttachments = new DiskAttachments();
+            for (V3Disk fromDisk : from.getDisks().getDisks()) {
+                DiskAttachment toAttachment = new DiskAttachment();
+                toAttachment.setDisk(adaptIn(fromDisk));
+                toAttachments.getDiskAttachments().add(toAttachment);
+            }
+            to.setDiskAttachments(toAttachments);
         }
         if (from.isSetDisplay()) {
             to.setDisplay(adaptIn(from.getDisplay()));

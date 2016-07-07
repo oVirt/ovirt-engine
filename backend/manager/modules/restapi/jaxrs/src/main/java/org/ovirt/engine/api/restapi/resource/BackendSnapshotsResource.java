@@ -2,11 +2,12 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
@@ -53,8 +54,8 @@ public class BackendSnapshotsResource
         if (snapshot.isSetPersistMemorystate()) {
             snapshotParams.setSaveMemory(snapshot.isPersistMemorystate());
         }
-        if (snapshot.isSetDisks()) {
-            snapshotParams.setDisks(mapDisks(snapshot.getDisks()));
+        if (snapshot.isSetDiskAttachments()) {
+            snapshotParams.setDisks(mapDisks(snapshot.getDiskAttachments()));
         }
         return performCreate(VdcActionType.CreateAllSnapshotsFromVm,
                                snapshotParams,
@@ -62,13 +63,30 @@ public class BackendSnapshotsResource
                                block);
     }
 
+    public ArrayList<DiskImage> mapDisks(DiskAttachments diskAttachments) {
+        ArrayList<DiskImage> diskImages = null;
+        if (diskAttachments != null && diskAttachments.isSetDiskAttachments()) {
+            diskImages = new ArrayList<>();
+            for (DiskAttachment diskAttachment : diskAttachments.getDiskAttachments()) {
+                Disk disk = diskAttachment.getDisk();
+                if (disk != null) {
+                    DiskImage diskImage = (DiskImage) DiskMapper.map(disk, null);
+                    diskImages.add(diskImage);
+                }
+            }
+        }
+        return diskImages;
+    }
+
     public ArrayList<DiskImage> mapDisks(Disks disks) {
         ArrayList<DiskImage> diskImages = null;
         if (disks != null && disks.isSetDisks()) {
             diskImages = new ArrayList<>();
             for (Disk disk : disks.getDisks()) {
-                DiskImage diskImage = (DiskImage) DiskMapper.map(disk, null);
-                diskImages.add(diskImage);
+                if (disk != null) {
+                    DiskImage diskImage = (DiskImage) DiskMapper.map(disk, null);
+                    diskImages.add(diskImage);
+                }
             }
         }
         return diskImages;

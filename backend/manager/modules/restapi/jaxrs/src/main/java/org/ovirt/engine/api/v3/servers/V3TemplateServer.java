@@ -28,7 +28,9 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.TemplateResource;
+import org.ovirt.engine.api.restapi.resource.BackendTemplateResource;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3TemplateHelper;
 import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3Template;
 
@@ -48,13 +50,13 @@ public class V3TemplateServer extends V3Server<TemplateResource> {
 
     @GET
     public V3Template get() {
-        return adaptGet(getDelegate()::get);
+        return V3TemplateHelper.addDisksLink(adaptGet(getDelegate()::get));
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Template update(V3Template template) {
-        return adaptUpdate(getDelegate()::update, template);
+        return V3TemplateHelper.addDisksLink(adaptUpdate(getDelegate()::update, template));
     }
 
     @DELETE
@@ -84,7 +86,7 @@ public class V3TemplateServer extends V3Server<TemplateResource> {
 
     @Path("disks")
     public V3TemplateDisksServer getDisksResource() {
-        return new V3TemplateDisksServer(getDelegate().getDisksResource());
+        return new V3TemplateDisksServer(((BackendTemplateResource) getDelegate()).getDisksResource());
     }
 
     @Path("nics")

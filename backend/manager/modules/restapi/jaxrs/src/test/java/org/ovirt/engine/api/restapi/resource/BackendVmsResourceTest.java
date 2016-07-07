@@ -18,7 +18,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Initialization;
@@ -380,7 +381,7 @@ public class BackendVmsResourceTest
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
 
-        Response response = collection.add(createModel(createDisksCollection()));
+        Response response = collection.add(createModel(createDiskAttachmentsCollection()));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
         verifyModel((Vm) response.getEntity(), 2);
@@ -422,7 +423,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        Vm model = createModel(createDisksCollection(), createSnapshotsCollection(1));
+        Vm model = createModel(createDiskAttachmentsCollection(), createSnapshotsCollection(1));
         model.setTemplate(null);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -465,7 +466,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[2]},
                 getEntity(2));
 
-        Response response = collection.add(createModel(new Disks()));
+        Response response = collection.add(createModel(new DiskAttachments()));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
         verifyModel((Vm) response.getEntity(), 2);
@@ -1054,12 +1055,12 @@ public class BackendVmsResourceTest
 
     @Test
     public void testCloneFromTemplateWithClonePermissionsDontClone() throws Exception {
-        doTestCloneFromTemplateWithClonePermissions(createModel(createDisksCollection()), false);
+        doTestCloneFromTemplateWithClonePermissions(createModel(createDiskAttachmentsCollection()), false);
     }
 
     @Test
     public void testCloneFromTemplateWithClonePermissionsClone() throws Exception {
-        Vm model = createModel(createDisksCollection());
+        Vm model = createModel(createDiskAttachmentsCollection());
         doTestCloneFromTemplateWithClonePermissions(model, true);
     }
 
@@ -1461,22 +1462,22 @@ public class BackendVmsResourceTest
 
     }
 
-    private Vm createModel(Disks disks) {
+    private Vm createModel(DiskAttachments diskAttachments) {
         Vm model = getModel(2);
 
         model.setTemplate(new Template());
         model.getTemplate().setId(GUIDS[1].toString());
         model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[2].toString());
-        if(disks != null){
-            model.setDisks(disks);
+        if (diskAttachments != null){
+            model.setDiskAttachments(diskAttachments);
         }
 
         return model;
     }
 
-    private Vm createModel(Disks disks, Snapshots snapshots) {
-        Vm model = createModel(disks);
+    private Vm createModel(DiskAttachments diskAttachments, Snapshots snapshots) {
+        Vm model = createModel(diskAttachments);
         if (snapshots != null) {
             model.setSnapshots(snapshots);
         }
@@ -1513,10 +1514,10 @@ public class BackendVmsResourceTest
         return cluster;
     }
 
-    private Disks createDisksCollection() {
-        Disks disks = new Disks();
-        disks.getDisks().add(map(createDiskList().get(0), null));
-        return disks;
+    private DiskAttachments createDiskAttachmentsCollection() {
+        DiskAttachments diskAttachments = new DiskAttachments();
+        diskAttachments.getDiskAttachments().add(map(createDiskList().get(0), null));
+        return diskAttachments;
     }
 
     private Snapshots createSnapshotsCollection(int index) {
@@ -1533,8 +1534,11 @@ public class BackendVmsResourceTest
         return result;
     }
 
-    private Disk map(DiskImage entity, Disk template) {
-        return getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, Disk.class).map(entity, template);
+    private DiskAttachment map(DiskImage entity, DiskAttachment template) {
+        Disk disk = getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, Disk.class).map(entity, null);
+        DiskAttachment diskAttachment = new DiskAttachment();
+        diskAttachment.setDisk(disk);
+        return diskAttachment;
     }
 
     private Snapshot map(org.ovirt.engine.core.common.businessentities.Snapshot entity, Snapshot template) {

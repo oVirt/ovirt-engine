@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Ips;
 import org.ovirt.engine.api.model.Link;
@@ -41,6 +43,7 @@ import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3CdRoms;
 import org.ovirt.engine.api.v3.types.V3CustomProperties;
+import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Disks;
 import org.ovirt.engine.api.v3.types.V3Floppies;
 import org.ovirt.engine.api.v3.types.V3GuestInfo;
@@ -68,6 +71,7 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
 
     static {
         RELS_TO_REMOVE.add("affinitylabels");
+        RELS_TO_REMOVE.add("diskattachments");
     }
 
     @Override
@@ -138,9 +142,16 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());
         }
-        if (from.isSetDisks()) {
-            to.setDisks(new V3Disks());
-            to.getDisks().getDisks().addAll(adaptOut(from.getDisks().getDisks()));
+        if (from.isSetDiskAttachments()) {
+            V3Disks toDisks = new V3Disks();
+            for (DiskAttachment fromDiskAttachment : from .getDiskAttachments().getDiskAttachments()) {
+                Disk fromDisk = fromDiskAttachment.getDisk();
+                if (fromDisk != null) {
+                    V3Disk toDisk = adaptOut(fromDisk);
+                    toDisks.getDisks().add(toDisk);
+                }
+            }
+            to.setDisks(toDisks);
         }
         if (from.isSetDisplay()) {
             to.setDisplay(adaptOut(from.getDisplay()));
