@@ -190,6 +190,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String kernelArgs;
 
+    private String prettyName;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -769,6 +771,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.kernelArgs = kernelArgs;
     }
 
+    public String getPrettyName() {
+        return prettyName;
+    }
+
+    public void setPrettyName(String prettyName) {
+        this.prettyName = prettyName;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -833,7 +843,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 maintenanceReason,
                 updateAvailable,
                 hostDevicePassthroughEnabled,
-                kernelArgs
+                kernelArgs,
+                prettyName
         );
     }
 
@@ -909,6 +920,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && updateAvailable == other.updateAvailable
                 && Objects.equals(additionalFeatures, other.additionalFeatures)
                 && Objects.equals(kernelArgs, other.kernelArgs)
-                && Objects.equals(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled);
+                && Objects.equals(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled)
+                && Objects.equals(prettyName, other.prettyName);
     }
 }
