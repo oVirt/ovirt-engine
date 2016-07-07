@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -156,13 +158,8 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                  VmMonitoringRowMapper.instance,
                  getCustomMapSqlParameterSource()
                         .addValue("vds_id", id));
-        HashMap<Guid, VM> map = new HashMap<>();
-
-        for (VM vm : vms) {
-            map.put(vm.getId(), vm);
-        }
-
-        return map;
+        return vms.stream()
+                .collect(Collectors.toMap(VM::getId, Function.identity()));
     }
 
     @Override
