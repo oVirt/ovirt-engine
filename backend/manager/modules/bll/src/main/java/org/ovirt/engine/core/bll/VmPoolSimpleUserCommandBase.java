@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserParameters> extends VmPoolCommandBase<T> {
 
@@ -21,7 +19,7 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
     }
 
     protected Guid getAdUserId() {
-        return getPoolUserSimpleParameters().getUserId();
+        return getParameters().getUserId();
     }
 
     @Override
@@ -33,7 +31,7 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
 
     protected DbUser getDbUser() {
         if (dbUser == null) {
-            dbUser = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
+            dbUser = getDbUserDao().get(getAdUserId());
         }
 
         return dbUser;
@@ -45,22 +43,19 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
 
     private String adUserName;
 
-    private VmPoolSimpleUserParameters getPoolUserSimpleParameters() {
-        VdcActionParametersBase tempVar = getParameters();
-        return (VmPoolSimpleUserParameters) ((tempVar instanceof VmPoolSimpleUserParameters) ? tempVar : null);
-    }
-
     public String getAdUserName() {
         if (adUserName == null) {
-            DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
+            DbUser user = getDbUserDao().get(getAdUserId());
             if (user != null) {
                 adUserName = user.getLoginName();
             }
         }
+
         return adUserName;
     }
 
     public void setAdUserName(String value) {
         adUserName = value;
     }
+
 }
