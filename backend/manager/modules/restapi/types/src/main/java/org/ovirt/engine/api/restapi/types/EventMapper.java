@@ -96,33 +96,47 @@ public class EventMapper {
         auditLog.setLogTime(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
                 : new Date(Calendar.getInstance().getTimeInMillis()));
         auditLog.setMessage(event.getDescription());
-        Guid guid = event.isSetUser() ? GuidUtils.asGuid(event.getUser().getId()) : Guid.Empty;
-        if (!guid.equals(Guid.Empty)) {
-            auditLog.setUserId(guid);
+        if (event.isSetUser() && event.getUser().isSetId()) {
+            Guid guid = GuidUtils.asGuid(event.getUser().getId());
+            if (!Guid.isNullOrEmpty(guid)) {
+                auditLog.setUserId(guid);
+            }
         }
-        guid = event.isSetVm() ? GuidUtils.asGuid(event.getVm().getId()) : Guid.Empty;
-        if (!guid.equals(Guid.Empty)) {
-            auditLog.setVmId(guid);
+        if (event.isSetVm() && event.getVm().isSetId()) {
+            Guid guid = GuidUtils.asGuid(event.getVm().getId());
+            if (!Guid.isNullOrEmpty(guid)) {
+                auditLog.setVmId(guid);
+            }
         }
-        guid = event.isSetStorageDomain() ? GuidUtils.asGuid(event.getStorageDomain().getId()) : Guid.Empty;
-        if (!guid.equals(Guid.Empty)) {
-            auditLog.setStorageDomainId(guid);
+        if (event.isSetStorageDomain() && event.getStorageDomain().isSetId()) {
+            Guid guid = GuidUtils.asGuid(event.getStorageDomain().getId());
+            if (!Guid.isNullOrEmpty(guid)) {
+                auditLog.setStorageDomainId(guid);
+            }
         }
-        guid = event.isSetHost() ? GuidUtils.asGuid(event.getHost().getId()) : Guid.Empty;
-        if (!guid.equals(Guid.Empty)) {
-            auditLog.setVdsId(guid);
+        if (event.isSetHost() && event.getHost().isSetId()) {
+            Guid guid = GuidUtils.asGuid(event.getHost().getId());
+            if (!Guid.isNullOrEmpty(guid)) {
+                auditLog.setVdsId(guid);
+            }
         }
-        guid = event.isSetTemplate() ? GuidUtils.asGuid(event.getTemplate().getId()) : Guid.Empty;
-        if (!guid.equals(Guid.Empty)) {
-            auditLog.setVmTemplateId(guid);
+        if (event.isSetTemplate() && event.getTemplate().isSetId()) {
+            Guid guid = GuidUtils.asGuid(event.getTemplate().getId());
+            if (!Guid.isNullOrEmpty(guid)) {
+                auditLog.setVmTemplateId(guid);
+            }
         }
-        guid = event.isSetCluster() ? GuidUtils.asGuid(event.getCluster().getId()) : Guid.Empty;
-        if (!guid.equals(Guid.Empty)) {
-            auditLog.setClusterId(guid);
+        if (event.isSetCluster() && event.getCluster().isSetId()) {
+            Guid guid = GuidUtils.asGuid(event.getCluster().getId());
+            if (!Guid.isNullOrEmpty(guid)) {
+                auditLog.setClusterId(guid);
+            }
         }
-        guid = event.isSetDataCenter() ? GuidUtils.asGuid(event.getDataCenter().getId()) : Guid.Empty;
-        if (!guid.equals(Guid.Empty)) {
-            auditLog.setStoragePoolId(guid);
+        if (event.isSetDataCenter() && event.getDataCenter().isSetId()) {
+            Guid guid = GuidUtils.asGuid(event.getDataCenter().getId());
+            if (!Guid.isNullOrEmpty(guid)) {
+                auditLog.setStoragePoolId(guid);
+            }
         }
         if (event.isSetCorrelationId()) {
             auditLog.setCorrelationId(event.getCorrelationId());
