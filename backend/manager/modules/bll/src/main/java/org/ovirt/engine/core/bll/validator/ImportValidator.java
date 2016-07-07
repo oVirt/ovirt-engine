@@ -146,7 +146,7 @@ public class ImportValidator {
     }
 
     private MacPool getMacPool() {
-        return Injector.get(MacPoolPerDc.class).getMacPoolForDataCenter(params.getStoragePoolId());
+        return Injector.get(MacPoolPerDc.class).getMacPoolForDataCenter(getStoragePoolId());
     }
 
     public StorageDomainDao getStorageDomainDao() {
@@ -158,9 +158,7 @@ public class ImportValidator {
     }
 
     public StoragePool getStoragePool() {
-        if (cachedStoragePool == null) {
-            cachedStoragePool = getStoragePoolDao().get(params.getStoragePoolId());
-        }
+        loadDc();
         return cachedStoragePool;
     }
 
@@ -169,5 +167,21 @@ public class ImportValidator {
             cachedStorageDomain = getStorageDomainDao().get(params.getStorageDomainId());
         }
         return cachedStorageDomain;
+    }
+
+    private Guid getStoragePoolId() {
+        loadDc();
+        return cachedStoragePool.getId();
+    }
+
+    private void loadDc() {
+        if (cachedStoragePool == null) {
+            final Guid dcId = params.getStoragePoolId();
+            if (Guid.isNullOrEmpty(dcId)) {
+                cachedStoragePool = getStoragePoolDao().getForCluster(params.getClusterId());
+            } else {
+                cachedStoragePool = getStoragePoolDao().get(dcId);
+            }
+        }
     }
 }
