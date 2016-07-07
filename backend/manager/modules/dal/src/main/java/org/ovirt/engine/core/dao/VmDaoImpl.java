@@ -382,7 +382,6 @@ public class VmDaoImpl extends BaseDao implements VmDao {
             entity.setCpuPerSocket(rs.getInt("cpu_per_socket"));
             entity.setThreadsPerCpu(rs.getInt("threads_per_cpu"));
             entity.setDynamicData(VmDynamicDaoImpl.getRowMapper().mapRow(rs, rowNum));
-            entity.setStatisticsData(VmStatisticsDaoImpl.getRowMapper().mapRow(rs, rowNum));
 
             return entity;
         }

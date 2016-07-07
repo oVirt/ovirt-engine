@@ -1377,26 +1377,10 @@ SELECT vm_dynamic.*,
     vm_static.num_of_sockets,
     vm_static.cpu_per_socket,
     vm_static.threads_per_cpu,
-    vm_static.fn_get_num_of_vcpus AS num_of_cpus, -- use of function as an attribute
-    vm_statistics.cpu_user,
-    vm_statistics.cpu_sys,
-    vm_statistics.memory_usage_history,
-    vm_statistics.cpu_usage_history,
-    vm_statistics.network_usage_history,
-    vm_statistics.elapsed_time,
-    vm_statistics.usage_network_percent,
-    vm_statistics.disks_usage,
-    vm_statistics.usage_mem_percent,
-    vm_statistics.migration_progress_percent,
-    vm_statistics.usage_cpu_percent,
-    vm_statistics.guest_mem_buffered,
-    vm_statistics.guest_mem_free,
-    vm_statistics.guest_mem_cached
+    vm_static.fn_get_num_of_vcpus AS num_of_cpus -- use of function as an attribute
 FROM vm_dynamic
 INNER JOIN vm_static
-    ON vm_static.vm_guid = vm_dynamic.vm_guid
-INNER JOIN vm_statistics
-    ON vm_static.vm_guid = vm_statistics.vm_guid;
+    ON vm_static.vm_guid = vm_dynamic.vm_guid;
 
 CREATE OR REPLACE VIEW vms_with_tags AS
 

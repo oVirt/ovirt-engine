@@ -224,7 +224,6 @@ public class VmAnalyzerTest {
         //then
         verify(resourceManager, times(1)).internalSetVmStatus(data.dbVm(), VMStatus.MigratingTo);
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
-        assertNotNull(vmAnalyzer.getVmStatisticsToSave());
         assertEquals(VmTestPairs.DST_HOST_ID, data.dbVm().getRunOnVds());
     }
 

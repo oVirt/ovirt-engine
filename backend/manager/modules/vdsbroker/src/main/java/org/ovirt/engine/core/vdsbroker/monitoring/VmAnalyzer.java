@@ -68,7 +68,6 @@ public class VmAnalyzer {
     private final VdsmVm vdsmVm;
 
     private VmDynamic vmDynamicToSave;
-    private boolean saveStatistics;
     private boolean saveVmInterfaces;
     private boolean movedToDown;
     private boolean rerun;
@@ -86,6 +85,7 @@ public class VmAnalyzer {
     private boolean guestAgentUpOrBalloonDeflated;
     private List<VmJob> vmJobs;
     private List<VmNumaNode> vmNumaNodesNeedUpdate;
+    private VmStatistics statistics;
 
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
@@ -350,7 +350,7 @@ public class VmAnalyzer {
                         vmExistReason);
             }
             saveDynamic(dbVm.getDynamicData());
-            saveStatistics();
+            resetStatistics();
             saveVmInterfaces();
             if (!resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
@@ -358,12 +358,13 @@ public class VmAnalyzer {
         }
     }
 
-    private void saveStatistics() {
-        saveStatistics = true;
+    private void resetStatistics() {
+        statistics = new VmStatistics();
+        statistics.setId(getVmId());
     }
 
     public VmStatistics getVmStatisticsToSave() {
-        return saveStatistics ? dbVm.getStatisticsData() : null;
+        return statistics;
     }
 
     public VmDynamic getVmDynamicToSave() {
@@ -389,7 +390,7 @@ public class VmAnalyzer {
                 vdsmVm.getVmDynamic().getExitMessage(),
                 vdsmVm.getVmDynamic().getExitReason());
         saveDynamic(dbVm.getDynamicData());
-        saveStatistics();
+        resetStatistics();
         saveVmInterfaces();
         auditVmMigrationAbort();
 
@@ -751,7 +752,6 @@ public class VmAnalyzer {
 
         // save the VM state
         saveDynamic(vmToRemove.getDynamicData());
-        saveStatistics();
         saveVmInterfaces();
     }
 
@@ -771,7 +771,6 @@ public class VmAnalyzer {
             log.info("Adding VM '{}'({}) to re-run list", vmToUpdate.getId(), vmToUpdate.getName());
             vmToUpdate.setMigratingToVds(null);
             vmToUpdate.setMigrationProgressPercent(0);
-            saveStatistics();
         }
     }
 
@@ -787,8 +786,8 @@ public class VmAnalyzer {
             return;
         }
 
-        dbVm.getStatisticsData().updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
-        saveStatistics();
+        statistics = getVmManager().getStatistics();
+        statistics.updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
         saveVmInterfaces();
         updateInterfaceStatistics();
         updateVmNumaNodeRuntimeInfo();
@@ -810,7 +809,7 @@ public class VmAnalyzer {
 
         List<String> macs = new ArrayList<>();
 
-        dbVm.setUsageNetworkPercent(0);
+        statistics.setUsageNetworkPercent(0);
 
         NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder();
 
@@ -851,7 +850,7 @@ public class VmAnalyzer {
                 double rx_percent = vmIface.getStatistics().getReceiveRate();
                 double tx_percent = vmIface.getStatistics().getTransmitRate();
 
-                dbVm.setUsageNetworkPercent(max(dbVm.getUsageNetworkPercent(),
+                statistics.setUsageNetworkPercent(max(statistics.getUsageNetworkPercent(),
                         (int) max(rx_percent, tx_percent)));
             }
 
@@ -860,9 +859,9 @@ public class VmAnalyzer {
             }
         }
 
-        dbVm.setUsageNetworkPercent(min(dbVm.getUsageNetworkPercent(), 100));
+        statistics.setUsageNetworkPercent(min(statistics.getUsageNetworkPercent(), 100));
         Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
-        dbVm.addNetworkUsageHistory(dbVm.getUsageNetworkPercent(), usageHistoryLimit);
+        statistics.addNetworkUsageHistory(statistics.getUsageNetworkPercent(), usageHistoryLimit);
     }
 
     private void saveVmInterfaces() {
