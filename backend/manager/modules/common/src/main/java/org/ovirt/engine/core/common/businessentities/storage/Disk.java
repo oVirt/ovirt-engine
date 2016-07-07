@@ -33,7 +33,7 @@ public abstract class Disk extends BaseDisk {
      * Plugged and readOnly are of type Boolean (as opposed to boolean) since they are optional.
      * In case the disk is not in a vm context, null will ensure they are invisible.
      */
-    private Boolean plugged;
+    private boolean plugged;
     private Boolean readOnly;
     private String logicalName;
 
@@ -61,11 +61,11 @@ public abstract class Disk extends BaseDisk {
         this.vmEntityType = vmEntityType;
     }
 
-    public Boolean getPlugged() {
+    public boolean getPlugged() {
         return plugged;
     }
 
-    public void setPlugged(Boolean plugged) {
+    public void setPlugged(boolean plugged) {
         this.plugged = plugged;
     }
 

@@ -59,7 +59,7 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
     /**
      * The device plugged flag
      */
-    private Boolean isPlugged;
+    private boolean isPlugged;
 
     /**
      * The device read-only flag
@@ -221,11 +221,11 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
         this.isManaged = isManaged;
     }
 
-    public Boolean getIsPlugged() {
-        return isPlugged == null ? Boolean.FALSE : isPlugged;
+    public boolean getIsPlugged() {
+        return isPlugged;
     }
 
-    public void setIsPlugged(Boolean isPlugged) {
+    public void setIsPlugged(boolean isPlugged) {
         this.isPlugged = isPlugged;
     }
 
@@ -322,7 +322,7 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 && bootOrder == other.bootOrder
                 && Objects.equals(specParams, other.specParams)
                 && isManaged == other.isManaged
-                && getIsPlugged().equals(other.getIsPlugged())
+                && getIsPlugged() == other.getIsPlugged()
                 && getIsReadOnly().equals(other.getIsReadOnly())
                 && alias.equals(other.alias)
                 && Objects.equals(customProperties, other.customProperties)
