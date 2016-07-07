@@ -41,8 +41,12 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUn
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InternalPolicyUnits {
+
+    private static final Logger log = LoggerFactory.getLogger(InternalPolicyUnits.class);
     private static final Set<Class<? extends PolicyUnitImpl>> enabledUnits = new HashSet<>();
 
     static {
@@ -104,7 +108,7 @@ public class InternalPolicyUnits {
                     .newInstance(null, pendingResourceManager);
             return unit;
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("Failed during unit instantiation", e);
             return null;
         }
     }
