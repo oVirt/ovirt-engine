@@ -14,9 +14,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<SchedulingPolicy, ClusterPolicy> implements
         SchedulingPolicyResource {
+
+    private static final Logger log = LoggerFactory.getLogger(BackendSchedulingPolicyResource.class);
 
     public BackendSchedulingPolicyResource(String id) {
         super(id, SchedulingPolicy.class, ClusterPolicy.class);
@@ -72,7 +76,7 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
                             new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById,
                                     IdQueryParameters.class).lookupEntity(asGuid(id))));
         } catch (BackendFailureException e) {
-            e.printStackTrace();
+            log.error("Failed performing action", e);
         }
         return performAction;
     }
