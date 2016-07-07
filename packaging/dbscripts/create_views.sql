@@ -1392,12 +1392,11 @@ SELECT vm_dynamic.*,
     vm_statistics.guest_mem_buffered,
     vm_statistics.guest_mem_free,
     vm_statistics.guest_mem_cached
-FROM vm_static
-INNER JOIN vm_dynamic
+FROM vm_dynamic
+INNER JOIN vm_static
     ON vm_static.vm_guid = vm_dynamic.vm_guid
 INNER JOIN vm_statistics
-    ON vm_static.vm_guid = vm_statistics.vm_guid
-WHERE vm_static.entity_type = 'VM';
+    ON vm_static.vm_guid = vm_statistics.vm_guid;
 
 CREATE OR REPLACE VIEW vms_with_tags AS
 
