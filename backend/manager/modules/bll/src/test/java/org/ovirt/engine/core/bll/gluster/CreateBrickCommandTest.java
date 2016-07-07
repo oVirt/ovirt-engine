@@ -82,7 +82,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.<StorageDevice> emptyList()), null));
+                null, Collections.emptyList()), null));
         prepareMocks(cmd, VDSStatus.Up);
         assertFalse(cmd.validate());
     }
