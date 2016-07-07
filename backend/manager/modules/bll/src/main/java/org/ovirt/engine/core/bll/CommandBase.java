@@ -388,9 +388,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
 
         try {
-            if (getCallback() != null || parentHasCallback()) {
+            if (parentHasCallback()) {
                 persistCommand(getParameters().getParentCommand());
-                CommandCoordinatorUtil.persistCommandAssociatedEntities(getCommandId(), getSubjectEntities());
             }
 
             actionAllowed = getReturnValue().isValid() || internalValidate();
@@ -405,7 +404,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 getReturnValue().setValid(false);
             }
         } finally {
-            persistCommandIfNeeded();
+            updateCommand();
             freeLockExecute();
             clearAsyncTasksWithOutVdsmId();
         }
@@ -1474,9 +1473,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     protected final void execute() {
         setCommandStatus(CommandStatus.ACTIVE);
-
         getReturnValue().setValid(true);
         getReturnValue().setIsSyncronious(true);
+
+        if (shouldPersistCommand()) {
+            persistCommandIfNeeded();
+            CommandCoordinatorUtil.persistCommandAssociatedEntities(getCommandId(), getSubjectEntities());
+        }
 
         if (!hasTaskHandlers() || getExecutionIndex() == 0) {
             ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
@@ -2334,8 +2337,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         persistCommand(parentCommand, getContext(), enableCallback, callbackTriggeredByEvent());
     }
 
+    private boolean shouldPersistCommand() {
+        return getCallback() != null || parentHasCallback();
+    }
+
     protected void persistCommandIfNeeded() {
-        if (getCallback() != null || parentHasCallback()) {
+        if (shouldPersistCommand()) {
+            persistCommand(getParameters().getParentCommand());
+        }
+    }
+
+    protected void updateCommand() {
+        if (CommandCoordinatorUtil.getCommandEntity(getCommandId()) != null) {
             persistCommand(getParameters().getParentCommand());
         }
     }
