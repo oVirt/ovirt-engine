@@ -12,7 +12,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
 
     public AddVmToPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        super.setVmId(parameters.getVmId());
+        setVmId(parameters.getVmId());
     }
 
 
@@ -51,13 +51,4 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
         return getSucceeded() ? AuditLogType.USER_ADD_VM_TO_POOL : AuditLogType.USER_ADD_VM_TO_POOL_FAILED;
     }
 
-    @Override
-    protected void endSuccessfully() {
-        setSucceeded(true);
-    }
-
-    @Override
-    protected void endWithFailure() {
-        setSucceeded(true);
-    }
 }
