@@ -11,9 +11,14 @@ common_modules_paths=("backend/manager/modules/searchbackend/" \
 #create a search string with OR on all paths
 common_modules_search_string=$(IFS='|'; echo "${common_modules_paths[*]}")
 
-dao_tests_path1=backend/manager/modules/dal
-dao_tests_path2=("dao_tests_path2=backend/manager/modules/common/src/main/"
-                 "java/org/ovirt/engine/core/common/businessentities")
+
+
+dao_tests_paths=("backend/manager/modules/dal" \
+                 "backend/manager/modules/searchbackend/" \
+                 "java/org/ovirt/engine/core/common/businessentities" )
+
+#create a search string with OR on all paths
+dao_tests_paths_search_string=$(IFS='|'; echo "${dao_tests_paths[*]}")
 
 if git show --pretty="format:" --name-only | egrep -q "\.(xml|java)$"; then
     BUILD_UT=1
@@ -25,7 +30,7 @@ if git show --pretty="format:" --name-only | egrep -q \
 fi
 
 if git show --pretty="format:" --name-only | egrep \
-    "(sql|$dao_tests_path1|${dao_tests_path2[0]}${dao_tests_path2[1]})" | \
+    "(sql|${dao_tests_paths_search_string})" | \
     egrep -v -q "backend/manager/modules/dal/src/main/resources/bundles"; then
     RUN_DAO_TESTS=1
 fi
