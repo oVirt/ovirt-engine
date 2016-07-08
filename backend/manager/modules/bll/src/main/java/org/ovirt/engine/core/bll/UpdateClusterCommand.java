@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -44,7 +47,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -53,6 +58,7 @@ import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
@@ -83,9 +89,12 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private NetworkCluster managementNetworkCluster;
 
+    private List<VM> vmsLockedForUpdate = Collections.emptyList();
+
     @Override
     protected void init() {
         updateMigrateOnError();
+        oldGroup = getClusterDao().get(getCluster().getId());
     }
 
     public UpdateClusterCommand(T parameters, CommandContext commandContext) {
@@ -166,29 +175,23 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     private boolean updateVms() {
-        final boolean compatibilityVersionUnchanged = Objects.equals(
-                oldGroup.getCompatibilityVersion(),
-                getParameters().getCluster().getCompatibilityVersion());
-        if (compatibilityVersionUnchanged) {
-            return true;
-        }
+        for (VM vm : vmsLockedForUpdate) {
+            VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+            /*
+            Locking by UpdateVmCommand is disabled since VMs are already locked in #getExclusiveLocks method.
+            This logic relies on assumption that UpdateVmCommand locks exactly only updated VM.
+             */
+            updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+            updateParams.setClusterLevelChangeToVersion(getParameters().getCluster().getCompatibilityVersion());
 
-        List<VM> vmList = getVmDao().getAllForCluster(getParameters().getCluster().getId());
+            VdcReturnValueBase result = runInternalAction(
+                    VdcActionType.UpdateVm,
+                    updateParams,
+                    cloneContextAndDetachFromParent());
 
-        for (VM vm : vmList) {
-            if (!vm.isExternalVm() && !vm.isHostedEngine()) {
-                VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
-                updateParams.setClusterLevelChangeToVersion(getParameters().getCluster().getCompatibilityVersion());
-
-                VdcReturnValueBase result = runInternalAction(
-                        VdcActionType.UpdateVm,
-                        updateParams,
-                        cloneContextAndDetachFromParent());
-
-                if (!result.getSucceeded()) {
-                    getReturnValue().setFault(result.getFault());
-                    return false;
-                }
+            if (!result.getSucceeded()) {
+                getReturnValue().setFault(result.getFault());
+                return false;
             }
         }
         return true;
@@ -264,7 +267,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         List<VM> vmList = null;
 
-        oldGroup = getClusterDao().get(getCluster().getId());
         if (oldGroup == null) {
             addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             result = false;
@@ -664,5 +666,29 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     public ClusterFeatureDao getClusterFeatureDao() {
         return clusterFeatureDao;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        final boolean versionChanged =
+                !Objects.equals(oldGroup.getCompatibilityVersion(), getCluster().getCompatibilityVersion());
+        if (!versionChanged) {
+            return null;
+        }
+        final String lockMessage = EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_BEING_UPDATED.name()
+                + ReplacementUtils.createSetVariableString("clusterName", oldGroup.getName());
+        vmsLockedForUpdate = getVmDao().getAllForCluster(oldGroup.getId()).stream()
+                .filter(vm -> !vm.isExternalVm() && !vm.isHostedEngine())
+                .filter(vm -> vm.getCustomCompatibilityVersion() == null) // no need for VM device update
+                .collect(Collectors.toList());
+        return vmsLockedForUpdate.stream()
+                .collect(Collectors.toMap(
+                        vm -> vm.getId().toString(),
+                        vm -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, lockMessage)));
+    }
+
+    @Override
+    protected LockProperties getLockProperties() {
+        return LockProperties.create(LockProperties.Scope.Command).withWait(false);
     }
 }
