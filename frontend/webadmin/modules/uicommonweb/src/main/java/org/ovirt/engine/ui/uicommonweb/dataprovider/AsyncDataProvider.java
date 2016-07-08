@@ -2002,12 +2002,13 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getVmsFromExternalServer(AsyncQuery<List<VM>> aQuery, Guid dataCenterId, Guid vdsId,
-            String url, String username, String password, OriginType originType) {
+    public void getVmsFromExternalServer(AsyncQuery aQuery, Guid dataCenterId, Guid vdsId,
+            String url, String username, String password, OriginType originType, List<String> vmsToImport) {
+
         aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExternalProvider,
-                new GetVmsFromExternalProviderQueryParameters(url, username, password, originType, vdsId, dataCenterId),
+                new GetVmsFromExternalProviderQueryParameters(url, username, password, originType, vdsId, dataCenterId, vmsToImport),
                 aQuery);
     }
 
@@ -3262,5 +3263,9 @@ public class AsyncDataProvider {
         asyncQuery.converterCallback = new QuotaConverter(topQuotaId);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
                 new IdQueryParameters(clusterId), asyncQuery);
+    }
+
+    public boolean isGetNamesOfVmsFromExternalProviderSupported(Version dataCenterVersion) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.GetNamesOfVmsFromExternalProviderSupported, dataCenterVersion.toString());
     }
 }

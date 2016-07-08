@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -98,6 +99,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -2271,14 +2273,138 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        if (!importVmsModel.validateArchitectures()) {
+        boolean vmsToImportHaveFullInfo = importVmsModel.vmsToImportHaveFullInfo();
+
+
+        if (vmsToImportHaveFullInfo && !importVmsModel.validateArchitectures(importVmsModel.getVmsToImport())) {
             return;
         }
 
-        final ImportVmModel model = importVmsModel.getSpecificImportModel();
-        setWindow(null); // remove import-vms window first
-        setWindow(model);
+        final ImportVmModel model = importVmsModel.getSpecificImportModel(vmsToImportHaveFullInfo);
 
+        if (vmsToImportHaveFullInfo) {
+            setWindow(null); // remove import-vms window first
+            setWindow(model);
+        } else {
+            initImportModelForVmsToImportNamesOnly(importVmsModel, model);
+        }
+    }
+
+    private void initImportModelForVmsToImportNamesOnly(final ImportVmsModel importVmsModel, final ImportVmModel importVmModel) {
+        final UIMessages messages = ConstantsManager.getInstance().getMessages();
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+        final List<String> vmsToImport = new ArrayList<>();
+        OriginType originType = convertImportSourceToOriginType(importVmsModel.getImportSources().getSelectedItem());
+
+        final List<VM> externalVms = importVmsModel.getVmsToImport();
+        for (VM vm : externalVms) {
+            vmsToImport.add(vm.getName());
+        }
+
+        importVmsModel.clearProblem();
+        importVmsModel.startProgress();
+        importVmModel.setMessage("");
+
+        AsyncQuery query = new AsyncQuery(new AsyncCallback() {
+            @Override
+            public void onSuccess(Object returnValue) {
+                if (returnValue instanceof VdcQueryReturnValue) {
+                    importVmsModel.setError(messages.providerFailure());
+                    importVmsModel.stopProgress();
+                }
+                else {
+                    List<VM> remoteVms = (List<VM>) returnValue;
+                    List<VM> remoteDownVms = new ArrayList<>();
+                    List<VM> nonRetrievedVms = new ArrayList<>();
+                    // find vms with status=down
+                    for (VM vm : remoteVms) {
+                        if (vm.isDown()) {
+                            remoteDownVms.add(vm);
+                        }
+                    }
+                    // find vms which have some kind of a problem retrieving them with their full info
+                    // i.e. they were retrieved with their names only but not with their full info
+                    if (remoteVms.size() != externalVms.size()) {
+                        for (VM vm : externalVms) {
+                            if (!remoteVms.contains(vm)) {
+                                nonRetrievedVms.add(vm);
+                            }
+                        }
+                    }
+
+                    importVmsModel.stopProgress();
+
+                    // prepare error message to be displayed in one of the models
+                    String messageForImportVm = null;
+                    String messageForImportVms = null;
+                    if (remoteVms.size() != remoteDownVms.size()) {
+                        if (!nonRetrievedVms.isEmpty()) {
+                            messageForImportVm = constants.nonRetrievedAndRunningVmsWereFilteredOnImportVm();
+                            messageForImportVms = constants.nonRetrievedAndRunningVmsWereAllFilteredOnImportVm();
+                        } else {
+                            messageForImportVm = constants.runningVmsWereFilteredOnImportVm();
+                            messageForImportVms = constants.runningVmsWereAllFilteredOnImportVm();
+                        }
+                    } else if (!nonRetrievedVms.isEmpty()) {
+                        messageForImportVm = constants.nonRetrievedVmsWereFilteredOnImportVm();
+                        messageForImportVms = constants.nonRetrievedVmsWereAllFilteredOnImportVm();
+                    }
+
+                    if (remoteDownVms.isEmpty() && messageForImportVms != null) {
+                        importVmsModel.setError(messageForImportVms);
+                    }
+
+                    if (!importVmsModel.validateArchitectures(remoteDownVms)) {
+                        return;
+                    }
+
+                    // init and display next dialog - the importVmsModel model
+                    importVmModel.init(remoteDownVms, importVmsModel.getDataCenters().getSelectedItem().getId());
+                    setWindow(null);
+                    setWindow(importVmModel);
+                    if (messageForImportVm != null) {
+                        importVmModel.setMessage(messageForImportVm);
+                    }
+                }
+            }
+        });
+
+        if (!(importVmModel instanceof ImportVmFromExternalSourceModel)) {
+            importVmsModel.setError(messages.providerImportFailure());
+            importVmsModel.stopProgress();
+            return;
+        }
+        ImportVmFromExternalSourceModel importVmsFromExternalSource = (ImportVmFromExternalSourceModel) importVmModel;
+
+        query.setHandleFailure(true);
+        AsyncDataProvider.getInstance().getVmsFromExternalServer(
+                query,
+                importVmsModel.getDataCenters().getSelectedItem().getId(),
+                importVmsFromExternalSource.getProxyHostId(),
+                importVmsFromExternalSource.getUrl(),
+                importVmsFromExternalSource.getUsername(),
+                importVmsFromExternalSource.getPassword(),
+                originType,
+                vmsToImport
+        );
+    }
+
+    private OriginType convertImportSourceToOriginType(ImportSource importSource) {
+        OriginType originType;
+        switch(importSource) {
+            case VMWARE:
+                originType = OriginType.VMWARE;
+                break;
+            case KVM:
+                originType = OriginType.KVM;
+                break;
+            case XEN:
+                originType = OriginType.XEN;
+                break;
+            default:
+                originType = OriginType.EXTERNAL;
+        }
+        return originType;
     }
 
     private void connectToConsoles() {

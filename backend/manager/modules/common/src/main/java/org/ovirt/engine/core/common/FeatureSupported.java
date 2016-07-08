@@ -116,4 +116,13 @@ public class FeatureSupported {
     public static boolean ovsSupported(Version version) {
         return supportedInConfig(ConfigValues.OvsSupported, version);
     }
+
+    /**
+     *
+     * @param version Compatibility version to check for.
+     * @return <code>true</code> iff get external VMS names only in 1st phase from external server VMS (v2v) is supported in <code>version</code>
+     */
+    public static boolean isGetNamesOfVmsFromExternalProviderSupported(Version version) {
+        return supportedInConfig(ConfigValues.GetNamesOfVmsFromExternalProviderSupported, version);
+    }
 }

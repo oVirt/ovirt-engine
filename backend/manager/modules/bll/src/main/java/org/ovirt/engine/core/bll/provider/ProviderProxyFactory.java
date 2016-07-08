@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
-
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * The provider proxy factory can create a provider proxy according to the provider definition.
@@ -54,13 +54,13 @@ public class ProviderProxyFactory {
             return (P) new OpenStackVolumeProviderProxy((Provider<OpenStackVolumeProviderProperties>) provider);
 
         case VMWARE:
-            return (P) new VmwareVmProviderProxy((Provider<VmwareVmProviderProperties>) provider);
+            return (P) Injector.injectMembers(new VmwareVmProviderProxy((Provider<VmwareVmProviderProperties>) provider));
 
         case KVM:
-            return (P) new KVMVmProviderProxy((Provider<KVMVmProviderProperties>) provider);
+            return (P) Injector.injectMembers(new KVMVmProviderProxy((Provider<KVMVmProviderProperties>) provider));
 
         case XEN:
-            return (P) new XENVmProviderProxy((Provider<XENVmProviderProperties>) provider);
+            return (P) Injector.injectMembers(new XENVmProviderProxy((Provider<XENVmProviderProperties>) provider));
 
         default:
             return null;

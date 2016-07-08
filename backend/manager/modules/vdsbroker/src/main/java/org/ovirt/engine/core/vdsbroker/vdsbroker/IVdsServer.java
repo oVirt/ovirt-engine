@@ -405,7 +405,9 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc updateVmPolicy(Map info);
 
-    VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password);
+    VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password, List<String> vmsNames);
+
+    VMNamesListReturnForXmlRpc getExternalVmNamesList(String uri, String username, String password);
 
     OneVmReturnForXmlRpc getExternalVmFromOva(String ovaPath);
 

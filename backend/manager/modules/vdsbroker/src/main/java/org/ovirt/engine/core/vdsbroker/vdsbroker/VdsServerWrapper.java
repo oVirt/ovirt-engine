@@ -1755,10 +1755,21 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password) {
+    public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password, List<String> vmsNames) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVMs(uri, username, password);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVMs(uri, username, password, vmsNames);
             VMListReturnForXmlRpc wrapper = new VMListReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public VMNamesListReturnForXmlRpc getExternalVmNamesList(String uri, String username, String password) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVMsNames(uri, username, password);
+            VMNamesListReturnForXmlRpc wrapper = new VMNamesListReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

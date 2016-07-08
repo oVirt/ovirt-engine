@@ -213,8 +213,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }
     }
 
-    public ImportVmModel getSpecificImportModel() {
+    public ImportVmModel getSpecificImportModel(boolean vmsToImportHaveFullInfo) {
         selectedImportVmModel = null;
+
         switch(importSources.getSelectedItem()) {
         case EXPORT_DOMAIN:
             importFromExportDomainModel.setEntity(null);
@@ -223,7 +224,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             selectedImportVmModel = importFromExportDomainModel;
             break;
         case VMWARE:
-            importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            if (vmsToImportHaveFullInfo) {
+                importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            }
             importFromExternalSourceModel.setUrl(getUrl());
             importFromExternalSourceModel.setUsername(getUsername().getEntity());
             importFromExternalSourceModel.setPassword(getPassword().getEntity());
@@ -237,7 +240,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             selectedImportVmModel = importFromOvaModel;
             break;
         case XEN:
-            importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            if (vmsToImportHaveFullInfo) {
+                importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            }
             importFromExternalSourceModel.setUrl(getXenUri().getEntity());
             importFromExternalSourceModel.setUsername(""); //$NON-NLS-1$
             importFromExternalSourceModel.setPassword(""); //$NON-NLS-1$
@@ -245,7 +250,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             selectedImportVmModel = importFromExternalSourceModel;
             break;
         case KVM:
-            importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            if (vmsToImportHaveFullInfo) {
+                importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            }
             importFromExternalSourceModel.setUrl(getKvmUri().getEntity());
             importFromExternalSourceModel.setUsername(getKvmUsername().getEntity());
             importFromExternalSourceModel.setPassword(getKvmPassword().getEntity());
@@ -661,7 +668,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         if (!validateKvmConfiguration()) {
             return;
         }
-        Guid proxyId = getXenProxyHosts().getSelectedItem() != null ? getXenProxyHosts().getSelectedItem().getId() : null;
+        Guid proxyId = getKvmProxyHosts().getSelectedItem() != null ? getKvmProxyHosts().getSelectedItem().getId() : null;
         loadVMsFromExternalProvider(OriginType.KVM, getKvmUri().getEntity(), getKvmUsername().getEntity(), getKvmPassword().getEntity(), proxyId);
     }
 
@@ -697,7 +704,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 uri,
                 username,
                 password,
-                type);
+                type,
+                null);
     }
 
     private boolean validateVmwareConfiguration() {
@@ -829,10 +837,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     /**
-     * @return true if selection of VMs to import if valid with regard to CPU architecture, false otherwise
+     * @return true if selection of VMs to import includes full data and not just VMs name, false otherwise
      */
-    public boolean validateArchitectures() {
-        final List<VM> vmsToImport = getVmsToImport();
+    public boolean validateArchitectures(List<VM> vmsToImport) {
         final StoragePool dataCenter = getDataCenters().getSelectedItem();
 
         if (vmsToImport.isEmpty() || dataCenter == null) {
@@ -841,6 +848,20 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
         return validateSameArchitecture(vmsToImport)
                 && validateClusterExistsForArchitecture(vmsToImport.get(0).getClusterArch(), dataCenter);
+    }
+
+    public boolean vmsToImportHaveFullInfo() {
+        switch(importSources.getSelectedItem()) {
+            case VMWARE:
+            case KVM:
+            case XEN:
+                if (AsyncDataProvider.getInstance().isGetNamesOfVmsFromExternalProviderSupported(getDataCenters().getSelectedItem().getCompatibilityVersion())) {
+                    return false;
+                }
+                break;
+            default:
+        }
+        return true;
     }
 
     private boolean validateClusterExistsForArchitecture(ArchitectureType architecture, StoragePool dataCenter) {

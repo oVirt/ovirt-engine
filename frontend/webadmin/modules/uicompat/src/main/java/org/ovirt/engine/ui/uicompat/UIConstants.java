@@ -1705,6 +1705,16 @@ public interface UIConstants extends Constants {
 
     String runningVmsWereFilteredOnImportVm();
 
+    String nonRetrievedVmsWereFilteredOnImportVm();
+
+    String nonRetrievedAndRunningVmsWereFilteredOnImportVm();
+
+    String runningVmsWereAllFilteredOnImportVm();
+
+    String nonRetrievedVmsWereAllFilteredOnImportVm();
+
+    String nonRetrievedAndRunningVmsWereAllFilteredOnImportVm();
+
     String notAvailableWithNoActiveExportDomain();
 
     String notAvailableWithNoTemplates();

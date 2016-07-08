@@ -628,6 +628,8 @@ select fn_db_add_config_value_for_versions_up_to('OvsSupported','false','3.6');
 -- Monitoring
 select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');
 
+select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'false', '4.0');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

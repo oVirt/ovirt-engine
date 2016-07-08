@@ -1904,5 +1904,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     Ipv6Supported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GetNamesOfVmsFromExternalProviderSupported,
+
     Invalid
 }

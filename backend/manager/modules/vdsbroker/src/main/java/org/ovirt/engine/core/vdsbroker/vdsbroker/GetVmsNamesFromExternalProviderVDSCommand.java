@@ -2,27 +2,27 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 
-public class GetVmsFromExternalProviderVDSCommand<T extends GetVmsFromExternalProviderParameters> extends VdsBrokerCommand<T> {
-    private VMListReturnForXmlRpc vmListReturn;
+public class GetVmsNamesFromExternalProviderVDSCommand<T extends GetVmsFromExternalProviderParameters> extends VdsBrokerCommand<T> {
+    private VMNamesListReturnForXmlRpc vmListReturn;
 
-    public GetVmsFromExternalProviderVDSCommand(T parameters) {
+    public GetVmsNamesFromExternalProviderVDSCommand(T parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-        vmListReturn = getBroker().getExternalVmList(getParameters().getUrl(),
+        vmListReturn = getBroker().getExternalVmNamesList(getParameters().getUrl(),
                 getParameters().getUsername(), getParameters().getPassword());
         proceedProxyReturnValue();
         List<VM> vms = new ArrayList<>();
-        for (Map<String, Object> map : vmListReturn.vmList) {
-            VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(map);
-            if (vm != null) {
+        for (String vmName : vmListReturn.getNamesList()) {
+            VM vm = new VM();
+            if (vmName != null) {
+                vm.setName(vmName);
                 vm.setOrigin(getParameters().getOriginType());
                 vms.add(vm);
             }
@@ -32,7 +32,7 @@ public class GetVmsFromExternalProviderVDSCommand<T extends GetVmsFromExternalPr
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return vmListReturn.status;
+        return vmListReturn.getStatus();
     }
 
     @Override

@@ -95,7 +95,8 @@ public enum ConfigurationValues {
     UploadImageXhrMaxRetries,
     MigrationPolicies,
     AdPartnerMacSupported,
-    OvsSupported;
+    OvsSupported,
+    GetNamesOfVmsFromExternalProviderSupported;
 
     public static enum ConfigAuthType {
         Admin,

@@ -3,13 +3,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
-//-----------------------------------------------------
-//
-//-----------------------------------------------------
-
-//-----------------------------------------------------
-//
-//-----------------------------------------------------
 @SuppressWarnings("unchecked")
 public final class VMListReturnForXmlRpc {
 

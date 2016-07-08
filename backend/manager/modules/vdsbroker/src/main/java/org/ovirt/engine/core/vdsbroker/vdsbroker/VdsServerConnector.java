@@ -374,7 +374,9 @@ public interface VdsServerConnector {
 
     public Map<String, Object> updateVmPolicy(Map info);
 
-    public Map<String, Object> getExternalVMs(String uri, String username, String password);
+    public Map<String, Object> getExternalVMs(String uri, String username, String password, List<String> vmsNames);
+
+    public Map<String, Object> getExternalVMsNames(String uri, String username, String password);
 
     public Map<String, Object> glusterVolumeSnapshotList(String volumeName);
 

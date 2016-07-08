@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.bll.provider.vms;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmProviderProperties;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -14,11 +18,16 @@ import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParam
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 public abstract class AbstractVmProviderProxy<P extends VmProviderProperties> implements ProviderProxy {
     protected Provider<P> provider;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     protected AbstractVmProviderProxy(Provider<P> provider) {
         this.provider = provider;
@@ -26,6 +35,8 @@ public abstract class AbstractVmProviderProxy<P extends VmProviderProperties> im
 
     @Override
     public void testConnection() {
+        chooseDcForCheckingIfGetNamesFromExternalProviderSupported();
+
         VdcQueryReturnValue retVal = Backend.getInstance().runInternalQuery(
                 VdcQueryType.GetVmsFromExternalProvider,
                 buildGetVmsFromExternalProviderQueryParameters());
@@ -59,5 +70,21 @@ public abstract class AbstractVmProviderProxy<P extends VmProviderProperties> im
                 return DbFacade.getInstance().getVdsDao();
             }
         };
+    }
+
+    private void chooseDcForCheckingIfGetNamesFromExternalProviderSupported() {
+        Version chosenDataCenterVersion = null;
+        Guid chosenDataCenterId = provider.getAdditionalProperties().getStoragePoolId();
+
+        if (chosenDataCenterId == null) {
+            // find data center with highest version
+            for (StoragePool sp : storagePoolDao.getAllByStatus(StoragePoolStatus.Up)) {
+                if (chosenDataCenterVersion == null || chosenDataCenterVersion.less(sp.getCompatibilityVersion())) {
+                    chosenDataCenterVersion = sp.getCompatibilityVersion();
+                    chosenDataCenterId = sp.getId();
+                }
+            }
+            provider.getAdditionalProperties().setStoragePoolId(chosenDataCenterId);
+        }
     }
 }

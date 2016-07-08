@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
-import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -385,23 +384,16 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         externalVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
-                return toCellString(externalVmModel);
+                return externalVmModel.getEntity().getName();
             }
         }, constants.name());
 
         importedVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
-                return toCellString(externalVmModel);
+                return externalVmModel.getEntity().getName();
             }
         }, constants.name());
-    }
-
-    private String toCellString(EntityModel<VM> vmModel) {
-        return vmModel.getEntity().getName()
-                + " (" //$NON-NLS-1$
-                + Objects.toString(vmModel.getEntity().getClusterArch(), "?") //$NON-NLS-1$
-                + ")"; //$NON-NLS-1$
     }
 
     @Override

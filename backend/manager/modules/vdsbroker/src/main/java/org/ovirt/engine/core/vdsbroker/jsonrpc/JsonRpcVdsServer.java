@@ -68,6 +68,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
@@ -1856,17 +1857,32 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password) {
+    public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password, List<String> vmsNames) {
+        RequestBuilder requestBuilder = new RequestBuilder("Host.getExternalVMs")
+                .withParameter("uri", uri)
+                .withParameter("username", username)
+                .withParameter("password", password)
+                .withOptionalParameterAsList("vm_names", vmsNames);
+        JsonRpcRequest request = requestBuilder.build();
+
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("vmList")
+                        .withResponseType(Object[].class);
+        return new VMListReturnForXmlRpc(response);
+    }
+
+    @Override
+    public VMNamesListReturnForXmlRpc getExternalVmNamesList(String uri, String username, String password) {
         JsonRpcRequest request =
-                new RequestBuilder("Host.getExternalVMs")
+                new RequestBuilder("Host.getExternalVMNames")
                         .withParameter("uri", uri)
                         .withParameter("username", username)
                         .withParameter("password", password)
                         .build();
         Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("vmList")
+                new FutureMap(this.client, request).withResponseKey("vmNames")
                         .withResponseType(Object[].class);
-        return new VMListReturnForXmlRpc(response);
+        return new VMNamesListReturnForXmlRpc(response);
     }
 
     @Override

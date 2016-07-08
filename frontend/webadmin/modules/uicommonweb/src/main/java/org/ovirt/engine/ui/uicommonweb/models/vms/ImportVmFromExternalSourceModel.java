@@ -54,6 +54,22 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
         this.proxyHostId = proxyHostId;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Guid getProxyHostId() {
+        return proxyHostId;
+    }
+
     @Override
     public void importVms(IFrontendMultipleActionAsyncCallback callback) {
         Frontend.getInstance().runMultipleAction(

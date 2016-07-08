@@ -128,6 +128,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         return importInterfaceListModel;
     }
 
+    @Override
     public void init(final List<VM> externalVms, final Guid dataCenterId) {
         setCloseCommand(new UICommand(null, this)
         .setTitle(ConstantsManager.getInstance().getConstants().close())
