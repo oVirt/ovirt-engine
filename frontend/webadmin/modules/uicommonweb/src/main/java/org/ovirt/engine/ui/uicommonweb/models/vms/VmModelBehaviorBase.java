@@ -933,7 +933,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateUseHostCpuAvailability() {
-        if (canUseHostCpuAvailability()) {
+
+        boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;
+        boolean vmIsNonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
+
+        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture() && vmIsNonMigratable) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
@@ -948,26 +952,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return cluster != null
                 && cluster.getArchitecture() != null
                 && ArchitectureType.ppc == cluster.getArchitecture().getFamily();
-    }
-
-    /**
-     * The 'Pass-Through Host CPU' option is only available on non-PPC clusters when either:
-     * a. "Do not allow migration" is selected
-     * OR
-     * b. "Allow manual migration" is selected and no specific host is selected
-     */
-    private boolean canUseHostCpuAvailability() {
-        boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;
-        MigrationSupport migrationMode = getModel().getMigrationMode().getSelectedItem();
-        boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == migrationMode;
-        boolean manuallyMigratable = MigrationSupport.IMPLICITLY_NON_MIGRATABLE == migrationMode;
-        Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
-
-        if (!clusterSupportsHostCpu || clusterHasPpcArchitecture()) {
-            return false;
-        } else {
-            return nonMigratable || (manuallyMigratable && isAutoAssign);
-        }
     }
 
     public void updateHaAvailability() {
