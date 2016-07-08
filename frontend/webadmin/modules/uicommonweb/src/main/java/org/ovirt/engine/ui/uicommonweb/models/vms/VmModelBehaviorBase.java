@@ -963,9 +963,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         boolean clusterSupportsHostCpu =
                 getClusterCompatibilityVersion() != null
                         && (getClusterCompatibilityVersion().compareTo(Version.v3_2) >= 0);
-        boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
+        boolean vmIsNonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
 
-        if (clusterSupportsHostCpu && nonMigratable && !clusterHasPpcArchitecture()) {
+        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture() && vmIsNonMigratable) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);

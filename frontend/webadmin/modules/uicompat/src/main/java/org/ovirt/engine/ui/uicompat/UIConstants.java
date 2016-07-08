@@ -2288,7 +2288,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Event Details")
     String eventDetailsTitle();
 
-    @DefaultStringValue("'Use Host CPU' is only available for non-PPC-based clusters compatible with ver 3.2 or higher, when 'Do not allow migration' is selected or 'Allow manual migration' is selected and no host is specified.) ")
+    @DefaultStringValue("'Use Host CPU' is only available for non-PPC-based clusters compatible with version 3.2 or higher with 'Do not allow migration' selected.")
     String hosCPUUnavailable();
 
     @DefaultStringValue("'CPU Pinning topology' is only available for cluster compatible with ver 3.1 or higher, when 'Do not allow migration' is selected and host is specified")
