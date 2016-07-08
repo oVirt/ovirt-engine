@@ -192,6 +192,10 @@ public interface Enums extends LocalizedEnums {
 
     String OriginType___HYPERV();
 
+    String OriginType___MANAGED_HOSTED_ENGINE();
+
+    String OriginType___KVM();
+
     @Deprecated
     String VmInterfaceType___rtl8139_pv();
 
