@@ -1027,6 +1027,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        // When updating, please also update UpdateClusterCommand#getExclusiveLocks
         if (!StringUtils.isBlank(getParameters().getVm().getName())) {
             return Collections.singletonMap(getParameters().getVm().getName(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED));
@@ -1036,6 +1037,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
+        // When updating, please also update UpdateClusterCommand#getSharedLocks
         return Collections.singletonMap(
                 getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(
