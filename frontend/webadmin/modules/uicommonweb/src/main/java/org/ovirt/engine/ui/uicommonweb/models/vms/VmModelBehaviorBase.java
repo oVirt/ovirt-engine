@@ -933,14 +933,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     /**
-     * A VM which is set to use pass through host cpu cann't migrate, otherwise all migrationMode are valid
+     * Disable the option to use pass-through host cpu for VMs with migration enabled
+     * or of a PPC-based architecture
      */
     public void updateUseHostCpuAvailability() {
 
         boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;
-        boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
+        boolean vmIsNonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
 
-        if (clusterSupportsHostCpu && nonMigratable && !clusterHasPpcArchitecture()) {
+        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture() && vmIsNonMigratable) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
