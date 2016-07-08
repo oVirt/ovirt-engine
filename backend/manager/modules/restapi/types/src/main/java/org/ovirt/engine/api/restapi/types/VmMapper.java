@@ -306,6 +306,11 @@ public class VmMapper extends VmBaseMapper {
                 model.setUseLatestTemplateVersion(entity.isUseLatestVersion());
             }
         }
+        if (entity.getOriginalTemplateGuid() != null) {
+            model.setOriginalTemplate(new Template());
+            model.getOriginalTemplate().setId(entity.getOriginalTemplateGuid().toString());
+        }
+
         if (entity.getInstanceTypeId() != null) {
             model.setInstanceType(new InstanceType());
             model.getInstanceType().setId(entity.getInstanceTypeId().toString());
