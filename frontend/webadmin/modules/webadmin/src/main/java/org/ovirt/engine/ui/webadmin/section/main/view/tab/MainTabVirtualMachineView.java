@@ -239,6 +239,16 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public VM getValue(VM object) {
                 return object;
             }
+
+            @Override
+            public SafeHtml getTooltip(VM value) {
+                String stopReason = value.getStopReason();
+                if (stopReason != null && !stopReason.trim().isEmpty()) {
+                    return SafeHtmlUtils.fromString(stopReason);
+                }
+                return null;
+            }
+
         };
         statusTextColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusTextColumn, constants.statusVm(), "120px"); //$NON-NLS-1$
