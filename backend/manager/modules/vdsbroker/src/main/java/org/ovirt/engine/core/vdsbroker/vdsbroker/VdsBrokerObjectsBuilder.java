@@ -2257,8 +2257,8 @@ public class VdsBrokerObjectsBuilder {
             Map ifaceMap = (Map) ifaceStruct;
             nic.setInterfaceName(assignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_NAME));
             nic.setMacAddress(getMacAddress(ifaceMap));
-            nic.setIpv4Addresses(extracStringtList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES));
-            nic.setIpv6Addresses(extracStringtList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES));
+            nic.setIpv4Addresses(extractList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES, true));
+            nic.setIpv6Addresses(extractList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES, true));
             nic.setVmId(vmId);
             interfaces.add(nic);
         }
@@ -2289,7 +2289,7 @@ public class VdsBrokerObjectsBuilder {
             for (Map.Entry<String, Map<String, Object>> item : numaNodeMap.entrySet()) {
                 int index = Integer.parseInt(item.getKey());
                 Map<String, Object> itemMap = item.getValue();
-                List<Integer> cpuIds = extractIntegerList(itemMap, VdsProperties.NUMA_NODE_CPU_LIST);
+                List<Integer> cpuIds = extractList(itemMap, VdsProperties.NUMA_NODE_CPU_LIST, false);
                 long memTotal =  assignLongValue(itemMap, VdsProperties.NUMA_NODE_TOTAL_MEM);
                 VdsNumaNode numaNode = new VdsNumaNode();
                 numaNode.setIndex(index);
@@ -2309,7 +2309,7 @@ public class VdsBrokerObjectsBuilder {
 
                 if (numaNodeDistanceMap != null) {
                     // Save the received NUMA node distances
-                    distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
+                    distances = extractList(numaNodeDistanceMap, String.valueOf(index), false);
                     for (int i = 0; i < distances.size(); i++) {
                         distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
                     }
@@ -2356,30 +2356,14 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static List<String> extracStringtList(Map<String, Object> xmlRpcStruct, String propertyName) {
-        if (!xmlRpcStruct.containsKey(propertyName)){
-            return null;
+    private static <T> List<T> extractList(Map<String, Object> xmlRpcStruct, String propertyName, boolean returnNullOnEmpty) {
+        if (xmlRpcStruct.containsKey(propertyName)){
+            Object[] items = (Object[]) xmlRpcStruct.get(propertyName);
+            if (items.length > 0) {
+                return Arrays.stream(items).map(item -> (T) item).collect(Collectors.toList());
+            }
         }
-
-        Object[] items = (Object[]) xmlRpcStruct.get(propertyName);
-        if (items.length == 0) {
-            return null;
-        }
-
-        return Arrays.stream(items).map(item -> (String) item).collect(Collectors.toList());
-    }
-
-    private static List<Integer> extractIntegerList(Map<String, Object> xmlRpcStruct, String propertyName) {
-        if (!xmlRpcStruct.containsKey(propertyName)){
-            return Collections.emptyList();
-        }
-
-        Object[] items = (Object[]) xmlRpcStruct.get(propertyName);
-        if (items.length == 0) {
-            return Collections.emptyList();
-        }
-
-        return Arrays.stream(items).map(item -> (Integer) item).collect(Collectors.toList());
+        return returnNullOnEmpty ? null : Collections.emptyList();
     }
 
     /**
