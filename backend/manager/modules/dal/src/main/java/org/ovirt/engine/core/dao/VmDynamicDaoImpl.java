@@ -102,6 +102,15 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
+    public void updateVmsToUnknown(List<Guid> vmIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_ids", createArrayOfUUIDs(vmIds))
+                .addValue("status", VMStatus.Unknown);
+
+        getCallsHandler().executeModification("SetToUnknown", parameterSource);
+    }
+
+    @Override
     public List<Pair<Guid, String>> getAllDevicesHashes() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         return getCallsHandler().executeReadList("GetAllHashesFromVmDynamic",

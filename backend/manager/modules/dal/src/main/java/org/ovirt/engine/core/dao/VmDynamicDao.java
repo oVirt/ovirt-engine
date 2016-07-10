@@ -99,4 +99,10 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      */
     void updateDevicesHashes(List<Pair<Guid, String>> vmHashes);
 
+    /**
+     * Update the status of all the given VMs to unknown
+     *
+     * @param vmIds - IDs of VMs to update
+     */
+    void updateVmsToUnknown(List<Guid> vmIds);
 }

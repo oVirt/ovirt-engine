@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -181,5 +182,15 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
         dao.update(vmDynamic);
         vmDynamic = dao.get(vmId);
         assertTrue(vmDynamic.getGuestAgentStatus().getValue() == GuestAgentStatus.UpdateNeeded.getValue());
+    }
+
+    @Test
+    public void testUpdateToUnknown() {
+        VmDynamic existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        VmDynamic existingVm3 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354"));
+        dao.updateVmsToUnknown(Arrays.asList(existingVm.getId(), existingVm2.getId()));
+        assertEquals(VMStatus.Unknown, dao.get(existingVm.getId()).getStatus());
+        assertEquals(VMStatus.Unknown, dao.get(existingVm2.getId()).getStatus());
+        assertNotEquals(VMStatus.Unknown, dao.get(existingVm3.getId()).getStatus());
     }
 }
