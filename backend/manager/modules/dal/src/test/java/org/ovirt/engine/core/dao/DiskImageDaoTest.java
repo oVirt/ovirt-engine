@@ -34,7 +34,7 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return TOTAL_DISK_IMAGES;
     }
 

@@ -143,7 +143,7 @@ public class VmNicDaoTest extends BaseGenericDaoTestCase<Guid, VmNic, VmNicDao> 
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return FixturesTool.NUMBER_OF_VM_INTERFACES;
     }
 }

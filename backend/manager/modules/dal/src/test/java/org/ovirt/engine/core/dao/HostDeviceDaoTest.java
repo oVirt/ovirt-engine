@@ -72,7 +72,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return 36;
     }
 
@@ -136,7 +136,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
     @Test
     public void testGetExtendedHostDevicesByHostId() {
         List<HostDeviceView> hostDevices = dao.getExtendedHostDevicesByHostId(EXISTING_HOST_ID);
-        assertEquals(getEneitiesTotalCount(), hostDevices.size());
+        assertEquals(getEntitiesTotalCount(), hostDevices.size());
         for (HostDeviceView hostDevice : hostDevices) {
             assertEquals(EXISTING_HOST_ID, hostDevice.getHostId());
         }

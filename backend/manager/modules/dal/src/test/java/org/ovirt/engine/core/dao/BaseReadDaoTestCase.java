@@ -65,9 +65,9 @@ D extends ReadDao<T, ID>> extends BaseDaoTestCase {
         List<T> result = dao.getAll();
 
         assertFalse(result.isEmpty());
-        assertEquals(getEneitiesTotalCount(), result.size());
+        assertEquals(getEntitiesTotalCount(), result.size());
     }
 
-    protected abstract int getEneitiesTotalCount();
+    protected abstract int getEntitiesTotalCount();
 
 }

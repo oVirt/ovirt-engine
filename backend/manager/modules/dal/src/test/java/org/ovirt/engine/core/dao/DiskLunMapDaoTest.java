@@ -23,7 +23,7 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return TOTAL_DISK_LUN_MAPS;
     }
 

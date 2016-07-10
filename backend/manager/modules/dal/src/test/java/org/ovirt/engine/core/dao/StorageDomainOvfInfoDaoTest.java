@@ -41,7 +41,7 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         //unneeded here
         return 0;
     }

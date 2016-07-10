@@ -87,7 +87,7 @@ public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoo
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return 4;
     }
 

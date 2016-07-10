@@ -45,7 +45,7 @@ public class LibvirtSecretDaoTest extends BaseGenericDaoTestCase<Guid, LibvirtSe
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return TOTAL_LIBVIRT_SECRETS;
     }
 }

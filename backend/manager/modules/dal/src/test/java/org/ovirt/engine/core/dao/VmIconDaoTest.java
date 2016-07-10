@@ -49,7 +49,7 @@ public class VmIconDaoTest extends BaseGenericDaoTestCase<Guid, VmIcon, VmIconDa
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return 6;
     }
 

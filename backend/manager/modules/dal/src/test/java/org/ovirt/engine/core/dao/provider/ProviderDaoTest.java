@@ -53,7 +53,7 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider<?>, P
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return 2;
     }
 

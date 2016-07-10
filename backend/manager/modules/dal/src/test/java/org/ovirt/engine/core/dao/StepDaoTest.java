@@ -53,7 +53,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return TOTAL_STEPS;
     }
 

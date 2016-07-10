@@ -65,7 +65,7 @@ public class CommandEntityDaoTest extends BaseGenericDaoTestCase<Guid, CommandEn
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return 3;
     }
 

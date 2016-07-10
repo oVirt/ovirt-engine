@@ -51,7 +51,7 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     }
 
     @Override
-    protected int getEneitiesTotalCount() {
+    protected int getEntitiesTotalCount() {
         return TOTAL_JOBS;
     }
 
