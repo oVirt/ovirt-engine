@@ -16,10 +16,10 @@ import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
+import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
-import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -166,7 +166,7 @@ public class BackendVmPoolResource
     @Override
     public Response allocateVm(Action action) {
         return doAction(VdcActionType.AttachUserToVmFromPoolAndRun,
-                        new VmPoolUserParameters(guid,  getCurrent().getUser().getId(), false),
+                        new AttachUserToVmFromPoolAndRunParameters(guid,  getCurrent().getUser().getId(), false),
                         action,
                         new VmQueryIdResolver(VdcQueryType.GetVmByVmId,
                                               IdQueryParameters.class));

@@ -1,27 +1,42 @@
 package org.ovirt.engine.core.common.action;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements Serializable {
-    private static final long serialVersionUID = -5672324868972973061L;
+public class VmPoolUserParameters extends VmPoolParametersBase {
+    private static final long serialVersionUID = -956095100193433604L;
 
-    public VmPoolUserParameters(Guid vmPoolId, Guid userId, boolean isInternal) {
-        super(vmPoolId, userId);
-        setIsInternal(isInternal);
+    @NotNull
+    private Guid userId;
+
+    public VmPoolUserParameters(Guid vmPoolId, Guid userId) {
+        super(vmPoolId);
+        this.userId = userId;
+        vmId = Guid.Empty;
     }
 
-    private boolean privateIsInternal;
-
-    public boolean getIsInternal() {
-        return privateIsInternal;
+    public VmPoolUserParameters(Guid vmPoolId, Guid userId, Guid vmId) {
+        this(vmPoolId, userId);
+        this.vmId = vmId;
     }
 
-    private void setIsInternal(boolean value) {
-        privateIsInternal = value;
+    public Guid getUserId() {
+        return userId;
+    }
+
+    private Guid vmId;
+
+    public Guid getVmId() {
+        return vmId;
+    }
+
+    public void setVmId(Guid value) {
+        vmId = value;
     }
 
     public VmPoolUserParameters() {
+        userId = Guid.Empty;
+        vmId = Guid.Empty;
     }
 }

@@ -10,10 +10,10 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
-import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -69,8 +69,8 @@ public class BackendVmPoolResourceTest
     public void testAllocateVm() throws Exception {
         setUpGetVmExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.AttachUserToVmFromPoolAndRun,
-                                           VmPoolUserParameters.class,
-                                           new String[] { "VmPoolId", "IsInternal" },
+                                           AttachUserToVmFromPoolAndRunParameters.class,
+                                           new String[] { "VmPoolId", "Internal" },
                                            new Object[] { GUIDS[0], Boolean.FALSE },
                                            GUIDS[0]));
 

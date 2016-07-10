@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
@@ -26,12 +27,12 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -45,7 +46,7 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
-public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
+public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoolAndRunParameters>
         extends VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
     @Inject
@@ -176,6 +177,13 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
                 : super.getTransactionScopeOption();
     }
 
+    private void initPoolUser() {
+        DbUser user = getDbUser();
+        if (user != null && user.getId() == null) {
+            user.setId(Guid.newGuid());
+            getDbUserDao().save(user);
+        }
+    }
     @Override
     protected void executeCommand() {
         initPoolUser();

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class DetachUserFromVmFromPoolParameters extends VmPoolSimpleUserParameters {
+public class DetachUserFromVmFromPoolParameters extends VmPoolUserParameters {
 
     private static final long serialVersionUID = 2255305819152411560L;
 

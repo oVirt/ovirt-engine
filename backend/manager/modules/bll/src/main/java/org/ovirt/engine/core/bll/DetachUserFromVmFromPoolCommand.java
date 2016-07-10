@@ -15,7 +15,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @DisableInPrepareMode
 public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolParameters> extends
-        VmPoolSimpleUserCommandBase<T> {
+        VmPoolUserCommandBase<T> {
 
     /**
      * Constructor for command creation when compensation is applied on startup

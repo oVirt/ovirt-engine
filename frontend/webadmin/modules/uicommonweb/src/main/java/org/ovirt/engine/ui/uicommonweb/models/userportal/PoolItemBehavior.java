@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -63,7 +63,7 @@ public class PoolItemBehavior extends ItemBehavior {
     private void takeVm() {
         VmPool entity = (VmPool) getItem().getEntity();
 
-        VmPoolUserParameters params = new VmPoolUserParameters(entity.getVmPoolId(),
+        AttachUserToVmFromPoolAndRunParameters params = new AttachUserToVmFromPoolAndRunParameters(entity.getVmPoolId(),
                 Frontend.getInstance().getLoggedInUser().getId(),
                 false);
 
