@@ -28,7 +28,7 @@ public class FCPStorageHelper extends StorageHelperBase {
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        return runConnectionStorageToDomain(storageDomain, vdsId, type, null, storageDomain.getStoragePoolId());
+        return runConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }
 
     @Override
@@ -74,9 +74,6 @@ public class FCPStorageHelper extends StorageHelperBase {
             int type,
             LUNs lun,
             Guid storagePoolId) {
-        if (Guid.isNullOrEmpty(storagePoolId)) {
-            return new Pair<>(true, null);
-        }
 
         VDSReturnValue returnValue = Backend
                 .getInstance()
