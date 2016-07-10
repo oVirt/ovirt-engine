@@ -781,7 +781,7 @@ public class VdsManager {
                 } else {
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
-                        moveVMsToUnknown();
+                        moveVmsToUnknown();
                         logHostFailToRespond(ex, timeoutToFence);
                         resourceManager.getEventListener().vdsNotResponding(cachedVds);
                     } else {
@@ -939,11 +939,12 @@ public class VdsManager {
         return System.currentTimeMillis() > nextMaintenanceAttemptTime;
     }
 
-    private void moveVMsToUnknown() {
-        List<VM> vmList = getVmsToMoveToUnknown();
-        for (VM vm :vmList) {
+    private void moveVmsToUnknown() {
+        List<VM> vms = getVmsToMoveToUnknown();
+        for (VM vm : vms) {
             destroyVmOnDestination(vm);
-            resourceManager.runVdsCommand(VDSCommandType.SetVmStatus,
+            resourceManager.runVdsCommand(
+                    VDSCommandType.SetVmStatus,
                     new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Unknown));
             // log VM transition to unknown status
             AuditLogableBase logable = new AuditLogableBase();
@@ -958,10 +959,10 @@ public class VdsManager {
         }
         // avoid nested locks by doing this in a separate thread
         ThreadPoolUtil.execute(() -> {
-            VDSReturnValue returnValue = null;
-            returnValue =
-                    resourceManager.runVdsCommand(VDSCommandType.DestroyVm,
-                            new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
+            VDSReturnValue returnValue = resourceManager.runVdsCommand(
+                    VDSCommandType.DestroyVm,
+                    new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
+
             if (returnValue != null && returnValue.getSucceeded()) {
                 log.info("Stopped migrating VM: '{}' on VDS: '{}'", vm.getName(), vm.getMigratingToVds());
             }
