@@ -54,7 +54,7 @@ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION GetAllFromDiskVmElement()
+CREATE OR REPLACE FUNCTION GetAllFromDiskVmElements()
 RETURNS SETOF disk_vm_element_extended STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
