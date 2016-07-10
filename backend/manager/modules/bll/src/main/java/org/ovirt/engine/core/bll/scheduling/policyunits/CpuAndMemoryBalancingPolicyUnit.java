@@ -86,7 +86,9 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             /* if no host has a spare power, then there is nothing we can do to balance it here, try
                the secondary aporoach */
             if (underUtilizedHosts == null || underUtilizedHosts.size() == 0) {
-                log.warn("All hosts are over-utilized, can't balance the cluster '{}' using the primary method", cluster.getName());
+                log.warn("All candidate hosts have been filtered, can't balance the cluster '{}'"
+                                + " based on the CPU usage, will try memory based approach",
+                        cluster.getName());
             } else {
                 FindVmAndDestinations.Result result =
                         findVmAndDestinations.invoke(overUtilizedPrimaryHosts, underUtilizedHosts, getVmDao());
@@ -105,7 +107,9 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
             // if no host has memory to spare, then there is nothing we can do to balance it..
             if (underUtilizedHosts == null || underUtilizedHosts.size() == 0) {
-                log.warn("All hosts are over-utilized, can't balance the cluster '{}' using the secondary method", cluster.getName());
+                log.warn("All candidate hosts have been filtered, can't balance the cluster '{}'"
+                                + " using memory based approach",
+                        cluster.getName());
                 return null;
             }
 
