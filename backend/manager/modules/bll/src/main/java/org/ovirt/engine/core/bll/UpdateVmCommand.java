@@ -901,7 +901,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<DiskVmElement> diskVmElements = getDbFacade().getDiskVmElementDao().getAllForVm(getVmId());
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
 
-        return checkPciAndIdeLimit(
+        return validate(VmValidator.checkPciAndIdeLimit(
                 vmFromParams.getOs(),
                 getEffectiveCompatibilityVersion(),
                 vmFromParams.getNumOfMonitors(),
@@ -910,8 +910,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 isVirtioScsiEnabled(),
                 hasWatchdog(),
                 isBalloonEnabled(),
-                isSoundDeviceEnabled(),
-                getReturnValue().getValidationMessages());
+                isSoundDeviceEnabled()));
     }
 
     private boolean isVmExist() {

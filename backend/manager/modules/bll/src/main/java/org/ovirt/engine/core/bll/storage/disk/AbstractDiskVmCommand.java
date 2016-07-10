@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -116,7 +117,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
         diskVmElements.add(getDiskVmElement());
 
-        return checkPciAndIdeLimit(getVm().getOs(),
+        return validate(VmValidator.checkPciAndIdeLimit(getVm().getOs(),
                 getVm().getCompatibilityVersion(),
                 getVm().getNumOfMonitors(),
                 vmInterfaces,
@@ -124,8 +125,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 isVirtioScsiControllerAttached(getVmId()),
                 hasWatchdog(getVmId()),
                 isBalloonEnabled(getVmId()),
-                isSoundDeviceEnabled(getVmId()),
-                getReturnValue().getValidationMessages());
+                isSoundDeviceEnabled(getVmId())));
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {

@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -229,7 +230,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
             List<DiskVmElement> diskVmElements = getDiskVmElementDao().getAllForVm(getVmTemplateId());
 
-            if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
+            if (!validate(VmValidator.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
                     getVmTemplate().getCompatibilityVersion(),
                     getParameters().getVmTemplateData().getNumOfMonitors(),
                     interfaces,
@@ -237,8 +238,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getVmDeviceUtils().hasVirtioScsiController(getParameters().getVmTemplateData().getId()),
                     hasWatchdog(getParameters().getVmTemplateData().getId()),
                     getVmDeviceUtils().hasMemoryBalloon(getParameters().getVmTemplateData().getId()),
-                    isSoundDeviceEnabled(),
-                    getReturnValue().getValidationMessages())) {
+                    isSoundDeviceEnabled()))) {
                 returnValue = false;
             }
         }

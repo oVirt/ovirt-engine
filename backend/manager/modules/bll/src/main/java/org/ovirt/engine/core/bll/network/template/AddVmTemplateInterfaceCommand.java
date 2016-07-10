@@ -3,11 +3,11 @@ package org.ovirt.engine.core.bll.network.template;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
@@ -68,7 +68,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
             List<VmNic> interfacesForCheckPciLimit = new ArrayList<>(interfaces);
             interfacesForCheckPciLimit.add(getParameters().getInterface());
-            if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getOsId(),
+            if (!validate(VmValidator.checkPciAndIdeLimit(getVmTemplate().getOsId(),
                     getCluster().getCompatibilityVersion(),
                     getVmTemplate().getNumOfMonitors(),
                     interfacesForCheckPciLimit,
@@ -76,8 +76,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                     getVmDeviceUtils().hasVirtioScsiController(getVmTemplate().getId()),
                     getVmDeviceUtils().hasWatchdog(getVmTemplate().getId()),
                     getVmDeviceUtils().hasMemoryBalloon(getVmTemplate().getId()),
-                    getVmDeviceUtils().hasSoundDevice(getVmTemplate().getId()),
-                    getReturnValue().getValidationMessages())) {
+                    getVmDeviceUtils().hasSoundDevice(getVmTemplate().getId())))) {
                 return false;
             }
 

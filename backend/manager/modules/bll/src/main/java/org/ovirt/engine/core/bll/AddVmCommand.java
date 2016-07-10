@@ -38,6 +38,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -364,7 +365,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean validateAddVmCommand() {
         return areParametersLegal(getReturnValue().getValidationMessages())
                 && checkNumberOfMonitors() && checkSingleQxlDisplay()
-                && checkPciAndIdeLimit(getParameters().getVm().getOs(),
+                && validate(VmValidator.checkPciAndIdeLimit(getParameters().getVm().getOs(),
                         getEffectiveCompatibilityVersion(),
                         getParameters().getVmStaticData().getNumOfMonitors(),
                         getVmInterfaces(),
@@ -372,8 +373,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         isVirtioScsiEnabled(),
                         hasWatchdog(),
                         isBalloonEnabled(),
-                        isSoundDeviceEnabled(),
-                        getReturnValue().getValidationMessages())
+                        isSoundDeviceEnabled()))
                 && canAddVm(getReturnValue().getValidationMessages(), destStorages.values())
                 && hostToRunExist();
     }

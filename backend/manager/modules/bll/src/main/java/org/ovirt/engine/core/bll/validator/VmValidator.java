@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -20,13 +22,17 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
@@ -230,6 +236,75 @@ public class VmValidator {
         }
         return ValidationResult.VALID;
     }
+
+    /**
+     * This method checks that with the given parameters, the max PCI and IDE limits defined are not passed.
+     */
+    public static ValidationResult checkPciAndIdeLimit(
+            int osId,
+            Version clusterVersion,
+            int monitorsNumber,
+            List<? extends VmNic> interfaces,
+            List<DiskVmElement> diskVmElements,
+            boolean virtioScsiEnabled,
+            boolean hasWatchdog,
+            boolean isBalloonEnabled,
+            boolean isSoundDeviceEnabled) {
+
+        // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
+        // interfaces) + (all disks that are not IDE)
+        int pciInUse = monitorsNumber;
+
+        for (VmNic a : interfaces) {
+            if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.rtl8139_pv) {
+                pciInUse += 2;
+            } else if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.spaprVlan) {
+                // Do not count sPAPR VLAN devices since they are not PCI
+            } else {
+                pciInUse += 1;
+            }
+        }
+
+        pciInUse += diskVmElements.stream().filter(dve -> dve.getDiskInterface() == DiskInterface.VirtIO).count();
+
+        // VirtIO SCSI controller requires one PCI slot
+        pciInUse += virtioScsiEnabled ? 1 : 0;
+
+        // VmWatchdog controller requires one PCI slot
+        pciInUse += hasWatchdog ? 1 : 0;
+
+        // Balloon controller requires one PCI slot
+        pciInUse += isBalloonEnabled ? 1 : 0;
+
+        // Sound device controller requires one PCI slot
+        pciInUse += isSoundDeviceEnabled ? 1 : 0;
+
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+
+        int maxPciSlots = osRepository.getMaxPciDevices(osId, clusterVersion);
+
+        ArrayList<EngineMessage> messages = new ArrayList<>();
+        if (pciInUse > maxPciSlots) {
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS);
+        }
+        else if (VmCommand.MAX_IDE_SLOTS < diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.IDE).count()) {
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS);
+        }
+        else if (VmCommand.MAX_VIRTIO_SCSI_DISKS <
+                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.VirtIO_SCSI).count()) {
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS);
+        }
+        else if (VmCommand.MAX_SPAPR_SCSI_DISKS <
+                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.SPAPR_VSCSI).count()) {
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS);
+        }
+
+        if (!messages.isEmpty()) {
+           return new ValidationResult(messages);
+        }
+        return ValidationResult.VALID;
+    }
+
 
     public DiskVmElementDao getDiskVmElementDao() {
         return DbFacade.getInstance().getDiskVmElementDao();

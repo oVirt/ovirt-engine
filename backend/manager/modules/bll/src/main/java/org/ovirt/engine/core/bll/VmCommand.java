@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.GuidUtils;
@@ -133,75 +131,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     public static final int MAX_SPAPR_SCSI_DISKS = 7;
 
     private List<VmNic> interfaces;
-
-    /**
-     * This method checks that with the given parameters, the max PCI and IDE limits defined are not passed.
-     */
-    public static boolean checkPciAndIdeLimit(
-            int osId,
-            Version clusterVersion,
-            int monitorsNumber,
-            List<? extends VmNic> interfaces,
-            List<DiskVmElement> diskVmElements,
-            boolean virtioScsiEnabled,
-            boolean hasWatchdog,
-            boolean isBalloonEnabled,
-            boolean isSoundDeviceEnabled,
-            ArrayList<String> messages) {
-
-        boolean result = true;
-        // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
-        // interfaces) + (all disks that are not IDE)
-        int pciInUse = monitorsNumber;
-
-        for (VmNic a : interfaces) {
-            if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.rtl8139_pv) {
-                pciInUse += 2;
-            } else if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.spaprVlan) {
-                // Do not count sPAPR VLAN devices since they are not PCI
-            } else {
-                pciInUse += 1;
-            }
-        }
-
-        pciInUse += diskVmElements.stream().filter(dve -> dve.getDiskInterface() == DiskInterface.VirtIO).count();
-
-        // VirtIO SCSI controller requires one PCI slot
-        pciInUse += virtioScsiEnabled ? 1 : 0;
-
-        // VmWatchdog controller requires one PCI slot
-        pciInUse += hasWatchdog ? 1 : 0;
-
-        // Balloon controller requires one PCI slot
-        pciInUse += isBalloonEnabled ? 1 : 0;
-
-        // Sound device controller requires one PCI slot
-        pciInUse += isSoundDeviceEnabled ? 1 : 0;
-
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-
-        int maxPciSlots = osRepository.getMaxPciDevices(osId, clusterVersion);
-
-        if (pciInUse > maxPciSlots) {
-            result = false;
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
-        }
-        else if (MAX_IDE_SLOTS < diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.IDE).count()) {
-            result = false;
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS.name());
-        }
-        else if (MAX_VIRTIO_SCSI_DISKS <
-                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.VirtIO_SCSI).count()) {
-            result = false;
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS.name());
-        }
-        else if (MAX_SPAPR_SCSI_DISKS <
-                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.SPAPR_VSCSI).count()) {
-            result = false;
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS.name());
-        }
-        return result;
-    }
 
     protected void removeVmStatic() {
         removeVmStatic(true);

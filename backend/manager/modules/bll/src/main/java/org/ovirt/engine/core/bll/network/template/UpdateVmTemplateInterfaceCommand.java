@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
@@ -101,7 +101,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         interfaces.remove(oldIface);
         interfaces.add(getParameters().getInterface());
 
-        return VmCommand.checkPciAndIdeLimit(getVmTemplate().getOsId(),
+        return validate(VmValidator.checkPciAndIdeLimit(getVmTemplate().getOsId(),
                 clusterCompatibilityVersion,
                 getVmTemplate().getNumOfMonitors(),
                 interfaces,
@@ -109,8 +109,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 getVmDeviceUtils().hasVirtioScsiController(getVmTemplate().getId()),
                 getVmDeviceUtils().hasWatchdog(getVmTemplate().getId()),
                 getVmDeviceUtils().hasMemoryBalloon(getVmTemplate().getId()),
-                getVmDeviceUtils().hasSoundDevice(getVmTemplate().getId()),
-                getReturnValue().getValidationMessages());
+                getVmDeviceUtils().hasSoundDevice(getVmTemplate().getId())));
     }
 
     @Override
