@@ -2087,3 +2087,15 @@ BEGIN
         WHERE origin = ANY(v_origins);
 END; $procedure$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION SetToUnknown (
+    v_vm_ids UUID[],
+    v_status INT
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE vm_dynamic
+    SET status = v_status
+    WHERE vm_guid = ANY(v_vm_ids);
+END;$PROCEDURE$
+LANGUAGE plpgsql;

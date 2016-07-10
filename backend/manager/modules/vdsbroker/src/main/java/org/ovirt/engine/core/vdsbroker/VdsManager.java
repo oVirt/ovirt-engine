@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -34,7 +35,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -45,6 +45,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -943,14 +944,22 @@ public class VdsManager {
         List<VM> vms = getVmsToMoveToUnknown();
         for (VM vm : vms) {
             destroyVmOnDestination(vm);
-            resourceManager.runVdsCommand(
-                    VDSCommandType.SetVmStatus,
-                    new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Unknown));
+            resourceManager.removeAsyncRunningVm(vm.getId());
+        }
+
+        List<Guid> vmIds = vms.stream().map(VM::getId).collect(Collectors.toList());
+        getVmDynamicDao().updateVmsToUnknown(vmIds);
+
+        vmIds.forEach(vmId -> {
             // log VM transition to unknown status
             AuditLogableBase logable = new AuditLogableBase();
-            logable.setVmId(vm.getId());
+            logable.setVmId(vmId);
             auditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
-        }
+        });
+    }
+
+    private VmDynamicDao getVmDynamicDao() {
+        return dbFacade.getInstance().getVmDynamicDao();
     }
 
     private void destroyVmOnDestination(final VM vm) {
