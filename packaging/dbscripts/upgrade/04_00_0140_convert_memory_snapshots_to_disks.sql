@@ -1,3 +1,11 @@
+-- remove memory that resides on storage domain that does not exist anymore
+UPDATE snapshots
+SET memory_volume = NULL
+WHERE CAST(split_part(memory_volume, ',', 1) AS UUID) NOT IN (
+        SELECT id
+        FROM storage_domain_static
+        );
+
 -- add meta data images
 INSERT INTO images(
     image_guid,
