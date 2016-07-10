@@ -1389,13 +1389,13 @@ public class VdsBrokerObjectsBuilder {
             Map<String, Object> diskStatsStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.DISK_STATS);
             Map<String, Long> diskStats = new HashMap<>();
 
+            // collect(Collectors.toMap(...)) will not work here as it uses merge() internally and
+            // will fail on null values
+            diskStatsStruct.entrySet()
+                    .stream()
+                    .forEach(e -> diskStats.put(e.getKey(),
+                            assignLongValue((Map<String, Object>) e.getValue(), VdsProperties.DISK_STATS_FREE)));
             vds.setLocalDisksUsage(diskStats);
-
-            for (Entry<String, Object> entry : diskStatsStruct.entrySet()) {
-                Map<String, Object> pathStatsStruct = (Map<String, Object>) entry.getValue();
-
-                diskStats.put(entry.getKey(), assignLongValue(pathStatsStruct, VdsProperties.DISK_STATS_FREE));
-            }
         }
     }
 
@@ -1907,16 +1907,12 @@ public class VdsBrokerObjectsBuilder {
 
     private static List<VdsNetworkInterface> findBridgedNetworkInterfaces(Map<String, Object> bridge,
             Map<String, VdsNetworkInterface> vdsInterfaces) {
-        List<VdsNetworkInterface> interfaces = new ArrayList<>();
         Object[] ports = (Object[]) bridge.get("ports");
         if (ports != null) {
-            for (Object port : ports) {
-                if (vdsInterfaces.containsKey(port.toString())) {
-                    interfaces.add(vdsInterfaces.get(port.toString()));
-                }
-            }
+            return Arrays.stream(ports).filter(port -> vdsInterfaces.containsKey(port.toString()))
+                    .map(port -> vdsInterfaces.get(port.toString())).collect(Collectors.toList());
         }
-        return interfaces;
+        return new ArrayList<>();
     }
 
     private static void addHostBondDevices(VDS vds, Map<String, Object> xmlRpcStruct) {
@@ -2168,16 +2164,14 @@ public class VdsBrokerObjectsBuilder {
     // and we have host that is not returning it's bonding options(host below 2.2.4) we override
     // the "new" bonding options with the old one only if we have the new one as null and the old one is not
     private static void setBondingOptions(VDS vds, List<VdsNetworkInterface> oldInterfaces) {
-        for (VdsNetworkInterface iface : oldInterfaces) {
-            if (iface.getBondOptions() != null) {
-                for (VdsNetworkInterface newIface : vds.getInterfaces()) {
-                    if (iface.getName().equals(newIface.getName()) && newIface.getBondOptions() == null) {
-                        newIface.setBondOptions(iface.getBondOptions());
-                        break;
-                    }
-                }
-            }
-        }
+        oldInterfaces.stream().
+                filter(iface -> iface.getBondOptions() != null).
+                forEach(iface -> vds.getInterfaces()
+                        .stream()
+                        .filter(newIface -> iface.getName().equals(newIface.getName()))
+                        .filter(newIface -> newIface.getBondOptions() == null)
+                        .findFirst()
+                        .ifPresent(newIface -> newIface.setBondOptions(iface.getBondOptions())));
     }
 
     private static Ipv4BootProtocolResolver getIpv4BootProtocolResolver() {
@@ -2228,14 +2222,12 @@ public class VdsBrokerObjectsBuilder {
     private static void addBondDeviceToHost(VDS vds, VdsNetworkInterface iface, Object[] interfaces) {
         vds.getInterfaces().add(iface);
         if (interfaces != null) {
-            for (Object name : interfaces) {
-                for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
-                    if (tempInterface.getName().equals(name.toString())) {
-                        tempInterface.setBondName(iface.getName());
-                        break;
-                    }
-                }
-            }
+            Arrays.stream(interfaces).
+                    forEach(name -> vds.getInterfaces()
+                            .stream()
+                            .filter(tempInterface -> tempInterface.getName().equals(name.toString()))
+                            .findFirst()
+                            .ifPresent(tempInterface -> tempInterface.setBondName(iface.getName())));
         }
     }
 
@@ -2374,11 +2366,7 @@ public class VdsBrokerObjectsBuilder {
             return null;
         }
 
-        List<String> list = new ArrayList<>();
-        for (Object item : items) {
-            list.add((String) item);
-        }
-        return list;
+        return Arrays.stream(items).map(item -> (String) item).collect(Collectors.toList());
     }
 
     private static List<Integer> extractIntegerList(Map<String, Object> xmlRpcStruct, String propertyName) {
@@ -2391,11 +2379,7 @@ public class VdsBrokerObjectsBuilder {
             return Collections.emptyList();
         }
 
-        List<Integer> list = new ArrayList<>();
-        for (Object item : items) {
-            list.add((Integer) item);
-        }
-        return list;
+        return Arrays.stream(items).map(item -> (Integer) item).collect(Collectors.toList());
     }
 
     /**
@@ -2484,10 +2468,10 @@ public class VdsBrokerObjectsBuilder {
             return;
         }
 
-        List<V2VJobInfo> v2vJobs = new ArrayList<>();
-        for (Entry<String, Object> job : ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.v2vJobs)).entrySet()) {
-            v2vJobs.add(buildV2VJobData(job.getKey(), (Map<String, Object>) job.getValue()));
-        }
+        List<V2VJobInfo> v2vJobs = ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.v2vJobs)).entrySet()
+                .stream()
+                .map(job -> buildV2VJobData(job.getKey(), (Map<String, Object>) job.getValue())).collect(Collectors.toList());
+
         vds.getStatisticsData().setV2VJobs(v2vJobs);
     }
 
