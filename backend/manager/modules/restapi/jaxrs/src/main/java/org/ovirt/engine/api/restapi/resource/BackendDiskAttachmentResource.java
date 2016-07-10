@@ -68,6 +68,19 @@ public class BackendDiskAttachmentResource
 
     @Override
     public DiskAttachment update(DiskAttachment attachment) {
+        if (attachment.isSetActive()) {
+            DiskAttachment attachmentFromDb = get();
+            if (!attachmentFromDb.isActive().equals(attachment.isActive())) {
+                VdcActionType actionType = attachment.isActive() ? VdcActionType.HotPlugDiskToVm : VdcActionType.HotUnPlugDiskFromVm;
+                VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(guid, vmId));
+                try {
+                    doAction(actionType, params);
+                }
+                catch (BackendFailureException e) {
+                    return handleError(e, false);
+                }
+            }
+        }
         return performUpdate(attachment, new AddDiskResolver(), VdcActionType.UpdateVmDisk, new UpdateParametersProvider());
     }
 
