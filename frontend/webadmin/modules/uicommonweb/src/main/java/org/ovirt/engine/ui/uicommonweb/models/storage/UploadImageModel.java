@@ -343,10 +343,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 public void initialize() {
                     super.initialize();
 
-                    getStorageDomain().setIsChangeable(false);
+                    getStorageDomain().setIsChangeable(limitToStorageDomainId == null);
+                    getDataCenter().setIsChangeable(limitToStorageDomainId == null);
                     getHost().setIsChangeable(false);
                     getStorageType().setIsChangeable(false);
-                    getDataCenter().setIsChangeable(false);
                 }
 
                 @Override
