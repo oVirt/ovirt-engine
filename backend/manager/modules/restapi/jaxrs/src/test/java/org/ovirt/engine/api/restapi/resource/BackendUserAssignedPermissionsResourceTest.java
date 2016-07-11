@@ -39,7 +39,7 @@ public class BackendUserAssignedPermissionsResourceTest
              verifyIncompleteException(wae,
                                        "Permission",
                                        "add",
-                                       "dataCenter|cluster|host|storageDomain|vm|vmpool|template.id");
+                                       "dataCenter|cluster|host|storageDomain|vm|vmPool|template.id");
         }
     }
 
