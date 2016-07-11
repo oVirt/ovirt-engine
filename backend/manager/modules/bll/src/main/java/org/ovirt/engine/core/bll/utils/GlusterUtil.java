@@ -374,16 +374,19 @@ public class GlusterUtil {
                     volume,
                     null,
                     logType,
-                    new HashMap<String, String>() {
-                        {
-                            put(GlusterConstants.VOLUME_NAME, volume.getName());
-                            put(GlusterConstants.CLUSTER, volume.getClusterName());
-                        }
-                    });
+                    volumeAsMap(volume)
+            );
             return true;
         }
 
         return false;
+    }
+
+    private static Map<String, String> volumeAsMap(GlusterVolumeEntity volume) {
+        Map<String, String> map = new HashMap<>();
+        map.put(GlusterConstants.VOLUME_NAME, volume.getName());
+        map.put(GlusterConstants.CLUSTER, volume.getClusterName());
+        return map;
     }
 
     public void alertVolumeSnapshotLimitsReached(final GlusterVolumeEntity volume) {
