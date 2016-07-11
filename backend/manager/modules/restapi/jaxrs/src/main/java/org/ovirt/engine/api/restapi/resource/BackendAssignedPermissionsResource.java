@@ -104,7 +104,7 @@ public class BackendAssignedPermissionsResource
     public Response add(Permission permission) {
         validateParameters(permission,
                            isPrincipalSubCollection()
-                           ? new String[] {"role.id|name", "dataCenter|cluster|host|storageDomain|vm|vmpool|template.id"}
+                           ? new String[] {"role.id|name", "dataCenter|cluster|host|storageDomain|vm|vmPool|template.id"}
                            : new String[] {"role.id|name", "user|group.id"});
         PermissionsOperationsParameters parameters = getParameters(permission);
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetPermissionById, IdQueryParameters.class);
