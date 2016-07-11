@@ -109,9 +109,9 @@ public class InteractiveAuthServlet extends HttpServlet {
     }
 
     private Credentials getUserCredentials(HttpServletRequest request) throws Exception {
-        String username = SsoUtils.getParameter(request, USERNAME);
-        String password = SsoUtils.getParameter(request, PASSWORD);
-        String profile = SsoUtils.getParameter(request, PROFILE);
+        String username = SsoUtils.getFormParameter(request, USERNAME);
+        String password = SsoUtils.getFormParameter(request, PASSWORD);
+        String profile = SsoUtils.getFormParameter(request, PROFILE);
         Credentials credentials;
         if (StringUtils.isEmpty(username) || password == null || StringUtils.isEmpty(profile)) {
             credentials = SsoUtils.getSsoSession(request).getTempCredentials();

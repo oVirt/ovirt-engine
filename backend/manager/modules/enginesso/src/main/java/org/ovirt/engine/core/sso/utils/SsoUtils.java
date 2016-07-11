@@ -195,6 +195,12 @@ public class SsoUtils {
                 null : decode(new String(value.getBytes("iso-8859-1")));
     }
 
+    public static String getFormParameter(HttpServletRequest request, String paramName)
+            throws UnsupportedEncodingException {
+        String value = request.getParameter(paramName);
+        return value == null ? null : new String(value.getBytes("iso-8859-1"));
+    }
+
     public static String getRequestParameter(HttpServletRequest request, String paramName) throws Exception {
         String value = getParameter(request, paramName);
         if (value == null) {
