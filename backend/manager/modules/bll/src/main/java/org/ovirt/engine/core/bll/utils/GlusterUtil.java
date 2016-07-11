@@ -200,7 +200,7 @@ public class GlusterUtil {
 
     protected String executePeerStatusCommand(SSHClient client) {
         ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500);
-        String command = Config.<String> getValue(ConfigValues.GlusterPeerStatusCommand);
+        String command = Config.getValue(ConfigValues.GlusterPeerStatusCommand);
         try {
             client.executeCommand(command, null, out, null);
             return new String(out.toByteArray(), "UTF-8");
