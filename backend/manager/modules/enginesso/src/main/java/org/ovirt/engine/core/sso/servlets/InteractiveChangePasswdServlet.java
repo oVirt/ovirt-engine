@@ -100,10 +100,10 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
     private Credentials getUserCredentials(HttpServletRequest request) throws AuthenticationException {
         try {
             String username = SsoUtils.getParameter(request, USERNAME);
-            String credentials = SsoUtils.getParameter(request, CREDENTIALS);
-            String credentialsNew1 = SsoUtils.getParameter(request, CREDENTIALS_NEW1);
-            String credentialsNew2 = SsoUtils.getParameter(request, CREDENTIALS_NEW2);
-            String profile = SsoUtils.getParameter(request, PROFILE);
+            String credentials = SsoUtils.getFormParameter(request, CREDENTIALS);
+            String credentialsNew1 = SsoUtils.getFormParameter(request, CREDENTIALS_NEW1);
+            String credentialsNew2 = SsoUtils.getFormParameter(request, CREDENTIALS_NEW2);
+            String profile = SsoUtils.getFormParameter(request, PROFILE);
             return StringUtils.isNotEmpty(username) &&
                     StringUtils.isNotEmpty(credentials) &&
                     StringUtils.isNotEmpty(credentialsNew1) &&

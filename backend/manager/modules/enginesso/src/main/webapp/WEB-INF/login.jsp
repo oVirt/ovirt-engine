@@ -55,7 +55,7 @@
                     </div>
                     <div style="vertical-align:top;display: table;">
                         <span style="vertical-align:top;display:table-cell;width:630px;">
-                            <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/interactive-login" enctype="application/x-www-form-urlencoded">
+                            <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/interactive-login">
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="username">
                                         <fmt:message key="loginpage.username" bundle="${loginpage}" />
