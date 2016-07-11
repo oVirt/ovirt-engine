@@ -73,6 +73,7 @@ public class VNodeModel extends Model {
         newNode.setIndex(vmNumaNode.getIndex());
         newNode.setId(vmNumaNode.getId());
         newNode.setMemTotal(vmNumaNode.getMemTotal());
+        newNode.setCpuIds(vmNumaNode.getCpuIds());
         if (isPinned()) {
             newNode.setVdsNumaNodeList(Arrays.asList(
                     new Pair<Guid, Pair<Boolean, Integer>>(null, new Pair(pinned, hostNodeIndex)))
