@@ -241,7 +241,6 @@ USAGE:
     files                           product files only
     db                              Engine database only
     dwhdb                           Data Warehouse database only
-    reportsdb                       Reports database only
     The option --scope can be passed more than once, with different scopes.
  --file=FILE                        file to use during backup or restore
  --log=FILE                         log file to use during backup or restore
@@ -294,23 +293,6 @@ USAGE:
  --dwh-db-name=name                 set Data Warehouse database name
  --dwh-db-secured                   set a secured connection for the Data Warehouse database
  --dwh-db-secured-validation        validate host for Data Warehouse database
- --reports-db-compressor=COMPRESSOR compress the Reports database, same options as --archive-compressor
- --reports-db-dump-format=FORMAT    Reports database dump format, same options as --db-dump-format
- --reports-db-restore-jobs=JOBS     for Reports database, same as --db-restore-jobs
- --provision-reports-db             create a PostgreSQL database for Reports on restore
- --change-reports-db-credentials    activate the following options, to restore
-                                    the Reports database using credentials other
-                                    than those stored in the backup itself.
-                                    If used, existing credentials are ignored.
- --reports-db-host=host             set Reports database host
- --reports-db-port=port             set Reports database port
- --reports-db-user=user             set Reports database user
- --reports-db-passfile=file         set Reports database password - read from file
- --reports-db-password=pass         set Reports database password
- --reports-db-password              set Reports database password - interactively
- --reports-db-name=name             set Reports database name
- --reports-db-secured               set a secured connection for the Reports database
- --reports-db-secured-validation    validate host for Reports database
 
  --no-restore-permissions           Affects only the custom dump format. Will pass
                                     to pg_restore '--no-owner --no-privileges'.
@@ -324,14 +306,11 @@ USAGE:
          --db-dump-format=custom \\
          --db-compressor=None \\
          --dwh-db-dump-format=custom \\
-         --dwh-db-compressor=None \\
-         --reports-db-dump-format=custom \\
-         --reports-db-compressor=None
+         --dwh-db-compressor=None
 
     In addition, you should pass, when restoring:
         --db-restore-jobs=N \\
-        --dwh-db-restore-jobs=N \\
-        --reports-db-restore-jobs=N
+        --dwh-db-restore-jobs=N
         where 'N' is around 150% of available cpu cores.
 
  --small-size                       for a small backup file, equivalent to:
@@ -340,9 +319,7 @@ USAGE:
          --db-dump-format=plain \\
          --db-compressor=xz \\
          --dwh-db-dump-format=plain \\
-         --dwh-db-compressor=xz \\
-         --reports-db-dump-format=plain \\
-         --reports-db-compressor=xz
+         --dwh-db-compressor=xz
 
  --fast-backup                      for a fast backup, equivalent to:
          --archive-compressor=gzip \\
@@ -350,9 +327,7 @@ USAGE:
          --db-dump-format=custom \\
          --db-compressor=None \\
          --dwh-db-dump-format=custom \\
-         --dwh-db-compressor=None \\
-         --reports-db-dump-format=custom \\
-         --reports-db-compressor=None
+         --dwh-db-compressor=None
 
  You can use one of --fast-restore, --small-size, --fast-backup, and after that
  one of the other compressor/format options for further fine-tuning.
@@ -364,8 +339,6 @@ USAGE:
      Database password as if provided by --db-password=pass option.
  OVIRT_DWH_DATABASE_PASSWORD
      Database password as if provided by --dwh-db-password=pass option.
- OVIRT_REPORTS_DATABASE_PASSWORD
-     Database password as if provided by --reports-db-password=pass option.
 
  Documentation
 
@@ -393,7 +366,7 @@ USAGE:
  host    <database>      <user>          ::0/0                   md5
 
  Replace <user>, <password>, <database> with appropriate values.
- Repeat for Engine, Data Warehouse, Reports as required.
+ Repeat for Engine, Data Warehouse as required.
 
 __EOF__
 	return 0
