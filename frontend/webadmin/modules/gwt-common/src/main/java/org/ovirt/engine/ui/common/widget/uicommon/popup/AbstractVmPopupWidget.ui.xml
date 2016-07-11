@@ -306,11 +306,6 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="LG_12">
-                    <b:Alert type="WARNING" ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" />
-                  </b:Column>
-                </b:Row>
-                <b:Row>
-                  <b:Column size="LG_12">
                     <g:Label ui:field="ssoMethodLabel" text="{constants.ssoMethod}" />
                   </b:Column>
                 </b:Row>
