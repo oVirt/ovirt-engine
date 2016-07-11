@@ -175,18 +175,13 @@ load_branding() {
 # Globals
 BACKUP_PATHS="/etc/ovirt-engine
 /etc/ovirt-engine-dwh
-/etc/ovirt-engine-reports
 /etc/ovirt-vmconsole
 /etc/pki/ovirt-engine
 /etc/pki/ovirt-vmconsole
 /etc/ovirt-engine-setup.conf.d
-/var/lib/ovirt-engine-reports/build-conf
-/var/lib/ovirt-engine-reports/ovirt-engine-reports.war/WEB-INF/js.quartz.properties
-#/var/lib/ovirt-engine-reports
 /etc/httpd/conf.d/ovirt-engine-root-redirect.conf
 /etc/httpd/conf.d/ssl.conf
 /etc/httpd/conf.d/z-ovirt-engine-proxy.conf
-/etc/httpd/conf.d/z-ovirt-engine-reports-proxy.conf
 /etc/yum/pluginconf.d/versionlock.list
 /etc/dnf/plugins/versionlock.list
 /etc/firewalld/services/ovirt-https.xml
@@ -540,6 +535,16 @@ set_scope() {
 	else
 		SCOPE="${SCOPE},${s}"
 	fi
+
+	# Reports is not included in 4.0.
+	# When restoring with 4.0 a backup done in 3.6 that includes
+	# Reports, ignore the Reports dump.
+	# When backing up with 4.0 a system that was upgraded from 3.6
+	# and had Reports, do not backup the Reports database.
+	# Relevant file paths were also removed for this from
+	# BACKUP_PATHS above.
+	# TODO in 4.1 or so - actually remove the code.
+	SCOPE_REPORTS_DB=
 }
 
 parseArgs() {
@@ -1055,6 +1060,21 @@ dorestore() {
 	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
 	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
 	[ -s "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" ] || SCOPE_REPORTS_DB=
+
+	# Notify user if reports found
+	if [ -s "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" ]; then
+		log "Reports dump found, notifying user that it is not restored"
+		cat << __EOF__
+------------------------------------------------------------------------------
+Please note:
+
+A Reports dump was found inside the backup.
+
+This version does not support Reports, and the dump and configuration files
+will not be restored.
+------------------------------------------------------------------------------
+__EOF__
+	fi
 
 	output "Restoring:"
 	if [ -n "${SCOPE_FILES}" ] ; then
