@@ -2058,6 +2058,23 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     /**
      * The following method should return a map which is represent exclusive lock
+     * <p>
+     * Lock structure:
+     * <pre>
+     *     Map {
+     *         locked entity identifier (usually id, it follows selected locking group),
+     *         Pair {
+     *             locking group,
+     *             message to be shown when this lock prevents acquisition of another
+     *                 lock/ other operation
+     *         }
+     *     }
+     * </pre>
+     * </p>
+     * Message has form of {@link EngineMessage} constant followed by possible variable
+     * replacements as parsed by {@link #extractVariableDeclarations}
+     *
+     * @see LockMessagesMatchUtil
      */
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return null;
@@ -2065,6 +2082,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     /**
      * The following method should return a map which is represent shared lock
+     *
+     * @see #getExclusiveLocks()
      */
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return null;
