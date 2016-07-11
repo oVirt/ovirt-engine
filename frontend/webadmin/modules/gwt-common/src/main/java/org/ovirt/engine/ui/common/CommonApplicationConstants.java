@@ -1025,8 +1025,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String cpuPinningLabelExplanation();
 
-    String nativeUsbSupportWarning();
-
     String monitors();
 
     String lunAlreadyUsedWarning();
