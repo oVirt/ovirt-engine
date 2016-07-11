@@ -2096,6 +2096,7 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_dynamic
     SET status = v_status
-    WHERE vm_guid = ANY(v_vm_ids);
+    WHERE vm_guid = ANY(v_vm_ids)
+        AND run_on_vds IS NOT NULL;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
