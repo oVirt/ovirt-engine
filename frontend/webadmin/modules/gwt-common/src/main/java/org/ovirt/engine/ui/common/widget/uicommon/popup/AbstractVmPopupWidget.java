@@ -864,10 +864,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("kernelParameters")
     public StringEntityModelTextBoxEditor kernel_parametersEditor;
 
-    @UiField
-    @Ignore
-    Alert nativeUsbWarningMessage;
-
     // ==Custom Properties Tab==
     @UiField
     protected DialogTab customPropertiesTab;
@@ -1602,18 +1598,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getUsbPolicy().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("SelectedItem".equals(args.propertyName)) { //$NON-NLS-1$
-                    updateUsbNativeMessageVisibility(object);
-                }
-            }
-        });
-
-        updateUsbNativeMessageVisibility(object);
-
         object.getEditingEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -1703,16 +1687,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             newClusterCpuModel += "(" + cpuName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return newClusterCpuModel;
-    }
-
-    /**
-     * This raises a warning for USB devices that won't persist a VM migration when using Native USB with SPICE in
-     * certain, configurable cluster version.
-     */
-    protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
-        changeApplicationLevelVisibility(
-                nativeUsbWarningMessage,
-                object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE);
     }
 
     private void addDiskAllocation(UnitVmModel model) {
@@ -2041,7 +2015,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 usbSupportEditor,
                 consoleDisconnectActionEditor,
                 isSmartcardEnabledEditor,
-                nativeUsbWarningMessage,
                 expander,
                 numOfMonitorsEditor,
                 vncKeyboardLayoutEditor,
