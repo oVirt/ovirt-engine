@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResource.SUB_COLLECTIONS;
 
 import java.util.List;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -111,8 +112,7 @@ public class BackendTemplateResource
 
     @Override
     public TemplateDiskAttachmentsResource getDiskAttachmentsResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendTemplateDiskAttachmentsResource(guid));
     }
 
     @Override
