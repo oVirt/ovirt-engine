@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -145,6 +146,28 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
                 (Collections.emptyList());
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
+    }
+
+    @Test
+    public void hasMultipleClustersForLocalDC() {
+        spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
+        when(spDao.get(any(Guid.class))).thenReturn(createNewStoragePool());
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
+        List<Cluster> clusters = Arrays.asList(new Cluster(), new Cluster());
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
+    }
+
+    @Test
+    public void hasMultipleHostsForLocalDC() {
+        spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
+        when(spDao.get(any(Guid.class))).thenReturn(createNewStoragePool());
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
+        List<VDS> hosts = Arrays.asList(new VDS(), new VDS());
+        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(hosts);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
     }
 
     @Test

@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -211,6 +212,16 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if (getOldStoragePool().isLocal() && !getStoragePool().isLocal()
                 && poolDomains.stream().anyMatch(sdc -> sdc.getStorageType() == StorageType.LOCALFS)) {
             return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_LOCAL);
+        }
+        if (!getOldStoragePool().isLocal() && getStoragePool().isLocal()) {
+            List<Cluster> clusters = getClusterDao().getAllForStoragePool(getStoragePool().getId());
+            if (clusters.size() > 1) {
+                return failValidation(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
+            }
+            List<VDS> hosts = getVdsDao().getAllForStoragePool(getStoragePool().getId());
+            if (hosts.size() > 1) {
+                return failValidation(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
+            }
         }
         if ( !getOldStoragePool().getCompatibilityVersion().equals(getStoragePool()
                 .getCompatibilityVersion())) {
