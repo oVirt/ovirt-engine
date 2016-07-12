@@ -29,18 +29,21 @@ public class StorageConnectionValidatorTest {
     private StorageServerConnections connection;
     private StorageConnectionValidator validator;
     private StorageDomain domain;
+
+    private static final String CONNECTION_ID_FOR_VALIDATION = Guid.newGuid().toString();
+
     @Mock
     protected StorageServerConnectionDao storageServerConnectionDao;
 
     @Before
     public void setUp() {
         connection = new StorageServerConnections();
-        connection.setId("0cc146e8-e5ed-482c-8814-270bc48c297e");
+        connection.setId(CONNECTION_ID_FOR_VALIDATION);
         connection.setStorageType(StorageType.ISCSI);
         validator = spy(new StorageConnectionValidator(connection));
         domain = new StorageDomain();
         domain.setStorageType(StorageType.ISCSI);
-        domain.setId(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
+        domain.setId(Guid.newGuid());
         domain.setStatus(StorageDomainStatus.Maintenance);
         domain.setStorageDomainSharedStatus(StorageDomainSharedStatus.Inactive);
     }
@@ -108,7 +111,7 @@ public class StorageConnectionValidatorTest {
     @Test
     public void isConnectionForISCSIDomainAttached() {
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setId("0cc146e8-e5ed-482c-8814-270bc48c297e");
+        connection.setId(CONNECTION_ID_FOR_VALIDATION);
         List<StorageServerConnections> connections = getConnections();
         connections.add(connection);
         doReturn(connections).when(validator).getAllConnectionsForDomain(domain.getId());
@@ -118,11 +121,11 @@ public class StorageConnectionValidatorTest {
     private List<StorageServerConnections> getConnections() {
          List<StorageServerConnections> connectionsList = new ArrayList<>();
          StorageServerConnections connection1 = new StorageServerConnections();
-         connection1.setId("1cc146e8-e5ed-482c-8814-270bc48c2981");
+         connection1.setId(Guid.newGuid().toString());
          StorageServerConnections connection2 = new StorageServerConnections();
-         connection2.setId("2cc146e8-e5ed-482c-8814-270bc48c2981");
+         connection2.setId(Guid.newGuid().toString());
          StorageServerConnections connection3 = new StorageServerConnections();
-         connection3.setId("3cc146e8-e5ed-482c-8814-270bc48c2981");
+         connection3.setId(Guid.newGuid().toString());
          connectionsList.add(connection1);
          connectionsList.add(connection2);
          connectionsList.add(connection3);
