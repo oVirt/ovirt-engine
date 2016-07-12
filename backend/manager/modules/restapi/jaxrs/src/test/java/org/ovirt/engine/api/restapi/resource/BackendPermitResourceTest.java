@@ -2,13 +2,10 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Permit;
-import org.ovirt.engine.api.model.PermitType;
-import org.ovirt.engine.api.restapi.types.PermitMapper;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -121,8 +118,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     }
     private void verifyPermit(Permit permit, ActionGroup action) {
         assertEquals(Integer.toString(action.getId()), permit.getId());
-        PermitType permitType = PermitMapper.map(action, (PermitType)null);
-        assertEquals(permitType.value(), permit.getName());
+        assertEquals(action.name().toLowerCase(), permit.getName());
         assertNotNull(permit.getRole());
         assertEquals(ROLE_ID.toString(), permit.getRole().getId());
     }

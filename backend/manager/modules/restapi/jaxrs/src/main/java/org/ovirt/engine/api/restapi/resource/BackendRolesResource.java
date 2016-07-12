@@ -3,18 +3,15 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Permit;
-import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
 import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.RolesResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
-import org.ovirt.engine.api.restapi.types.PermitMapper;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -51,21 +48,8 @@ public class BackendRolesResource
     private void validatePermitId(Role role) {
         for (Permit permit : role.getPermits().getPermits()) {
             if (permit.isSetId()) {
-                boolean valid = false;
-                // VM_BASIC_OPERATIONS is deprecated in ActionGroup
-                // We are keeping its id for backward compatibility.
-                if (permit.getId().equals(PermitType.getVmBasicOperationsId())) {
-                    valid = true;
-                } else {
-                    for (PermitType permitType : PermitType.values()) {
-                        Permit mappedPermit = PermitMapper.map(permitType, (Permit)null);
-                        if (mappedPermit != null && mappedPermit.getId().equals(permit.getId())) {
-                            valid = true;
-                            break;
-                        }
-                    }
-                }
-                if (!valid) {
+                ActionGroup actionGroup = ActionGroup.forValue(Integer.parseInt(permit.getId()));
+                if (actionGroup == null) {
                     throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                             .entity(permit.getId() + " is not a valid permit ID.")
                             .build());

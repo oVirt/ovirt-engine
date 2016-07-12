@@ -332,11 +332,36 @@ to use the `hosts` element even if when pinning to a single host.
 
 === Removed the `capabilities.permits` element
 
-The list of permits is version specific, and it has been added to
-the `version` element long ago, but it has been kept into the
-`capabilities` element as well, just for backwards compatibility.
+The list of permits is potentiall different for each cluster level, and
+it has been added to the `version` element long ago, but it has been
+kept into the `capabilities` element as well, just for backwards
+compatibility.
 
-In 4.0 it has been removed completely from `capabilities`.
+In 4.0 it the `capabilities` service has been completely removed, and
+replaced by the new `clusterlevels` service. To find the permits
+supported by cluster level 4.0 a request like this should be used:
+
+[source]
+----
+GET /clusterlevels/4.0
+----
+
+The result will be a document containing the information specific to
+that cluster level, in particular the set of supported permits:
+
+[source,xml]
+----
+<cluster_level id="4.0" href="/clusterlevels/4.0">
+  ...
+  <permits>
+    <permit id="1">
+      <name>create_vm</name>
+      <administrative>false</administrative>
+    </permit>
+    ...
+  </permits>
+</cluster_level>
+----
 
 === Removed the `storage_manager` element
 

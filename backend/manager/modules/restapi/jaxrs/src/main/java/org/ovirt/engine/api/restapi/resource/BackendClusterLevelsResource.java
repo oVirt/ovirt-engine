@@ -18,6 +18,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -26,10 +27,14 @@ import org.ovirt.engine.api.model.ClusterLevel;
 import org.ovirt.engine.api.model.ClusterLevels;
 import org.ovirt.engine.api.model.CpuType;
 import org.ovirt.engine.api.model.CpuTypes;
+import org.ovirt.engine.api.model.Permit;
+import org.ovirt.engine.api.model.Permits;
 import org.ovirt.engine.api.resource.ClusterLevelResource;
 import org.ovirt.engine.api.resource.ClusterLevelsResource;
 import org.ovirt.engine.api.restapi.types.CPUMapper;
+import org.ovirt.engine.api.restapi.types.PermitMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
@@ -63,6 +68,14 @@ public class BackendClusterLevelsResource extends BackendResource implements Clu
             level.setCpuTypes(cpuTypes);
         }
 
+        // Add permits:
+        Permits permits = new Permits();
+        for (ActionGroup actionGroup : getActionGroups()) {
+            Permit permit = PermitMapper.map(actionGroup, null);
+            permits.getPermits().add(permit);
+        }
+        level.setPermits(permits);
+
         return LinkHelper.addLinks(level);
     }
 
@@ -72,6 +85,10 @@ public class BackendClusterLevelsResource extends BackendResource implements Clu
            new GetAllServerCpuListParameters(new Version(version)),
            version
         );
+    }
+
+    private List<ActionGroup> getActionGroups() {
+        return Arrays.asList(ActionGroup.values());
     }
 
     public List<String> getSupportedClusterLevels() {
