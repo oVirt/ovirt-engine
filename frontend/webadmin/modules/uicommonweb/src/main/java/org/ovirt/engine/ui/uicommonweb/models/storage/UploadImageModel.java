@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdates;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -28,7 +30,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
@@ -384,7 +385,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
         setImagePath(new EntityModel<String>());
         setImageUri(new EntityModel<String>());
         setVolumeFormat(new ListModel<VolumeFormat>());
-        getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
 
         setUploadState(UploadState.NEW);
         setProgressStr(""); //$NON-NLS-1$
@@ -394,6 +394,9 @@ public class UploadImageModel extends Model implements ICommandTarget {
         setOkCommand(UICommand.createDefaultOkUiCommand("Ok", this)); //$NON-NLS-1$
         getOkCommand().setIsExecutionAllowed(true);
         getCommands().add(getOkCommand());
+
+        getDiskModel().getStorageDomain().getSelectedItemChangedEvent().addListener(this);
+        getDiskModel().getVolumeType().getSelectedItemChangedEvent().addListener(this);
     }
 
     @Override
@@ -404,27 +407,20 @@ public class UploadImageModel extends Model implements ICommandTarget {
     @Override
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
-        if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
-            if (sender == getImageSourceLocalEnabled()
-                    || sender == getImagePath()
-                    || sender == getImageUri()) {
-                recalculateImageDerivedFields();
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
+            if (sender == getDiskModel().getStorageDomain()
+                    || sender == getDiskModel().getVolumeType()) {
+                updateVolumeType();
             }
         }
     }
 
-    private void recalculateImageDerivedFields() {
-        if (getImageSourceLocalEnabled().getEntity()) {
-            autoSelectImageType(getImagePath().getEntity());
-        } else {
-            autoSelectImageType(getImageUri().getEntity());
-        }
-    }
-
-    public void autoSelectImageType(final String pathname) {
-        if (pathname != null) {
-            // TODO Look for COW once it's supported... for now, just set it to RAW
-            getVolumeFormat().setSelectedItem(VolumeFormat.RAW);
+    private void updateVolumeType() {
+        StorageDomain storageDomain = getDiskModel().getStorageDomain().getSelectedItem();
+        VolumeType volumeType = getDiskModel().getVolumeType().getSelectedItem();
+        if (storageDomain != null) {
+            getVolumeFormat().setItems(new ArrayList<>(Collections.singletonList(
+                    AsyncDataProvider.getInstance().getDiskVolumeFormat(volumeType, storageDomain.getStorageType()))));
         }
     }
 
