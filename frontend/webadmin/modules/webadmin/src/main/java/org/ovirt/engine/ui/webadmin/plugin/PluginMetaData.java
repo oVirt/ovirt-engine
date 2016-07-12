@@ -34,6 +34,14 @@ public final class PluginMetaData extends JavaScriptObject {
     }-*/;
 
     /**
+     * Indicates whether the plugin host page is loaded asynchronously (if {@code false},
+     * WebAdmin pre-loads the plugin host page before loading the main UI).
+     */
+    public native boolean isLazyLoad() /*-{
+        return this.lazyLoad;
+    }-*/;
+
+    /**
      * Indicates whether the plugin should be loaded on WebAdmin startup.
      */
     public native boolean isEnabled() /*-{

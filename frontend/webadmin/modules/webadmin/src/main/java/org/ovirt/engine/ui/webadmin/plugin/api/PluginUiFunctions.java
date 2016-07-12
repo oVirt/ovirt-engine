@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
-import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
@@ -37,6 +36,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -51,14 +51,14 @@ public class PluginUiFunctions implements HasHandlers {
     private final DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory;
     private final Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider;
 
-    private final WebAdminPlaceManager placeManager;
+    private final PlaceManager placeManager;
     private final AlertManager alertManager;
 
     @Inject
     public PluginUiFunctions(EventBus eventBus,
             DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory,
             Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider,
-            WebAdminPlaceManager placeManager,
+            PlaceManager placeManager,
             AlertManager alertManager) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;

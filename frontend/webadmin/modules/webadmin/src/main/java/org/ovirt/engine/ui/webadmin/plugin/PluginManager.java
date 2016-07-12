@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.webadmin.plugin.api.ApiOptions;
 import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
@@ -40,6 +41,12 @@ import com.google.web.bindery.event.shared.EventBus;
  */
 public class PluginManager implements HasHandlers {
 
+    public interface PluginsReadyCallback {
+
+        void onPluginsReady();
+
+    }
+
     public interface PluginInvocationCondition {
 
         boolean canInvoke(Plugin plugin);
@@ -58,15 +65,19 @@ public class PluginManager implements HasHandlers {
     // Maps plugin names to corresponding object representations
     private final Map<String, Plugin> plugins = new HashMap<>();
 
+    // Used to track plugins that need to be pre-loaded before loading the main UI
+    private final Map<String, Boolean> pluginsToPreLoad = new HashMap<>();
+
     // Maps plugin names to scheduled event handler functions invoked via Command interface
     private final Map<String, List<Command>> scheduledFunctionCommands = new HashMap<>();
-
-    // Controls plugin invocation, allowing WebAdmin to call plugins only in a specific context
-    private boolean canInvokePlugins = false;
 
     private final PluginUiFunctions uiFunctions;
     private final CurrentUser user;
     private final EventBus eventBus;
+
+    // PluginsReadyCallback should be invoked only once and as early as possible
+    private boolean pluginsReadyCallbackInvoked = false;
+    private PluginsReadyCallback pluginsReadyCallback;
 
     @Inject
     public PluginManager(PluginUiFunctions uiFunctions, CurrentUser user, EventBus eventBus) {
@@ -75,6 +86,10 @@ public class PluginManager implements HasHandlers {
         this.eventBus = eventBus;
         exposePluginApi();
         defineAndLoadPlugins();
+    }
+
+    public void setPluginsReadyCallback(PluginsReadyCallback callback) {
+        this.pluginsReadyCallback = callback;
     }
 
     Plugin getPlugin(String pluginName) {
@@ -106,10 +121,6 @@ public class PluginManager implements HasHandlers {
         scheduledFunctionCommands.remove(pluginName);
     }
 
-    void cancelScheduledFunctionCommands() {
-        scheduledFunctionCommands.clear();
-    }
-
     /**
      * Defines all plugins that were detected when serving WebAdmin host page, and loads them as necessary.
      */
@@ -127,6 +138,13 @@ public class PluginManager implements HasHandlers {
                 }
             }
         }
+
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                maybeInvokePluginsReadyCallback();
+            }
+        });
     }
 
     /**
@@ -160,8 +178,14 @@ public class PluginManager implements HasHandlers {
         addPlugin(plugin);
         logger.info("Plugin [" + pluginName + "] is defined to be loaded from URL " + pluginHostPageUrl); //$NON-NLS-1$ //$NON-NLS-2$
 
+        // Load the plugin host page
         if (pluginMetaData.isEnabled()) {
             loadPlugin(plugin);
+
+            if (plugin.shouldPreLoad()) {
+                pluginsToPreLoad.put(pluginName, false);
+                logger.info("Plugin [" + pluginName + "] will be pre-loaded"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         }
     }
 
@@ -174,42 +198,6 @@ public class PluginManager implements HasHandlers {
             Document.get().getBody().appendChild(plugin.getIFrameElement());
             plugin.markAsLoading();
         }
-    }
-
-    /**
-     * Called when WebAdmin enters the state that allows plugins to be invoked.
-     */
-    public void enablePluginInvocation() {
-        canInvokePlugins = true;
-
-        // Try to initialize all plugins after the browser event loop returns
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                initAllPlugins();
-            }
-        });
-    }
-
-    /**
-     * Initialize all the plugins and fire an event when finished.
-     */
-    private void initAllPlugins() {
-        for (Plugin plugin : getPlugins()) {
-            initPlugin(plugin);
-        }
-        UiPluginsInitializedEvent.fire(PluginManager.this);
-    }
-
-    /**
-     * Called when WebAdmin leaves the state that allows plugins to be invoked.
-     */
-    public void disablePluginInvocation() {
-        canInvokePlugins = false;
-
-        // Clean up scheduled event handler functions for all plugins,
-        // since we are leaving the current plugin invocation context
-        cancelScheduledFunctionCommands();
     }
 
     /**
@@ -228,11 +216,9 @@ public class PluginManager implements HasHandlers {
      * {@code functionArgs} represents the argument list to use when calling the given function (can be {@code null}).
      */
     public void invokePluginsNow(String functionName, JsArray<?> functionArgs, PluginInvocationCondition condition) {
-        if (canInvokePlugins) {
-            for (Plugin plugin : getPlugins()) {
-                if (plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
-                    invokePlugin(plugin, functionName, functionArgs);
-                }
+        for (Plugin plugin : getPlugins()) {
+            if (plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
+                invokePlugin(plugin, functionName, functionArgs);
             }
         }
     }
@@ -259,11 +245,11 @@ public class PluginManager implements HasHandlers {
         invokePluginsNow(functionName, functionArgs, condition);
 
         for (final Plugin plugin : getPlugins()) {
-            if (!canInvokePlugins || !plugin.isInState(PluginState.IN_USE)) {
+            if (!plugin.isInState(PluginState.IN_USE)) {
                 scheduleFunctionCommand(plugin.getName(), new Command() {
                     @Override
                     public void execute() {
-                        if (canInvokePlugins && plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
+                        if (plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
                             invokePlugin(plugin, functionName, functionArgs);
                         }
                     }
@@ -315,9 +301,7 @@ public class PluginManager implements HasHandlers {
      */
     boolean validatePluginAction(String pluginName) {
         Plugin plugin = getPlugin(pluginName);
-        boolean pluginInitializingOrInUse = plugin != null
-                ? plugin.isInState(PluginState.INITIALIZING) || plugin.isInState(PluginState.IN_USE) : false;
-        return canInvokePlugins && pluginInitializingOrInUse;
+        return plugin != null && (plugin.isInState(PluginState.INITIALIZING) || plugin.isInState(PluginState.IN_USE));
     }
 
     /**
@@ -367,9 +351,25 @@ public class PluginManager implements HasHandlers {
             plugin.markAsReady();
             logger.info("Plugin [" + pluginName + "] reports in as ready"); //$NON-NLS-1$ //$NON-NLS-2$
 
-            // Try to initialize the plugin, since the plugin might report in as ready
-            // after WebAdmin enters the state that allows plugins to be invoked
+            // Initialize the plugin once it's ready
             initPlugin(plugin);
+
+            if (plugin.shouldPreLoad()) {
+                pluginsToPreLoad.put(pluginName, true);
+            }
+
+            maybeInvokePluginsReadyCallback();
+        }
+    }
+
+    /**
+     * Checks if all plugins that need pre-loading have been loaded already, and if so,
+     * invokes the {@link #pluginsReadyCallback}.
+     */
+    void maybeInvokePluginsReadyCallback() {
+        if (pluginsReadyCallback != null && !pluginsReadyCallbackInvoked && !pluginsToPreLoad.containsValue(false)) {
+            pluginsReadyCallback.onPluginsReady();
+            pluginsReadyCallbackInvoked = true;
         }
     }
 
@@ -380,8 +380,7 @@ public class PluginManager implements HasHandlers {
      * The UiInit function will be called just once during the lifetime of a plugin. More precisely, UiInit function
      * will be called:
      * <ul>
-     * <li>after the plugin reports in as {@linkplain PluginState#READY ready} <b>and</b> WebAdmin
-     * {@linkplain #enablePluginInvocation enters} the state that allows plugins to be invoked
+     * <li>after the plugin reports in as {@linkplain PluginState#READY ready}
      * <li>before any other event handler functions are invoked by the plugin infrastructure
      * </ul>
      * <p>
@@ -390,10 +389,6 @@ public class PluginManager implements HasHandlers {
      * function completes successfully.
      */
     void initPlugin(Plugin plugin) {
-        if (!canInvokePlugins) {
-            return;
-        }
-
         String pluginName = plugin.getName();
 
         // Try to invoke UiInit event handler function

@@ -85,10 +85,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.alertManager = alertManager;
     }
 
-    protected AlertManager getAlertManager() {
-        return this.alertManager;
-    }
-
     @Override
     public final void onBootstrap() {
         Logger rootLogger = Logger.getLogger(""); //$NON-NLS-1$
@@ -138,14 +134,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     /**
      * Actual initialization logic that bootstraps the application.
-     * <p>
-     * Subclasses must override this method to initiate GWTP place transition via {@code PlaceManager},
-     * for example:
-     * <pre>
-     * super.performBootstrap(); // Common initialization (mandatory)
-     * performCustomBootstrap(); // Custom initialization (optional)
-     * placeManager.revealCurrentPlace(); // Initiate place transition
-     * </pre>
      */
     protected void performBootstrap() {
         // Handle UI logout requests
@@ -214,24 +202,30 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     protected void performLogin(T loginModel) {
         DbUser loggedUser = loginModel.getLoggedUser();
-        String loginPassword = loginModel.getPassword().getEntity();
 
-        beforeLogin(loginModel);
+        beforeLogin();
 
         // UiCommon login preparation
-        frontend.initLoggedInUser(loggedUser, loginPassword);
+        frontend.initLoggedInUser(loggedUser);
 
         // UI login actions
-        user.onUserLogin(loggedUser);
+        user.login(loggedUser);
 
-        // Post-login actions
-        loginModel.getPassword().setEntity(null);
+        afterLogin();
+
+        // Perform initial GWTP place transition
+        performPlaceTransition();
     }
 
-    /**
-     * Invoked right after the user has logged in successfully on backend, before proceeding with UI login sequence.
-     */
-    protected abstract void beforeLogin(T loginModel);
+    protected void performPlaceTransition() {
+        user.fireLoginChangeEvent();
+    }
+
+    protected void beforeLogin() {
+    }
+
+    protected void afterLogin() {
+    }
 
     protected void initUiCommon() {
         // Set up UiCommon type resolver

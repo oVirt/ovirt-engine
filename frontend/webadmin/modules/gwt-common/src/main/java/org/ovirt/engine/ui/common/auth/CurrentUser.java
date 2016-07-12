@@ -93,9 +93,11 @@ public class CurrentUser implements HasHandlers {
         this.logoutHandler = logoutHandler;
     }
 
-    /**
-     * Initiates the sign out operation.
-     */
+    public void login(DbUser loggedUser) {
+        setLoggedUser(loggedUser);
+        setLoggedIn(true);
+    }
+
     public void logout() {
         if (isLoggedIn() && logoutHandler != null) {
             logoutHandler.onLogout();
@@ -108,16 +110,7 @@ public class CurrentUser implements HasHandlers {
         }
     }
 
-    /**
-     * User login callback, called after successful user authentication.
-     */
-    public void onUserLogin(DbUser loggedUser) {
-        setLoggedUser(loggedUser);
-        setLoggedIn(true);
-        fireLoginChangeEvent();
-    }
-
-    void fireLoginChangeEvent() {
+    public void fireLoginChangeEvent() {
         UserLoginChangeEvent.fire(this);
     }
 

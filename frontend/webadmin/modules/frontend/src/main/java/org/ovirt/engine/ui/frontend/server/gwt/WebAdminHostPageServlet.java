@@ -145,6 +145,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
             dataObj.put("name", data.getName()); //$NON-NLS-1$
             dataObj.put("url", data.getUrl()); //$NON-NLS-1$
             dataObj.put("config", data.mergeConfiguration()); //$NON-NLS-1$
+            dataObj.put("lazyLoad", data.isLazyLoad()); //$NON-NLS-1$
             dataObj.put("enabled", data.isEnabled()); //$NON-NLS-1$
             arr.add(dataObj);
         }

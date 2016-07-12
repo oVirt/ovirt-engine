@@ -43,6 +43,10 @@ public class Plugin {
         return getMetaData().getName();
     }
 
+    public boolean shouldPreLoad() {
+        return !getMetaData().isLazyLoad();
+    }
+
     public boolean isInState(PluginState state) {
         return this.state == state;
     }

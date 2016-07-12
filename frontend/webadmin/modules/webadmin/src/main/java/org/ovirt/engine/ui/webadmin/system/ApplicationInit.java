@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.system;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
@@ -18,20 +21,41 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
+import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
+import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginsReadyCallback;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicMainTabAddedEvent;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicMainTabAddedEvent.DynamicMainTabAddedHandler;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
-public class ApplicationInit extends BaseApplicationInit<LoginModel> {
+public class ApplicationInit extends BaseApplicationInit<LoginModel> implements PluginsReadyCallback,
+        DynamicMainTabAddedHandler {
 
-    private final PlaceManager placeManager;
+    static class DynamicMainTabInfo {
+
+        String historyToken;
+        String searchPrefix;
+
+        DynamicMainTabInfo(String historyToken, String searchPrefix) {
+            this.historyToken = historyToken;
+            this.searchPrefix = searchPrefix;
+        }
+
+    }
+
     private final ApplicationDynamicMessages dynamicMessages;
-
     private final Provider<CommonModel> commonModelProvider;
+
+    private boolean pluginsReady = false;
+    private boolean loginComplete = false;
+
+    private final List<DynamicMainTabInfo> dynamicMainTabs = new ArrayList<>();
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
@@ -43,16 +67,17 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             LockInteractionManager lockInteractionManager,
             LocalStorageLogHandler localStorageLogHandler,
             Frontend frontend,
-            PlaceManager placeManager,
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
-            Provider<CommonModel> commonModelProvider) {
+            Provider<CommonModel> commonModelProvider,
+            PluginManager pluginManager) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager,
                 localStorageLogHandler, frontend, currentUserRole);
-        this.placeManager = placeManager;
         this.dynamicMessages = dynamicMessages;
         this.commonModelProvider = commonModelProvider;
+        pluginManager.setPluginsReadyCallback(this);
+        eventBus.addHandler(DynamicMainTabAddedEvent.getType(), this);
     }
 
     @Override
@@ -65,13 +90,27 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         if (uiMode != null) {
             ApplicationModeHelper.setUiMode(uiMode);
         }
-
-        // Initiate transition to requested application place
-        placeManager.revealCurrentPlace();
     }
 
     @Override
-    protected void beforeLogin(LoginModel loginModel) {
+    public void onPluginsReady() {
+        pluginsReady = true;
+    }
+
+    @Override
+    protected void performPlaceTransition() {
+        // Make sure all plugins that need pre-loading have been loaded already
+        if (!pluginsReady) {
+            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                @Override
+                public void execute() {
+                    performPlaceTransition();
+                }
+            });
+        } else {
+            // Do the actual place transition
+            super.performPlaceTransition();
+        }
     }
 
     @Override
@@ -94,6 +133,32 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         });
 
         performLogin(loginModel);
+    }
+
+    @Override
+    protected void afterLogin() {
+        loginComplete = true;
+
+        for (DynamicMainTabInfo tabInfo : dynamicMainTabs) {
+            addDynamicMainTabToCommonModel(tabInfo.historyToken, tabInfo.searchPrefix);
+        }
+        dynamicMainTabs.clear();
+    }
+
+    @Override
+    public void onDynamicMainTabAdded(DynamicMainTabAddedEvent event) {
+        String historyToken = event.getHistoryToken();
+        String searchPrefix = event.getSearchPrefix();
+
+        if (loginComplete) {
+            addDynamicMainTabToCommonModel(historyToken, searchPrefix);
+        } else {
+            dynamicMainTabs.add(new DynamicMainTabInfo(historyToken, searchPrefix));
+        }
+    }
+
+    void addDynamicMainTabToCommonModel(String historyToken, String searchPrefix) {
+        commonModelProvider.get().addPluginModel(historyToken, searchPrefix);
     }
 
 }

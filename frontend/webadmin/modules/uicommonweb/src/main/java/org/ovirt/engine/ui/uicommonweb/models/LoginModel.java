@@ -20,9 +20,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class LoginModel extends Model {
 
-    public static final String BeginLoginStage = "BeginTest"; //$NON-NLS-1$
-    public static final String EndLoginStage = "EndTest"; //$NON-NLS-1$
-
     public static final EventDefinition loggedInEventDefinition;
     private Event<EventArgs> privateLoggedInEvent;
 
@@ -32,17 +29,6 @@ public class LoginModel extends Model {
 
     private void setLoggedInEvent(Event<EventArgs> value) {
         privateLoggedInEvent = value;
-    }
-
-    public static final EventDefinition loginFailedEventDefinition;
-    private Event<EventArgs> privateLoginFailedEvent;
-
-    public Event<EventArgs> getLoginFailedEvent() {
-        return privateLoginFailedEvent;
-    }
-
-    private void setLoginFailedEvent(Event<EventArgs> value) {
-        privateLoginFailedEvent = value;
     }
 
     private ListModel<String> privateProfile;
@@ -63,29 +49,6 @@ public class LoginModel extends Model {
 
     private void setUserName(EntityModel<String> value) {
         privateUserName = value;
-    }
-
-    private EntityModel<String> privatePassword;
-
-    public EntityModel<String> getPassword() {
-        return privatePassword;
-    }
-
-    private void setPassword(EntityModel<String> value) {
-        privatePassword = value;
-    }
-
-    private boolean isConnecting;
-
-    public boolean getIsConnecting() {
-        return isConnecting;
-    }
-
-    public void setIsConnecting(boolean value) {
-        if (isConnecting != value) {
-            isConnecting = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsConnecting")); //$NON-NLS-1$
-        }
     }
 
     private EntityModel<Boolean> createInstanceOnly;
@@ -113,7 +76,6 @@ public class LoginModel extends Model {
 
     static {
         loggedInEventDefinition = new EventDefinition("LoggedIn", LoginModel.class); //$NON-NLS-1$
-        loginFailedEventDefinition = new EventDefinition("LoginFailed", LoginModel.class); //$NON-NLS-1$
     }
 
     private List<String> messages;
@@ -131,28 +93,20 @@ public class LoginModel extends Model {
 
     public LoginModel() {
         setLoggedInEvent(new Event<>(loggedInEventDefinition));
-        setLoginFailedEvent(new Event<>(loginFailedEventDefinition));
 
         setProfile(new ListModel<String>());
         getProfile().setIsChangeable(false);
         setUserName(new EntityModel<String>());
         getUserName().setIsChangeable(false);
         getUserName().getEntityChangedEvent().addListener(this);
-        setPassword(new EntityModel<String>());
-        getPassword().setIsChangeable(false);
         setCreateInstanceOnly(new EntityModel<>(false));
 
-        setIsConnecting(true);
-
         AsyncQuery _asyncQuery = new AsyncQuery();
-
         _asyncQuery.setModel(this);
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
-
-                setIsConnecting(false);
 
                 LoginModel loginModel = (LoginModel) model;
                 if (ReturnValue == null) {
@@ -167,7 +121,6 @@ public class LoginModel extends Model {
                     // If this happens to be executed before the AutoLogin() is executed,
                     // it is not a problem, as the AutoLogin() will disable the screen by itself.
                     loginModel.getUserName().setIsChangeable(true);
-                    loginModel.getPassword().setIsChangeable(true);
                     loginModel.getProfile().setIsChangeable(true);
                 }
 
@@ -197,16 +150,14 @@ public class LoginModel extends Model {
 
     protected void disableLoginScreen() {
         getUserName().setIsChangeable(false);
-        getPassword().setIsChangeable(false);
         getProfile().setIsChangeable(false);
     }
 
     protected boolean validate() {
         getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getProfile().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        return getUserName().getIsValid() && getPassword().getIsValid() && getProfile().getIsValid();
+        return getUserName().getIsValid() && getProfile().getIsValid();
     }
 
 }

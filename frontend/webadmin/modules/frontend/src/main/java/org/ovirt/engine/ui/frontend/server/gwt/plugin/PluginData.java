@@ -23,6 +23,7 @@ public class PluginData implements Comparable<PluginData> {
     private static final String ATT_URL = "url"; //$NON-NLS-1$
     private static final String ATT_CONFIG = "config"; //$NON-NLS-1$
     private static final String ATT_RESOURCEPATH = "resourcePath"; //$NON-NLS-1$
+    private static final String ATT_LAZYLOAD = "lazyLoad"; //$NON-NLS-1$
     private static final String ATT_ENABLED = "enabled"; //$NON-NLS-1$
     private static final String ATT_ORDER = "order"; //$NON-NLS-1$
 
@@ -80,6 +81,10 @@ public class PluginData implements Comparable<PluginData> {
         }
         if (!checkOptionalNonEmptyStringNode(descriptorNode, ATT_RESOURCEPATH)) {
             callback.descriptorError("Optional attribute must be non-empty string: " + ATT_RESOURCEPATH); //$NON-NLS-1$
+            isValid = false;
+        }
+        if (!checkOptionalBooleanNode(descriptorNode, ATT_LAZYLOAD)) {
+            callback.descriptorError("Optional attribute must be boolean: " + ATT_LAZYLOAD); //$NON-NLS-1$
             isValid = false;
         }
 
@@ -158,6 +163,11 @@ public class PluginData implements Comparable<PluginData> {
     public String getResourcePath() {
         JsonNode target = descriptorNode.path(ATT_RESOURCEPATH);
         return !target.isMissingNode() ? target.getTextValue() : null;
+    }
+
+    public boolean isLazyLoad() {
+        JsonNode target = descriptorNode.path(ATT_LAZYLOAD);
+        return !target.isMissingNode() ? target.getBooleanValue() : true;
     }
 
     public boolean isEnabled() {

@@ -59,7 +59,6 @@ import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
@@ -70,9 +69,6 @@ import com.google.inject.name.Named;
 
 public class CommonModel extends ListModel<SearchableListModel> {
 
-    // TODO: "SingedOut" is misspelled.
-    public static final EventDefinition signedOutEventDefinition = new EventDefinition("SingedOut", CommonModel.class); //$NON-NLS-1$
-    private Event<EventArgs> privateSignedOutEvent;
     private UICommand privateSearchCommand;
     private UICommand privateConfigureCommand;
     private UICommand privateSignOutCommand;
@@ -188,8 +184,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
         setModelList();
 
-        setSignedOutEvent(new Event<>(signedOutEventDefinition));
-
         UICommand tempVar = new UICommand("Search", this); //$NON-NLS-1$
         tempVar.setIsDefault(true);
         setSearchCommand(tempVar);
@@ -211,7 +205,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
         getTaskList().getSearchCommand().execute();
 
-        initItems();
+        // Activate the default list model.
+        setSelectedItem(getDefaultItem());
 
         setLoggedInUser(Frontend.getInstance().getLoggedInUser());
         getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -253,11 +248,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
         modelList.add(this.sessionListModel);
         modelList.add(this.instanceTypeListModel);
         setItems(modelList);
-    }
-
-    private void initItems() {
-        // Activate the default list model.
-        setSelectedItem(getDefaultItem());
     }
 
     private void updateHasSelectedTags() {
@@ -992,14 +982,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
             search.argvalue = source;
             getAutoCompleteModel().setFilter(null);
         }
-    }
-
-    public Event getSignedOutEvent() {
-        return privateSignedOutEvent;
-    }
-
-    private void setSignedOutEvent(Event value) {
-        privateSignedOutEvent = value;
     }
 
     public UICommand getSearchCommand() {

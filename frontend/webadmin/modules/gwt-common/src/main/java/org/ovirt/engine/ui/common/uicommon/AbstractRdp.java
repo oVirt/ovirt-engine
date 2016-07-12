@@ -29,8 +29,8 @@ public abstract class AbstractRdp extends AbstractConsole {
     }
 
     public String getUserPassword() {
-        String password = Frontend.getInstance().getLoginPassword();
-        return password != null ? password : ""; //$NON-NLS-1$
+        // TODO(vs) password is not accessible due to SSO
+        return ""; //$NON-NLS-1$
     }
 
     public String getUserDomainController() {

@@ -48,9 +48,6 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         setInSlot(TYPE_SetHeader, header);
 
-        // Enable plugin invocation within the scope of main section
-        pluginManager.enablePluginInvocation();
-
         // Enable alerts within the scope of main section
         alertManager.setCanShowAlerts(true);
     }
@@ -58,9 +55,6 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     @Override
     protected void onHide() {
         super.onHide();
-
-        // Disable plugin invocation outside the scope of main section
-        pluginManager.disablePluginInvocation();
 
         // Disable alerts outside the scope of main section
         alertManager.setCanShowAlerts(false);

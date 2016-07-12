@@ -123,11 +123,6 @@ public class Frontend implements HasHandlers {
     private DbUser currentUser;
 
     /**
-     * The current login password.
-     */
-    private String currentPassword;
-
-    /**
      * Should queries be filtered.
      */
     private boolean filterQueries;
@@ -863,11 +858,9 @@ public class Frontend implements HasHandlers {
     /**
      * Initializes the currently logged in user.
      * @param loggedUser A {@code DbUser} object.
-     * @param loginPassword The login password associated with that user.
      */
-    public void initLoggedInUser(DbUser loggedUser, String loginPassword) {
+    public void initLoggedInUser(DbUser loggedUser) {
         this.currentUser = loggedUser;
-        this.currentPassword = loginPassword;
     }
 
     /**
@@ -876,14 +869,6 @@ public class Frontend implements HasHandlers {
      */
     public DbUser getLoggedInUser() {
         return currentUser;
-    }
-
-    /**
-     * Get the current login password.
-     * @return The current login password as a {@code String}.
-     */
-    public String getLoginPassword() {
-        return currentPassword;
     }
 
     /**

@@ -53,13 +53,10 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
     protected void performBootstrap() {
         super.performBootstrap();
         Window.setTitle(dynamicMessages.applicationTitle());
-
-        // Initiate transition to requested application place
-        placeManager.revealCurrentPlace();
     }
 
     @Override
-    protected void beforeLogin(UserPortalLoginModel loginModel) {
+    protected void beforeLogin() {
         UserPortalModelInitEvent.fire(eventBus);
     }
 
