@@ -226,6 +226,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String uploadImage();
 
+    String uploadImageStart();
+
     String uploadImageCancel();
 
     String uploadImagePause();

@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -7,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
@@ -28,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -280,33 +285,34 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImage()) {
+        // Upload operations drop down
+        List<ActionButtonDefinition<Disk>> uploadActions = new LinkedList<>();
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageStart()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getUploadCommand();
             }
         });
-
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCancelUploadCommand();
             }
         });
-
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getPauseUploadCommand();
             }
         });
-
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getResumeUploadCommand();
             }
         });
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(
+                constants.uploadImage(), uploadActions));
     }
 
     void searchByDiskViewType(Object diskViewType) {

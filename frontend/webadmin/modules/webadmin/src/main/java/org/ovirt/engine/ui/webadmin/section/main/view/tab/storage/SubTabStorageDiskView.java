@@ -1,10 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -18,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
@@ -134,29 +139,34 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
                 return getDetailModel().getRemoveCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImage()) {
+
+        // Upload operations drop down
+        List<ActionButtonDefinition<Disk>> uploadActions = new LinkedList<>();
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageStart()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getUploadCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCancelUploadCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseUploadCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
+        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getResumeUploadCommand();
             }
         });
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(
+                constants.uploadImage(), uploadActions));
     }
 }
