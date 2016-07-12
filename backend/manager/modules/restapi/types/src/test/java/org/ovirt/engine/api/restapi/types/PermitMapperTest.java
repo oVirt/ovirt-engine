@@ -1,9 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Permit;
-import org.ovirt.engine.api.model.PermitType;
-import org.ovirt.engine.api.model.RoleType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.RoleType;
 
 public class PermitMapperTest extends AbstractInvertibleMappingTest<Permit, ActionGroup, ActionGroup> {
 
@@ -15,9 +14,8 @@ public class PermitMapperTest extends AbstractInvertibleMappingTest<Permit, Acti
     protected Permit postPopulate(Permit from) {
         ActionGroup actionGroup = MappingTestHelper.shuffle(ActionGroup.class);
         from.setId(Integer.toString(actionGroup.getId()));
-        PermitType permitType = PermitMapper.map(actionGroup, (PermitType)null);
-        from.setName(permitType.value());
-        from.setAdministrative(actionGroup.getRoleType().toString().equals(RoleType.ADMIN.toString()));
+        from.setName(actionGroup.name().toLowerCase());
+        from.setAdministrative(actionGroup.getRoleType() == RoleType.ADMIN);
         return from;
     }
 

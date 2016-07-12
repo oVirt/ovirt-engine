@@ -2,14 +2,11 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Permit;
-import org.ovirt.engine.api.model.PermitType;
-import org.ovirt.engine.api.restapi.types.PermitMapper;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -88,8 +85,8 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
     @Override
     protected void verifyModel(Permit model, int index) {
         assertEquals(Integer.toString(index + 1), model.getId());
-        PermitType permitType = PermitMapper.map(ActionGroup.forValue(index + 1), (PermitType)null);
-        assertEquals(permitType.value(), model.getName());
+        ActionGroup actionGroup = ActionGroup.forValue(index + 1);
+        assertEquals(actionGroup.name().toLowerCase(), model.getName());
     }
 
 }
