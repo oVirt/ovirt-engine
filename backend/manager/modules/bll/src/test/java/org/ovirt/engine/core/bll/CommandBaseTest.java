@@ -110,7 +110,7 @@ public class CommandBaseTest extends BaseCommandTest {
         }
 
         @Override
-        protected void updateCommand() {
+        protected void updateCommandIfNeeded() {
         }
     }
 

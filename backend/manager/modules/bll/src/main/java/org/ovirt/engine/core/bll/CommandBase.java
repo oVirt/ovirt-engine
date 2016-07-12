@@ -400,7 +400,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 getReturnValue().setValid(false);
             }
         } finally {
-            updateCommand();
+            updateCommandIfNeeded();
             freeLockExecute();
             clearAsyncTasksWithOutVdsmId();
         }
@@ -2342,8 +2342,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
     }
 
-    protected void updateCommand() {
-        if (CommandCoordinatorUtil.getCommandEntity(getCommandId()) != null) {
+    protected void updateCommandIfNeeded() {
+        if (shouldPersistCommand() && CommandCoordinatorUtil.getCommandEntity(getCommandId()) != null) {
             persistCommand(getParameters().getParentCommand());
         }
     }
