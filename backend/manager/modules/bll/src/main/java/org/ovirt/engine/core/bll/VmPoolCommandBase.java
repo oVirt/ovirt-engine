@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -135,24 +134,24 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     protected static boolean isVmFree(Guid vmId, List<String> messages) {
         // check that there isn't another user already attached to this VM:
         if (vmAssignedToUser(vmId, messages)) {
-            return failVmFree(messages);
+            return failVmFree(messages, Collections.emptyList());
         }
 
         // check that vm can be run:
         if (!canRunPoolVm(vmId, messages)) {
-            return failVmFree(messages);
+            return failVmFree(messages, Collections.emptyList());
         }
 
         // check vm images:
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         ValidationResult vmDuringSnapshotResult = snapshotsValidator.vmNotDuringSnapshot(vmId);
         if (!vmDuringSnapshotResult.isValid()) {
-            return failVmFree(messages, vmDuringSnapshotResult.getMessage().name());
+            return failVmFree(messages, vmDuringSnapshotResult.getMessagesAsStrings());
         }
 
         ValidationResult vmInPreviewResult = snapshotsValidator.vmNotInPreview(vmId);
         if (!vmInPreviewResult.isValid()) {
-            return failVmFree(messages, vmInPreviewResult.getMessage().name());
+            return failVmFree(messages, vmInPreviewResult.getMessagesAsStrings());
         }
 
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
@@ -162,7 +161,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         StoragePool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());
         ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
         if (!spUpResult.isValid()) {
-            return failVmFree(messages, spUpResult.getMessage().name());
+            return failVmFree(messages, spUpResult.getMessagesAsStrings());
         }
 
         Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getStorageIds().get(0) : Guid.Empty;
@@ -173,7 +172,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                             .getForStoragePool(storageDomainId, sp.getId()));
             ValidationResult domainActiveResult = storageDomainValidator.isDomainExistAndActive();
             if (!domainActiveResult.isValid()) {
-                return failVmFree(messages, domainActiveResult.getMessage().name());
+                return failVmFree(messages, domainActiveResult.getMessagesAsStrings());
             }
         }
 
@@ -181,24 +180,17 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         ValidationResult disksNotLockedResult = diskImagesValidator.diskImagesNotLocked();
         if (!disksNotLockedResult.isValid()) {
             List<String> messagesToAdd = new LinkedList<>();
-            messagesToAdd.add(disksNotLockedResult.getMessage().name());
+            messagesToAdd.addAll(disksNotLockedResult.getMessagesAsStrings());
             messagesToAdd.addAll(disksNotLockedResult.getVariableReplacements());
             return failVmFree(messages, messagesToAdd);
         }
 
         ValidationResult vmNotLockResult = new VmValidator(vm).vmNotLocked();
         if (!vmNotLockResult.isValid()) {
-            return failVmFree(messages, vmNotLockResult.getMessage().name());
+            return failVmFree(messages, vmNotLockResult.getMessagesAsStrings());
         }
 
         return true;
-    }
-
-    private static boolean failVmFree(List<String> messages, String... messagesToAdd) {
-        for (String messageToAdd : messagesToAdd) {
-            messages.add(messageToAdd);
-        }
-        return failVmFree(messages, Arrays.asList(messagesToAdd));
     }
 
     private static boolean failVmFree(List<String> messages, List<String> messagesToAdd) {

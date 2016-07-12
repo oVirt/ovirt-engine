@@ -82,7 +82,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             ValidationResult res = storageDomainValidator.isDomainExistAndActive();
             returnValue = res.isValid();
             if (!returnValue) {
-                reasons.add(res.getMessage().toString());
+                reasons.addAll(res.getMessagesAsStrings());
                 reasons.addAll(res.getVariableReplacements());
             }
         }

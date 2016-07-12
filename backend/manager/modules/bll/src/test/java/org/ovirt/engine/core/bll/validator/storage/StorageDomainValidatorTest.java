@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,17 +30,17 @@ public class StorageDomainValidatorTest {
     @Test
     public void testIsDomainExistAndActiveDomainNotExists() {
         validator = new StorageDomainValidator(null);
-        assertEquals("Wrong failure for null domain",
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST,
-                validator.isDomainExistAndActive().getMessage());
+        assertThat("Wrong failure for null domain",
+                validator.isDomainExistAndActive(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST));
     }
 
     @Test
     public void testIsDomainExistAndActiveDomainNotUp() {
         domain.setStatus(StorageDomainStatus.Inactive);
-        assertEquals("Wrong failure for inactive domain",
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
-                validator.isDomainExistAndActive().getMessage());
+        assertThat("Wrong failure for inactive domain",
+                validator.isDomainExistAndActive(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
     }
 
     @Test
@@ -51,9 +52,9 @@ public class StorageDomainValidatorTest {
     @Test
     public void testDomainWithNotEnoughSpace() {
         validator = new StorageDomainValidator(mockStorageDomain(3, 756, StorageType.NFS));
-        assertEquals("Wrong failure for not enough space",
-                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
-                validator.isDomainWithinThresholds().getMessage());
+        assertThat("Wrong failure for not enough space",
+                validator.isDomainWithinThresholds(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
     @Test

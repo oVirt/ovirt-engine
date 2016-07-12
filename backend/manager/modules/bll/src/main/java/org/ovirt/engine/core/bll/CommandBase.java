@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
@@ -2095,8 +2096,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      */
     protected boolean validate(ValidationResult validationResult) {
         if (!validationResult.isValid()) {
-            addValidationMessage(validationResult.getMessage());
-
+            addValidationMessages(validationResult.getMessages());
             validationResult.getVariableReplacements().forEach(this::addValidationMessage);
         }
 
@@ -2115,6 +2115,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         getReturnValue().getValidationMessages().add(message.name());
     }
 
+    protected void addValidationMessages(List<EngineMessage> messages) {
+        getReturnValue().getValidationMessages().addAll(messages.stream().map(m -> m.name()).collect(Collectors.toList()));
+    }
+
     /**
      * Add validation message with variable replacements and return false.
      *
@@ -2124,7 +2128,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @see {@link #addValidationMessage(String)}
      */
     protected final boolean failValidation(EngineMessage message, String ... variableReplacements) {
-        addValidationMessage(message);
+        return failValidation(Collections.singletonList(message), variableReplacements);
+    }
+
+    protected final boolean failValidation(List<EngineMessage> messages, String ... variableReplacements) {
+        addValidationMessages(messages);
         for (String variableReplacement : variableReplacements) {
             addValidationMessage(variableReplacement);
         }

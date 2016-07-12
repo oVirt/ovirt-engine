@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -138,6 +140,8 @@ public class SnapshotsValidatorTest {
      */
     private static void validateResult(ValidationResult validationResult, boolean isValid, EngineMessage message) {
         assertEquals(isValid, validationResult.isValid());
-        assertEquals(message, validationResult.getMessage());
+        if (!isValid) {
+            assertThat(validationResult, failsWith(message));
+        }
     }
 }

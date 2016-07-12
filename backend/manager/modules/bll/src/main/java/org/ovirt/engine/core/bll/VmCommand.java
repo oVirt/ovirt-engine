@@ -427,7 +427,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected boolean canRunActionOnNonManagedVm() {
         ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
         if (!nonManagedVmValidationResult.isValid()) {
-            return failValidation(nonManagedVmValidationResult.getMessage());
+            return failValidation(nonManagedVmValidationResult.getMessages());
         }
         return true;
     }

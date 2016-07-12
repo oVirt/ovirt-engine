@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsNumaNodeDao;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -219,8 +220,6 @@ public class NumaValidatorTest {
     }
 
     private void assertValidationFailure(ValidationResult validationResult, EngineMessage engineMessage) {
-        assertFalse(validationResult.isValid());
-        assertTrue(String.format("Expected %s but got %s", engineMessage.name(), validationResult.getMessage().name()),
-                validationResult.getMessage() == engineMessage);
+        assertThat(validationResult, failsWith(engineMessage));
     }
 }

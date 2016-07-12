@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +48,7 @@ public class StorageConnectionValidatorTest {
     @Test
     public void isConnectionNotExists() {
         validator = new StorageConnectionValidator(null);
-        assertEquals(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST,
-                validator.isConnectionExists().getMessage());
+        assertThat(validator.isConnectionExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST));
     }
 
     @Test
@@ -66,16 +66,16 @@ public class StorageConnectionValidatorTest {
     @Test
     public void isNotSameStorageType() {
         domain.setStorageType(StorageType.NFS);
-        assertEquals(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_NOT_SAME_STORAGE_TYPE,
-                validator.isSameStorageType(domain).getMessage());
+        assertThat(validator.isSameStorageType(domain),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_NOT_SAME_STORAGE_TYPE));
     }
 
     @Test
     public void isNotISCSIConnectionAndDomain() {
         connection.setStorageType(StorageType.NFS);
         domain.setStorageType(StorageType.NFS);
-        assertEquals(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS,
-                validator.isISCSIConnectionAndDomain(domain).getMessage());
+        assertThat(validator.isISCSIConnectionAndDomain(domain),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS));
     }
 
     @Test

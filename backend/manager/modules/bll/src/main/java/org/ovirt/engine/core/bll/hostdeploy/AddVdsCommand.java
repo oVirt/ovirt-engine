@@ -580,8 +580,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     @Override
-    protected void addValidationMessage(EngineMessage message) {
-        super.addValidationMessage(message);
+    protected void addValidationMessages(List<EngineMessage> messages) {
+        super.addValidationMessages(messages);
     }
 
     @Override

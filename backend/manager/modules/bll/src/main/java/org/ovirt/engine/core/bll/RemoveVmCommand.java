@@ -245,7 +245,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         if (!vmLockedValidatorResult.isValid()) {
             // without force remove, we can't remove the VM
             if (!getParameters().getForce()) {
-                return failValidation(vmLockedValidatorResult.getMessage());
+                return failValidation(vmLockedValidatorResult.getMessages());
             }
 
             // If it is force, we cannot remove if there are task

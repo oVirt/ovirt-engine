@@ -458,7 +458,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     protected boolean canRunActionOnNonManagedVm() {
         ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
         if (!nonManagedVmValidationResult.isValid()) {
-            return failValidation(nonManagedVmValidationResult.getMessage());
+            return failValidation(nonManagedVmValidationResult.getMessages());
         }
         return true;
     }

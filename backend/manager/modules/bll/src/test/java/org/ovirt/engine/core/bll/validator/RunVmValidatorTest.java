@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -305,7 +307,9 @@ public class RunVmValidatorTest {
 
     private static void validateResult(ValidationResult validationResult, boolean isValid, EngineMessage message) {
         assertEquals(isValid, validationResult.isValid());
-        assertEquals(message, validationResult.getMessage());
+        if (!isValid) {
+            assertThat(validationResult, failsWith(message));
+        }
     }
 
 }

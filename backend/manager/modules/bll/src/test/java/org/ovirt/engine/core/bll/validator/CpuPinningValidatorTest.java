@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,12 +129,10 @@ public class CpuPinningValidatorTest {
     }
 
     private void assertFailsWith(ValidationResult validationResult, EngineMessage engineMessage) {
-        assertThat(validationResult.isValid()).isFalse();
-        assertThat(validationResult.getMessage()).isEqualTo(engineMessage);
+        assertThat(validationResult, failsWith(engineMessage));
     }
 
     private void assertFailsWith(String errorMessage, ValidationResult validationResult, EngineMessage engineMessage) {
-        assertThat(validationResult.isValid()).isFalse().as(errorMessage);
-        assertThat(validationResult.getMessage()).isEqualTo(engineMessage).as(errorMessage);
+        assertThat(errorMessage, validationResult, failsWith(engineMessage));
     }
 }

@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,6 @@ public class StorageServerConnectionExtensionValidatorTest {
     @Test
     public void testIsConnectionDoesNotExistForHostAndTargetFails() {
         when(storageServerConnectionExtensionDao.getByHostIdAndTarget(conn.getHostId(), conn.getIqn())).thenReturn(new StorageServerConnectionExtension());
-        assertEquals(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS, validator.isConnectionDoesNotExistForHostAndTarget(conn).getMessage());
+        assertThat(validator.isConnectionDoesNotExistForHostAndTarget(conn), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS));
     }
 }

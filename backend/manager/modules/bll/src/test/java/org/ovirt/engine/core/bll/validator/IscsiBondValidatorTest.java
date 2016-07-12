@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,7 @@ public class IscsiBondValidatorTest {
     @Test
     public void iscsiBondDoesNotExist() {
         ValidationResult res = validator.isIscsiBondExist(null);
-        assertEquals(EngineMessage.ISCSI_BOND_NOT_EXIST, res.getMessage());
+        assertThat(res, failsWith(EngineMessage.ISCSI_BOND_NOT_EXIST));
     }
 
     @Test
@@ -74,7 +76,7 @@ public class IscsiBondValidatorTest {
         doReturn(iscsiBonds).when(iscsiBondDao).getAllByStoragePoolId(any(Guid.class));
 
         ValidationResult res = validator.iscsiBondWithTheSameNameExistInDataCenter(createIscsiBond("Second", dataCenterId));
-        assertEquals(EngineMessage.ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER, res.getMessage());
+        assertThat(res, failsWith(EngineMessage.ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER));
     }
 
     @Test
@@ -103,7 +105,7 @@ public class IscsiBondValidatorTest {
 
         ValidationResult res = validator.validateAddedLogicalNetworks(iscsiBond);
 
-        assertEquals(EngineMessage.NETWORKS_DONT_EXIST_IN_DATA_CENTER, res.getMessage());
+        assertThat(res, failsWith(EngineMessage.NETWORKS_DONT_EXIST_IN_DATA_CENTER));
         assertEquals(2, res.getVariableReplacements().size());
         assertEquals("$networkIds " + iscsiBond.getNetworkIds().get(1).toString(), res.getVariableReplacements().get(0));
         assertEquals("$dataCenterId " + iscsiBond.getStoragePoolId().toString(), res.getVariableReplacements().get(1));
@@ -125,7 +127,7 @@ public class IscsiBondValidatorTest {
 
         ValidationResult res = validator.validateAddedLogicalNetworks(after, before);
 
-        assertEquals(EngineMessage.NETWORKS_DONT_EXIST_IN_DATA_CENTER, res.getMessage());
+        assertThat(res, failsWith(EngineMessage.NETWORKS_DONT_EXIST_IN_DATA_CENTER));
         assertEquals(2, res.getVariableReplacements().size());
         assertEquals("$networkIds " + after.getNetworkIds().get(1).toString(), res.getVariableReplacements().get(0));
         assertEquals("$dataCenterId " + after.getStoragePoolId().toString(), res.getVariableReplacements().get(1));
@@ -170,7 +172,7 @@ public class IscsiBondValidatorTest {
 
         ValidationResult res = validator.validateAddedLogicalNetworks(iscsiBond);
 
-        assertEquals(EngineMessage.ACTION_TYPE_FAILED_ISCSI_BOND_NETWORK_CANNOT_BE_REQUIRED, res.getMessage());
+        assertThat(res, failsWith(EngineMessage.ACTION_TYPE_FAILED_ISCSI_BOND_NETWORK_CANNOT_BE_REQUIRED));
     }
 
     @Test
@@ -201,7 +203,7 @@ public class IscsiBondValidatorTest {
 
         ValidationResult res = validator.validateAddedStorageConnections(iscsiBond);
 
-        assertEquals(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTIONS_CANNOT_BE_ADDED_TO_ISCSI_BOND, res.getMessage());
+        assertThat(res, failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTIONS_CANNOT_BE_ADDED_TO_ISCSI_BOND));
         assertEquals(1, res.getVariableReplacements().size());
         assertEquals("$connectionIds " + iscsiBond.getStorageConnectionIds().get(1).toString(), res.getVariableReplacements().get(0));
     }

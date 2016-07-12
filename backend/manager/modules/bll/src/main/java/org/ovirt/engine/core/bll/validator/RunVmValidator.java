@@ -452,12 +452,8 @@ public class RunVmValidator {
 
     protected boolean validate(ValidationResult validationResult, List<String> message) {
         if (!validationResult.isValid()) {
-            message.add(validationResult.getMessage().name());
-
-            for (String variableReplacement : validationResult.getVariableReplacements()) {
-                message.add(variableReplacement);
-            }
-
+            message.addAll(validationResult.getMessagesAsStrings());
+            message.addAll(validationResult.getVariableReplacements());
         }
         return validationResult.isValid();
     }

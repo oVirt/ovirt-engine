@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -11,6 +10,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,10 +86,7 @@ public class MultipleStorageDomainsValidatorTest {
         domain1.setStatus(StorageDomainStatus.Active);
         domain2.setStatus(StorageDomainStatus.Inactive);
         ValidationResult result = validator.allDomainsExistAndActive();
-        assertFalse("One domain should not be active", result.isValid());
-        assertEquals("Wrong validation error",
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
-                result.getMessage());
+        assertThat("One domain should not be active", result, failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
     }
 
     @Test
@@ -108,10 +105,7 @@ public class MultipleStorageDomainsValidatorTest {
         domain1.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
         domain2.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
         ValidationResult result = validator.allDomainsWithinThresholds();
-        assertFalse("domain2 should not be within thresholds", result.isValid());
-        assertEquals("Wrong validation error",
-                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
-                result.getMessage());
+        assertThat("domain2 should not be within thresholds", result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
     @Test
@@ -138,10 +132,7 @@ public class MultipleStorageDomainsValidatorTest {
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
         ValidationResult result = validator.allDomainsHaveSpaceForNewDisks(disksList);
-        assertFalse(result.isValid());
-        assertEquals("Wrong validation error",
-                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
-                result.getMessage());
+        assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
     @Test
@@ -168,10 +159,7 @@ public class MultipleStorageDomainsValidatorTest {
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
         ValidationResult result = validator.allDomainsHaveSpaceForClonedDisks(disksList);
-        assertFalse(result.isValid());
-        assertEquals("Wrong validation error",
-                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
-                result.getMessage());
+        assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
     @Test
@@ -202,10 +190,7 @@ public class MultipleStorageDomainsValidatorTest {
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
         ValidationResult result = validator.allDomainsHaveSpaceForAllDisks(disksListForNew, disksListForCloned);
-        assertFalse(result.isValid());
-        assertEquals("Wrong validation error",
-                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
-                result.getMessage());
+        assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
     private List<DiskImage> generateDisksList(int size, List<Guid> sdIds) {

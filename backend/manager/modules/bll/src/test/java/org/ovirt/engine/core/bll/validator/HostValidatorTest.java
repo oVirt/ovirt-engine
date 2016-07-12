@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -326,7 +325,7 @@ public class HostValidatorTest {
     @Test
     public void testIsNotUp() {
         validator = mockHostForActivation(VDSStatus.Down);
-        assertNotEquals(validator.isUp().getMessage(), EngineMessage.VAR__HOST_STATUS__UP);
+        assertThat(validator.isUp(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, "$hostStatus Up"));
     }
 
     @Test

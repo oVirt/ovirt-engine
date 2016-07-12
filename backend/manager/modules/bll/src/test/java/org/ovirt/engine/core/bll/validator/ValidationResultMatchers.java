@@ -6,8 +6,11 @@ import static org.hamcrest.CoreMatchers.not;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -62,7 +65,7 @@ public class ValidationResultMatchers {
 
     /**
      * @param expectedError
-     *            The error message expected in {@link ValidationResult#getMessage()}
+     *            The error message expected in {@link ValidationResult#getMessages()}
      * @return A matcher matching any {@link ValidationResult} that is not valid and fails with the given error.
      */
     public static Matcher<ValidationResult> failsWith(EngineMessage expectedError) {
@@ -78,11 +81,16 @@ public class ValidationResultMatchers {
         return new Fails(expectedError, variableReplacements.toArray(new String[variableReplacements.size()]));
     }
 
+    public static Matcher<ValidationResult> failsWith(List<EngineMessage> expectedErrors,
+            Collection<String> variableReplacements) {
+        return new Fails(expectedErrors, variableReplacements.toArray(new String[variableReplacements.size()]));
+    }
+
     public static Matcher<ValidationResult> failsWith(ValidationResult validationResult) {
         if (ValidationResult.VALID.equals(validationResult)) {
             throw new IllegalArgumentException("Illegal matcher usage: you cannot pass ValidationResult.VALID here.");
         }
-        return failsWith(validationResult.getMessage(), validationResult.getVariableReplacements());
+        return failsWith(validationResult.getMessages(), validationResult.getVariableReplacements());
     }
 
     /**
@@ -111,22 +119,23 @@ public class ValidationResultMatchers {
         }
     }
 
-    private static class WithMessage extends TypeSafeMatcher<ValidationResult> {
+    private static class WithMessages extends TypeSafeMatcher<ValidationResult> {
 
-        private EngineMessage expected;
+        private List<EngineMessage> expected;
 
-        public WithMessage(EngineMessage expected) {
+        public WithMessages(List<EngineMessage> expected) {
             this.expected = expected;
         }
 
         @Override
         public void describeTo(Description description) {
-            description.appendText("message \"" + expected.name()+"\"");
+            description.appendText("messages \"" +
+                    expected.stream().map(m -> m.name()).collect(Collectors.joining()) + "\"");
         }
 
         @Override
         public boolean matchesSafely(ValidationResult item) {
-            return expected == item.getMessage();
+            return CollectionUtils.isEqualCollection(expected, item.getMessages());
         }
     }
 
@@ -174,18 +183,19 @@ public class ValidationResultMatchers {
         private Matcher<ValidationResult> matcher;
 
         public Fails(EngineMessage expected) {
-            matcher = both(not(isValid())).and(new WithMessage(expected));
+            matcher = both(not(isValid())).and(new WithMessages(Collections.singletonList(expected)));
         }
 
         public Fails(EngineMessage expected, String... variableReplacements) {
-            matcher = allOf(
-                    not(isValid()),
-                    new WithMessage(expected),
-                    hasVariableReplacements(variableReplacements));
-
+            this(Collections.singletonList(expected), variableReplacements);
         }
 
-
+        public Fails(List<EngineMessage> expected, String... variableReplacements) {
+            matcher = allOf(
+                    not(isValid()),
+                    new WithMessages(expected),
+                    hasVariableReplacements(variableReplacements));
+        }
 
         @Override
         public void describeTo(Description description) {

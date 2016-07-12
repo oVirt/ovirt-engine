@@ -157,7 +157,7 @@ public class AddVdsCommandTest {
 
         when(commandMock.createReturnValue()).thenCallRealMethod();
         when(commandMock.getReturnValue()).thenCallRealMethod();
-        doCallRealMethod().when(commandMock).addValidationMessage(any(EngineMessage.class));
+        doCallRealMethod().when(commandMock).addValidationMessages(any(List.class));
 
         when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)

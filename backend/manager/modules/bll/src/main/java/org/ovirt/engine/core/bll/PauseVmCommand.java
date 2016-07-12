@@ -44,7 +44,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
 
             ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
             if (!nonManagedVmValidationResult.isValid()) {
-                addValidationMessage(nonManagedVmValidationResult.getMessage());
+                addValidationMessages(nonManagedVmValidationResult.getMessages());
                 retValue = false;
             }
 

@@ -786,7 +786,8 @@ public class HostSetupNetworksValidatorTest {
             assertThat(validator.validNewOrModifiedBonds(), isValid());
         } else {
             assertThat(validator.validNewOrModifiedBonds(),
-                failsWith(expectedValidationResult.getMessage(), expectedValidationResult.getVariableReplacements()));
+                failsWith(expectedValidationResult.getMessages(),
+                        expectedValidationResult.getVariableReplacements()));
         }
     }
 

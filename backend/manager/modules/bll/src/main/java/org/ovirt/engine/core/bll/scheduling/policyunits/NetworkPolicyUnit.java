@@ -81,7 +81,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
             if (!result.isValid()) {
                 toRemoveHostList.add(host);
                 messages.addMessages(host.getId(), result.getVariableReplacements());
-                messages.addMessage(host.getId(), result.getMessage().name());
+                messages.addMessages(host.getId(), result.getMessagesAsStrings());
             }
         }
         hosts.removeAll(toRemoveHostList);

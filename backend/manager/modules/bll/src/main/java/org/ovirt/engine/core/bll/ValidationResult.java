@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -24,7 +26,7 @@ public final class ValidationResult {
     /**
      * In case the validation succeeded it is {@code null}, otherwise it contains the validation failure message.
      */
-    private final EngineMessage message;
+    private final List<EngineMessage> messages = new ArrayList<>();
 
     /**
      * If there are any replacements for variables in the message, they can be set here.
@@ -36,8 +38,27 @@ public final class ValidationResult {
      * This constructor is private, it is only used to create a 'valid' result. Please use {@link ValidationResult#VALID}
      */
     private ValidationResult() {
-        message = null;
         variableReplacements = Collections.emptyList();
+    }
+
+    /**
+     * Validation result for failure with given messages.
+     *
+     * @param messages
+     *            The validation failure messages.
+     * @param variableReplacements
+     *            Replacements for variables that appear in the messages, in syntax: "$var text" where $var is the
+     *            variable to be replaced, and the text is the replacement.
+     */
+    public ValidationResult(List<EngineMessage> messages, String... variableReplacements) {
+        if (messages == null || messages.isEmpty()) {
+            throw new IllegalArgumentException("messages must not be empty");
+        }
+
+        this.messages.addAll(messages);
+        this.variableReplacements = variableReplacements == null || variableReplacements.length == 0 ?
+                Collections.<String>emptyList() :
+                Collections.unmodifiableList(Arrays.asList(variableReplacements));
     }
 
     /**
@@ -50,14 +71,10 @@ public final class ValidationResult {
      *            variable to be replaced, and the text is the replacement.
      */
     public ValidationResult(EngineMessage message, String... variableReplacements) {
+        this(Collections.singletonList(message), variableReplacements);
         if (message == null) {
             throw new IllegalArgumentException("message must not be null");
         }
-
-        this.message = message;
-        this.variableReplacements = variableReplacements == null || variableReplacements.length == 0 ?
-                Collections.<String>emptyList() :
-                Collections.unmodifiableList(Arrays.asList(variableReplacements));
     }
 
     /**
@@ -77,14 +94,22 @@ public final class ValidationResult {
      * @return Did the validation succeed or not?
      */
     public boolean isValid() {
-        return message == null;
+        return messages.isEmpty();
     }
 
     /**
-     * @return {@code null} in case the validation succeeded, otherwise the validation failure message
+     * @return an empty {@code List} in case the validation succeeded, otherwise the validation failure messages
      */
-    public EngineMessage getMessage() {
-        return message;
+    public List<EngineMessage> getMessages() {
+        return messages;
+    }
+
+    /**
+     * @return an empty {@code List} in case the validation succeeded, otherwise the validation
+     * failure messages as Strings
+     */
+    public List<String> getMessagesAsStrings() {
+        return messages.stream().map(m -> m.name()).collect(Collectors.toList());
     }
 
     /**
@@ -98,7 +123,7 @@ public final class ValidationResult {
     @Override
     public int hashCode() {
         return Objects.hash(
-                message,
+                messages,
                 variableReplacements
         );
     }
@@ -112,14 +137,14 @@ public final class ValidationResult {
             return false;
         }
         ValidationResult other = (ValidationResult) obj;
-        return Objects.equals(message, other.message)
+        return Objects.equals(messages, other.messages)
                 && Objects.equals(variableReplacements, other.variableReplacements);
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("message", getMessage())
+                .append("messages", messages.toArray())
                 .append("variableReplacements", getVariableReplacements())
                 .build();
     }
