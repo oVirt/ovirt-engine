@@ -7,8 +7,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -120,12 +121,9 @@ public class StorageConnectionValidatorTest {
     }
 
     private List<StorageServerConnections> getConnections() {
-         List<StorageServerConnections> connectionsList = new ArrayList<>();
-         for (int i = 0; i < NUMBER_OF_EXISTING_CONNECTIONS; i++) {
-             StorageServerConnections conn = new StorageServerConnections();
-             conn.setId(Guid.newGuid().toString());
-             connectionsList.add(conn);
-         }
-         return connectionsList;
+        return Stream.generate(StorageServerConnections::new)
+                .limit(NUMBER_OF_EXISTING_CONNECTIONS)
+                .peek(conn -> conn.setId(Guid.newGuid().toString()))
+                .collect(Collectors.toList());
     }
 }
