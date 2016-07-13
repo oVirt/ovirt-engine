@@ -234,7 +234,7 @@ public class VmAnalyzer {
             }
 
             updateVmDynamicData();
-            updateVmStatistics();
+            updateStatistics();
             if (!vdsManager.isInitialized()) {
                 resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
             }
@@ -553,7 +553,7 @@ public class VmAnalyzer {
         }
 
         updateVmDynamicData();
-        updateVmStatistics();
+        updateStatistics();
         if (!vdsManager.isInitialized()) {
             resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
         }
@@ -778,18 +778,22 @@ public class VmAnalyzer {
         auditLog(auditLogable, AuditLogType.VM_STATUS_RESTORED);
     }
 
-    private void updateVmStatistics() {
+    private void updateStatistics() {
         if (!updateStatistics) {
             return;
         }
 
-        statistics = getVmManager().getStatistics();
-        statistics.updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
+        updateVmStatistics();
         saveVmInterfaces();
         updateInterfaceStatistics();
         updateVmNumaNodeRuntimeInfo();
         updateDiskImageDynamics();
         updateVmJobs();
+    }
+
+    private void updateVmStatistics() {
+        statistics = getVmManager().getStatistics();
+        statistics.updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
     }
 
     private void updateDiskImageDynamics() {
