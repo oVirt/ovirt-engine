@@ -92,10 +92,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 VdsmVm vdsmVm = dbVm == null ?
                         createVdsmVm(vmId, vmMap, notifyTime)
                         : createVdsmVm(dbVm, vmMap, notifyTime);
-                return new Pair<>(
-                        // if dbVm runs on a different host, monitoring expects it to be null
-                        dbVm != null && !vdsManager.getVdsId().equals(dbVm.getRunOnVds()) ? null : dbVm,
-                        vdsmVm);
+                return new Pair<>(dbVm, vdsmVm);
             }
 
             private VdsmVm createVdsmVm(Guid vmId, Map<String, Object> xmlRpcStruct, Double notifyTime) {
