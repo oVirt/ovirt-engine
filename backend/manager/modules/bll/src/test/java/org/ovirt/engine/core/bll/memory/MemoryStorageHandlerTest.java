@@ -140,7 +140,7 @@ public class MemoryStorageHandlerTest {
             StorageDomain expectedStorageDomain) {
         List<StorageDomain> filteredStorageDomains = new ArrayList<>(
                 memoryStorageHandler.filterStorageDomains(storageDomains, memoryDisks));
-        assertEquals(filteredStorageDomains, Arrays.asList(expectedStorageDomain));
+        assertEquals(filteredStorageDomains, Collections.singletonList(expectedStorageDomain));
     }
 
     private void verifyDomainForMemory(List<StorageDomain> storageDomains, StorageDomain expectedStorageDomain) {
