@@ -98,7 +98,7 @@ public class MemoryStorageHandlerTest {
 
     @Test
     public void testFindStorageDomainForMemoryWithEmptyDomainsList() {
-        verifyNoDomainForMemory(Collections.<StorageDomain>emptyList());
+        verifyNoDomainForMemory(Collections.emptyList());
     }
 
     @Test
