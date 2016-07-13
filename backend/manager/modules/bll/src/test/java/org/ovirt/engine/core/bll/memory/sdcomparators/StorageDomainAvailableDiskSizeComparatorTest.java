@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.memory.sdcomparators;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
@@ -11,7 +12,7 @@ public class StorageDomainAvailableDiskSizeComparatorTest extends StorageDomainC
     public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     public StorageDomainAvailableDiskSizeComparatorTest() {
-        comparator = new StorageDomainAvailableDiskSizeComparator();
+        comparator = MemoryStorageHandler.AVAILABLE_SIZE_COMPARATOR;
     }
 
     @Test

@@ -7,10 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainAvailableDiskSizeComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
-import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeFileFirstComparator;
-import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeSharedFirstComparator;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
@@ -97,9 +94,9 @@ public class MemoryStorageHandler {
 
     protected List<? extends Comparator<StorageDomain>> getStorageDomainComparators(Collection<DiskImage> vmDisks) {
         return Arrays.asList(new StorageDomainNumberOfVmDisksComparator(vmDisks),
-                new StorageTypeSharedFirstComparator(),
-                new StorageTypeFileFirstComparator(),
-                new StorageDomainAvailableDiskSizeComparator());
+                SHARED_FIRST_COMPARATOR,
+                FILE_FIRST_COMPARATOR,
+                AVAILABLE_SIZE_COMPARATOR);
     }
 
     protected List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, List<DiskImage> memoryDisks) {
@@ -122,4 +119,16 @@ public class MemoryStorageHandler {
         VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
         disk.setVolumeType(volumeType);
     }
+
+    /* Comparators */
+
+    public static final Comparator<StorageDomain> SHARED_FIRST_COMPARATOR =
+            Comparator.comparing(StorageDomain::isShared).reversed();
+
+    public static final Comparator<StorageDomain> FILE_FIRST_COMPARATOR =
+            Comparator.<StorageDomain, Boolean>comparing(s -> s.getStorageType().isFileDomain()).reversed();
+
+    public static final Comparator<StorageDomain> AVAILABLE_SIZE_COMPARATOR =
+            Comparator.comparing(StorageDomain::getAvailableDiskSize).reversed();
+
 }

@@ -6,6 +6,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 @RunWith(Theories.class)
@@ -15,7 +16,7 @@ public class StorageTypeFileFirstComparatorTest extends StorageDomainComparatorA
     public static StorageType[] storageTypes = StorageType.values();
 
     public StorageTypeFileFirstComparatorTest() {
-        comparator = new StorageTypeFileFirstComparator();
+        comparator = MemoryStorageHandler.FILE_FIRST_COMPARATOR;
     }
 
     @Theory

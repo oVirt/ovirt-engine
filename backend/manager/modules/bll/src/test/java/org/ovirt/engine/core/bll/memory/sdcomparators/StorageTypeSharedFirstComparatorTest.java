@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll.memory.sdcomparators;
 
 import org.junit.Test;
+import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 public class StorageTypeSharedFirstComparatorTest extends StorageDomainComparatorAbstractTest {
 
     public StorageTypeSharedFirstComparatorTest() {
-        comparator = new StorageTypeSharedFirstComparator();
+        comparator = MemoryStorageHandler.SHARED_FIRST_COMPARATOR;
     }
 
     @Test
