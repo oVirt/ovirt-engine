@@ -11,9 +11,8 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainTypeFilter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -88,8 +87,8 @@ public class MemoryStorageHandler {
     }
 
     protected List<Predicate<StorageDomain>> getStorageDomainFilters(List<DiskImage> memoryDisks) {
-        return Arrays.asList(new StorageDomainStatusFilter(),
-                new StorageDomainTypeFilter(),
+        return Arrays.asList(ACTIVE_DOMAINS_PREDICATE,
+                DATA_DOMAINS_PREDICATE,
                 new StorageDomainSpaceRequirementsFilter(memoryDisks));
     }
 
@@ -117,6 +116,14 @@ public class MemoryStorageHandler {
         VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
         disk.setVolumeType(volumeType);
     }
+
+    /* Predicates */
+
+    public static final Predicate<StorageDomain> ACTIVE_DOMAINS_PREDICATE =
+            d -> d.getStatus() == StorageDomainStatus.Active;
+
+    public static final Predicate<StorageDomain> DATA_DOMAINS_PREDICATE =
+            d -> d.getStorageDomainType().isDataDomain();
 
     /* Comparators */
 
