@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -720,11 +721,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private String getSnapshotIsBeingTakenForVmMessage() {
         if (cachedSnapshotIsBeingTakenMessage == null) {
-            StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_SNAPSHOT_IS_BEING_TAKEN_FOR_VM.name());
-            if (getVmName() != null) {
-                builder.append(String.format("$VmName %1$s", getVmName()));
-            }
-            cachedSnapshotIsBeingTakenMessage = builder.toString();
+            cachedSnapshotIsBeingTakenMessage =
+                    new LockMessage(EngineMessage.ACTION_TYPE_FAILED_SNAPSHOT_IS_BEING_TAKEN_FOR_VM)
+                            .withOptional("VmName", getVmName())
+                            .toString();
         }
         return cachedSnapshotIsBeingTakenMessage;
     }

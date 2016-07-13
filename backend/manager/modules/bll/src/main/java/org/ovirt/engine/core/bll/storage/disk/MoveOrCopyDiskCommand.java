@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -505,11 +506,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private String getDiskIsBeingMigratedMessage() {
         if (cachedDiskIsBeingMigratedMessage == null) {
-            StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED.name());
-            if (getImage() != null) {
-                builder.append(String.format("$DiskName %1$s", getDiskAlias()));
-            }
-            cachedDiskIsBeingMigratedMessage = builder.toString();
+            cachedDiskIsBeingMigratedMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED)
+                    .withOptional("DiskName", getImage() != null ? getDiskAlias() : null)
+                    .toString();
         }
         return cachedDiskIsBeingMigratedMessage;
     }

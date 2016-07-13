@@ -331,15 +331,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (getVmTemplate() != null) {
             return Collections.singletonMap(getVmTemplateId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateExclusiveLockMessage()));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
+                            new LockMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED)
+                                    .with("templateName", getVmTemplate().getName())
+                                    .with("templateId", getVmTemplate().getId().toString())));
         }
         return null;
-    }
-
-    private String getTemplateExclusiveLockMessage() {
-        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED.name())
-        .append(String.format("$templateName %s$templateId %s", getVmTemplate().getName(), getVmTemplate().getId()))
-        .toString();
     }
 
     private void removeTemplateFromDb() {

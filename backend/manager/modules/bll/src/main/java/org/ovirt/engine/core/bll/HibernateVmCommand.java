@@ -206,15 +206,9 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getVmIsHibernatingMessage()));
-    }
-
-    private String getVmIsHibernatingMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_HIBERNATING.name());
-        if (getVmName() != null) {
-            builder.append(String.format("$VmName %1$s", getVmName()));
-        }
-        return builder.toString();
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_HIBERNATING)
+                                .withOptional("VmName", getVmName())));
     }
 
     @Override

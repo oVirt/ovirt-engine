@@ -68,15 +68,9 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getVmPool().getName(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL_NAME, getVmPoolIsBeingCreatedMessage()));
-    }
-
-    private String getVmPoolIsBeingCreatedMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_CREATED.name());
-        if (getVmPoolName() != null) {
-            builder.append(String.format("$VmPoolName %1$s", getVmPoolName()));
-        }
-        return builder.toString();
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL_NAME,
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_CREATED)
+                                .withOptional("VmPoolName", getVmPoolName())));
     }
 
     @Override

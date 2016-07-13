@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RemoveVmCommand;
@@ -60,15 +61,8 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         return Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.REMOTE_VM,
-                        getVmIsBeingRemovedFromExportDomainMessage()));
-    }
-
-    private String getVmIsBeingRemovedFromExportDomainMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_EXPORT_DOMAIN.name());
-        if (getVmName() != null) {
-            builder.append(String.format("$VmName %1$s", getVmName()));
-        }
-        return builder.toString();
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_EXPORT_DOMAIN)
+                                .withOptional("VmName", getVmName())));
     }
 
     @Override

@@ -65,16 +65,10 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
         return lockProperties.withScope(LockProperties.Scope.Execution);
     }
 
-    private String getVmBeingRemovedFromPoolMessage() {
-        StringBuilder builder = new StringBuilder(
-                EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_POOL.name());
-        if (getVm() != null) {
-            builder.append(String.format("$VmName %1$s", getVm().getName()));
-        }
-        if (getVmPool() != null) {
-            builder.append(String.format("$VmPoolName %1$s", getVmPool().getName()));
-        }
-        return builder.toString();
+    private LockMessage getVmBeingRemovedFromPoolMessage() {
+        return new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_POOL)
+                .withOptional("VmName", getVm() != null ? getVm().getName() : null)
+                .withOptional("VmPoolName", getVmPool() != null ? getVmPool().getName() : null);
     }
 
     @Override

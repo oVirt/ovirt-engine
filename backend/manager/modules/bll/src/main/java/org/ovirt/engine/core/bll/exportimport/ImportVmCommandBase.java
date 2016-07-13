@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
@@ -267,12 +268,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return null;
     }
 
-    protected String getVmIsBeingImportedMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
-        if (getVmName() != null) {
-            builder.append(String.format("$VmName %1$s", getVmName()));
-        }
-        return builder.toString();
+    protected LockMessage getVmIsBeingImportedMessage() {
+        return new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED)
+                .withOptional("VmName", getVmName());
     }
 
     @Override

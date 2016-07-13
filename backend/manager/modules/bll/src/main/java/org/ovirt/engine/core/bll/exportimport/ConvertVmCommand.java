@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -104,15 +105,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         return Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.VM,
-                        getVmIsBeingImportedMessage()));
-    }
-
-    protected String getVmIsBeingImportedMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
-        if (getVmName() != null) {
-            builder.append(String.format("$VmName %1$s", getVmName()));
-        }
-        return builder.toString();
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED)
+                                .with("VmName", getVmName())));
     }
 
     @Override

@@ -60,15 +60,9 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmPoolId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL, getVmPoolIsBeingUpdatedMessage()));
-    }
-
-    private String getVmPoolIsBeingUpdatedMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_UPDATED.name());
-        if (getVmPool() != null) {
-            builder.append(String.format("$VmPoolName %1$s", getVmPool().getName()));
-        }
-        return builder.toString();
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL,
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_UPDATED)
+                                .withOptional("VmPoolName", getVmPool() != null ? getVmPool().getName() : null)));
     }
 
     @Override

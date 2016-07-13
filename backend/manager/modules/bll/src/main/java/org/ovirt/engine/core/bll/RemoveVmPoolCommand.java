@@ -79,7 +79,9 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getVmPoolId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL, getVmPoolIsBeingRemovedMessage()));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL,
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_REMOVED)
+                                .withOptional("VmPoolName", getVmPool() != null ? getVmPool().getName() : null)));
         for (VM vm : getCachedVmsInPool()) {
             addVmLocks(vm, locks);
         }
@@ -91,22 +93,10 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getVmIsBeingRemovedMessage(vm)));
     }
 
-    private String getVmPoolIsBeingRemovedMessage() {
-        StringBuilder builder = new StringBuilder(
-                EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_REMOVED.name());
-        if (getVmPool() != null) {
-            builder.append(String.format("$VmPoolName %1$s", getVmPool().getName()));
-        }
-        return builder.toString();
-    }
-
-    private String getVmIsBeingRemovedMessage(VM vm) {
-        StringBuilder builder = new StringBuilder(
-                EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_REMOVED_WITH_VM.name());
-        if (getVmPool() != null) {
-            builder.append(String.format("$VmPoolName %1$s $VmName %2$s", getVmPool().getName(), vm.getName()));
-        }
-        return builder.toString();
+    private LockMessage getVmIsBeingRemovedMessage(VM vm) {
+        return new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_REMOVED_WITH_VM)
+                .withOptional("VmPoolName", getVmPool() != null ? getVmPool().getName() : null)
+                .withOptional("VmName", getVmPool() != null ? vm.getName() : null);
     }
 
     @Override

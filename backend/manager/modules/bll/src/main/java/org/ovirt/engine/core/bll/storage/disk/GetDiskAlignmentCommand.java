@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -79,10 +80,9 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         return null;
     }
 
-    private String getDiskIsUsedByGetAlignment() {
-        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT.name())
-                .append(String.format("$DiskAlias %1$s", getDiskAlias()))
-                .toString();
+    private LockMessage getDiskIsUsedByGetAlignment() {
+        return new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT)
+                .with("DiskAlias", getDiskAlias());
     }
 
     @Override

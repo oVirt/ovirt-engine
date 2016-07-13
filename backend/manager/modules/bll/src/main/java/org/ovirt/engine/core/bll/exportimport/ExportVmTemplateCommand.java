@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
@@ -121,11 +122,9 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     private String getTemplateIsBeingExportedMessage() {
         if (cachedTemplateIsBeingExportedMessage == null) {
-            StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED.name());
-            if (getVmTemplate() != null) {
-                builder.append(String.format("$TemplateName %1$s", getVmTemplate().getName()));
-            }
-            cachedTemplateIsBeingExportedMessage = builder.toString();
+            cachedTemplateIsBeingExportedMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED)
+                    .withOptional("TemplateName", getVmTemplate() != null ? getVmTemplate().getName() : null)
+                    .toString();
         }
         return cachedTemplateIsBeingExportedMessage;
     }

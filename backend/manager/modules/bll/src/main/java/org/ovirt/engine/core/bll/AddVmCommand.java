@@ -219,37 +219,29 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getVmTemplateId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateSharedLockMessage()));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM)
+                                .with("VmName", getVmName())));
         for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
             locks.put(image.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskSharedLockMessage()));
         }
         if (getParameters().getPoolId() != null) {
             locks.put(getParameters().getPoolId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL, getPoolSharedLockMessage()));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL,
+                            new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_USED_FOR_CREATE_VM)
+                                    .with("VmName", getVmName())));
         }
         return locks;
     }
 
-    private String getTemplateSharedLockMessage() {
-        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM.name())
-                .append(String.format("$VmName %1$s", getVmName()))
-                .toString();
-    }
-
     protected String getDiskSharedLockMessage() {
         if (cachedDiskSharedLockMessage == null) {
-            cachedDiskSharedLockMessage = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM.name())
-            .append(String.format("$VmName %1$s", getVmName()))
-            .toString();
+            cachedDiskSharedLockMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM)
+                    .with("VmName", getVmName())
+                    .toString();
         }
         return cachedDiskSharedLockMessage;
-    }
-
-    private String getPoolSharedLockMessage() {
-        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_USED_FOR_CREATE_VM.name())
-                .append(String.format("$VmName %1$s", getVmName()))
-                .toString();
     }
 
     protected ImageType getImageType() {

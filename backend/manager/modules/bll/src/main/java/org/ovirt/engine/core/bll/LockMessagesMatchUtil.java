@@ -29,4 +29,11 @@ public class LockMessagesMatchUtil {
     public static Pair<String, String> makeLockingPair(LockingGroup group, String message) {
         return new Pair<>(group.name(), message);
     }
+
+    /**
+     * @see #makeLockingPair(LockingGroup, String)
+     */
+    public static Pair<String, String> makeLockingPair(LockingGroup group, LockMessage messageBuilder) {
+        return makeLockingPair(group, messageBuilder.toString());
+    }
 }

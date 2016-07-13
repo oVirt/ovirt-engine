@@ -60,7 +60,6 @@ import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
@@ -712,8 +711,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         if (!versionChanged) {
             return null;
         }
-        final String lockMessage = EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_BEING_UPDATED.name()
-                + ReplacementUtils.createSetVariableString("clusterName", oldCluster.getName());
+        final LockMessage lockMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_BEING_UPDATED)
+                .with("clusterName", oldCluster.getName());
         vmsLockedForUpdate = getVmDao().getAllForCluster(oldCluster.getId()).stream()
                 .filter(vm -> !vm.isExternalVm() && !vm.isHostedEngine())
                 .filter(vm -> vm.getCustomCompatibilityVersion() == null) // no need for VM device update

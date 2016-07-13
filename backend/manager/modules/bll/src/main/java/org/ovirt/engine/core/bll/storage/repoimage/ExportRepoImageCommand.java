@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -82,15 +83,10 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
             return null;
         }
         return Collections.singletonMap(diskImage.getId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingExportedMessage()));
-    }
-
-    private String getDiskIsBeingExportedMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_EXPORTED.name());
-        if (getDiskImage() != null) {
-            builder.append(String.format("$DiskAlias %1$s", getDiskImage().getDiskAlias()));
-        }
-        return builder.toString();
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_EXPORTED)
+                                .withOptional("DiskAlias",
+                                        getDiskImage() != null ? getDiskImage().getDiskAlias() : null)));
     }
 
     @Override

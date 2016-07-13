@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -409,9 +410,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private String getDiskIsBeingRemovedLockMessage() {
         if (cachedDiskIsBeingRemovedLockMessage == null) {
-            cachedDiskIsBeingRemovedLockMessage = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED.name())
-            .append(String.format("$DiskName %1$s", getDiskAlias()))
-            .toString();
+            cachedDiskIsBeingRemovedLockMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED)
+                    .with("DiskName", getDiskAlias())
+                    .toString();
         }
         return cachedDiskIsBeingRemovedLockMessage;
     }
