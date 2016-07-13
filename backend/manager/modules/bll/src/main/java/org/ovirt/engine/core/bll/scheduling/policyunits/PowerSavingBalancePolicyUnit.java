@@ -330,7 +330,8 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         long lowMemoryLimit = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
                 Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
         long highMemoryLimit = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?
-                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) : 0L;
+                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()))
+                : Long.MAX_VALUE;
 
         List<VDS> result = new ArrayList<>();
         result.addAll(getUnderUtilizedMemoryHosts(candidateHosts, highMemoryLimit, 1));
@@ -343,7 +344,8 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         long notEnoughMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
                 Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
         long tooMuchMemory = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?
-                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) : 0L;
+                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) :
+                Long.MAX_VALUE;
 
         return getNormallyUtilizedMemoryHosts(candidateHosts, notEnoughMemory, tooMuchMemory);
     }
