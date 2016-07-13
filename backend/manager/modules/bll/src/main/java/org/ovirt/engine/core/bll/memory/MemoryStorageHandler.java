@@ -95,9 +95,8 @@ public class MemoryStorageHandler {
                 new StorageDomainSpaceRequirementsFilter());
     }
 
-    protected List<? extends Comparator<StorageDomain>> getStorageDomainComparators(
-            List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
-        return Arrays.asList(new StorageDomainNumberOfVmDisksComparator(domainsInPool, vmDisks),
+    protected List<? extends Comparator<StorageDomain>> getStorageDomainComparators(Collection<DiskImage> vmDisks) {
+        return Arrays.asList(new StorageDomainNumberOfVmDisksComparator(vmDisks),
                 new StorageTypeSharedComparator(),
                 new StorageTypeFileComparator(),
                 new StorageDomainAvailableDiskSizeComparator());
@@ -113,7 +112,7 @@ public class MemoryStorageHandler {
     protected void sortStorageDomains(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
         Comparator<StorageDomain> comp = null;
         // When there is more than one comparator, a nested sort is performed.
-        for (Comparator<StorageDomain> comparator : getStorageDomainComparators(domainsInPool, vmDisks)) {
+        for (Comparator<StorageDomain> comparator : getStorageDomainComparators(vmDisks)) {
             // A reversed sort will be performed to get the "biggest" storage domain first.
             comp = (comp == null) ? comparator.reversed() : comp.thenComparing(comparator.reversed());
         }

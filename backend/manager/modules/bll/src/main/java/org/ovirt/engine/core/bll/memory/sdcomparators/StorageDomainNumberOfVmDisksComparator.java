@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.memory.sdcomparators;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -14,32 +13,24 @@ public class StorageDomainNumberOfVmDisksComparator implements Comparator<Storag
 
     private Map<Guid, Integer> numOfVmDisksInStorageDomains;
 
-    public StorageDomainNumberOfVmDisksComparator(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
-        setUpNumOfVmDisksInStorageDomains(domainsInPool, vmDisks);
+    public StorageDomainNumberOfVmDisksComparator(Collection<DiskImage> vmDisks) {
+        setUpNumOfVmDisksInStorageDomains(vmDisks);
     }
 
     @Override
     public int compare(StorageDomain storageDomain, StorageDomain storageDomain2) {
-        Integer numOfVmDisksInStorageDomain = numOfVmDisksInStorageDomains.get(storageDomain.getId());
-        Integer numOfVmDisksInStorageDomain2 = numOfVmDisksInStorageDomains.get(storageDomain2.getId());
+        Integer numOfVmDisksInStorageDomain = numOfVmDisksInStorageDomains.getOrDefault(storageDomain.getId(), 0);
+        Integer numOfVmDisksInStorageDomain2 = numOfVmDisksInStorageDomains.getOrDefault(storageDomain2.getId(), 0);
         return numOfVmDisksInStorageDomain.compareTo(numOfVmDisksInStorageDomain2);
     }
 
-    private void setUpNumOfVmDisksInStorageDomains(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
+    private void setUpNumOfVmDisksInStorageDomains(Collection<DiskImage> vmDisks) {
         numOfVmDisksInStorageDomains = new HashMap<>();
-
-        // Initialize each storage domain to have 0 disks.
-        for (StorageDomain storageDomain : domainsInPool) {
-            numOfVmDisksInStorageDomains.put(storageDomain.getId(), 0);
-        }
 
         for (DiskImage vmDisk : vmDisks) {
             Guid vmDiskStorageDomainId = vmDisk.getStorageIds().get(0);
-            if (numOfVmDisksInStorageDomains.containsKey(vmDiskStorageDomainId)) {
-                // The current vmDisk belongs to a storage domain which was not filtered by MemoryStorageHandler.
-                numOfVmDisksInStorageDomains.put(vmDiskStorageDomainId,
-                        numOfVmDisksInStorageDomains.get(vmDiskStorageDomainId) + 1);
-            }
+            numOfVmDisksInStorageDomains.put(vmDiskStorageDomainId,
+                    numOfVmDisksInStorageDomains.getOrDefault(vmDiskStorageDomainId, 0) + 1);
         }
     }
 }

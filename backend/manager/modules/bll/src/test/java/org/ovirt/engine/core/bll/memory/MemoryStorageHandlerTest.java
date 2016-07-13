@@ -128,8 +128,7 @@ public class MemoryStorageHandlerTest {
         List<? extends Comparator<StorageDomain>> comparators = Arrays.asList(
                 new SmallestStorageDomainComparator(validStorageDomain2),
                 new BiggestStorageDomainComparator(validStorageDomain3));
-        doReturn(comparators).when(memoryStorageHandler)
-                .getStorageDomainComparators(anyListOf(StorageDomain.class), anyListOf(DiskImage.class));
+        doReturn(comparators).when(memoryStorageHandler).getStorageDomainComparators(anyListOf(DiskImage.class));
     }
 
     private StorageDomain initStorageDomain() {

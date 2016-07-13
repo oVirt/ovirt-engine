@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.memory.sdcomparators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 public class StorageDomainNumberOfVmDisksComparatorTest extends StorageDomainComparatorAbstractTest {
 
-    private List<StorageDomain> storageDomains;
     private DiskImage vmDisk1;
     private DiskImage vmDisk2;
     private DiskImage vmDisk3;
@@ -20,7 +18,6 @@ public class StorageDomainNumberOfVmDisksComparatorTest extends StorageDomainCom
     @Override
     public void setUp() {
         super.setUp();
-        storageDomains = Arrays.asList(storageDomain1, storageDomain2);
         vmDisk1 = new DiskImage();
         vmDisk2 = new DiskImage();
         vmDisk3 = new DiskImage();
@@ -58,6 +55,6 @@ public class StorageDomainNumberOfVmDisksComparatorTest extends StorageDomainCom
     }
 
     private void initComparator(DiskImage... vmDisks) {
-        comparator = new StorageDomainNumberOfVmDisksComparator(storageDomains, Arrays.asList(vmDisks));
+        comparator = new StorageDomainNumberOfVmDisksComparator(Arrays.asList(vmDisks));
     }
 }
