@@ -250,8 +250,8 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         boolean usingScsiReservation = !vmDevice.isUsingScsiReservation();
         vmDevice.setUsingScsiReservation(usingScsiReservation);
         dao.update(vmDevice);
-        dao.get(getExistingEntityId());
-        assertEquals(vmDevice.isUsingScsiReservation(), usingScsiReservation);
+        VmDevice vmDeviceFromDb = dao.get(getExistingEntityId());
+        assertEquals(vmDeviceFromDb.isUsingScsiReservation(), usingScsiReservation);
     }
 
     private VmDevice createVmDevice(Guid vmGuid) {
