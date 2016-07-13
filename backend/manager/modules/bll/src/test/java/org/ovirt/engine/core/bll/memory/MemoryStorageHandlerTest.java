@@ -116,10 +116,10 @@ public class MemoryStorageHandlerTest {
     }
 
     private void initFilters() {
-        List<StorageDomainRejectingFilter> storageDomainFilters = Arrays.asList(
-                new StorageDomainRejectingFilter(invalidStorageDomain1),
-                new StorageDomainRejectingFilter(invalidStorageDomain2),
-                new StorageDomainRejectingFilter(invalidStorageDomain3));
+        List<Predicate<StorageDomain>> storageDomainFilters = Arrays.asList(
+                d -> !d.equals(invalidStorageDomain1),
+                d -> !d.equals(invalidStorageDomain2),
+                d -> !d.equals(invalidStorageDomain3));
         doReturn(storageDomainFilters).when(memoryStorageHandler).getStorageDomainFilters(memoryDisks);
     }
 
@@ -158,20 +158,6 @@ public class MemoryStorageHandlerTest {
     private void sortStorageDomains(List<StorageDomain> domainsInPool, List<StorageDomain> expectedSortedList) {
         memoryStorageHandler.sortStorageDomains(domainsInPool, vmDisks);
         assertEquals(domainsInPool, expectedSortedList);
-    }
-
-    private static class StorageDomainRejectingFilter implements Predicate<StorageDomain> {
-
-        private final StorageDomain sdToReject;
-
-        private StorageDomainRejectingFilter(StorageDomain storageDomainToReject) {
-            this.sdToReject = storageDomainToReject;
-        }
-
-        @Override
-        public boolean test(StorageDomain storageDomain) {
-            return !sdToReject.equals(storageDomain);
-        }
     }
 
     private abstract static class StorageDomainAbstractComparator implements Comparator<StorageDomain> {
