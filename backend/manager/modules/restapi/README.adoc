@@ -1777,3 +1777,39 @@ with disks in specific storage domains will now look like this:
   </vm>
 </template>
 ----
+
+=== Use `iscsi_targets` element to discover unregistered storage
+
+In version 3 of the API the operation to discover unregistered storage
+domains used to receive a list of iSCSI targets, using multiple
+`iscsi_target` elements:
+
+[source]
+----
+POST /hosts/{host:id}/unregisteredstoragedomaindiscover
+<action>
+  <iscsi>
+    <address>myiscsiserver</address>
+  </iscsi>
+  <iscsi_target>iqn.2016-07.com.example:mytarget1</iscsi_target>
+  <iscsi_target>iqn.2016-07.com.example:mytarget2</iscsi_target>
+</action>
+----
+
+In version 4 of the API all repeating elements, like `iscsi_target`
+in this case, are wrapped with another element, `iscsi_targets` in
+case. So the same request should now look like this:
+
+[source]
+----
+POST /hosts/{host:id}/unregisteredstoragedomaindiscover
+<action>
+  <iscsi>
+    <address>myiscsiserver</address>
+  </iscsi>
+  <iscsi_targets>
+    <iscsi_target>iqn.2016-07.com.example:mytarget1</iscsi_target>
+    <iscsi_target>iqn.2016-07.com.example:mytarget2</iscsi_target>
+  </iscsi_targets>
+</action>
+----
