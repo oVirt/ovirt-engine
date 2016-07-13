@@ -1158,8 +1158,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     void addVmStatistics() {
-        VmStatistics stats = new VmStatistics();
-        stats.setId(getVmId());
+        VmStatistics stats = new VmStatistics(getVmId());
         DbFacade.getInstance().getVmStatisticsDao().save(stats);
         getCompensationContext().snapshotNewEntity(stats);
     }

@@ -40,6 +40,11 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         vmId = Guid.Empty;
     }
 
+    public VmStatistics(Guid vmId) {
+        this();
+        this.vmId = vmId;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(

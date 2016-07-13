@@ -42,8 +42,7 @@ public class VmManager {
         this.vmId = vmId;
         lock = new ReentrantLock();
         convertOperationProgress = -1;
-        statistics = new VmStatistics();
-        statistics.setId(vmId);
+        statistics = new VmStatistics(vmId);
     }
 
     public void lock() {

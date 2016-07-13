@@ -359,8 +359,7 @@ public class VmAnalyzer {
     }
 
     private void resetStatistics() {
-        statistics = new VmStatistics();
-        statistics.setId(getVmId());
+        statistics = new VmStatistics(getVmId());
     }
 
     public VmStatistics getVmStatisticsToSave() {
