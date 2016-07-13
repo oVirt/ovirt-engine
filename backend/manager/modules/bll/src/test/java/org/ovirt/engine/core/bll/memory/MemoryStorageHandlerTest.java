@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -121,7 +120,7 @@ public class MemoryStorageHandlerTest {
                 new StorageDomainRejectingFilter(invalidStorageDomain1),
                 new StorageDomainRejectingFilter(invalidStorageDomain2),
                 new StorageDomainRejectingFilter(invalidStorageDomain3));
-        doReturn(storageDomainFilters).when(memoryStorageHandler).getStorageDomainFilters();
+        doReturn(storageDomainFilters).when(memoryStorageHandler).getStorageDomainFilters(memoryDisks);
     }
 
     private void initComparators() {
@@ -161,7 +160,7 @@ public class MemoryStorageHandlerTest {
         assertEquals(domainsInPool, expectedSortedList);
     }
 
-    private static class StorageDomainRejectingFilter extends StorageDomainFilter {
+    private static class StorageDomainRejectingFilter implements Predicate<StorageDomain> {
 
         private final StorageDomain sdToReject;
 
@@ -170,8 +169,8 @@ public class MemoryStorageHandlerTest {
         }
 
         @Override
-        protected Predicate<StorageDomain> getPredicate(List<DiskImage> memoryDisks) {
-            return storageDomain -> !sdToReject.equals(storageDomain);
+        public boolean test(StorageDomain storageDomain) {
+            return !sdToReject.equals(storageDomain);
         }
     }
 

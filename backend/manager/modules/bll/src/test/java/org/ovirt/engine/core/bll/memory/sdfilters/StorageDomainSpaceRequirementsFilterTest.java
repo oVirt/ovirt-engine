@@ -6,13 +6,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -23,8 +23,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilterAbstractTest {
 
-    @Spy
-    private StorageDomainSpaceRequirementsFilter filter = new StorageDomainSpaceRequirementsFilter();
+    private StorageDomainSpaceRequirementsFilter filter;
 
     @Mock
     private StorageDomainValidator storageDomainValidator;
@@ -39,24 +38,25 @@ public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilte
 
     @Test
     public void testStorageDomainForMemoryIsValid() {
-        assertTrue(filter.getPredicate(memoryDisks).test(storageDomain));
+        assertTrue(filter.test(storageDomain));
     }
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasLowSpace() {
         when(storageDomainValidator.isDomainWithinThresholds())
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        assertFalse(filter.getPredicate(memoryDisks).test(storageDomain));
+        assertFalse(filter.test(storageDomain));
     }
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasNoSpaceForClonedDisks() {
         when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        assertFalse(filter.getPredicate(memoryDisks).test(storageDomain));
+        assertFalse(filter.test(storageDomain));
     }
 
     private void initFilter() {
+        filter = spy(new StorageDomainSpaceRequirementsFilter(memoryDisks));
         doNothing().when(filter).updateDisksStorage(any(StorageDomain.class), anyListOf(DiskImage.class));
         doReturn(storageDomainValidator).when(filter).getStorageDomainValidator(storageDomain);
     }

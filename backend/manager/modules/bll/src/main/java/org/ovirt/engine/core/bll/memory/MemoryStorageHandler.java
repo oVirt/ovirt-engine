@@ -6,9 +6,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
-import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainTypeFilter;
@@ -86,10 +87,10 @@ public class MemoryStorageHandler {
         return domainsInPool.isEmpty() ? null : domainsInPool.get(0);
     }
 
-    protected List<? extends StorageDomainFilter> getStorageDomainFilters() {
+    protected List<Predicate<StorageDomain>> getStorageDomainFilters(List<DiskImage> memoryDisks) {
         return Arrays.asList(new StorageDomainStatusFilter(),
                 new StorageDomainTypeFilter(),
-                new StorageDomainSpaceRequirementsFilter());
+                new StorageDomainSpaceRequirementsFilter(memoryDisks));
     }
 
     protected List<Comparator<StorageDomain>> getStorageDomainComparators(Collection<DiskImage> vmDisks) {
@@ -100,10 +101,9 @@ public class MemoryStorageHandler {
     }
 
     protected List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, List<DiskImage> memoryDisks) {
-        for (StorageDomainFilter storageDomainFilter : getStorageDomainFilters()) {
-            domainsInPool = storageDomainFilter.filterStorageDomains(domainsInPool, memoryDisks);
-        }
-        return domainsInPool;
+        Predicate<StorageDomain> predicate =
+                getStorageDomainFilters(memoryDisks).stream().reduce(Predicate::and).orElse(t -> true);
+        return domainsInPool.stream().filter(predicate).collect(Collectors.toList());
     }
 
     protected void sortStorageDomains(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
