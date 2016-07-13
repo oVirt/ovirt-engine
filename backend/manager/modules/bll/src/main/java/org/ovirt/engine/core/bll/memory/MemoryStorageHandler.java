@@ -83,7 +83,7 @@ public class MemoryStorageHandler {
             Collection<DiskImage> vmDisks) {
         domainsInPool = filterStorageDomains(domainsInPool, memoryDisks);
         sortStorageDomains(domainsInPool, vmDisks);
-        return domainsInPool.isEmpty() ? null : domainsInPool.get(0);
+        return domainsInPool.stream().findFirst().orElse(null);
     }
 
     protected List<Predicate<StorageDomain>> getStorageDomainFilters(List<DiskImage> memoryDisks) {
