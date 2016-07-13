@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -26,7 +26,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
     private static final Logger log = LoggerFactory.getLogger(EventVmStatsRefresher.class);
     private Subscription subscription;
     @Inject
-    private DbFacade dbFacade;
+    private VmDao vmDao;
     private ResourceManager resourceManager;
     private PollAllVmStatsOnlyRefresher allVmStatsOnlyRefresher;
 
@@ -76,19 +76,22 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 log.debug("processing event for host {} data:\n{}", vdsManager.getVdsName(), sb);
             }
 
+            @SuppressWarnings("unchecked")
             private List<Pair<VM, VdsmVm>> convertEvent(Map<String, Object> map) {
                 Double notifyTime = VdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
                 return map.entrySet().stream()
-                        .map(idToMap -> toMonitoredVm(new Guid(idToMap.getKey()), idToMap.getValue(), notifyTime))
+                        .map(idToMap -> toMonitoredVm(
+                                new Guid(idToMap.getKey()),
+                                (Map<String, Object>) idToMap.getValue(),
+                                notifyTime))
                         .collect(Collectors.toList());
             }
 
-            private Pair<VM, VdsmVm> toMonitoredVm(Guid vmId, Object vmMap, Double notifyTime) {
-                VM dbVm = dbFacade.getVmDao().get(vmId);
-                @SuppressWarnings("unchecked")
+            private Pair<VM, VdsmVm> toMonitoredVm(Guid vmId, Map<String, Object> vmMap, Double notifyTime) {
+                VM dbVm = vmDao.get(vmId);
                 VdsmVm vdsmVm = dbVm == null ?
-                        createVdsmVm(vmId, (Map<String, Object>) vmMap, notifyTime)
-                        : createVmInternalData(dbVm, (Map<String, Object>) vmMap, notifyTime);
+                        createVdsmVm(vmId, vmMap, notifyTime)
+                        : createVdsmVm(dbVm, vmMap, notifyTime);
                 return new Pair<>(
                         // if dbVm runs on a different host, monitoring expects it to be null
                         dbVm != null && !vdsManager.getVdsId().equals(dbVm.getRunOnVds()) ? null : dbVm,
@@ -98,10 +101,10 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
             private VdsmVm createVdsmVm(Guid vmId, Map<String, Object> xmlRpcStruct, Double notifyTime) {
                 VM fakeVm = new VM();
                 fakeVm.setId(vmId);
-                return createVmInternalData(fakeVm, xmlRpcStruct, notifyTime);
+                return createVdsmVm(fakeVm, xmlRpcStruct, notifyTime);
             }
 
-            private VdsmVm createVmInternalData(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
+            private VdsmVm createVdsmVm(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
                 // send a clone of vm dynamic to be overridden with new data
                 VmDynamic clonedVmDynamic = new VmDynamic(dbVm.getDynamicData());
                 VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, xmlRpcStruct, vdsManager.getCopyVds());
