@@ -4,9 +4,11 @@ import static org.ovirt.engine.core.utils.collections.MultiValueMapUtils.addToMa
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.inject.Inject;
 
@@ -28,8 +30,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @NonTransactiveCommandAttribute
 public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends RefreshHostInfoCommandBase<T> {
@@ -52,8 +56,6 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
 
-    private Map<String, HostDevice> oldMap;
-
     private Map<String, HostDevice> fetchedMap;
 
     private Map<String, List<VmDevice>> attachedVmDevicesMap;
@@ -73,8 +75,8 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         List<HostDevice> fetchedDevices = (List<HostDevice>) vdsReturnValue.getReturnValue();
         List<HostDevice> oldDevices = hostDeviceDao.getHostDevicesByHostId(getVdsId());
 
-        fetchedMap = Entities.entitiesByName(fetchedDevices);
-        oldMap = Entities.entitiesByName(oldDevices);
+        Map<String, HostDevice> oldMap = Entities.entitiesByName(oldDevices);
+        fetchedMap = filterOrphanedDevices(Entities.entitiesByName(fetchedDevices));
 
         final List<HostDevice> newDevices = new ArrayList<>();
         final List<HostDevice> changedDevices = new ArrayList<>();
@@ -127,6 +129,45 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         }
 
         setSucceeded(true);
+    }
+
+    /**
+     * Filters out devices which may be orphaned (their parent is no longer included in device list)
+     * or otherwise invalid (parent is null or empty).
+     *
+     * This is done transitively by using DFS started in the root device (computer) and
+     * adding only reachable devices via the "parent device" relationship.
+     */
+    static Map<String, HostDevice> filterOrphanedDevices(Map<String, HostDevice> fetchedDevicesMap) {
+        if (!fetchedDevicesMap.containsKey(VdsProperties.ROOT_HOST_DEVICE)) {
+            // if there is no root, nothing can be reachable from root
+            return Collections.emptyMap();
+        }
+
+        Map<String, List<String>> childrenDeviceMap = new HashMap<>();
+
+        // aggregate inverse information: parent -> list of children
+        for (Map.Entry<String, HostDevice> entry : fetchedDevicesMap.entrySet()) {
+            String deviceName = entry.getKey();
+            HostDevice device = entry.getValue();
+            MultiValueMapUtils.addToMap(device.getParentDeviceName(), deviceName, childrenDeviceMap);
+        }
+
+        Stack<String> toTraverse = new Stack<>();
+        toTraverse.push(VdsProperties.ROOT_HOST_DEVICE);
+
+        Map<String, HostDevice> result = new HashMap<>();
+        while (!toTraverse.empty()) {
+            String deviceName = toTraverse.pop();
+            result.put(deviceName, fetchedDevicesMap.get(deviceName));
+            if (childrenDeviceMap.containsKey(deviceName)) {
+                childrenDeviceMap.get(deviceName).stream()
+                        // prevent infinite loop by adding root again as a child of root
+                        .filter(child -> !VdsProperties.ROOT_HOST_DEVICE.equals(child))
+                        .forEach(toTraverse::push);
+            }
+        }
+        return result;
     }
 
     /**
