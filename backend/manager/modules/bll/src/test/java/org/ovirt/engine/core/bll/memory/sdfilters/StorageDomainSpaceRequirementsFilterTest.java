@@ -9,6 +9,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,19 +22,24 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilterAbstractTest {
+public class StorageDomainSpaceRequirementsFilterTest {
 
     private StorageDomainSpaceRequirementsFilter filter;
 
     @Mock
     private StorageDomainValidator storageDomainValidator;
 
+    private StorageDomain storageDomain;
+    private List<DiskImage> memoryDisks;
+
     @Before
-    @Override
     public void setUp() {
-        super.setUp();
+        storageDomain = new StorageDomain();
+        storageDomain.setId(Guid.newGuid());
+        memoryDisks = new LinkedList<>();
         initFilter();
         initStorageDomainValidator();
     }
