@@ -198,7 +198,7 @@ public class IrsProxyData {
                             .get(_storagePoolId);
 
                     if (storagePool != null) {
-                        boolean poolStatusDeterminedByHostsStatus = FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
+                        boolean poolStatusDeterminedByHostsStatus = FeatureSupported.dataOperationsByHSM(storagePool.getCompatibilityVersion());
                         // when there are no hosts in status up, it means that there shouldn't be domain monitoring
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
                         if (DbFacade.getInstance()
@@ -1265,7 +1265,7 @@ public class IrsProxyData {
 
             else if ((inActiveDomainsInPool.contains(tempData.getDomainId()) ||
                     // in data centers with spm, unknown domains are moving to Active status according to the pool metadata.
-                    (FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion()) && unknownDomainsInPool.contains(tempData.getDomainId())))
+                    (FeatureSupported.dataOperationsByHSM(storagePool.getCompatibilityVersion()) && unknownDomainsInPool.contains(tempData.getDomainId())))
                     && analyzeDomainReport(tempData, false).validAndActual()) {
                 log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
                         getDomainIdTuple(tempData.getDomainId()),

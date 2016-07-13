@@ -109,16 +109,16 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
     }
 
-    protected boolean isDataCenterWithSpm() {
-        return isDataCenterWithSpm(getStoragePool());
+    protected boolean isDataOperationsBySpm() {
+        return isDataOperationsBySpm(getStoragePool());
     }
 
-    protected boolean isDataCenterWithSpm(StoragePool storagePool) {
-        return !FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
+    protected boolean isDataOperationsBySpm(StoragePool storagePool) {
+        return !FeatureSupported.dataOperationsByHSM(storagePool.getCompatibilityVersion());
     }
 
-    protected boolean isDataCenterWithoutSpm() {
-        return FeatureSupported.dataCenterWithoutSpm(getStoragePool().getCompatibilityVersion());
+    protected boolean isDataOperationsByHSM() {
+        return FeatureSupported.dataOperationsByHSM(getStoragePool().getCompatibilityVersion());
     }
 
     protected VDSReturnValue performImageVdsmOperation() {
@@ -324,7 +324,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getVolumeInfo(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
                                          Guid newImageId) {
-        if (isDataCenterWithSpm()) {
+        if (isDataOperationsBySpm()) {
             return (DiskImage) runVdsCommand(
                     VDSCommandType.GetImageInfo,
                     new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,

@@ -1838,7 +1838,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    DataCenterWithoutSpm,
+    DataOperationsByHSM,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")

@@ -1,0 +1,1 @@
+DELETE from vdc_options where option_name = 'DataCenterWithoutSpm';

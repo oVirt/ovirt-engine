@@ -81,10 +81,10 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
-     * @return <code>true</code> if data center without spm is supported for the given version
+     * @return <code>true</code> if data operations by HSM are supported for the given version
      */
-    public static boolean dataCenterWithoutSpm(Version version) {
-        return supportedInConfig(ConfigValues.DataCenterWithoutSpm, version);
+    public static boolean dataOperationsByHSM(Version version) {
+        return supportedInConfig(ConfigValues.DataOperationsByHSM, version);
     }
 
     /**

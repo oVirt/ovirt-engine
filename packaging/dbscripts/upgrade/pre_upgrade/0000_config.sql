@@ -185,7 +185,7 @@ select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
 
-select fn_db_add_config_value_for_versions_up_to('DataCenterWithoutSpm', 'false', '3.6'); --is that true in 4.0 ?
+select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'false', '4.1');
 
 -- default requirement for rng sources (comma-separated string of 'RANDOM' and 'HWRNG')
 select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', 'RANDOM', '4.1');

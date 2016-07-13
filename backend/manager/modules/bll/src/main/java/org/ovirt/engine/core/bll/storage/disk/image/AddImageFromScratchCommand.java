@@ -44,7 +44,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
 
     @Override
     public CommandCallback getCallback() {
-        if (isDataCenterWithoutSpm()) {
+        if (isDataOperationsByHSM()) {
             return new ConcurrentChildCommandsExecutionCallback();
         }
 
@@ -53,7 +53,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
 
     @Override
     protected AsyncTaskType getTaskType() {
-        if (isDataCenterWithoutSpm()) {
+        if (isDataOperationsByHSM()) {
             return AsyncTaskType.notSupported;
         }
 
@@ -108,7 +108,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     protected boolean processImageInIrs() {
-        if (isDataCenterWithSpm()) {
+        if (isDataOperationsBySpm()) {
             Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
             VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage,
                     getCreateImageVDSCommandParameters());
