@@ -9,13 +9,13 @@ import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 @RunWith(Theories.class)
-public class StorageTypeFileComparatorTest extends StorageDomainComparatorAbstractTest {
+public class StorageTypeFileFirstComparatorTest extends StorageDomainComparatorAbstractTest {
 
     @DataPoints
     public static StorageType[] storageTypes = StorageType.values();
 
-    public StorageTypeFileComparatorTest() {
-        comparator = new StorageTypeFileComparator();
+    public StorageTypeFileFirstComparatorTest() {
+        comparator = new StorageTypeFileFirstComparator();
     }
 
     @Theory
@@ -23,7 +23,7 @@ public class StorageTypeFileComparatorTest extends StorageDomainComparatorAbstra
         storageDomain1.setStorageType(storageType);
         for (StorageType storageType2 : StorageType.values()) {
             storageDomain2.setStorageType(storageType2);
-            int compareTypes = Boolean.compare(storageType.isFileDomain(), storageType2.isFileDomain());
+            int compareTypes = -1 * Boolean.compare(storageType.isFileDomain(), storageType2.isFileDomain());
             int comparatorReturnValue = comparator.compare(storageDomain1, storageDomain2);
             assertEquals(compareTypes < 0, comparatorReturnValue < 0);
             assertEquals(compareTypes == 0, comparatorReturnValue == 0);

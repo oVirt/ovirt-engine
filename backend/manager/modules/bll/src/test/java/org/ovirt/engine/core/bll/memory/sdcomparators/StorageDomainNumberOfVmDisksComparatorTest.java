@@ -40,8 +40,8 @@ public class StorageDomainNumberOfVmDisksComparatorTest extends StorageDomainCom
 
     @Test
     public void compareWhenSizesAreNotEqual() {
-        attachVmDisksToStorageDomain(storageDomain1, vmDisk1, vmDisk2);
-        attachVmDisksToStorageDomain(storageDomain2, vmDisk3);
+        attachVmDisksToStorageDomain(storageDomain1, vmDisk1);
+        attachVmDisksToStorageDomain(storageDomain2, vmDisk2, vmDisk3);
         initComparator(vmDisk1, vmDisk2, vmDisk3);
 
         assertBiggerThan(storageDomain1, storageDomain2);

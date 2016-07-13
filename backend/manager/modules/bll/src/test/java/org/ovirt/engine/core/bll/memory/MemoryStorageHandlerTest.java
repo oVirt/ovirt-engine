@@ -210,12 +210,12 @@ public class MemoryStorageHandlerTest {
 
         @Override
         protected int equalsToFirstStorageDomain() {
-            return 1;
+            return -1;
         }
 
         @Override
         protected int equalsToSecondStorageDomain() {
-            return -1;
+            return 1;
         }
     }
 
@@ -227,12 +227,12 @@ public class MemoryStorageHandlerTest {
 
         @Override
         protected int equalsToFirstStorageDomain() {
-            return -1;
+            return 1;
         }
 
         @Override
         protected int equalsToSecondStorageDomain() {
-            return 1;
+            return -1;
         }
     }
 }

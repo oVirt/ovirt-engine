@@ -8,6 +8,7 @@ public class StorageDomainAvailableDiskSizeComparator implements Comparator<Stor
 
     @Override
     public int compare(StorageDomain storageDomain, StorageDomain storageDomain2) {
-        return storageDomain.getAvailableDiskSize().compareTo(storageDomain2.getAvailableDiskSize());
+        // Return the domain with the more available space first
+        return -1 * storageDomain.getAvailableDiskSize().compareTo(storageDomain2.getAvailableDiskSize());
     }
 }

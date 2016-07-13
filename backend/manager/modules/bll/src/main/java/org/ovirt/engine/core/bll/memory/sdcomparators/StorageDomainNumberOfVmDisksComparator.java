@@ -23,6 +23,8 @@ public class StorageDomainNumberOfVmDisksComparator implements Comparator<Storag
     public int compare(StorageDomain storageDomain, StorageDomain storageDomain2) {
         Long numOfVmDisksInStorageDomain = numOfVmDisksInStorageDomains.getOrDefault(storageDomain.getId(), 0L);
         Long numOfVmDisksInStorageDomain2 = numOfVmDisksInStorageDomains.getOrDefault(storageDomain2.getId(), 0L);
-        return numOfVmDisksInStorageDomain.compareTo(numOfVmDisksInStorageDomain2);
+
+        // Prefer the domain with more disks on it
+        return -1 * numOfVmDisksInStorageDomain.compareTo(numOfVmDisksInStorageDomain2);
     }
 }

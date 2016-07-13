@@ -4,11 +4,10 @@ import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 
-public class StorageTypeFileComparator implements Comparator<StorageDomain> {
+public class StorageTypeSharedFirstComparator implements Comparator<StorageDomain> {
 
     @Override
     public int compare(StorageDomain storageDomain, StorageDomain storageDomain2) {
-        return Boolean.compare(storageDomain.getStorageType().isFileDomain(),
-                storageDomain2.getStorageType().isFileDomain());
+        return -1 * Boolean.compare(storageDomain.isShared(), storageDomain2.isShared());
     }
 }

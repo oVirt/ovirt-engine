@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainAvailableDiskSizeComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
-import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeFileComparator;
-import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeSharedComparator;
+import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeFileFirstComparator;
+import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeSharedFirstComparator;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
@@ -97,8 +97,8 @@ public class MemoryStorageHandler {
 
     protected List<? extends Comparator<StorageDomain>> getStorageDomainComparators(Collection<DiskImage> vmDisks) {
         return Arrays.asList(new StorageDomainNumberOfVmDisksComparator(vmDisks),
-                new StorageTypeSharedComparator(),
-                new StorageTypeFileComparator(),
+                new StorageTypeSharedFirstComparator(),
+                new StorageTypeFileFirstComparator(),
                 new StorageDomainAvailableDiskSizeComparator());
     }
 
@@ -113,8 +113,7 @@ public class MemoryStorageHandler {
         Comparator<StorageDomain> comp = null;
         // When there is more than one comparator, a nested sort is performed.
         for (Comparator<StorageDomain> comparator : getStorageDomainComparators(vmDisks)) {
-            // A reversed sort will be performed to get the "biggest" storage domain first.
-            comp = (comp == null) ? comparator.reversed() : comp.thenComparing(comparator.reversed());
+            comp = (comp == null) ? comparator : comp.thenComparing(comparator);
         }
         Collections.sort(domainsInPool, comp);
     }

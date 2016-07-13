@@ -25,7 +25,7 @@ public class StorageDomainAvailableDiskSizeComparatorTest extends StorageDomainC
     @Test
     public void compareWhenSizesAreNotEqual() {
         int availableDiskSize = getRandomNumberForTest();
-        setStorageDomainsAvailableDiskSize(availableDiskSize, availableDiskSize / 2);
+        setStorageDomainsAvailableDiskSize(availableDiskSize / 2, availableDiskSize);
 
         assertBiggerThan(storageDomain1, storageDomain2);
         assertSmallerThan(storageDomain2, storageDomain1);

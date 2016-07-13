@@ -3,23 +3,23 @@ package org.ovirt.engine.core.bll.memory.sdcomparators;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
-public class StorageTypeSharedComparatorTest extends StorageDomainComparatorAbstractTest {
+public class StorageTypeSharedFirstComparatorTest extends StorageDomainComparatorAbstractTest {
 
-    public StorageTypeSharedComparatorTest() {
-        comparator = new StorageTypeSharedComparator();
+    public StorageTypeSharedFirstComparatorTest() {
+        comparator = new StorageTypeSharedFirstComparator();
     }
 
     @Test
     public void testCompareLocalWithShared() {
-        storageDomain1.setStorageType(StorageType.NFS);
-        storageDomain2.setStorageType(StorageType.LOCALFS);
+        storageDomain1.setStorageType(StorageType.LOCALFS);
+        storageDomain2.setStorageType(StorageType.NFS);
         assertSmallerThan(storageDomain2, storageDomain1);
     }
 
     @Test
     public void testCompareSharedWithLocal() {
-        storageDomain1.setStorageType(StorageType.NFS);
-        storageDomain2.setStorageType(StorageType.LOCALFS);
+        storageDomain1.setStorageType(StorageType.LOCALFS);
+        storageDomain2.setStorageType(StorageType.NFS);
         assertBiggerThan(storageDomain1, storageDomain2);
     }
 
