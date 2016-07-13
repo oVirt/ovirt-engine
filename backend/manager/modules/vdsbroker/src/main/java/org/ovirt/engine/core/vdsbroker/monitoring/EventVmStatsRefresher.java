@@ -91,23 +91,22 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 VM dbVm = vmDao.get(vmId);
                 VdsmVm vdsmVm = dbVm == null ?
                         createVdsmVm(vmId, vmMap, notifyTime)
-                        : createVdsmVm(dbVm, vmMap, notifyTime);
+                        : createVdsmVm(dbVm.getDynamicData(), vmMap, notifyTime);
                 return new Pair<>(dbVm, vdsmVm);
             }
 
             private VdsmVm createVdsmVm(Guid vmId, Map<String, Object> xmlRpcStruct, Double notifyTime) {
-                VM fakeVm = new VM();
+                VmDynamic fakeVm = new VmDynamic();
                 fakeVm.setId(vmId);
                 return createVdsmVm(fakeVm, xmlRpcStruct, notifyTime);
             }
 
-            private VdsmVm createVdsmVm(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
+            private VdsmVm createVdsmVm(VmDynamic dbVmDyanmic, Map<String, Object> xmlRpcStruct, Double notifyTime) {
                 // send a clone of vm dynamic to be overridden with new data
-                VmDynamic clonedVmDynamic = new VmDynamic(dbVm.getDynamicData());
+                VmDynamic clonedVmDynamic = new VmDynamic(dbVmDyanmic);
                 VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, xmlRpcStruct, vdsManager.getCopyVds());
                 return new VdsmVm(notifyTime)
-                        .setVmDynamic(clonedVmDynamic)
-                        .setVmStatistics(dbVm.getStatisticsData());
+                        .setVmDynamic(clonedVmDynamic);
             }
 
             @Override
