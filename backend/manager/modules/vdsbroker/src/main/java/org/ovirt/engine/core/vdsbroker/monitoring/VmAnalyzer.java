@@ -7,6 +7,7 @@ import static org.ovirt.engine.core.utils.ObjectIdentityChecker.getChangedFields
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -93,12 +94,10 @@ public class VmAnalyzer {
     private static final Logger log = LoggerFactory.getLogger(VmAnalyzer.class);
 
     static {
-        List<String> tmpList = new ArrayList<>();
-        for (Field field : VmDynamic.class.getDeclaredFields()) {
-            if (field.isAnnotationPresent(UnchangeableByVdsm.class)) {
-                tmpList.add(field.getName());
-            }
-        }
+        List<String> tmpList = Arrays.stream(VmDynamic.class.getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(UnchangeableByVdsm.class))
+                .map(Field::getName)
+                .collect(Collectors.toList());
         UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
     }
 
