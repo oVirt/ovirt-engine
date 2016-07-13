@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
                 + " be over 'LowUtilization' and under 'HighUtilization'",
         parameters = {
                 PolicyUnitParameter.HIGH_UTILIZATION,
+                PolicyUnitParameter.LOW_UTILIZATION,
                 PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
                 PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
                 PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES,
