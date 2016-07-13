@@ -264,7 +264,7 @@ public class VmAnalyzer {
         case MigratingFrom:
             switch (vdsmVm.getVmDynamic().getExitStatus()) {
             case Normal:
-                handOverVm(dbVm);
+                handOverVm();
                 break;
 
             case Error:
@@ -644,6 +644,14 @@ public class VmAnalyzer {
         }
     }
 
+    private void logVmHandOver(Guid destinationHostId, VMStatus newVmStatus) {
+        log.info("Handing over VM '{}'({}) to Host '{}'. Setting VM to status '{}'",
+                dbVm.getId(),
+                dbVm.getName(),
+                destinationHostId,
+                newVmStatus);
+    }
+
     private void logVmStatusTransition() {
         if (dbVm.getStatus() != vdsmVm.getVmDynamic().getStatus()) {
             log.info("VM '{}'({}) moved from '{}' --> '{}'",
@@ -695,7 +703,7 @@ public class VmAnalyzer {
     private void proceedDisappearedVm() {
         switch (dbVm.getStatus()) {
         case MigratingFrom:
-            handOverVm(dbVm);
+            handOverVm();
             break;
 
         case PoweringDown:
@@ -732,26 +740,17 @@ public class VmAnalyzer {
         }
     }
 
-    private void handOverVm(VM vmToRemove) {
-        Guid destinationHostId = vmToRemove.getMigratingToVds();
-
+    private void handOverVm() {
+        Guid destinationHostId = dbVm.getMigratingToVds();
         // when the destination VDS is NonResponsive put the VM to Uknown like the rest of its VMs, else MigratingTo
         VMStatus newVmStatus = isVdsNonResponsive(destinationHostId) ? VMStatus.Unknown : VMStatus.MigratingTo;
-
         // handing over the VM to the DST by marking it running on it. it will now be its SRC host.
-        vmToRemove.setRunOnVds(destinationHostId);
-
-        log.info("Handing over VM '{}'({}) to Host '{}'. Setting VM to status '{}'",
-                vmToRemove.getId(),
-                vmToRemove.getName(),
-                destinationHostId,
-                newVmStatus);
-
+        dbVm.setRunOnVds(destinationHostId);
+        logVmHandOver(destinationHostId, newVmStatus);
         // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
-        resourceManager.internalSetVmStatus(vmToRemove, newVmStatus);
-
+        resourceManager.internalSetVmStatus(dbVm, newVmStatus);
         // save the VM state
-        saveDynamic(vmToRemove.getDynamicData());
+        saveDynamic(dbVm.getDynamicData());
         saveVmInterfaces();
     }
 
