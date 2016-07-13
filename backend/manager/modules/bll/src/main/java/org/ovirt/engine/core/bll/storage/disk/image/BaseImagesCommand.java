@@ -10,9 +10,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -105,6 +107,18 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         } else {
             destinationImageId = value;
         }
+    }
+
+    protected boolean isDataCenterWithSpm() {
+        return isDataCenterWithSpm(getStoragePool());
+    }
+
+    protected boolean isDataCenterWithSpm(StoragePool storagePool) {
+        return !FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
+    }
+
+    protected boolean isDataCenterWithoutSpm() {
+        return FeatureSupported.dataCenterWithoutSpm(getStoragePool().getCompatibilityVersion());
     }
 
     protected VDSReturnValue performImageVdsmOperation() {
