@@ -92,7 +92,7 @@ public class MemoryStorageHandler {
                 new StorageDomainSpaceRequirementsFilter());
     }
 
-    protected List<? extends Comparator<StorageDomain>> getStorageDomainComparators(Collection<DiskImage> vmDisks) {
+    protected List<Comparator<StorageDomain>> getStorageDomainComparators(Collection<DiskImage> vmDisks) {
         return Arrays.asList(new StorageDomainNumberOfVmDisksComparator(vmDisks),
                 SHARED_FIRST_COMPARATOR,
                 FILE_FIRST_COMPARATOR,
@@ -107,11 +107,9 @@ public class MemoryStorageHandler {
     }
 
     protected void sortStorageDomains(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
-        Comparator<StorageDomain> comp = null;
-        // When there is more than one comparator, a nested sort is performed.
-        for (Comparator<StorageDomain> comparator : getStorageDomainComparators(vmDisks)) {
-            comp = (comp == null) ? comparator : comp.thenComparing(comparator);
-        }
+        Comparator<StorageDomain> comp =
+                getStorageDomainComparators(vmDisks).stream().reduce(Comparator::thenComparing).orElse(null);
+
         Collections.sort(domainsInPool, comp);
     }
 
