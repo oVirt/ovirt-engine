@@ -319,7 +319,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         long lowMemoryLimit = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
                 Long.valueOf(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
         long highMemoryLimit = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : Long.MAX_VALUE;
 
         List<VDS> result = new ArrayList<>();
         result.addAll(getUnderUtilizedMemoryHosts(candidateHosts, highMemoryLimit, 1));
@@ -332,7 +332,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         long notEnoughMemory = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
                 Long.valueOf(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
         long tooMuchMemory = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
-                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : Long.MAX_VALUE;
 
         return getNormallyUtilizedMemoryHosts(candidateHosts, notEnoughMemory, tooMuchMemory);
     }
