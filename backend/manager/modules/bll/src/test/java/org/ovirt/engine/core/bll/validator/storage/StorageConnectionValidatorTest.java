@@ -31,6 +31,7 @@ public class StorageConnectionValidatorTest {
     private StorageDomain domain;
 
     private static final String CONNECTION_ID_FOR_VALIDATION = Guid.newGuid().toString();
+    private static final int NUMBER_OF_EXISTING_CONNECTIONS = 3;
 
     @Mock
     protected StorageServerConnectionDao storageServerConnectionDao;
@@ -120,15 +121,11 @@ public class StorageConnectionValidatorTest {
 
     private List<StorageServerConnections> getConnections() {
          List<StorageServerConnections> connectionsList = new ArrayList<>();
-         StorageServerConnections connection1 = new StorageServerConnections();
-         connection1.setId(Guid.newGuid().toString());
-         StorageServerConnections connection2 = new StorageServerConnections();
-         connection2.setId(Guid.newGuid().toString());
-         StorageServerConnections connection3 = new StorageServerConnections();
-         connection3.setId(Guid.newGuid().toString());
-         connectionsList.add(connection1);
-         connectionsList.add(connection2);
-         connectionsList.add(connection3);
+         for (int i = 0; i < NUMBER_OF_EXISTING_CONNECTIONS; i++) {
+             StorageServerConnections conn = new StorageServerConnections();
+             conn.setId(Guid.newGuid().toString());
+             connectionsList.add(conn);
+         }
          return connectionsList;
     }
 }
