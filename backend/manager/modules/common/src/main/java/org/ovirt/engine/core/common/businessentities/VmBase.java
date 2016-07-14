@@ -277,9 +277,13 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     /**
      * The cluster version in which the VM configuration was created.
-     * Used by snapshots. Stored in OVF.
+     * Used by snapshots. Stored in OVF as OvfProperties.CLUSTER_COMPATIBILITY_VERSION.
+     *
+     * The clusterCompatibilityVersionOrigin is not really editable but since it is saved on next-run
+     * snapshot as well, it blocks VM updates.
      */
     @TransientField
+    @EditableVmField
     private Version clusterCompatibilityVersionOrigin;
 
     /**
