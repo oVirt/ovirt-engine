@@ -1451,10 +1451,17 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmsByUserId(v_user_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
+
+DECLARE v_vm_ids  UUID[];
 BEGIN
-RETURN QUERY select vms.* from vms
-   INNER JOIN permissions on vms.vm_guid = permissions.object_id
-   WHERE permissions.ad_element_id = v_user_id;
+SELECT array_agg(object_id) INTO v_vm_ids
+FROM permissions
+    WHERE ad_element_id = v_user_id;
+
+RETURN QUERY
+SELECT vms.*
+FROM vms
+   WHERE vm_guid = ANY(v_vm_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 
