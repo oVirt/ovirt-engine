@@ -160,7 +160,6 @@ public class VmAnalyzer {
         }
 
         proceedWatchdogEvents();
-        proceedBalloonCheck();
         proceedGuaranteedMemoryCheck();
         updateRepository();
         prepareGuestAgentNetworkDevicesForUpdate();
@@ -435,38 +434,41 @@ public class VmAnalyzer {
     }
 
     private void proceedBalloonCheck() {
-        if (vdsManager.getCopyVds().isBalloonEnabled()) {
-            VmBalloonInfo balloonInfo = vdsmVm.getVmBalloonInfo();
-            if (balloonInfo == null) {
-                return;
-            }
-            // last memory is null the first time we check it or when
-            // we're not getting the balloon info from vdsm
-            // TODO: getBalloonLastMemory always returns null - need to fix
-            if (balloonInfo.getBalloonLastMemory() == null || balloonInfo.getBalloonLastMemory() == 0) {
-                balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
-                return;
-            }
+        if (!vdsManager.getCopyVds().isBalloonEnabled()) {
+            return;
+        }
 
-            if (isBalloonDeviceActiveOnVm()
-                    && (Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())
-                    || !isBalloonWorking(balloonInfo))) {
-                vmBalloonDriverRequestedAndUnavailable = true;
-            } else {
-                vmBalloonDriverNotRequestedOrAvailable = true;
-            }
+        VmBalloonInfo balloonInfo = vdsmVm.getVmBalloonInfo();
+        if (balloonInfo == null) {
+            return;
+        }
 
-            // save the current value for the next time we check it
+        // last memory is null the first time we check it or when
+        // we're not getting the balloon info from vdsm
+        // TODO: getBalloonLastMemory always returns null - need to fix
+        if (balloonInfo.getBalloonLastMemory() == null || balloonInfo.getBalloonLastMemory() == 0) {
             balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
+            return;
+        }
 
-            if (vdsmVm.getVmStatistics().getUsageMemPercent() != null
-                    && vdsmVm.getVmStatistics().getUsageMemPercent() == 0  // guest agent is down
-                    && balloonInfo.isBalloonDeviceEnabled() // check if the device is present
-                    && !Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())) {
-                guestAgentDownAndBalloonInfalted = true;
-            } else {
-                guestAgentUpOrBalloonDeflated = true;
-            }
+        if (isBalloonDeviceActiveOnVm()
+                && (Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())
+                        || !isBalloonWorking(balloonInfo))) {
+            vmBalloonDriverRequestedAndUnavailable = true;
+        } else {
+            vmBalloonDriverNotRequestedOrAvailable = true;
+        }
+
+        // save the current value for the next time we check it
+        balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
+
+        if (vdsmVm.getVmStatistics().getUsageMemPercent() != null
+                && vdsmVm.getVmStatistics().getUsageMemPercent() == 0  // guest agent is down
+                && balloonInfo.isBalloonDeviceEnabled() // check if the device is present
+                && !Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())) {
+            guestAgentDownAndBalloonInfalted = true;
+        } else {
+            guestAgentUpOrBalloonDeflated = true;
         }
     }
 
@@ -783,6 +785,7 @@ public class VmAnalyzer {
             return;
         }
 
+        proceedBalloonCheck();
         updateVmStatistics();
         saveVmInterfaces();
         updateInterfaceStatistics();
