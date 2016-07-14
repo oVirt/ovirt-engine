@@ -50,7 +50,6 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     private String storagePoolName;
 
-    @Min(value = 0, message = "CLUSTER_OVER_COMMIT_VALUE_INVALID")
     private int maxVdsMemoryOverCommit;
 
     private boolean enableBallooning;
