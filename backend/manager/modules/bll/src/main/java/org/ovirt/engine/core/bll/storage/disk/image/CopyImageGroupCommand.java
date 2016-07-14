@@ -2,11 +2,14 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -77,58 +80,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     protected void executeCommand() {
         lockImage();
-        VDSReturnValue vdsReturnValue = null;
-
-        Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                : getDiskImage().getStorageIds().get(0);
-
-        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-
-        if (getParameters().getUseCopyCollapse()) {
-            vdsReturnValue = runVdsCommand(
-                    VDSCommandType.CopyImage,
-                    PostZeroHandler.fixParametersWithPostZero(
-                            new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
-                                    sourceDomainId,
-                                    getParameters().getContainerId(),
-                                    getParameters().getImageGroupID(),
-                                    getParameters().getImageId(),
-                                    getParameters().getDestImageGroupId(),
-                                    getParameters().getDestinationImageId(),
-                                    "",
-                                    getParameters().getStorageDomainId(),
-                                    getParameters().getCopyVolumeType(),
-                                    getVolumeFormatForDomain(),
-                                    getParameters().getVolumeType(),
-                                    isWipeAfterDelete(),
-                                    getParameters().getForceOverride())));
-        } else {
-            vdsReturnValue = runVdsCommand(
-                    VDSCommandType.MoveImageGroup,
-                    PostZeroHandler.fixParametersWithPostZero(
-                            new MoveImageGroupVDSCommandParameters(
-                                    getDiskImage() != null ? getDiskImage().getStoragePoolId()
-                                            : getStorageDomain().getStoragePoolId(),
-                                    sourceDomainId,
-                                    getDiskImage() != null ?
-                                            getDiskImage().getId() : getParameters().getImageGroupID(),
-                                    getParameters().getStorageDomainId(),
-                                    getParameters().getContainerId(),
-                                    ImageOperation.Copy,
-                                    isWipeAfterDelete(),
-                                    getParameters().getForceOverride())));
-        }
-
-        if (vdsReturnValue.getSucceeded()) {
-            AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
-            getTaskIdList().add(
-                    createTask(taskId,
-                            taskCreationInfo,
-                            getParameters().getParentCommand(),
-                            VdcObjectType.Storage,
-                            sourceDomainId,
-                            getParameters().getStorageDomainId()));
-
+        if (performStorageOperation()) {
             // Add storage domain in db only if there is new entity in DB.
             if (!shouldUpdateStorageDisk() && getParameters().getAddImageDomainMapping()) {
                 getImageStorageDomainMapDao().save
@@ -140,6 +92,87 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
             setSucceeded(true);
         }
+    }
+
+    private boolean performStorageOperation() {
+        Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
+                : getDiskImage().getStorageIds().get(0);
+        if (isDataOperationsByHSM()) {
+            CopyImageGroupWithDataCommandParameters p = new CopyImageGroupWithDataCommandParameters(
+                    getStorageDomain().getStoragePoolId(),
+                    sourceDomainId,
+                    getParameters().getStorageDomainId(),
+                    getParameters().getImageGroupID(),
+                    getParameters().getImageId(),
+                    getParameters().getImageGroupID(),
+                    getParameters().getImageId(),
+                    getVolumeFormatForDomain(),
+                    getParameters().getUseCopyCollapse());
+            p.setParentParameters(getParameters());
+            p.setParentCommand(getActionType());
+            runInternalAction(VdcActionType.CopyImageGroupWithData, p);
+            return true;
+        } else {
+            VDSReturnValue vdsReturnValue;
+            Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+
+            if (getParameters().getUseCopyCollapse()) {
+                vdsReturnValue = runVdsCommand(
+                        VDSCommandType.CopyImage,
+                        PostZeroHandler.fixParametersWithPostZero(
+                                new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
+                                        sourceDomainId,
+                                        getParameters().getContainerId(),
+                                        getParameters().getImageGroupID(),
+                                        getParameters().getImageId(),
+                                        getParameters().getDestImageGroupId(),
+                                        getParameters().getDestinationImageId(),
+                                        "",
+                                        getParameters().getStorageDomainId(),
+                                        getParameters().getCopyVolumeType(),
+                                        getVolumeFormatForDomain(),
+                                        getParameters().getVolumeType(),
+                                        isWipeAfterDelete(),
+                                        getParameters().getForceOverride())));
+            } else {
+                vdsReturnValue = runVdsCommand(
+                        VDSCommandType.MoveImageGroup,
+                        PostZeroHandler.fixParametersWithPostZero(
+                                new MoveImageGroupVDSCommandParameters(
+                                        getDiskImage() != null ? getDiskImage().getStoragePoolId()
+                                                : getStorageDomain().getStoragePoolId(),
+                                        sourceDomainId,
+                                        getDiskImage() != null ?
+                                                getDiskImage().getId() : getParameters().getImageGroupID(),
+                                        getParameters().getStorageDomainId(),
+                                        getParameters().getContainerId(),
+                                        ImageOperation.Copy,
+                                        isWipeAfterDelete(),
+                                        getParameters().getForceOverride())));
+            }
+
+            if (vdsReturnValue.getSucceeded()) {
+                AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
+                getTaskIdList().add(
+                        createTask(taskId,
+                                taskCreationInfo,
+                                getParameters().getParentCommand(),
+                                VdcObjectType.Storage,
+                                sourceDomainId,
+                                getParameters().getStorageDomainId()));
+            }
+
+            return vdsReturnValue.getSucceeded();
+        }
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        if (isDataOperationsByHSM()){
+            return new ConcurrentChildCommandsExecutionCallback();
+        }
+
+        return null;
     }
 
     private boolean isWipeAfterDelete() {
@@ -183,7 +216,11 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected AsyncTaskType getTaskType() {
-        return AsyncTaskType.moveImage;
+        if (isDataOperationsBySpm()) {
+            return AsyncTaskType.moveImage;
+        }
+
+        return AsyncTaskType.notSupported;
     }
 
     @Override
