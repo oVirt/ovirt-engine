@@ -60,7 +60,7 @@ public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends Queries
                 vm.setStaticData(temp);
             }
 
-
+            VmHandler.updateDisksFromDb(vm);
             VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         }
 

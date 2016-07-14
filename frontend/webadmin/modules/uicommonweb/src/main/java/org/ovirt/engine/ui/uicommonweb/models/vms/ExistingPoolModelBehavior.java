@@ -140,9 +140,15 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
                     diskModel.getQuota().setIsChangeable(false);
 
-                    ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
-                    // We only have one storage ID, as the object is a VM, not a template
-                    if (storageIds.size() == 0) {
+                    ArrayList<Guid> storageIds = null;
+                    for (DiskImage disk : pool.getDiskList()) {
+                        if (diskModel.getDisk() instanceof DiskImage &&
+                                ((DiskImage) diskModel.getDisk()).getImageId().equals(disk.getParentId())) {
+                            storageIds = new ArrayList<>(disk.getStorageIds());
+                            break;
+                        }
+                    }
+                    if (storageIds == null || storageIds.size() == 0) {
                         continue;
                     }
 
