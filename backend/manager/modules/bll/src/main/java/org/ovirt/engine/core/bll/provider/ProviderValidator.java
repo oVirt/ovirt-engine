@@ -9,11 +9,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-public class ProviderValidator {
+public class ProviderValidator<P extends Provider.AdditionalProperties> {
 
-    protected Provider<?> provider;
+    protected Provider<P> provider;
 
-    public ProviderValidator(Provider<?> provider) {
+    public ProviderValidator(Provider<P> provider) {
         this.provider = provider;
     }
 

@@ -19,6 +19,7 @@
         <include name="common/businessentities/EngineSession.java" />
         <include name="common/businessentities/UserSession.java" />
         <include name="common/businessentities/V2VJobInfo.java" />
+        <include name="common/businessentities/VmProviderProperties.java" />
         <include name="common/businessentities/VmwareVmProviderProperties.java" />
         <include name="common/businessentities/KVMVmProviderProperties.java" />
         <include name="common/businessentities/XENVmProviderProperties.java" />
