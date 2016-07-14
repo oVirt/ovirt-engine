@@ -54,7 +54,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             TransactionSupport.executeInNewTransaction(() -> {
                 curVm.setStopReason(getParameters().getReason());
                 vmManager.update(curVm.getDynamicData());
-                vmManager.update(curVm.getStatisticsData());
+                vmManager.update(vmManager.resetStatistics());
                 update(curVm.getInterfaces());
                 vmNumaNodeDao.massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
                 return null;
