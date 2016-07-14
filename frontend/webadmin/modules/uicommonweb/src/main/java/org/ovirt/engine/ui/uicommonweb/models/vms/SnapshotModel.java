@@ -436,9 +436,12 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         // the cluster version in which the memory snapshot was taken
         Version originalClusterVersion = vm.getClusterCompatibilityVersionOrigin();
 
+        // The originalClusterVersion is null if the snapshot originates in <3.6 .
+        // Otherwise it is stored in OVF as OvfProperties.CLUSTER_COMPATIBILITY_VERSION and contains cluster
+        // version at the time of snapshot's creation. Populated by OvfReader.
         return originalClusterVersion != null
-               && recentClusterVersion.getMajor() == originalClusterVersion.getMajor()
-               && recentClusterVersion.getMinor() == originalClusterVersion.getMinor();
+                && recentClusterVersion.getMajor() == originalClusterVersion.getMajor()
+                && recentClusterVersion.getMinor() == originalClusterVersion.getMinor();
 
     }
 }

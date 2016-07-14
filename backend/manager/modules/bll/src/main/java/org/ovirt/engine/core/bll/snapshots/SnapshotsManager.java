@@ -561,7 +561,7 @@ public class SnapshotsManager {
             vm.setIsoPath(oldVmStatic.getIsoPath());
             vm.setCpuProfileId(oldVmStatic.getCpuProfileId());
             vm.setClusterId(oldVmStatic.getClusterId());
-            vm.setClusterCompatibilityVersionOrigin(oldVmStatic.getClusterCompatibilityVersionOrigin());
+
             // The VM configuration does not hold the vds group Id.
             // It is necessary to fetch the vm static from the Db, in order to get this information
             VmStatic vmStaticFromDb = getVmStaticDao().get(vm.getId());
