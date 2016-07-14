@@ -160,7 +160,6 @@ public class VmAnalyzer {
         }
 
         proceedWatchdogEvents();
-        proceedGuaranteedMemoryCheck();
         updateRepository();
         prepareGuestAgentNetworkDevicesForUpdate();
     }
@@ -480,16 +479,17 @@ public class VmAnalyzer {
     }
 
     private void proceedGuaranteedMemoryCheck() {
-        if (vdsmVm.getVmBalloonInfo() != null &&
-                vdsmVm.getVmBalloonInfo().getCurrentMemory() != null &&
-                vdsmVm.getVmBalloonInfo().getCurrentMemory() > 0 &&
-                dbVm.getMinAllocatedMem() > vdsmVm.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES) {
+        VmBalloonInfo vmBalloonInfo = vdsmVm.getVmBalloonInfo();
+        if (vmBalloonInfo != null &&
+                vmBalloonInfo.getCurrentMemory() != null &&
+                vmBalloonInfo.getCurrentMemory() > 0 &&
+                dbVm.getMinAllocatedMem() > vmBalloonInfo.getCurrentMemory() / TO_MEGA_BYTES) {
             AuditLogableBase auditLogable = new AuditLogableBase();
             auditLogable.addCustomValue("VmName", dbVm.getName());
             auditLogable.addCustomValue("VdsName", vdsManager.getVdsName());
             auditLogable.addCustomValue("MemGuaranteed", String.valueOf(dbVm.getMinAllocatedMem()));
             auditLogable.addCustomValue("MemActual",
-                    Long.toString(vdsmVm.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES));
+                    Long.toString(vmBalloonInfo.getCurrentMemory() / TO_MEGA_BYTES));
             auditLog(auditLogable, AuditLogType.VM_MEMORY_UNDER_GUARANTEED_VALUE);
         }
     }
@@ -786,6 +786,7 @@ public class VmAnalyzer {
         }
 
         proceedBalloonCheck();
+        proceedGuaranteedMemoryCheck();
         updateVmStatistics();
         saveVmInterfaces();
         updateInterfaceStatistics();
