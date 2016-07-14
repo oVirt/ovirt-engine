@@ -89,8 +89,14 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     private void updateProperties() {
-        VM vm = getEntity();
+        Object entity = getEntity();
+        // This class is, among other, used in extended user portal where the entity may also be a VmPool.
+        // The Guest Info subtab should be hidden for pools.
+        if (!(entity instanceof VM)) {
+            return;
+        }
 
+        VM vm = (VM) entity;
         setClientIp(vm.getClientIp());
         setConsoleUserName(!StringUtils.isEmpty(vm.getClientIp())
                 ? vm.getConsoleCurentUserName()
