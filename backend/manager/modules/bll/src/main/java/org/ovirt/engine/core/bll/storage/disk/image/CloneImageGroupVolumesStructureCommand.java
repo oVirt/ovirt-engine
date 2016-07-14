@@ -85,14 +85,20 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         return true;
     }
 
+    private Guid determineSourceImageGroup(DiskImage image) {
+        return image.getImageTemplateId() != Guid.Empty ? getImageDao().get(image.getImageTemplateId()).getId() :
+                getParameters().getImageGroupID();
+
+    }
+
     private void createImage(DiskImage image) {
         CreateVolumeContainerCommandParameters parameters = new CreateVolumeContainerCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getDestDomain(),
                 getParameters().getImageGroupID(),
                 image.getImageId(),
-                getParameters().getImageGroupID(),
-                image.getImageId(),
+                determineSourceImageGroup(image),
+                image.getParentId(),
                 getParameters().getDestFormat(),
                 getParameters().getDescription(),
                 image.getSize(),
