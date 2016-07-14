@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.provider.vms;
 
-import java.security.cert.Certificate;
-import java.util.List;
-
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
@@ -48,23 +45,6 @@ public class XENVmProviderProxy implements ProviderProxy {
                 provider.getAdditionalProperties().getProxyHostId(),
                 provider.getAdditionalProperties().getStoragePoolId()
                 );
-    }
-
-    @Override
-    public List<? extends Certificate> getCertificateChain() {
-        return null;
-    }
-
-    @Override
-    public void onAddition() {
-    }
-
-    @Override
-    public void onModification() {
-    }
-
-    @Override
-    public void onRemoval() {
     }
 
     @Override

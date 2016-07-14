@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.provider.storage;
 
-import java.security.cert.Certificate;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
@@ -19,6 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackClient;
 import com.woorea.openstack.base.client.OpenStackRequest;
@@ -85,11 +85,6 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
 
     protected String getTenantId() {
         return getAccess().getToken().getTenant().getId();
-    }
-
-    @Override
-    public List<? extends Certificate> getCertificateChain() {
-        return null;
     }
 
     protected Guid addStorageDomain(StorageType storageType, StorageDomainType storageDomainType) {

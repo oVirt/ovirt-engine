@@ -218,18 +218,6 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void onAddition() {
-    }
-
-    @Override
-    public void onModification() {
-    }
-
-    @Override
-    public void onRemoval() {
-    }
-
     private List<Network> map(List<com.woorea.openstack.quantum.model.Network> externalNetworks) {
         List<Network> networks = new ArrayList<>(externalNetworks.size());
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.provider.storage;
 
-import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
+
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.cinder.Cinder;
 import com.woorea.openstack.cinder.model.ConnectionForInitialize;
@@ -34,11 +34,6 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
 
     public OpenStackVolumeProviderProxy(Provider<OpenStackVolumeProviderProperties> provider) {
         this.provider = provider;
-    }
-
-    @Override
-    public List<? extends Certificate> getCertificateChain() {
-        return null;
     }
 
     @Override

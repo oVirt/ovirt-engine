@@ -17,25 +17,30 @@ public interface ProviderProxy<T extends ProviderValidator> {
      * Useful when the provider is secured.
      * @return List of Certificate objects
      */
-    List<? extends Certificate> getCertificateChain();
+    default List<? extends Certificate> getCertificateChain() {
+        return null;
+    }
 
     /**
      * Callback executed when the provider is added.<br>
      * Useful to add provider-specific operations when the provider is added.
      */
-    void onAddition();
+    default void onAddition() {
+    }
 
     /**
      * Callback executed when the provider is modified.<br>
      * Useful to add provider-specific operations when the provider is modified.
      */
-    void onModification();
+    default void onModification() {
+    }
 
     /**
      * Callback executed when the provider is removed.<br>
      * Useful to add provider-specific operations when the provider is removed.
      */
-    void onRemoval();
+    default void onRemoval() {
+    }
 
     /**
      * Gets a specific validator for the provider

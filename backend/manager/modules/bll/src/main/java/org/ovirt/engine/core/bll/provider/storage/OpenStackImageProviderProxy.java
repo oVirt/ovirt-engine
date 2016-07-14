@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.provider.storage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
+
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Image;
@@ -67,11 +67,6 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
 
     public OpenStackImageProviderProxy(Provider<OpenStackImageProviderProperties> provider) {
         this.provider = provider;
-    }
-
-    @Override
-    public List<? extends Certificate> getCertificateChain() {
-        return null;
     }
 
     @Override

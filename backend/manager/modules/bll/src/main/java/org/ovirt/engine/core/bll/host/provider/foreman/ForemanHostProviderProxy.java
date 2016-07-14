@@ -370,18 +370,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
-    public void onAddition() {
-    }
-
-    @Override
-    public void onModification() {
-    }
-
-    @Override
-    public void onRemoval() {
-    }
-
-    @Override
     public ErrataData getErrataForHost(String hostName, ErrataFilter errataFilter) {
         return getContentHostProvider().getErrataForHost(hostName, errataFilter);
     }
