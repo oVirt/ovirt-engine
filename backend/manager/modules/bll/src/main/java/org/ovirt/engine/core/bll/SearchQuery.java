@@ -375,7 +375,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     for (String profile : profiles) {
                         if (searchText.startsWith(profile + COLON)) {
                             queryAuthz = profile;
-                            searchText = searchText.replace(profile + COLON, StringUtils.EMPTY);
+                            searchText = searchText.replaceFirst(profile + COLON, StringUtils.EMPTY);
                             break;
                         }
                     }
