@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 
-@ApplicationScoped
+@Singleton
 public class NumaValidator {
 
     private final VdsNumaNodeDao vdsNumaNodeDao;
