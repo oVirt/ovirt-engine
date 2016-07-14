@@ -1,20 +1,25 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.StorageJobCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommandParameters> extends
-        StorageJobCommand<T> {
+        BaseImagesCommand<T> {
 
     public CreateVolumeContainerCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -25,28 +30,38 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     }
 
     @Override
-    public CommandCallback getCallback() {
-        return new StorageJobCallback();
+    protected AsyncTaskType getTaskType() {
+        return AsyncTaskType.createVolume;
+    }
+
+    private CreateImageVDSCommandParameters getCreateVDSCommandParameters() {
+        CreateSnapshotVDSCommandParameters parameters =
+                new CreateSnapshotVDSCommandParameters(getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(), getParameters().getImageGroupID(), getParameters()
+                        .getSrcImageId(), getParameters().getSize(),
+                        VolumeType.Sparse, getParameters().getVolumeFormat(), getParameters().getSrcImageGroupId(),
+                        getParameters().getImageId(),
+                        getParameters().getDescription());
+        parameters.setImageInitialSizeInBytes(Optional.ofNullable(getParameters().getInitialSize()).orElse(0L));
+        return parameters;
     }
 
     @Override
     protected void executeCommand() {
-        VdsCommandsHelper.runVdsCommandWithFailover(
-                VDSCommandType.CreateVolumeContainer,
-                new CreateVolumeVDSCommandParameters(
-                        getParameters().getStorageDomainId(),
-                        getParameters().getStorageJobId(),
-                        getParameters().getSize(),
-                        getParameters().getInitialSize(),
-                        getParameters().getImageGroupID(),
-                        getParameters().getImageId(),
-                        getParameters().getSrcImageGroupId(),
-                        getParameters().getSrcImageId(),
-                        getParameters().getVolumeFormat(),
-                        getParameters().getDescription()),
-                getParameters().getStoragePoolId(),
-                this);
-        setSucceeded(true);
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateSnapshot,
+                getCreateVDSCommandParameters());
+        if (vdsReturnValue.getSucceeded()) {
+            getParameters().setVdsmTaskIds(new ArrayList<>());
+            getParameters().getVdsmTaskIds().add(
+                    createTask(taskId,
+                            vdsReturnValue.getCreationInfo(),
+                            getParameters().getParentCommand(),
+                            VdcObjectType.Storage,
+                            getParameters().getStorageDomainId()));
+            getTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
+            setSucceeded(true);
+        }
     }
 }
 

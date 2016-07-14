@@ -27,6 +27,7 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
         this.size = size;
         this.volumeFormat = volumeFormat;
         this.initialSize = initialSize;
+        fillEntityInfo(imageId);
     }
 
     public long getSize() {
