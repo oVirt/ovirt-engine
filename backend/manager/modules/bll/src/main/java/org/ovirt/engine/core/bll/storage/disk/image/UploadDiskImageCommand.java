@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -37,8 +38,10 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
 
     @Override
     protected boolean validate() {
-        return CommandHelper.canDoAction(VdcActionType.AddDisk, getAddDiskParameters(),
-                getContext().clone().getExecutionContext(), true).isValid();
+        VdcReturnValueBase returnValue = CommandHelper.canDoAction(VdcActionType.AddDisk, getAddDiskParameters(),
+                getContext().clone().getExecutionContext(), true);
+        getReturnValue().setValidationMessages(returnValue.getValidationMessages());
+        return returnValue.isValid();
     }
 
     @Override
