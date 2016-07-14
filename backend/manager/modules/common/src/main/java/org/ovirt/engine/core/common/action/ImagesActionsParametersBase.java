@@ -27,7 +27,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public ImagesActionsParametersBase(Guid imageId) {
         super(Guid.Empty);
-        setEntityInfo(new EntityInfo(VdcObjectType.Disk, imageId));
+        fillEntityInfo(imageId);
         this.imageId = imageId;
         destinationImageId = Guid.Empty;
         imageGroupID = Guid.Empty;
@@ -44,6 +44,10 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
         this.imageGroupID = other.imageGroupID;
         this.importEntity = other.importEntity;
         this.leaveLocked = other.leaveLocked;
+    }
+
+    protected void fillEntityInfo(Guid imageId) {
+        setEntityInfo(new EntityInfo(VdcObjectType.Disk, imageId));
     }
 
     public Guid getImageId() {
