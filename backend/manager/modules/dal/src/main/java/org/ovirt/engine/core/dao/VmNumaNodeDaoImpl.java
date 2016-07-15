@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -33,32 +32,6 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
 
         vmNumaNodes.stream().filter(node -> vmNumaNodesPinMap.containsKey(node.getId())).forEach(
                 node -> node.setVdsNumaNodeList(vmNumaNodesPinMap.get(node.getId())));
-
-        return vmNumaNodes;
-    }
-
-    @Override
-    public List<VmNumaNode> getAllPinnedVmNumaNodeByVdsNumaNodeId(Guid vdsNumaNodeId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_numa_node_id", vdsNumaNodeId)
-                .addValue("is_pinned", true);
-
-        List<VmNumaNode> vmNumaNodes =
-                getCallsHandler().executeReadList("GetVmNumaNodeByVdsNumaNodeIdWithPinnedInfo",
-                        vmNumaNodeRowMapper, parameterSource);
-
-        Map<Guid, List<Integer>> numaNodesCpusMap = getAllNumaNodeCpuMap();
-
-        Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
-
-        for (VmNumaNode node : vmNumaNodes) {
-            if (numaNodesCpusMap.containsKey(node.getId())) {
-                node.setCpuIds(numaNodesCpusMap.get(node.getId()));
-            }
-            if (vmNumaNodesPinMap.containsKey(node.getId())) {
-                node.setVdsNumaNodeList(vmNumaNodesPinMap.get(node.getId()));
-            }
-        }
 
         return vmNumaNodes;
     }
@@ -125,40 +98,11 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
     private static final RowMapper<Pair<Guid, Integer>> vmNumaNodeCpusRowMapper =
             (rs, rowNum) -> new Pair<>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
 
-    private static final RowMapper<Pair<Guid, Integer>> vNodePinToPnodeRowMapper =
-            (rs, rowNum) ->
-                    new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"), rs.getInt("last_run_in_vds_numa_node_index"));
-
     private static final RowMapper<Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodeAssignmentRowMapper =
             (rs, rowNum) -> new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"),
                     new Pair<>(getGuid(rs, "run_in_vds_numa_node_id"),
                             new Pair<>(rs.getBoolean("is_pinned"),
                             rs.getInt("run_in_vds_numa_node_index"))));
-
-    @Override
-    public List<VmNumaNode> getAllVmNumaNodeByVdsNumaNodeId(Guid vdsNumaNodeId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_numa_node_id", vdsNumaNodeId);
-
-        List<VmNumaNode> vmNumaNodes =
-                getCallsHandler().executeReadList("GetVmNumaNodeByVdsNumaNodeId",
-                        vmNumaNodeRowMapper, parameterSource);
-
-        Map<Guid, List<Integer>> numaNodesCpusMap = getAllNumaNodeCpuMap();
-
-        Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
-
-        for (VmNumaNode node : vmNumaNodes) {
-            if (numaNodesCpusMap.containsKey(node.getId())) {
-                node.setCpuIds(numaNodesCpusMap.get(node.getId()));
-            }
-            if (vmNumaNodesPinMap.containsKey(node.getId())) {
-                node.setVdsNumaNodeList(vmNumaNodesPinMap.get(node.getId()));
-            }
-        }
-
-        return vmNumaNodes;
-    }
 
     @Override
     public List<Pair<Guid, VmNumaNode>> getVmNumaNodeInfoByClusterId(Guid cluster) {
@@ -196,34 +140,4 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
         }
         return map;
     }
-
-    @Override
-    public List<Pair<Guid, Integer>> getPinnedNumaNodeIndex(Guid vmId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_id", vmId);
-
-        return getCallsHandler().executeReadList("GetLastRunInPnodeInfoByVmId",
-                vNodePinToPnodeRowMapper, parameterSource);
-    }
-
-    @Override
-    public void massUpdateVmNumaNodeRuntimePinning(List<VmNumaNode> vmNumaNodes) {
-        List<MapSqlParameterSource> vNodeToPnodeDeletions = new ArrayList<>();
-        List<MapSqlParameterSource> vNodeToPnodeInsertions = new ArrayList<>();
-        for (VmNumaNode node : vmNumaNodes) {
-            vNodeToPnodeDeletions.add(getCustomMapSqlParameterSource().addValue("vm_numa_node_id", node.getId()));
-            vNodeToPnodeInsertions.addAll(node.getVdsNumaNodeList()
-                    .stream()
-                    .filter(pair -> !pair.getSecond().getFirst())
-                    .map(pair -> createVnodeToPnodeParametersMapper(pair, node.getId()))
-                    .collect(Collectors.toList()));
-        }
-        if (!vNodeToPnodeDeletions.isEmpty()) {
-            getCallsHandler().executeStoredProcAsBatch("DeleteUnpinnedNumaNodeMapByVmNumaNodeId", vNodeToPnodeDeletions);
-        }
-        if (!vNodeToPnodeInsertions.isEmpty()) {
-            getCallsHandler().executeStoredProcAsBatch("InsertNumaNodeMap", vNodeToPnodeInsertions);
-        }
-    }
-
 }

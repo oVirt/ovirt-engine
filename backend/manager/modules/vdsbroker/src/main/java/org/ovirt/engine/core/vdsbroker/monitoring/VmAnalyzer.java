@@ -15,7 +15,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -51,7 +49,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -84,7 +81,6 @@ public class VmAnalyzer {
     private boolean guestAgentDownAndBalloonInfalted;
     private boolean guestAgentUpOrBalloonDeflated;
     private List<VmJob> vmJobs;
-    private List<VmNumaNode> vmNumaNodesNeedUpdate;
     private VmStatistics statistics;
     private List<VmNetworkInterface> ifaces;
 
@@ -794,7 +790,6 @@ public class VmAnalyzer {
         proceedGuaranteedMemoryCheck();
         updateVmStatistics();
         updateInterfaceStatistics();
-        updateVmNumaNodeRuntimeInfo();
         updateDiskImageDynamics();
         updateVmJobs();
     }
@@ -895,43 +890,6 @@ public class VmAnalyzer {
 
     private void updateVmJobs() {
         vmJobs = vdsmVm.getVmJobs();
-    }
-
-    private void updateVmNumaNodeRuntimeInfo() {
-        List<VmNumaNode> reportedNumaNodes = vdsmVm.getvNumaNodeStatisticsList();
-        if (reportedNumaNodes == null || reportedNumaNodes.isEmpty() || !dbVm.getStatus().isRunning()) {
-            return;
-        }
-
-        //Build numa nodes map of the host which the dbVm is running on with node index as the key
-        Map<Integer, VdsNumaNode> vdsNumaNodes = vdsNumaNodesProvider.get();
-
-        //Build numa nodes map of the dbVm with node index as the key
-        Map<Integer, VmNumaNode> vmAllNumaNodesMap = vmNumaNodeDao
-                .getAllVmNumaNodeByVmId(dbVm.getId()).stream()
-                .collect(Collectors.toMap(VmNumaNode::getIndex, Function.identity()));
-
-        //Initialize the unpinned dbVm numa nodes list with the runtime pinning information
-        for (VmNumaNode vNode : reportedNumaNodes) {
-            VmNumaNode dbVmNumaNode = vmAllNumaNodesMap.get(vNode.getIndex());
-            if (dbVmNumaNode != null) {
-                vNode.setId(dbVmNumaNode.getId());
-                List<Integer> pinnedNodes = NumaUtils.getPinnedNodeIndexList(dbVmNumaNode.getVdsNumaNodeList());
-                List<Pair<Guid, Pair<Boolean, Integer>>> runTimePinList = new ArrayList<>();
-                for (Pair<Guid, Pair<Boolean, Integer>> pair : vNode.getVdsNumaNodeList()) {
-                    if (!pinnedNodes.contains(pair.getSecond().getSecond()) &&
-                            vdsNumaNodes.containsKey(pair.getSecond().getSecond())) {
-                        pair.setFirst(vdsNumaNodes.get(pair.getSecond().getSecond()).getId());
-                        pair.getSecond().setFirst(false);
-                        runTimePinList.add(pair);
-                    }
-                }
-                if (!runTimePinList.isEmpty()) {
-                    vNode.setVdsNumaNodeList(runTimePinList);
-                    vmNumaNodesNeedUpdate.add(vNode);
-                }
-            }
-        }
     }
 
     /**** Helpers and sub-methods ****/
@@ -1058,10 +1016,6 @@ public class VmAnalyzer {
 
     public List<VmJob> getVmJobs() {
         return vmJobs;
-    }
-
-    public List<VmNumaNode> getVmNumaNodesNeedUpdate() {
-        return vmNumaNodesNeedUpdate;
     }
 
     public Guid getVmId() {

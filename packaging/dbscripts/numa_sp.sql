@@ -118,35 +118,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetAllFromNumaNode ()
-RETURNS SETOF numa_node STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node.*
-        FROM numa_node;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetNumaNodeByNumaNodeId (v_numa_node_id UUID)
-RETURNS SETOF numa_node STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node.*
-        FROM numa_node
-        WHERE numa_node_id = v_numa_node_id;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetNumaNodeByVdsId (v_vds_id UUID)
 RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
 BEGIN
@@ -231,22 +202,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetNumaNodeCpuByNumaNodeId (v_numa_node_id UUID)
-RETURNS SETOF INT STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node_cpu_map.cpu_core_id
-        FROM numa_node_cpu_map
-        WHERE numa_node_id = v_numa_node_id
-        ORDER BY numa_node_cpu_map.cpu_core_id ASC;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 ----------------------------------------------------------------
 -- [vm_vds_numa_node_map] Table
 --
@@ -293,93 +248,9 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteNumaNodeMapByVdsNumaNodeId (v_vds_numa_node_id UUID)
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    BEGIN
-        DELETE
-        FROM vm_vds_numa_node_map
-        WHERE vds_numa_node_id = v_vds_numa_node_id;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION DeleteUnpinnedNumaNodeMapByVmNumaNodeId (v_vm_numa_node_id UUID)
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    BEGIN
-        DELETE
-        FROM vm_vds_numa_node_map
-        WHERE vm_numa_node_id = v_vm_numa_node_id
-            AND is_pinned = FALSE;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 ----------------------------------------------------------------
 -- [numa_node_assignment_view] View
 --
-CREATE OR REPLACE FUNCTION GetVmNumaNodeByVdsNumaNodeIdWithPinnedInfo (
-    v_vds_numa_node_id UUID,
-    v_is_pinned BOOLEAN
-    )
-RETURNS SETOF numa_node STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node_assignment_view.assigned_vm_numa_node_id,
-            numa_node_assignment_view.run_in_vds_id,
-            numa_node_assignment_view.vm_numa_node_vm_id,
-            numa_node_assignment_view.vm_numa_node_index,
-            numa_node_assignment_view.vm_numa_node_mem_total,
-            numa_node_assignment_view.vm_numa_node_cpu_count,
-            numa_node_assignment_view.vm_numa_node_mem_free,
-            numa_node_assignment_view.vm_numa_node_usage_mem_percent,
-            numa_node_assignment_view.vm_numa_node_cpu_sys,
-            numa_node_assignment_view.vm_numa_node_cpu_user,
-            numa_node_assignment_view.vm_numa_node_cpu_idle,
-            numa_node_assignment_view.vm_numa_node_usage_cpu_percent,
-            numa_node_assignment_view.vm_numa_node_distance
-        FROM numa_node_assignment_view
-        WHERE run_in_vds_numa_node_id = v_vds_numa_node_id
-            AND is_pinned = v_is_pinned;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetVmNumaNodeByVdsNumaNodeId (v_vds_numa_node_id UUID)
-RETURNS SETOF numa_node STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node_assignment_view.assigned_vm_numa_node_id,
-            numa_node_assignment_view.run_in_vds_id,
-            numa_node_assignment_view.vm_numa_node_vm_id,
-            numa_node_assignment_view.vm_numa_node_index,
-            numa_node_assignment_view.vm_numa_node_mem_total,
-            numa_node_assignment_view.vm_numa_node_cpu_count,
-            numa_node_assignment_view.vm_numa_node_mem_free,
-            numa_node_assignment_view.vm_numa_node_usage_mem_percent,
-            numa_node_assignment_view.vm_numa_node_cpu_sys,
-            numa_node_assignment_view.vm_numa_node_cpu_user,
-            numa_node_assignment_view.vm_numa_node_cpu_idle,
-            numa_node_assignment_view.vm_numa_node_usage_cpu_percent,
-            numa_node_assignment_view.vm_numa_node_distance
-        FROM numa_node_assignment_view
-        WHERE run_in_vds_numa_node_id = v_vds_numa_node_id;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllAssignedNumaNodeInfomation ()
 RETURNS SETOF numa_node_assignment_view STABLE AS $PROCEDURE$
@@ -389,21 +260,6 @@ BEGIN
 
         SELECT numa_node_assignment_view.*
         FROM numa_node_assignment_view;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetLastRunInPnodeInfoByVmId (v_vm_id UUID)
-RETURNS SETOF numa_node_assignment_view STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node_assignment_view.*
-        FROM numa_node_assignment_view
-        WHERE vm_numa_node_vm_id = v_vm_id;
     END;
 
     RETURN;

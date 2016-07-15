@@ -58,7 +58,6 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmJobState;
 import org.ovirt.engine.core.common.businessentities.VmJobType;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -91,7 +90,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -2340,28 +2338,6 @@ public class VdsBrokerObjectsBuilder {
             vds.setNumaSupport(newNumaNodeList.size() > 1);
         }
 
-    }
-
-    /**
-     * Build through the received vm NUMA nodes runtime information
-     */
-    public static List<VmNumaNode> buildVmNumaNodesRuntimeInfo(Map<String, Object> xmlRpcStruct) {
-        if (!xmlRpcStruct.containsKey(VdsProperties.VM_NUMA_NODES_RUNTIME_INFO)) {
-            return null;
-        }
-        List<VmNumaNode> vmNumaNodes = new ArrayList<>();
-        Map<String, Object[]> vNodesRunInfo = (Map<String, Object[]>)xmlRpcStruct.get(
-                VdsProperties.VM_NUMA_NODES_RUNTIME_INFO);
-        for (Map.Entry<String, Object[]> item : vNodesRunInfo.entrySet()) {
-            VmNumaNode vNode = new VmNumaNode();
-            vNode.setIndex(Integer.parseInt(item.getKey()));
-            for (Object pNodeIndex : item.getValue()) {
-                vNode.getVdsNumaNodeList().add(new Pair<>(
-                        Guid.Empty, new Pair<>(false, (Integer)pNodeIndex)));
-            }
-            vmNumaNodes.add(vNode);
-        }
-        return vmNumaNodes;
     }
 
     private static <T> List<T> extractList(Map<String, Object> xmlRpcStruct, String propertyName, boolean returnNullOnEmpty) {

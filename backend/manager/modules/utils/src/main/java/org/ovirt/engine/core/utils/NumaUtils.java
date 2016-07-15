@@ -30,14 +30,6 @@ public class NumaUtils {
         return "";
     }
 
-    public static List<Integer> getNodeIndexList(List<VdsNumaNode> nodeList) {
-        List<Integer> nodeIndexes = new ArrayList<>(nodeList.size());
-        for (VdsNumaNode item : nodeList) {
-            nodeIndexes.add(item.getIndex());
-        }
-        return nodeIndexes;
-    }
-
     public static List<Integer> getPinnedNodeIndexList(List<Pair<Guid, Pair<Boolean, Integer>>> nodeList) {
         List<Integer> nodeIndexes = new ArrayList<>(nodeList.size());
         for (Pair<Guid, Pair<Boolean, Integer>> item : nodeList) {
