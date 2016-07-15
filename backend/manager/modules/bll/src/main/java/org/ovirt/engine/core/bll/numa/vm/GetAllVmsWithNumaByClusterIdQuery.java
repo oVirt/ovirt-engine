@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -8,7 +9,6 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -28,12 +28,10 @@ public class GetAllVmsWithNumaByClusterIdQuery<P extends IdQueryParameters> exte
     protected void executeQueryCommand() {
         Guid clusterId = getParameters().getId();
         List<VM> vms = vmDao.getAllForCluster(clusterId);
-        List<Pair<Guid, VmNumaNode>> nodes = vmNumaNodeDao.getVmNumaNodeInfoByClusterId(clusterId);
+        Map<Guid, List<VmNumaNode>> nodes = vmNumaNodeDao.getVmNumaNodeInfoByClusterId(clusterId);
         for (VM vm : vms) {
-            for (Pair<Guid, VmNumaNode> pairnode : nodes) {
-                if (vm.getId().equals(pairnode.getFirst())) {
-                    vm.getvNumaNodeList().add(pairnode.getSecond());
-                }
+            if (nodes.containsKey(vm.getId())) {
+                vm.setvNumaNodeList(nodes.get(vm.getId()));
             }
         }
         getQueryReturnValue().setReturnValue(vms);

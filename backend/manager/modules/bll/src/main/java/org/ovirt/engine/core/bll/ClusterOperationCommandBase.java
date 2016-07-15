@@ -165,7 +165,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     private void populateVMNUMAInfo(final List<VM> vms) {
         // Populate numa nodes with a mass update
         final Map<Guid, List<VmNumaNode>> numaNodes =
-                vmNumaNodeDao.getVmNumaNodeInfoByClusterIdAsMap(getClusterId());
+                vmNumaNodeDao.getVmNumaNodeInfoByClusterId(getClusterId());
         for (final VM vm : vms) {
             if (numaNodes.containsKey(vm.getId())) {
                 vm.setvNumaNodeList(numaNodes.get(vm.getId()));

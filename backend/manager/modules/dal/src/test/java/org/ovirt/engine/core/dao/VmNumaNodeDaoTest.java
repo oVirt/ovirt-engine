@@ -12,7 +12,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmNumaNodeDaoTest extends BaseDaoTestCase {
@@ -58,18 +57,10 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetVmNumaNodeInfoByClusterId() {
-        Guid clusterId = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-        List<Pair<Guid, VmNumaNode>> result = vmNumaNodeDao.getVmNumaNodeInfoByClusterId(clusterId);
-        assertNotNull(result);
-        assertEquals(2, result.size());
-    }
-
-    @Test
-    public void testGetVmNumaNodeInfoByBdsGroupIdAsMap() {
+    public void testGetVmNumaNodeInfoByBdsGroupId() {
         Guid vdsGroupId = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
         Guid vmId = Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4354");
-        Map<Guid, List<VmNumaNode>> result = vmNumaNodeDao.getVmNumaNodeInfoByClusterIdAsMap(vdsGroupId);
+        Map<Guid, List<VmNumaNode>> result = vmNumaNodeDao.getVmNumaNodeInfoByClusterId(vdsGroupId);
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(2, result.get(vmId).size());
@@ -99,7 +90,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         newVmNumaNode.getVdsNumaNodeList().add(1);
         newVmNode.add(newVmNumaNode);
 
-        vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
+        vmNumaNodeDao.massSaveNumaNode(newVmNode, ANOTHER_EXISTING_VM_ID);
         result = vmNumaNodeDao.getAllVmNumaNodeByVmId(ANOTHER_EXISTING_VM_ID);
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -141,8 +132,6 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         newVmNumaNode.setCpuIds(generateCpuList(0, 4));
         newVmNumaNode.setId(vmNumaNode1);
         newVmNumaNode.setIndex(0);
-        newVmNumaNode.setNumaNodeDistances(generateDistance(2, 0));
-        newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVmNumaNode.getVdsNumaNodeList().add(0);
         newVmNode.add(newVmNumaNode);
 
@@ -150,12 +139,10 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         newVmNumaNode.setCpuIds(generateCpuList(4, 4));
         newVmNumaNode.setId(vmNumaNode2);
         newVmNumaNode.setIndex(1);
-        newVmNumaNode.setNumaNodeDistances(generateDistance(2, 1));
-        newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVmNumaNode.getVdsNumaNodeList().add(1);
         newVmNode.add(newVmNumaNode);
 
-        vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
+        vmNumaNodeDao.massSaveNumaNode(newVmNode, ANOTHER_EXISTING_VM_ID);
         result = vmNumaNodeDao.getAllVmNumaNodeByVmId(ANOTHER_EXISTING_VM_ID);
         assertNotNull(result);
         assertEquals(2, result.size());

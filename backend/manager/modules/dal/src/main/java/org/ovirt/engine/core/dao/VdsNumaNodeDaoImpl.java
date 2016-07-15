@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements VdsNumaNodeDao {
+public class VdsNumaNodeDaoImpl extends NumaNodeDaoBase<VdsNumaNode> implements VdsNumaNodeDao {
 
     @Override
     public List<VdsNumaNode> getAllVdsNumaNodeByVdsId(Guid vdsId) {
@@ -28,6 +28,29 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
         return getCallsHandler().executeReadList("GetNumaNodeByVdsId",
                 vdsNumaNodeRowMapper, parameterSource);
     }
+
+    @Override
+    public void massSaveNumaNode(List<VdsNumaNode> numaNodes, Guid vdsId) {
+        insertNodes(numaNodes, node -> createNumaNodeParametersMapper(node).addValue("vds_id", vdsId));
+        insertCpus(numaNodes);
+    }
+
+    @Override
+    public void massUpdateNumaNode(List<VdsNumaNode> numaNodes) {
+        updateNodes(numaNodes, node -> createNumaNodeParametersMapper(node));
+        removeCpus(numaNodes);
+        insertCpus(numaNodes);
+    }
+
+    @Override
+    public void massUpdateNumaNodeStatistics(List<VdsNumaNode> numaNodes) {
+        List<MapSqlParameterSource> executions = numaNodes.stream()
+                .map(node -> createNumaNodeStatisticsParametersMapper(node))
+                .collect(Collectors.toList());
+
+        getCallsHandler().executeStoredProcAsBatch("UpdateNumaNodeStatistics", executions);
+    }
+
 
     private static final RowMapper<VdsNumaNode> vdsNumaNodeRowMapper = (rs, rowNum) -> {
         VdsNumaNode entity = new VdsNumaNode();
@@ -55,5 +78,35 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
 
         return Arrays.stream(distance.split(";")).map(d -> d.split(",")).collect(
                 Collectors.toMap(k -> Integer.valueOf(k[0]), v -> Integer.valueOf(v[1])));
+    }
+
+    protected MapSqlParameterSource createNumaNodeParametersMapper(VdsNumaNode node) {
+        return super.createNumaNodeParametersMapper(node)
+                .addValue("distance", getDistanceString(node.getNumaNodeDistances()));
+    }
+
+    private static String getDistanceString(Map<Integer, Integer> distance) {
+        if (distance == null || distance.isEmpty()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Integer, Integer> entry : distance.entrySet()) {
+            sb.append(entry.getKey());
+            sb.append(",");
+            sb.append(entry.getValue());
+            sb.append(";");
+        }
+        return sb.deleteCharAt(sb.length() - 1).toString();
+    }
+
+    private MapSqlParameterSource createNumaNodeStatisticsParametersMapper(VdsNumaNode node) {
+        return getCustomMapSqlParameterSource()
+                .addValue("numa_node_id", node.getId())
+                .addValue("mem_free", node.getNumaNodeStatistics().getMemFree())
+                .addValue("usage_mem_percent", node.getNumaNodeStatistics().getMemUsagePercent())
+                .addValue("cpu_sys", node.getNumaNodeStatistics().getCpuSys())
+                .addValue("cpu_user", node.getNumaNodeStatistics().getCpuUser())
+                .addValue("cpu_idle", node.getNumaNodeStatistics().getCpuIdle())
+                .addValue("usage_cpu_percent", node.getNumaNodeStatistics().getCpuUsagePercent());
     }
 }

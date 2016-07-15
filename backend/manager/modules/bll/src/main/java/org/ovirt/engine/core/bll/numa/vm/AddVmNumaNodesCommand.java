@@ -29,7 +29,7 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
         vmNumaNodes.stream()
                 .forEach(node -> node.setId(Guid.newGuid()));
 
-        vmNumaNodeDao.massSaveNumaNode(vmNumaNodes, null, getVm().getId());
+        vmNumaNodeDao.massSaveNumaNode(vmNumaNodes, getVm().getId());
 
         // Used for restful API for reture first NUMA node GUID
         setActionReturnValue(vmNumaNodes.get(0).getId());

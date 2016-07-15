@@ -466,6 +466,7 @@
         <include name="common/businessentities/CpuStatistics.java" />
         <include name="common/businessentities/NumaNodeStatistics.java" />
         <include name="common/businessentities/NumaTuneMode.java" />
+        <include name="common/businessentities/NumaNode.java" />
         <include name="common/businessentities/VdsNumaNode.java" />
         <include name="common/businessentities/VmNumaNode.java" />
         <!-- Foreman Objects -->

@@ -574,7 +574,7 @@ public class VdsManager {
                         vdsNumaNodeDao.massUpdateNumaNode(numaNodesToUpdate);
                     }
                     if (!numaNodesToSave.isEmpty()) {
-                        vdsNumaNodeDao.massSaveNumaNode(numaNodesToSave, vds.getId(), null);
+                        vdsNumaNodeDao.massSaveNumaNode(numaNodesToSave, vds.getId());
                     }
                     return null;
                 });

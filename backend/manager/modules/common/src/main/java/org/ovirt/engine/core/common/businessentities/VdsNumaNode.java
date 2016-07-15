@@ -1,68 +1,22 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Object which represents host NUMA node information
  *
  */
-public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
+public class VdsNumaNode extends NumaNode {
 
     private static final long serialVersionUID = -683066053231559224L;
 
-    private Guid id;
-
-    private int index;
-
-    private List<Integer> cpuIds;
-
-    private long memTotal;
-
     private NumaNodeStatistics numaNodeStatistics;
 
-    private Map<Integer, Integer> numaNodeDistances;
+    private Map<Integer, Integer> numaNodeDistances = new HashMap<>();
 
     public VdsNumaNode() {
-        cpuIds = new ArrayList<>();
-        numaNodeDistances = new HashMap<>();
-    }
-
-    public Guid getId() {
-        return id;
-    }
-
-    public void setId(Guid id) {
-        this.id = id;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public List<Integer> getCpuIds() {
-        return cpuIds;
-    }
-
-    public void setCpuIds(List<Integer> cpuIds) {
-        this.cpuIds = cpuIds;
-    }
-
-    public long getMemTotal() {
-        return memTotal;
-    }
-
-    public void setMemTotal(long memTotal) {
-        this.memTotal = memTotal;
     }
 
     public NumaNodeStatistics getNumaNodeStatistics() {
@@ -89,10 +43,7 @@ public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
     @Override
     public int hashCode() {
         return Objects.hash(
-                cpuIds,
-                id,
-                index,
-                memTotal,
+                super.hashCode(),
                 numaNodeDistances,
                 numaNodeStatistics
         );
@@ -107,17 +58,8 @@ public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
             return false;
         }
         VdsNumaNode other = (VdsNumaNode) obj;
-        return Objects.equals(cpuIds, other.cpuIds)
-                && Objects.equals(id, other.id)
-                && index == other.index
-                && memTotal == other.memTotal
+        return super.equals(obj)
                 && Objects.equals(numaNodeDistances, other.numaNodeDistances)
-                && Objects.equals(numaNodeStatistics, numaNodeStatistics);
+                && Objects.equals(numaNodeStatistics, other.numaNodeStatistics);
     }
-
-    @Override
-    public Object getQueryableId() {
-        return id;
-    }
-
 }

@@ -38,14 +38,14 @@ public class AddVmNumaNodesCommandTest
     public void canSetNumaConfigurationWithVmFromParams() {
         mockCommandWithVmFromParams();
         command.executeCommand();
-        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class), any(Guid.class));
+        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class));
     }
 
     @Test
     public void canSetNumaConfigurationWithVmFromDb() {
         mockCommandWithVmFromDb();
         command.executeCommand();
-        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class), any(Guid.class));
+        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class AddVmNumaNodesCommandTest
         paramNumaNodes.add(createVmNumaNode(1, vdsNumaNodes));
         mockCommandWithVmFromParams();
         command.executeCommand();
-        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class), any(Guid.class));
+        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class));
     }
 
     @Test

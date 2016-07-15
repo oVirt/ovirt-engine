@@ -65,7 +65,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
         newVdsNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVdsNode.add(newVdsNumaNode);
 
-        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, ANOTHER_EXISTING_VDS_ID, null);
+        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, ANOTHER_EXISTING_VDS_ID);
         result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(ANOTHER_EXISTING_VDS_ID);
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -137,7 +137,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
         newVdsNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVdsNode.add(newVdsNumaNode);
 
-        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, ANOTHER_EXISTING_VDS_ID, null);
+        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, ANOTHER_EXISTING_VDS_ID);
 
         List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(ANOTHER_EXISTING_VDS_ID);
         assertNotNull(result);

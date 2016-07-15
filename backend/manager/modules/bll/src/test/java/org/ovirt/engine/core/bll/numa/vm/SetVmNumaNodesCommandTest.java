@@ -43,7 +43,7 @@ public class SetVmNumaNodesCommandTest
         mockCommandWithVmFromParams();
         command.executeCommand();
         verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(eq(existingNumaNodeIds));
-        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class), any(Guid.class));
+        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class SetVmNumaNodesCommandTest
         mockCommandWithVmFromDb();
         command.executeCommand();
         verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(eq(existingNumaNodeIds));
-        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class), any(Guid.class));
+        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class SetVmNumaNodesCommandTest
         mockCommandWithVmFromParams();
         command.executeCommand();
         verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(eq(existingNumaNodeIds));
-        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class), any(Guid.class));
+        verify(vmNumaNodeDao).massSaveNumaNode(eq(paramNumaNodes), any(Guid.class));
     }
 
     @Test

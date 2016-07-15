@@ -605,7 +605,7 @@ public class UpdateClusterCommandTest {
         doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradeDone(anyList());
         doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradePossible(anyList(), anyList());
         doReturn(new HashMap<Guid, List<VmNumaNode>>()).when(vmNumaNodeDao)
-                .getVmNumaNodeInfoByClusterIdAsMap(any(Guid.class));
+                .getVmNumaNodeInfoByClusterId(any(Guid.class));
 
         if (StringUtils.isEmpty(group.getCpuName())) {
             doReturn(ArchitectureType.undefined).when(cmd).getArchitecture();

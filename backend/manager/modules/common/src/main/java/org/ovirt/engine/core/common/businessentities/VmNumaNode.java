@@ -8,7 +8,7 @@ import java.util.Objects;
  * Object which represents vm virtual NUMA node information
  *
  */
-public class VmNumaNode extends VdsNumaNode {
+public class VmNumaNode extends NumaNode {
 
     private static final long serialVersionUID = -5384287037435972730L;
 
