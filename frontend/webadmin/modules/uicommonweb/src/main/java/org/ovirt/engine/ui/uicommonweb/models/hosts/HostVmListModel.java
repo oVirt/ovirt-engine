@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
@@ -61,15 +59,7 @@ public class HostVmListModel extends VmListModel<VDS> {
         // During the migration, the VM should be visible on source host (Migrating From), and also
         // on destination host (Migrating To)
         if (getEntity() != null) {
-            AsyncDataProvider.getInstance().getVmsRunningOnOrMigratingToVds(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object target, Object returnValue) {
-                    @SuppressWarnings("unchecked")
-                    final ArrayList<VM> list = (ArrayList<VM>) returnValue;
-                    final HostVmListModel model = (HostVmListModel) target;
-                    model.setItems(list);
-                }
-            }), getEntity().getId());
+            AsyncDataProvider.getInstance().getVmsRunningOnOrMigratingToVds(new SetRawItemsAsyncQuery(), getEntity().getId());
         } else {
             setItems(new ArrayList<VM>());
         }

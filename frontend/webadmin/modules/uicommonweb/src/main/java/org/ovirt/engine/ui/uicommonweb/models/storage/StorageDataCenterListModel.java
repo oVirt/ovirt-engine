@@ -22,9 +22,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -125,14 +124,14 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         attachCandidateDatacenters = value;
     }
 
-    private ArrayList<StoragePool> availableDatacenters;
+    private List<StoragePool> availableDataCenters;
 
-    public ArrayList<StoragePool> getavailableDatacenters() {
-        return availableDatacenters;
+    public List<StoragePool> getAvailableDataCenters() {
+        return availableDataCenters;
     }
 
-    public void setavailableDatacenters(ArrayList<StoragePool> value) {
-        availableDatacenters = value;
+    public void setAvailableDataCenters(List<StoragePool> value) {
+        availableDataCenters = value;
     }
 
     private List<StoragePool> selectedDataCentersForAttach;
@@ -181,13 +180,12 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
+        tempVar.setRefresh(getIsQueryFirstTime());
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainListById, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                ArrayList<StorageDomain> domains =
-                        ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<StorageDomain> domains = returnValue.getReturnValue();
                 for (StorageDomain domain : domains) {
                     domain.setId(domain.getStoragePoolId());
                 }
@@ -195,11 +193,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 setItems(domains);
                 setIsEmpty(getItems().size() == 0);
             }
-        };
-
-        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
-        tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainListById, tempVar, _asyncQuery);
+        }));
     }
 
     private void attach() {
@@ -210,73 +204,67 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         setattachCandidateDatacenters(new ArrayList<EntityModel>());
         setAttachMultiple(getEntity().getStorageDomainType() == StorageDomainType.ISO);
 
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this,
-                                                                         new INewAsyncCallback() {
-                                                                             @Override
-                                                                             public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(
+                new AsyncCallback<List<StoragePool>>() {
+                    @Override
+                    public void onSuccess(List<StoragePool> returnValue) {
 
-                                                                                 StorageDataCenterListModel listModel = (StorageDataCenterListModel) target;
-                                                                                 listModel.setavailableDatacenters((ArrayList<StoragePool>) returnValue);
-                                                                                 boolean addDatacenter = false;
-                                                                                 for (StoragePool dataCenter : listModel.getavailableDatacenters()) {
-                                                                                     switch (getEntity().getStorageDomainType()) {
-                                                                                         case Master:
-                                                                                         case Data:
-                                                                                             addDatacenter =
-                                                                                                     (dataCenter.getStatus() == StoragePoolStatus.Uninitialized || dataCenter.getStatus() == StoragePoolStatus.Up)
-                                                                                                             && (dataCenter.getStoragePoolFormatType() == null || dataCenter.getStoragePoolFormatType() == getEntity().getStorageStaticData()
-                                                                                                             .getStorageFormat() && (dataCenter.isLocal() || !getEntity().getStorageType().isLocal()));
-                                                                                             addToAttachCandidateDatacenters(dataCenter, addDatacenter);
-                                                                                             break;
-                                                                                         case Volume:
-                                                                                             addDatacenter = dataCenter.getStatus() == StoragePoolStatus.Up;
-                                                                                             addToAttachCandidateDatacenters(dataCenter, addDatacenter);
-                                                                                             break;
-                                                                                         case ISO:
-                                                                                             AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(new Object[] {listModel,
-                                                                                                                                                  dataCenter},
-                                                                                                                                                         new INewAsyncCallback() {
-                                                                                                                                                             @Override
-                                                                                                                                                             public void onSuccess(Object target1, Object returnValue1) {
+                        setAvailableDataCenters(returnValue);
+                        boolean addDatacenter = false;
+                        for (final StoragePool dataCenter : getAvailableDataCenters()) {
+                            switch (getEntity().getStorageDomainType()) {
+                            case Master:
+                            case Data:
+                                addDatacenter =
+                                        (dataCenter.getStatus() == StoragePoolStatus.Uninitialized
+                                                || dataCenter.getStatus() == StoragePoolStatus.Up)
+                                                && (dataCenter.getStoragePoolFormatType() == null
+                                                        || dataCenter.getStoragePoolFormatType() == getEntity()
+                                                                .getStorageStaticData()
+                                                                .getStorageFormat()
+                                                                && (dataCenter.isLocal()
+                                                                        || !getEntity().getStorageType().isLocal()));
+                                addToAttachCandidateDatacenters(dataCenter, addDatacenter);
+                                break;
+                            case Volume:
+                                addDatacenter = dataCenter.getStatus() == StoragePoolStatus.Up;
+                                addToAttachCandidateDatacenters(dataCenter, addDatacenter);
+                                break;
+                            case ISO:
+                                AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery<>(
+                                        new AsyncCallback<StorageDomain>() {
+                                            @Override
+                                            public void onSuccess(StorageDomain storageDomain) {
 
-                                                                                                                                                                 Object[] array1 = (Object[]) target1;
-                                                                                                                                                                 StorageDataCenterListModel listModel1 =
-                                                                                                                                                                         (StorageDataCenterListModel) array1[0];
-                                                                                                                                                                 StoragePool dataCenter1 = (StoragePool) array1[1];
-                                                                                                                                                                 boolean addDatacenter1 =
-                                                                                                                                                                         dataCenter1.getStatus() == StoragePoolStatus.Up
-                                                                                                                                                                                 && returnValue1 == null;
-                                                                                                                                                                 listModel1.addToAttachCandidateDatacenters(dataCenter1, addDatacenter1);
+                                                boolean addDatacenter =
+                                                        dataCenter.getStatus() == StoragePoolStatus.Up
+                                                                && storageDomain == null;
+                                                addToAttachCandidateDatacenters(dataCenter, addDatacenter);
 
-                                                                                                                                                             }
-                                                                                                                                                         }),
-                                                                                                                                          dataCenter.getId());
-                                                                                             break;
-                                                                                         case ImportExport:
-                                                                                             AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(new Object[] {
-                                                                                                                                                     listModel, dataCenter},
-                                                                                                                                                            new INewAsyncCallback() {
-                                                                                                                                                                @Override
-                                                                                                                                                                public void onSuccess(Object target2, Object returnValue2) {
+                                            }
+                                        }),
+                                        dataCenter.getId());
+                                break;
+                            case ImportExport:
+                                AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery<>(
+                                        new AsyncCallback<StorageDomain>() {
+                                            @Override
+                                            public void onSuccess(StorageDomain storageDomain) {
 
-                                                                                                                                                                    Object[] array2 = (Object[]) target2;
-                                                                                                                                                                    StorageDataCenterListModel listModel2 =
-                                                                                                                                                                            (StorageDataCenterListModel) array2[0];
-                                                                                                                                                                    StoragePool dataCenter2 = (StoragePool) array2[1];
-                                                                                                                                                                    boolean addDatacenter2 =
-                                                                                                                                                                            dataCenter2.getStatus() == StoragePoolStatus.Up
-                                                                                                                                                                                    && returnValue2 == null;
-                                                                                                                                                                    listModel2.addToAttachCandidateDatacenters(dataCenter2, addDatacenter2);
+                                                boolean addDatacenter =
+                                                        dataCenter.getStatus() == StoragePoolStatus.Up
+                                                                && storageDomain == null;
+                                                addToAttachCandidateDatacenters(dataCenter, addDatacenter);
 
-                                                                                                                                                                }
-                                                                                                                                                            }),
-                                                                                                                                             dataCenter.getId());
-                                                                                             break;
-                                                                                     }
-                                                                                 }
+                                            }
+                                        }),
+                                        dataCenter.getId());
+                                break;
+                            }
+                        }
 
-                                                                             }
-                                                                         }));
+                    }
+                }));
     }
 
     public void addToAttachCandidateDatacenters(StoragePool dataCenter, boolean addDatacenter) {
@@ -288,7 +276,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         getattachCandidateDatacenters().add(dcEntityModel);
 
         // If not finished going through the datacenters list - return
-        if (getattachCandidateDatacenters().size() != getavailableDatacenters().size()) {
+        if (getattachCandidateDatacenters().size() != getAvailableDataCenters().size()) {
             return;
         }
 
@@ -378,15 +366,13 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             storageDomains.add(getEntity());
 
             AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<List<StorageDomainStatic>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        StorageDataCenterListModel storageDataCenterListModel = (StorageDataCenterListModel) target;
-                        List<StorageDomainStatic> attachedStorageDomains = (List<StorageDomainStatic>) returnValue;
+                    public void onSuccess(List<StorageDomainStatic> attachedStorageDomains) {
                         if (!attachedStorageDomains.isEmpty()) {
                             ConfirmationModel model = new ConfirmationModel();
-                            storageDataCenterListModel.setWindow(null);
-                            storageDataCenterListModel.setWindow(model);
+                            setWindow(null);
+                            setWindow(model);
 
                             List<String> stoageDomainNames = new ArrayList<>();
                             for (StorageDomainStatic domain : attachedStorageDomains) {
@@ -401,12 +387,12 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                             model.getLatch().setIsAvailable(true);
                             model.getLatch().setIsChangeable(true);
 
-                            UICommand onApprove = new UICommand("OnAttachApprove", storageDataCenterListModel); //$NON-NLS-1$
+                            UICommand onApprove = new UICommand("OnAttachApprove", StorageDataCenterListModel.this); //$NON-NLS-1$
                             onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
                             onApprove.setIsDefault(true);
                             model.getCommands().add(onApprove);
 
-                            UICommand cancel = new UICommand("Cancel", storageDataCenterListModel); //$NON-NLS-1$
+                            UICommand cancel = new UICommand("Cancel", StorageDataCenterListModel.this); //$NON-NLS-1$
                             cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                             cancel.setIsCancel(true);
                             model.getCommands().add(cancel);
@@ -526,25 +512,22 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 getdetachPrms().add(param);
             }
             else {
-                AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(new Object[] { this, getEntity() },
-                        new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(
+                        new AsyncCallback<VDS>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                            public void onSuccess(VDS locaVds) {
 
-                                Object[] array = (Object[]) target;
-                                StorageDataCenterListModel listModel = (StorageDataCenterListModel) array[0];
-                                StorageDomain storage = (StorageDomain) array[1];
-                                VDS locaVds = (VDS) returnValue;
+                                StorageDomain storage = getEntity();
                                 RemoveStorageDomainParameters tempVar =
                                         new RemoveStorageDomainParameters(storage.getId());
                                 tempVar.setVdsId(locaVds != null ? locaVds.getId() : null);
                                 tempVar.setDoFormat(model.getForce().getEntity());
                                 RemoveStorageDomainParameters removeStorageDomainParameters = tempVar;
-                                listModel.getremovePrms().add(removeStorageDomainParameters);
-                                if (listModel.getremovePrms().size() + listModel.getdetachPrms().size() == listModel.getSelectedItems()
+                                getremovePrms().add(removeStorageDomainParameters);
+                                if (getremovePrms().size() + getdetachPrms().size() == getSelectedItems()
                                         .size()) {
                                     Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStorageDomain,
-                                            listModel.getremovePrms());
+                                            getremovePrms());
                                 }
 
                             }

@@ -10,9 +10,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
@@ -98,17 +97,15 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
                         ArrayList<VM> vms = new ArrayList<>();
                         ArrayList<VmPool> pools = new ArrayList<>();
 
-                        VdcQueryReturnValue retValue = (VdcQueryReturnValue) returnValue;
-                        if (retValue != null && retValue.getSucceeded()) {
-                            List<Object> list = (ArrayList<Object>) retValue.getReturnValue();
+                        if (returnValue != null && returnValue.getSucceeded()) {
+                            List<Object> list = (ArrayList<Object>) returnValue.getReturnValue();
                             if (list != null) {
                                 for (Object object : list) {
                                     if (object instanceof VM) {
@@ -120,7 +117,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
                             }
                         }
 
-                        userPortalBasicListModel.onVmAndPoolLoad(vms, pools);
+                        onVmAndPoolLoad(vms, pools);
                     }
                 }));
     }
@@ -164,25 +161,20 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
             updateDetails(vm);
         }
         else if (entity instanceof VmPool) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object result) {
-                    UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                    if (result != null) {
-                        VM vm = ((VdcQueryReturnValue) result).getReturnValue();
-                        if (vm != null) {
-                            userPortalBasicListModel.updateDetails(vm);
-                        }
-                    }
-                }
-            };
-
             VmPool pool = (VmPool) entity;
             Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
-                    _asyncQuery);
+                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                        @Override
+                        public void onSuccess(VdcQueryReturnValue result) {
+                            if (result != null) {
+                                VM vm = result.getReturnValue();
+                                if (vm != null) {
+                                    updateDetails(vm);
+                                }
+                            }
+                        }
+                    }));
         }
     }
 

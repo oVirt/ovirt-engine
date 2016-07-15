@@ -5,8 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -67,10 +66,9 @@ public class ReplaceBrickModel extends Model {
     private void updateBricksFromHost() {
         VDS selectedServer = getServers().getSelectedItem();
         if (selectedServer != null) {
-            AsyncDataProvider.getInstance().getUnusedBricksFromServer(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getUnusedBricksFromServer(new AsyncQuery<>(new AsyncCallback<List<StorageDevice>>() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    List<StorageDevice> bricks = (List<StorageDevice>) returnValue;
+                public void onSuccess(List<StorageDevice> bricks) {
                     List<String> lvNames = new ArrayList<>();
                     for (StorageDevice brick : bricks) {
                         if (brick.getMountPoint() != null && !brick.getMountPoint().isEmpty()) {

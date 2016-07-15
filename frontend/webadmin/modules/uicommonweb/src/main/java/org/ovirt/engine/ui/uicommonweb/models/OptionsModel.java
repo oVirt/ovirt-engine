@@ -4,9 +4,8 @@ import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -43,7 +42,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             return;
         }
 
-        EditOptionsModel model = new EditOptionsModel();
+        final EditOptionsModel model = new EditOptionsModel();
 
         model.setTitle(constants.editOptionsTitle());
 
@@ -55,17 +54,17 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
         UICommand cancelCommand = UICommand.createCancelUiCommand(constants.cancel(), this);
         model.getCommands().add(cancelCommand);
 
-        AsyncDataProvider.getInstance().getUserProfile(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getUserProfile(model.asyncQuery(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 Boolean connectAutomatically = Boolean.TRUE;
-                UserProfile profile = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                UserProfile profile = returnValue.getReturnValue();
                 if (profile != null) {
                     setUserProfile(profile);
                     connectAutomatically = profile.isUserPortalVmLoginAutomatically();
-                    ((EditOptionsModel) model).getPublicKey().setEntity(profile.getSshPublicKey());
+                    model.getPublicKey().setEntity(profile.getSshPublicKey());
                 }
-                ((EditOptionsModel) model).getEnableConnectAutomatically().setEntity(connectAutomatically);
+                model.getEnableConnectAutomatically().setEntity(connectAutomatically);
             }
         }));
     }

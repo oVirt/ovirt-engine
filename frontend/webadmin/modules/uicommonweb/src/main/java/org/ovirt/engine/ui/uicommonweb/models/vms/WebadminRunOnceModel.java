@@ -8,9 +8,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
@@ -39,11 +38,10 @@ public class WebadminRunOnceModel extends RunOnceModel {
      */
     private void loadHosts() {
         // append just active hosts
-        AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery<>(
+                new AsyncCallback<List<VDS>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                final List<VDS> hosts = (ArrayList<VDS>) returnValue;
+            public void onSuccess(List<VDS> hosts) {
                 final List<VDS> activeHosts = new ArrayList<>();
                 for (VDS host : hosts) {
                     if (VDSStatus.Up.equals(host.getStatus())) {

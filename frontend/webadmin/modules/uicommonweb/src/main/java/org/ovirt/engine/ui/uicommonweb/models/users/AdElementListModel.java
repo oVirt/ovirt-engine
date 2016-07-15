@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -20,9 +21,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -66,7 +66,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     private Iterable<DbUser> privateExcludeItems;
 
-    private HashMap<String, List<String>> namespacesMap = new HashMap<>();
+    private Map<String, List<String>> namespacesMap = new HashMap<>();
 
     public Iterable<DbUser> getExcludeItems() {
         return privateExcludeItems;
@@ -204,16 +204,16 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
         setIsTimerDisabled(true);
 
-        AsyncDataProvider.getInstance().getAAAProfilesEntriesList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAAAProfilesEntriesList(new AsyncQuery<>(new AsyncCallback<List<ProfileEntry>>() {
 
             @Override
-            public void onSuccess(Object model, Object result) {
-                setProfileEntries((List<ProfileEntry>) result);
-                AsyncDataProvider.getInstance().getAAANamespaces(new AsyncQuery(this, new INewAsyncCallback() {
+            public void onSuccess(List<ProfileEntry> result) {
+                setProfileEntries(result);
+                AsyncDataProvider.getInstance().getAAANamespaces(new AsyncQuery<>(new AsyncCallback<Map<String, List<String>>>() {
 
                     @Override
-                    public void onSuccess(Object model, Object result) {
-                        namespacesMap = (HashMap<String, List<String>>) result;
+                    public void onSuccess(Map<String, List<String>> result) {
+                        namespacesMap = result;
                         populateProfiles(getProfileEntries());
                     }
                 }));
@@ -221,12 +221,10 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
         }));
 
-        AsyncDataProvider.getInstance().getRoleList(new AsyncQuery(this, new INewAsyncCallback() {
-
+        AsyncDataProvider.getInstance().getRoleList(new AsyncQuery<>(new AsyncCallback<List<Role>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                populateRoles((List<Role>) result);
-
+            public void onSuccess(List<Role> result) {
+                populateRoles(result);
             }
         }));
     }
@@ -242,30 +240,26 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     public void searchMyGroups() {
         getSearchInProgress().setEntity(true);
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.setHandleFailure(true);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                AdElementListModel adElementListModel = (AdElementListModel) model;
-                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) ReturnValue;
-                if (handleQueryError(queryReturnValue, adElementListModel)) {
+            public void onSuccess(VdcQueryReturnValue queryReturnValue) {
+                if (handleQueryError(queryReturnValue)) {
                     return;
                 }
 
                 HashSet<String> excludeUsers = new HashSet<>();
-                if (adElementListModel.getExcludeItems() != null) {
-                    for (DbUser item : adElementListModel.getExcludeItems()) {
+                if (getExcludeItems() != null) {
+                    for (DbUser item : getExcludeItems()) {
                         excludeUsers.add(item.getExternalId());
                     }
                 }
-                adElementListModel.setgroups(new ArrayList<EntityModel<DbUser>>());
+                setgroups(new ArrayList<EntityModel<DbUser>>());
                 addGroupsToModel(queryReturnValue, excludeUsers);
-                adElementListModel.setusers(new ArrayList<EntityModel<DbUser>>());
-                onUserAndAdGroupsLoaded(adElementListModel);
+                setusers(new ArrayList<EntityModel<DbUser>>());
+                onUserAndAdGroupsLoaded();
             }
-        };
+        });
+        asyncQuery.setHandleFailure(true);
 
         Frontend.getInstance()
                 .runQuery(VdcQueryType.GetDirectoryGroupsForUser, new VdcQueryParametersBase(), asyncQuery);
@@ -341,57 +335,48 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     }
 
     private void syncSearchUsers() {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.setHandleFailure(true);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                AdElementListModel adElementListModel = (AdElementListModel) model;
-                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) ReturnValue;
-                if (handleQueryError(queryReturnValue, adElementListModel)) {
+            public void onSuccess(VdcQueryReturnValue queryReturnValue) {
+                if (handleQueryError(queryReturnValue)) {
                     return;
                 }
 
                 setusers(new ArrayList<EntityModel<DbUser>>());
                 addUsersToModel(queryReturnValue, getExcludeUsers());
-                onAdUsersLoaded(adElementListModel);
+                onAdUsersLoaded();
             }
-        };
+        });
+        asyncQuery.setHandleFailure(true);
 
         findUsers("allnames=" //$NON-NLS-1$
                 + (StringUtils.isEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$
-                _asyncQuery);
+                asyncQuery);
     }
 
     private void syncSearchGroups() {
-        AsyncQuery _asyncQuery;
-        _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.setHandleFailure(true);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                AdElementListModel adElementListModel = (AdElementListModel) model;
-                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) ReturnValue;
-                if (handleQueryError(queryReturnValue, adElementListModel)) {
+            public void onSuccess(VdcQueryReturnValue queryReturnValue) {
+                if (handleQueryError(queryReturnValue)) {
                     return;
                 }
 
                 HashSet<String> excludeUsers = new HashSet<>();
-                if (adElementListModel.getExcludeItems() != null) {
-                    for (DbUser item : adElementListModel.getExcludeItems()) {
+                if (getExcludeItems() != null) {
+                    for (DbUser item : getExcludeItems()) {
                         excludeUsers.add(item.getExternalId());
                     }
                 }
-                adElementListModel.setgroups(new ArrayList<EntityModel<DbUser>>());
+                setgroups(new ArrayList<EntityModel<DbUser>>());
                 addGroupsToModel(queryReturnValue, excludeUsers);
-                onAdGroupsLoaded(adElementListModel);
+                onAdGroupsLoaded();
             }
-        };
+        });
+        asyncQuery.setHandleFailure(true);
 
         findGroups("name=" + (StringUtils.isEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$ //$NON-NLS-2$
-                _asyncQuery);
+                asyncQuery);
     }
 
     protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<String> excludeUsers) {
@@ -447,32 +432,32 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                         new SearchParameters("ADUSER@" + getProfile().getSelectedItem().getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
-    protected void onAdUsersLoaded(AdElementListModel adElementListModel) {
-        onAdItemsLoaded(adElementListModel, getusers());
+    protected void onAdUsersLoaded() {
+        onAdItemsLoaded(getusers());
     }
 
-    protected void onAdGroupsLoaded(AdElementListModel adElementListModel) {
-        onAdItemsLoaded(adElementListModel, getgroups());
+    protected void onAdGroupsLoaded() {
+        onAdItemsLoaded(getgroups());
     }
 
-    private void onAdItemsLoaded(AdElementListModel adElementListModel, List<EntityModel<DbUser>> userOrGroups) {
+    private void onAdItemsLoaded(List<EntityModel<DbUser>> userOrGroups) {
         getSearchInProgress().setEntity(false);
         List<EntityModel<DbUser>> items = new ArrayList<>();
         items.addAll(userOrGroups);
-        adElementListModel.getSelectAll().setEntity(false);
-        adElementListModel.setItems(items);
+        getSelectAll().setEntity(false);
+        setItems(items);
         setIsEmpty(items.isEmpty());
     }
 
-    protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel) {
-        if (adElementListModel.getusers() != null && adElementListModel.getgroups() != null) {
+    protected void onUserAndAdGroupsLoaded() {
+        if (getusers() != null && getgroups() != null) {
             getSearchInProgress().setEntity(false);
 
             List<EntityModel<DbUser>> items = new ArrayList<>();
             items.addAll(getusers());
             items.addAll(getgroups());
-            adElementListModel.getSelectAll().setEntity(false);
-            adElementListModel.setItems(items);
+            getSelectAll().setEntity(false);
+            setItems(items);
             setusers(null);
             setgroups(getusers());
 
@@ -527,13 +512,12 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     /**
      * Handle error message in case of a query failure
      * @param returnValue query return value
-     * @param model the model being currently displayed
      * @return true if a query failure has occurred
      */
-    private boolean handleQueryError(VdcQueryReturnValue returnValue, AdElementListModel model) {
-        model.setMessage(null);
+    private boolean handleQueryError(VdcQueryReturnValue returnValue) {
+        setMessage(null);
         if (!returnValue.getSucceeded()) {
-            model.setMessage(Frontend.getInstance().getAppErrorsTranslator()
+            setMessage(Frontend.getInstance().getAppErrorsTranslator()
                     .translateErrorTextSingle(returnValue.getExceptionString()));
             getSearchInProgress().setEntity(false);
 

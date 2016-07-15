@@ -7,8 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -68,11 +67,9 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(new AsyncCallback<List<VmTemplate>>() {
             @Override
-            public void onSuccess(Object target1, Object returnValue1) {
-
-                List<VmTemplate> templatesByDataCenter = (List<VmTemplate>) returnValue1;
+            public void onSuccess(List<VmTemplate> templatesByDataCenter) {
                 List<VmTemplate> properArchitectureTemplates =
                         AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByDataCenter,
                                 dataCenterWithCluster.getCluster().getArchitecture());
@@ -127,10 +124,9 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     private void templateValidate() {
-        AsyncDataProvider.getInstance().countAllTemplates(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().countAllTemplates(asyncQuery(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                int count = (Integer) returnValue;
+            public void onSuccess(Integer count) {
                 if (count <= 1) {
                     getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoTemplates());
                 }

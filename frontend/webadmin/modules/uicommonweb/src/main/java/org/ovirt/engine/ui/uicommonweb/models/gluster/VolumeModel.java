@@ -11,8 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -295,7 +294,7 @@ public class VolumeModel extends Model {
             return;
         }
 
-        VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
+        final VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
         volumeBrickModel.getVolumeType().setEntity(getTypeList().getSelectedItem());
 
@@ -319,13 +318,9 @@ public class VolumeModel extends Model {
         volumeBrickModel.setHelpTag(HelpTag.add_bricks);
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(volumeBrickModel);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostListByCluster(volumeBrickModel.asyncQuery(new AsyncCallback<List<VDS>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
-                ArrayList<VDS> hostList = (ArrayList<VDS>) result;
+            public void onSuccess(List<VDS> hostList) {
                 Iterator<VDS> iterator = hostList.iterator();
                 while (iterator.hasNext()) {
                     if (iterator.next().getStatus() != VDSStatus.Up) {
@@ -334,8 +329,7 @@ public class VolumeModel extends Model {
                 }
                 volumeBrickModel.setHostList(hostList);
             }
-        };
-        AsyncDataProvider.getInstance().getHostListByCluster(_asyncQuery, getCluster().getSelectedItem().getName());
+        }), getCluster().getSelectedItem().getName());
 
         // TODO: fetch the mount points to display
         if (getBricks().getItems() != null) {
@@ -467,16 +461,16 @@ public class VolumeModel extends Model {
         if (getCluster().getSelectedItem() != null) {
             final Cluster cluster = getCluster().getSelectedItem();
 
-            AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(new AsyncCallback<Boolean>() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
+                public void onSuccess(Boolean returnValue) {
 
                     // In case the result of previous call is returned after selecting some other cluster
                     if (!getCluster().getSelectedItem().getId().equals(cluster.getId())) {
                         return;
                     }
 
-                    if ((Boolean) returnValue) {
+                    if (returnValue) {
                         getAddBricksCommand().setIsExecutionAllowed(true);
                         setMessage(null);
                     }
@@ -497,14 +491,12 @@ public class VolumeModel extends Model {
     private void dataCenter_SelectedItemChanged() {
         StoragePool dataCenter = getDataCenter().getSelectedItem();
         if (dataCenter != null) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+
+            // load clusters of Gluster type
+            AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
                 @Override
-                public void onSuccess(Object model, Object result) {
-                    VolumeModel volumeModel = (VolumeModel) model;
-                    ArrayList<Cluster> clusters = (ArrayList<Cluster>) result;
-                    Cluster oldCluster = volumeModel.getCluster().getSelectedItem();
+                public void onSuccess(List<Cluster> clusters) {
+                    Cluster oldCluster = getCluster().getSelectedItem();
                     StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
 
                     Iterator<Cluster> iterator = clusters.iterator();
@@ -519,27 +511,24 @@ public class VolumeModel extends Model {
                     if (clusters.isEmpty()
                             || clusters.size() > 0
                             && clusters.get(0)
-                                    .getStoragePoolId()
-                                    .equals(selectedDataCenter.getId())) {
-                        volumeModel.getCluster().setItems(clusters);
+                            .getStoragePoolId()
+                            .equals(selectedDataCenter.getId())) {
+                        getCluster().setItems(clusters);
 
                         if (oldCluster != null) {
                             Cluster newSelectedItem =
                                     Linq.firstOrNull(clusters, new Linq.IdPredicate<>(oldCluster.getId()));
                             if (newSelectedItem != null) {
-                                volumeModel.getCluster().setSelectedItem(newSelectedItem);
+                                getCluster().setSelectedItem(newSelectedItem);
                             }
                         }
 
-                        if (volumeModel.getCluster().getSelectedItem() == null) {
-                            volumeModel.getCluster().setSelectedItem(Linq.firstOrNull(clusters));
+                        if (getCluster().getSelectedItem() == null) {
+                            getCluster().setSelectedItem(Linq.firstOrNull(clusters));
                         }
                     }
                 }
-            };
-
-            // load clusters of Gluster type
-            AsyncDataProvider.getInstance().getClusterByServiceList(_asyncQuery, dataCenter.getId(), false, true);
+            }), dataCenter.getId(), false, true);
         }
     }
 

@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
@@ -39,28 +39,23 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
     protected void initClusters(final List<StoragePool> dataCenters) {
         // Get clusters with permitted edit action
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
-        AsyncDataProvider.getInstance().getClustersWithPermittedAction(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClustersWithPermittedAction(new AsyncQuery<>(
+                new AsyncCallback<List<Cluster>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        ExistingVmModelBehavior behavior = UserPortalExistingVmModelBehavior.this;
-                        UnitVmModel model = (UnitVmModel) target;
-                        List<Cluster> clusters = (List<Cluster>) returnValue;
-
+                    public void onSuccess(List<Cluster> clusters) {
                         // filter clusters by architecture
                         clusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, vm.getClusterArch());
 
                         if (containsVmCluster(clusters)) {
                             Collections.sort(clusters, new NameableComparator());
-                            model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getClusterId());
+                            getModel().setDataCentersAndClusters(getModel(), dataCenters, clusters, vm.getClusterId());
                         } else {
                             // Add VM's cluster if not contained in the cluster list
                             addVmCluster(dataCenters, clusters);
                         }
 
-                        behavior.initTemplate();
-                        behavior.initCdImage();
+                        initTemplate();
+                        initCdImage();
 
                     }
                 }), actionGroup, true, false);
@@ -87,18 +82,15 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
     }
 
     private void addVmCluster(final List<StoragePool> dataCenters, final List<Cluster> clusters) {
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                new AsyncCallback<Cluster>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        UnitVmModel model = (UnitVmModel) target;
-                        Cluster cluster = (Cluster) returnValue;
+                    public void onSuccess(Cluster cluster) {
                         if (cluster != null) {
                             clusters.add(cluster);
                         }
                         Collections.sort(clusters, new NameableComparator());
-                        model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getClusterId());
+                        getModel().setDataCentersAndClusters(getModel(), dataCenters, clusters, vm.getClusterId());
                     }
                 }), vm.getClusterId());
     }

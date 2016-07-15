@@ -5,8 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -63,9 +62,9 @@ public class HostNetworkProviderModel extends EntityModel {
 
     private void initNetworkProvidersList() {
         AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+        getProvidersQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 stopProgress();
                 List<Provider<OpenstackNetworkProviderProperties>> providers = (List<Provider<OpenstackNetworkProviderProperties>>) result;
                 providers.add(0, null);

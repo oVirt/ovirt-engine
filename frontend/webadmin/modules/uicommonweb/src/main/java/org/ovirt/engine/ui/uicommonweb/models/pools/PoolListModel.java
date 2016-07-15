@@ -22,9 +22,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -210,10 +209,10 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
 
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object modell, Object result) {
-                        final VM vm = ((VdcQueryReturnValue) result).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue result) {
+                        final VM vm = result.getReturnValue();
 
                         final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
                         behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener<EventArgs>() {
@@ -374,12 +373,10 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         final String name = model.getName().getEntity();
 
         // Check name unicitate.
-        AsyncDataProvider.getInstance().isPoolNameUnique(new AsyncQuery(this,
-                        new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isPoolNameUnique(new AsyncQuery<>(
+                        new AsyncCallback<Boolean>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                Boolean isUnique = (Boolean) returnValue;
-
+                            public void onSuccess(Boolean isUnique) {
                                 if ((model.getIsNew() && !isUnique)
                                         || (!model.getIsNew() && !isUnique
                                         && name.compareToIgnoreCase(getCurrentPool().getName()) != 0)) {

@@ -10,6 +10,7 @@ import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.userTemplate
 import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.vnicProfileUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -19,9 +20,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -65,14 +65,14 @@ public class UserPortalLoginModel extends LoginModel {
         privateLoggedUserActionGroupList = value;
     }
 
-    private ArrayList<ActionGroup> privateENGINEUserActionGroupList;
+    private List<ActionGroup> engineUserActionGroupList;
 
-    public ArrayList<ActionGroup> getENGINEUserActionGroupList() {
-        return privateENGINEUserActionGroupList;
+    public List<ActionGroup> getEngineUserActionGroupList() {
+        return engineUserActionGroupList;
     }
 
-    public void setENGINEUserActionGroupList(ArrayList<ActionGroup> value) {
-        privateENGINEUserActionGroupList = value;
+    public void setEngineUserActionGroupList(List<ActionGroup> value) {
+        engineUserActionGroupList = value;
     }
 
     private int privateRolesCounter;
@@ -94,21 +94,20 @@ public class UserPortalLoginModel extends LoginModel {
     // Update IsENGINEUser flag.
     // Get 'ENGINEUser' role's ActionGroups (and proceed to Step2).
     public void updateIsENGINEUser(DbUser LoggedUser) {
-        setENGINEUserActionGroupList(new ArrayList<ActionGroup>());
+        setEngineUserActionGroupList(new ArrayList<ActionGroup>());
         this.setLoggedUser(LoggedUser);
 
-        AsyncDataProvider.getInstance().getRoleActionGroupsByRoleId(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getRoleActionGroupsByRoleId(new AsyncQuery<>(
+                new AsyncCallback<List<ActionGroup>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(List<ActionGroup> returnValue) {
 
-                        UserPortalLoginModel loginModel = (UserPortalLoginModel) target;
-                        loginModel.setENGINEUserActionGroupList((ArrayList<ActionGroup>) returnValue);
+                        setEngineUserActionGroupList(returnValue);
                         // a user 'stays' a user if he has consume quota action group.
                         // so we need to apply the same logic to this ActionGroup as for
                         // engine user role's action group.
-                        loginModel.getENGINEUserActionGroupList().add(ConsumeQuotaActionGroup);
-                        loginModel.getUserRoles(loginModel);
+                        getEngineUserActionGroupList().add(ConsumeQuotaActionGroup);
+                        getUserRoles();
 
                     }
                 }), engineUser.asGuid());
@@ -116,13 +115,12 @@ public class UserPortalLoginModel extends LoginModel {
 
     // Get logged user's permissions and create a list of roles associated with the user (and proceed to Step3).
     // Use only as 'Step2' of 'UpdateIsENGINEUser'
-    public void getUserRoles(UserPortalLoginModel loginModel) {
-        AsyncDataProvider.getInstance().getPermissionsByAdElementId(new AsyncQuery(loginModel,
-                new INewAsyncCallback() {
+    public void getUserRoles() {
+        AsyncDataProvider.getInstance().getPermissionsByAdElementId(new AsyncQuery<>(
+                new AsyncCallback<List<Permission>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(List<Permission> permissions) {
 
-                        ArrayList<Permission> permissions = (ArrayList<Permission>) returnValue;
                         ArrayList<Guid> roleIdList = new ArrayList<>();
                         for (Permission permission : permissions) {
 
@@ -144,14 +142,13 @@ public class UserPortalLoginModel extends LoginModel {
                                 roleIdList.add(permission.getRoleId());
                             }
                         }
-                        UserPortalLoginModel loginModel1 = (UserPortalLoginModel) target;
-                        loginModel1.setLoggedUserActionGroupList(new ArrayList<ActionGroup>());
+                        setLoggedUserActionGroupList(new ArrayList<ActionGroup>());
                         if (roleIdList.size() > 0) {
-                            loginModel1.setRolesCounter(roleIdList.size());
-                            loginModel1.updateUserActionGroups(loginModel1, roleIdList);
+                            setRolesCounter(roleIdList.size());
+                            updateUserActionGroups(roleIdList);
                         }
                         else {
-                            checkIsENGINEUser(loginModel1);
+                            checkIsENGINEUser();
                         }
 
                     }
@@ -160,13 +157,13 @@ public class UserPortalLoginModel extends LoginModel {
                         return permission.getAdElementId().equals(user.asGuid())
                                 && permission.getRoleId().equals(role.asGuid());
                     }
-                }), loginModel.getLoggedUser().getId());
+                }), getLoggedUser().getId());
     }
 
     // Create a list of ActionGroups associated with the user by retrieving each role's ActionGroups (and proceed to
     // Step4).
     // Use only as 'Step3' of 'UpdateIsENGINEUser'
-    public void updateUserActionGroups(UserPortalLoginModel targetObject, ArrayList<Guid> roleIdList) {
+    public void updateUserActionGroups(ArrayList<Guid> roleIdList) {
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         for (Guid roleId : roleIdList) {
@@ -187,7 +184,7 @@ public class UserPortalLoginModel extends LoginModel {
                     }
                     UserPortalLoginModel.this.setRolesCounter(UserPortalLoginModel.this.getRolesCounter() - 1);
                     if (UserPortalLoginModel.this.getRolesCounter() == 0) {
-                        checkIsENGINEUser(UserPortalLoginModel.this);
+                        checkIsENGINEUser();
                     }
                 }
             }
@@ -198,23 +195,23 @@ public class UserPortalLoginModel extends LoginModel {
     // the logged user is not 'ENGINEUser' - Update IsENGINEUser to false; Otherwise, true.
     // Raise 'LoggedIn' event after updating the flag.
     // Use only as 'Step4' of 'UpdateIsENGINEUser'
-    public void checkIsENGINEUser(UserPortalLoginModel loginModel) {
-        loginModel.getIsENGINEUser().setEntity(null);
+    public void checkIsENGINEUser() {
+        getIsENGINEUser().setEntity(null);
         boolean isENGINEUser = true;
 
-        for (ActionGroup actionGroup : loginModel.getLoggedUserActionGroupList()) {
-            if (!loginModel.getENGINEUserActionGroupList().contains(actionGroup)) {
+        for (ActionGroup actionGroup : getLoggedUserActionGroupList()) {
+            if (!getEngineUserActionGroupList().contains(actionGroup)) {
                 isENGINEUser = false;
                 break;
             }
         }
 
-        if (loginModel.getLoggedUserActionGroupList().contains(ActionGroup.CREATE_INSTANCE)) {
-            loginModel.getCreateInstanceOnly().setEntity(true);
+        if (getLoggedUserActionGroupList().contains(ActionGroup.CREATE_INSTANCE)) {
+            getCreateInstanceOnly().setEntity(true);
         } else {
-            loginModel.getCreateInstanceOnly().setEntity(false);
+            getCreateInstanceOnly().setEntity(false);
         }
 
-        loginModel.getIsENGINEUser().setEntity(isENGINEUser);
+        getIsENGINEUser().setEntity(isENGINEUser);
     }
 }

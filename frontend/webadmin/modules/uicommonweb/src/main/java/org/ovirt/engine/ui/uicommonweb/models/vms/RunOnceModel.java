@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -27,9 +26,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -702,12 +700,10 @@ public abstract class RunOnceModel extends Model {
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
 
-        AsyncDataProvider.isFloppySupported(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.isFloppySupported(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                Boolean isFloppySupported = (Boolean) returnValue;
-
-                if (!isFloppySupported.booleanValue()) {
+            public void onSuccess(Boolean isFloppySupported) {
+                if (!isFloppySupported) {
                     getAttachFloppy().setIsAvailable(false);
                     getFloppyImage().setIsAvailable(false);
                 }
@@ -802,13 +798,11 @@ public abstract class RunOnceModel extends Model {
     }
 
     protected void updateFloppyImages() {
-        AsyncDataProvider.getInstance().getFloppyImageList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-
+        AsyncDataProvider.getInstance().getFloppyImageList(new AsyncQuery<>(
+                new AsyncCallback<List<String>>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(List<String> images) {
                         VM selectedVM = vm;
-                        List<String> images = (List<String>) returnValue;
 
                         if (AsyncDataProvider.getInstance().isWindowsOsType(selectedVM.getVmOsId())) {
                             // Add a pseudo floppy disk image used for Windows' sysprep.
@@ -832,11 +826,11 @@ public abstract class RunOnceModel extends Model {
 
     private void setIsBootFromHardDiskAllowedForVm() {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<Disk> vmDisks = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        ArrayList<Disk> vmDisks = returnValue.getReturnValue();
 
                         if (vmDisks.isEmpty()) {
                             getRunAsStateless().setIsChangeable(false);
@@ -870,12 +864,11 @@ public abstract class RunOnceModel extends Model {
 
     private void setIsBootFromNetworkAllowedForVm() {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        Collection<VmNetworkInterface> nics =
-                                ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        Collection<VmNetworkInterface> nics = returnValue.getReturnValue();
                         Collection<VmNetworkInterface> pluggedNics =
                                 Linq.where(nics, new Linq.IPredicate<VmNetworkInterface>() {
 
@@ -899,12 +892,12 @@ public abstract class RunOnceModel extends Model {
     }
 
     private void updateDisplayProtocols() {
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vm.getId()), new AsyncQuery(this, new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vm.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 boolean selectVnc = false;
 
-                List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
                 if (graphicsDevices.size() == 1 && graphicsDevices.get(0).getGraphicsType() == GraphicsType.VNC) {
                     selectVnc = true;
                 }
@@ -924,30 +917,23 @@ public abstract class RunOnceModel extends Model {
     }
 
     public void updateUnknownTypeImagesList(boolean forceRefresh) {
-        INewAsyncCallback callback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getUnknownImageList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<String> images = (List<String>) returnValue;
-
+            public void onSuccess(List<String> images) {
                 getKernelImage().setItems(images);
                 getInitrdImage().setItems(images);
 
                 getKernelImage().setSelectedItem(null);
                 getInitrdImage().setSelectedItem(null);
             }
-        };
-
-
-        AsyncQuery aQuery = new AsyncQuery(this, callback);
-        AsyncDataProvider.getInstance().getUnknownImageList(aQuery, vm.getStoragePoolId(), forceRefresh);
+        }), vm.getStoragePoolId(), forceRefresh);
     }
 
     public void updateIsoList(boolean forceRefresh) {
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(
+                new AsyncCallback<List<String>>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<String> images = (List<String>) returnValue;
+                    public void onSuccess(List<String> images) {
                         final String lastSelectedIso = getIsoImage().getSelectedItem();
 
                         getIsoImage().setItems(images);
@@ -967,22 +953,20 @@ public abstract class RunOnceModel extends Model {
 
     private void updateDomainList() {
         // Update Domain list
-        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery(this,
-                                                                          new INewAsyncCallback() {
-                                                                              @Override
-                                                                              public void onSuccess(Object target, Object returnValue) {
-                                                                                  List<String> domains = (List<String>) returnValue;
-                                                                                  String oldDomain = getSysPrepDomainName().getSelectedItem();
-                                                                                  if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
-                                                                                      domains.add(0, oldDomain);
-                                                                                  }
-                                                                                  getSysPrepDomainName().setItems(domains);
-                                                                                  String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrNull(domains);
-                                                                                  if (!StringHelper.isNullOrEmpty(selectedDomain)) {
-                                                                                      getSysPrepDomainName().setSelectedItem(selectedDomain);
-                                                                                  }
-                                                                              }
-                                                                          }));
+        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
+            @Override
+            public void onSuccess(List<String> domains) {
+                String oldDomain = getSysPrepDomainName().getSelectedItem();
+                if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
+                    domains.add(0, oldDomain);
+                }
+                getSysPrepDomainName().setItems(domains);
+                String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrNull(domains);
+                if (!StringHelper.isNullOrEmpty(selectedDomain)) {
+                    getSysPrepDomainName().setSelectedItem(selectedDomain);
+                }
+            }
+        }));
     }
 
     private void updateSystemTabLists() {
@@ -991,36 +975,33 @@ public abstract class RunOnceModel extends Model {
         if (clusterId != null) {
 
             // update emulated machine list
-            AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery<>(
+                    new AsyncCallback<Set<String>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            if (returnValue != null) {
-                                Set<String> emulatedSet = new TreeSet<>((HashSet<String>) returnValue);
+                        public void onSuccess(Set<String> emulatedSet) {
+                            if (emulatedSet != null) {
                                 String oldVal = getEmulatedMachine().getSelectedItem();
-                                getEmulatedMachine().setItems(emulatedSet);
+                                getEmulatedMachine().setItems(new TreeSet<>(emulatedSet));
                                 getEmulatedMachine().setSelectedItem(oldVal);// even if converted - needed as fallback
                                 convertEmulatedMachineField();
                             }
                         }
                     }), clusterId);
 
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                    new AsyncCallback<Cluster>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            if (returnValue != null) {
-                                Cluster cluster = (Cluster) returnValue;
-
+                        public void onSuccess(Cluster cluster) {
+                            if (cluster != null) {
                                 // update cpu names list
                                 if (cluster.getCpuName() != null) {
-                                    AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery(this,
-                                            new INewAsyncCallback() {
+                                    AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery<>(
+                                            new AsyncCallback<List<ServerCpu>>() {
                                                 @Override
-                                                public void onSuccess(Object model, Object returnValue) {
+                                                public void onSuccess(List<ServerCpu> returnValue) {
                                                     if (returnValue != null) {
                                                         List<String> cpuList = new ArrayList<>();
-                                                        for (ServerCpu cpu : (List<ServerCpu>) returnValue) {
+                                                        for (ServerCpu cpu : returnValue) {
                                                             cpuList.add(cpu.getVdsVerbData());
                                                         }
                                                         String oldVal = getCustomCpu().getSelectedItem();
@@ -1049,13 +1030,11 @@ public abstract class RunOnceModel extends Model {
         if (StringHelper.isNullOrEmpty(getEmulatedMachine().getSelectedItem())) {
             Guid clusterId = vm.getClusterId();
             if (clusterId != null) {
-                AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
-                        new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                        new AsyncCallback<Cluster>() {
                             @Override
-                            public void onSuccess(Object model, Object returnValue) {
-                                if (returnValue != null) {
-                                    Cluster cluster = (Cluster) returnValue;
-
+                            public void onSuccess(Cluster cluster) {
+                                if (cluster != null) {
                                     if (cluster.getEmulatedMachine() != null) {
                                         getEmulatedMachine().setSelectedItem(cluster.getEmulatedMachine());
                                     }

@@ -13,8 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
@@ -53,10 +52,9 @@ public class UserPortalTemplateListModel extends TemplateListModel {
 
     @Override
     protected void syncSearch() {
-        AsyncDataProvider.getInstance().getAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllVmTemplates(new AsyncQuery<>(new AsyncCallback<List<VmTemplate>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                Collection<VmTemplate> vmTemplates = (Collection<VmTemplate>) returnValue;
+            public void onSuccess(List<VmTemplate> vmTemplates) {
                 prefetchIcons(vmTemplates);
             }
         }), getIsQueryFirstTime());

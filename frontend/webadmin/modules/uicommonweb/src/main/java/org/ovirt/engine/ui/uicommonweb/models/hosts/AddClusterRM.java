@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
@@ -10,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
@@ -49,12 +50,12 @@ public class AddClusterRM extends IEnlistmentNotification {
 
         if (!StringHelper.isNullOrEmpty(clusterName)) {
 
-            AsyncDataProvider.getInstance().getClusterListByName(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterListByName(new AsyncQuery<>(
+                    new AsyncCallback<List<Cluster>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
+                        public void onSuccess(List<Cluster> returnValue) {
 
-                            context.clusterFoundByName = Linq.firstOrNull((Iterable<Cluster>) returnValue);
+                            context.clusterFoundByName = Linq.firstOrNull(returnValue);
                             prepare2();
                         }
                     }),

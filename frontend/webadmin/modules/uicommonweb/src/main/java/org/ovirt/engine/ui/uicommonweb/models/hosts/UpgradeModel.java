@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -10,9 +10,8 @@ import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -41,33 +40,29 @@ public class UpgradeModel extends InstallModel {
         getHostVersion().setEntity(getVds().getHostOs());
         getHostVersion().setIsAvailable(false);
 
-        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery<>(
+                new AsyncCallback<List<RpmVersion>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(List<RpmVersion> isos) {
 
-                        UpgradeModel model = (UpgradeModel) target;
-
-                        @SuppressWarnings("unchecked")
-                        ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
                         Collections.sort(isos, new Comparator<RpmVersion>() {
                             @Override
                             public int compare(RpmVersion rpmV1, RpmVersion rpmV2) {
                                 return RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName());
                             }
                         });
-                        model.getOVirtISO().setItems(isos);
-                        model.getOVirtISO().setSelectedItem(Linq.firstOrNull(isos));
-                        model.getOVirtISO().setIsAvailable(true);
-                        model.getOVirtISO().setIsChangeable(!isos.isEmpty());
-                        model.getHostVersion().setIsAvailable(true);
+                        getOVirtISO().setItems(isos);
+                        getOVirtISO().setSelectedItem(Linq.firstOrNull(isos));
+                        getOVirtISO().setIsAvailable(true);
+                        getOVirtISO().setIsChangeable(!isos.isEmpty());
+                        getHostVersion().setIsAvailable(true);
 
                         if (isos.isEmpty()) {
-                            model.setMessage(constants.thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
+                            setMessage(constants.thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
                         }
 
                         if (getVds().getHostOs() == null) {
-                            model.setMessage(constants.hostMustBeInstalledBeforeUpgrade());
+                            setMessage(constants.hostMustBeInstalledBeforeUpgrade());
                         }
 
                         addUpgradeCommands(getVds(), isos.isEmpty());

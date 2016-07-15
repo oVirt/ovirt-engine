@@ -29,9 +29,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -105,11 +104,10 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void onRemove() {
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
+            public void onSuccess(List<StoragePool> pools) {
                 if (pools != null && !pools.isEmpty()) {
                     pool = pools.get(0);
                     checkVmsDependentOnTemplate(pool.getId(), getEntity().getId());
@@ -122,18 +120,17 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     private void checkVmsDependentOnTemplate(Guid dataCenterId, Guid storageDomainId) {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(dataCenterId, storageDomainId),
-                new AsyncQuery(this, createGetVmsFromExportDomainCallback()));
+                new AsyncQuery<>(createGetVmsFromExportDomainCallback()));
     }
 
-    private INewAsyncCallback createGetVmsFromExportDomainCallback() {
-        return new INewAsyncCallback() {
+    private AsyncCallback<VdcQueryReturnValue> createGetVmsFromExportDomainCallback() {
+        return new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue retVal = (VdcQueryReturnValue) returnValue;
-                if (retVal == null || retVal.getReturnValue() == null || !retVal.getSucceeded()) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                if (returnValue == null || returnValue.getReturnValue() == null || !returnValue.getSucceeded()) {
                     return;
                 }
-                List<VM> vmsInExportDomain = retVal.getReturnValue();
+                List<VM> vmsInExportDomain = returnValue.getReturnValue();
                 HashMap<String, List<String>> problematicVmNames =
                         getDependentVMsForTemplates(vmsInExportDomain, getSelectedItems());
                 if (!problematicVmNames.isEmpty()) {
@@ -361,42 +358,34 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             setItems(Collections.<VmTemplate>emptyList());
         }
         else {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue) {
-                    TemplateBackupModel backupModel = (TemplateBackupModel) model;
-                    ArrayList<StoragePool> list = (ArrayList<StoragePool>) ReturnValue;
+                public void onSuccess(List<StoragePool> list) {
                     if (list != null && list.size() > 0) {
                         StoragePool dataCenter = list.get(0);
-                        AsyncQuery _asyncQuery1 = new AsyncQuery();
-                        _asyncQuery1.setModel(backupModel);
-                        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object model1, Object ReturnValue1) {
-                                ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items = new ArrayList<>();
-                                HashMap<VmTemplate, List<DiskImage>> dictionary = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                                ArrayList<VmTemplate> list = new ArrayList<>();
-                                for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
-                                    items.add(item);
-                                    VmTemplate template = item.getKey();
-                                    template.setDiskList(new ArrayList<DiskImage>());
-                                    template.getDiskList().addAll(item.getValue());
-                                    list.add(template);
-                                }
-                                Collections.sort(list, new LexoNumericNameableComparator<>());
-                                setItems((ArrayList) list);
-                                TemplateBackupModel.this.extendedItems = items;
-                            }
-                        };
                         Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain,
                                 new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
-                                        backupModel.getEntity().getId()), _asyncQuery1);
+                                        getEntity().getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                                            @Override
+                                            public void onSuccess(VdcQueryReturnValue returnValue) {
+                                                ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
+                                                HashMap<VmTemplate, List<DiskImage>> dictionary = returnValue.getReturnValue();
+                                                ArrayList<VmTemplate> list1 = new ArrayList<>();
+                                                for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
+                                                    items1.add(item);
+                                                    VmTemplate template = item.getKey();
+                                                    template.setDiskList(new ArrayList<DiskImage>());
+                                                    template.getDiskList().addAll(item.getValue());
+                                                    list1.add(template);
+                                                }
+                                                Collections.sort(list1, new LexoNumericNameableComparator<>());
+                                                setItems(list1);
+                                                TemplateBackupModel.this.extendedItems = items1;
+                                            }
+                                        }));
                     }
                 }
-            };
-            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(_asyncQuery, getEntity().getId());
+            }), getEntity().getId());
         }
     }
 

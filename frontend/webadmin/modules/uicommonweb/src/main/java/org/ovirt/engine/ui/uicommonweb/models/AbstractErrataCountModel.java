@@ -6,9 +6,8 @@ import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -102,29 +101,24 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
 
     public void runQuery(Guid guid) {
         startProgress("getCount"); //$NON-NLS-1$
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.setHandleFailure(true);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 stopProgress();
-                AbstractErrataCountModel errataCountModel = (AbstractErrataCountModel) model;
-                VdcQueryReturnValue returnValueObject = (VdcQueryReturnValue) returnValue;
-                ErrataCounts resultEntity = returnValueObject.getReturnValue();
+                ErrataCounts resultEntity = returnValue.getReturnValue();
                 //Set message to null to make sure the actual setMessage creates an event.
-                errataCountModel.setMessage(null);
-                if (resultEntity != null && returnValueObject.getSucceeded()) {
-                    errataCountModel.setErrataCounts(resultEntity);
+                setMessage(null);
+                if (resultEntity != null && returnValue.getSucceeded()) {
+                    setErrataCounts(resultEntity);
                 }
                 else {
-                    errataCountModel.setMessage(
-                            constants.katelloProblemRetrievingErrata()  + " " + returnValueObject.getExceptionMessage()); //$NON-NLS-1$
+                    setMessage(
+                            constants.katelloProblemRetrievingErrata()  + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
                 }
             }
-        };
-
-        Frontend.getInstance().runQuery(getQueryType(), new GetErrataCountsParameters(guid), _asyncQuery);
+        });
+        asyncQuery.setHandleFailure(true);
+        Frontend.getInstance().runQuery(getQueryType(), new GetErrataCountsParameters(guid), asyncQuery);
     }
 
     public void setGuid(Guid id) {

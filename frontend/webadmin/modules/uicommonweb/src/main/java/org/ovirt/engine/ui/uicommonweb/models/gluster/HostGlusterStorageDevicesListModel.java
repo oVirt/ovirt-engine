@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -95,11 +94,10 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDevices(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDevices(new AsyncQuery<>(new AsyncCallback<List<StorageDevice>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<StorageDevice> devices = (List<StorageDevice>) returnValue;
+            public void onSuccess(List<StorageDevice> devices) {
                 Collections.sort(devices, new Linq.StorageDeviceComparer());
                 setItems(devices);
             }
@@ -133,18 +131,14 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
         lvModel.getStorageDevices().setItems(selectedDevices);
         lvModel.setSelectedDevices(selectedDevices);
 
-        AsyncQuery asyncQueryForDefaultMountPoint = new AsyncQuery();
-        asyncQueryForDefaultMountPoint.setModel(lvModel);
-        asyncQueryForDefaultMountPoint.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<String> asyncQueryForDefaultMountPoint = lvModel.asyncQuery(new AsyncCallback<String>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(String defaultMountPoint) {
                 lvModel.stopProgress();
-                CreateBrickModel lvModel = (CreateBrickModel) model;
-                String defaultMountPoint = (String) returnValue;
                 lvModel.getDefaultMountFolder().setEntity(defaultMountPoint);
             }
-        };
+        });
         AsyncDataProvider.getInstance()
                 .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterDefaultBrickMountPoint,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),

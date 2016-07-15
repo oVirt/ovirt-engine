@@ -39,9 +39,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -910,10 +909,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllMacPools,
                 new VdcQueryParametersBase(),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        getMacPoolListModel().setItems((Collection<MacPool>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        getMacPoolListModel().setItems((Collection<MacPool>) returnValue.getReturnValue());
                         stopProgress();
                     }
                 }));
@@ -926,13 +925,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
         Version version = getVersion().getSelectedItem();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterTunedProfiles, new IdAndNameQueryParameters(null, version.getValue()),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ClusterModel.this.stopProgress();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                stopProgress();
                 List<String> glusterTunedProfiles = new ArrayList<>();
-                if (((VdcQueryReturnValue) returnValue).getSucceeded()) {
-                    glusterTunedProfiles.addAll((List<String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                if (returnValue.getSucceeded()) {
+                    glusterTunedProfiles.addAll((List<String>) returnValue.getReturnValue());
                 }
                 final String oldSelectedProfile = glusterTunedProfile.getSelectedItem();
                 glusterTunedProfile.setItems(glusterTunedProfiles);
@@ -965,10 +964,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setEnableHostMaintenanceReason(new EntityModel<>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         setGlusterTunedProfile(new ListModel<String>());
-        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                setAllowClusterWithVirtGlusterEnabled((Boolean) returnValue);
+            public void onSuccess(Boolean returnValue) {
+                setAllowClusterWithVirtGlusterEnabled(returnValue);
             }
         }));
 
@@ -1221,57 +1220,49 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getHostsWithBrokenConnectivityThreshold().getSelectedItemChangedEvent().addListener(this);
         initHostsWithBrokenConnectivityThreshold();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterDesktopMemoryOverCommit(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                ClusterModel clusterModel = (ClusterModel) model;
-                clusterModel.setDesktopOverCommit((Integer) result);
-                AsyncQuery _asyncQuery1 = new AsyncQuery();
-                _asyncQuery1.setModel(clusterModel);
-                _asyncQuery1.asyncCallback = new INewAsyncCallback() {
+            public void onSuccess(Integer result) {
+                setDesktopOverCommit(result);
+                AsyncDataProvider.getInstance().getClusterServerMemoryOverCommit(new AsyncQuery<>(new AsyncCallback<Integer>() {
                     @Override
-                    public void onSuccess(Object model1, Object result1) {
-                        ClusterModel clusterModel1 = (ClusterModel) model1;
-                        clusterModel1.setServerOverCommit((Integer) result1);
+                    public void onSuccess(Integer result) {
+                        setServerOverCommit(result);
 
                         // temp is used for conversion purposes
                         EntityModel temp;
 
-                        temp = clusterModel1.getOptimizationNone();
-                        temp.setEntity(clusterModel1.getDefaultMemoryOvercommit());
+                        temp = getOptimizationNone();
+                        temp.setEntity(getDefaultMemoryOvercommit());
                         // res1, res2 is used for conversion purposes.
-                        boolean res1 = clusterModel1.getDesktopOverCommit() != clusterModel1.getDefaultMemoryOvercommit();
-                        boolean res2 = clusterModel1.getServerOverCommit() != clusterModel1.getDefaultMemoryOvercommit();
-                        temp = clusterModel1.getOptimizationNone_IsSelected();
+                        boolean res1 = getDesktopOverCommit() != getDefaultMemoryOvercommit();
+                        boolean res2 = getServerOverCommit() != getDefaultMemoryOvercommit();
+                        temp = getOptimizationNone_IsSelected();
                         setIsSelected(res1 && res2);
                         temp.setEntity(getIsSelected());
 
-                        temp = clusterModel1.getOptimizationForServer();
-                        temp.setEntity(clusterModel1.getServerOverCommit());
-                        temp = clusterModel1.getOptimizationForServer_IsSelected();
-                        temp.setEntity(clusterModel1.getServerOverCommit() == clusterModel1.getDefaultMemoryOvercommit());
+                        temp = getOptimizationForServer();
+                        temp.setEntity(getServerOverCommit());
+                        temp = getOptimizationForServer_IsSelected();
+                        temp.setEntity(getServerOverCommit() == getDefaultMemoryOvercommit());
 
-                        temp = clusterModel1.getOptimizationForDesktop();
-                        temp.setEntity(clusterModel1.getDesktopOverCommit());
-                        temp = clusterModel1.getOptimizationForDesktop_IsSelected();
-                        temp.setEntity(clusterModel1.getDesktopOverCommit() == clusterModel1.getDefaultMemoryOvercommit());
+                        temp = getOptimizationForDesktop();
+                        temp.setEntity(getDesktopOverCommit());
+                        temp = getOptimizationForDesktop_IsSelected();
+                        temp.setEntity(getDesktopOverCommit() == getDefaultMemoryOvercommit());
 
-                        temp = clusterModel1.getOptimizationCustom();
+                        temp = getOptimizationCustom();
                         temp.setIsAvailable(false);
                         temp.setIsChangeable(false);
 
-                        if (clusterModel1.getIsEdit()) {
-                            clusterModel1.postInit();
+                        if (getIsEdit()) {
+                            postInit();
                         }
 
                     }
-                };
-                AsyncDataProvider.getInstance().getClusterServerMemoryOverCommit(_asyncQuery1);
+                }));
             }
-        };
-        AsyncDataProvider.getInstance().getClusterDesktopMemoryOverCommit(_asyncQuery);
+        }));
 
         setDataCenter(new ListModel<StoragePool>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
@@ -1309,32 +1300,29 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setClusterPolicy(new ListModel<ClusterPolicy>());
         setCustomPropertySheet(new KeyValueModel());
         getClusterPolicy().getSelectedItemChangedEvent().addListener(this);
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
-                new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery<>(
+                new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<PolicyUnit> policyUnits =
-                                ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        ArrayList<PolicyUnit> policyUnits = returnValue.getReturnValue();
                         policyUnitMap = new LinkedHashMap<>();
                         for (PolicyUnit policyUnit : policyUnits) {
                             policyUnitMap.put(policyUnit.getId(), policyUnit);
                         }
                         Frontend.getInstance().runQuery(VdcQueryType.GetClusterPolicies,
                                 new VdcQueryParametersBase(),
-                                new AsyncQuery(model,
-                                        new INewAsyncCallback() {
+                                new AsyncQuery<>(
+                                        new AsyncCallback<VdcQueryReturnValue>() {
 
                                             @Override
-                                            public void onSuccess(Object model, Object returnValue) {
-                                                ClusterModel clusterModel = (ClusterModel) model;
-                                                ArrayList<ClusterPolicy> list =
-                                                        ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                                clusterModel.getClusterPolicy().setItems(list);
+                                            public void onSuccess(VdcQueryReturnValue returnValue) {
+                                                ArrayList<ClusterPolicy> list = returnValue.getReturnValue();
+                                                getClusterPolicy().setItems(list);
                                                 ClusterPolicy defaultClusterPolicy = null;
                                                 ClusterPolicy selectedClusterPolicy = null;
                                                 for (ClusterPolicy clusterPolicy : list) {
-                                                    if (clusterModel.getIsEdit() && getEntity() != null
+                                                    if (getIsEdit() && getEntity() != null
                                                             && clusterPolicy.getId()
                                                             .equals(getEntity().getClusterPolicyId())) {
                                                         selectedClusterPolicy = clusterPolicy;
@@ -1344,11 +1332,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                                                     }
                                                 }
                                                 if (selectedClusterPolicy != null) {
-                                                    clusterModel.getClusterPolicy()
-                                                            .setSelectedItem(selectedClusterPolicy);
+                                                    getClusterPolicy().setSelectedItem(selectedClusterPolicy);
                                                 } else {
-                                                    clusterModel.getClusterPolicy()
-                                                            .setSelectedItem(defaultClusterPolicy);
+                                                    getClusterPolicy().setSelectedItem(defaultClusterPolicy);
                                                 }
                                                 clusterPolicyChanged();
                                             }
@@ -1475,14 +1461,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void fetchFingerprint(String hostAddress) {
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.setModel(this);
-        aQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostFingerprint(new AsyncQuery<>(new AsyncCallback<String>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                String fingerprint = (String) result;
+            public void onSuccess(String fingerprint) {
                 if (fingerprint != null && fingerprint.length() > 0) {
-                    getGlusterHostFingerprint().setEntity((String) result);
+                    getGlusterHostFingerprint().setEntity(fingerprint);
                     setIsFingerprintVerified(true);
                 }
                 else {
@@ -1492,8 +1475,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     setIsFingerprintVerified(false);
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getHostFingerprint(aQuery, hostAddress);
+        }), hostAddress);
         getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
     }
 
@@ -1515,35 +1497,29 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getEnableBallooning().setEntity(getEntity().isEnableBallooning());
         getEnableKsm().setEntity(getEntity().isEnableKsm());
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                ClusterModel clusterModel = (ClusterModel) model;
-                List<StoragePool> dataCenters = (List<StoragePool>) result;
+            public void onSuccess(List<StoragePool> dataCenters) {
+                getDataCenter().setItems(dataCenters);
 
-                clusterModel.getDataCenter().setItems(dataCenters);
-
-                clusterModel.getDataCenter().setSelectedItem(null);
-                final Guid dataCenterId = clusterModel.getEntity().getStoragePoolId();
+                getDataCenter().setSelectedItem(null);
+                final Guid dataCenterId = getEntity().getStoragePoolId();
                 for (StoragePool dataCenter : dataCenters) {
                     if (dataCenterId != null && dataCenter.getId().equals(dataCenterId)) {
-                        clusterModel.getDataCenter().setSelectedItem(dataCenter);
+                        getDataCenter().setSelectedItem(dataCenter);
                         break;
                     }
                 }
-                final StoragePool selectedDataCenter = clusterModel.getDataCenter().getSelectedItem();
-                clusterModel.getDataCenter().setIsChangeable(selectedDataCenter == null);
+                final StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
+                getDataCenter().setIsChangeable(selectedDataCenter == null);
 
-                clusterModel.setMigrateOnErrorOption(clusterModel.getEntity().getMigrateOnError());
+                setMigrateOnErrorOption(getEntity().getMigrateOnError());
 
-                if (!clusterModel.getManagementNetwork().getIsChangable()) {
+                if (!getManagementNetwork().getIsChangable()) {
                     loadCurrentClusterManagementNetwork();
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+        }));
         // inactive KsmPolicyForNuma if KSM disabled
         if (getEnableKsm().getEntity() == false) {
             getKsmPolicyForNumaSelection().setIsChangeable(false);
@@ -1551,42 +1527,36 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void loadCurrentClusterManagementNetwork() {
-        final AsyncQuery getManagementNetworkQuery = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getManagementNetwork(new AsyncQuery<>(new AsyncCallback<Network>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                final ClusterModel clusterModel = (ClusterModel) model;
-                final Network managementNetwork = (Network) returnValue;
-                clusterModel.getManagementNetwork().setSelectedItem(managementNetwork);
+            public void onSuccess(Network managementNetwork1) {
+                getManagementNetwork().setSelectedItem(managementNetwork1);
             }
-        });
-        AsyncDataProvider.getInstance().getManagementNetwork(getManagementNetworkQuery, getEntity().getId());
+        }), getEntity().getId());
     }
 
     private void loadDcNetworks(final Guid dataCenterId) {
         if (dataCenterId == null) {
             return;
         }
-        final AsyncQuery getAllDataCenterNetworksQuery = new AsyncQuery(this, new INewAsyncCallback() {
+        final AsyncQuery getAllDataCenterNetworksQuery = new AsyncQuery<>(new AsyncCallback<List<Network>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                final ClusterModel clusterModel = (ClusterModel) model;
-                if (clusterModel.getDataCenter().getSelectedItem() == null) {
+            public void onSuccess(List<Network> dcNetworks) {
+                if (getDataCenter().getSelectedItem() == null) {
                     return;
                 }
-                final List<Network> dcNetworks = (List<Network>) returnValue;
-                clusterModel.getManagementNetwork().setItems(dcNetworks);
+                getManagementNetwork().setItems(dcNetworks);
 
                 if (defaultManagementNetworkCache.containsKey(dataCenterId)) {
                     final Network defaultManagementNetwork = defaultManagementNetworkCache.get(dataCenterId);
-                    setSelectedDefaultManagementNetwork(clusterModel, defaultManagementNetwork);
+                    setSelectedDefaultManagementNetwork(defaultManagementNetwork);
                 } else {
                     final AsyncQuery getDefaultManagementNetworkQuery =
-                            new AsyncQuery(clusterModel, new INewAsyncCallback() {
+                            new AsyncQuery<>(new AsyncCallback<Network>() {
                                 @Override
-                                public void onSuccess(Object model, Object returnValue) {
-                                    final Network defaultManagementNetwork = (Network) returnValue;
+                                public void onSuccess(Network defaultManagementNetwork) {
                                     defaultManagementNetworkCache.put(dataCenterId, defaultManagementNetwork);
-                                    setSelectedDefaultManagementNetwork(clusterModel, defaultManagementNetwork);
+                                    setSelectedDefaultManagementNetwork(defaultManagementNetwork);
                                 }
                             });
                     AsyncDataProvider.getInstance()
@@ -1594,10 +1564,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }
             }
 
-            private void setSelectedDefaultManagementNetwork(ClusterModel clusterModel,
-                    Network defaultManagementNetwork) {
+            private void setSelectedDefaultManagementNetwork(Network defaultManagementNetwork) {
                 if (defaultManagementNetwork != null) {
-                    clusterModel.getManagementNetwork().setSelectedItem(defaultManagementNetwork);
+                    getManagementNetwork().setSelectedItem(defaultManagementNetwork);
                 }
             }
         });
@@ -1731,52 +1700,35 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             version = getDataCenter().getSelectedItem().getCompatibilityVersion();
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getCPUList(new AsyncQuery<>(new AsyncCallback<List<ServerCpu>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                ClusterModel clusterModel = (ClusterModel) model;
-                ArrayList<ServerCpu> cpus = (ArrayList<ServerCpu>) result;
+            public void onSuccess(final List<ServerCpu> cpus) {
+                if (getIsEdit()) {
 
-                if (clusterModel.getIsEdit()) {
-                    AsyncQuery emptyQuery = new AsyncQuery();
-
-                    emptyQuery.setModel(new Object[] { clusterModel, cpus });
-                    emptyQuery.asyncCallback = new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().isClusterEmpty(new AsyncQuery<>(new AsyncCallback<Boolean>() {
 
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            Boolean isEmpty = (Boolean) returnValue;
-
-                            Object[] objArray = (Object[]) model;
-
-                            ClusterModel clusterModel = (ClusterModel) objArray[0];
-                            ArrayList<ServerCpu> cpus = (ArrayList<ServerCpu>) objArray[1];
-
+                        public void onSuccess(Boolean isEmpty) {
                             if (isEmpty) {
-                                populateCPUList(clusterModel, cpus, true);
+                                populateCPUList(cpus, true);
                             } else {
                                 ArrayList<ServerCpu> filteredCpus = new ArrayList<>();
 
                                 for (ServerCpu cpu : cpus) {
-                                    if (cpu.getArchitecture() == clusterModel.getEntity().getArchitecture()) {
+                                    if (cpu.getArchitecture() == getEntity().getArchitecture()) {
                                         filteredCpus.add(cpu);
                                     }
                                 }
 
-                                populateCPUList(clusterModel, filteredCpus, false);
+                                populateCPUList(filteredCpus, false);
                             }
                         }
-                    };
-
-                    AsyncDataProvider.getInstance().isClusterEmpty(emptyQuery, clusterModel.getEntity().getId());
+                    }), getEntity().getId());
                 } else {
-                    populateCPUList(clusterModel, cpus, true);
+                    populateCPUList(cpus, true);
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getCPUList(_asyncQuery, version);
+        }), version);
 
         getVersionSupportsCpuThreads().setEntity(true);
         getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
@@ -1829,25 +1781,20 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             category = ApplicationMode.VirtOnly;
         }
 
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
         // Get all the addtional features avaivalble for the cluster
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        startProgress();
+        AsyncDataProvider.getInstance().getClusterFeaturesByVersionAndCategory(new AsyncQuery<>(new AsyncCallback<Set<AdditionalFeature>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                ClusterModel.this.stopProgress();
-                final Set<AdditionalFeature> features = (Set<AdditionalFeature>) result;
+            public void onSuccess(final Set<AdditionalFeature> features) {
+                stopProgress();
                 // Get the additional features which are already enabled for cluster. Applicable only in case of edit
                 // cluster
                 if (getIsEdit() && !features.isEmpty()) {
-                    AsyncQuery asyncQuery = new AsyncQuery();
-                    asyncQuery.setModel(this);
-                    asyncQuery.asyncCallback = new INewAsyncCallback() {
+                    startProgress();
+                    AsyncDataProvider.getInstance().getClusterFeaturesByClusterId(new AsyncQuery<>(new AsyncCallback<Set<SupportedAdditionalClusterFeature>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            ClusterModel.this.stopProgress();
-                            Set<SupportedAdditionalClusterFeature> clusterFeatures =
-                                    (Set<SupportedAdditionalClusterFeature>) returnValue;
+                        public void onSuccess(Set<SupportedAdditionalClusterFeature> clusterFeatures) {
+                            stopProgress();
                             Set<AdditionalFeature> featuresEnabled = new HashSet<>();
                             for (SupportedAdditionalClusterFeature feature : clusterFeatures) {
                                 if (feature.isEnabled()) {
@@ -1856,17 +1803,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                             }
                             updateAddtionClusterFeatureList(features, featuresEnabled);
                         }
-                    };
-                    ClusterModel.this.startProgress();
-                    AsyncDataProvider.getInstance().getClusterFeaturesByClusterId(asyncQuery, getEntity().getId());
+                    }), getEntity().getId());
                 } else {
                     updateAddtionClusterFeatureList(features,
                             Collections.<AdditionalFeature> emptySet());
                 }
             }
-        };
-        this.startProgress();
-        AsyncDataProvider.getInstance().getClusterFeaturesByVersionAndCategory(asyncQuery, version, category);
+        }), version, category);
     }
 
     private void updateAddtionClusterFeatureList(Set<AdditionalFeature> featuresAvailable,
@@ -1947,33 +1890,33 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    private void populateCPUList(ClusterModel clusterModel, List<ServerCpu> cpus, boolean canChangeArchitecture) {
+    private void populateCPUList(List<ServerCpu> cpus, boolean canChangeArchitecture) {
         // disable CPU Architecture-Type filtering
         getArchitecture().getSelectedItemChangedEvent().removeListener(this);
 
-        ServerCpu oldSelectedCpu = clusterModel.getCPU().getSelectedItem();
-        ArchitectureType oldSelectedArch = clusterModel.getArchitecture().getSelectedItem();
+        ServerCpu oldSelectedCpu = getCPU().getSelectedItem();
+        ArchitectureType oldSelectedArch = getArchitecture().getSelectedItem();
 
-        clusterModel.getCPU().setItems(cpus);
-        initSupportedArchitectures(clusterModel);
+        getCPU().setItems(cpus);
+        initSupportedArchitectures();
 
-        clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
+        getCPU().setSelectedItem(oldSelectedCpu != null ?
                 Linq.firstOrNull(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
 
-        if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized) {
+        if (getCPU().getSelectedItem() == null || !isCPUinitialized) {
             initCPU();
         }
 
-        if (clusterModel.getIsEdit()) {
+        if (getIsEdit()) {
             if (!canChangeArchitecture) {
-                getArchitecture().setItems(new ArrayList<>(Arrays.asList(clusterModel.getEntity().getArchitecture())));
+                getArchitecture().setItems(new ArrayList<>(Arrays.asList(getEntity().getArchitecture())));
             }
 
             if (oldSelectedArch != null) {
                 getArchitecture().setSelectedItem(oldSelectedArch);
             } else {
-                if (clusterModel.getEntity() != null) {
-                    getArchitecture().setSelectedItem(clusterModel.getEntity().getArchitecture());
+                if (getEntity() != null) {
+                    getArchitecture().setSelectedItem(getEntity().getArchitecture());
                 } else {
                     getArchitecture().setSelectedItem(ArchitectureType.undefined);
                 }
@@ -1991,13 +1934,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getArchitecture().getSelectedItemChangedEvent().addListener(this);
     }
 
-    private void initSupportedArchitectures(ClusterModel clusterModel) {
+    private void initSupportedArchitectures() {
         Collection<ArchitectureType> archsWithSupportingCpus = new HashSet<>();
         archsWithSupportingCpus.add(ArchitectureType.undefined);
-        for (ServerCpu cpu: clusterModel.getCPU().getItems()) {
+        for (ServerCpu cpu: getCPU().getItems()) {
             archsWithSupportingCpus.add(cpu.getArchitecture());
         }
-        clusterModel.getArchitecture().setItems(archsWithSupportingCpus);
+        getArchitecture().setItems(archsWithSupportingCpus);
     }
 
     private void initCPU() {
@@ -2039,42 +1982,33 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             setMigrationTabAvailable(true);
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterVersions(new AsyncQuery<>(new AsyncCallback<List<Version>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                ClusterModel clusterModel = (ClusterModel) model;
-                @SuppressWarnings("unchecked")
-                ArrayList<Version> versions = (ArrayList<Version>) result;
-                Version versionToSelect = calculateNewVersionWhichShouldBeSelected(clusterModel, versions);
+            public void onSuccess(List<Version> versions) {
+                Version versionToSelect = calculateNewVersionWhichShouldBeSelected(versions);
 
-                clusterModel.getVersion().setItems(versions, versionToSelect);
+                getVersion().setItems(versions, versionToSelect);
             }
 
-            private Version calculateNewVersionWhichShouldBeSelected(ClusterModel clusterModel,
-                    List<Version> versions) {
-                ListModel<Version> version = clusterModel.getVersion();
+            private Version calculateNewVersionWhichShouldBeSelected(List<Version> versions) {
+                ListModel<Version> version = getVersion();
                 Version selectedVersion = version.getSelectedItem();
 
-                if (!clusterModel.getIsEdit() && (selectedVersion == null || !versions.contains(selectedVersion) ||
+                if (!getIsEdit() && (selectedVersion == null || !versions.contains(selectedVersion) ||
                         selectedVersion.compareTo(selectedDataCenter.getCompatibilityVersion()) > 0)) {
                     if (ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)) {
                         return Linq.selectHighestVersion(versions);
                     } else {
                         return selectedDataCenter.getCompatibilityVersion();
                     }
-                } else if (clusterModel.getIsEdit()) {
+                } else if (getIsEdit()) {
                     return Linq.firstOrNull(versions,
-                            new Linq.EqualsPredicate(clusterModel.getEntity().getCompatibilityVersion()));
+                            new Linq.EqualsPredicate(getEntity().getCompatibilityVersion()));
                 } else {
                     return selectedVersion;
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterVersions(_asyncQuery,
-                ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly) ? null
-                        : selectedDataCenter.getId());
+        }), ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly) ? null : selectedDataCenter.getId());
 
         if (getManagementNetwork().getIsChangable()) {
             loadDcNetworks(selectedDataCenter.getId());

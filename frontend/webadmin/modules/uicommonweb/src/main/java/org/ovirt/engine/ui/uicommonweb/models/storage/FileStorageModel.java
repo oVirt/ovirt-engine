@@ -4,8 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -33,10 +32,9 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
         boolean isEditable = isEditable(storage);
         getPath().setIsChangeable(isEditable);
 
-        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(new AsyncCallback<StorageServerConnections>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                StorageServerConnections connection = (StorageServerConnections) returnValue;
+            public void onSuccess(StorageServerConnections connection) {
                 getPath().setEntity(connection.getConnection());
                 prepareConnectionForEditing(connection);
             }

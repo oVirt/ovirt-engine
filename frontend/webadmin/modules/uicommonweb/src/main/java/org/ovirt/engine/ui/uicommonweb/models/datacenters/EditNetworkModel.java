@@ -4,9 +4,8 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -54,13 +53,12 @@ public class EditNetworkModel extends NetworkModel {
     }
 
     private void initManagement() {
-        final AsyncQuery callback = new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isManagementNetwork(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                management = (Boolean) returnValue;
+            public void onSuccess(Boolean returnValue) {
+                management = returnValue;
             }
-        });
-        AsyncDataProvider.getInstance().isManagementNetwork(callback, getNetwork().getId());
+        }), getNetwork().getId());
     }
 
     @Override

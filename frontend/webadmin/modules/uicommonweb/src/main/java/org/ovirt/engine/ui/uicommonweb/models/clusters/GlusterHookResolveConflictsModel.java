@@ -4,8 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentT
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -268,10 +267,9 @@ public class GlusterHookResolveConflictsModel extends Model {
 
         if (selectedServer.getContentType() == GlusterHookContentType.TEXT) {
             startProgress();
-            AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery<>(new AsyncCallback<String>() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    String content = (String) returnValue;
+                public void onSuccess(String content) {
                     getContentModel().getContent().setEntity(content);
                     stopProgress();
                 }

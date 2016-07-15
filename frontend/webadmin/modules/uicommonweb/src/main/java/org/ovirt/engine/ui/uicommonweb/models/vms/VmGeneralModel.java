@@ -14,9 +14,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -578,10 +577,10 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setHasCreatedByUser(vm.getCreatedByUserId() != null);
         if (getHasCreatedByUser()) {
             Frontend.getInstance().runQuery(VdcQueryType.GetDbUserByUserId, new IdQueryParameters(vm.getCreatedByUserId()),
-                    new AsyncQuery(this, new INewAsyncCallback() {
+                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                         @Override
-                        public void onSuccess(Object target, Object result) {
-                            DbUser dbUser = ((VdcQueryReturnValue) result).getReturnValue();
+                        public void onSuccess(VdcQueryReturnValue result) {
+                            DbUser dbUser = result.getReturnValue();
                             if (dbUser != null) {
                                 setCreatedByUser(getUserName(dbUser));
                             }
@@ -605,17 +604,16 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setHasDefaultHost(vm.getDedicatedVmForVdsList().size() > 0);
         if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
-                    + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery(this, //$NON-NLS-1$
-                    new INewAsyncCallback() {
+                    + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery<>(//$NON-NLS-1$
+                    new AsyncCallback<VdcQueryReturnValue>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(VdcQueryReturnValue returnValue) {
 
-                            VmGeneralModel model = (VmGeneralModel) target;
-                            VM localVm = model.getEntity();
+                            VM localVm = getEntity();
                             if (localVm == null) {
                                 return;
                             }
-                            ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            ArrayList<VDS> hosts = returnValue.getReturnValue();
                             if (localVm.getDedicatedVmForVdsList().size() > 0) {
                                 String defaultHost = "";
                                 for (VDS host : hosts) {
@@ -627,7 +625,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                                         }
                                     }
                                 }
-                                model.setDefaultHost(defaultHost);
+                                setDefaultHost(defaultHost);
                             }
 
                         }

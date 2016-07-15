@@ -12,9 +12,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -190,16 +189,15 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setHasDefaultHost(vm.getDedicatedVmForVdsList().isEmpty() == false);
         if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
-                    + " sortby name", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
-                            new INewAsyncCallback() {
+                    + " sortby name", SearchType.VDS), new AsyncQuery<>(//$NON-NLS-1$
+                            new AsyncCallback<VdcQueryReturnValue>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
+                        public void onSuccess(VdcQueryReturnValue returnValue) {
                             VM localVm = getEntity() != null ? getEntity().getVm() : null;
                             if (localVm == null) {
                                 return;
                             }
-                            ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            ArrayList<VDS> hosts = returnValue.getReturnValue();
                             for (VDS host : hosts) {
                                 if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
                                     setDefaultHost(host.getName());

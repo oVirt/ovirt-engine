@@ -16,9 +16,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
@@ -190,14 +189,10 @@ public class ResourcesModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                ResourcesModel resourcesModel = (ResourcesModel) model;
-                final ArrayList<VM> list =
-                        ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                final ArrayList<VM> list = returnValue.getReturnValue();
 
                 // Update calculated properties.
                 int runningVMs = 0;
@@ -242,63 +237,61 @@ public class ResourcesModel extends SearchableListModel {
                 getNumOfSnapshots().setEntity(numOfSnapshots);
 
                 Collections.sort(list, COMPARATOR);
-                resourcesModel.setItems(list);
+                setItems(list);
 
                 VdcQueryParametersBase parameters =
                         new VdcQueryParametersBase();
                 parameters.setRefresh(getIsQueryFirstTime());
-                Frontend.getInstance().runQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object model, Object ReturnValue) {
-                                Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap =
-                                        (HashMap<Guid, QuotaUsagePerUser>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Frontend.getInstance().runQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue ReturnValue) {
+                        Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = (HashMap<Guid, QuotaUsagePerUser>) ReturnValue.getReturnValue();
 
-                                //calculate personal consumption
-                                for (VM vm : list) {
-                                    // if vm is running and have a quota
-                                    if (vm.getStatus() != VMStatus.Down
-                                            && vm.getStatus() != VMStatus.Suspended
-                                            && vm.getStatus() != VMStatus.ImageIllegal
-                                            && vm.getStatus() != VMStatus.ImageLocked
-                                            && vm.getStatus() != VMStatus.PoweringDown
-                                            && vm.getQuotaId() != null) {
-                                        QuotaUsagePerUser quotaUsagePerUser =
-                                                quotaPerUserUsageEntityMap.get(vm.getQuotaId());
-                                        // add the vm cpu and mem to the user quota consumption
-                                        if (quotaUsagePerUser != null) {
-                                            quotaUsagePerUser.setMemoryUsageForUser(quotaUsagePerUser.getMemoryUsageForUser()
-                                                    + vm.getMemSizeMb());
-                                            quotaUsagePerUser.setVcpuUsageForUser(quotaUsagePerUser.getVcpuUsageForUser()
-                                                    + vm.getCpuPerSocket() * vm.getNumOfSockets());
-                                        }
-                                    }
-                                    // for each image of each disk of the vm - if it has a quota
-                                    for (DiskImage image : vm.getDiskList()) {
-                                        QuotaUsagePerUser quotaUsagePerUser =
-                                                quotaPerUserUsageEntityMap.get(image.getQuotaId());
-                                        double imageSize =
-                                                image.getImage().isActive() ? image.getSizeInGigabytes()
-                                                        : image.getActualSize();
-                                        // add the disk size to the user storage consumption
-                                        if (quotaUsagePerUser != null) {
-                                            quotaUsagePerUser.setStorageUsageForUser(quotaUsagePerUser.getStorageUsageForUser()
-                                                    + imageSize);
-                                        }
-                                    }
+                        //calculate personal consumption
+                        for (VM vm : list) {
+                            // if vm is running and have a quota
+                            if (vm.getStatus() != VMStatus.Down
+                                    && vm.getStatus() != VMStatus.Suspended
+                                    && vm.getStatus() != VMStatus.ImageIllegal
+                                    && vm.getStatus() != VMStatus.ImageLocked
+                                    && vm.getStatus() != VMStatus.PoweringDown
+                                    && vm.getQuotaId() != null) {
+                                QuotaUsagePerUser quotaUsagePerUser =
+                                        quotaPerUserUsageEntityMap.get(vm.getQuotaId());
+                                // add the vm cpu and mem to the user quota consumption
+                                if (quotaUsagePerUser != null) {
+                                    quotaUsagePerUser.setMemoryUsageForUser(quotaUsagePerUser.getMemoryUsageForUser()
+                                            + vm.getMemSizeMb());
+                                    quotaUsagePerUser.setVcpuUsageForUser(quotaUsagePerUser.getVcpuUsageForUser()
+                                            + vm.getCpuPerSocket() * vm.getNumOfSockets());
                                 }
-                                getUsedQuotaPercentage().setEntity(new ArrayList<>(quotaPerUserUsageEntityMap.values()));
                             }
-                        }));
+                            // for each image of each disk of the vm - if it has a quota
+                            for (DiskImage image : vm.getDiskList()) {
+                                QuotaUsagePerUser quotaUsagePerUser =
+                                        quotaPerUserUsageEntityMap.get(image.getQuotaId());
+                                double imageSize =
+                                        image.getImage().isActive() ? image.getSizeInGigabytes()
+                                                : image.getActualSize();
+                                // add the disk size to the user storage consumption
+                                if (quotaUsagePerUser != null) {
+                                    quotaUsagePerUser.setStorageUsageForUser(quotaUsagePerUser.getStorageUsageForUser()
+                                            + imageSize);
+                                }
+                            }
+                        }
+                        getUsedQuotaPercentage().setEntity(new ArrayList<>(quotaPerUserUsageEntityMap.values()));
+                    }
+                }));
             }
-        };
+        });
 
         // Items property will contain list of VMs.
         GetUserVmsByUserIdAndGroupsParameters getUserVmsByUserIdAndGroupsParameters =
                 new GetUserVmsByUserIdAndGroupsParameters();
         getUserVmsByUserIdAndGroupsParameters.setIncludeDiskData(true);
         getUserVmsByUserIdAndGroupsParameters.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetUserVmsByUserIdAndGroups, getUserVmsByUserIdAndGroupsParameters, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetUserVmsByUserIdAndGroups, getUserVmsByUserIdAndGroupsParameters, asyncQuery);
     }
 
     // Temporarily converter

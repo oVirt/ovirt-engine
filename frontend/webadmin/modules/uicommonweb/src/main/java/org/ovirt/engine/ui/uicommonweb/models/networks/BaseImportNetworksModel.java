@@ -23,9 +23,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -124,12 +123,11 @@ public class BaseImportNetworksModel extends Model {
 
     protected void initProviderList() {
         startProgress();
-        AsyncDataProvider.getInstance().getAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllNetworkProviders(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(List<Provider<?>> providers) {
                 stopProgress();
-                List<Provider<?>> providers = (List<Provider<?>>) returnValue;
                 providers.add(0, null);
                 getProviders().setItems(providers);
             }
@@ -145,10 +143,10 @@ public class BaseImportNetworksModel extends Model {
         final List<StoragePool> dataCenters = new LinkedList<>();
 
         final AsyncQuery networkQuery = new AsyncQuery();
-        networkQuery.asyncCallback = new INewAsyncCallback() {
+        networkQuery.asyncCallback = new AsyncCallback() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 Map<Network, Set<Guid>> externalNetworkToDataCenters = (Map<Network, Set<Guid>>) returnValue;
                 List<ExternalNetwork> items = new LinkedList<>();
                 for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
@@ -182,10 +180,10 @@ public class BaseImportNetworksModel extends Model {
         };
 
         final AsyncQuery dcQuery = new AsyncQuery();
-        dcQuery.asyncCallback = new INewAsyncCallback() {
+        dcQuery.asyncCallback = new AsyncCallback() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 dataCenters.addAll((Collection<StoragePool>) returnValue);
                 Collections.sort(dataCenters, new NameableComparator());
 
@@ -269,11 +267,10 @@ public class BaseImportNetworksModel extends Model {
         if (dcClusters.containsKey(dcId)) {
             attachNetworkToClusters(network, dcClusters.get(dcId), publicUse);
         } else {
-            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
 
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    Collection<Cluster> clusters = (Collection<Cluster>) returnValue;
+                public void onSuccess(List<Cluster> clusters) {
                     dcClusters.put(dcId, clusters);
                     attachNetworkToClusters(network, clusters, publicUse);
                 }

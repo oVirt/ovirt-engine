@@ -21,9 +21,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -51,14 +50,11 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     public void init(ArrayList<DiskImage> diskImages) {
         setDiskImages(diskImages);
 
-        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery<>(new AsyncCallback<List<DiskImage>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                MoveDiskModel moveDiskModel = (MoveDiskModel) target;
-                ArrayList<Disk> diskImages = (ArrayList<Disk>) returnValue;
-
-                moveDiskModel.onInitAllDisks(diskImages);
-                moveDiskModel.onInitDisks();
+            public void onSuccess(List diskImages) {
+                onInitAllDisks(diskImages);
+                onInitDisks();
             }
         }));
     }
@@ -109,12 +105,10 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                MoveDiskModel moveDiskModel = (MoveDiskModel) target;
-                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
-                moveDiskModel.onInitStorageDomains(storageDomains);
+            public void onSuccess(List<StorageDomain> storageDomains) {
+                onInitStorageDomains(storageDomains);
             }
         }), ((DiskImage) disk).getStoragePoolId());
     }

@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.IAsyncConverter;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.Converter;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -22,49 +22,43 @@ public abstract class ProfileBehavior {
 
     public void initProfiles(final Guid clusterId,
             final Guid dcId,
-            final AsyncQuery profilesQuery) {
+            final AsyncQuery<List<VnicProfileView>> profilesQuery) {
 
-        profilesQuery.converterCallback = new IAsyncConverter() {
-
+        AsyncQuery<List<Network>> networksQuery = new AsyncQuery<>(new AsyncCallback<List<Network>>() {
             @Override
-            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
-                List<Network> clusterNetworks = (ArrayList<Network>) asyncQuery.getModel();
-
-                ProfileBehavior.this.clusterNetworks = clusterNetworks;
-
-                List<VnicProfileView> vnicProfiles = new ArrayList<>();
-                vnicProfiles.add(VnicProfileView.EMPTY);
-
-                if (returnValue == null) {
-                    return vnicProfiles;
-                }
-
-                for (VnicProfileView vnicProfile : (List<VnicProfileView>) returnValue) {
-                    Network network = findNetworkById(vnicProfile.getNetworkId());
-                    if (network != null && network.isVmNetwork()) {
-                        vnicProfiles.add(vnicProfile);
-                    }
-
-                }
-
-                Collections.sort(vnicProfiles, new Linq.VnicProfileViewComparator());
-
-                return vnicProfiles;
-            }
-        };
-
-        AsyncQuery networksQuery = new AsyncQuery();
-        networksQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model1, Object result1) {
-                List<Network> clusterNetworks = (List<Network>) result1;
+            public void onSuccess(final List<Network> clusterNetworks) {
                 Network managementNetwork = Linq.findManagementNetwork(clusterNetworks);
                 managementNetworkName = managementNetwork != null ? managementNetwork.getName() : null;
 
-                profilesQuery.setModel(clusterNetworks);
+                profilesQuery.converterCallback = new Converter<List<VnicProfileView>>() {
+
+                    @Override
+                    public List<VnicProfileView> convert(Object returnValue) {
+                        ProfileBehavior.this.clusterNetworks = clusterNetworks;
+
+                        List<VnicProfileView> vnicProfiles = new ArrayList<>();
+                        vnicProfiles.add(VnicProfileView.EMPTY);
+
+                        if (returnValue == null) {
+                            return vnicProfiles;
+                        }
+
+                        for (VnicProfileView vnicProfile : (List<VnicProfileView>) returnValue) {
+                            Network network = findNetworkById(vnicProfile.getNetworkId());
+                            if (network != null && network.isVmNetwork()) {
+                                vnicProfiles.add(vnicProfile);
+                            }
+
+                        }
+
+                        Collections.sort(vnicProfiles, new Linq.VnicProfileViewComparator());
+
+                        return vnicProfiles;
+                    }
+                };
                 AsyncDataProvider.getInstance().getVnicProfilesByDcId(profilesQuery, dcId);
             }
-        };
+        });
         AsyncDataProvider.getInstance().getClusterNetworkList(networksQuery, clusterId);
     }
 

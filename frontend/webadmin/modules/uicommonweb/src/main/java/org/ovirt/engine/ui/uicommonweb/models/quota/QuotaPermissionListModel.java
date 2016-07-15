@@ -7,9 +7,8 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -37,12 +36,12 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
         tempVar.setDirectOnly(false);
         tempVar.setRefresh(getIsQueryFirstTime());
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        tempVar.setRefresh(getIsQueryFirstTime());
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsForObject, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<Permission> list = returnValue.getReturnValue();
                 ArrayList<Permission> newList = new ArrayList<>();
                 for (Permission permission : list) {
                     if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
@@ -51,11 +50,7 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
                 }
                 setItems(newList);
             }
-        };
-
-        tempVar.setRefresh(getIsQueryFirstTime());
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsForObject, tempVar, _asyncQuery);
+        }));
 
         setIsQueryFirstTime(false);
     }

@@ -49,8 +49,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -1802,10 +1801,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public void initForemanProviders(final Guid selected) {
         AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+        getProvidersQuery.asyncCallback = new AsyncCallback() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 List<Provider<OpenstackNetworkProviderProperties>> providers =
                         (List<Provider<OpenstackNetworkProviderProperties>>) result;
                 Provider<OpenstackNetworkProviderProperties> noneProvider = createNoneProvider();
@@ -1838,19 +1837,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateLabelList() {
         AsyncQuery getLabelsQuery = new AsyncQuery();
-        getLabelsQuery.asyncCallback = new INewAsyncCallback() {
+        getLabelsQuery.asyncCallback = new AsyncCallback() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 final List<Label> allLabels = (List<Label>) result;
                 boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
 
                 if (isExistingVmBehavior) {
                     AsyncQuery getLabelsByVmIdQuery = new AsyncQuery();
 
-                    getLabelsByVmIdQuery.asyncCallback = new INewAsyncCallback() {
+                    getLabelsByVmIdQuery.asyncCallback = new AsyncCallback() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object returnValue) {
                             List<Label> vmLabelsList = (List<Label>) returnValue;
 
                             labelList.setItems(allLabels);
@@ -2085,20 +2084,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     protected void initNumOfMonitors() {
-        AsyncDataProvider.getInstance().getNumOfMonitorList(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getNumOfMonitorList(new AsyncQuery<>(
+                new AsyncCallback<List<Integer>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(List<Integer> numOfMonitors) {
 
-                        UnitVmModel model = (UnitVmModel) target;
                         Integer oldNumOfMonitors = null;
-                        if (model.getNumOfMonitors().getSelectedItem() != null) {
-                            oldNumOfMonitors = model.getNumOfMonitors().getSelectedItem();
+                        if (getNumOfMonitors().getSelectedItem() != null) {
+                            oldNumOfMonitors = getNumOfMonitors().getSelectedItem();
                         }
-                        ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
-                        model.getNumOfMonitors().setItems(numOfMonitors);
+                        getNumOfMonitors().setItems(numOfMonitors);
                         if (oldNumOfMonitors != null) {
-                            model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
+                            getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
                         }
 
                     }
@@ -2397,9 +2394,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         Cluster cluster = getSelectedCluster();
         if (osType != null && cluster != null && getWatchdogModel() != null) {
             AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.asyncCallback = new INewAsyncCallback() {
+            asyncQuery.asyncCallback = new AsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
+                public void onSuccess(Object returnValue) {
                     getBehavior().deactivateInstanceTypeManager();
 
                     updateWatchdogItems((HashSet<VmWatchdogType>) ((VdcQueryReturnValue) returnValue)

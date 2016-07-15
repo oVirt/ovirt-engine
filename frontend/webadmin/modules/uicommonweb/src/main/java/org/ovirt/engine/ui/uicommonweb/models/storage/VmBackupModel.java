@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -14,12 +15,10 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -106,20 +105,16 @@ public class VmBackupModel extends ManageBackupModel<VM> {
 
         model.startProgress();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.model = this;
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
+            public void onSuccess(List<StoragePool> pools) {
                 if (pools != null && pools.size() > 0) {
                     StoragePool pool = pools.get(0);
-                    VmBackupModel backupModel = (VmBackupModel) model;
                     ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-                    for (VM vm : backupModel.getSelectedItems()) {
+                    for (VM vm : getSelectedItems()) {
                         list.add(new RemoveVmFromImportExportParameters(vm.getId(),
-                                backupModel.getEntity().getId(), pool.getId()));
+                                getEntity().getId(), pool.getId()));
                     }
 
                     Frontend.getInstance().runMultipleAction(
@@ -129,19 +124,16 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                                 public void executed(
                                         FrontendMultipleActionAsyncResult result) {
 
-                                    ConfirmationModel localModel = (ConfirmationModel) result
-                                            .getState();
+                                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
                                     localModel.stopProgress();
                                     cancel();
                                     onEntityChanged();
 
                                 }
-                            }, backupModel.getWindow());
+                            }, getWindow());
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(_asyncQuery,
-                getEntity().getId());
+        }), getEntity().getId());
     }
 
     protected ArchitectureType getArchitectureFromItem(VM vm) {
@@ -267,34 +259,17 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                 || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active) {
             setItems(Collections.<VM>emptyList());
         } else {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue) {
-                    VmBackupModel backupModel = (VmBackupModel) model;
-                    ArrayList<StoragePool> list = (ArrayList<StoragePool>) ReturnValue;
+                public void onSuccess(List<StoragePool> list) {
                     if (list != null && list.size() > 0) {
                         StoragePool dataCenter = list.get(0);
-                        AsyncQuery _asyncQuery1 = new AsyncQuery();
-                        _asyncQuery1.setModel(backupModel);
-                        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object model1,
-                                    Object ReturnValue1) {
-                                ArrayList<VM> vms = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                                Collections.sort(vms, new LexoNumericNameableComparator<>());
-                                setItems((ArrayList) vms);
-                            }
-                        };
                         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
                                 new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
-                                        backupModel.getEntity().getId()), _asyncQuery1);
+                                        getEntity().getId()), new SetSortedItemsAsyncQuery(new LexoNumericNameableComparator<>()));
                     }
                 }
-            };
-            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(_asyncQuery,
-                    getEntity().getId());
+            }), getEntity().getId());
         }
     }
 

@@ -23,9 +23,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -157,7 +156,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     public int selectedItemsCounter;
     private UserOrGroup userOrGroup;
 
-    private void getAttachedTagsToSelectedUsers(TagListModel model) {
+    private void getAttachedTagsToSelectedUsers(final TagListModel model) {
         ArrayList<Guid> userIds = new ArrayList<>();
         ArrayList<Guid> grpIds = new ArrayList<>();
 
@@ -176,18 +175,14 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         }
 
         for (Guid userId : userIds) {
-            AsyncDataProvider.getInstance().getAttachedTagsToUser(new AsyncQuery(new Object[] { this, model },
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAttachedTagsToUser(new AsyncQuery<>(new AsyncCallback<List<Tags>>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(List<Tags> returnValue) {
 
-                            Object[] array = (Object[]) target;
-                            UserListModel userListModel = (UserListModel) array[0];
-                            TagListModel tagListModel = (TagListModel) array[1];
-                            userListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
-                            userListModel.selectedItemsCounter++;
-                            if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size()) {
-                                postGetAttachedTags(userListModel, tagListModel);
+                            allAttachedTags.addAll(returnValue);
+                            selectedItemsCounter++;
+                            if (selectedItemsCounter == getSelectedItems().size()) {
+                                postGetAttachedTags(UserListModel.this, model);
                             }
 
                         }
@@ -195,18 +190,15 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                     userId);
         }
         for (Guid grpId : grpIds) {
-            AsyncDataProvider.getInstance().getAttachedTagsToUserGroup(new AsyncQuery(new Object[] { this, model },
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAttachedTagsToUserGroup(new AsyncQuery<>(
+                    new AsyncCallback<List<Tags>>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(List<Tags> returnValue) {
 
-                            Object[] array = (Object[]) target;
-                            UserListModel userListModel = (UserListModel) array[0];
-                            TagListModel tagListModel = (TagListModel) array[1];
-                            userListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
-                            userListModel.selectedItemsCounter++;
-                            if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size()) {
-                                postGetAttachedTags(userListModel, tagListModel);
+                            allAttachedTags.addAll(returnValue);
+                            selectedItemsCounter++;
+                            if (selectedItemsCounter == getSelectedItems().size()) {
+                                postGetAttachedTags(UserListModel.this, model);
                             }
 
                         }

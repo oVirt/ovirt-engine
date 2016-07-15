@@ -1,15 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -40,11 +39,9 @@ public class CloneVmModel extends Model {
 
     @Override
     public void initialize() {
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-
+            public void onSuccess(List<Disk> disks) {
                 if (!Linq.filterDisksByStorageType(disks, DiskStorageType.LUN).isEmpty()) {
                     setMessage(ConstantsManager.getInstance().getConstants().cloneVmLunsWontBeCloned());
                 }
@@ -71,11 +68,11 @@ public class CloneVmModel extends Model {
 
         startProgress();
 
-        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery<>(new AsyncCallback<Boolean>() {
 
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                if ((Boolean) returnValue) {
+            public void onSuccess(Boolean returnValue) {
+                if (returnValue) {
                     postCloneVmNameUnique(targetModel, makeCreatorExplicitOwner);
                 } else {
                     stopProgress();

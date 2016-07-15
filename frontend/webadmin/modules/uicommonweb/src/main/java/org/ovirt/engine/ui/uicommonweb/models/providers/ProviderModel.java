@@ -20,9 +20,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.Uri;
@@ -324,10 +323,9 @@ public class ProviderModel extends Model {
                     proxyHostPropertiesModel.disableProxyHost();
                 } else {
                     proxyHostPropertiesModel.getProxyHost().setIsChangeable(true);
-                    AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            List<VDS> hosts = (List<VDS>) returnValue;
+                        public void onSuccess(List<VDS> hosts) {
                             VDS prevHost = getPreviousHost(hosts);
                             hosts.add(0, null); // Any host in the cluster
                             proxyHostPropertiesModel.getProxyHost().setItems(hosts);
@@ -365,9 +363,9 @@ public class ProviderModel extends Model {
     }
 
     protected void updateDatacentersForExternalProvider() {
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 final List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
                 StoragePool prevDataCenter = getPreviousDataCenter(dataCenters);
                 Collections.sort(dataCenters, new NameableComparator());
@@ -526,14 +524,13 @@ public class ProviderModel extends Model {
         flush();
         startProgress();
         if (provider.getUrl().startsWith(Uri.SCHEME_HTTPS)) {
-            AsyncDataProvider.getInstance().getProviderCertificateChain(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getProviderCertificateChain(new AsyncQuery<>(new AsyncCallback<List<CertificateInfo>>() {
 
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
+                public void onSuccess(List<CertificateInfo> certs) {
                     boolean ok = false;
                     certificate = null;
-                    if (returnValue != null) {
-                        List<CertificateInfo> certs = (List<CertificateInfo>) returnValue;
+                    if (certs != null) {
                         if (!certs.isEmpty()) {
                             certificate = certs.get(certs.size() - 1).getPayload();
                             ConfirmationModel confirmationModel =

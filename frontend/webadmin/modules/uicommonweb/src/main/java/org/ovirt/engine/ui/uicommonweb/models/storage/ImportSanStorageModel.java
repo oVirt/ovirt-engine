@@ -10,9 +10,8 @@ import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsPa
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -53,12 +52,11 @@ public abstract class ImportSanStorageModel extends SanStorageModel {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredBlockStorageDomains,
                 new GetUnregisteredBlockStorageDomainsParameters(vds.getId(), getType(), connections),
-                new AsyncQuery(getContainer(), new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        VdcQueryReturnValue vdcQueryReturnValue = (VdcQueryReturnValue) returnValue;
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
                         Pair<List<StorageDomain>, List<StorageServerConnections>> returnValuePair =
-                                vdcQueryReturnValue.getReturnValue();
+                                returnValue.getReturnValue();
 
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValuePair.getFirst();

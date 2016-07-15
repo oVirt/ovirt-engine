@@ -36,9 +36,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -269,10 +268,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void initDataCenterCpuArchitectureMap() {
-        final AsyncQuery callback = new AsyncQuery(new INewAsyncCallback() {
+        final AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object nothing, Object returnValue) {
-                List<Cluster> allClusters = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<Cluster> allClusters = returnValue.getReturnValue();
                 clusterArchitecturesInDataCenters = new HashMap<>();
                 for (Cluster cluster : allClusters) {
                     if (cluster.supportsVirtService() && cluster.getArchitecture() != null) {
@@ -294,11 +293,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     }
 
-    private INewAsyncCallback createGetStorageDomainsByStoragePoolIdCallback(final StoragePool dataCenter) {
-        return new INewAsyncCallback() {
+    private AsyncCallback<VdcQueryReturnValue> createGetStorageDomainsByStoragePoolIdCallback() {
+        return new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                List<StorageDomain> storageDomains = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<StorageDomain> storageDomains = returnValue.getReturnValue();
 
                exportDomain.setEntity(getExportDomain(storageDomains));
                if (exportDomain.getEntity() == null) {
@@ -307,17 +306,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                    setExportName(exportDomain.getEntity().getName());
                    setExportDescription(exportDomain.getEntity().getDescription());
                    // get export-path
-                   AsyncQuery _asyncQuery = new AsyncQuery();
-                   _asyncQuery.setModel(this);
-                   _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                   AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(new AsyncCallback<StorageServerConnections>() {
                        @Override
-                       public void onSuccess(Object model, Object ReturnValue) {
-                           StorageServerConnections connection = (StorageServerConnections) ReturnValue;
+                       public void onSuccess(StorageServerConnections connection) {
                            setExportPath(connection == null ? null : connection.getConnection());
                            stopProgress();
                        }
-                   };
-                   AsyncDataProvider.getInstance().getStorageConnectionById(_asyncQuery, exportDomain.getEntity().getStorage(), true);
+                   }), exportDomain.getEntity().getStorage(), true);
                }
                validateSource();
             }
@@ -430,19 +425,17 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 Frontend.getInstance().runQuery(
                         VdcQueryType.GetStorageDomainsByStoragePoolId,
                         new IdQueryParameters(dataCenter.getId()),
-                        new AsyncQuery(this, createGetStorageDomainsByStoragePoolIdCallback(dataCenter)));
+                        new AsyncQuery<>(createGetStorageDomainsByStoragePoolIdCallback()));
             }
         });
 
         dataCenters.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                AsyncQuery hostsQuery = new AsyncQuery();
-                hostsQuery.setModel(ImportVmsModel.this);
-                hostsQuery.asyncCallback = new INewAsyncCallback() {
+
+                AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<VDS> hosts = (List<VDS>) returnValue;
+                    public void onSuccess(List<VDS> hosts) {
                         List<VDS> upHosts = filterUpHosts(hosts);
                         proxyHosts.setItems(addAnyHostInCluster(upHosts));
                         xenProxyHosts.setItems(addAnyHostInCluster(upHosts));
@@ -450,9 +443,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                         ImportVmsModel.this.hosts.setItems(upHosts);
                         stopProgress();
                     }
-                };
-
-                AsyncDataProvider.getInstance().getHostListByDataCenter(hostsQuery, dataCenters.getSelectedItem().getId());
+                }), dataCenters.getSelectedItem().getId());
             }
 
             private List<VDS> filterUpHosts(List<VDS> hosts) {
@@ -472,9 +463,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             }
         });
 
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 final List<StoragePool> dataCenters = new ArrayList<>();
                 for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                     if (a.getStatus() == StoragePoolStatus.Up) {
@@ -527,9 +518,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void loadVmwareProviders() {
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 List<Provider<VmwareVmProviderProperties>> providers = new ArrayList<>();
                 for (Provider<VmwareVmProviderProperties> provider : (List<Provider<VmwareVmProviderProperties>>) returnValue) {
                     if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
@@ -544,9 +535,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void loadKvmProviders() {
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 List<Provider<KVMVmProviderProperties>> providers = new ArrayList<>();
                 for (Provider<KVMVmProviderProperties> provider : (List<Provider<KVMVmProviderProperties>>) returnValue) {
                     if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
@@ -561,9 +552,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void loadXenProviders() {
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 List<Provider<XENVmProviderProperties>> providers = new ArrayList<>();
                 for (Provider<XENVmProviderProperties> provider : (List<Provider<XENVmProviderProperties>>) returnValue) {
                     if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
@@ -608,10 +599,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getEntity().getId()),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        updateVms(((VdcQueryReturnValue) returnValue).<List<VM>>getReturnValue());
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        updateVms(returnValue.<List<VM>>getReturnValue());
                     }
                 }));
     }
@@ -623,12 +614,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }
 
         startProgress();
-        AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) returnValue;
-                        if (queryReturnValue.getSucceeded()) {
-                            VM vm = queryReturnValue.getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        if (returnValue.getSucceeded()) {
+                            VM vm = returnValue.getReturnValue();
                             updateVms(Collections.singletonList(vm));
                         } else {
                             setError(messages.failedToLoadOva(getOvaPath().getEntity()));
@@ -677,9 +667,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void loadVMsFromExternalProvider(final OriginType type, String uri, String username, String password, Guid proxyId) {
         startProgress();
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery query = new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 if (returnValue instanceof VdcQueryReturnValue) {
                     setError(messages.providerFailure());
                     stopProgress();

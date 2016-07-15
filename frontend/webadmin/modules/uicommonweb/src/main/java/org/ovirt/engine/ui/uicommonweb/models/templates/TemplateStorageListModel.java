@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -46,7 +45,6 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
     }
 
     List<StorageDomainModel> storageDomainModels;
-    Collection<StorageDomainModel> value;
 
     public TemplateStorageListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
@@ -83,7 +81,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
     }
 
     @Override
-    public void setItems(Collection<StorageDomainModel> value) {
+    public void setItems(final Collection<StorageDomainModel> value) {
         if (storageDomainModels != null) {
             Collections.sort(storageDomainModels, new StorageDomainModelByNameComparer());
             itemsChanging(value, items);
@@ -94,18 +92,14 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
             storageDomainModels = null;
         }
         else {
-            this.value = value;
             VmTemplate template = getEntity();
-            AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery<>(
+                    new AsyncCallback<List<DiskImage>>() {
                         @SuppressWarnings("unchecked")
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            TemplateStorageListModel templateStorageListModel = (TemplateStorageListModel) target;
-                            List<DiskImage> diskImages = (List<DiskImage>) returnValue;
+                        public void onSuccess(List<DiskImage> diskImages) {
 
-                            List<StorageDomain> storageDomains =
-                                    Linq.cast(templateStorageListModel.value);
+                            List<StorageDomain> storageDomains = Linq.cast(value);
                             List<StorageDomainModel> storageDomainModels = new ArrayList<>();
 
                             for (StorageDomain storageDomain : storageDomains) {
@@ -124,8 +118,8 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
                                 storageDomainModels.add(storageDomainModel);
                             }
 
-                            templateStorageListModel.storageDomainModels = storageDomainModels;
-                            setItems(templateStorageListModel.value);
+                            TemplateStorageListModel.this.storageDomainModels = storageDomainModels;
+                            setItems(value);
                         }
                     }),
                     template.getId());

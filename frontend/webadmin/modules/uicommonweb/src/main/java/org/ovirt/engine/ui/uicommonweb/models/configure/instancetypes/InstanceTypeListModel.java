@@ -23,9 +23,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -140,10 +139,10 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         final Guid instanceTypeId = getSelectedItem().getId();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsByInstanceTypeId,
-                new IdQueryParameters(instanceTypeId), new AsyncQuery(this, new INewAsyncCallback() {
+                new IdQueryParameters(instanceTypeId), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object parentModel, Object returnValue) {
-                List<VM> vmsAttachedToInstanceType = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<VM> vmsAttachedToInstanceType = returnValue.getReturnValue();
                 if (vmsAttachedToInstanceType == null || vmsAttachedToInstanceType.size() == 0) {
                     window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());
                     window.setItems(Arrays.asList(getSelectedItem().getName()));
@@ -181,11 +180,10 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
             return;
         }
 
-        AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
+                new AsyncCallback<Boolean>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        boolean isNameUnique = (Boolean) returnValue;
+                    public void onSuccess(Boolean isNameUnique) {
                         if (isNameUnique) {
                             postInstanceTypeNameUniqueCheck();
                         } else {

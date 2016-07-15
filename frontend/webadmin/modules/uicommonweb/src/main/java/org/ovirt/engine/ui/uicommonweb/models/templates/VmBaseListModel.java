@@ -20,9 +20,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -108,14 +107,10 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         model.startProgress();
         setupExportModel(model);
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
+                new AsyncCallback<List<StorageDomain>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmBaseListModel vmListModel = (VmBaseListModel) target;
-                        List<StorageDomain> storageDomains =
-                                (List<StorageDomain>) returnValue;
-
+                    public void onSuccess(List<StorageDomain> storageDomains) {
                         List<StorageDomain> filteredStorageDomains = new ArrayList<>();
                         for (StorageDomain a : storageDomains) {
                             if (a.getStorageDomainType() == StorageDomainType.ImportExport) {
@@ -123,7 +118,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
                             }
                         }
 
-                        vmListModel.postExportGetStorageDomainList(filteredStorageDomains);
+                        postExportGetStorageDomainList(filteredStorageDomains);
                     }
                 }), extractStoragePoolIdNullSafe(selectedEntity));
 
@@ -195,17 +190,13 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         }
     }
 
-    protected void showWarningOnExistingEntities(ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
+    protected void showWarningOnExistingEntities(final ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(new Object[]{this, model},
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
+                new AsyncCallback<List<StoragePool>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        Object[] array = (Object[]) target;
-                        VmBaseListModel vmListModel = (VmBaseListModel) array[0];
-                        ExportVmModel exportVmModel = (ExportVmModel) array[1];
-                        List<StoragePool> storagePools = (List<StoragePool>) returnValue;
-                        vmListModel.postShowWarningOnExistingVms(exportVmModel, storagePools, getVmOrTemplateQuery);
+                    public void onSuccess(List<StoragePool> storagePools) {
+                        postShowWarningOnExistingVms(model, storagePools, getVmOrTemplateQuery);
                     }
                 }), storageDomainId);
     }
@@ -216,22 +207,23 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
         if (storagePool != null) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+
+            Guid storageDomainId = exportModel.getStorage().getSelectedItem().getId();
+            GetAllFromExportDomainQueryParameters tempVar =
+                    new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
+            Frontend.getInstance().runQuery(getVmOrTemplateQuery, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                 @Override
-                public void onSuccess(Object model, Object result) {
+                public void onSuccess(VdcQueryReturnValue returnValue) {
                     ExportVmModel windowModel = (ExportVmModel) getWindow();
                     List<T> foundVms = new ArrayList<>();
 
-                    if (result != null) {
-                        VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
+                    if (returnValue != null) {
                         Iterable<T> iterableReturnValue = asIterableReturnValue(returnValue.getReturnValue());
 
-                        for (T selectedItem : getSelectedItems()) {
+                        for (T selectedItem1 : getSelectedItems()) {
                             for (T returnValueItem : iterableReturnValue) {
-                                if (entititesEqualsNullSafe(returnValueItem, selectedItem)) {
-                                    foundVms.add(selectedItem);
+                                if (entititesEqualsNullSafe(returnValueItem, selectedItem1)) {
+                                    foundVms.add(selectedItem1);
                                     break;
                                 }
                             }
@@ -244,12 +236,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
                     exportModel.stopProgress();
                 }
-            };
-
-            Guid storageDomainId = exportModel.getStorage().getSelectedItem().getId();
-            GetAllFromExportDomainQueryParameters tempVar =
-                    new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
-            Frontend.getInstance().runQuery(getVmOrTemplateQuery, tempVar, _asyncQuery);
+            }));
         } else {
             exportModel.stopProgress();
         }
@@ -302,11 +289,11 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         }
 
         AsyncDataProvider.getInstance().
-                isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+                isVmNameUnique(new AsyncQuery<>(new AsyncCallback<Boolean>() {
 
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                if (!(Boolean) returnValue && vmName.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
+                            public void onSuccess(Boolean returnValue) {
+                                if (!returnValue && vmName.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
                                     model.getName()
                                             .getInvalidityReasons()
                                             .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());

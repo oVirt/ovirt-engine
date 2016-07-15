@@ -16,9 +16,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -172,12 +171,10 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
             if (getHost().getCluster().getSelectedItem() != null) {
                 version = getHost().getCluster().getSelectedItem().getCompatibilityVersion().toString();
             }
-            AsyncDataProvider.getInstance().getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getPmOptions(new AsyncQuery<>(new AsyncCallback<List<String>>() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
+                public void onSuccess(List<String> pmOptions) {
 
-                    @SuppressWarnings("unchecked")
-                    List<String> pmOptions = (List<String>) returnValue;
                     if (pmOptions != null) {
                         getPmPort().setIsAvailable(pmOptions.contains(PM_PORT_KEY));
                         getPmSlot().setIsAvailable(pmOptions.contains(PM_SLOT_KEY));
@@ -317,12 +314,10 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
 
         param.setClusterId(cluster.getId());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery(this,
-                new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnObj) {
-                        VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnObj;
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
                         String msg;
                         if (returnValue == null) {
                             msg = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();

@@ -46,9 +46,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -372,14 +372,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateUserCdImage(Guid storagePoolId) {
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        UnitVmModel model = (UnitVmModel) target;
-                        List<String> images = (List<String>) returnValue;
-                        setImagesToModel(model, images);
+                    public void onSuccess(List<String> images) {
+                        setImagesToModel(getModel(), images);
                     }
-
                 }),
                 storagePoolId
         );
@@ -406,13 +403,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(getModel(),
-                        new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getIrsImageList(asyncQuery(
+                        new AsyncCallback<List<String>>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                UnitVmModel model = (UnitVmModel) target;
-                                ArrayList<String> images = (ArrayList<String>) returnValue;
-                                setImagesToModel(model, images);
+                            public void onSuccess(List<String> images) {
+                                setImagesToModel(getModel(), images);
 
                             }
                         }),
@@ -498,12 +493,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncQuery query = new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        getHostListByCluster(cluster, asyncQuery(
+                new AsyncCallback() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
                         List<VDS> hosts = null;
                         if (returnValue instanceof List) {
                             hosts = (List<VDS>) returnValue;
@@ -514,23 +508,23 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             throw new IllegalArgumentException("The return value should be List<VDS> or VdcQueryReturnValue with return value List<VDS>"); //$NON-NLS-1$
                         }
 
-                        List<VDS> oldDefaultHosts = model.getDefaultHost().getSelectedItems();
-                        if (model.getBehavior().getSystemTreeSelectedItem() != null
-                                && model.getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
-                            VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
+                        List<VDS> oldDefaultHosts = getModel().getDefaultHost().getSelectedItems();
+                        if (getModel().getBehavior().getSystemTreeSelectedItem() != null
+                                && getModel().getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
+                            VDS host = (VDS) getModel().getBehavior().getSystemTreeSelectedItem().getEntity();
                             for (VDS vds : hosts) {
                                 if (host.getId().equals(vds.getId())) {
-                                    model.getDefaultHost()
+                                    getModel().getDefaultHost()
                                             .setItems(new ArrayList<>(Collections.singletonList(vds)));
-                                    model.getDefaultHost().setSelectedItems(Collections.singletonList(vds));
-                                    model.getDefaultHost().setIsChangeable(false);
-                                    model.getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
+                                    getModel().getDefaultHost().setSelectedItems(Collections.singletonList(vds));
+                                    getModel().getDefaultHost().setIsChangeable(false);
+                                    getModel().getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
                                     break;
                                 }
                             }
                         }
                         else {
-                            model.getDefaultHost().setItems(hosts);
+                            getModel().getDefaultHost().setItems(hosts);
 
                             // attempt to preserve selection as much as possible
                             if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
@@ -544,20 +538,18 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                               : !hosts.isEmpty()
                                                       ? Collections.singletonList(hosts.get(0))
                                                       : Collections.<VDS>emptyList();
-                            model.getDefaultHost().setSelectedItems(hostsToSelect);
+                            getModel().getDefaultHost().setSelectedItems(hostsToSelect);
                         }
                         changeDefaultHost();
 
                     }
-                });
-
-        getHostListByCluster(cluster, query);
+                }));
     }
 
     /**
      * By default admin query is fired, UserPortal overrides it to fire user query
      */
-    protected void getHostListByCluster(Cluster cluster, AsyncQuery query) {
+    protected void getHostListByCluster(Cluster cluster, AsyncQuery<List<VDS>> query) {
         AsyncDataProvider.getInstance().getHostListByCluster(query, cluster.getName());
     }
 
@@ -574,13 +566,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updataMaxVmsInPool() {
-        AsyncDataProvider.getInstance().getMaxVmsInPool(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxVmsInPool(asyncQuery(
+                new AsyncCallback<Integer>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                        behavior.setMaxVmsInPool((Integer) returnValue);
-                        behavior.updateMaxNumOfVmCpus();
+                    public void onSuccess(Integer returnValue) {
+                        setMaxVmsInPool(returnValue);
+                        updateMaxNumOfVmCpus();
                     }
                 }
         ));
@@ -589,14 +580,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateMaxNumOfVmCpus() {
         String version = getCompatibilityVersion().toString();
 
-        AsyncDataProvider.getInstance().getMaxNumOfVmCpus(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxNumOfVmCpus(asyncQuery(
+                new AsyncCallback<Integer>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        VmModelBehaviorBase behavior = VmModelBehaviorBase.this;
-                        behavior.maxCpus = (Integer) returnValue;
-                        behavior.postUpdateNumOfSockets2();
+                    public void onSuccess(Integer returnValue) {
+                        maxCpus = returnValue;
+                        postUpdateNumOfSockets2();
                     }
                 }), version);
     }
@@ -604,14 +593,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void postUpdateNumOfSockets2() {
         String version = getCompatibilityVersion().toString();
 
-        AsyncDataProvider.getInstance().getMaxNumOfCPUsPerSocket(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxNumOfCPUsPerSocket(asyncQuery(
+                new AsyncCallback<Integer>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        VmModelBehaviorBase behavior = VmModelBehaviorBase.this;
-                        behavior.maxCpusPerSocket = (Integer) returnValue;
-                        behavior.postUpdateNumOfSockets3();
+                    public void onSuccess(Integer returnValue) {
+                        maxCpusPerSocket = returnValue;
+                        postUpdateNumOfSockets3();
                     }
                 }), version);
     }
@@ -619,14 +606,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void postUpdateNumOfSockets3() {
         String version = getCompatibilityVersion().toString();
 
-        AsyncDataProvider.getInstance().getMaxNumOfThreadsPerCpu(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxNumOfThreadsPerCpu(asyncQuery(
+                new AsyncCallback<Integer>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmModelBehaviorBase behavior = VmModelBehaviorBase.this;
-                        behavior.maxThreadsPerCore = (Integer) returnValue;
-
-                        behavior.totalCpuCoresChanged();
+                    public void onSuccess(Integer returnValue) {
+                        maxThreadsPerCore = returnValue;
+                        totalCpuCoresChanged();
                     }
                 }), version);
     }
@@ -634,11 +619,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void initDisks() {
         VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
 
-        AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(getModel(),
-                        new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateDiskList(asyncQuery(
+                        new AsyncCallback<List<DiskImage>>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                initTemplateDisks((List<DiskImage>) returnValue);
+                            public void onSuccess(List<DiskImage> returnValue) {
+                                initTemplateDisks(returnValue);
                             }
                         }),
                 template.getId());
@@ -710,21 +695,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
-        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmModelBehaviorBase behavior = VmModelBehaviorBase.this;
-                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
+            public void onSuccess(List<StorageDomain> storageDomains) {
                 ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
 
-                boolean provisioning = behavior.getModel().getProvisioning().getEntity();
-                ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
+                boolean provisioning = getModel().getProvisioning().getEntity();
+                ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
                 Collections.sort(activeStorageDomains, new NameableComparator());
 
                 ArrayList<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
                 for (DiskModel diskModel : diskImages) {
                     ArrayList<StorageDomain> availableDiskStorageDomains;
-                    diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
+                    diskModel.getQuota().setItems(getModel().getQuota().getItems());
                     ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
 
                     // Active storage domains that the disk resides on
@@ -760,7 +743,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    public ArrayList<StorageDomain> filterStorageDomains(ArrayList<StorageDomain> storageDomains) {
+    public ArrayList<StorageDomain> filterStorageDomains(List<StorageDomain> storageDomains) {
         // filter only the Active storage domains (Active regarding the relevant storage pool).
         ArrayList<StorageDomain> list = new ArrayList<>();
         for (StorageDomain a : storageDomains) {
@@ -785,12 +768,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             if (cluster == null) {
                 return;
             }
-            AsyncDataProvider.getInstance().getAllRelevantQuotasForClusterSorted(new AsyncQuery(getModel(),
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAllRelevantQuotasForClusterSorted(new AsyncQuery<>(
+                    new AsyncCallback<List<Quota>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            UnitVmModel vmModel = (UnitVmModel) model;
-                            List<Quota> quotaList =  (List<Quota>) returnValue;
+                        public void onSuccess(List<Quota> quotaList) {
+                            UnitVmModel vmModel = getModel();
                             if (quotaList == null) {
                                 return;
                             }
@@ -853,20 +835,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void setupTemplateWithVersion(final Guid templateId,
             final boolean useLatest,
             final boolean isVersionChangeable) {
-        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
-                        new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(
+                        new AsyncCallback<VmTemplate>() {
                             @Override
-                            public void onSuccess(Object nothing, Object returnValue) {
-                                VmTemplate rawTemplate = (VmTemplate) returnValue;
-
+                            public void onSuccess(VmTemplate rawTemplate) {
                                 if (isVersionChangeable) {
                                     // only used by pools therefore query is limited to admin-portal permissions.
                                     AsyncDataProvider.getInstance().getVmTemplatesByBaseTemplateId(
-                                            new AsyncQuery(getModel(), new INewAsyncCallback() {
+                                            new AsyncQuery<>(new AsyncCallback<List<VmTemplate>>() {
                                                 @Override
-                                                public void onSuccess(Object target, Object returnValue) {
-                                                    ArrayList<VmTemplate> templatesChain =
-                                                            new ArrayList<>((List<VmTemplate>) returnValue);
+                                                public void onSuccess(List<VmTemplate> templatesChain) {
                                                     initTemplateWithVersion(templatesChain, templateId, useLatest);
                                                 }
                                             }), rawTemplate.getBaseTemplateId());
@@ -879,11 +857,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                                 new TemplateWithVersion(template, template);
                                         setReadOnlyTemplateWithVersion(templateCouple);
                                     } else {
-                                        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
-                                                        new INewAsyncCallback() {
+                                        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(
+                                                        new AsyncCallback<VmTemplate>() {
                                                             @Override
-                                                            public void onSuccess(Object nothing, Object returnValue) {
-                                                                VmTemplate baseTemplate = (VmTemplate) returnValue;
+                                                            public void onSuccess(VmTemplate baseTemplate) {
                                                                 TemplateWithVersion templateCouple =
                                                                         new TemplateWithVersion(baseTemplate, template);
                                                                 setReadOnlyTemplateWithVersion(templateCouple);
@@ -1214,14 +1191,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getMaxNumOfVmSockets(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxNumOfVmSockets(asyncQuery(
+                new AsyncCallback<Integer>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        VmModelBehaviorBase behavior = VmModelBehaviorBase.this;
-                        behavior.maxNumOfSockets = (Integer) returnValue;
-                        behavior.updataMaxVmsInPool();
+                    public void onSuccess(Integer returnValue) {
+                        maxNumOfSockets = returnValue;
+                        updataMaxVmsInPool();
                     }
                 }), version.toString());
     }
@@ -1295,12 +1270,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery<>(
+                new AsyncCallback<Set<String>>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Set<String> returnValue) {
                         if (returnValue != null) {
-                            Set<String> emulatedSet = new TreeSet<>((HashSet<String>) returnValue);
+                            Set<String> emulatedSet = new TreeSet<>(returnValue);
                             emulatedSet.add(""); //$NON-NLS-1$
                             String oldVal = getModel().getEmulatedMachine().getSelectedItem();
                             getModel().getEmulatedMachine().setItems(emulatedSet);
@@ -1321,14 +1296,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery<>(
+                new AsyncCallback<List<ServerCpu>>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(List<ServerCpu> returnValue) {
                         if (returnValue != null) {
                             List<String> cpuList = new ArrayList<>();
                             cpuList.add(""); //$NON-NLS-1$
-                            for (ServerCpu cpu : (List<ServerCpu>) returnValue) {
+                            for (ServerCpu cpu : returnValue) {
                                 cpuList.add(cpu.getVdsVerbData());
                             }
                             String oldVal = getModel().getCustomCpu().getSelectedItem();
@@ -1350,10 +1325,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetConsoleDevices,
                 new IdQueryParameters(vmId),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<String> consoleDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<String> consoleDevices = returnValue.getReturnValue();
                         getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
                     }
                 }));
@@ -1398,12 +1373,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetRngDevice,
                 new IdQueryParameters(templateId),
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
+                new AsyncQuery<>(
+                        new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
-                            public void onSuccess(Object model, Object returnValue) {
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
                                 @SuppressWarnings("unchecked")
-                                List<VmRngDevice> devs = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                List<VmRngDevice> devs = returnValue.getReturnValue();
                                 getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
                                 getModel().setRngDevice(devs.isEmpty() ? new VmRngDevice() : devs.get(0));
                             }
@@ -1424,10 +1399,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncQuery asyncQuery = new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterVersions(new AsyncQuery<>(new AsyncCallback<List<Version>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                List<Version> versions = (List<Version>) result;
+            public void onSuccess(List<Version> versions) {
                 versions.add(0, null);
                 Version selectedVersion;
                 selectedVersion = getModel().getCustomCompatibilityVersion().getSelectedItem();
@@ -1437,8 +1411,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     getModel().getCustomCompatibilityVersion().setItems(versions);
                 }
             }
-        });
-        AsyncDataProvider.getInstance().getDataCenterVersions(asyncQuery, dataCenter.getId());
+        }), dataCenter.getId());
     }
 
     /**
@@ -1501,11 +1474,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<CpuProfile> cpuProfiles = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
                         getModel().getCpuProfiles().setItems(cpuProfiles);
                         if (cpuProfiles != null) {
                             for (CpuProfile cpuProfile : cpuProfiles) {
@@ -1548,13 +1521,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateGraphics(Guid id) {
-        AsyncQuery callback = new AsyncQuery();
-        callback.setModel(getModel());
-        callback.asyncCallback = new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(id), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue retVal = (VdcQueryReturnValue) returnValue;
-                List<VmDevice> graphicsVmDevs = retVal.getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<VmDevice> graphicsVmDevs = returnValue.getReturnValue();
 
                 List<GraphicsType> graphicsTypes = new ArrayList<>();
                 for (VmDevice graphicsVmDev : graphicsVmDevs) {
@@ -1572,9 +1542,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsType(type));
                 }
             }
-        };
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(id), callback);
+        }));
     }
 
     /**
@@ -1664,4 +1632,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
+    protected <T> AsyncQuery<T> asyncQuery(AsyncCallback<T> callback) {
+        return getModel().asyncQuery(callback);
+    }
 }

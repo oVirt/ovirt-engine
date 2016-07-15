@@ -19,9 +19,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
@@ -103,12 +102,10 @@ public class NewDiskModel extends AbstractDiskModel {
     }
 
     public void updateSuggestedDiskAliasFromServer() {
-        AsyncDataProvider.getInstance().getNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getNextAvailableDiskAliasNameByVMId(new AsyncQuery<>(new AsyncCallback<String>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                String suggestedDiskAlias = (String) returnValue;
-                DiskModel diskModel = (DiskModel) model;
-                diskModel.getAlias().setEntity(suggestedDiskAlias);
+            public void onSuccess(String suggestedDiskAlias) {
+                getAlias().setEntity(suggestedDiskAlias);
             }
         }), getVm().getId());
     }

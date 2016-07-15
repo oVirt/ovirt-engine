@@ -50,9 +50,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
@@ -510,7 +509,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void getAttachedTagsToSelectedVMs(TagListModel model) {
+    private void getAttachedTagsToSelectedVMs(final TagListModel model) {
         ArrayList<Guid> vmIds = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
@@ -522,18 +521,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         selectedItemsCounter = 0;
 
         for (Guid id : vmIds) {
-            AsyncDataProvider.getInstance().getAttachedTagsToVm(new AsyncQuery(new Object[] { this, model },
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAttachedTagsToVm(new AsyncQuery<>(
+                    new AsyncCallback<List<Tags>>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(List<Tags> returnValue) {
 
-                            Object[] array = (Object[]) target;
-                            VmListModel<Void> vmListModel = (VmListModel<Void>) array[0];
-                            TagListModel tagListModel = (TagListModel) array[1];
-                            vmListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
-                            vmListModel.selectedItemsCounter++;
-                            if (vmListModel.selectedItemsCounter == vmListModel.getSelectedItems().size()) {
-                                postGetAttachedTags(vmListModel, tagListModel);
+                            allAttachedTags.addAll(returnValue);
+                            selectedItemsCounter++;
+                            if (selectedItemsCounter == getSelectedItems().size()) {
+                                postGetAttachedTags(model);
                             }
 
                         }
@@ -542,23 +538,23 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
     }
 
-    private void postGetAttachedTags(VmListModel<Void> vmListModel, TagListModel tagListModel) {
-        if (vmListModel.getLastExecutedCommand() == getAssignTagsCommand()) {
+    private void postGetAttachedTags(TagListModel tagListModel) {
+        if (getLastExecutedCommand() == getAssignTagsCommand()) {
             ArrayList<Tags> attachedTags =
-                    Linq.distinct(vmListModel.allAttachedTags, new TagsEqualityComparer());
+                    Linq.distinct(allAttachedTags, new TagsEqualityComparer());
             for (Tags tag : attachedTags) {
                 int count = 0;
-                for (Tags tag2 : vmListModel.allAttachedTags) {
+                for (Tags tag2 : allAttachedTags) {
                     if (tag2.getTagId().equals(tag.getTagId())) {
                         count++;
                     }
                 }
-                vmListModel.attachedTagsToEntities.put(tag.getTagId(), count == vmListModel.getSelectedItems().size());
+                attachedTagsToEntities.put(tag.getTagId(), count == getSelectedItems().size());
             }
-            tagListModel.setAttachedTagsToEntities(vmListModel.attachedTagsToEntities);
+            tagListModel.setAttachedTagsToEntities(attachedTagsToEntities);
         }
-        else if ("OnAssignTags".equals(vmListModel.getLastExecutedCommand().getName())) { //$NON-NLS-1$
-            vmListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
+        else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
+            postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
@@ -614,15 +610,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             setGuideContext(vm.getId());
         }
 
-        AsyncDataProvider.getInstance().getVmById(new AsyncQuery(this,
-                                                   new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(
+                                                   new AsyncCallback<VM>() {
                                                        @Override
-                                                       public void onSuccess(Object target, Object returnValue) {
-                                                           VmListModel<Void> vmListModel = (VmListModel<Void>) target;
-                                                           VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
-                                                           model.setEntity((VM) returnValue);
+                                                       public void onSuccess(VM returnValue) {
+                                                           VmGuideModel model = (VmGuideModel) getWindow();
+                                                           model.setEntity(returnValue);
 
-                                                           UICommand tempVar = new UICommand("Cancel", vmListModel); //$NON-NLS-1$
+                                                           UICommand tempVar = new UICommand("Cancel", VmListModel.this); //$NON-NLS-1$
                                                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
                                                            tempVar.setIsDefault(true);
                                                            tempVar.setIsCancel(true);
@@ -686,9 +681,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         // populating VMInit
         AsyncQuery getVmInitQuery = new AsyncQuery();
-        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+        getVmInitQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 editedVm = (VM) result;
                 vmInitLoaded(editedVm);
             }
@@ -923,16 +918,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
+                new AsyncCallback<List<StoragePool>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmListModel<Void> vmListModel = (VmListModel<Void>) target;
-                        ArrayList<StoragePool> storagePools =
-                                (ArrayList<StoragePool>) returnValue;
+                    public void onSuccess(List<StoragePool> storagePools) {
                         StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
-                        vmListModel.postGetTemplatesNotPresentOnExportDomain(storagePool);
+                        postGetTemplatesNotPresentOnExportDomain(storagePool);
                     }
                 }), storageDomainId);
     }
@@ -942,19 +934,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         if (storagePool != null) {
-            AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery(this,
-                            new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery<>(
+                            new AsyncCallback<Map<VmTemplate, ArrayList<DiskImage>>>() {
                                 @Override
-                                public void onSuccess(Object target, Object returnValue) {
-                                    VmListModel<Void> vmListModel = (VmListModel<Void>) target;
-                                    HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
-                                            (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
+                                public void onSuccess(Map<VmTemplate, ArrayList<DiskImage>> templatesDiskSet) {
                                     HashMap<String, ArrayList<String>> templateDic =
                                             new HashMap<>();
 
                                     // check if relevant templates are already there
-                                    for (Object selectedItem : vmListModel.getSelectedItems()) {
-                                        VM vm = (VM) selectedItem;
+                                    for (VM vm : getSelectedItems()) {
                                         boolean hasMatch = false;
                                         for (VmTemplate a : templatesDiskSet.keySet()) {
                                             if (vm.getVmtGuid().equals(a.getId())) {
@@ -971,7 +959,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                         }
                                     }
 
-                                    String tempStr;
                                     ArrayList<String> tempList;
                                     ArrayList<String> missingTemplates = new ArrayList<>();
                                     for (Map.Entry<String, ArrayList<String>> keyValuePair : templateDic.entrySet()) {
@@ -987,7 +974,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                         missingTemplates.add(sb.toString());
                                     }
 
-                                    vmListModel.postExportGetMissingTemplates(missingTemplates);
+                                    postExportGetMissingTemplates(missingTemplates);
                                 }
                             }),
                     storagePool.getId(),
@@ -1133,13 +1120,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     @Override
     protected void sendWarningForNonExportableDisks(VM entity) {
         // load VM disks and check if there is one which doesn't allow snapshot
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(getWindow(),
-                        new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(
+                        new AsyncCallback<List<Disk>>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                final ExportVmModel model = (ExportVmModel) target;
-                                @SuppressWarnings("unchecked")
-                                final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
+                            public void onSuccess(List<Disk> vmDisks) {
+                                final ExportVmModel model = (ExportVmModel) getWindow();
                                 VmModelHelper.sendWarningForNonExportableDisks(model,
                                         vmDisks,
                                         VmModelHelper.WarningType.VM_EXPORT);
@@ -1151,17 +1136,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private void runOnce() {
         VM vm = getSelectedItem();
         // populating VMInit
-        AsyncQuery getVmInitQuery = new AsyncQuery();
-        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                RunOnceModel runOnceModel = new WebadminRunOnceModel((VM) result,
-                        VmListModel.this);
+            public void onSuccess(VM result) {
+                RunOnceModel runOnceModel = new WebadminRunOnceModel(result, VmListModel.this);
                 setWindow(runOnceModel);
                 runOnceModel.init();
             }
-        };
-        AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
+        }), vm.getId());
 
 
     }
@@ -1216,15 +1198,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             String name = model.getName().getEntity();
 
             // Check name unicitate.
-            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
+                    new AsyncCallback<Boolean>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Boolean isNameUnique) {
 
-                            VmListModel<Void> vmListModel = (VmListModel<Void>) target;
-                            boolean isNameUnique = (Boolean) returnValue;
                             if (!isNameUnique) {
-                                UnitVmModel VmModel = (UnitVmModel) vmListModel.getWindow();
+                                UnitVmModel VmModel = (UnitVmModel) getWindow();
                                 VmModel.getInvalidityReasons().clear();
                                 VmModel.getName()
                                         .getInvalidityReasons()
@@ -1236,7 +1216,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                 VmModel.fireValidationCompleteEvent();
                             }
                             else {
-                                vmListModel.postNameUniqueCheck();
+                                postNameUniqueCheck();
                             }
 
                         }
@@ -1261,12 +1241,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
-
-                        VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
-                        vmListModel.getWindow().stopProgress();
+                        getWindow().stopProgress();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                         if (returnValueBase != null && returnValueBase.getSucceeded()) {
-                            vmListModel.cancel();
+                            cancel();
                         }
 
                     }
@@ -1390,11 +1368,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         if (clusterId == null) {
             powerAction(actionName, title, message, false);
         } else {
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
-                new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                new AsyncCallback<Cluster>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        Cluster cluster = (Cluster) returnValue;
+                    public void onSuccess(Cluster cluster) {
                         if (cluster != null) {
                             powerAction(actionName, title, message, cluster.isOptionalReasonRequired());
                         }
@@ -1624,15 +1601,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         attachCdModel.getIsoImage().setItems(images1);
         attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrNull(images1));
 
-        AsyncQuery getIrsImageListCallback = new AsyncQuery();
-        getIrsImageListCallback.setModel(this);
-
-        getIrsImageListCallback.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                VmListModel<Void> vmListModel2 = (VmListModel<Void>) model;
-                AttachCdModel _attachCdModel = (AttachCdModel) vmListModel2.getWindow();
-                ArrayList<String> images = (ArrayList<String>) result;
+            public void onSuccess(List<String> images) {
+                AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
                 images.add(0, ConsoleModel.getEjectLabel());
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable()) {
@@ -1645,8 +1617,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                     _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? ConsoleModel.getEjectLabel() : selectedIso);
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getIrsImageList(getIrsImageListCallback, vm.getStoragePoolId());
+        }), vm.getStoragePoolId());
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnChangeCD", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
@@ -1751,11 +1722,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getcurrentVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
         if (selectedItem.isRunningOrPaused() && !selectedItem.isHostedEngine()) {
-            AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery<>(
+                    new AsyncCallback<VdcQueryReturnValue>() {
                 @Override
-                public void onSuccess(Object thisModel, Object returnValue) {
-                    List<String> changedFields = ((VdcQueryReturnValue)returnValue).<List<String>> getReturnValue();
+                public void onSuccess(VdcQueryReturnValue returnValue) {
+                    List<String> changedFields = returnValue.getReturnValue();
                     // provide warnings if isVmUnpinned()
                     if (!changedFields.isEmpty() || isVmUnpinned()) {
                         VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();

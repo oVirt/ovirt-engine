@@ -13,9 +13,8 @@ import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.IModel;
@@ -164,10 +163,10 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dataCenterId, getQosType()),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery(new AsyncCallback() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object returnValue) {
                         ProfileBaseModel.this.postInitQosList(returnValue == null ? new ArrayList<Q>()
                                 : (List<Q>) ((VdcQueryReturnValue) returnValue).getReturnValue());
                     }

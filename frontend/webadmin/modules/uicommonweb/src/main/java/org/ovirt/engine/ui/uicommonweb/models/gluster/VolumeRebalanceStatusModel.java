@@ -10,8 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskSt
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -145,12 +144,11 @@ public class VolumeRebalanceStatusModel extends Model {
     }
 
     public void refreshDetails(GlusterVolumeEntity volumeEntity) {
-        AsyncDataProvider.getInstance().getGlusterRebalanceStatus(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterRebalanceStatus(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
-                GlusterVolumeTaskStatusEntity rebalanceStatusEntity =vdcValue.getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                GlusterVolumeTaskStatusEntity rebalanceStatusEntity = returnValue.getReturnValue();
                 if (rebalanceStatusEntity != null) {
                     showStatus(rebalanceStatusEntity);
                 }

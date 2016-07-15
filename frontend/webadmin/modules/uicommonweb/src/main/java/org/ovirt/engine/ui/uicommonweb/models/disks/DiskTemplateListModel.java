@@ -9,9 +9,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -40,22 +39,18 @@ public class DiskTemplateListModel extends SearchableListModel<DiskImage, VmTemp
             return;
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        IdQueryParameters getVmTemplatesByImageGuidParameters = new IdQueryParameters(diskImage.getImageId());
+        getVmTemplatesByImageGuidParameters.setRefresh(getIsQueryFirstTime());
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesByImageGuid, getVmTemplatesByImageGuidParameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                HashMap<Boolean, VmTemplate> map = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                HashMap<Boolean, VmTemplate> map = returnValue.getReturnValue();
                 List<VmTemplate> templates = new ArrayList<>();
                 templates.add(map.get(true));
                 setItems(templates);
             }
-        };
-
-        IdQueryParameters getVmTemplatesByImageGuidParameters = new IdQueryParameters(diskImage.getImageId());
-        getVmTemplatesByImageGuidParameters.setRefresh(getIsQueryFirstTime());
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesByImageGuid, getVmTemplatesByImageGuidParameters, _asyncQuery);
+        }));
 
         setIsQueryFirstTime(false);
     }

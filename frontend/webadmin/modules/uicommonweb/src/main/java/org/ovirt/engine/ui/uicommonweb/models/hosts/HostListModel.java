@@ -57,9 +57,8 @@ import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
@@ -484,7 +483,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void getAttachedTagsToSelectedHosts(TagListModel model) {
+    private void getAttachedTagsToSelectedHosts(final TagListModel model) {
         ArrayList<Guid> hostIds = new ArrayList<>();
 
         for (VDS vds : getSelectedItems()) {
@@ -496,18 +495,15 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         selectedItemsCounter = 0;
 
         for (Guid hostId : hostIds) {
-            AsyncDataProvider.getInstance().getAttachedTagsToHost(new AsyncQuery(new Object[] { this, model },
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAttachedTagsToHost(new AsyncQuery<>(
+                    new AsyncCallback<List<Tags>>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(List<Tags> returnValue) {
 
-                            Object[] array = (Object[]) target;
-                            HostListModel<Void> hostListModel = (HostListModel<Void>) array[0];
-                            TagListModel tagListModel = (TagListModel) array[1];
-                            hostListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
-                            hostListModel.selectedItemsCounter++;
-                            if (hostListModel.selectedItemsCounter == hostListModel.getSelectedItems().size()) {
-                                postGetAttachedTags(hostListModel, tagListModel);
+                            allAttachedTags.addAll(returnValue);
+                            selectedItemsCounter++;
+                            if (selectedItemsCounter == getSelectedItems().size()) {
+                                postGetAttachedTags(model);
                             }
 
                         }
@@ -516,24 +512,24 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
     }
 
-    private void postGetAttachedTags(HostListModel<Void> hostListModel, TagListModel tagListModel) {
-        if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand()) {
+    private void postGetAttachedTags(TagListModel tagListModel) {
+        if (getLastExecutedCommand() == getAssignTagsCommand()) {
             ArrayList<Tags> attachedTags =
-                    Linq.distinct(hostListModel.allAttachedTags, new TagsEqualityComparer());
+                    Linq.distinct(allAttachedTags, new TagsEqualityComparer());
             for (Tags tag : attachedTags) {
                 int count = 0;
-                for (Tags tag2 : hostListModel.allAttachedTags) {
+                for (Tags tag2 : allAttachedTags) {
                     if (tag2.getTagId().equals(tag.getTagId())) {
                         count++;
                     }
                 }
-                hostListModel.attachedTagsToEntities.put(tag.getTagId(), count == hostListModel.getSelectedItems()
+                attachedTagsToEntities.put(tag.getTagId(), count == getSelectedItems()
                         .size());
             }
-            tagListModel.setAttachedTagsToEntities(hostListModel.attachedTagsToEntities);
+            tagListModel.setAttachedTagsToEntities(attachedTagsToEntities);
         }
-        else if ("OnAssignTags".equals(hostListModel.getLastExecutedCommand().getName())) { //$NON-NLS-1$
-            hostListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
+        else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
+            postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
@@ -650,11 +646,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         hostModel.getConsoleAddressEnabled().setEntity(false);
         hostModel.getConsoleAddress().setIsChangeable(false);
 
-        AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery<>(new AsyncCallback<String>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-
-                hostModel.setPmProxyPreferences((String) returnValue);
+            public void onSuccess(String returnValue) {
+                hostModel.setPmProxyPreferences(returnValue);
             }
         }));
 
@@ -705,71 +700,65 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             }
         });
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                HostListModel<Void> hostListModel = (HostListModel<Void>) model;
-                HostModel innerHostModel = (HostModel) hostListModel.getWindow();
-                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
+            public void onSuccess(List<StoragePool> dataCenters) {
+                HostModel innerHostModel = (HostModel) getWindow();
                 final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-                if (hostListModel.getSystemTreeSelectedItem() != null) {
-                    switch (hostListModel.getSystemTreeSelectedItem().getType()) {
-                    case Host:
-                        innerHostModel.getName().setIsChangeable(false);
-                        innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-                        break;
-                    case Hosts:
-                    case Cluster:
-                    case Cluster_Gluster:
-                        Cluster cluster = (Cluster) hostListModel.getSystemTreeSelectedItem().getEntity();
-                        for (StoragePool dc : dataCenters) {
-                            if (dc.getId().equals(cluster.getStoragePoolId())) {
-                                innerHostModel.getDataCenter()
-                                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
-                                innerHostModel.getDataCenter().setSelectedItem(dc);
-                                break;
+                if (getSystemTreeSelectedItem() != null) {
+                    switch (getSystemTreeSelectedItem().getType()) {
+                        case Host:
+                            innerHostModel.getName().setIsChangeable(false);
+                            innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
+                            break;
+                        case Hosts:
+                        case Cluster:
+                        case Cluster_Gluster:
+                            Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
+                            for (StoragePool dc : dataCenters) {
+                                if (dc.getId().equals(cluster.getStoragePoolId())) {
+                                    innerHostModel.getDataCenter()
+                                            .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
+                                    innerHostModel.getDataCenter().setSelectedItem(dc);
+                                    break;
+                                }
                             }
-                        }
-                        innerHostModel.getDataCenter().setIsChangeable(false);
-                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                        innerHostModel.getCluster().setItems(Arrays.asList(cluster));
-                        innerHostModel.getCluster().setSelectedItem(cluster);
-                        innerHostModel.getCluster().setIsChangeable(false);
-                        innerHostModel.getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
-                        break;
-                    case DataCenter:
-                        StoragePool selectDataCenter =
-                                (StoragePool) hostListModel.getSystemTreeSelectedItem().getEntity();
-                        innerHostModel.getDataCenter()
-                                .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
-                        innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
-                        innerHostModel.getDataCenter().setIsChangeable(false);
-                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                        break;
-                    default:
-                        innerHostModel.getDataCenter().setItems(dataCenters);
-                        innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-                        break;
+                            innerHostModel.getDataCenter().setIsChangeable(false);
+                            innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
+                            innerHostModel.getCluster().setItems(Arrays.asList(cluster));
+                            innerHostModel.getCluster().setSelectedItem(cluster);
+                            innerHostModel.getCluster().setIsChangeable(false);
+                            innerHostModel.getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
+                            break;
+                        case DataCenter:
+                            StoragePool selectDataCenter =
+                                    (StoragePool) getSystemTreeSelectedItem().getEntity();
+                            innerHostModel.getDataCenter()
+                                    .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
+                            innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
+                            innerHostModel.getDataCenter().setIsChangeable(false);
+                            innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
+                            break;
+                        default:
+                            innerHostModel.getDataCenter().setItems(dataCenters);
+                            innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
+                            break;
                     }
-                }
-                else {
+                } else {
                     innerHostModel.getDataCenter().setItems(dataCenters);
                     innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
                 }
 
                 innerHostModel.onDataInitialized();
 
-                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", HostListModel.this); //$NON-NLS-1$
                 innerHostModel.getCommands().add(onSaveFalseCommand);
 
-                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", hostListModel); //$NON-NLS-1$
+                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
                 innerHostModel.getCommands().add(cancelCommand);
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+        }));
     }
 
     private void goToEventsTab() {
@@ -782,17 +771,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
 
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                HostListModel<Void> hostListModel = (HostListModel<Void>) model;
-                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
-                VDS host = hostListModel.getSelectedItem();
+            public void onSuccess(List<StoragePool> dataCenters) {
+                VDS host = getSelectedItem();
 
                 final EditHostModel hostModel = new EditHostModel();
-                hostListModel.setWindow(hostModel);
+                setWindow(hostModel);
                 hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
                 hostModel.setSelectedCluster(host);
                 hostModel.onDataInitialized();
@@ -804,19 +789,18 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                     hostModel.setPmProxyPreferences(
                             FenceProxySourceTypeHelper.saveAsString(host.getFenceProxySources()));
                 } else {
-                    AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery<>(new AsyncCallback<String>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-
-                            hostModel.setPmProxyPreferences((String) returnValue);
+                        public void onSuccess(String returnValue) {
+                            hostModel.setPmProxyPreferences(returnValue);
                         }
                     }));
                 }
 
-                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", HostListModel.this); //$NON-NLS-1$
                 hostModel.getCommands().add(onSaveFalseCommand);
 
-                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", hostListModel); //$NON-NLS-1$
+                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
                 hostModel.getCommands().add(cancelCommand);
 
                 if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
@@ -825,8 +809,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }
 
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+        }));
 
 
     }
@@ -1097,10 +1080,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         // - the cluster should have  gluster service enabled
         if (clusters.size() == 1) {
             model.startProgress();
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
-                    Cluster cluster = (Cluster) returnValue;
+                public void onSuccess(Cluster cluster) {
                     if (cluster != null && cluster.supportsGlusterService()) {
                         model.getForce().setIsAvailable(true);
                     }
@@ -1181,11 +1163,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         if (clusterId == null) {
             maintenance(false, false);
         } else {
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                    new AsyncCallback<Cluster>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            Cluster cluster = (Cluster) returnValue;
+                        public void onSuccess(Cluster cluster) {
                             if (cluster != null) {
                                 maintenance(cluster.isMaintenanceReasonRequired(), cluster.supportsGlusterService());
                             }
@@ -1264,27 +1245,22 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     public void approve() {
         HostModel hostModel = new EditHostModel();
         setWindow(hostModel);
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                HostListModel<Void> hostListModel = (HostListModel<Void>) model;
-                HostModel innerHostModel = (HostModel) hostListModel.getWindow();
-                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
-                VDS host = hostListModel.getSelectedItem();
+            public void onSuccess(List<StoragePool> dataCenters) {
+                HostModel innerHostModel = (HostModel) getWindow();
+                VDS host = getSelectedItem();
                 innerHostModel.updateModelFromVds(host, dataCenters, false, getSystemTreeSelectedItem());
                 innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
                 innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
                 innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
-                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnApprove", hostListModel); //$NON-NLS-1$
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnApprove", HostListModel.this); //$NON-NLS-1$
                 innerHostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", hostListModel); //$NON-NLS-1$
+                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
                 innerHostModel.getCommands().add(tempVar2);
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+        }));
     }
 
     public void onApprove() {
@@ -1340,7 +1316,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        UpdateVdsActionParameters param = new UpdateVdsActionParameters();
+        final UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(host);
         param.setVdsId(host.getId());
         param.setPassword(model.getUserPassword().getEntity());
@@ -1360,15 +1336,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
-
+            public void onSuccess(Cluster returnValue) {
                 Frontend.getInstance().runAction(
                         VdcActionType.InstallVds,
-                        internalParam,
+                        param,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
@@ -1756,13 +1730,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                    }
-                }),
-                host.getId());
+        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(), host.getId());
     }
 
     private void setUpgradeActionStatus(final VDS vds) {
@@ -1910,11 +1878,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
             Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId,
                     new IdQueryParameters(dbUser.getId()),
-                    new AsyncQuery(this, new INewAsyncCallback() {
+                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                        public void onSuccess(VdcQueryReturnValue response) {
                             if (response == null || !response.getSucceeded()) {
                                 hasAdminSystemPermission = false;
                                 updateConfigureLocalStorageCommandAvailability1();

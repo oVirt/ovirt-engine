@@ -13,9 +13,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -149,12 +148,11 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
             profileModel.startProgress();
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
 
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            IdQueryParameters queryParams = new IdQueryParameters(dc.getId());
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, queryParams, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue) {
-                    Collection<Network> networks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                public void onSuccess(VdcQueryReturnValue returnValue) {
+                    Collection<Network> networks = returnValue.getReturnValue();
 
                     profileModel.getNetwork().setItems(networks);
 
@@ -169,10 +167,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
                     profileModel.stopProgress();
                 }
-            };
-
-            IdQueryParameters queryParams = new IdQueryParameters(dc.getId());
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, queryParams, _asyncQuery);
+            }));
         }
     }
 
@@ -209,14 +204,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
         if (treeSelectedNetwork != null) {
             Network network = (Network) treeSelectedNetwork.getEntity();
-            AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    setItems((Collection<VnicProfileView>) returnValue);
-                }
-            };
-            AsyncDataProvider.getInstance().getVnicProfilesByNetworkId(asyncQuery, network.getId());
+            AsyncDataProvider.getInstance().getVnicProfilesByNetworkId(new SetRawItemsAsyncQuery(), network.getId());
             return;
         }
 
@@ -225,15 +213,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
         if (treeSelectedDc != null) {
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
-
-            AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    setItems((Collection<VnicProfileView>) returnValue);
-                }
-            };
-            AsyncDataProvider.getInstance().getVnicProfilesByDcId(asyncQuery, dc.getId());
+            AsyncDataProvider.getInstance().getVnicProfilesByDcId(new SetRawItemsAsyncQuery(), dc.getId());
         }
     }
 

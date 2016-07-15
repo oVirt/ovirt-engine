@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
@@ -71,13 +71,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     protected void loadDataCenters() {
-        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery<>(
+                new AsyncCallback<List<StoragePool>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(List<StoragePool> returnValue) {
 
                         final ArrayList<StoragePool> dataCenters = new ArrayList<>();
-                        for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
+                        for (StoragePool a : returnValue) {
                             if (a.getStatus() == StoragePoolStatus.Up) {
                                 dataCenters.add(a);
                             }
@@ -85,14 +85,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
                         if (!dataCenters.isEmpty()) {
                             AsyncDataProvider.getInstance().getClusterListByService(
-                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
+                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
 
                                         @Override
-                                        public void onSuccess(Object target, Object returnValue) {
-                                            UnitVmModel model = (UnitVmModel) target;
-                                            List<Cluster> clusterList = (List<Cluster>) returnValue;
+                                        public void onSuccess(List<Cluster> clusterList) {
                                             List<Cluster> filteredClusterList = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
-                                            model.setDataCentersAndClusters(model,
+                                            getModel().setDataCentersAndClusters(getModel(),
                                                     dataCenters,
                                                     filteredClusterList, null);
                                             initCdImage();
@@ -285,19 +283,14 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(null,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(
+                    new AsyncCallback<List<VmTemplate>>() {
                         @Override
-                        public void onSuccess(Object nothing, Object returnValue1) {
-
-                            final List<VmTemplate> templatesByDataCenter = (List<VmTemplate>) returnValue1;
-
-                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(null,
-                                    new INewAsyncCallback() {
+                        public void onSuccess(final List<VmTemplate> templatesByDataCenter ) {
+                            AsyncDataProvider.getInstance().getTemplateListByStorage(asyncQuery(
+                                    new AsyncCallback<List<VmTemplate>>() {
                                         @Override
-                                        public void onSuccess(Object nothing, Object returnValue2) {
-
-                                            List<VmTemplate> templatesByStorage = (List<VmTemplate>) returnValue2;
+                                        public void onSuccess(List<VmTemplate> templatesByStorage) {
                                             VmTemplate blankTemplate =
                                                     Linq.firstOrNull(templatesByDataCenter,
                                                             new Linq.IdPredicate<>(Guid.Empty));
@@ -308,7 +301,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                             List<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
                                                             dataCenterWithCluster.getCluster().getArchitecture());
 
-                                            NewVmModelBehavior.this.postInitTemplate(templateList);
+                                            postInitTemplate(templateList);
 
                                         }
                                     }),
@@ -319,14 +312,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     dataCenter.getId());
         }
         else {
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(null,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(
+                    new AsyncCallback<List<VmTemplate>>() {
                         @Override
-                        public void onSuccess(Object nothing, Object returnValue) {
-
-                            List<VmTemplate> templates = (List<VmTemplate>) returnValue;
-
-                            NewVmModelBehavior.this.postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                        public void onSuccess(List<VmTemplate> templates) {
+                            postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
                                     dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }

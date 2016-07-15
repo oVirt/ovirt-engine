@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,8 +7,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -154,16 +152,12 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
         getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
 
         setMaxNameLength(1);
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterMaxNameLength(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                DataCenterModel dataCenterModel = (DataCenterModel) model;
-                dataCenterModel.setMaxNameLength((Integer) result);
+            public void onSuccess(Integer result) {
+                setMaxNameLength(result);
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterMaxNameLength(_asyncQuery);
+        }));
 
     }
 
@@ -177,17 +171,12 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
     }
 
     private void storagePoolType_SelectedItemChanged() {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterVersions(new AsyncQuery<>(new AsyncCallback<List<Version>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                DataCenterModel dataCenterModel = (DataCenterModel) model;
-                ArrayList<Version> versions = (ArrayList<Version>) result;
-
+            public void onSuccess(List<Version> versions) {
                 Version selectedVersion = null;
-                if (dataCenterModel.getVersion().getSelectedItem() != null) {
-                    selectedVersion = dataCenterModel.getVersion().getSelectedItem();
+                if (getVersion().getSelectedItem() != null) {
+                    selectedVersion = getVersion().getSelectedItem();
                     boolean hasSelectedVersion = false;
                     for (Version version : versions) {
                         if (selectedVersion.equals(version)) {
@@ -201,21 +190,20 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
                     }
                 }
 
-                dataCenterModel.getVersion().setItems(versions);
+                getVersion().setItems(versions);
 
                 if (selectedVersion == null) {
-                    dataCenterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
+                    getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
                     if (getEntity() != null) {
                         initVersion();
                     }
                 }
                 else {
-                    dataCenterModel.getVersion().setSelectedItem(selectedVersion);
+                    getVersion().setSelectedItem(selectedVersion);
                 }
 
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterVersions(_asyncQuery, getDataCenterId());
+        }), getDataCenterId());
     }
 
     private boolean isVersionInit = false;

@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -57,16 +56,16 @@ public class NewNetworkModel extends NetworkModel {
     public void syncWithBackend() {
         super.syncWithBackend();
         // Get dc- cluster list
-        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(NewNetworkModel.this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(
+                new AsyncCallback<List<Cluster>>() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue) {
-                        onGetClusterList((ArrayList<Cluster>) ReturnValue);
+                    public void onSuccess(List<Cluster> clusters) {
+                        onGetClusterList(clusters);
                     }
                 }), getSelectedDc().getId());
     }
 
-    protected void onGetClusterList(ArrayList<Cluster> clusterList) {
+    protected void onGetClusterList(List<Cluster> clusterList) {
         // Cluster list
         List<NetworkClusterModel> items = new ArrayList<>();
         for (Cluster cluster : clusterList) {

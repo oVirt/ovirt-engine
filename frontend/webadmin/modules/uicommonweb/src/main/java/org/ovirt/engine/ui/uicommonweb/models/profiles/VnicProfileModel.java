@@ -20,9 +20,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -277,13 +276,12 @@ public abstract class VnicProfileModel extends Model {
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceCustomProperties,
                 params,
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
+                new AsyncQuery<>(
+                        new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
                                 if (returnValue != null) {
-                                    Map<String, String> customPropertiesList =
-                                            ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                    Map<String, String> customPropertiesList = returnValue.getReturnValue();
 
                                     getCustomPropertySheet().setKeyValueMap(customPropertiesList);
                                     getCustomPropertySheet().setIsChangeable(!customPropertiesList.isEmpty());
@@ -300,26 +298,21 @@ public abstract class VnicProfileModel extends Model {
             return;
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllNetworkQos(dcId, new AsyncQuery<>(new AsyncCallback<List<NetworkQoS>>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                List<NetworkQoS> networkQoSes = (List<NetworkQoS>) ReturnValue;
+            public void onSuccess(List<NetworkQoS> networkQoSes) {
                 getNetworkQoS().setItems(networkQoSes);
                 defaultQos = Linq.findNetworkQosById(networkQoSes, defaultQosId);
                 getNetworkQoS().setSelectedItem(defaultQos);
             }
-        };
-
-        AsyncDataProvider.getInstance().getAllNetworkQos(dcId, _asyncQuery);
+        }));
     }
 
     public void initNetworkFilterList(Version dcCompatibilityVersion) {
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        asyncQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 List<NetworkFilter> networkFilters =
                         new ArrayList((Collection<NetworkFilter>) ((VdcQueryReturnValue) returnValue).getReturnValue());
                 networkFilters.add(EMPTY_FILTER);

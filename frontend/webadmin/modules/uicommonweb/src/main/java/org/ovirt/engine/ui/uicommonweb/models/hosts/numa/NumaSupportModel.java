@@ -20,8 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -87,24 +86,24 @@ public class NumaSupportModel extends Model {
 
     protected void initHostNUMATopology() {
         startProgress();
-        AsyncDataProvider.getInstance().getHostNumaTopologyByHostId(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostNumaTopologyByHostId(new AsyncQuery<>(new AsyncCallback<List<VdsNumaNode>>() {
 
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(List<VdsNumaNode> returnValue) {
                 // TODO: host query can be skipped in case it was already fetched.
-                NumaSupportModel.this.getNumaNodeList().addAll((List<VdsNumaNode>) returnValue);
-                NumaSupportModel.this.initFirstLevelDistanceSetList();
-                AsyncDataProvider.getInstance().getVMsWithVNumaNodesByClusterId(new AsyncQuery(new INewAsyncCallback() {
+                getNumaNodeList().addAll(returnValue);
+                initFirstLevelDistanceSetList();
+                AsyncDataProvider.getInstance().getVMsWithVNumaNodesByClusterId(new AsyncQuery<>(new AsyncCallback<List<VM>>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        NumaSupportModel.this.setVmsWithvNumaNodeList((List<VM>) returnValue);
+                    public void onSuccess(List<VM> returnValue) {
+                        setVmsWithvNumaNodeList(returnValue);
                         initVNumaNodes();
-                        NumaSupportModel.this.modelReady();
+                        modelReady();
                     }
 
-                }), NumaSupportModel.this.hosts.getSelectedItem().getClusterId());
+                }), hosts.getSelectedItem().getClusterId());
             }
 
         }), hosts.getSelectedItem().getId());

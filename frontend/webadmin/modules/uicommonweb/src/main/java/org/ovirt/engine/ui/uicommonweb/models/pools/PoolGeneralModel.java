@@ -11,9 +11,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractGeneralModel;
@@ -345,107 +344,98 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
         setName(pool.getName());
         setDescription(pool.getVmPoolDescription());
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object result) {
-                // currently, only query that is being invoked asynchrounously in
-                // this context is GetVmDataByPoolIdQuery. If more async queries will be needed,
-                // refactor to "switch ... case...".
-                if (result != null) {
-                    setvm((VM) ((VdcQueryReturnValue) result).getReturnValue());
-                }
-                PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
-                if (getvm() != null) {
-                    poolGeneralModel.setTemplate(vmTemplateNameRenderer.render(getvm()));
-                    poolGeneralModel.setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
-                            getvm().getNumOfCpus(),
-                            getvm().getNumOfSockets(),
-                            getvm().getCpuPerSocket(),
-                            getvm().getThreadsPerCpu()));
-                    poolGeneralModel.setMonitorCount(getvm().getNumOfMonitors());
-
-                    poolGeneralModel.setOS(getvm().getVmOsId());
-
-                    poolGeneralModel.setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
-                    poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
-
-                    Translator translator = EnumTranslator.getInstance();
-                    setDefaultDisplayType(translator.translate(getvm().getDefaultDisplayType()));
-
-                    poolGeneralModel.setOrigin(translator.translate(getvm().getOrigin()));
-                    poolGeneralModel.setUsbPolicy(translator.translate(getvm().getUsbPolicy()));
-
-                    setHasDomain(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
-
-                    setHasTimeZone(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
-                    poolGeneralModel.setTimeZone(getvm().getTimeZone());
-
-                    poolGeneralModel.setIsStateless(!pool.isStateful());
-
-                    poolGeneralModel.setQuotaName(getvm().getQuotaName());
-
-                    poolGeneralModel.setHasDefaultHost(getvm().getDedicatedVmForVdsList().size() > 0);
-                    if (poolGeneralModel.getHasDefaultHost()) {
-                        AsyncQuery _asyncQuery1 = new AsyncQuery();
-                        _asyncQuery1.setModel(poolGeneralModel);
-                        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object model1, Object ReturnValue1) {
-                                PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
-                                String defaultHost = "";
-                                ArrayList<VDS> hosts = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                                for (VDS host : hosts) {
-                                    if (poolGeneralModel1.getvm().getDedicatedVmForVdsList().contains(host.getId())) {
-                                        if (defaultHost.isEmpty()) {
-                                            defaultHost = host.getName();
-                                        } else {
-                                            defaultHost += ", " + host.getName(); //$NON-NLS-1$
-                                        }
-                                    }
-                                }
-                                poolGeneralModel1.setDefaultHost(defaultHost);
-                            }
-                        };
-
-                        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
-                                + getvm().getClusterName() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
-                    }
-                    else {
-                        poolGeneralModel.setDefaultHost(ConstantsManager.getInstance()
-                                .getConstants()
-                                .anyHostInCluster());
-                    }
-                    if (getvm() != null) {
-                        PoolGeneralModel.super.updateProperties(getvm().getId());
-                    }
-                }
-                else {
-                    poolGeneralModel.setTemplate(null);
-                    poolGeneralModel.setCpuCount(0);
-                    poolGeneralModel.setMonitorCount(0);
-                    poolGeneralModel.setOS(0);
-                    poolGeneralModel.setDefinedMemory(null);
-                    poolGeneralModel.setMinAllocatedMemory(null);
-                    poolGeneralModel.setDefaultDisplayType(null);
-                    poolGeneralModel.setHasDomain(false);
-                    poolGeneralModel.setDomain(null);
-                    poolGeneralModel.setHasTimeZone(false);
-                    poolGeneralModel.setTimeZone(null);
-                    poolGeneralModel.setUsbPolicy(null);
-                    poolGeneralModel.setDefaultHost(null);
-                    poolGeneralModel.setIsStateless(!pool.isStateful());
-                    poolGeneralModel.setGraphicsType(""); //$NON-NLS-1$
-
-                    poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.EMPTY);
-                }
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
-                _asyncQuery);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue result) {
+                        // currently, only query that is being invoked asynchrounously in
+                        // this context is GetVmDataByPoolIdQuery. If more async queries will be needed,
+                        // refactor to "switch ... case...".
+                        if (result != null) {
+                            setvm((VM) result.getReturnValue());
+                        }
+                        if (getvm() != null) {
+                            setTemplate(vmTemplateNameRenderer.render(getvm()));
+                            setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
+                                    getvm().getNumOfCpus(),
+                                    getvm().getNumOfSockets(),
+                                    getvm().getCpuPerSocket(),
+                                    getvm().getThreadsPerCpu()));
+                            setMonitorCount(getvm().getNumOfMonitors());
+
+                            setOS(getvm().getVmOsId());
+
+                            setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
+                            setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
+
+                            Translator translator = EnumTranslator.getInstance();
+                            setDefaultDisplayType(translator.translate(getvm().getDefaultDisplayType()));
+
+                            setOrigin(translator.translate(getvm().getOrigin()));
+                            setUsbPolicy(translator.translate(getvm().getUsbPolicy()));
+
+                            setHasDomain(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
+
+                            setHasTimeZone(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
+                            setTimeZone(getvm().getTimeZone());
+
+                            setIsStateless(!pool.isStateful());
+
+                            setQuotaName(getvm().getQuotaName());
+
+                            setHasDefaultHost(getvm().getDedicatedVmForVdsList().size() > 0);
+                            if (getHasDefaultHost()) {
+
+                                Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
+                                        + getvm().getClusterName() + " sortby name", SearchType.VDS), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() { //$NON-NLS-1$
+                                            @Override
+                                            public void onSuccess(VdcQueryReturnValue returnValue1) {
+                                                String defaultHost1 = "";
+                                                ArrayList<VDS> hosts = returnValue1.getReturnValue();
+                                                for (VDS host : hosts) {
+                                                    if (getvm().getDedicatedVmForVdsList().contains(host.getId())) {
+                                                        if (defaultHost1.isEmpty()) {
+                                                            defaultHost1 = host.getName();
+                                                        } else {
+                                                            defaultHost1 += ", " + host.getName(); //$NON-NLS-1$
+                                                        }
+                                                    }
+                                                }
+                                                setDefaultHost(defaultHost1);
+                                            }
+                                        }));
+                            }
+                            else {
+                                setDefaultHost(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .anyHostInCluster());
+                            }
+                            if (getvm() != null) {
+                                PoolGeneralModel.super.updateProperties(getvm().getId());
+                            }
+                        }
+                        else {
+                            setTemplate(null);
+                            setCpuCount(0);
+                            setMonitorCount(0);
+                            setOS(0);
+                            setDefinedMemory(null);
+                            setMinAllocatedMemory(null);
+                            setDefaultDisplayType(null);
+                            setHasDomain(false);
+                            setDomain(null);
+                            setHasTimeZone(false);
+                            setTimeZone(null);
+                            setUsbPolicy(null);
+                            setDefaultHost(null);
+                            setIsStateless(!pool.isStateful());
+                            setGraphicsType(""); //$NON-NLS-1$
+
+                            getUpdateCompleteEvent().raise(this, EventArgs.EMPTY);
+                        }
+                    }
+                }));
     }
 
 }

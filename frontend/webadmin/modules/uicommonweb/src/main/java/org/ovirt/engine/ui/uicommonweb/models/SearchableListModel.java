@@ -24,9 +24,8 @@ import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.searchbackend.SyntaxObject;
 import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.RegistrationResult;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent.RefreshActiveModelHandler;
@@ -879,18 +878,10 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                setItems((Collection<T>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        };
 
         vdcQueryParametersBase.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, _asyncQuery);
+        Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, new SetItemsAsyncQuery());
 
         setIsQueryFirstTime(false);
     }
@@ -939,15 +930,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
         public PrivateAsyncCallback(SearchableListModel<E, T> model) {
             this.model = model;
-            AsyncQuery _asyncQuery1 = new AsyncQuery();
-            _asyncQuery1.setModel(this);
-            _asyncQuery1.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getSearchResultsLimit(model.asyncQuery(new AsyncCallback<Integer>() {
                 @Override
-                public void onSuccess(Object model1, Object result1) {
-                    ApplySearchPageSize((Integer) result1);
+                public void onSuccess(Integer result) {
+                    ApplySearchPageSize(result);
                 }
-            };
-            AsyncDataProvider.getInstance().getSearchResultsLimit(_asyncQuery1);
+            }));
         }
 
         public void requestSearch() {
@@ -967,6 +955,54 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
             // Sure paging functionality.
             model.updatePagingAvailability();
+        }
+    }
+
+    protected class SetItemsAsyncQuery extends AsyncQuery<VdcQueryReturnValue> {
+        public SetItemsAsyncQuery() {
+            super(new AsyncCallback<VdcQueryReturnValue>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public void onSuccess(VdcQueryReturnValue returnValue) {
+                    setItems((Collection<T>) returnValue.getReturnValue());
+                }
+            });
+        }
+    }
+
+    protected class SetRawItemsAsyncQuery extends AsyncQuery<List<T>> {
+        public SetRawItemsAsyncQuery() {
+            super(new AsyncCallback<List<T>>() {
+                @Override
+                public void onSuccess(List<T> returnValue) {
+                    setItems(returnValue);
+                }
+            });
+        }
+    }
+
+    protected class SetSortedItemsAsyncQuery extends AsyncQuery<VdcQueryReturnValue> {
+        public SetSortedItemsAsyncQuery(final Comparator<? super T> comparator) {
+            super(new AsyncCallback<VdcQueryReturnValue>() {
+                @Override
+                public void onSuccess(VdcQueryReturnValue returnValue) {
+                    List<T> items = returnValue.getReturnValue();
+                    Collections.sort(items, comparator);
+                    setItems(items);
+                }
+            });
+        }
+    }
+
+    protected class SetSortedRawItemsAsyncQuery extends AsyncQuery<List<T>> {
+        public SetSortedRawItemsAsyncQuery(final Comparator<? super T> comparator) {
+            super(new AsyncCallback<List<T>>() {
+                @Override
+                public void onSuccess(List<T> items) {
+                    Collections.sort(items, comparator);
+                    setItems(items);
+                }
+            });
         }
     }
 

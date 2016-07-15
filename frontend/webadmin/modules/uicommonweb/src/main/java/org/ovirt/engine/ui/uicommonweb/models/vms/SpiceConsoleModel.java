@@ -27,9 +27,8 @@ import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
@@ -261,22 +260,17 @@ public class SpiceConsoleModel extends ConsoleModel {
     }
 
     private void executeQuery(final VM vm) {
-        final AsyncQuery imagesListQuery = new AsyncQuery();
-        imagesListQuery.setModel(this);
-        imagesListQuery.asyncCallback = new INewAsyncCallback() {
+        final AsyncQuery<VdcQueryReturnValue> imagesListQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<RepoImage> repoImages = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                ((SpiceConsoleModel) model).invokeClient(repoImages);
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<RepoImage> repoImages = returnValue.getReturnValue();
+                invokeClient(repoImages);
             }
-        };
+        });
 
-        AsyncQuery isoDomainQuery = new AsyncQuery();
-        isoDomainQuery.setModel(this);
-        isoDomainQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<StorageDomain> isoDomainQuery = new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                StorageDomain isoDomain = (StorageDomain) result;
+            public void onSuccess(StorageDomain isoDomain) {
                 if (isoDomain != null) {
                     GetImagesListByStoragePoolIdParameters getIsoParams =
                             new GetImagesListByStoragePoolIdParameters(vm.getStoragePoolId(), ImageFileType.ISO);
@@ -286,10 +280,10 @@ public class SpiceConsoleModel extends ConsoleModel {
                             getIsoParams,
                             imagesListQuery);
                 } else {
-                    ((SpiceConsoleModel) model).invokeClient(null);
+                    invokeClient(null);
                 }
             }
-        };
+        });
 
         AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(isoDomainQuery, vm.getStoragePoolId());
     }
@@ -309,10 +303,10 @@ public class SpiceConsoleModel extends ConsoleModel {
         Frontend.getInstance().runQuery(
                 VdcQueryType.ConfigureConsoleOptions,
                 parameters,
-                new ShowErrorAsyncQuery(new INewAsyncCallback() {
+                new ShowErrorAsyncQuery(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        final ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        final ConsoleOptions configuredOptions = returnValue.getReturnValue();
                         // overriding global server settings by frontend settings
                         configuredOptions.setRemapCtrlAltDelete(options.isRemapCtrlAltDelete());
                         configuredOptions.setTitle(getClientTitle());

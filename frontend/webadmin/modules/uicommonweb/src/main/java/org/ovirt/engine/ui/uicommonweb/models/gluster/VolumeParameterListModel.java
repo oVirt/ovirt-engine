@@ -11,9 +11,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -113,18 +112,12 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         setWindow(volumeParameterModel);
         volumeParameterModel.startProgress();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.setHandleFailure(true);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
                 ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<>();
-
-                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
 
                 if (!returnValue.getSucceeded()) {
                     innerParameterModel.setMessage(ConstantsManager.getInstance()
@@ -139,12 +132,13 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                 innerParameterModel.getKeyList().setItems(optionInfoList);
                 innerParameterModel.stopProgress();
 
-                UICommand command = UICommand.createDefaultOkUiCommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
+                UICommand command = UICommand.createDefaultOkUiCommand("OnSetParameter", VolumeParameterListModel.this); //$NON-NLS-1$
                 innerParameterModel.getCommands().add(command);
-                innerParameterModel.getCommands().add(UICommand.createCancelUiCommand("OnCancel", volumeParameterListModel)); //$NON-NLS-1$
+                innerParameterModel.getCommands().add(UICommand.createCancelUiCommand("OnCancel", VolumeParameterListModel.this)); //$NON-NLS-1$
             }
-        };
-        AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
+        });
+        asyncQuery.setHandleFailure(true);
+        AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(asyncQuery, volume.getClusterId());
     }
 
     private void onSetParameter() {
@@ -214,18 +208,12 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         volumeParameterModel.getSelectedKey().setIsChangeable(false);
         volumeParameterModel.startProgress();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.setHandleFailure(true);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
                 ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<>();
-
-                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
 
                 if (!returnValue.getSucceeded()) {
                     innerParameterModel.setMessage(ConstantsManager.getInstance()
@@ -246,13 +234,14 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
 
                 innerParameterModel.stopProgress();
 
-                UICommand command = UICommand.createDefaultOkUiCommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
+                UICommand command = UICommand.createDefaultOkUiCommand("OnSetParameter", VolumeParameterListModel.this); //$NON-NLS-1$
                 innerParameterModel.getCommands().add(command);
-                command = UICommand.createCancelUiCommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
+                command = UICommand.createCancelUiCommand("OnCancel", VolumeParameterListModel.this); //$NON-NLS-1$
                 innerParameterModel.getCommands().add(command);
             }
-        };
-        AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
+        });
+        asyncQuery.setHandleFailure(true);
+        AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(asyncQuery, volume.getClusterId());
     }
 
     private GlusterVolumeOptionInfo getCifsVolumeOption() {

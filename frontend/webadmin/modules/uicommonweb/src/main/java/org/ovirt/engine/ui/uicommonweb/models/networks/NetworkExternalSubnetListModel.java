@@ -9,9 +9,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -103,9 +102,9 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
 
     private AsyncQuery createProviderReadOnlyCallback(){
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        asyncQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 setCommandExecutionAllowedForProvider((Provider) ( ((VdcQueryReturnValue)returnValue).getReturnValue()));
             }
         };

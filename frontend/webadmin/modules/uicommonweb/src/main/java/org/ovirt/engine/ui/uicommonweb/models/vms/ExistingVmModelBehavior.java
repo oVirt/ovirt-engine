@@ -25,9 +25,9 @@ import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
@@ -82,23 +82,23 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmNumaNodesByVmId,
                 new IdQueryParameters(vm.getId()),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<VmNumaNode> nodes = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        ExistingVmModelBehavior.this.getModel().setVmNumaNodes(nodes);
-                        ExistingVmModelBehavior.this.getModel().updateNodeCount(nodes.size());
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<VmNumaNode> nodes = returnValue.getReturnValue();
+                        getModel().setVmNumaNodes(nodes);
+                        getModel().updateNodeCount(nodes.size());
                     }
                 }));
         // load dedicated host names into host names list
         if (getVm().getDedicatedVmForVdsList().size() > 0) {
             Frontend.getInstance().runQuery(VdcQueryType.GetAllHostNamesPinnedToVmById,
                     new IdQueryParameters(vm.getId()),
-                    new AsyncQuery(new INewAsyncCallback() {
+                    asyncQuery(new AsyncCallback<VdcQueryReturnValue>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            setDedicatedHostsNames((List<String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                            setDedicatedHostsNames((List<String>) returnValue.getReturnValue());
                         }
                     }));
         }
@@ -113,20 +113,18 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     Collections.singletonList(newCustomCompatibilityVersion), newCustomCompatibilityVersion);
         }
 
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
-                        new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterById(asyncQuery(
+                        new AsyncCallback<StoragePool>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                            public void onSuccess(StoragePool dataCenter) {
 
-                                UnitVmModel model = (UnitVmModel) target;
-                                if (returnValue != null) {
-                                    StoragePool dataCenter = (StoragePool) returnValue;
+                                if (dataCenter != null) {
                                     final List<StoragePool> dataCenters =
                                             new ArrayList<>(Arrays.asList(new StoragePool[]{dataCenter}));
 
                                     initClusters(dataCenters);
                                 } else {
-                                    ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
+                                    ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) getModel().getBehavior();
                                     VM currentVm = behavior.vm;
                                     Cluster cluster = new Cluster();
                                     cluster.setId(currentVm.getClusterId());
@@ -135,8 +133,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                     cluster.setStoragePoolId(currentVm.getStoragePoolId());
                                     DataCenterWithCluster dataCenterWithCluster =
                                             new DataCenterWithCluster(null, cluster);
-                                    model.getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
-                                    model.getDataCenterWithClustersList().setSelectedItem(dataCenterWithCluster);
+                                    getModel().getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
+                                    getModel().getDataCenterWithClustersList().setSelectedItem(dataCenterWithCluster);
                                     behavior.initTemplate();
                                     behavior.initCdImage();
                                 }
@@ -148,18 +146,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     protected void initClusters(final List<StoragePool> dataCenters) {
         AsyncDataProvider.getInstance().getClusterListByService(
-                new AsyncQuery(getModel(), new INewAsyncCallback() {
+                asyncQuery(new AsyncCallback<List<Cluster>>() {
 
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        UnitVmModel model = (UnitVmModel) target;
-
-                        List<Cluster> clusters = (List<Cluster>) returnValue;
-
+                    public void onSuccess(List<Cluster> clusters) {
                         List<Cluster> filteredClusters =
                                 AsyncDataProvider.getInstance().filterByArchitecture(clusters, vm.getClusterArch());
 
-                        model.setDataCentersAndClusters(model,
+                        getModel().setDataCentersAndClusters(getModel(),
                                 dataCenters,
                                 filteredClusters, vm.getClusterId());
                         updateCompatibilityVersion();
@@ -207,9 +201,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     getModel().getThreadsPerCore().getSelectedItemChangedEvent().removeListener(getModel());
                     getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
 
-                    AsyncDataProvider.getInstance().getHostById(new AsyncQuery(new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getHostById(new AsyncQuery(new AsyncCallback() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object returnValue) {
                             runningOnHost = (VDS) returnValue;
                             hostCpu = calculateHostCpus();
                             updateNumOfSockets();
@@ -282,13 +276,13 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     private void updateInstanceImages() {
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(new AsyncCallback<List<Disk>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(List<Disk> disks) {
                 List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
                 boolean isChangeable = vm == null || VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk);
 
-                for (Disk disk : (ArrayList<Disk>) returnValue) {
+                for (Disk disk : disks) {
                     InstanceImageLineModel lineModel = new InstanceImageLineModel(getModel().getInstanceImages());
                     lineModel.initialize(disk, getVm());
                     lineModel.setEnabled(isChangeable);

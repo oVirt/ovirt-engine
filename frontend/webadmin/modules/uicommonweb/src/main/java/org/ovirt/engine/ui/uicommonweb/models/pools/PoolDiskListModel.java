@@ -5,9 +5,8 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -36,25 +35,22 @@ public class PoolDiskListModel extends VmDiskListModelBase<VmPool> {
 
         VmPool pool = getEntity();
         if (pool != null) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object result) {
-                    if (result != null) {
-                        VM vm = ((VdcQueryReturnValue) result).getReturnValue();
-                        if (vm == null) {
-                            return;
-                        }
-
-                        setVM(vm);
-                        syncSearch();
-                    }
-                }
-            };
             Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
-                    _asyncQuery);
+                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                        @Override
+                        public void onSuccess(VdcQueryReturnValue result) {
+                            if (result != null) {
+                                VM vm = result.getReturnValue();
+                                if (vm == null) {
+                                    return;
+                                }
+
+                                setVM(vm);
+                                syncSearch();
+                            }
+                        }
+                    }));
         }
     }
 

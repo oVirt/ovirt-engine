@@ -27,9 +27,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -697,12 +696,10 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     protected void updateDataCenterVersion() {
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery<StoragePool> query = new AsyncQuery<>(new AsyncCallback<StoragePool>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmDiskListModel model = (VmDiskListModel) target;
-                StoragePool storagePool = (StoragePool) returnValue;
-                model.setDataCenterVersion(storagePool.getCompatibilityVersion());
+            public void onSuccess(StoragePool storagePool) {
+                setDataCenterVersion(storagePool.getCompatibilityVersion());
             }
         });
         AsyncDataProvider.getInstance().getDataCenterById(query, getEntity().getStoragePoolId());

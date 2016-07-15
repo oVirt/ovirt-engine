@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -52,12 +52,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getProvisioning().setIsAvailable(false);
         getModel().getProvisioning().setEntity(false);
 
-        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(asyncQuery(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(List<StoragePool> returnValue) {
 
                 final List<StoragePool> dataCenters = new ArrayList<>();
-                for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
+                for (StoragePool a : returnValue) {
                     if (a.getStatus() == StoragePoolStatus.Up) {
                         dataCenters.add(a);
                     }
@@ -86,14 +86,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     protected void postDataCentersLoaded(final List<StoragePool> dataCenters) {
         AsyncDataProvider.getInstance().getClusterListByService(
-                new AsyncQuery(getModel(), new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
 
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        UnitVmModel model = (UnitVmModel) target;
-                        List<Cluster> clusters = (List<Cluster>) returnValue;
+                    public void onSuccess(List<Cluster> clusters) {
                         List<Cluster> filteredClusters = filterClusters(clusters);
-                        model.setDataCentersAndClusters(model,
+                        getModel().setDataCentersAndClusters(getModel(),
                                 dataCenters,
                                 filteredClusters, null);
                         initCdImage();

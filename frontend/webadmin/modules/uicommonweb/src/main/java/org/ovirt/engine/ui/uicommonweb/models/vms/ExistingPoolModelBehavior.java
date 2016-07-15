@@ -13,8 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -121,23 +120,19 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
-        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(asyncQuery(new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-
-                VmModelBehaviorBase behavior = ExistingPoolModelBehavior.this;
-
-                ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
-                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
+            public void onSuccess(List<StorageDomain> storageDomains) {
+                ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
                 ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
 
-                DisksAllocationModel disksAllocationModel = behavior.getModel().getDisksAllocationModel();
+                DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
                 disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
-                behavior.getModel().getStorageDomain().setItems(activeStorageDomains);
+                getModel().getStorageDomain().setItems(activeStorageDomains);
 
                 for (DiskModel diskModel : disks) {
                     // Setting Quota
-                    diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
+                    diskModel.getQuota().setItems(getModel().getQuota().getItems());
                     diskModel.getQuota().setIsChangeable(false);
 
                     ArrayList<Guid> storageIds = null;

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -14,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
@@ -53,12 +54,12 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         if (!StringHelper.isNullOrEmpty(dataCenterName)) {
 
-            AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery<>(
+                    new AsyncCallback<List<StoragePool>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
+                        public void onSuccess(List<StoragePool> returnValue) {
 
-                            context.dataCenterFoundByName = Linq.firstOrNull((Iterable<StoragePool>) returnValue);
+                            context.dataCenterFoundByName = Linq.firstOrNull(returnValue);
                             prepare2();
                         }
                     }),
@@ -157,12 +158,12 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         if (enlistmentContext.getDataCenterId() != null) {
 
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
+                    new AsyncCallback<StoragePool>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
+                        public void onSuccess(StoragePool returnValue) {
 
-                            context.dataCenterFoundById = (StoragePool) returnValue;
+                            context.dataCenterFoundById = returnValue;
                             rollback2();
                         }
                     }),
@@ -181,12 +182,12 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         VDS host = model.getSelectedItem();
 
         // Retrieve host to make sure we have an updated status etc.
-        AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostById(new AsyncQuery<>(
+                new AsyncCallback<VDS>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(VDS returnValue) {
 
-                        context.hostFoundById = (VDS) returnValue;
+                        context.hostFoundById = returnValue;
                         rollback3();
                     }
                 }),

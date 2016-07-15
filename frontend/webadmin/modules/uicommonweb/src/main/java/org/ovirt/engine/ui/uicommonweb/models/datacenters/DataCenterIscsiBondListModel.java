@@ -8,11 +8,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -202,19 +199,9 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
 
     @Override
     protected void syncSearch() {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ret) {
-                ArrayList<IscsiBond> items = ((VdcQueryReturnValue) ret).getReturnValue();
-                setItems(items);
-            }
-        };
-
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetIscsiBondsByStoragePoolId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetIscsiBondsByStoragePoolId, params, new SetItemsAsyncQuery());
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.system;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.DisplayUncaughtUIExceptions;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
@@ -13,9 +14,9 @@ import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.Application
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.widget.AlertManager;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
@@ -182,15 +183,14 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     @Override
     public void onLogout() {
-        AsyncQuery query = new AsyncQuery();
-        query.setHandleFailure(true);
-        query.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcReturnValueBase> query = new AsyncQuery<>(new AsyncCallback<VdcReturnValueBase>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
+            public void onSuccess(VdcReturnValueBase returnValue) {
                 // Redirect to SSO Logout after the user has logged out successfully on backend.
                 Window.Location.assign(GWT.getModuleBaseURL() + "sso/logout"); //$NON-NLS-1$
             }
-        };
+        });
+        query.setHandleFailure(true);
 
         frontend.logoffAsync(query);
     }

@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ProfileBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -39,15 +39,15 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
 
         VdcQueryType queryType = (vmBase instanceof VmTemplate) ? VdcQueryType.GetTemplateInterfacesByTemplateId : VdcQueryType.GetVmInterfacesByVmId;
 
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery query = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(Object parentModel, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 if (returnValue == null) {
                     return;
                 }
 
-                List<VmNetworkInterface> nics = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                List<VmNetworkInterface> nics = returnValue.getReturnValue();
                 updateNetworkInterfaces(getNetworkProfileBehavior(), nics);
             }
         });
@@ -58,11 +58,10 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
     }
 
     private void updateNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> argNics) {
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery<List<VnicProfileView>> query = new AsyncQuery<>(new AsyncCallback<List<VnicProfileView>>() {
 
             @Override
-            public void onSuccess(Object parentModel, Object returnValue) {
-                List<VnicProfileView> profiles = (List<VnicProfileView>) returnValue;
+            public void onSuccess(List<VnicProfileView> profiles) {
                 List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
                 List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
 

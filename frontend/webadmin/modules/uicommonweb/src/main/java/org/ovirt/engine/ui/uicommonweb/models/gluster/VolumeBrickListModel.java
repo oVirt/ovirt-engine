@@ -28,9 +28,8 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -67,18 +66,15 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         getReplaceBrickCommand().setIsAvailable(true);
 
         // Get the meta volume name
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.setModel(this);
-        aQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                glusterMetaVolumeName = (String) returnValue;
-            }
-        };
         AsyncDataProvider.getInstance()
                 .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterMetaVolumeName,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                        aQuery);
+                        new AsyncQuery<>(new AsyncCallback<String>() {
+                            @Override
+                            public void onSuccess(String returnValue) {
+                                glusterMetaVolumeName = returnValue;
+                            }
+                        }));
 
     }
 
@@ -295,18 +291,17 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = getEntity();
+        final GlusterVolumeEntity volumeEntity = getEntity();
 
         if (volumeEntity == null) {
             return;
         }
 
-        AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery(volumeEntity, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object entity, Object returnValue) {
-                boolean clusterHasUpHost = (Boolean) returnValue;
+            public void onSuccess(Boolean clusterHasUpHost) {
                 if (clusterHasUpHost) {
-                    addBricks((GlusterVolumeEntity) entity);
+                    addBricks(volumeEntity);
                 }
                 else {
                     ConfirmationModel model = new ConfirmationModel();
@@ -347,21 +342,14 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         setWindow(volumeBrickModel);
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(volumeBrickModel);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(volumeBrickModel.asyncQuery(new AsyncCallback<Cluster>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                Cluster cluster = (Cluster) result;
+            public void onSuccess(Cluster cluster) {
                 volumeBrickModel.getForce().setIsAvailable(true);
                 volumeBrickModel.setIsBrickProvisioningSupported();
-                AsyncQuery _asyncQueryInner = new AsyncQuery();
-                _asyncQueryInner.setModel(model);
-                _asyncQueryInner.asyncCallback = new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getHostListByCluster(volumeBrickModel.asyncQuery(new AsyncCallback<List<VDS>>() {
                     @Override
-                    public void onSuccess(Object model, Object result) {
-                        VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
-                        ArrayList<VDS> hostList = (ArrayList<VDS>) result;
+                    public void onSuccess(List<VDS> hostList) {
                         Iterator<VDS> iterator = hostList.iterator();
                         while (iterator.hasNext()) {
                             if (iterator.next().getStatus() != VDSStatus.Up) {
@@ -371,11 +359,9 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
                         volumeBrickModel.setHostList(hostList);
                     }
-                };
-                AsyncDataProvider.getInstance().getHostListByCluster(_asyncQueryInner, cluster.getName());
+                }), cluster.getName());
             }
-        };
-        AsyncDataProvider.getInstance().getClusterById(_asyncQuery, volumeEntity.getClusterId());
+        }), volumeEntity.getClusterId());
 
         // TODO: fetch the mount points to display
         volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel<GlusterBrickEntity>>());
@@ -971,17 +957,15 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
         cancelCommand.setIsCancel(true);
 
-        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 cModel.stopProgress();
-                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
-
-                if (vdcValue.getSucceeded() && vdcValue.getReturnValue() != null) {
+                if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
                     cancelConfirmation();
 
                     RemoveBrickStatusModel removeBrickStatusModel;
-                    GlusterVolumeTaskStatusEntity removeBrickStatusEntity = vdcValue.getReturnValue();
+                    GlusterVolumeTaskStatusEntity removeBrickStatusEntity = returnValue.getReturnValue();
 
                     if (getWindow() == null) {
                         removeBrickStatusModel =
@@ -1119,34 +1103,24 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             return;
         }
 
-        ReplaceBrickModel brickModel = new ReplaceBrickModel();
+        final ReplaceBrickModel brickModel = new ReplaceBrickModel();
 
         setWindow(brickModel);
         brickModel.setTitle(ConstantsManager.getInstance().getConstants().replaceBrickTitle());
         brickModel.setHelpTag(HelpTag.replace_brick);
         brickModel.setHashName("replace_brick"); //$NON-NLS-1$
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(brickModel);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(brickModel.asyncQuery(new AsyncCallback<Cluster>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                Cluster cluster = (Cluster) result;
-
-                AsyncQuery _asyncQueryInner = new AsyncQuery();
-                _asyncQueryInner.setModel(model);
-                _asyncQueryInner.asyncCallback = new INewAsyncCallback() {
+            public void onSuccess(Cluster cluster) {
+                AsyncDataProvider.getInstance().getHostListByCluster(brickModel.asyncQuery(new AsyncCallback<List<VDS>>() {
                     @Override
-                    public void onSuccess(Object model, Object result) {
-                        ReplaceBrickModel brickModel = (ReplaceBrickModel) model;
-                        ArrayList<VDS> hostList = (ArrayList<VDS>) result;
+                    public void onSuccess(List<VDS> hostList) {
                         brickModel.getServers().setItems(hostList);
                     }
-                };
-                AsyncDataProvider.getInstance().getHostListByCluster(_asyncQueryInner, cluster.getName());
+                }), cluster.getName());
             }
-        };
-        AsyncDataProvider.getInstance().getClusterById(_asyncQuery, volumeEntity.getClusterId());
+        }), volumeEntity.getClusterId());
 
         UICommand command = UICommand.createDefaultOkUiCommand("OnReplace", this); //$NON-NLS-1$
         brickModel.getCommands().add(command);
@@ -1204,9 +1178,9 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
     private void showBrickAdvancedDetails() {
         final GlusterVolumeEntity volumeEntity = getEntity();
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(Cluster returnValue) {
                 onShowBrickAdvancedDetails(volumeEntity);
             }
         }),
@@ -1223,12 +1197,11 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
         brickModel.startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 brickModel.stopProgress();
 
-                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
                 if (returnValue == null || !returnValue.getSucceeded()) {
                     brickModel.setMessage(ConstantsManager.getInstance()
                             .getConstants()

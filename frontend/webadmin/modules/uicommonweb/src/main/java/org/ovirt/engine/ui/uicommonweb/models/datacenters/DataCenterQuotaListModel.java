@@ -1,16 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
@@ -50,21 +45,11 @@ public class DataCenterQuotaListModel extends QuotaListModel<StoragePool> {
         if (getEntity() == null) {
             return;
         }
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.model = this;
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
-
-            }
-        };
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
-                asyncQuery);
+                new SetItemsAsyncQuery());
     }
 
     @Override

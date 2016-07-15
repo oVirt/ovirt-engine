@@ -3,11 +3,12 @@ package org.ovirt.engine.ui.common.uicommon;
 import org.ovirt.engine.core.common.queries.SignStringParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 
@@ -32,18 +33,15 @@ public class WebClientConsoleInvoker {
     }
 
     public void invokeClient() {
-        AsyncQuery signCallback = new AsyncQuery();
-        signCallback.setModel(this);
-        signCallback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue queryRetVal = (VdcQueryReturnValue) returnValue;
-                String signedTicket = queryRetVal.getReturnValue();
-                invokeClientNative(signedTicket);
-            }
-        };
-
-        Frontend.getInstance().runQuery(VdcQueryType.SignString, new SignStringParameters(createConnectionString(host, port, useSsl)), signCallback);
+        Frontend.getInstance().runQuery(VdcQueryType.SignString,
+                new SignStringParameters(createConnectionString(host, port, useSsl)),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        String signedTicket = returnValue.getReturnValue();
+                        invokeClientNative(signedTicket);
+                    }
+                }));
     }
 
     private native void invokeClientNative(String connectionTicket)/*-{

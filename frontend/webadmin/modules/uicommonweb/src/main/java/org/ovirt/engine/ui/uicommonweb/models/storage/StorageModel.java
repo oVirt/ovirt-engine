@@ -22,8 +22,7 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -415,44 +414,37 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             // We are either adding a new storage or editing an unattached storage
             // -> fill DataCenters drop-down with all possible Data-Centers, choose the empty one:
             // [TODO: In case of an Unattached SD, choose only DCs of the same type]
-                AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this,
-                                                                                 new INewAsyncCallback() {
-                                                                                     @Override
-                                                                                     public void onSuccess(Object target, Object returnValue) {
+                AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(
+                        new AsyncCallback<List<StoragePool>>() {
+                            @Override
+                            public void onSuccess(List<StoragePool> dataCenters) {
 
-                                                                                         StorageModel storageModel = (StorageModel) target;
-                                                                                         StorageModelBehavior storageModelBehavior = behavior;
-                                                                                         List<StoragePool> dataCenters =
-                                                                                                 (ArrayList<StoragePool>) returnValue;
-                                                                                         dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
-                                                                                         StorageModel.addEmptyDataCenterToList(dataCenters);
-                                                                                         StoragePool oldSelectedItem =
-                                                                                                 storageModel.getDataCenter().getSelectedItem();
-                                                                                         storageModel.getDataCenter().setItems(dataCenters);
-                                                                                         if (oldSelectedItem != null) {
-                                                                                             storageModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
-                                                                                                                                                              new Linq.IdPredicate<>(oldSelectedItem.getId())));
-                                                                                         } else {
-                                                                                             storageModel.getDataCenter()
-                                                                                                     .setSelectedItem(getStorage() == null ? Linq.firstOrNull(dataCenters)
-                                                                                                                              : Linq.firstOrNull(dataCenters,
-                                                                                                                                                    new Linq.IdPredicate<>(UnassignedDataCenterId)));
-                                                                                         }
+                                StorageModelBehavior storageModelBehavior = behavior;
+                                dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
+                                StorageModel.addEmptyDataCenterToList(dataCenters);
+                                StoragePool oldSelectedItem = getDataCenter().getSelectedItem();
+                                getDataCenter().setItems(dataCenters);
+                                if (oldSelectedItem != null) {
+                                    getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
+                                            new Linq.IdPredicate<>(oldSelectedItem.getId())));
+                                } else {
+                                    getDataCenter()
+                                            .setSelectedItem(getStorage() == null ? Linq.firstOrNull(dataCenters)
+                                                    : Linq.firstOrNull(dataCenters,
+                                                            new Linq.IdPredicate<>(UnassignedDataCenterId)));
+                                }
 
-                                                                                     }
-                                                                                 }));
+                            }
+                        }));
             }
 
             else { // "Edit Storage" mode:
-                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
-                        new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
+                        new AsyncCallback<List<StoragePool>>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                            public void onSuccess(List<StoragePool> dataCentersWithStorage) {
 
-                                StorageModel storageModel = (StorageModel) target;
                                 List<StoragePool> dataCenters = new ArrayList<>();
-                                List<StoragePool> dataCentersWithStorage =
-                                        (ArrayList<StoragePool>) returnValue;
                                 if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null) {
                                     StorageModel.addEmptyDataCenterToList(dataCenters);
                                 }
@@ -460,8 +452,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                                     dataCenters =
                                             new ArrayList<>(Arrays.asList(new StoragePool[]{dataCentersWithStorage.get(0)}));
                                 }
-                                storageModel.getDataCenter().setItems(dataCenters);
-                                storageModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
+                                getDataCenter().setItems(dataCenters);
+                                getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
 
                             }
                         }),
@@ -491,12 +483,10 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         boolean localFsOnly = getCurrentStorageItem() instanceof LocalStorageModel;
         Guid dataCenterId = dataCenter == null ? null : dataCenter.getId();
 
-        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                StorageModel storageModel = (StorageModel) model;
-                Collection<VDS> hosts = (Collection<VDS>) returnValue;
-                storageModel.postUpdateHost(hosts);
+            public void onSuccess(List<VDS> hosts) {
+                postUpdateHost(hosts);
             }
         }), dataCenterId, localFsOnly);
     }
@@ -608,11 +598,10 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     private void updateWipeAfterDelete() {
         StorageType storageType = getAvailableStorageTypeItems().getSelectedItem();
         if (isNewStorage()) {
-            AsyncDataProvider.getInstance().getStorageDomainDefaultWipeAfterDelete(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override public void onSuccess(Object model, Object returnValue) {
-                            StorageModel storageModel = (StorageModel) model;
-                            storageModel.getWipeAfterDelete().setEntity((Boolean) returnValue);
+            AsyncDataProvider.getInstance().getStorageDomainDefaultWipeAfterDelete(new AsyncQuery<>(
+                    new AsyncCallback<Boolean>() {
+                        @Override public void onSuccess(Boolean returnValue) {
+                            getWipeAfterDelete().setEntity(returnValue);
                         }
                     }), storageType);
         }

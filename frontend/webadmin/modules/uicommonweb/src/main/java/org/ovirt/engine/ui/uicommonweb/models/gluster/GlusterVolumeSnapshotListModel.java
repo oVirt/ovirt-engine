@@ -22,9 +22,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -190,13 +189,11 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
             return;
         }
 
-        AsyncDataProvider.getInstance().getGlusterVolumeSnapshotsForVolume(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterVolumeSnapshotsForVolume(new AsyncQuery<>(
+                new AsyncCallback<List<GlusterVolumeSnapshotEntity>>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<GlusterVolumeSnapshotEntity> snapshots =
-                                (ArrayList<GlusterVolumeSnapshotEntity>) returnValue;
+                    public void onSuccess(List<GlusterVolumeSnapshotEntity> snapshots) {
                         Collections.sort(snapshots, new Linq.GlusterVolumeSnapshotComparer());
                         setItems(snapshots);
                     }
@@ -436,10 +433,9 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         snapshotModel.getClusterName().setEntity(volumeEntity.getClusterName());
         snapshotModel.getVolumeName().setEntity(volumeEntity.getName());
 
-        AsyncDataProvider.getInstance().getIsGlusterVolumeSnapshotCliScheduleEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getIsGlusterVolumeSnapshotCliScheduleEnabled(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                Boolean isCliScheduleEnabled = (Boolean) returnValue;
+            public void onSuccess(Boolean isCliScheduleEnabled) {
                 snapshotModel.getDisableCliSchedule().setEntity(isCliScheduleEnabled);
                 snapshotModel.stopProgress();
             }
@@ -595,17 +591,16 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         snapshotModel.startProgress();
 
-        AsyncDataProvider.getInstance().getVolumeSnapshotSchedule(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVolumeSnapshotSchedule(new AsyncQuery<>(new AsyncCallback<GlusterVolumeSnapshotSchedule>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                if (returnValue == null) {
+            public void onSuccess(final GlusterVolumeSnapshotSchedule schedule) {
+                if (schedule == null) {
                     snapshotModel.setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .unableToFetchVolumeSnapshotSchedule());
                     return;
                 }
-                final GlusterVolumeSnapshotSchedule schedule = (GlusterVolumeSnapshotSchedule) returnValue;
                 snapshotModel.getSnapshotName().setEntity(schedule.getSnapshotNamePrefix());
                 snapshotModel.getDescription().setEntity(schedule.getSnapshotDescription());
                 snapshotModel.getRecurrence().setSelectedItem(schedule.getRecurrence());

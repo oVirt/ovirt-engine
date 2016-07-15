@@ -3,14 +3,15 @@ package org.ovirt.engine.ui.uicommonweb;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -214,23 +215,22 @@ public abstract class Configurator {
     }
 
     private void updateSpiceUsbAutoShare(final ISpice spice) {
-        AsyncDataProvider.getInstance().getSpiceUsbAutoShare(new AsyncQuery(this,
-                                                                            new INewAsyncCallback() {
-                                                                                @Override
-                                                                                public void onSuccess(Object target, Object returnValue) {
-                                                                                    spice.getOptions().setUsbAutoShare((Boolean) returnValue);
-                                                                                }
-                                                                            }));
+        AsyncDataProvider.getInstance().getSpiceUsbAutoShare(new AsyncQuery<>(new AsyncCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean returnValue) {
+                spice.getOptions().setUsbAutoShare(returnValue);
+            }
+        }));
     }
 
     protected abstract ConfigurationValues spiceFullScreenConfigKey();
 
     private void updateSpiceFullScreenDefault(final ISpice spice) {
-        AsyncDataProvider.getInstance().getConfigurationValueBoolean(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getConfigurationValueBoolean(new AsyncQuery<>(
+                new AsyncCallback<Boolean>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        spice.getOptions().setFullScreen((Boolean) returnValue);
+                    public void onSuccess(Boolean returnValue) {
+                        spice.getOptions().setFullScreen(returnValue);
                     }
                 }), spiceFullScreenConfigKey());
     }

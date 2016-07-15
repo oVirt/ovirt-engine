@@ -10,8 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -125,17 +124,13 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
 
         updateServiceTypeList();
 
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                List<VDS> hostList = (List<VDS>) result;
+            public void onSuccess(List<VDS> hostList) {
                 hostList.add(0, null);
                 getHostList().setItems(hostList);
             }
-        };
-        AsyncDataProvider.getInstance().getHostListByCluster(asyncQuery, getEntity().getName());
+        }), getEntity().getName());
     }
 
     private void updateServiceTypeList() {
@@ -147,12 +142,9 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
     }
 
     private void updateServiceList() {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterGlusterServices(new AsyncQuery<>(new AsyncCallback<GlusterVolumeAdvancedDetails>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                GlusterVolumeAdvancedDetails details = (GlusterVolumeAdvancedDetails) result;
+            public void onSuccess(GlusterVolumeAdvancedDetails details) {
                 if (details.getServiceInfo() != null) {
                     setActualServiceList(details.getServiceInfo());
                 }
@@ -161,8 +153,7 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
                 }
                 filterServices();
             }
-        };
-        AsyncDataProvider.getInstance().getClusterGlusterServices(asyncQuery, getEntity().getId());
+        }), getEntity().getId());
     }
 
     private void filterServices() {

@@ -10,8 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -96,13 +95,12 @@ public class GlusterClusterSnapshotConfigModel extends Model {
             return;
         }
 
-        AsyncDataProvider.getInstance().getGlusterSnapshotConfig(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterSnapshotConfig(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>> configs =
-                        vdcValue.getReturnValue();
+                        returnValue.getReturnValue();
                 if (configs != null) {
                     List<GlusterVolumeSnapshotConfig> clusterConfigOptions = configs.getFirst();
                     Collections.sort(clusterConfigOptions, new Linq.GlusterVolumeSnapshotConfigComparator());

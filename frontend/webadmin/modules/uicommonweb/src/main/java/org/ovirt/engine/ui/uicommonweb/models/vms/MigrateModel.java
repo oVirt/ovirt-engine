@@ -7,8 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -173,11 +172,10 @@ public class MigrateModel extends Model {
         }
 
         AsyncDataProvider.getInstance().getClusterList(
-                new AsyncQuery(MigrateModel.this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
 
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        List<Cluster> clusterList = (List<Cluster>) returnValue;
+                    public void onSuccess(List<Cluster> clusterList) {
                         List<Cluster> onlyWithArchitecture = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
                         List<Cluster> onlyVirt = AsyncDataProvider.getInstance().getClusterByServiceList(onlyWithArchitecture, true, false);
 
@@ -202,12 +200,12 @@ public class MigrateModel extends Model {
             return;
         }
 
-        AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery<>(
+                new AsyncCallback<List<VDS>>() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        postMigrateGetUpHosts(privateVmList, (List<VDS>) returnValue);
+                    public void onSuccess(List<VDS> returnValue) {
+                        postMigrateGetUpHosts(privateVmList, returnValue);
                     }
                 }), selectedCluster.getName());
     }

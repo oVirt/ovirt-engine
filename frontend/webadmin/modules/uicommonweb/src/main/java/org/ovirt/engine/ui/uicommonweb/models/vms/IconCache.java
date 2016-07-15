@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.queries.GetVmIconsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 
 /**
  * Bidirectional map Guid &lt;-> String (icon id &lt;-> dataUri icon)
@@ -54,11 +54,10 @@ public class IconCache {
             callback.onSuccess(localResult);
         } else {
             Frontend.getInstance().runQuery(VdcQueryType.GetVmIcons, GetVmIconsParameters.create(iconIds),
-                    new AsyncQuery(null, new INewAsyncCallback() {
+                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                         @Override
-                        public void onSuccess(Object nothing, Object returnValue) {
-                            Map<Guid, String> idToIconMap =
-                                    ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                            Map<Guid, String> idToIconMap = returnValue.getReturnValue();
                             IconCache.this.cache.putAll(idToIconMap);
                             final Map<Guid, String> result = IconCache.this.getIcons(iconIds);
                             callback.onSuccess(result);
@@ -120,12 +119,10 @@ public class IconCache {
         return cache.getId(icon);
     }
 
-    public static interface IconsCallback {
-        public void onSuccess(Map<Guid, String> idToIconMap);
+    public interface IconsCallback extends AsyncCallback<Map<Guid, String>> {
     }
 
-    public static interface IconCallback {
-        public void onSuccess(String icon);
+    public interface IconCallback extends AsyncCallback<String> {
     }
 
     private static class GuidIconBiDiMap {

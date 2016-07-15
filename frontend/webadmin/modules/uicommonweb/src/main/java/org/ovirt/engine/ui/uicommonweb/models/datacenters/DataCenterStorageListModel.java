@@ -20,11 +20,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -173,18 +171,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
     @Override
     protected void syncSearch() {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        };
-
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, tempVar, new SetItemsAsyncQuery());
     }
 
     public void onMaintenance() {
@@ -268,60 +257,51 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         setWindow(listModel);
 
         if (storageType == StorageDomainType.ISO) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
                 @Override
-                public void onSuccess(Object model, Object result) {
-                    ArrayList<StorageDomain> list = (ArrayList<StorageDomain>) result;
-                    DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
+                public void onSuccess(List<StorageDomain> list) {
                     ArrayList<EntityModel> models;
                     models = new ArrayList<>();
-                    ArrayList<StorageDomain> items =
-                            dcStorageModel.getItems() != null ? new ArrayList<>(Linq.<StorageDomain>cast(dcStorageModel.getItems()))
+                    ArrayList<StorageDomain> items1 =
+                            getItems() != null ? new ArrayList<>(Linq.<StorageDomain>cast(getItems()))
                                     : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list) {
-                        if (!Linq.isSDItemExistInList(items, a.getId())) {
+                        if (!Linq.isSDItemExistInList(items1, a.getId())) {
                             EntityModel tempVar = new EntityModel();
                             tempVar.setEntity(a);
                             models.add(tempVar);
                         }
                     }
-                    dcStorageModel.postAttachInternal(models);
+                    postAttachInternal(models);
 
                 }
-            };
-            AsyncDataProvider.getInstance().getISOStorageDomainList(_asyncQuery);
+            }));
         }
         else {
 
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
                 @Override
-                public void onSuccess(Object model, Object result) {
-                    DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
-                    ArrayList<StorageDomain> list = (ArrayList<StorageDomain>) result;
+                public void onSuccess(List<StorageDomain> list) {
                     ArrayList<EntityModel> models = new ArrayList<>();
                     boolean addToList;
-                    ArrayList<StorageDomain> items =
-                            dcStorageModel.getItems() != null ? new ArrayList<>(Linq.<StorageDomain>cast(dcStorageModel.getItems()))
+                    ArrayList<StorageDomain> items1 =
+                            getItems() != null ? new ArrayList<>(Linq.<StorageDomain>cast(getItems()))
                                     : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list) {
                         addToList = false;
-                        if (Linq.isSDItemExistInList(items, a.getId()) ||
+                        if (Linq.isSDItemExistInList(items1, a.getId()) ||
                                 a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
                             continue;
                         }
                         if (a.getStorageDomainType() == StorageDomainType.Volume) {
                             addToList = true;
                         }
-                        else if (a.getStorageDomainType() == dcStorageModel.getStorageDomainType()) {
-                            if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data) {
-                                if (dcStorageModel.getEntity().getStoragePoolFormatType() == null) {
+                        else if (a.getStorageDomainType() == getStorageDomainType()) {
+                            if (getStorageDomainType() == StorageDomainType.Data) {
+                                if (getEntity().getStoragePoolFormatType() == null) {
                                     addToList = true;
                                 }
-                                else if (dcStorageModel.getEntity().getStoragePoolFormatType() == a.getStorageStaticData()
+                                else if (getEntity().getStoragePoolFormatType() == a.getStorageStaticData()
                                         .getStorageFormat()) {
                                     addToList = true;
                                 }
@@ -332,7 +312,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                                     }
                                 }
                             }
-                            else if (dcStorageModel.getStorageDomainType() == StorageDomainType.ImportExport) {
+                            else if (getStorageDomainType() == StorageDomainType.ImportExport) {
                                 addToList = true;
                             }
                         }
@@ -342,10 +322,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                             models.add(tempVar2);
                         }
                     }
-                    dcStorageModel.postAttachInternal(models);
+                    postAttachInternal(models);
                 }
-            };
-            AsyncDataProvider.getInstance().getStorageDomainList(_asyncQuery);
+            }));
         }
 
     }
@@ -399,15 +378,13 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
 
         AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<List<StorageDomainStatic>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        DataCenterStorageListModel dataCenterStorageListModel = (DataCenterStorageListModel) target;
-                        List<StorageDomainStatic> attachedStorageDomains = (List<StorageDomainStatic>) returnValue;
+                    public void onSuccess(List<StorageDomainStatic> attachedStorageDomains) {
                         if (!attachedStorageDomains.isEmpty()) {
                             ConfirmationModel model = new ConfirmationModel();
-                            dataCenterStorageListModel.setWindow(null);
-                            dataCenterStorageListModel.setWindow(model);
+                            setWindow(null);
+                            setWindow(model);
 
                             List<String> stoageDomainNames = new ArrayList<>();
                             for (StorageDomainStatic domain : attachedStorageDomains) {
@@ -428,12 +405,12 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                             model.getLatch().setIsAvailable(true);
                             model.getLatch().setIsChangeable(true);
 
-                            UICommand onApprove = new UICommand("OnAttachApprove", dataCenterStorageListModel); //$NON-NLS-1$
+                            UICommand onApprove = new UICommand("OnAttachApprove", DataCenterStorageListModel.this); //$NON-NLS-1$
                             onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
                             onApprove.setIsDefault(true);
                             model.getCommands().add(onApprove);
 
-                            UICommand cancel = new UICommand("Cancel", dataCenterStorageListModel); //$NON-NLS-1$
+                            UICommand cancel = new UICommand("Cancel", DataCenterStorageListModel.this); //$NON-NLS-1$
                             cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                             cancel.setIsCancel(true);
                             model.getCommands().add(cancel);
@@ -552,22 +529,17 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         confirmModel.startProgress();
 
         if (getpb_remove().size() > 0) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(new AsyncCallback<VDS>() {
                 @Override
-                public void onSuccess(Object model, Object result) {
-                    DataCenterStorageListModel dataCenterStorageListModel = (DataCenterStorageListModel) model;
-                    VDS locaVds = (VDS) result;
-                    for (VdcActionParametersBase item : dataCenterStorageListModel.getpb_remove()) {
+                public void onSuccess(VDS locaVds) {
+                    for (VdcActionParametersBase item : getpb_remove()) {
                         ((RemoveStorageDomainParameters) item).setVdsId(locaVds != null ? locaVds.getId() : null);
                         ((RemoveStorageDomainParameters) item).setDoFormat(confirmModel.getForce().getEntity());
                     }
 
-                    dataCenterStorageListModel.postDetach(dataCenterStorageListModel.getWindow());
+                    postDetach(getWindow());
                 }
-            };
-            AsyncDataProvider.getInstance().getLocalStorageHost(_asyncQuery, localStorgaeDC);
+            }), localStorgaeDC);
         }
         else {
             postDetach(confirmModel);

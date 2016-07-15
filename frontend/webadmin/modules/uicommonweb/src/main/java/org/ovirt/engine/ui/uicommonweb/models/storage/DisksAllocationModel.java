@@ -19,9 +19,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -106,11 +105,9 @@ public class DisksAllocationModel extends EntityModel {
             diskModelsMap.put(((DiskImage) diskModel.getDisk()).getImageId(), diskModel);
         }
 
-        Model model = getContainer() != null ? getContainer() : this;
-        AsyncDataProvider.getInstance().getAncestorImagesByImagesIds(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAncestorImagesByImagesIds(new AsyncQuery<>(new AsyncCallback<Map<Guid, DiskImage>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                Map<Guid, DiskImage> imagesAncestors = (Map<Guid, DiskImage>) returnValue;
+            public void onSuccess(Map<Guid, DiskImage> imagesAncestors) {
                 for (Map.Entry<Guid, DiskImage> entry : imagesAncestors.entrySet()) {
                     DiskModel diskModel = diskModelsMap.get(entry.getKey());
                     diskModel.getVolumeType().setSelectedItem(entry.getValue().getVolumeType());
@@ -181,11 +178,10 @@ public class DisksAllocationModel extends EntityModel {
 
     private void updateQuota(Guid storageDomainId, final ListModel<Quota> isItem, final Guid diskQuotaId) {
         if (getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED && storageDomainId != null) {
-            AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery<>(
+                    new AsyncCallback<List<Quota>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            List<Quota> list = (List<Quota>) returnValue;
+                        public void onSuccess(List<Quota> list) {
                             if (list == null) {
                                 return;
                             }
@@ -225,11 +221,11 @@ public class DisksAllocationModel extends EntityModel {
     private void updateDiskProfile(Guid storageDomainId, final ListModel<DiskProfile> diskProfiles) {
         Frontend.getInstance().runQuery(VdcQueryType.GetDiskProfilesByStorageDomainId,
                 new IdQueryParameters(storageDomainId),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<DiskProfile> fetchedDiskProfiles = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<DiskProfile> fetchedDiskProfiles = returnValue.getReturnValue();
                         DisksAllocationModel.this.setDiskProfilesList(diskProfiles, fetchedDiskProfiles);
 
                     }

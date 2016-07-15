@@ -11,9 +11,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -159,21 +158,18 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncDataProvider.getInstance().getRootTag(new AsyncQuery(this,
-                                                                  new INewAsyncCallback() {
-                                                                      @Override
-                                                                      public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getRootTag(new AsyncQuery<>(new AsyncCallback<Tags>() {
+            @Override
+            public void onSuccess(Tags returnValue) {
 
-                                                                          TagListModel tagListModel = (TagListModel) target;
-                                                                          TagModel rootTag =
-                                                                                  tagListModel.tagToModel((Tags) returnValue);
-                                                                          rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
-                                                                          rootTag.setType(TagModelType.Root);
-                                                                          rootTag.setIsChangeable(false);
-                                                                          tagListModel.setItems(new ArrayList<>(Arrays.asList(new TagModel[]{rootTag})));
+                TagModel rootTag = tagToModel(returnValue);
+                rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
+                rootTag.setType(TagModelType.Root);
+                rootTag.setIsChangeable(false);
+                setItems(new ArrayList<>(Arrays.asList(new TagModel[] { rootTag })));
 
-                                                                      }
-                                                                  }));
+            }
+        }));
     }
 
     @Override

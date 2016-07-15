@@ -30,13 +30,15 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
-import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Label;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -48,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -59,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
+import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -73,9 +77,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEli
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -170,10 +177,10 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Converter;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.IAsyncConverter;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.comparators.QuotaComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -291,18 +298,17 @@ public class AsyncDataProvider {
         return _defaultConfigurationVersion;
     }
 
-    private void getDefaultConfigurationVersion(Object target) {
-        AsyncQuery callback = new AsyncQuery(target, new INewAsyncCallback() {
+    private void getDefaultConfigurationVersion(final LoginModel loginModel) {
+        AsyncQuery callback = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 if (returnValue != null) {
                     _defaultConfigurationVersion =
                             ((VdcQueryReturnValue) returnValue).getReturnValue();
                 } else {
                     _defaultConfigurationVersion = GENERAL;
                 }
-                LoginModel loginModel = (LoginModel) model;
                 loginModel.getLoggedInEvent().raise(loginModel, EventArgs.EMPTY);
             }
         });
@@ -312,11 +318,11 @@ public class AsyncDataProvider {
                 callback);
     }
 
-    public void initCache(LoginModel loginModel) {
-        cacheConfigValues(new AsyncQuery(loginModel, new INewAsyncCallback() {
+    public void initCache(final LoginModel loginModel) {
+        cacheConfigValues(new AsyncQuery<>(new AsyncCallback<Map<KeyValuePairCompat<ConfigurationValues, String>, Object>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                getDefaultConfigurationVersion(target);
+            public void onSuccess(Map<KeyValuePairCompat<ConfigurationValues, String>, Object> returnValue) {
+                getDefaultConfigurationVersion(loginModel);
             }
         }));
         initOsNames();
@@ -341,22 +347,23 @@ public class AsyncDataProvider {
     }
 
     private void initMigrationPolicies() {
-        AsyncQuery aQuery = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery<List<MigrationPolicy>> aQuery = new AsyncQuery<>(new AsyncCallback<List<MigrationPolicy>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                migrationPolicies = (List<MigrationPolicy>) returnValue;
+            public void onSuccess(List<MigrationPolicy> returnValue) {
+                migrationPolicies = returnValue;
             }
         });
 
-        aQuery.converterCallback = new IAsyncConverter() {
+        aQuery.converterCallback = new Converter<List<MigrationPolicy>>() {
             @Override
-            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
+            public List<MigrationPolicy> convert(Object returnValue) {
                 if (returnValue == null) {
-                    return new ArrayList<MigrationPolicy>();
+                    return new ArrayList<>();
                 }
 
-                Collections.sort((List<MigrationPolicy>) returnValue, new Comparator<MigrationPolicy>() {
+                List<MigrationPolicy> policies = (List<MigrationPolicy>) returnValue;
+                Collections.sort(policies, new Comparator<MigrationPolicy>() {
                     @Override
                     public int compare(MigrationPolicy m1, MigrationPolicy m2) {
                         // the empty one is always the first
@@ -367,7 +374,7 @@ public class AsyncDataProvider {
                     }
                 });
 
-                return returnValue;
+                return policies;
             }
         };
 
@@ -407,49 +414,31 @@ public class AsyncDataProvider {
     }
 
     private void initCustomPropertiesList() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<Map<Version, Map<String, String>>> callback = new AsyncQuery<>(new AsyncCallback<Map<Version, Map<String, String>>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                customPropertiesList = (Map<Version, Map<String, String>>) returnValue;
+            public void onSuccess(Map<Version, Map<String, String>> returnValue) {
+                customPropertiesList = returnValue;
             }
-        };
+        });
 
-        callback.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return (source != null) ? (Map<Version, Map<String, String>>) source
-                        : new HashMap<Version, Map<String, String>>();
-            }
-
-
-        };
+        callback.converterCallback = new MapConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties,
                 new VdcQueryParametersBase().withoutRefresh(), callback);
     }
 
     public void initDefaultOSes() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                defaultOSes = ((VdcQueryReturnValue) returnValue)
-                        .getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
-                OsRepositoryVerb.GetDefaultOSes), callback);
+                OsRepositoryVerb.GetDefaultOSes), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        defaultOSes = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public void getStorageDomainsWithAttachedStoragePoolGuid(
-            AsyncQuery aQuery, StoragePool storagePool, List<StorageDomain> storageDomains) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source == null ?
-                        new ArrayList<StorageDomain>() : (ArrayList<StorageDomain>) source;
-            }
-        };
+            AsyncQuery<List<StorageDomainStatic>> aQuery, StoragePool storagePool, List<StorageDomain> storageDomains) {
+        aQuery.converterCallback = new ListConverter<>();
         StorageDomainsAndStoragePoolIdQueryParameters parameters =
                 new StorageDomainsAndStoragePoolIdQueryParameters(storageDomains, storagePool.getId());
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
@@ -457,15 +446,9 @@ public class AsyncDataProvider {
     }
 
     public void getStorageDomainsWithAttachedStoragePoolGuid(
-            AsyncQuery aQuery, StoragePool storagePool,
+            AsyncQuery<List<StorageDomainStatic>> aQuery, StoragePool storagePool,
             List<StorageDomain> storageDomains, StorageServerConnections storageServerConnection, Guid vdsId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source == null ?
-                        new ArrayList<StorageDomain>() : (ArrayList<StorageDomain>) source;
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
 
         if (storageDomains != null) {
             // Get file storage domains
@@ -500,55 +483,47 @@ public class AsyncDataProvider {
     }
 
     private void initMigrationSupportMap() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                migrationSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMigrationSupport),
-                callback);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        migrationSupport = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     private void initMemorySnapshotSupportMap() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                memorySnapshotSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemorySnapshotSupport),
-                callback);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        memorySnapshotSupport = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     private void initSuspendSupportMap() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                suspendSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetSuspendSupport),
-                callback);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        suspendSupport = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     private void initMemoryHotUnplugSupportMap() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                memoryHotUnplugSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemoryHotUnplugSupport),
-                callback);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        memoryHotUnplugSupport = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     /**
@@ -587,9 +562,9 @@ public class AsyncDataProvider {
 
     public void initNicHotplugSupportMap() {
         AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
+        callback.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 nicHotplugSupportMap = ((VdcQueryReturnValue) returnValue)
                         .getReturnValue();
             }
@@ -617,28 +592,23 @@ public class AsyncDataProvider {
     }
 
     public void initBalloonSupportMap() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                balloonSupportMap = ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
-                OsRepositoryVerb.GetBalloonSupportMap), callback);
+                OsRepositoryVerb.GetBalloonSupportMap), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        balloonSupportMap = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public void initDiskHotpluggableInterfacesMap() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                diskHotpluggableInterfacesMap = ((VdcQueryReturnValue) returnValue)
-                        .getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
-                OsRepositoryVerb.GetDiskHotpluggableInterfacesMap), callback);
+                OsRepositoryVerb.GetDiskHotpluggableInterfacesMap), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        diskHotpluggableInterfacesMap = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public Boolean isSoundDeviceEnabled(int osId, Version version) {
@@ -647,10 +617,10 @@ public class AsyncDataProvider {
 
     public void initSoundDeviceSupportMap() {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
-                OsRepositoryVerb.GetSoundDeviceSupportMap), new AsyncQuery(new INewAsyncCallback() {
+                OsRepositoryVerb.GetSoundDeviceSupportMap), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object result) {
-                        soundDeviceSupportMap = ((VdcQueryReturnValue) result).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue result) {
+                        soundDeviceSupportMap = result.getReturnValue();
                     }
                 }));
     }
@@ -674,31 +644,26 @@ public class AsyncDataProvider {
         return diskInterfaces;
     }
 
-    public void getUserProfile(AsyncQuery aQuery) {
+    public void getUserProfile(AsyncQuery<VdcQueryReturnValue> aQuery) {
         Frontend.getInstance().runQuery(VdcQueryType.GetUserProfile, new VdcQueryParametersBase().withoutRefresh(), aQuery);
     }
 
-    public void getAAAProfilesListViaPublic(AsyncQuery aQuery, boolean passwordBasedOnly) {
+    public void getAAAProfilesListViaPublic(AsyncQuery<List<String>> aQuery, boolean passwordBasedOnly) {
         convertAAAProfilesResult(aQuery, passwordBasedOnly);
         Frontend.getInstance().runPublicQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void isFloppySupported(AsyncQuery aQuery, Integer osId, Version version) {
-        aQuery.converterCallback = new IAsyncConverter<Boolean>() {
-            @Override
-            public Boolean convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Boolean) source : Boolean.FALSE;
-            }
-        };
+    public static void isFloppySupported(AsyncQuery<Boolean> aQuery, Integer osId, Version version) {
+        aQuery.converterCallback = new DefaultValueConverter<>(Boolean.FALSE);
         OsQueryParameters params = new OsQueryParameters(OsRepositoryVerb.GetFloppySupport, osId, version);
 
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, params, aQuery);
     }
 
-    public void getIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getIsoDomainByDataCenterId(AsyncQuery<StorageDomain> aQuery, Guid dataCenterId) {
+        aQuery.converterCallback = new Converter<StorageDomain>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public StorageDomain convert(Object source) {
                 if (source != null) {
                     ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                     for (StorageDomain domain : storageDomains) {
@@ -716,10 +681,10 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getIsoParams, aQuery);
     }
 
-    public void getExportDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getExportDomainByDataCenterId(AsyncQuery<StorageDomain> aQuery, Guid dataCenterId) {
+        aQuery.converterCallback = new Converter<StorageDomain>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public StorageDomain convert(Object source) {
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                 for (StorageDomain domain : storageDomains) {
                     if (domain.getStorageDomainType() == StorageDomainType.ImportExport) {
@@ -735,20 +700,20 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getExportParams, aQuery);
     }
 
-    public void getIrsImageList(AsyncQuery aQuery, Guid storagePoolId) {
+    public void getIrsImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
         getIrsImageList(aQuery, storagePoolId, false);
     }
 
-    public void getIrsImageList(AsyncQuery aQuery, Guid storagePoolId, boolean forceRefresh) {
+    public void getIrsImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
         ImageFileType imageFileType = ImageFileType.ISO;
         getIrsImageList(aQuery, storagePoolId, forceRefresh, imageFileType);
     }
 
-    public void getFloppyImageList(AsyncQuery aQuery, Guid storagePoolId) {
+    public void getFloppyImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
         getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy);
     }
 
-    public void getUnknownImageList(AsyncQuery aQuery, Guid storagePoolId, boolean forceRefresh) {
+    public void getUnknownImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
         getIrsImageList(aQuery,
                 storagePoolId,
                 forceRefresh,
@@ -768,7 +733,7 @@ public class AsyncDataProvider {
                 });
     }
 
-    public void getIrsImageList(AsyncQuery aQuery,
+    public void getIrsImageList(AsyncQuery<List<String>> aQuery,
             Guid storagePoolId,
             boolean forceRefresh,
             ImageFileType imageFileType) {
@@ -778,11 +743,11 @@ public class AsyncDataProvider {
                 new RepoImageToImageFileNameAsyncConverter());
     }
 
-    private void getIrsImageList(AsyncQuery aQuery,
+    private void getIrsImageList(AsyncQuery<List<String>> aQuery,
             Guid storagePoolId,
             boolean forceRefresh,
             ImageFileType imageFileType,
-            IAsyncConverter converterCallBack) {
+            Converter<List<String>> converterCallBack) {
 
         aQuery.converterCallback = converterCallBack;
 
@@ -792,108 +757,70 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
     }
 
-    public void getDefaultManagementNetwork(AsyncQuery aQuery, Guid dataCenterId) {
+    public void getDefaultManagementNetwork(AsyncQuery<Network> aQuery, Guid dataCenterId) {
         runQueryByIdParameter(VdcQueryType.GetDefaultManagementNetwork, aQuery, dataCenterId);
     }
 
-    public void getManagementNetwork(AsyncQuery aQuery, Guid clusterId) {
+    public void getManagementNetwork(AsyncQuery<Network> aQuery, Guid clusterId) {
         runQueryByIdParameter(VdcQueryType.GetManagementNetwork, aQuery, clusterId);
     }
 
-    public void isManagementNetwork(AsyncQuery aQuery, Guid networkId) {
+    public void isManagementNetwork(AsyncQuery<Boolean> aQuery, Guid networkId) {
         runQueryByIdParameter(VdcQueryType.IsManagementNetwork, aQuery, networkId);
     }
 
-    public void isClusterEmpty(AsyncQuery aQuery, Guid clusterId) {
+    public void isClusterEmpty(AsyncQuery<Boolean> aQuery, Guid clusterId) {
         runQueryByIdParameter(VdcQueryType.IsClusterEmpty, aQuery, clusterId);
     }
 
     private void runQueryByIdParameter(VdcQueryType queryType, AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new AsIsAsyncConverter();
+        aQuery.converterCallback = new CastingConverter();
         Frontend.getInstance().runQuery(queryType, new IdQueryParameters(id), aQuery);
     }
 
-    public void getHostArchitecture(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter<ArchitectureType>() {
-            @Override
-            public ArchitectureType convert(Object source, AsyncQuery _asyncQuery) {
-                return (ArchitectureType) source;
-            }
-        };
+    public void getHostArchitecture(AsyncQuery<ArchitectureType> aQuery, Guid id) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetHostArchitecture, new IdQueryParameters(id), aQuery);
     }
 
-    public void getClusterById(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getClusterById(AsyncQuery<Cluster> aQuery, Guid id) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterById, new IdQueryParameters(id), aQuery);
     }
 
-    public void getClusterListByName(AsyncQuery aQuery, String name) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<Cluster>();
-                }
-                return source;
-            }
-        };
+    public void getClusterListByName(AsyncQuery<List<Cluster>> aQuery, String name) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("Cluster: name=" + name + " sortby name", SearchType.Cluster), //$NON-NLS-1$ //$NON-NLS-2$
                 aQuery);
     }
 
-    public void getAuthzGroupsByUserId(AsyncQuery aQuery, Guid userId) {
-        aQuery.converterCallback = new IAsyncConverter<List<AuthzGroup>>() {
-            @Override
-            public List<AuthzGroup> convert(Object source, AsyncQuery _asyncQuery) {
-                return (List<AuthzGroup>) source;
-            }
-        };
+    public void getAuthzGroupsByUserId(AsyncQuery<List<AuthzGroup>> aQuery, Guid userId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAuthzGroupsByUserId, new IdQueryParameters(userId), aQuery);
     }
 
-    public void getPoolById(AsyncQuery aQuery, Guid poolId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getPoolById(AsyncQuery<VmPool> aQuery, Guid poolId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmPoolById, new IdQueryParameters(poolId), aQuery);
     }
 
-    public void getVmById(AsyncQuery aQuery, Guid vmId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getVmById(AsyncQuery<VM> aQuery, Guid vmId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void getVmNextRunConfiguration(AsyncQuery aQuery, Guid vmId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getVmNextRunConfiguration(AsyncQuery<VM> aQuery, Guid vmId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void getVmChangedFieldsForNextRun(VM original, VM updated, VmManagementParametersBase updateVmParameters, AsyncQuery aQuery) {
+    public void getVmChangedFieldsForNextRun(VM original, VM updated, VmManagementParametersBase updateVmParameters, AsyncQuery<VdcQueryReturnValue> aQuery) {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmChangedFieldsForNextRun,
                 new GetVmChangedFieldsForNextRunParameters(original, updated, updateVmParameters), aQuery);
     }
 
-    public void getDataCenterList(AsyncQuery aQuery) {
+    public void getDataCenterList(AsyncQuery<List<StoragePool>> aQuery) {
         getDataCenterList(aQuery, true);
     }
 
@@ -901,36 +828,16 @@ public class AsyncDataProvider {
         return migrationPolicies;
     }
 
-    public void getDataCenterList(AsyncQuery aQuery, boolean doRefresh) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<StoragePool>();
-                }
-                return source;
-            }
-        };
+    public void getDataCenterList(AsyncQuery<List<StoragePool>> aQuery, boolean doRefresh) {
+        aQuery.converterCallback = new ListConverter<>();
         SearchParameters params = new SearchParameters("DataCenter: sortby name", SearchType.StoragePool); //$NON-NLS-1$
         Frontend.getInstance().runQuery(VdcQueryType.Search, doRefresh ? params : params.withoutRefresh(), aQuery);
     }
 
-    public void getDataCenterByClusterServiceList(AsyncQuery aQuery,
+    public void getDataCenterByClusterServiceList(AsyncQuery<List<StoragePool>> aQuery,
             boolean supportsVirtService,
             boolean supportsGlusterService) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<StoragePool>();
-                }
-
-                // sort data centers
-                final ArrayList<StoragePool> storagePoolList = (ArrayList<StoragePool>) source;
-                Collections.sort(storagePoolList, new NameableComparator());
-                return source;
-            }
-        };
+        aQuery.converterCallback = new SortListByNameConverter<>();
 
         final GetStoragePoolsByClusterServiceParameters parameters = new GetStoragePoolsByClusterServiceParameters();
         parameters.setSupportsVirtService(supportsVirtService);
@@ -939,49 +846,31 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolsByClusterService, parameters, aQuery);
     }
 
-    public void getDataCenterListByName(AsyncQuery aQuery, String name) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<StoragePool>();
-                }
-                return source;
-            }
-        };
+    public void getDataCenterListByName(AsyncQuery<List<StoragePool>> aQuery, String name) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("DataCenter: name=" + name + " sortby name", SearchType.StoragePool), //$NON-NLS-1$ //$NON-NLS-2$
                 aQuery);
     }
 
-    public void getSpiceUsbAutoShare(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source == null || (Boolean) source;
-            }
-        };
+    public void getSpiceUsbAutoShare(AsyncQuery<Boolean> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(Boolean.TRUE);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.SpiceUsbAutoShare,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getConfigurationValueBoolean(AsyncQuery aQuery, ConfigurationValues configVal) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Boolean) source).booleanValue() : true;
-            }
-        };
+    public void getConfigurationValueBoolean(AsyncQuery<Boolean> aQuery, ConfigurationValues configVal) {
+        aQuery.converterCallback = new DefaultValueConverter<>(Boolean.TRUE);
         getConfigFromCache(
                 new GetConfigurationValueParameters(configVal, getDefaultConfigurationVersion()), aQuery);
     }
 
-    public void getWANColorDepth(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getWANColorDepth(AsyncQuery<WanColorDepth> aQuery) {
+        aQuery.converterCallback = new Converter<WanColorDepth>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public WanColorDepth convert(Object source) {
                 return source != null ? WanColorDepth.fromInt((Integer) source) : WanColorDepth.depth16;
             }
         };
@@ -990,12 +879,12 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getWANDisableEffects(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getWANDisableEffects(AsyncQuery<List<WanDisableEffects>> aQuery) {
+        aQuery.converterCallback = new Converter<List<WanDisableEffects>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<WanDisableEffects> convert(Object source) {
                 if (source == null) {
-                    return new ArrayList<WanDisableEffects>();
+                    return new ArrayList<>();
                 }
 
                 List<WanDisableEffects> res = new ArrayList<>();
@@ -1027,82 +916,47 @@ public class AsyncDataProvider {
         return cpuMap.get(new Pair<>(cpuName, clusterVersion));
     }
 
-    public void getMaxVmsInPool(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 1000;
-            }
-        };
+    public void getMaxVmsInPool(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1000);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.MaxVmsInPool, getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getMaxNumOfVmSockets(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 1;
-            }
-        };
+    public void getMaxNumOfVmSockets(AsyncQuery<Integer> aQuery, String version) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfVmSockets);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public void getMaxNumOfVmCpus(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 1;
-            }
-        };
+    public void getMaxNumOfVmCpus(AsyncQuery<Integer> aQuery, String version) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfVmCpus);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public void getMaxNumOfCPUsPerSocket(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 1;
-            }
-        };
+    public void getMaxNumOfCPUsPerSocket(AsyncQuery<Integer> aQuery, String version) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfCpuPerSocket);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public void getMaxNumOfThreadsPerCpu(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 1;
-            }
-        };
+    public void getMaxNumOfThreadsPerCpu(AsyncQuery<Integer> aQuery, String version) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfThreadsPerCpu);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public void getClusterList(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<Cluster> list = (ArrayList<Cluster>) source;
-                    Collections.sort(list, new NameableComparator());
-                    return list;
-                }
-                return new ArrayList<Cluster>();
-            }
-        };
+    public void getClusterList(AsyncQuery<List<Cluster>> aQuery, Guid dataCenterId) {
+        aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetClustersByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
@@ -1130,13 +984,13 @@ public class AsyncDataProvider {
         return filteredClusters;
     }
 
-    public void getClusterByServiceList(AsyncQuery aQuery, Guid dataCenterId,
+    public void getClusterByServiceList(AsyncQuery<List<Cluster>> aQuery, Guid dataCenterId,
             final boolean supportsVirtService, final boolean supportsGlusterService) {
-        aQuery.converterCallback = new IAsyncConverter() {
+        aQuery.converterCallback = new Converter<List<Cluster>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<Cluster> convert(Object source) {
                 if (source == null) {
-                    return new ArrayList<Cluster>();
+                    return new ArrayList<>();
                 }
                 final ArrayList<Cluster> list = (ArrayList<Cluster>) source;
                 return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
@@ -1147,40 +1001,22 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void isSoundcardEnabled(AsyncQuery aQuery, Guid vmId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    return !((List<?>) source).isEmpty();
-                }
-
-                return false;
-            }
-        };
+    public void isSoundcardEnabled(AsyncQuery<Boolean> aQuery, Guid vmId) {
+        aQuery.converterCallback = new IsNonEmptyCollectionConverter();
         Frontend.getInstance().runQuery(VdcQueryType.GetSoundDevices, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void isVirtioScsiEnabledForVm(AsyncQuery aQuery, Guid vmId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    return !((List<?>) source).isEmpty();
-                }
-
-                return false;
-            }
-        };
+    public void isVirtioScsiEnabledForVm(AsyncQuery<Boolean> aQuery, Guid vmId) {
+        aQuery.converterCallback = new IsNonEmptyCollectionConverter();
         Frontend.getInstance().runQuery(VdcQueryType.GetVirtioScsiControllers, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void getClusterListByService(AsyncQuery aQuery, final boolean supportsVirtService,
+    public void getClusterListByService(AsyncQuery<List<Cluster>> aQuery, final boolean supportsVirtService,
             final boolean supportsGlusterService) {
 
-        aQuery.converterCallback = new IAsyncConverter() {
+        aQuery.converterCallback = new Converter<List<Cluster>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<Cluster> convert(Object source) {
                 if (source != null) {
                     ArrayList<Cluster> list =
                             getClusterByServiceList((ArrayList<Cluster>) source,
@@ -1189,72 +1025,34 @@ public class AsyncDataProvider {
                     Collections.sort(list, new NameableComparator());
                     return list;
                 }
-                return new ArrayList<Cluster>();
+                return new ArrayList<>();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllClusters, new VdcQueryParametersBase(), aQuery);
     }
 
-    public void getClusterList(AsyncQuery aQuery) {
+    public void getClusterList(AsyncQuery<List<Cluster>> aQuery) {
         getClusterList(aQuery, true);
     }
 
     public void getClusterList(AsyncQuery aQuery, boolean doRefresh) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<Cluster> list = (ArrayList<Cluster>) source;
-                    Collections.sort(list, new NameableComparator());
-                    return list;
-                }
-                return new ArrayList<Cluster>();
-            }
-        };
+        aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllClusters, doRefresh ? new VdcQueryParametersBase() :
                 new VdcQueryParametersBase().withoutRefresh(), aQuery);
     }
 
-    public void getLabelList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<Label> list = (ArrayList<Label>) source;
-                    Collections.sort(list, new NameableComparator());
-                    return list;
-                }
-                return new ArrayList<Label>();
-            }
-        };
+    public void getLabelList(AsyncQuery<List<Label>> aQuery) {
+        aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllLabels, new VdcQueryParametersBase(), aQuery);
     }
 
-    public void getLabelListByEntityId(AsyncQuery aQuery, Guid entityId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<Label> list = (ArrayList<Label>) source;
-                    Collections.sort(list, new NameableComparator());
-                    return list;
-                }
-                return new ArrayList<Label>();
-            }
-        };
+    public void getLabelListByEntityId(AsyncQuery<List<Label>> aQuery, Guid entityId) {
+        aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetLabelByEntityId, new IdQueryParameters(entityId), aQuery);
     }
 
-    public void getTemplateDiskList(AsyncQuery aQuery, Guid templateId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<DiskImage>();
-                }
-                return source;
-            }
-        };
+    public void getTemplateDiskList(AsyncQuery<List<DiskImage>> aQuery, Guid templateId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesDisks, new IdQueryParameters(templateId), aQuery);
     }
 
@@ -1291,17 +1089,17 @@ public class AsyncDataProvider {
         return 0;
     }
 
-    public void getTemplateListByDataCenter(AsyncQuery aQuery, Guid dataCenterId) {
+    public void getTemplateListByDataCenter(AsyncQuery<List<VmTemplate>> aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new TemplateConverter();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
 
-    public void getTemplateListByStorage(AsyncQuery aQuery, Guid storageId) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getTemplateListByStorage(AsyncQuery<List<VmTemplate>> aQuery, Guid storageId) {
+        aQuery.converterCallback = new Converter<List<VmTemplate>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<VmTemplate> convert(Object source) {
                 ArrayList<VmTemplate> list = new ArrayList<>();
                 if (source != null) {
                     for (VmTemplate template : (ArrayList<VmTemplate>) source) {
@@ -1335,10 +1133,10 @@ public class AsyncDataProvider {
         return filteredList;
     }
 
-    public void getNumOfMonitorList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getNumOfMonitorList(AsyncQuery<List<Integer>> aQuery) {
+        aQuery.converterCallback = new Converter<List<Integer>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<Integer> convert(Object source) {
                 ArrayList<Integer> nums = new ArrayList<>();
                 if (source != null) {
                     Iterable numEnumerable = (Iterable) source;
@@ -1356,100 +1154,54 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getStorageDomainList(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<StorageDomain>();
-                }
-                return source;
-            }
-        };
+    public void getStorageDomainList(AsyncQuery<List<StorageDomain>> aQuery, Guid dataCenterId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
 
-    public void getMaxVmPriority(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return 100;
-                }
-                return source;
-            }
-        };
+    public void getMaxVmPriority(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(100);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getHostById(AsyncQuery aQuery, Guid id) {
-
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getHostById(AsyncQuery<VDS> aQuery, Guid id) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(id).withoutRefresh(), aQuery);
     }
 
-    public void getHostListByCluster(AsyncQuery aQuery, String clusterName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<VDS> list = Linq.<VDS> cast((List<IVdcQueryable>) source);
-                    return list;
-                }
-
-                return new ArrayList<VDS>();
-            }
-        };
+    public void getHostListByCluster(AsyncQuery<List<VDS>> aQuery, String clusterName) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " sortby name", //$NON-NLS-1$ //$NON-NLS-2$
                 SearchType.VDS), aQuery);
     }
 
-    public void getHostListByClusterId(AsyncQuery aQuery, Guid clusterId) {
+    public void getHostListByClusterId(AsyncQuery<List<VDS>> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
-    public void getHostListByDataCenter(AsyncQuery aQuery, Guid spId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    return Linq.<VDS> cast((List<?>) source);
-                }
-
-                return new ArrayList<VDS>();
-            }
-        };
+    public void getHostListByDataCenter(AsyncQuery<List<VDS>> aQuery, Guid spId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsByStoragePool, new IdQueryParameters(spId), aQuery);
     }
 
-    public void getHostDevicesByHostId(AsyncQuery aQuery, Guid hostId) {
+    public void getHostDevicesByHostId(AsyncQuery<List<HostDeviceView>> aQuery, Guid hostId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetExtendedHostDevicesByHostId, new IdQueryParameters(hostId), aQuery);
     }
 
-    public void getConfiguredVmHostDevices(AsyncQuery aQuery, Guid vmId) {
+    public void getConfiguredVmHostDevices(AsyncQuery<List<VmHostDevice>> aQuery, Guid vmId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmHostDevices, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void getVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    return source;
-                }
-                return new ArrayList<DiskImage>();
-            }
-        };
+    public void getVmDiskList(AsyncQuery<List<Disk>> aQuery, Guid vmId, boolean isRefresh) {
+        aQuery.converterCallback = new ListConverter<>();
         IdQueryParameters params = new IdQueryParameters(vmId);
         params.setRefresh(isRefresh);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
@@ -1459,61 +1211,36 @@ public class AsyncDataProvider {
         return uniqueOsNames;
     }
 
-    public void getAAAProfilesList(AsyncQuery aQuery) {
+    public void getAAAProfilesList(AsyncQuery<List<String>> aQuery) {
         convertAAAProfilesResult(aQuery, false);
         Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
-    public void getAAANamespaces(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (HashMap<String, List<String>>) source : new HashMap<String, List<String>>();
-            }
-        };
+    public void getAAANamespaces(AsyncQuery<Map<String, List<String>>> aQuery) {
+        aQuery.converterCallback = new MapConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase(), aQuery);
     }
 
 
-    public void getAAAProfilesEntriesList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Collection<ProfileEntry>) source : new ArrayList<ProfileEntry>();
-            }
-        };
+    public void getAAAProfilesEntriesList(AsyncQuery<List<ProfileEntry>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
-    public void getRoleList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<Role>) source : new ArrayList<Role>();
-            }
-        };
+    public void getRoleList(AsyncQuery<List<Role>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters(), aQuery);
     }
 
-    public void getStorageDomainById(AsyncQuery aQuery, Guid storageDomainId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (StorageDomain) source : null;
-            }
-        };
+    public void getStorageDomainById(AsyncQuery<StorageDomain> aQuery, Guid storageDomainId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainById,
                 new IdQueryParameters(storageDomainId),
                 aQuery);
     }
 
-    public void getStorageDomainByName(AsyncQuery aQuery, String storageDomainName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getStorageDomainByName(AsyncQuery<StorageDomainStatic> aQuery, String storageDomainName) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainByName,
                 new NameQueryParameters(storageDomainName),
                 aQuery);
@@ -1548,29 +1275,21 @@ public class AsyncDataProvider {
         }
     }
 
-    public void getClusterNetworkList(AsyncQuery aQuery, Guid clusterId) {
+    public void getClusterNetworkList(AsyncQuery<List<Network>> aQuery, Guid clusterId) {
         // do not replace a converter = just add if none provided
         if (aQuery.converterCallback == null) {
-            aQuery.converterCallback = new IAsyncConverter() {
-                @Override
-                public Object convert(Object source, AsyncQuery _asyncQuery) {
-                    if (source == null) {
-                        return new ArrayList<Network>();
-                    }
-                    return source;
-                }
-            };
+            aQuery.converterCallback = new ListConverter<>();
         }
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
-    public void getAllNetworkQos(Guid dcId, AsyncQuery query) {
-        query.converterCallback = new IAsyncConverter<List<NetworkQoS>>() {
+    public void getAllNetworkQos(Guid dcId, AsyncQuery<List<NetworkQoS>> query) {
+        query.converterCallback = new ListConverter<NetworkQoS>() {
 
             @Override
-            public List<NetworkQoS> convert(Object returnValue, AsyncQuery asyncQuery) {
-                List<NetworkQoS> qosList = returnValue == null ? new ArrayList<NetworkQoS>() : (List<NetworkQoS>) returnValue;
+            public List<NetworkQoS> convert(Object returnValue) {
+                List<NetworkQoS> qosList = super.convert(returnValue);
                 qosList.add(0, NetworkQoSModel.EMPTY_QOS);
                 return qosList;
             }
@@ -1578,13 +1297,12 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, new IdQueryParameters(dcId), query);
     }
 
-    public void getAllHostNetworkQos(Guid dcId, AsyncQuery query) {
-        query.converterCallback = new IAsyncConverter<List<HostNetworkQos>>() {
+    public void getAllHostNetworkQos(Guid dcId, AsyncQuery<List<HostNetworkQos>> query) {
+        query.converterCallback = new ListConverter<HostNetworkQos>() {
 
             @Override
-            public List<HostNetworkQos> convert(Object returnValue, AsyncQuery asyncQuery) {
-                List<HostNetworkQos> qosList =
-                        (returnValue == null) ? new ArrayList<HostNetworkQos>() : (List<HostNetworkQos>) returnValue;
+            public List<HostNetworkQos> convert(Object returnValue) {
+                List<HostNetworkQos> qosList = super.convert(returnValue);
                 qosList.add(0, NetworkModel.EMPTY_HOST_NETWORK_QOS);
                 return qosList;
             }
@@ -1594,21 +1312,16 @@ public class AsyncDataProvider {
                 query);
     }
 
-    public void getDataCenterById(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getDataCenterById(AsyncQuery<StoragePool> aQuery, Guid dataCenterId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById,
                 new IdQueryParameters(dataCenterId).withoutRefresh(), aQuery);
     }
 
-    public void getNetworkLabelsByDataCenterId(Guid dataCenterId, AsyncQuery query) {
-        query.converterCallback = new IAsyncConverter<SortedSet<String>>() {
+    public void getNetworkLabelsByDataCenterId(Guid dataCenterId, AsyncQuery<SortedSet<String>> query) {
+        query.converterCallback = new Converter<SortedSet<String>>() {
             @Override
-            public SortedSet<String> convert(Object returnValue, AsyncQuery asyncQuery) {
+            public SortedSet<String> convert(Object returnValue) {
                 SortedSet<String> sortedSet = new TreeSet<>(new LexoNumericComparator());
                 sortedSet.addAll((Collection<String>) returnValue);
                 return sortedSet;
@@ -1623,50 +1336,30 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void getTemplateById(AsyncQuery aQuery, Guid templateId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getTemplateById(AsyncQuery<VmTemplate> aQuery, Guid templateId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(templateId), aQuery);
     }
 
-    public void countAllTemplates(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void countAllTemplates(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplateCount, new VdcQueryParametersBase(), aQuery);
     }
 
-    public void getHostList(AsyncQuery aQuery) {
+    public void getHostList(AsyncQuery<List<VDS>> aQuery) {
         getHostListByStatus(aQuery, null);
     }
 
-    public void getHostList(AsyncQuery aQuery, boolean doRefresh) {
+    public void getHostList(AsyncQuery<List<VDS>> aQuery, boolean doRefresh) {
         getHostListByStatus(aQuery, null, doRefresh);
     }
 
-    public void getHostListByStatus(AsyncQuery aQuery, VDSStatus status) {
+    public void getHostListByStatus(AsyncQuery<List<VDS>> aQuery, VDSStatus status) {
         getHostListByStatus(aQuery, status, true);
     }
 
-    public void getHostListByStatus(AsyncQuery aQuery, VDSStatus status, boolean doRefresh) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<VDS> list = Linq.<VDS> cast((Iterable) source);
-                    return list;
-                }
-
-                return new ArrayList<VDS>();
-            }
-        };
+    public void getHostListByStatus(AsyncQuery<List<VDS>> aQuery, VDSStatus status, boolean doRefresh) {
+        aQuery.converterCallback = new ListConverter<>();
         SearchParameters searchParameters =
                 new SearchParameters("Host: " + (status == null ? "" : ("status=" + status.name())), SearchType.VDS); //$NON-NLS-1$ //$NON-NLS-2$
         searchParameters.setMaxCount(9999);
@@ -1674,44 +1367,24 @@ public class AsyncDataProvider {
                 doRefresh ? searchParameters : searchParameters.withoutRefresh(), aQuery);
     }
 
-    public void getHostsForStorageOperation(AsyncQuery aQuery, Guid storagePoolId, boolean localFsOnly) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    return source;
-                }
-
-                return new ArrayList<VDS>();
-            }
-        };
+    public void getHostsForStorageOperation(AsyncQuery<List<VDS>> aQuery, Guid storagePoolId, boolean localFsOnly) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetHostsForStorageOperation,
                 new GetHostsForStorageOperationParameters(storagePoolId, localFsOnly),
                 aQuery);
     }
 
-    public void getVolumeList(AsyncQuery aQuery, String clusterName) {
+    public void getVolumeList(AsyncQuery<List<GlusterVolumeEntity>> aQuery, String clusterName) {
         getVolumeList(aQuery, clusterName, true);
     }
 
-    public void getVolumeList(AsyncQuery aQuery, String clusterName, boolean doRefresh) {
+    public void getVolumeList(AsyncQuery<List<GlusterVolumeEntity>> aQuery, String clusterName, boolean doRefresh) {
 
         if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.GlusterOnly.getValue()) == 0) {
-            aQuery.asyncCallback.onSuccess(aQuery.model, new ArrayList<GlusterVolumeEntity>());
+            aQuery.asyncCallback.onSuccess(new ArrayList<GlusterVolumeEntity>());
             return;
         }
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<GlusterVolumeEntity> list =
-                            (ArrayList<GlusterVolumeEntity>) source;
-                    return list;
-                }
-
-                return new ArrayList<GlusterVolumeEntity>();
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
         SearchParameters searchParameters;
         searchParameters =
                 clusterName == null ? new SearchParameters("Volumes:", SearchType.GlusterVolume) //$NON-NLS-1$
@@ -1727,23 +1400,13 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeOptionsInfo, new GlusterParameters(clusterId), aQuery);
     }
 
-    public void getHostFingerprint(AsyncQuery aQuery, String hostAddress) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (String) source : ""; //$NON-NLS-1$
-            }
-        };
+    public void getHostFingerprint(AsyncQuery<String> aQuery, String hostAddress) {
+        aQuery.converterCallback = new StringConverter();
         Frontend.getInstance().runQuery(VdcQueryType.GetServerSSHKeyFingerprint, new ServerParameters(hostAddress), aQuery);
     }
 
-    public void getEngineSshPublicKey(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (String) source : ""; //$NON-NLS-1$
-            }
-        };
+    public void getEngineSshPublicKey(AsyncQuery<String> aQuery) {
+        aQuery.converterCallback = new StringConverter();
         Frontend.getInstance().runQuery(VdcQueryType.GetEngineSSHPublicKey, new VdcQueryParametersBase(), aQuery);
     }
 
@@ -1755,13 +1418,8 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getClusterGlusterServices(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getClusterGlusterServices(AsyncQuery<GlusterVolumeAdvancedDetails> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new CastingConverter<>();
         // Passing empty values for Volume and Brick to get the services of all the volumes/hosts in the cluster
         GlusterVolumeAdvancedDetailsParameters parameters =
                 new GlusterVolumeAdvancedDetailsParameters(clusterId, null, null, false); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1778,188 +1436,104 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getGlusterHostsNewlyAdded(AsyncQuery aQuery, Guid clusterId, boolean isFingerprintRequired) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getGlusterHostsNewlyAdded(AsyncQuery<Map<String, String>> aQuery, Guid clusterId, boolean isFingerprintRequired) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAddedGlusterServers,
                 new AddedGlusterServersParameters(clusterId, isFingerprintRequired),
                 aQuery);
     }
 
-    public void isAnyHostUpInCluster(AsyncQuery aQuery, String clusterName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null && !((List<?>) source).isEmpty()) {
-                    return true;
-                }
-                return false;
-            }
-        };
+    public void isAnyHostUpInCluster(AsyncQuery<Boolean> aQuery, String clusterName) {
+        aQuery.converterCallback = new IsNonEmptyCollectionConverter();
         getUpHostListByCluster(aQuery, clusterName, 1);
     }
 
-    public void getGlusterHooks(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : new ArrayList<GlusterHookEntity>();
-            }
-        };
+    public void getGlusterHooks(AsyncQuery<List<GlusterHookEntity>> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterHooks, new GlusterParameters(clusterId), aQuery);
     }
 
-    public void getGlusterBricksForServer(AsyncQuery aQuery, Guid serverId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : new ArrayList<GlusterBrickEntity>();
-            }
-        };
+    public void getGlusterBricksForServer(AsyncQuery<List<GlusterBrickEntity>> aQuery, Guid serverId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeBricksByServerId, new IdQueryParameters(serverId), aQuery);
     }
 
-    public void getGlusterVolumeGeoRepStatusForMasterVolume(AsyncQuery aQuery, Guid masterVolumeId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery asyncQuery) {
-                return source != null ? source : new ArrayList<GlusterGeoRepSession>();
-            }
-        };
+    public void getGlusterVolumeGeoRepStatusForMasterVolume(AsyncQuery<List<GlusterGeoRepSession>> aQuery, Guid masterVolumeId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepSessions, new IdQueryParameters(masterVolumeId), aQuery);
     }
 
-    public void getGlusterVolumeGeoRepRecommendationViolations(AsyncQuery aQuery,
+    public void getGlusterVolumeGeoRepRecommendationViolations(AsyncQuery<List<GlusterGeoRepNonEligibilityReason>> aQuery,
             Guid masterVolumeId,
             Guid slaveVolumeId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
-                return returnValue == null ? new ArrayList<GlusterGeoRepNonEligibilityReason>()
-                        : (List<GlusterGeoRepNonEligibilityReason>) returnValue;
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetNonEligibilityReasonsOfVolumeForGeoRepSession,
                 new GlusterVolumeGeoRepEligibilityParameters(masterVolumeId, slaveVolumeId),
                 aQuery);
     }
 
-    public void getGlusterVolumeSnapshotsForVolume(AsyncQuery aQuery, Guid volumeId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery asyncQuery) {
-                return source != null ? source : new ArrayList<GlusterVolumeSnapshotEntity>();
-            }
-        };
+    public void getGlusterVolumeSnapshotsForVolume(AsyncQuery<List<GlusterVolumeSnapshotEntity>> aQuery, Guid volumeId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotsByVolumeId, new IdQueryParameters(volumeId), aQuery);
     }
 
-    public void getVolumeSnapshotSchedule(AsyncQuery aQuery, Guid volumeId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery asyncQuery) {
-                return source;
-            }
-        };
+    public void getVolumeSnapshotSchedule(AsyncQuery<GlusterVolumeSnapshotSchedule> aQuery, Guid volumeId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotScheduleByVolumeId,
                 new IdQueryParameters(volumeId),
                 aQuery);
     }
 
-    public void getIsGlusterVolumeSnapshotCliScheduleEnabled(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery asyncQuery) {
-                return source;
-            }
-        };
+    public void getIsGlusterVolumeSnapshotCliScheduleEnabled(AsyncQuery<Boolean> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotCliScheduleFlag,
                 new IdQueryParameters(clusterId),
                 aQuery);
     }
 
-    public void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getGlusterHook(AsyncQuery<GlusterHookEntity> aQuery, Guid hookId, boolean includeServerHooks) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterHookById,
                 new GlusterHookQueryParameters(hookId, includeServerHooks),
                 aQuery);
     }
 
-    public void getGlusterHookContent(AsyncQuery aQuery, Guid hookId, Guid serverId) {
-
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : ""; //$NON-NLS-1$
-            }
-        };
+    public void getGlusterHookContent(AsyncQuery<String> aQuery, Guid hookId, Guid serverId) {
+        aQuery.converterCallback = new StringConverter();
         GlusterHookContentQueryParameters parameters = new GlusterHookContentQueryParameters(hookId);
         parameters.setGlusterServerId(serverId);
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterHookContent, parameters, aQuery);
     }
 
-    public void getGlusterSwiftServices(AsyncQuery aQuery, Guid serverId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : new ArrayList<GlusterServerService>();
-            }
-        };
+    public void getGlusterSwiftServices(AsyncQuery<List<GlusterServerService>> aQuery, Guid serverId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterServerServicesByServerId, new GlusterServiceQueryParameters(serverId,
                 ServiceType.GLUSTER_SWIFT), aQuery);
     }
 
-    public void getClusterGlusterSwiftService(AsyncQuery aQuery, Guid clusterId) {
+    public void getClusterGlusterSwiftService(AsyncQuery<GlusterClusterService> aQuery, Guid clusterId) {
 
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    List<GlusterClusterService> serviceList = (List<GlusterClusterService>) source;
-                    if (!serviceList.isEmpty()) {
-                        return serviceList.get(0);
-                    }
-                    return null;
-                }
-                else {
-                    return source;
-                }
-            }
-        };
+        aQuery.converterCallback = new GetFirstConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterClusterServiceByClusterId,
                 new GlusterServiceQueryParameters(clusterId,
                         ServiceType.GLUSTER_SWIFT), aQuery);
     }
 
-    public void getGlusterSwiftServerServices(AsyncQuery aQuery, Guid clusterId) {
+    public void getGlusterSwiftServerServices(AsyncQuery<List<GlusterServerService>> aQuery, Guid clusterId) {
 
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : new ArrayList<GlusterServerService>();
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterServerServicesByClusterId,
                 new GlusterServiceQueryParameters(clusterId,
                         ServiceType.GLUSTER_SWIFT), aQuery);
     }
 
-    public void getGlusterRebalanceStatus(AsyncQuery aQuery, Guid clusterId, Guid volumeId) {
+    public void getGlusterRebalanceStatus(AsyncQuery<VdcQueryReturnValue> aQuery, Guid clusterId, Guid volumeId) {
         aQuery.setHandleFailure(true);
         GlusterVolumeQueriesParameters parameters = new GlusterVolumeQueriesParameters(clusterId, volumeId);
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
     }
 
-    public void getGlusterSnapshotConfig(AsyncQuery aQuery, Guid clusterId, Guid volumeId) {
+    public void getGlusterSnapshotConfig(AsyncQuery<VdcQueryReturnValue> aQuery, Guid clusterId, Guid volumeId) {
         aQuery.setHandleFailure(true);
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotConfig, new GlusterVolumeQueriesParameters(clusterId, volumeId), aQuery);
     }
@@ -1970,7 +1544,7 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeProfileInfo, parameters, aQuery);
     }
 
-    public void getGlusterRemoveBricksStatus(AsyncQuery aQuery,
+    public void getGlusterRemoveBricksStatus(AsyncQuery<VdcQueryReturnValue> aQuery,
             Guid clusterId,
             Guid volumeId,
             List<GlusterBrickEntity> bricks) {
@@ -1980,13 +1554,8 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
     }
 
-    public void getSearchResultsLimit(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 100;
-            }
-        };
+    public void getSearchResultsLimit(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(100);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.SearchResultsLimit,
                         getDefaultConfigurationVersion()),
@@ -1997,36 +1566,24 @@ public class AsyncDataProvider {
         return customPropertiesList;
     }
 
-    public void getPermissionsByAdElementId(AsyncQuery aQuery, Guid userId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<Permission>) source
-                        : new ArrayList<Permission>();
-            }
-        };
+    public void getPermissionsByAdElementId(AsyncQuery<List<Permission>> aQuery, Guid userId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId,
                 new IdQueryParameters(userId),
                 aQuery);
     }
 
-    public void getRoleActionGroupsByRoleId(AsyncQuery aQuery, Guid roleId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<ActionGroup>) source
-                        : new ArrayList<ActionGroup>();
-            }
-        };
+    public void getRoleActionGroupsByRoleId(AsyncQuery<List<ActionGroup>> aQuery, Guid roleId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetRoleActionGroupsByRoleId,
                 new IdQueryParameters(roleId),
                 aQuery);
     }
 
-    public void isTemplateNameUnique(AsyncQuery aQuery, String templateName, Guid datacenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void isTemplateNameUnique(AsyncQuery<Boolean> aQuery, String templateName, Guid datacenterId) {
+        aQuery.converterCallback = new Converter<Boolean>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public Boolean convert(Object source) {
                 return source != null && !(Boolean) source;
             }
         };
@@ -2037,10 +1594,10 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void isVmNameUnique(AsyncQuery aQuery, String name, Guid datacenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void isVmNameUnique(AsyncQuery<Boolean> aQuery, String name, Guid datacenterId) {
+        aQuery.converterCallback = new Converter<Boolean>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public Boolean convert(Object source) {
                 return source != null && !(Boolean) source;
             }
         };
@@ -2049,17 +1606,9 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.IsVmWithSameNameExist, params, aQuery);
     }
 
-    public void getDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup,
+    public void getDataCentersWithPermittedActionOnClusters(AsyncQuery<List<StoragePool>> aQuery, ActionGroup actionGroup,
             final boolean supportsVirtService, final boolean supportsGlusterService) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<StoragePool>();
-                }
-                return source;
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
 
         GetDataCentersWithPermittedActionOnClustersParameters getDataCentersWithPermittedActionOnClustersParameters =
                 new GetDataCentersWithPermittedActionOnClustersParameters();
@@ -2072,16 +1621,16 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getClustersWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup,
+    public void getClustersWithPermittedAction(AsyncQuery<List<Cluster>> aQuery, ActionGroup actionGroup,
             final boolean supportsVirtService, final boolean supportsGlusterService) {
-        aQuery.converterCallback = new IAsyncConverter() {
+        aQuery.converterCallback = new Converter<List<Cluster>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<Cluster> convert(Object source) {
                 if (source != null) {
                     ArrayList<Cluster> list = (ArrayList<Cluster>) source;
                     return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
                 }
-                return new ArrayList<Cluster>();
+                return new ArrayList<>();
             }
         };
 
@@ -2091,34 +1640,24 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetClustersWithPermittedAction, getEntitiesWithPermittedActionParameters, aQuery);
     }
 
-    public void getClustersHavingHosts(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<Cluster> list = (ArrayList<Cluster>) source;
-                    Collections.sort(list, new NameableComparator());
-                    return list;
-                }
-                return new ArrayList<Cluster>();
-            }
-        };
+    public void getClustersHavingHosts(AsyncQuery<List<Cluster>> aQuery) {
+        aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllClustersHavingHosts,
                 new VdcQueryParametersBase(),
                 aQuery);
     }
 
-    public void getAllVmTemplates(AsyncQuery aQuery, final boolean refresh) {
+    public void getAllVmTemplates(AsyncQuery<List<VmTemplate>> aQuery, final boolean refresh) {
         aQuery.converterCallback = new TemplateConverter();
         VdcQueryParametersBase params = new VdcQueryParametersBase();
         params.setRefresh(refresh);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmTemplates, params, aQuery);
     }
 
-    public void getStorageConnectionById(AsyncQuery aQuery, String id, boolean isRefresh) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getStorageConnectionById(AsyncQuery<StorageServerConnections> aQuery, String id, boolean isRefresh) {
+        aQuery.converterCallback = new Converter<StorageServerConnections>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public StorageServerConnections convert(Object source) {
                 return source != null ? (StorageServerConnections) source : null;
             }
         };
@@ -2127,104 +1666,62 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageServerConnectionById, params, aQuery);
     }
 
-    public void getDataCentersByStorageDomain(AsyncQuery aQuery, Guid storageDomainId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<StoragePool>) source : null;
-            }
-        };
+    public void getDataCentersByStorageDomain(AsyncQuery<List<StoragePool>> aQuery, Guid storageDomainId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
                 new IdQueryParameters(storageDomainId),
                 aQuery);
     }
 
-    public void getDataCenterVersions(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<Version>();
-                }
-                else {
-                    ArrayList<Version> list = (ArrayList<Version>) source;
-                    Collections.sort(list);
-                    return list;
-                }
-            }
-        };
+    public void getDataCenterVersions(AsyncQuery<List<Version>> aQuery, Guid dataCenterId) {
+        aQuery.converterCallback = new SortListConverter<>();
         IdQueryParameters tempVar = new IdQueryParameters(dataCenterId);
         Frontend.getInstance().runQuery(VdcQueryType.GetAvailableClusterVersionsByStoragePool, tempVar, aQuery);
     }
 
-    public void getDataCenterMaxNameLength(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 1;
-            }
-        };
+    public void getDataCenterMaxNameLength(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.StoragePoolNameSizeLimit,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getClusterServerMemoryOverCommit(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 0;
-            }
-        };
+    public void getClusterServerMemoryOverCommit(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(0);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommitForServers,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getClusterDesktopMemoryOverCommit(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 0;
-            }
-        };
+    public void getClusterDesktopMemoryOverCommit(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(0);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommit,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getAllowClusterWithVirtGlusterEnabled(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : Boolean.TRUE;
-            }
-        };
+    public void getAllowClusterWithVirtGlusterEnabled(AsyncQuery<Boolean> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(Boolean.TRUE);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.AllowClusterWithVirtGlusterEnabled,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getCPUList(AsyncQuery aQuery, Version version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<ServerCpu>) source : new ArrayList<ServerCpu>();
-            }
-        };
+    public void getCPUList(AsyncQuery<List<ServerCpu>> aQuery, Version version) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllServerCpuList,
                 new GetAllServerCpuListParameters(version),
                 aQuery);
     }
 
-    public void getPmTypeList(AsyncQuery aQuery, Version version) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getPmTypeList(AsyncQuery<List<String>> aQuery, Version version) {
+        aQuery.converterCallback = new Converter<List<String>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<String> convert(Object source) {
                 ArrayList<String> list = new ArrayList<>();
                 if (source != null) {
                     String[] array = ((String) source).split("[,]", -1); //$NON-NLS-1$
@@ -2240,10 +1737,10 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetFenceConfigurationValue, param, aQuery);
     }
 
-    public void getPmOptions(AsyncQuery aQuery, final String pmType, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getPmOptions(AsyncQuery<List<String>> aQuery, final String pmType, String version) {
+        aQuery.converterCallback = new Converter<List<String>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<String> convert(Object source) {
                 HashMap<String, ArrayList<String>> cachedPmMap = new HashMap<>();
                 HashMap<String, HashMap<String, Object>> dict =
                         (HashMap<String, HashMap<String, Object>>) source;
@@ -2261,21 +1758,16 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAgentFenceOptions, new GetAgentFenceOptionsQueryParameters(version), aQuery);
     }
 
-    public void getNetworkList(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<Network>) source : new ArrayList<Network>();
-            }
-        };
+    public void getNetworkList(AsyncQuery<List<Network>> aQuery, Guid dataCenterId) {
+        aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, new IdQueryParameters(dataCenterId), aQuery);
     }
 
-    public void getISOStorageDomainList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getISOStorageDomainList(AsyncQuery<List<StorageDomain>> aQuery) {
+        aQuery.converterCallback = new Converter<List<StorageDomain>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<StorageDomain> convert(Object source) {
                 if (source != null) {
                     ArrayList<StorageDomain> allStorageDomains =
                             (ArrayList<StorageDomain>) source;
@@ -2287,7 +1779,7 @@ public class AsyncDataProvider {
                     }
                     return isoStorageDomains;
                 }
-                return new ArrayList<StorageDomain>();
+                return new ArrayList<>();
             }
         };
 
@@ -2297,14 +1789,8 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
-    public void getStorageDomainList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<StorageDomain>) source
-                        : new ArrayList<StorageDomain>();
-            }
-        };
+    public void getStorageDomainList(AsyncQuery<List<StorageDomain>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
 
         SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
@@ -2312,29 +1798,14 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
-    public void getLocalStorageHost(AsyncQuery aQuery, String dataCenterName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    for (IVdcQueryable item : (List<IVdcQueryable>) source) {
-                        return item;
-                    }
-                }
-                return null;
-            }
-        };
+    public void getLocalStorageHost(AsyncQuery<VDS> aQuery, String dataCenterName) {
+        aQuery.converterCallback = new GetFirstConverter<>();
         SearchParameters sp = new SearchParameters("hosts: datacenter=" + dataCenterName, SearchType.VDS); //$NON-NLS-1$
         Frontend.getInstance().runQuery(VdcQueryType.Search, sp, aQuery);
     }
 
-    public void getStorageDomainsByConnection(AsyncQuery aQuery, Guid storagePoolId, String connectionPath) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<StorageDomain>) source : null;
-            }
-        };
+    public void getStorageDomainsByConnection(AsyncQuery<List<StorageDomain>> aQuery, Guid storagePoolId, String connectionPath) {
+        aQuery.converterCallback = new CastingConverter<>();
 
         GetStorageDomainsByConnectionParameters param = new GetStorageDomainsByConnectionParameters();
         param.setConnection(connectionPath);
@@ -2345,17 +1816,12 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByConnection, param, aQuery);
     }
 
-    public void getExistingStorageDomainList(AsyncQuery aQuery,
+    public void getExistingStorageDomainList(AsyncQuery<List<StorageDomain>> aQuery,
             Guid hostId,
             StorageDomainType domainType,
             StorageType storageType,
             String path) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<StorageDomain>) source : null;
-            }
-        };
+        aQuery.converterCallback = new CastingConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetExistingStorageDomainList, new GetExistingStorageDomainListParameters(hostId,
                 storageType,
@@ -2363,79 +1829,59 @@ public class AsyncDataProvider {
                 path), aQuery);
     }
 
-    public void getStorageDomainMaxNameLength(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 1;
-            }
-        };
+    public void getStorageDomainMaxNameLength(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.StorageDomainNameSizeLimit,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void isStorageDomainNameUnique(AsyncQuery aQuery, String name) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void isStorageDomainNameUnique(AsyncQuery<Boolean> aQuery, String name) {
+        aQuery.converterCallback = new Converter<Boolean>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public Boolean convert(Object source) {
                 if (source != null) {
                     ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                     return storageDomains.isEmpty();
                 }
 
-                return source;
+                return false;
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Storage: name=" + name, //$NON-NLS-1$
                 SearchType.StorageDomain), aQuery);
     }
 
-    public void getNetworkConnectivityCheckTimeoutInSeconds(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 120;
-            }
-        };
+    public void getNetworkConnectivityCheckTimeoutInSeconds(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(120);
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.NetworkConnectivityCheckTimeoutInSeconds,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getMaxSpmPriority(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 0;
-            }
-        };
-        aQuery.asyncCallback.onSuccess(aQuery.getModel(), 10);
+    public void getMaxSpmPriority(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(0);
+        aQuery.asyncCallback.onSuccess(10);
     }
 
-    public void getDefaultSpmPriority(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Integer) source : 0;
-            }
-        };
-        aQuery.asyncCallback.onSuccess(aQuery.getModel(), 5);
+    public void getDefaultSpmPriority(AsyncQuery<Integer> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(0);
+        aQuery.asyncCallback.onSuccess(5);
     }
 
-    public void getDefaultPmProxyPreferences(AsyncQuery query) {
+    public void getDefaultPmProxyPreferences(AsyncQuery<String> query) {
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.FenceProxyDefaultPreferences,
                         getDefaultConfigurationVersion()),
                 query);
     }
 
-    public void getRootTag(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getRootTag(AsyncQuery<Tags> aQuery) {
+        aQuery.converterCallback = new Converter<Tags>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public Tags convert(Object source) {
                 if (source != null) {
                     Tags tag = (Tags) source;
 
@@ -2458,10 +1904,10 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetRootTag, new VdcQueryParametersBase(), aQuery);
     }
 
-    private void setAttachedTagsConverter(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    private void setAttachedTagsConverter(AsyncQuery<List<Tags>> aQuery) {
+        aQuery.converterCallback = new Converter<List<Tags>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<Tags> convert(Object source) {
                 if (source != null) {
                     ArrayList<Tags> ret = new ArrayList<>();
                     for (Tags tags : (ArrayList<Tags>) source) {
@@ -2472,75 +1918,55 @@ public class AsyncDataProvider {
                     return ret;
                 }
 
-                return new Tags();
+                return new ArrayList<>();
             }
         };
     }
 
-    public void getAttachedTagsToVm(AsyncQuery aQuery, Guid id) {
+    public void getAttachedTagsToVm(AsyncQuery<List<Tags>> aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetTagsByVmId, new GetTagsByVmIdParameters(id.toString()), aQuery);
     }
 
-    public void getAttachedTagsToUser(AsyncQuery aQuery, Guid id) {
+    public void getAttachedTagsToUser(AsyncQuery<List<Tags>> aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetTagsByUserId, new GetTagsByUserIdParameters(id.toString()), aQuery);
     }
 
-    public void getAttachedTagsToUserGroup(AsyncQuery aQuery, Guid id) {
+    public void getAttachedTagsToUserGroup(AsyncQuery<List<Tags>> aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetTagsByUserGroupId, new GetTagsByUserGroupIdParameters(id.toString()), aQuery);
     }
 
-    public void getAttachedTagsToHost(AsyncQuery aQuery, Guid id) {
+    public void getAttachedTagsToHost(AsyncQuery<List<Tags>> aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(id.toString()), aQuery);
     }
 
-    public void getoVirtISOsList(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? new ArrayList<>((ArrayList<RpmVersion>) source) : new ArrayList<RpmVersion>();
-            }
-        };
+    public void getoVirtISOsList(AsyncQuery<List<RpmVersion>> aQuery, Guid id) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetoVirtISOs, new IdQueryParameters(id), aQuery);
     }
 
-    public void getLunsByVgId(AsyncQuery aQuery, String vgId, Guid vdsId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<LUNs>) source : new ArrayList<LUNs>();
-            }
-        };
+    public void getLunsByVgId(AsyncQuery<List<LUNs>> aQuery, String vgId, Guid vdsId) {
+        aQuery.converterCallback = new ListConverter<>();
         GetLunsByVgIdParameters params = new GetLunsByVgIdParameters(vgId, vdsId);
         Frontend.getInstance().runQuery(VdcQueryType.GetLunsByVgId, params, aQuery);
     }
 
-    public void getAllTemplatesFromExportDomain(AsyncQuery aQuery, Guid storagePoolId, Guid storageDomainId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : new HashMap<VmTemplate, ArrayList<DiskImage>>();
-            }
-        };
+    public void getAllTemplatesFromExportDomain(AsyncQuery<Map<VmTemplate, ArrayList<DiskImage>>> aQuery, Guid storagePoolId, Guid storageDomainId) {
+        aQuery.converterCallback = new MapConverter<>();
         GetAllFromExportDomainQueryParameters getAllFromExportDomainQueryParamenters =
                 new GetAllFromExportDomainQueryParameters(storagePoolId, storageDomainId);
         Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
     }
 
-    public void getUpHostListByCluster(AsyncQuery aQuery, String clusterName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? source : Collections.emptyList();
-            }
-        };
+    public void getUpHostListByCluster(AsyncQuery<List<VDS>> aQuery, String clusterName) {
+        aQuery.converterCallback = new ListConverter<>();
         getUpHostListByCluster(aQuery, clusterName, null);
     }
 
@@ -2553,75 +1979,42 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
-    public void getVmNicList(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? new ArrayList<>((ArrayList<VmNetworkInterface>) source)
-                        : new ArrayList<VmNetworkInterface>();
-            }
-        };
+    public void getVmNicList(AsyncQuery<List<VmNetworkInterface>> aQuery, Guid id) {
+        aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(id), aQuery);
     }
 
-    public void getTemplateNicList(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? new ArrayList<>((ArrayList<VmNetworkInterface>) source)
-                        : new ArrayList<VmNetworkInterface>();
-            }
-        };
+    public void getTemplateNicList(AsyncQuery<List<VmNetworkInterface>> aQuery, Guid id) {
+        aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetTemplateInterfacesByTemplateId, new IdQueryParameters(id), aQuery);
     }
 
-    public void getVmSnapshotList(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<Snapshot>) source : new ArrayList<Snapshot>();
-            }
-        };
+    public void getVmSnapshotList(AsyncQuery<List<Snapshot>> aQuery, Guid id) {
+        aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmSnapshotsByVmId, new IdQueryParameters(id), aQuery);
     }
 
-    public void getVmsRunningOnOrMigratingToVds(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VM>();
-                }
-                return source;
-            }
-        };
+    public void getVmsRunningOnOrMigratingToVds(AsyncQuery<List<VM>> aQuery, Guid id) {
+        aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsRunningOnOrMigratingToVds,
                 new IdQueryParameters(id),
                 aQuery);
     }
 
-    public void getVmsFromExternalServer(AsyncQuery aQuery, Guid dataCenterId, Guid vdsId,
+    public void getVmsFromExternalServer(AsyncQuery<List<VM>> aQuery, Guid dataCenterId, Guid vdsId,
             String url, String username, String password, OriginType originType) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VM>();
-                }
-                return source;
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExternalProvider,
                 new GetVmsFromExternalProviderQueryParameters(url, username, password, originType, vdsId, dataCenterId),
                 aQuery);
     }
 
-    public void getVmFromOva(AsyncQuery aQuery, Guid vdsId, String path) {
+    public void getVmFromOva(AsyncQuery<VdcQueryReturnValue> aQuery, Guid vdsId, String path) {
         aQuery.setHandleFailure(true);
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetVmFromOva,
@@ -2629,10 +2022,10 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getVmDiskList(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getVmDiskList(AsyncQuery<List<Disk>> aQuery, Guid id) {
+        aQuery.converterCallback = new Converter<List<Disk>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<Disk> convert(Object source) {
                 ArrayList<Disk> list = new ArrayList<>();
                 if (source != null) {
                     Iterable listEnumerable = (Iterable) source;
@@ -2648,25 +2041,14 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(id).withoutRefresh(), aQuery);
     }
 
-    public void getVmListByClusterName(AsyncQuery aQuery, String clusterName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                ArrayList<VM> vms = Linq.<VM> cast((ArrayList<IVdcQueryable>) source);
-                return vms;
-            }
-        };
+    public void getVmListByClusterName(AsyncQuery<List<VM>> aQuery, String clusterName) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("Vms: cluster=" + clusterName, SearchType.VM), aQuery); //$NON-NLS-1$
     }
 
-    public void getDiskList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<DiskImage>) source : new ArrayList<DiskImage>();
-            }
-        };
+    public void getDiskList(AsyncQuery<List<DiskImage>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
 
         SearchParameters searchParams = new SearchParameters("Disks:", SearchType.Disk); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
@@ -2674,23 +2056,18 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
-    public void getNextAvailableDiskAliasNameByVMId(AsyncQuery aQuery, Guid vmId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getNextAvailableDiskAliasNameByVMId(AsyncQuery<String> aQuery, Guid vmId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
                 new IdQueryParameters(vmId),
                 aQuery);
     }
 
-    public void isPoolNameUnique(AsyncQuery aQuery, String name) {
+    public void isPoolNameUnique(AsyncQuery<Boolean> aQuery, String name) {
 
-        aQuery.converterCallback = new IAsyncConverter() {
+        aQuery.converterCallback = new Converter<Boolean>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public Boolean convert(Object source) {
                 if (source != null) {
                     return !(Boolean) source;
                 }
@@ -2703,53 +2080,30 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getVmConfigurationBySnapshot(AsyncQuery aQuery, Guid snapshotSourceId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (VM) source : null;
-            }
-        };
+    public void getVmConfigurationBySnapshot(AsyncQuery<VM> aQuery, Guid snapshotSourceId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmConfigurationBySnapshot,
                 new IdQueryParameters(snapshotSourceId).withoutRefresh(),
                 aQuery);
     }
 
-    public void getAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (ArrayList<Disk>) source : new ArrayList<Disk>();
-            }
-        };
+    public void getAllAttachableDisks(AsyncQuery<List<Disk>> aQuery, Guid storagePoolId, Guid vmId) {
+        aQuery.converterCallback = new ListConverter<>();
         GetAllAttachableDisksForVmQueryParameters params = new GetAllAttachableDisksForVmQueryParameters(storagePoolId);
         params.setVmId(vmId);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllAttachableDisksForVm, params, aQuery);
     }
 
-    public void getAncestorImagesByImagesIds(AsyncQuery aQuery, List<Guid> imagesIds) {
-        aQuery.converterCallback = new IAsyncConverter<Map<Guid, DiskImage>>() {
-            @Override
-            public Map<Guid, DiskImage> convert(Object returnValue, AsyncQuery asyncQuery) {
-                return (Map<Guid, DiskImage>) returnValue;
-            }
-        };
+    public void getAncestorImagesByImagesIds(AsyncQuery<Map<Guid, DiskImage>> aQuery, List<Guid> imagesIds) {
+        aQuery.converterCallback = new CastingConverter<>();
         IdsQueryParameters params = new IdsQueryParameters(imagesIds);
         Frontend.getInstance().runQuery(VdcQueryType.GetAncestorImagesByImagesIds, params, aQuery);
     }
 
-    public void getPermittedStorageDomainsByStoragePoolId(AsyncQuery aQuery,
+    public void getPermittedStorageDomainsByStoragePoolId(AsyncQuery<List<StorageDomain>> aQuery,
             Guid dataCenterId,
             ActionGroup actionGroup) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new java.util.ArrayList<StorageDomain>();
-                }
-                return source;
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
         GetPermittedStorageDomainsByStoragePoolIdParameters params =
                 new GetPermittedStorageDomainsByStoragePoolIdParameters();
 
@@ -2759,38 +2113,29 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, params, aQuery);
     }
 
-    public void getStorageDomainDefaultWipeAfterDelete(AsyncQuery aQuery, StorageType storageType) {
-        aQuery.converterCallback = new IAsyncConverter<Boolean>() {
-            @Override public Boolean convert(Object returnValue, AsyncQuery asyncQuery) {
-                return (Boolean) returnValue;
-            }
-        };
+    public void getStorageDomainDefaultWipeAfterDelete(AsyncQuery<Boolean> aQuery, StorageType storageType) {
+        aQuery.converterCallback = new CastingConverter<>();
         GetStorageDomainDefaultWipeAfterDeleteParameters params =
                 new GetStorageDomainDefaultWipeAfterDeleteParameters(storageType);
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainDefaultWipeAfterDelete, params, aQuery);
     }
 
-    public void getAllDataCenterNetworks(AsyncQuery aQuery, Guid storagePoolId) {
-        aQuery.converterCallback = new ListAsyncConverter();
+    public void getAllDataCenterNetworks(AsyncQuery<List<Network>> aQuery, Guid storagePoolId) {
+        aQuery.converterCallback = new ListConverter<>();
         IdQueryParameters params = new IdQueryParameters(storagePoolId);
         Frontend.getInstance().runQuery(VdcQueryType.GetNetworksByDataCenterId, params, aQuery);
     }
 
-    public void getManagementNetworkCandidates(AsyncQuery aQuery, Guid storagePoolId) {
-        aQuery.converterCallback = new ListAsyncConverter();
+    public void getManagementNetworkCandidates(AsyncQuery<List<Network>> aQuery, Guid storagePoolId) {
+        aQuery.converterCallback = new ListConverter<>();
         IdQueryParameters params = new IdQueryParameters(storagePoolId);
         Frontend.getInstance().runQuery(VdcQueryType.GetManagementNetworkCandidates, params, aQuery);
     }
 
-    public void getStorageConnectionsByDataCenterIdAndStorageType(AsyncQuery aQuery,
+    public void getStorageConnectionsByDataCenterIdAndStorageType(AsyncQuery<List<StorageServerConnections>> aQuery,
                                                                          Guid storagePoolId,
                                                                          StorageType storageType) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+        aQuery.converterCallback = new CastingConverter<>();
         GetConnectionsByDataCenterAndStorageTypeParameters params = new GetConnectionsByDataCenterAndStorageTypeParameters(storagePoolId, storageType);
         Frontend.getInstance().runQuery(VdcQueryType.GetConnectionsByDataCenterAndStorageType, params, aQuery);
     }
@@ -2798,10 +2143,10 @@ public class AsyncDataProvider {
     /**
      * Cache configuration values [raw (not converted) values from vdc_options table].
      */
-    private void cacheConfigValues(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    private void cacheConfigValues(AsyncQuery<Map<KeyValuePairCompat<ConfigurationValues, String>, Object>> aQuery) {
+        aQuery.converterCallback = new Converter<Map<KeyValuePairCompat<ConfigurationValues, String>, Object>>() {
             @Override
-            public Object convert(Object returnValue, AsyncQuery _asyncQuery) {
+            public Map<KeyValuePairCompat<ConfigurationValues, String>, Object> convert(Object returnValue) {
                 if (returnValue != null) {
                     cachedConfigValuesPreConvert.putAll((HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>) returnValue);
                 }
@@ -2838,31 +2183,31 @@ public class AsyncDataProvider {
      * @param parameters
      *            a converter for the async query
      */
-    public void getConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery aQuery) {
+    public <T> void getConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery<T> aQuery) {
         // cache key
         final KeyValuePairCompat<ConfigurationValues, String> config_key =
                 new KeyValuePairCompat<>(parameters.getConfigValue(), parameters.getVersion());
 
-        Object returnValue = null;
+        T returnValue = null;
 
         if (cachedConfigValues.containsKey(config_key)) {
             // cache hit
-            returnValue = cachedConfigValues.get(config_key);
+            returnValue = (T) cachedConfigValues.get(config_key);
         }
         // cache miss: convert configuration value using query's converter
         // and call asyncCallback's onSuccess
         else if (cachedConfigValuesPreConvert.containsKey(config_key)) {
-            returnValue = cachedConfigValuesPreConvert.get(config_key);
+            returnValue = (T) cachedConfigValuesPreConvert.get(config_key);
 
             // run converter
             if (aQuery.converterCallback != null) {
-                returnValue = aQuery.converterCallback.convert(returnValue, aQuery);
+                returnValue = aQuery.converterCallback.convert(returnValue);
             }
             if (returnValue != null) {
                 cachedConfigValues.put(config_key, returnValue);
             }
         }
-        aQuery.asyncCallback.onSuccess(aQuery.getModel(), returnValue);
+        aQuery.asyncCallback.onSuccess(returnValue);
     }
 
     public ArrayList<QuotaEnforcementTypeEnum> getQuotaEnforcmentTypes() {
@@ -2872,10 +2217,10 @@ public class AsyncDataProvider {
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
     }
 
-    private static class TemplateConverter implements IAsyncConverter {
+    private static class TemplateConverter implements Converter<List<VmTemplate>> {
 
         @Override
-        public Object convert(Object source, AsyncQuery asyncQuery) {
+        public List<VmTemplate> convert(Object source) {
             List<VmTemplate> list = new ArrayList<>();
             if (source != null) {
                 VmTemplate blankTemplate = null;
@@ -2901,15 +2246,7 @@ public class AsyncDataProvider {
                                                    Guid providerId,
                                                    boolean filterOutExistingHosts,
                                                    String searchFilter) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VDS>();
-                }
-                return source;
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
         GetHostListFromExternalProviderParameters params = new GetHostListFromExternalProviderParameters();
         params.setFilterOutExistingHosts(filterOutExistingHosts);
         params.setProviderId(providerId);
@@ -2920,71 +2257,38 @@ public class AsyncDataProvider {
     }
 
     public void getExternalProviderDiscoveredHostList(AsyncQuery aQuery, Provider provider) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<ExternalDiscoveredHost>();
-                }
-                return source;
-            }
-        };
+        aQuery.converterCallback = new ListConverter<>();
         ProviderQueryParameters params = new ProviderQueryParameters();
         params.setProvider(provider);
         Frontend.getInstance().runQuery(VdcQueryType.GetDiscoveredHostListFromExternalProvider, params, aQuery);
     }
 
-    public void getExternalProviderHostGroupList(AsyncQuery aQuery, Provider provider) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<ExternalHostGroup>();
-                }
-                return source;
-            }
-        };
+    public void getExternalProviderHostGroupList(AsyncQuery<List<ExternalHostGroup>> aQuery, Provider provider) {
+        aQuery.converterCallback = new ListConverter<>();
 
         ProviderQueryParameters params = new ProviderQueryParameters();
         params.setProvider(provider);
         Frontend.getInstance().runQuery(VdcQueryType.GetHostGroupsFromExternalProvider, params, aQuery);
     }
 
-    public void getExternalProviderComputeResourceList(AsyncQuery aQuery, Provider provider) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<ExternalComputeResource>();
-                }
-                return source;
-            }
-        };
+    public void getExternalProviderComputeResourceList(AsyncQuery<List<ExternalComputeResource>> aQuery, Provider provider) {
+        aQuery.converterCallback = new ListConverter<>();
 
         ProviderQueryParameters params = new ProviderQueryParameters();
         params.setProvider(provider);
         Frontend.getInstance().runQuery(VdcQueryType.GetComputeResourceFromExternalProvider, params, aQuery);
     }
 
-    public void getAllProviders(AsyncQuery aQuery, boolean doRefresh) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<Provider>();
-                }
-                Collections.sort((List<Provider>) source, new NameableComparator());
-                return source;
-            }
-        };
+    public void getAllProviders(AsyncQuery<List<Provider<?>>> aQuery, boolean doRefresh) {
+        aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, doRefresh ? new GetAllProvidersParameters() :
                 new GetAllProvidersParameters().withoutRefresh(), aQuery);
     }
 
     public void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
-        query.converterCallback = new IAsyncConverter<List<Provider>>() {
+        query.converterCallback = new Converter<List<Provider>>() {
             @Override
-            public List<Provider> convert(Object returnValue, AsyncQuery asyncQuery) {
+            public List<Provider> convert(Object returnValue) {
                 if (returnValue == null) {
                     return new ArrayList<>();
                 }
@@ -2997,33 +2301,17 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), query);
     }
 
-    public void getAllNetworkProviders(AsyncQuery query) {
+    public void getAllNetworkProviders(AsyncQuery<List<Provider<?>>> query) {
         getAllProvidersByProvidedEntity(query, VdcObjectType.Network);
     }
 
-    public void getAllProvidersByType(AsyncQuery aQuery, ProviderType providerType) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<Provider>();
-                }
-                return source;
-            }
-        };
+    public void getAllProvidersByType(AsyncQuery<List<Provider<?>>> aQuery, ProviderType providerType) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(providerType), aQuery);
     }
 
-    public void getProviderCertificateChain(AsyncQuery aQuery, Provider provider) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return Collections.<CertificateInfo> emptyList();
-                }
-                return source;
-            }
-        };
+    public void getProviderCertificateChain(AsyncQuery<List<CertificateInfo>> aQuery, Provider provider) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetProviderCertificateChain,
                 new ProviderQueryParameters(provider),
                 aQuery);
@@ -3061,12 +2349,11 @@ public class AsyncDataProvider {
         return VdcEventNotificationUtils.getNotificationEvents();
     }
 
-    public void getNicTypeList(final int osId, Version version, AsyncQuery asyncQuery) {
-        final INewAsyncCallback chainedCallback = asyncQuery.asyncCallback;
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+    public void getNicTypeList(final int osId, Version version, AsyncQuery<List<VmInterfaceType>> asyncQuery) {
+        asyncQuery.converterCallback = new Converter<List<VmInterfaceType>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ArrayList<String> nics = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            public List<VmInterfaceType> convert(Object returnValue) {
+                ArrayList<String> nics = (ArrayList<String>) returnValue;
                 List<VmInterfaceType> interfaceTypes = new ArrayList<>();
                 for (String nic : nics) {
                     try {
@@ -3075,7 +2362,7 @@ public class AsyncDataProvider {
                         // ignore if we can't find the enum value.
                     }
                 }
-                chainedCallback.onSuccess(model, interfaceTypes);
+                return interfaceTypes;
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
@@ -3083,14 +2370,8 @@ public class AsyncDataProvider {
                 asyncQuery);
     }
 
-    public void getIsPasswordDelegationPossible(AsyncQuery asyncQuery) {
-        final INewAsyncCallback chainedCallback = asyncQuery.asyncCallback;
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                chainedCallback.onSuccess(model, ((VdcQueryReturnValue) returnValue).getReturnValue());
-            }
-        };
+    public void getIsPasswordDelegationPossible(AsyncQuery<Boolean> asyncQuery) {
+        asyncQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.IsPasswordDelegationPossible,
                 new VdcQueryParametersBase(),
                 asyncQuery);
@@ -3126,12 +2407,11 @@ public class AsyncDataProvider {
         return new ArrayList<>(Arrays.asList(StorageType.ISCSI, StorageType.FCP));
     }
 
-    public void getDiskInterfaceList(int osId, Version clusterVersion, AsyncQuery asyncQuery) {
-        final INewAsyncCallback chainedCallback = asyncQuery.asyncCallback;
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+    public void getDiskInterfaceList(int osId, Version clusterVersion, AsyncQuery<List<DiskInterface>> asyncQuery) {
+        asyncQuery.converterCallback = new Converter<List<DiskInterface>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ArrayList<String> interfaces = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            public List<DiskInterface> convert(Object returnValue) {
+                ArrayList<String> interfaces = (ArrayList<String>) returnValue;
                 List<DiskInterface> interfaceTypes = new ArrayList<>();
                 for (String diskIfs : interfaces) {
                     try {
@@ -3140,7 +2420,7 @@ public class AsyncDataProvider {
                         // ignore if we can't find the enum value.
                     }
                 }
-                chainedCallback.onSuccess(model, interfaceTypes);
+                return interfaceTypes;
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
@@ -3218,70 +2498,65 @@ public class AsyncDataProvider {
     }
 
     public void initWindowsOsTypes() {
-
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                windowsOsIds = (ArrayList<Integer>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetWindowsOss), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetWindowsOss),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        windowsOsIds = (ArrayList<Integer>) returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public void initLinuxOsTypes() {
-
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                linuxOsIds = (ArrayList<Integer>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetLinuxOss), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetLinuxOss),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        linuxOsIds = (ArrayList<Integer>) returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public void initUniqueOsNames() {
-
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                uniqueOsNames = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                // Initialize specific UI dependencies for search
-                SimpleDependencyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        uniqueOsNames = returnValue.getReturnValue();
+                        // Initialize specific UI dependencies for search
+                        SimpleDependencyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
+                    }
+                }));
     }
 
     public void initOsNames() {
-
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                osNames = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                initOsIds();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsNames), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetOsNames),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        osNames = returnValue.getReturnValue();
+                        initOsIds();
+                    }
+                }));
     }
 
     private void initOsDefaultIconIds() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                final Map<Integer, VmIconIdSizePair> returnMap = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                if (returnMap.get(DEFAULT_OS_ID) == null) {
-                    throw new RuntimeException("Engine did not provide icon IDs of default OS."); //$NON-NLS-1$
-                }
-                osIdToDefaultIconIdMap = Collections.unmodifiableMap(returnMap);
-                initializeLargeToSmallIconMap();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmIconDefaults, new VdcQueryParametersBase(), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmIconDefaults, new VdcQueryParametersBase(),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        final Map<Integer, VmIconIdSizePair> returnMap = returnValue.getReturnValue();
+                        if (returnMap.get(DEFAULT_OS_ID) == null) {
+                            throw new RuntimeException("Engine did not provide icon IDs of default OS."); //$NON-NLS-1$
+                        }
+                        osIdToDefaultIconIdMap = Collections.unmodifiableMap(returnMap);
+                        initializeLargeToSmallIconMap();
+                    }
+                }));
     }
 
     private void initializeLargeToSmallIconMap() {
@@ -3302,14 +2577,14 @@ public class AsyncDataProvider {
     }
 
     public void initOsArchitecture() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                osArchitectures = ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        osArchitectures = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public boolean osNameExists(Integer osId) {
@@ -3367,14 +2642,14 @@ public class AsyncDataProvider {
     }
 
     private void initDisplayTypes() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                graphicsAndDisplays = ((VdcQueryReturnValue) returnValue).getReturnValue();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        graphicsAndDisplays = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public List<Integer> getOsIds(ArchitectureType architectureType) {
@@ -3455,45 +2730,21 @@ public class AsyncDataProvider {
         return 0;
     }
 
-    public void getVmGuestAgentInterfacesByVmId(AsyncQuery aQuery, Guid vmId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VmGuestAgentInterface>();
-                }
-                return source;
-            }
-        };
+    public void getVmGuestAgentInterfacesByVmId(AsyncQuery<List<VmGuestAgentInterface>> aQuery, Guid vmId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
                 new IdQueryParameters(vmId).withoutRefresh(), aQuery);
     }
 
-    public void getVnicProfilesByNetworkId(AsyncQuery aQuery, Guid networkId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VnicProfileView>();
-                }
-                return source;
-            }
-        };
+    public void getVnicProfilesByNetworkId(AsyncQuery<List<VnicProfileView>> aQuery, Guid networkId) {
+        aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(networkId), aQuery);
     }
 
-    public void getVnicProfilesByDcId(AsyncQuery aQuery, Guid dcId) {
+    public void getVnicProfilesByDcId(AsyncQuery<List<VnicProfileView>> aQuery, Guid dcId) {
         // do not replace a converter = just add if none provided
         if (aQuery.converterCallback == null) {
-            aQuery.converterCallback = new IAsyncConverter() {
-                @Override
-                public Object convert(Object source, AsyncQuery _asyncQuery) {
-                    if (source == null) {
-                        return new ArrayList<VnicProfileView>();
-                    }
-                    return source;
-                }
-            };
+            aQuery.converterCallback = new ListConverter<>();
         }
         Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
     }
@@ -3541,15 +2792,7 @@ public class AsyncDataProvider {
     }
 
     public void getExternalNetworkMap(AsyncQuery aQuery, Guid providerId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new HashMap<Network, Set<Guid>>();
-                }
-                return source;
-            }
-        };
+        aQuery.converterCallback = new MapConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllExternalNetworksOnProvider,
                 new IdQueryParameters(providerId),
                 aQuery);
@@ -3733,10 +2976,10 @@ public class AsyncDataProvider {
         }
     }
 
-    private static void convertAAAProfilesResult(AsyncQuery aQuery, final boolean passwordBasedOnly) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    private static void convertAAAProfilesResult(AsyncQuery<List<String>> aQuery, final boolean passwordBasedOnly) {
+        aQuery.converterCallback = new Converter<List<String>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public List<String> convert(Object source) {
                 List<String> results = new ArrayList<>();
                 for (ProfileEntry profileEntry : (Collection<ProfileEntry>) source) {
                     if (!passwordBasedOnly || profileEntry.getSupportsPasswordAuthenication()) {
@@ -3748,33 +2991,15 @@ public class AsyncDataProvider {
         };
     }
 
-    public void getHostNumaTopologyByHostId(AsyncQuery asyncQuery, Guid hostId) {
-        asyncQuery.converterCallback = new IAsyncConverter() {
-
-            @Override
-            public Object convert(Object source, AsyncQuery asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VdsNumaNode>();
-                }
-                return source;
-            }
-        };
+    public void getHostNumaTopologyByHostId(AsyncQuery<List<VdsNumaNode>> asyncQuery, Guid hostId) {
+        asyncQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVdsNumaNodesByVdsId,
                 new IdQueryParameters(hostId),
                 asyncQuery);
     }
 
-    public void getVMsWithVNumaNodesByClusterId(AsyncQuery asyncQuery, Guid clusterId) {
-        asyncQuery.converterCallback = new IAsyncConverter() {
-
-            @Override
-            public Object convert(Object source, AsyncQuery asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VM>();
-                }
-                return source;
-            }
-        };
+    public void getVMsWithVNumaNodesByClusterId(AsyncQuery<List<VM>> asyncQuery, Guid clusterId) {
+        asyncQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsWithNumaByClusterId,
                 new IdQueryParameters(clusterId),
                 asyncQuery);
@@ -3788,12 +3013,12 @@ public class AsyncDataProvider {
         }));
     }
 
-    public void getEmulatedMachinesByClusterID(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
+    public void getEmulatedMachinesByClusterID(AsyncQuery<Set<String>> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new Converter<Set<String>>() {
             @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
+            public Set<String> convert(Object source) {
                 if (source != null) {
-                    ArrayList<VDS> vdsList = Linq.<VDS> cast((List<IVdcQueryable>) source);
+                    ArrayList<VDS> vdsList = Linq.cast((List<IVdcQueryable>) source);
                     Set<String> emulatedMachineList = new HashSet<>();
                     for (VDS host : vdsList) {
                         String hostSupportedMachines = host.getSupportedEmulatedMachines();
@@ -3811,103 +3036,150 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
-    public void getSupportedCpuList(AsyncQuery aQuery, String cpuName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source != null) {
-                    ArrayList<ServerCpu> cpuList = Linq.<ServerCpu> cast((ArrayList<ServerCpu>) source);
-                    return cpuList;
-                }
-
-                return null;
-            }
-        };
+    public void getSupportedCpuList(AsyncQuery<List<ServerCpu>> aQuery, String cpuName) {
+        aQuery.converterCallback = new CastingConverter<>();
 
         Frontend.getInstance().runQuery(VdcQueryType.GetSupportedCpuList, new GetSupportedCpuListParameters(cpuName), aQuery);
 
     }
 
-    public void getStorageDevices(AsyncQuery aQuery, Guid hostId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
+    public void getStorageDevices(AsyncQuery<List<StorageDevice>> aQuery, Guid hostId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterStorageDevices,
                 new IdQueryParameters(hostId),
                 aQuery);
     }
 
-    public void getClusterEditWarnings(AsyncQuery aQuery, Guid clusterId, Cluster cluster) {
+    public void getClusterEditWarnings(AsyncQuery<ClusterEditWarnings> aQuery, Guid clusterId, Cluster cluster) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 
-    private static class AsIsAsyncConverter implements IAsyncConverter {
+    private static class CastingConverter<T> implements Converter<T> {
         @Override
-        public Object convert(Object source, AsyncQuery _asyncQuery) {
-            return source;
+        public T convert(Object source) {
+            return (T) source;
         }
     }
 
-    private static class ListAsyncConverter implements IAsyncConverter {
+    private static class DefaultValueConverter<T> extends CastingConverter<T> {
+
+        private final T defaultValue;
+
+        public DefaultValueConverter(T defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
         @Override
-        public Object convert(Object source, AsyncQuery _asyncQuery) {
-            return source != null ? source : new ArrayList();
+        public T convert(Object returnValue) {
+            T value = super.convert(returnValue);
+            return value != null ? value : defaultValue;
         }
     }
 
-    public void getUnusedBricksFromServer(AsyncQuery asyncQuery, Guid hostId) {
-        asyncQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
+    private static class StringConverter extends DefaultValueConverter<String> {
+        public StringConverter() {
+            super("");
+        }
+    }
+
+    private static class ListConverter<T> implements Converter<List<T>> {
+        @Override
+        public List<T> convert(Object source) {
+            return source != null ? (List<T>) source : new ArrayList<T>();
+        }
+    }
+
+    private static class MapConverter<K, V> implements Converter<Map<K, V>> {
+        @Override
+        public Map<K, V> convert(Object source) {
+            return source != null ? (Map<K, V>) source : new HashMap<K, V>();
+        }
+    }
+
+    private static class SetConverter<T> implements Converter<Set<T>> {
+        @Override
+        public Set<T> convert(Object source) {
+            return source != null ? (Set<T>) source : new HashSet<T>();
+        }
+    }
+
+    private static class SortListConverter<T> extends ListConverter<T> {
+        private final Comparator<? super T> comparator;
+
+        public SortListConverter() {
+            this(null);
+        }
+
+        public SortListConverter(Comparator<? super T> comparator) {
+            this.comparator = comparator;
+        }
+
+        @Override
+        public List<T> convert(Object source) {
+            List<T> list = super.convert(source);
+            Collections.sort(list, comparator);
+            return list;
+        }
+    }
+
+    private static class SortListByNameConverter<T extends Nameable> extends SortListConverter<T> {
+        public SortListByNameConverter() {
+            super(new NameableComparator());
+        }
+    }
+
+    private static class IsNonEmptyCollectionConverter implements Converter<Boolean> {
+        @Override
+        public Boolean convert(Object source) {
+            if (source != null) {
+                return !((Collection<?>) source).isEmpty();
             }
-        };
+
+            return false;
+        }
+    }
+
+    private static class GetFirstConverter<T> implements Converter<T> {
+        @Override
+        public T convert(Object source) {
+            Iterable<T> iterable = (Iterable<T>) source;
+            Iterator<T> iterator = iterable.iterator();
+            while (iterator.hasNext()) {
+                return iterator.next();
+            }
+            return null;
+        }
+    }
+
+    public void getUnusedBricksFromServer(AsyncQuery<List<StorageDevice>> asyncQuery, Guid hostId) {
+        asyncQuery.converterCallback = new CastingConverter<>();
         IdQueryParameters parameters = new IdQueryParameters(hostId);
         Frontend.getInstance().runQuery(VdcQueryType.GetUnusedGlusterBricks, parameters, asyncQuery);
     }
 
-    public void getCinderVolumeTypesList(AsyncQuery aQuery, Guid storageDomainId) {
-        aQuery.converterCallback = new IAsyncConverter<List<CinderVolumeType>>() {
-            @Override
-            public List<CinderVolumeType> convert(Object source, AsyncQuery _asyncQuery) {
-                return (List<CinderVolumeType>) source;
-            }
-        };
+    public void getCinderVolumeTypesList(AsyncQuery<List<CinderVolumeType>> aQuery, Guid storageDomainId) {
+        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetCinderVolumeTypesByStorageDomainId, new IdQueryParameters(storageDomainId), aQuery);
     }
 
-    public void getClusterFeaturesByVersionAndCategory(AsyncQuery aQuery, Version version, ApplicationMode category) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Set<AdditionalFeature>) source
-                        : new HashSet<AdditionalFeature>();
-            }
-        };
+    public void getClusterFeaturesByVersionAndCategory(AsyncQuery<Set<AdditionalFeature>> aQuery, Version version, ApplicationMode category) {
+        aQuery.converterCallback = new SetConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterFeaturesByVersionAndCategory,
                 new GetClusterFeaturesByVersionAndCategoryParameters(version, category),
                 aQuery);
     }
 
-    public void getClusterFeaturesByClusterId(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (Set<SupportedAdditionalClusterFeature>) source
-                        : new HashSet<SupportedAdditionalClusterFeature>();
-            }
-        };
+    public void getClusterFeaturesByClusterId(AsyncQuery<Set<SupportedAdditionalClusterFeature>> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new SetConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterFeaturesByClusterId,
                 new IdQueryParameters(clusterId),
                 aQuery);
     }
 
-    private static class RepoImageToImageFileNameAsyncConverter implements IAsyncConverter {
+    private static class RepoImageToImageFileNameAsyncConverter implements Converter<List<String>> {
         @Override
-        public Object convert(Object source, AsyncQuery _asyncQuery) {
+        public List<String> convert(Object source) {
             if (source != null) {
                 ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
                 ArrayList<String> fileNameList = new ArrayList<>();
@@ -3920,7 +3192,7 @@ public class AsyncDataProvider {
                 Collections.sort(fileNameList, new LexoNumericComparator());
                 return fileNameList;
             }
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
         protected String transform(ArrayList<String> fileNameList, RepoImage repoImage) {
@@ -3932,17 +3204,8 @@ public class AsyncDataProvider {
         }
     }
 
-    public void getVmTemplatesByBaseTemplateId(AsyncQuery asyncQuery, Guid baseTemplate) {
-        asyncQuery.converterCallback = new IAsyncConverter() {
-
-            @Override
-            public Object convert(Object source, AsyncQuery asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<VmTemplate>();
-                }
-                return source;
-            }
-        };
+    public void getVmTemplatesByBaseTemplateId(AsyncQuery<List<VmTemplate>> asyncQuery, Guid baseTemplate) {
+        asyncQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesByBaseTemplateId,
                 new GetVmTemplateParameters(baseTemplate),
                 asyncQuery);
@@ -3972,7 +3235,7 @@ public class AsyncDataProvider {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrMaxRetries);
     }
 
-    private static final class QuotaConverter implements IAsyncConverter<List<Quota>> {
+    private static final class QuotaConverter implements Converter<List<Quota>> {
         private final Guid topId;
 
         public QuotaConverter(Guid topId) {
@@ -3980,7 +3243,7 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public List<Quota> convert(Object returnValue, AsyncQuery asyncQuery) {
+        public List<Quota> convert(Object returnValue) {
             List<Quota> quotaList = (List<Quota>) returnValue;
             if (quotaList != null && !quotaList.isEmpty()) {
                 Comparator<Quota> comparator = (topId == null) ? QuotaComparator.NAME :
@@ -3992,13 +3255,13 @@ public class AsyncDataProvider {
         }
     }
 
-    public void getAllRelevantQuotasForStorageSorted(AsyncQuery asyncQuery, Guid storageId, Guid topQuotaId) {
+    public void getAllRelevantQuotasForStorageSorted(AsyncQuery<List<Quota>> asyncQuery, Guid storageId, Guid topQuotaId) {
         asyncQuery.converterCallback = new QuotaConverter(topQuotaId);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
                 new IdQueryParameters(storageId), asyncQuery);
     }
 
-    public void getAllRelevantQuotasForClusterSorted(AsyncQuery asyncQuery, Guid clusterId, Guid topQuotaId) {
+    public void getAllRelevantQuotasForClusterSorted(AsyncQuery<List<Quota>> asyncQuery, Guid clusterId, Guid topQuotaId) {
         asyncQuery.converterCallback = new QuotaConverter(topQuotaId);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
                 new IdQueryParameters(clusterId), asyncQuery);

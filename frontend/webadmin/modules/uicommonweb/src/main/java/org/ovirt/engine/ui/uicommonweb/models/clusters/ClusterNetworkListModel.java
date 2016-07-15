@@ -17,9 +17,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.NetworkInClusterComparator;
@@ -96,23 +95,19 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
+        tempVar.setRefresh(getIsQueryFirstTime());
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                final List<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                final List<Network> newItems = returnValue.getReturnValue();
                 Collections.sort(newItems, new NetworkInClusterComparator());
                 for (Network network : newItems) {
                     network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
                 }
                 setItems(newItems);
             }
-        };
-
-        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
-        tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, _asyncQuery);
+        }));
     }
 
     public void setAsDisplay() {
@@ -132,23 +127,17 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
         Guid storagePoolId =
                 (getEntity().getStoragePoolId() != null) ? getEntity().getStoragePoolId() : Guid.Empty;
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        // fetch the list of DC Networks
+        AsyncDataProvider.getInstance().getNetworkList(new AsyncQuery<>(new AsyncCallback<List<Network>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
-                final List<Network> dcNetworks = (List<Network>) result;
-
+            public void onSuccess(List<Network> dcNetworks) {
                 ClusterNetworkManageModel networkToManage = createNetworkList(dcNetworks);
-                clusterNetworkListModel.setWindow(networkToManage);
+                setWindow(networkToManage);
                 networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
                 networkToManage.setHelpTag(HelpTag.assign_networks);
                 networkToManage.setHashName("assign_networks"); //$NON-NLS-1$
             }
-        };
-        // fetch the list of DC Networks
-        AsyncDataProvider.getInstance().getNetworkList(_asyncQuery, storagePoolId);
+        }), storagePoolId);
     }
 
     private ClusterNetworkManageModel createNetworkList(List<Network> dcNetworks) {
@@ -220,18 +209,13 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
         // Set selected dc
         if (getEntity().getStoragePoolId() != null) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(networkModel);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById(networkModel.asyncQuery(new AsyncCallback<StoragePool>() {
                 @Override
-                public void onSuccess(Object model, Object result) {
-                    final StoragePool dataCenter = (StoragePool) result;
+                public void onSuccess(StoragePool dataCenter) {
                     networkModel.getDataCenters().setItems(Arrays.asList(dataCenter));
                     networkModel.getDataCenters().setSelectedItem(dataCenter);
-
                 }
-            };
-            AsyncDataProvider.getInstance().getDataCenterById(_asyncQuery, getEntity().getStoragePoolId());
+            }), getEntity().getStoragePoolId());
         }
     }
 

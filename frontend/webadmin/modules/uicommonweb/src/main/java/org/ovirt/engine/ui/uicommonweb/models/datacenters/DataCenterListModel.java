@@ -32,9 +32,8 @@ import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -212,15 +211,14 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
             setGuideContext(dataCenter.getId());
         }
 
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
+                new AsyncCallback<StoragePool>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        DataCenterListModel dataCenterListModel = (DataCenterListModel) target;
-                        DataCenterGuideModel model = (DataCenterGuideModel) dataCenterListModel.getWindow();
-                        model.setEntity((StoragePool) returnValue);
+                    public void onSuccess(StoragePool returnValue) {
+                        DataCenterGuideModel model = (DataCenterGuideModel) getWindow();
+                        model.setEntity(returnValue);
 
-                        UICommand tempVar = new UICommand("Cancel", dataCenterListModel); //$NON-NLS-1$
+                        UICommand tempVar = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
                         tempVar.setIsDefault(true);
                         tempVar.setIsCancel(true);
@@ -391,11 +389,10 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
 
         windowModel.startProgress();
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(List<StorageDomain> storageDomainList) {
                 windowModel.stopProgress();
-                List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 List<EntityModel> models = new ArrayList<>();
                 for (StorageDomain a : storageDomainList) {
                     if (a.getStorageDomainType() == StorageDomainType.Data
@@ -442,10 +439,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
+            public void onSuccess(List<StorageDomain> storageDomainList) {
                 for (StorageDomain a : storageDomainList) {
                     if (a.getStorageDomainType() == StorageDomainType.Master) {
                         break;
@@ -566,12 +562,11 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
 
             startProgress();
 
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            IdQueryParameters params = new IdQueryParameters(sp.getId());
+            Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, params, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                 @Override
-                public void onSuccess(Object model, Object ReturnValue) {
-                    List<StorageDomain> storages = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                public void onSuccess(VdcQueryReturnValue returnValue) {
+                    List<StorageDomain> storages = returnValue.getReturnValue();
 
                     StorageDomain storage = null;
                     for (StorageDomain sd : storages) {
@@ -597,11 +592,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                                 .getMessages()
                                 .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg(v.getValue()));
                     }
-                    ((DataCenterListModel) model).stopProgress();
+                    stopProgress();
                 }
-            };
-            IdQueryParameters params = new IdQueryParameters(sp.getId());
-            Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, params, _asyncQuery);
+            }));
 
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveInternal", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar);
@@ -622,12 +615,11 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     private void validateDataCenterName(final DataCenterModel dataCenter) {
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolByDatacenterName,
                 new NameQueryParameters(dataCenter.getName().getEntity()),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VdcQueryReturnValue result = (VdcQueryReturnValue) returnValue;
-                        if (!((Collection<?>)result.getReturnValue()).isEmpty()) {
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        if (!((Collection<?>)returnValue.getReturnValue()).isEmpty()) {
                             dataCenter.getName().getInvalidityReasons().add(
                                     ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             dataCenter.getName().setIsValid(false);
@@ -647,13 +639,12 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         IdQueryParameters parameters = new IdQueryParameters(storage_pool.getId());
         Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
-                new AsyncQuery(
-                        quotaListModel,
-                        new INewAsyncCallback() {
+                new AsyncQuery<>(
+                        new AsyncCallback<VdcQueryReturnValue>() {
 
                             @Override
-                            public void onSuccess(Object model, Object returnValue) {
-                                if (((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue()).size() == 0) {
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
+                                if (((ArrayList<Quota>) returnValue.getReturnValue()).size() == 0) {
                                     promptNoQuotaInDCMessage();
                                 } else {
                                     onSaveInternal();
@@ -839,13 +830,11 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
-        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(new AsyncCallback<List<StorageServerConnections>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(List<StorageServerConnections> connections) {
                 boolean hasIscsiStorage = false;
-
-                ArrayList<StorageServerConnections> connections = (ArrayList<StorageServerConnections>) returnValue;
 
                 for (StorageServerConnections connection : connections) {
                     if (connection.getStorageType() == StorageType.ISCSI) {

@@ -1,24 +1,23 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 
-public class ShowErrorAsyncQuery extends AsyncQuery {
+public class ShowErrorAsyncQuery extends AsyncQuery<VdcQueryReturnValue> {
 
-    public ShowErrorAsyncQuery(final INewAsyncCallback onRealSuccessCallback) {
-        super(new INewAsyncCallback() {
+    public ShowErrorAsyncQuery(final AsyncCallback<VdcQueryReturnValue> onRealSuccessCallback) {
+        super(new AsyncCallback<VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                final VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) returnValue;
-                if (!queryReturnValue.getSucceeded()) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                if (!returnValue.getSucceeded()) {
                     final ErrorPopupManager popupManager =
                             (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
-                    popupManager.show(queryReturnValue.getExceptionMessage());
+                    popupManager.show(returnValue.getExceptionMessage());
                     return;
                 }
-                onRealSuccessCallback.onSuccess(model, returnValue);
+                onRealSuccessCallback.onSuccess(returnValue);
             }
         });
         setHandleFailure(true);

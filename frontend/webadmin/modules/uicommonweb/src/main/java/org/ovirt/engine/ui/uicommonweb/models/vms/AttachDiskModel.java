@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -118,19 +117,16 @@ public class AttachDiskModel extends NewDiskModel {
     protected void doLoadAttachableDisks(GetDisksCallback imageCallback, GetDisksCallback lunCallback,
                                          GetDisksCallback cinderCallback) {
         AsyncDataProvider.getInstance().getAllAttachableDisks(
-                new AsyncQuery(this, imageCallback
-                ), getVm().getStoragePoolId(), getVm().getId());
+                new AsyncQuery<>(imageCallback), getVm().getStoragePoolId(), getVm().getId());
 
         AsyncDataProvider.getInstance().getAllAttachableDisks(
-                new AsyncQuery(this, lunCallback
-                ), null, getVm().getId());
+                new AsyncQuery<>(lunCallback), null, getVm().getId());
 
         AsyncDataProvider.getInstance().getAllAttachableDisks(
-                new AsyncQuery(this, cinderCallback
-                ), getVm().getStoragePoolId(), getVm().getId());
+                new AsyncQuery<>(cinderCallback), getVm().getStoragePoolId(), getVm().getId());
     }
 
-    class GetDisksCallback implements INewAsyncCallback {
+    class GetDisksCallback implements AsyncCallback<List<Disk>> {
 
         private DiskStorageType diskStorageType;
 
@@ -139,19 +135,17 @@ public class AttachDiskModel extends NewDiskModel {
         }
 
         @Override
-        public void onSuccess(Object model, Object returnValue) {
-            final AttachDiskModel parentModel = (AttachDiskModel) model;
+        public void onSuccess(List<Disk> returnValue) {
             List<Disk> disks = adjustReturnValue(returnValue);
             Collections.sort(disks, new DiskByDiskAliasComparator());
             final ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
 
-            AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), new AsyncQuery<>(new AsyncCallback<List<DiskInterface>>() {
                 @Override
-                public void onSuccess(Object model, Object diskInterfacesReturnValue) {
-                    final ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) diskInterfacesReturnValue;
-                    AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
+                public void onSuccess(final List<DiskInterface> diskInterfaces) {
+                    AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
                         @Override
-                        public void onSuccess(Object model, Object virtioScsiEnabledReturnValue) {
+                        public void onSuccess(Boolean virtioScsiEnabledReturnValue) {
                             if (Boolean.FALSE.equals(virtioScsiEnabledReturnValue)) {
                                 diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
                             }
@@ -163,7 +157,7 @@ public class AttachDiskModel extends NewDiskModel {
                                         @Override
                                         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                                             boolean isBootableMarked = (Boolean) ((EntityModel) sender).getEntity();
-                                            parentModel.getIsBootable().setIsChangeable(!isBootableMarked);
+                                            getIsBootable().setIsChangeable(!isBootableMarked);
                                         }
                                     });
                                 }
@@ -178,8 +172,7 @@ public class AttachDiskModel extends NewDiskModel {
                         }
                     }), getVmId());
                 }
-            });
-            AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), asyncQuery);
+            }));
 
 
         }
@@ -188,8 +181,8 @@ public class AttachDiskModel extends NewDiskModel {
             getAttachableDisksMap().get(diskStorageType).setItems(entities);
         }
 
-        protected List<Disk> adjustReturnValue(Object returnValue) {
-            return (List<Disk>) returnValue;
+        protected List<Disk> adjustReturnValue(List<Disk> returnValue) {
+            return returnValue;
         }
     }
 

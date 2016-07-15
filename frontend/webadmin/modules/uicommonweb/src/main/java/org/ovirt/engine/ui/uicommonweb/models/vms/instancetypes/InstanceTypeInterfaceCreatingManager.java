@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
@@ -33,7 +34,7 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
     }
 
     @Override
-    protected void getNics(final AsyncQuery getNicsQuery, final Guid vmId, final UnitVmModel unitVmModel) {
+    protected void getNics(final AsyncQuery<List<VmNetworkInterface>> getNicsQuery, final Guid vmId, final UnitVmModel unitVmModel) {
         AsyncDataProvider.getInstance().getTemplateNicList(getNicsQuery, vmId);
     }
 

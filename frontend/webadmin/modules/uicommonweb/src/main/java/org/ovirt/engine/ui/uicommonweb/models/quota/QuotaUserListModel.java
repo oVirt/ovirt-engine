@@ -16,9 +16,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -71,12 +70,12 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         IdQueryParameters param = new IdQueryParameters(getEntity().getId());
         param.setRefresh(getIsQueryFirstTime());
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        param.setRefresh(getIsQueryFirstTime());
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsToConsumeQuotaByQuotaId, param, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<Permission> list = returnValue.getReturnValue();
                 Map<Guid, Permission> map = new HashMap<>();
                 for (Permission permission : list) {
                     //filter out sys-admin and dc admin from consumers sub-tab
@@ -100,11 +99,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
                 }
                 setItems(list);
             }
-        };
-
-        param.setRefresh(getIsQueryFirstTime());
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsToConsumeQuotaByQuotaId, param, _asyncQuery);
+        }));
 
         setIsQueryFirstTime(false);
     }

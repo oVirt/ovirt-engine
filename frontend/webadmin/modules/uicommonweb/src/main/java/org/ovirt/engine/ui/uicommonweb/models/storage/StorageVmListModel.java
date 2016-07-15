@@ -9,9 +9,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericName
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -57,21 +56,17 @@ public class StorageVmListModel extends SearchableListModel<StorageDomain, VM> {
 
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
+        tempVar.setRefresh(getIsQueryFirstTime());
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByStorageDomain, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                ArrayList<VM> vms = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<VM> vms = returnValue.getReturnValue();
                 Collections.sort(vms, new LexoNumericNameableComparator<>());
                 setItems(vms);
                 setIsEmpty(vms.size() == 0);
             }
-        };
-
-        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
-        tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByStorageDomain, tempVar, _asyncQuery);
+        }));
     }
 
     @Override

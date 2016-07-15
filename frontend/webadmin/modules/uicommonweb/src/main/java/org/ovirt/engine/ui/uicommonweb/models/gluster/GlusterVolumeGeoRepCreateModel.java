@@ -16,9 +16,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -118,19 +117,15 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void getVolumesForForceSessionCreate() {
         GlusterVolumeGeoRepCreateModel.this.startProgress(constants.fetchingDataMessage());
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                showAvailableVolumes(ReturnValue);
-            }
-
-        };
         SearchParameters volumesSearchParameters = new SearchParameters("Volumes:", SearchType.GlusterVolume, false);//$NON-NLS-1$
         volumesSearchParameters.setRefresh(true);
 
-        Frontend.getInstance().runQuery(VdcQueryType.Search, volumesSearchParameters, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, volumesSearchParameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+            @Override
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                showAvailableVolumes(returnValue);
+            }
+        }));
     }
 
     private void showAvailableVolumes(Object returnValue) {
@@ -148,9 +143,9 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void getEligibleVolumes() {
         this.startProgress(constants.fetchingDataMessage());
-        AsyncQuery aQuery = new AsyncQuery(new INewAsyncCallback() {
+        AsyncQuery aQuery = new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 showAvailableVolumes(returnValue);
             }
         });
@@ -275,9 +270,9 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void updateRecommendatonViolations() {
         startProgress(constants.fetchingDataMessage());
-        AsyncQuery aQuery = new AsyncQuery(new INewAsyncCallback() {
+        AsyncQuery aQuery = new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 GlusterVolumeGeoRepCreateModel.this.stopProgress();
                 List<GlusterGeoRepNonEligibilityReason> eligibilityViolators = (List<GlusterGeoRepNonEligibilityReason>) returnValue;
                 if(eligibilityViolators.size() > 0) {

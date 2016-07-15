@@ -10,9 +10,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -65,13 +64,12 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
             return;
         }
         IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getId());
+        mlaParams.setRefresh(getIsQueryFirstTime());
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<Permission> list = returnValue.getReturnValue();
                 ArrayList<Permission> newList = new ArrayList<>();
                 for (Permission permission : list) {
                     if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
@@ -80,11 +78,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
                 }
                 setItems(newList);
             }
-        };
-
-        mlaParams.setRefresh(getIsQueryFirstTime());
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, _asyncQuery);
+        }));
 
         setIsQueryFirstTime(false);
 

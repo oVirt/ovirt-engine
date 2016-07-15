@@ -10,9 +10,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.IModel;
@@ -63,9 +62,9 @@ public class EditVnicProfileModel extends VnicProfileModel {
 
     private void updateChangabilityIfVmsUsingTheProfile() {
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        asyncQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
+            public void onSuccess(Object ReturnValue) {
                 Collection<VM> vms = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 if (vms != null && !vms.isEmpty()) {
                     getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()

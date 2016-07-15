@@ -43,7 +43,6 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.gwt.user.client.rpc.XsrfToken;
@@ -86,17 +85,17 @@ public class FrontendTest {
     @Mock
     IFrontendMultipleQueryAsyncCallback mockMultipleQueryCallback;
     @Mock
-    INewAsyncCallback mockAsyncCallback;
+    AsyncCallback mockAsyncCallback;
     @Mock
-    IAsyncConverter<Object> mockConverter;
+    Converter<Object> mockConverter;
     @Mock
     EventBus mockEventBus;
     @Mock
     XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
     @Captor
-    ArgumentCaptor<AsyncCallback<VdcQueryReturnValue>> callback;
+    ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback> callback;
     @Captor
-    ArgumentCaptor<AsyncCallback<ArrayList<VdcQueryReturnValue>>> callbackMultipleQueries;
+    ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback> callbackMultipleQueries;
 
     @Before
     public void setUp() throws Exception {
@@ -210,7 +209,7 @@ public class FrontendTest {
             // Call the failure handler.
             callback.getValue().onFailure(exception);
         }
-        verify(mockAsyncCallback).onSuccess(mockModel, null);
+        verify(mockAsyncCallback).onSuccess(null);
         verify(mockEventsHandler).runQueryFailed(null);
         verifyAsyncQueryFailed();
     }
@@ -383,7 +382,7 @@ public class FrontendTest {
         callback.getValue().onSuccess(mockReturnValue);
         // Make sure the not logged in event is called
         verify(mockFrontendNotLoggedInEvent).raise(Frontend.class, EventArgs.EMPTY);
-        verify(mockAsyncCallback).onSuccess(mockModel, mockReturnValue);
+        verify(mockAsyncCallback).onSuccess(mockReturnValue);
         verifyAsyncQuerySucceeded();
     }
 
@@ -406,8 +405,7 @@ public class FrontendTest {
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);
-        verify(mockAsyncQuery).setOriginalReturnValue(mockReturnValue);
-        verify(mockAsyncCallback).onSuccess(mockModel, mockReturnValue);
+        verify(mockAsyncCallback).onSuccess(mockReturnValue);
         verifyAsyncQuerySucceeded();
     }
 
@@ -434,12 +432,11 @@ public class FrontendTest {
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setReturnValue(mockResultModel);
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
-        when(mockConverter.convert(mockResultModel, mockAsyncQuery)).thenReturn(mockConvertedModel);
+        when(mockConverter.convert(mockResultModel)).thenReturn(mockConvertedModel);
         // Return value set to success
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);
-        verify(mockAsyncQuery).setOriginalReturnValue(mockReturnValue);
-        verify(mockAsyncCallback).onSuccess(mockModel, mockConvertedModel);
+        verify(mockAsyncCallback).onSuccess(mockConvertedModel);
         verifyAsyncQuerySucceeded();
     }
 
@@ -467,7 +464,7 @@ public class FrontendTest {
         // Return value set to success
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);
-        verify(mockAsyncCallback).onSuccess(mockModel, mockReturnValue);
+        verify(mockAsyncCallback).onSuccess(mockReturnValue);
         verifyAsyncQuerySucceeded();
     }
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -16,9 +17,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -67,13 +67,13 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
 
     protected boolean ignoreStorageDomains;
 
-    ArrayList<StorageDomain> storageDomains;
+    private List<StorageDomain> storageDomains;
 
-    public ArrayList<StorageDomain> getStorageDomains() {
+    public List<StorageDomain> getStorageDomains() {
         return storageDomains;
     }
 
-    public void setStorageDomains(ArrayList<StorageDomain> storageDomains) {
+    public void setStorageDomains(List<StorageDomain> storageDomains) {
         this.storageDomains = storageDomains;
     }
 
@@ -125,17 +125,15 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
             setDisks(value);
         }
         else {
-            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
-                                                                                new INewAsyncCallback() {
-                                                                                    @Override
-                                                                                    public void onSuccess(Object target, Object returnValue) {
-                                                                                        ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
-
-                                                                                        Collections.sort(storageDomains, new NameableComparator());
-                                                                                        setStorageDomains(storageDomains);
-                                                                                        setDisks(value);
-                                                                                    }
-                                                                                }));
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
+                    new AsyncCallback<List<StorageDomain>>() {
+                        @Override
+                        public void onSuccess(List<StorageDomain> storageDomains) {
+                            Collections.sort(storageDomains, new NameableComparator());
+                            setStorageDomains(storageDomains);
+                            setDisks(value);
+                        }
+                    }));
         }
 
         updateActionAvailability();

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.hostdev;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,9 +9,7 @@ import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -82,10 +79,9 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
 
     private void fetchExistingDevices() {
         startProgress();
-        AsyncDataProvider.getInstance().getConfiguredVmHostDevices(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getConfiguredVmHostDevices(new AsyncQuery<>(new AsyncCallback<List<VmHostDevice>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<VmHostDevice> devices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            public void onSuccess(List<VmHostDevice> devices) {
                 for (VmHostDevice device : devices) {
                     if (!device.isIommuPlaceholder()) {
                         alreadyAttachedDevices.add(device.getDevice());
@@ -113,11 +109,10 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
         selectedHostDevices.setItems(new ArrayList<EntityModel<HostDeviceView>>());
 
         startProgress();
-        AsyncDataProvider.getInstance().getHostDevicesByHostId(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostDevicesByHostId(new AsyncQuery<>(new AsyncCallback<List<HostDeviceView>>() {
             @Override
-            public void onSuccess(final Object model, Object returnValue) {
+            public void onSuccess(List<HostDeviceView> fetchedDevices) {
                 stopProgress();
-                Collection<HostDeviceView> fetchedDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 List<EntityModel<HostDeviceView>> models = new ArrayList<>();
                 for (HostDeviceView hostDevice : fetchedDevices) {
                     // show only devices that support assignment and are not yet attached

@@ -16,9 +16,8 @@ import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkI
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -85,24 +84,22 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
             return;
         }
 
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(getViewFilterType());
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                if (model.equals(getViewFilterType())) {
-                    setItems((Collection<PairQueryable<VmNetworkInterface, VM>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                }
-            }
-        };
-
         GetVmsAndNetworkInterfacesByNetworkIdParameters params =
                 new GetVmsAndNetworkInterfacesByNetworkIdParameters(getEntity().getId(),
                         NetworkVmFilter.running.equals(getViewFilterType()));
         params.setRefresh(getIsQueryFirstTime());
+
+        final NetworkVmFilter filter = getViewFilterType();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId,
                 params,
-                asyncQuery);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        if (filter.equals(getViewFilterType())) {
+                            setItems((Collection<PairQueryable<VmNetworkInterface, VM>>) returnValue.getReturnValue());
+                        }
+                    }
+                }));
     }
 
     @Override

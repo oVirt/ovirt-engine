@@ -31,9 +31,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -47,6 +46,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.inject.Inject;
 
 public class ImportVmFromExportDomainModel extends ImportVmModel {
@@ -84,13 +84,10 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
         // get cluster
         getCluster().setItems(null);
-        AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
                    @Override
-                   public void onSuccess(Object model, Object returnValue) {
-                       ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
-
-                       ImportVmFromExportDomainModel importModel = (ImportVmFromExportDomainModel) model;
-                       ArchitectureType targetArch = importModel.getTargetArchitecture();
+                   public void onSuccess(List<Cluster> clusters) {
+                       ArchitectureType targetArch = getTargetArchitecture();
 
                        if (targetArch != null) {
                            List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
@@ -103,13 +100,11 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                        }
 
                        // get storage domains
-                       AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExportDomainModel.this,
-                                       new INewAsyncCallback() {
+                       AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
+                                       new AsyncCallback<List<StorageDomain>>() {
 
                                            @Override
-                                           public void onSuccess(Object model, Object returnValue) {
-                                               ArrayList<StorageDomain> storageDomains =
-                                                       (ArrayList<StorageDomain>) returnValue;
+                                           public void onSuccess(List<StorageDomain> storageDomains) {
                                                // filter storage domains
                                                filteredStorageDomains = new ArrayList<>();
                                                for (StorageDomain domain : storageDomains) {
@@ -289,13 +284,12 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((StorageDomain) getEntity())
                         .getId());
-        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmFromExportDomainModel.this,
-                new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery<>(
+                new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        Map<VmTemplate, List<DiskImage>> dictionary =
-                                (HashMap<VmTemplate, List<DiskImage>>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        Map<VmTemplate, List<DiskImage>> dictionary = (HashMap<VmTemplate, List<DiskImage>>) returnValue.getReturnValue();
                         Map<Guid, Guid> tempMap = new HashMap<>();
                         for (Entry<VmTemplate, List<DiskImage>> entry : dictionary.entrySet()) {
                             tempMap.put(entry.getKey().getId(), null);
@@ -403,30 +397,29 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 && getClusterQuota().getIsValid();
     }
 
-    protected void withDataCenterLoaded(Guid storageDomainId, final INewAsyncCallback callback) {
+    protected void withDataCenterLoaded(Guid storageDomainId, final AsyncCallback<List<StoragePool>> callback) {
         // get Storage pool
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<StoragePool> pools = (List<StoragePool>) returnValue;
+            public void onSuccess(List<StoragePool> pools) {
                 if (pools == null || pools.size() != 1) {
                     return;
                 }
 
                 StoragePool dataCenter = pools.get(0);
                 setStoragePool(dataCenter);
-                callback.onSuccess(model, returnValue);
+                callback.onSuccess(pools);
             }
         }), storageDomainId);
     }
 
     public void init(final List<VM> externalVms, final Guid storageDomainId) {
-        withDataCenterLoaded(storageDomainId, new INewAsyncCallback() {
+        withDataCenterLoaded(storageDomainId, new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                setItems(new INewAsyncCallback() {
+            public void onSuccess(List<StoragePool> returnValue) {
+                setItems(new AsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object returnValue) {
                         doInit();
                     }
                 }, externalVms);

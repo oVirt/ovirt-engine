@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
@@ -47,13 +47,13 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         getModel().getVmId().setIsAvailable(true);
 
         // Get datacenters with permitted create action
-        AsyncDataProvider.getInstance().getDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersWithPermittedActionOnClusters(new AsyncQuery<>(
+                new AsyncCallback<List<StoragePool>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(List<StoragePool> returnValue) {
 
                         final List<StoragePool> dataCenters = new ArrayList<>();
-                        for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
+                        for (StoragePool a : returnValue) {
                             if (a.getStatus() == StoragePoolStatus.Up) {
                                 dataCenters.add(a);
                             }
@@ -61,15 +61,13 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
                         if (!dataCenters.isEmpty()) {
                             AsyncDataProvider.getInstance().getClustersWithPermittedAction(
-                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
+                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
 
                                         @Override
-                                        public void onSuccess(Object target, Object returnValue) {
-                                            UnitVmModel model = (UnitVmModel) target;
-                                            List<Cluster> clusters = (List<Cluster>) returnValue;
+                                        public void onSuccess(List<Cluster> clusters) {
                                             // filter clusters without cpu name
                                             clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
-                                            model.setDataCentersAndClusters(model,
+                                            getModel().setDataCentersAndClusters(getModel(),
                                                     dataCenters,
                                                     clusters, null);
                                         }

@@ -9,9 +9,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericName
 import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -50,22 +49,18 @@ public class StorageTemplateListModel extends SearchableListModel<StorageDomain,
 
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        GetVmTemplatesFromStorageDomainParameters tempVar =
+                new GetVmTemplatesFromStorageDomainParameters(getEntity().getId(), true);
+        tempVar.setRefresh(getIsQueryFirstTime());
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                ArrayList<VmTemplate> templates = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<VmTemplate> templates = returnValue.getReturnValue();
                 Collections.sort(templates, new LexoNumericNameableComparator<>());
                 setItems(templates);
                 setIsEmpty(templates.size() == 0);
             }
-        };
-
-        GetVmTemplatesFromStorageDomainParameters tempVar =
-                new GetVmTemplatesFromStorageDomainParameters(getEntity().getId(), true);
-        tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, tempVar, _asyncQuery);
+        }));
     }
 
     @Override

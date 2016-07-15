@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
@@ -10,8 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -124,9 +124,9 @@ public class NewHostModel extends HostModel {
         }
 
         AsyncQuery getHostsQuery = new AsyncQuery();
-        getHostsQuery.asyncCallback = new INewAsyncCallback() {
+        getHostsQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 ArrayList<VDS> hosts = (ArrayList<VDS>) result;
                 ListModel<VDS> hostNameListModel = getExternalHostName();
                 hostNameListModel.setItems(hosts);
@@ -141,18 +141,18 @@ public class NewHostModel extends HostModel {
                 getProviderSearchFilter().getEntity());
 
         AsyncQuery getHostGroupsQuery = new AsyncQuery();
-        getHostGroupsQuery.asyncCallback = new INewAsyncCallback() {
+        getHostGroupsQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 ArrayList<ExternalHostGroup> hostGroups = (ArrayList<ExternalHostGroup>) result;
                 ListModel externalHostGroupsListModel = getExternalHostGroups();
                 externalHostGroupsListModel.setItems(hostGroups);
                 externalHostGroupsListModel.setIsChangeable(true);
 
                 AsyncQuery getDiscoveredHostsQuery = new AsyncQuery();
-                getDiscoveredHostsQuery.asyncCallback = new INewAsyncCallback() {
+                getDiscoveredHostsQuery.asyncCallback = new AsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object result) {
+                    public void onSuccess(Object result) {
                         ArrayList<ExternalDiscoveredHost> hosts = (ArrayList<ExternalDiscoveredHost>) result;
                         ListModel externalDiscoveredHostsListModel = getExternalDiscoveredHosts();
                         externalDiscoveredHostsListModel.setItems(hosts);
@@ -166,9 +166,9 @@ public class NewHostModel extends HostModel {
         AsyncDataProvider.getInstance().getExternalProviderHostGroupList(getHostGroupsQuery, provider);
 
         AsyncQuery getComputeResourceQuery = new AsyncQuery();
-        getComputeResourceQuery.asyncCallback = new INewAsyncCallback() {
+        getComputeResourceQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 ArrayList<ExternalComputeResource> computeResources = (ArrayList<ExternalComputeResource>) result;
                 ListModel externalComputeResourceListModel = getExternalComputeResource();
                 externalComputeResourceListModel.setItems(computeResources);
@@ -182,9 +182,9 @@ public class NewHostModel extends HostModel {
         Provider provider = getProviders().getSelectedItem();
         if (provider != null ) {
             AsyncQuery getHostsQuery = new AsyncQuery();
-            getHostsQuery.asyncCallback = new INewAsyncCallback() {
+            getHostsQuery.asyncCallback = new AsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result) {
+                public void onSuccess(Object result) {
                     ArrayList<VDS> hosts = (ArrayList<VDS>) result;
                     ListModel<VDS> hostNameListModel = getExternalHostName();
                     hostNameListModel.setItems(hosts);
@@ -206,7 +206,7 @@ public class NewHostModel extends HostModel {
     }
 
     @Override
-    protected void updateModelDataCenterFromVds(ArrayList<StoragePool> dataCenters, VDS vds) {
+    protected void updateModelDataCenterFromVds(List<StoragePool> dataCenters, VDS vds) {
     }
 
     @Override

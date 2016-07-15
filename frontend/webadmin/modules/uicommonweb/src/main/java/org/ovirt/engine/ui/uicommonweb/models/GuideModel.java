@@ -14,9 +14,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -109,11 +108,11 @@ public class GuideModel<T> extends EntityModel<T> {
         }
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(searchStr, SearchType.VDS),
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
+                new AsyncQuery<>(
+                        new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                List<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
+                                List<VDS> hosts = returnValue.getReturnValue();
                                 boolean succeeded = true;
                                 for (VDS host : hosts) {
                                     if (!host.getClusterId().equals(hostClusterIdMap.get(host.getId()))) {
@@ -154,11 +153,11 @@ public class GuideModel<T> extends EntityModel<T> {
     protected void checkVdsActivateSucceeded(final String searchStr) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(searchStr, SearchType.VDS),
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
+                new AsyncQuery<>(
+                        new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                List<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
+                                List<VDS> hosts = returnValue.getReturnValue();
                                 boolean succeeded = true;
                                 for (VDS host : hosts) {
                                     if (host.getStatus() != VDSStatus.Up) {

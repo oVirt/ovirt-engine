@@ -29,8 +29,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -764,18 +763,14 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     public void fetchEngineSshPublicKey() {
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.setModel(this);
-        aQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getEngineSshPublicKey(new AsyncQuery<>(new AsyncCallback<String>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                String pk = (String) result;
+            public void onSuccess(String pk) {
                 if (pk != null && pk.length() > 0) {
                     getPublicKey().setEntity(pk);
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getEngineSshPublicKey(aQuery);
+        }));
     }
 
     private void fetchSSHFingerprint() {
@@ -783,12 +778,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
         getFetchResult().setEntity(""); //$NON-NLS-1$
 
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.setModel(this);
-        aQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<String> aQuery = new AsyncQuery<>(new AsyncCallback<String>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                String fingerprint = (String) result;
+            public void onSuccess(String fingerprint) {
                 if (fingerprint != null && fingerprint.length() > 0) {
                     getFetchSshFingerprint().setEntity(fingerprint);
                     getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
@@ -797,7 +789,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                     getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
                 }
             }
-        };
+        });
 
         getHost().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
@@ -819,13 +811,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private void initSpmPriorities() {
 
-        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(Integer returnValue) {
 
-                HostModel model = (HostModel) target;
-
-                model.maxSpmPriority = (Integer) returnValue;
+                maxSpmPriority = returnValue;
                 initSpmPriorities1();
             }
         }));
@@ -833,13 +823,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private void initSpmPriorities1() {
 
-        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(Integer returnValue) {
 
-                HostModel model = (HostModel) target;
-
-                model.defaultSpmPriority = (Integer) returnValue;
+                defaultSpmPriority = returnValue;
 
                 if (postponedSpmPriority != null) {
                     updateSpmPriority(postponedSpmPriority);
@@ -929,23 +917,15 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     private void dataCenter_SelectedItemChanged() {
         StoragePool dataCenter = getDataCenter().getSelectedItem();
         if (dataCenter != null) {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
                 @Override
-                public void onSuccess(Object nothing, Object result) {
-                    @SuppressWarnings("unchecked")
-                    final ArrayList<Cluster> clusters = (ArrayList<Cluster>) result;
-
+                public void onSuccess(final List<Cluster> clusters) {
                     if (getIsNew()) {
                         updateClusterList(HostModel.this, clusters);
                     } else {
-                        AsyncQuery architectureQuery = new AsyncQuery();
-
-                        architectureQuery.asyncCallback = new INewAsyncCallback() {
+                        AsyncDataProvider.getInstance().getHostArchitecture(new AsyncQuery<>(new AsyncCallback<ArchitectureType>() {
                             @Override
-                            public void onSuccess(Object nothing, Object returnValue) {
-                                ArchitectureType architecture = (ArchitectureType) returnValue;
-
+                            public void onSuccess(ArchitectureType architecture) {
                                 ArrayList<Cluster> filteredClusters = new ArrayList<>();
 
                                 for (Cluster cluster : clusters) {
@@ -958,16 +938,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
                                 updateClusterList(HostModel.this, filteredClusters);
                             }
-                        };
-
-                        AsyncDataProvider.getInstance().getHostArchitecture(architectureQuery, getHostId());
+                        }), getHostId());
 
                     }
                     updatePmModels();
                 }
-            };
-
-            AsyncDataProvider.getInstance().getClusterList(_asyncQuery);
+            }));
         }
     }
 
@@ -1012,11 +988,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         getFencingEnabled().setEntity(cluster.getFencingPolicy().isFencingEnabled());
 
-        AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-
-                List<String> pmTypes = (ArrayList<String>) returnValue;
+            public void onSuccess(List<String> pmTypes) {
                 updatePmTypeList(pmTypes);
             }
         }), cluster.getCompatibilityVersion());
@@ -1120,7 +1094,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     public void updateModelFromVds(VDS vds,
-            ArrayList<StoragePool> dataCenters,
+            List<StoragePool> dataCenters,
             boolean isEditWithPMemphasis,
             SystemTreeItemModel selectedSystemTreeItem) {
         setHostId(vds.getId());
@@ -1258,13 +1232,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void updateExternalHostModels(final Guid selected) {
-        AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result) {
-                List<Provider<OpenstackNetworkProviderProperties>> providers =
-                        (List<Provider<OpenstackNetworkProviderProperties>>) result;
+            public void onSuccess(List<Provider<?>> result) {
+                List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
                 ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
                 if (selected != null) {
                     for (Provider<OpenstackNetworkProviderProperties> provider: providers) {
@@ -1284,8 +1256,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                     getIsDiscoveredHosts().setEntity(null);
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
+        }), ProviderType.FOREMAN);
     }
 
     /**
@@ -1423,30 +1394,20 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void updateLabelList() {
-        final AsyncQuery getAllLabelsQuery = new AsyncQuery();
-        getAllLabelsQuery.asyncCallback = new INewAsyncCallback() {
-            @SuppressWarnings("unchecked")
+        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                final List<Label> allLabels = (List<Label>) result;
-
+            public void onSuccess(final List<Label> allLabels) {
                 if (getIsNew()) {
                     labelList.setItems(allLabels);
                     labelList.setSelectedItems(new ArrayList<Label>());
                 } else {
-                    AsyncQuery getLabelsByHostIdQuery = new AsyncQuery();
-
-                    getLabelsByHostIdQuery.asyncCallback = new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            List<Label> hostLabelsList = (List<Label>) returnValue;
-
+                        public void onSuccess(List<Label> hostLabelsList) {
                             labelList.setItems(allLabels);
                             labelList.setSelectedItems(hostLabelsList);
                         }
-                    };
-
-                    AsyncDataProvider.getInstance().getLabelListByEntityId(getLabelsByHostIdQuery, getHostId());
+                    }), getHostId());
                 }
 
                 // This is phase 1 of this feature. Phase 2 will introduce the ability to make
@@ -1454,8 +1415,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 // the REST API.
                 labelList.setIsChangeable(false);
             }
-        };
-        AsyncDataProvider.getInstance().getLabelList(getAllLabelsQuery);
+        }));
     }
 
     protected abstract boolean showInstallationProperties();
@@ -1464,7 +1424,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     public abstract boolean showExternalProviderPanel();
 
-    protected abstract void updateModelDataCenterFromVds(ArrayList<StoragePool> dataCenters, VDS vds);
+    protected abstract void updateModelDataCenterFromVds(List<StoragePool> dataCenters, VDS vds);
 
     protected abstract void updateModelClusterFromVds(ArrayList<Cluster> clusters, VDS vds);
 

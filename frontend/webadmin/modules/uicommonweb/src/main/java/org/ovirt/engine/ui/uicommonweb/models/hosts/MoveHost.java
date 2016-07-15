@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -54,18 +54,16 @@ public class MoveHost extends ListModel<MoveHostData> {
 
     private void cluster_SelectedItemChanged() {
         if (getCluster().getSelectedItem() != null) {
-            AsyncDataProvider.getInstance().getHostList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
-
-                    ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
+                public void onSuccess(List<VDS> hosts) {
                     postGetHostList(hosts);
                 }
             }));
         }
     }
 
-    private void postGetHostList(ArrayList<VDS> hosts) {
+    private void postGetHostList(List<VDS> hosts) {
 
         Cluster cluster = getCluster().getSelectedItem();
         ArrayList<MoveHostData> items = new ArrayList<>();

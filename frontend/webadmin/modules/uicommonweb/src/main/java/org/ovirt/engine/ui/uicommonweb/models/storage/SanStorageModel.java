@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -132,11 +131,9 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         initializeItems(null, null);
 
         final SanStorageModel model = this;
-        Object target = getWidgetModel() != null ? getWidgetModel() : getContainer();
-        AsyncQuery asyncQuery = new AsyncQuery(target, new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+            public void onSuccess(VdcQueryReturnValue response) {
                 if (response.getSucceeded()) {
                     model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected);
                     model.setGetLUNsFailure(""); //$NON-NLS-1$
@@ -664,10 +661,9 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         VDS host = getContainer().getHost().getSelectedItem();
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
-        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery(getContainer(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(new AsyncCallback<List<LUNs>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
+            public void onSuccess(List<LUNs> lunList) {
                 model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()));
             }
         }), storage.getStorage(), hostId);

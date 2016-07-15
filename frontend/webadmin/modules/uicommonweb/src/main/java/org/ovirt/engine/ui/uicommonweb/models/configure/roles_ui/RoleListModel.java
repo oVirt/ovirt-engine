@@ -19,9 +19,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -171,30 +170,25 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        MultilevelAdministrationsQueriesParameters tempVar = new MultilevelAdministrationsQueriesParameters();
+        tempVar.setRefresh(getIsQueryFirstTime());
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                RoleListModel roleListModel = (RoleListModel) model;
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 ArrayList<Role> filteredList = new ArrayList<>();
-                for (Role item : (ArrayList<Role>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()) {
+                for (Role item : (ArrayList<Role>) returnValue.getReturnValue()) {
                     // ignore CONSUME_QUOTA_ROLE in UI
                     if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         continue;
                     }
-                    if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType()) {
+                    if (getItemsFilter() == null || getItemsFilter() == item.getType()) {
                         filteredList.add(item);
                     }
                 }
                 Collections.sort(filteredList, new NameableComparator());
-                roleListModel.setItems(filteredList);
+                setItems(filteredList);
             }
-        };
-
-        MultilevelAdministrationsQueriesParameters tempVar = new MultilevelAdministrationsQueriesParameters();
-        tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, tempVar, _asyncQuery);
+        }));
         setIsQueryFirstTime(false);
     }
 
@@ -278,22 +272,17 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                 setAttachedActionGroups(selectedActionGroups);
             } else {
 
-                AsyncQuery _asyncQuery = new AsyncQuery();
-                _asyncQuery.setModel(this);
-                _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object ReturnValue) {
-                        RoleListModel roleListModel = (RoleListModel) model;
-                        roleListModel.publicAttachedActions =
-                                ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                        roleListModel.setAttachedActionGroups(publicAttachedActions);
-                    }
-                };
                 Role role = getSelectedItem();
                 Frontend.getInstance().runQuery(
                         VdcQueryType.GetRoleActionGroupsByRoleId,
                         new IdQueryParameters(role.getId()),
-                        _asyncQuery);
+                        new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                            @Override
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
+                                publicAttachedActions = returnValue.getReturnValue();
+                                setAttachedActionGroups(publicAttachedActions);
+                            }
+                        }));
             }
 
         }

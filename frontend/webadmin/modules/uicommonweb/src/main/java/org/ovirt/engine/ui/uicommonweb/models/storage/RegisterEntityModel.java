@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -65,20 +64,17 @@ public abstract class RegisterEntityModel<T> extends Model {
     }
 
     private void updateClusters() {
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ArrayList<StoragePool> storagePools = (ArrayList<StoragePool>) returnValue;
+            public void onSuccess(List<StoragePool> storagePools) {
                 storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
                 if (storagePool == null) {
                     return;
                 }
 
-                AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(target, new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
-
+                    public void onSuccess(List<Cluster> clusters) {
                         for (ImportEntityData<T> entityData : entities.getItems()) {
                             List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
                             entityData.getCluster().setItems(filteredClusters);
@@ -103,9 +99,9 @@ public abstract class RegisterEntityModel<T> extends Model {
         }
 
         AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
-                new INewAsyncCallback() {
+                new AsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object returnValue) {
                         List<Quota> quotas = (List<Quota>)returnValue;
                         quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
 
@@ -115,7 +111,7 @@ public abstract class RegisterEntityModel<T> extends Model {
                 }), storageDomainId, null);
     }
 
-    private void updateClusterQuota(ArrayList<Cluster> clusters) {
+    private void updateClusterQuota(List<Cluster> clusters) {
         if (!isQuotaEnabled()) {
             return;
         }

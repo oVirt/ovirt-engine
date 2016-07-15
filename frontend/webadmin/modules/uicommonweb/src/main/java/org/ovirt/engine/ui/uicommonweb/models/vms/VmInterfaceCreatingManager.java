@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -35,18 +35,17 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
         return new RemoveVmInterfaceParameters(id, nicId);
     }
 
-    protected void getNics(final AsyncQuery getNicsQuery, final Guid vmId, final UnitVmModel unitVmModel) {
-        AsyncQuery osInfoQuery = new AsyncQuery(new INewAsyncCallback() {
-               @Override
-               public void onSuccess(Object model, Object returnValue) {
-                   defaultType = AsyncDataProvider.getInstance().getDefaultNicType((Collection<VmInterfaceType>) returnValue);
-                       supportedInterfaceTypes = (Collection<VmInterfaceType>) returnValue;
-                       AsyncDataProvider.getInstance().getVmNicList(getNicsQuery, vmId);
-                   }
-           });
-       AsyncDataProvider.getInstance().getNicTypeList(unitVmModel.getOSType().getSelectedItem(),
+    protected void getNics(final AsyncQuery<List<VmNetworkInterface>> getNicsQuery, final Guid vmId, final UnitVmModel unitVmModel) {
+        AsyncDataProvider.getInstance().getNicTypeList(unitVmModel.getOSType().getSelectedItem(),
                        unitVmModel.getDataCenterWithClustersList().getSelectedItem().getCluster().getCompatibilityVersion(),
-                       osInfoQuery);
+                new AsyncQuery<>(new AsyncCallback<List<VmInterfaceType>>() {
+                       @Override
+                       public void onSuccess(List<VmInterfaceType> returnValue) {
+                           defaultType = AsyncDataProvider.getInstance().getDefaultNicType(returnValue);
+                           supportedInterfaceTypes = returnValue;
+                           AsyncDataProvider.getInstance().getVmNicList(getNicsQuery, vmId);
+                       }
+                   }));
     }
 
     @Override

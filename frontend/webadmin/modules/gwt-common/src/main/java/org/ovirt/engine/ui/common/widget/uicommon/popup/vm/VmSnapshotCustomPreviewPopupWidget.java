@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotInfoPanel;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.PreviewSnapshotModel;
@@ -152,9 +152,9 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 refreshTable(previewTable);
 
                 if (snapshotModel.getVm() == null) {
-                    snapshotModel.updateVmConfiguration(new INewAsyncCallback() {
+                    snapshotModel.updateVmConfiguration(new AsyncCallback<Void>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Void returnValue) {
                             updateInfoPanel();
                         }
                     });

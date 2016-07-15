@@ -22,9 +22,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -34,7 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ReadOnlyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -50,7 +48,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -356,12 +353,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     if (limitToStorageDomainId == null) {
                         super.updateStorageDomains(datacenter);
                     } else {
-                        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
+                        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                DiskModel diskModel = (DiskModel) target;
-                                StorageDomain storageDomain = (StorageDomain) returnValue;
-                                diskModel.getStorageDomain().setSelectedItem(storageDomain);
+                            public void onSuccess(StorageDomain storageDomain) {
+                                getStorageDomain().setSelectedItem(storageDomain);
                             }
                         }), limitToStorageDomainId);
                     }

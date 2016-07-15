@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
@@ -75,12 +75,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         disksAllocationModel.setContainer(getModel());
         disksAllocationModel.setIsThinProvisioning(false);
 
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
+                new AsyncCallback<StoragePool>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        final StoragePool dataCenter = (StoragePool) returnValue;
+                    public void onSuccess(final StoragePool dataCenter) {
                         if (dataCenter == null) {
                             disableNewTemplateModel(ConstantsManager.getInstance()
                                     .getConstants()
@@ -89,19 +87,15 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         else {
 
                             AsyncDataProvider.getInstance().getClusterListByService(
-                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
+                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
 
                                         @Override
-                                        public void onSuccess(Object target, Object returnValue) {
-                                            UnitVmModel model = (UnitVmModel) target;
-
-                                            List<Cluster> clusters = (List<Cluster>) returnValue;
-
+                                        public void onSuccess(List<Cluster> clusters) {
                                             List<Cluster> filteredClusters =
                                                     AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                                             vm.getClusterArch());
 
-                                            model.setDataCentersAndClusters(model,
+                                            getModel().setDataCentersAndClusters(getModel(),
                                                     Arrays.asList(dataCenter),
                                                     filteredClusters,
                                                     vm.getClusterId());
@@ -113,12 +107,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                     true,
                                     false);
 
-                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(getModel(),
-                                    new INewAsyncCallback() {
-
+                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(
+                                    new AsyncCallback<Boolean>() {
                                         @Override
-                                        public void onSuccess(Object model, Object returnValue) {
-                                            getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
+                                        public void onSuccess(Boolean returnValue) {
+                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
                                         }
                                     }), vm.getId());
 
@@ -141,27 +134,17 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
+                    new AsyncCallback<List<VmTemplate>>() {
                         @Override
-                        public void onSuccess(Object target1, Object returnValue1) {
+                        public void onSuccess(final List<VmTemplate> templatesByDataCenter) {
 
-                            NewTemplateVmModelBehavior behavior1 = NewTemplateVmModelBehavior.this;
-                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
-                                    returnValue1 },
-                                    new INewAsyncCallback() {
+                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery<>(
+                                    new AsyncCallback<List<VmTemplate>>() {
                                         @Override
-                                        public void onSuccess(Object target2, Object returnValue2) {
+                                        public void onSuccess(List<VmTemplate> templatesByStorage) {
 
-                                            Object[] array2 = (Object[]) target2;
-                                            NewTemplateVmModelBehavior behavior2 = (NewTemplateVmModelBehavior) array2[0];
-                                            ArrayList<VmTemplate> templatesByDataCenter =
-                                                    (ArrayList<VmTemplate>) array2[1];
-                                            ArrayList<VmTemplate> templatesByStorage =
-                                                    (ArrayList<VmTemplate>) returnValue2;
-                                            VmTemplate blankTemplate =
-                                                    Linq.firstOrNull(templatesByDataCenter,
-                                                            new Linq.IdPredicate<>(Guid.Empty));
+                                            VmTemplate blankTemplate = Linq.firstOrNull(templatesByDataCenter, new Linq.IdPredicate<>(Guid.Empty));
                                             if (blankTemplate != null) {
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
@@ -169,7 +152,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             ArrayList<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
                                                             dataCenterWithCluster.getCluster().getArchitecture());
 
-                                            behavior2.postInitTemplate(templateList);
+                                            postInitTemplate(templateList);
 
                                         }
                                     }),
@@ -180,16 +163,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     dataCenter.getId());
         }
         else {
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
+                    new AsyncCallback<List<VmTemplate>>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
-
-                            ArrayList<VmTemplate> templates = (ArrayList<VmTemplate>) returnValue;
-
-                            behavior.postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                        public void onSuccess(List<VmTemplate> templates) {
+                            postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
                                     dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }
@@ -234,14 +212,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         super.dataCenterWithClusterSelectedItemChanged();
 
         // If a VM has at least one disk, present its storage domain.
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(
+                new AsyncCallback<List<Disk>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
+                    public void onSuccess(List<Disk> vmDisks) {
                         ArrayList<Disk> imageDisks = new ArrayList<>();
-                        ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
 
                         for (Disk disk : vmDisks) {
                             if (disk.isShareable() || disk.isDiskSnapshot()) {
@@ -253,7 +228,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             }
                         }
 
-                        behavior.initStorageDomains();
+                        initStorageDomains();
                         initDisks(imageDisks);
 
                         VmModelHelper.sendWarningForNonExportableDisks(getModel(),
@@ -355,12 +330,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     @Override
     public void initStorageDomains() {
-        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(asyncQuery(
+                new AsyncCallback<List<StorageDomain>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
-                        ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
+                    public void onSuccess(List<StorageDomain> storageDomains) {
                         ArrayList<StorageDomain> activeStorageDomainList = new ArrayList<>();
 
                         for (StorageDomain storageDomain : storageDomains) {
@@ -377,7 +350,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                         Linq.getStorageDomainsByIds(diskImage.getStorageIds(), activeStorageDomainList);
 
                                 if (activeDiskStorages.isEmpty()) {
-                                    behavior.disableNewTemplateModel(
+                                    disableNewTemplateModel(
                                             ConstantsManager.getInstance()
                                                     .getMessages()
                                                     .vmStorageDomainIsNotAccessible());
@@ -398,23 +371,22 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                 activeStorageDomainList =
                                         new ArrayList<>(Arrays.asList(new StorageDomain[]{s}));
 
-                                behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
-                                behavior.getModel().getStorageDomain().setIsChangeable(false);
-                                behavior.getModel().getStorageDomain().setSelectedItem(s);
+                                getModel().getStorageDomain().setItems(activeStorageDomainList);
+                                getModel().getStorageDomain().setIsChangeable(false);
+                                getModel().getStorageDomain().setSelectedItem(s);
                             }
                             else {
-                                behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
-                                behavior.getModel().getStorageDomain().setIsChangeable(true);
+                                getModel().getStorageDomain().setItems(activeStorageDomainList);
+                                getModel().getStorageDomain().setIsChangeable(true);
                             }
                         }
                         else {
-                            behavior.disableNewTemplateModel(ConstantsManager.getInstance()
+                            disableNewTemplateModel(ConstantsManager.getInstance()
                                     .getMessages()
                                     .noActiveStorageDomain());
                         }
 
-                        ArrayList<DiskModel> disks =
-                                (ArrayList<DiskModel>) behavior.getModel().getDisksAllocationModel().getDisks();
+                        ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisksAllocationModel().getDisks();
 
                         Collections.sort(activeStorageDomainList, new NameableComparator());
                         if (disks != null) {

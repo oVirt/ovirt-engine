@@ -15,8 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -1077,21 +1076,18 @@ public class VmInitModel extends Model {
         // Can't use domain since onSuccess is async call and it have
         // a different stack call.
         currentDomain = domain;
-        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery(this,
-                                                                          new INewAsyncCallback() {
-                                                                              @Override
-                                                                              public void onSuccess(Object target, Object returnValue) {
-                                                                                  @SuppressWarnings("unchecked")
-                                                                                  List<String> domains = (List<String>) returnValue;
-                                                                                  getSysprepDomain().setItems(domains);
-                                                                                  if (!StringHelper.isNullOrEmpty(currentDomain)) {
-                                                                                      if (!domains.contains(currentDomain)) {
-                                                                                          domains.add(currentDomain);
-                                                                                      }
-                                                                                      getSysprepDomain().setSelectedItem(currentDomain);
-                                                                                  }
-                                                                              }
-                                                                          }));
+        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
+            @Override
+            public void onSuccess(List<String> domains) {
+                getSysprepDomain().setItems(domains);
+                if (!StringHelper.isNullOrEmpty(currentDomain)) {
+                    if (!domains.contains(currentDomain)) {
+                        domains.add(currentDomain);
+                    }
+                    getSysprepDomain().setSelectedItem(currentDomain);
+                }
+            }
+        }));
     }
 
     /**

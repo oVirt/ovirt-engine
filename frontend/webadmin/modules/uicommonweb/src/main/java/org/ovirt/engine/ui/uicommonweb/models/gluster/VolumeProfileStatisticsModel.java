@@ -14,8 +14,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -211,9 +210,9 @@ public class VolumeProfileStatisticsModel extends Model {
     public void queryBackend(final boolean isBrickSelected) {
         startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
 
-        AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery(new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 stopProgress();
                 VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
                 GlusterVolumeProfileInfo profileInfoEntity =vdcValue.getReturnValue();

@@ -18,7 +18,7 @@ public class VmModelHelper {
         VM_TEMPLATE
     }
 
-    public static void sendWarningForNonExportableDisks(Model model, ArrayList<Disk> vmDisks, WarningType warningType) {
+    public static void sendWarningForNonExportableDisks(Model model, List<Disk> vmDisks, WarningType warningType) {
         final ArrayList<Disk> sharedImageDisks = new ArrayList<>();
         final ArrayList<Disk> directLunDisks = new ArrayList<>();
         final ArrayList<Disk> snapshotDisks = new ArrayList<>();

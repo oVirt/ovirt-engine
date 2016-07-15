@@ -9,8 +9,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -86,20 +87,20 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     private void updateWANDisableEffects(final ISpice spice) {
-        AsyncDataProvider.getInstance().getWANDisableEffects(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWANDisableEffects(new AsyncQuery<>(new AsyncCallback<List<WanDisableEffects>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                spice.getOptions().setWanDisableEffects((List<WanDisableEffects>) returnValue);
+            public void onSuccess(List<WanDisableEffects> returnValue) {
+                spice.getOptions().setWanDisableEffects(returnValue);
             }
         }));
     }
 
     private void updateWanColorDepthOptions(final ISpice spice) {
-        AsyncDataProvider.getInstance().getWANColorDepth(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWANColorDepth(new AsyncQuery<>(new AsyncCallback<WanColorDepth>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                spice.getOptions().setWanColorDepth((WanColorDepth) returnValue);
+            public void onSuccess(WanColorDepth returnValue) {
+                spice.getOptions().setWanColorDepth(returnValue);
             }
         }));
     }

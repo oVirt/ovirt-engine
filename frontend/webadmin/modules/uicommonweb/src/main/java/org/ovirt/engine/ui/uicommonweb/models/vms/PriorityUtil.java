@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -21,37 +21,36 @@ public class PriorityUtil {
     }
 
     public void initPriority(final int priority, final PriorityUpdatingCallbacks callbacks) {
-        AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
-                                                                        new INewAsyncCallback() {
-                                                                            @Override
-                                                                            public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery<>(
+                new AsyncCallback<Integer>() {
+                    @Override
+                    public void onSuccess(Integer returnValue) {
 
-                                                                                UnitVmModel model = (UnitVmModel) target;
-                                                                                cachedMaxPriority = (Integer) returnValue;
+                        cachedMaxPriority = returnValue;
 
-                                                                                int value = AsyncDataProvider.getInstance().getRoundedPriority(priority, cachedMaxPriority);
-                                                                                EntityModel tempVar = new EntityModel();
-                                                                                tempVar.setEntity(value);
-                                                                                before(callbacks);
-                                                                                model.getPriority().setSelectedItem(tempVar);
-                                                                                after(callbacks);
-                                                                                updatePriority(callbacks);
+                        int value = AsyncDataProvider.getInstance().getRoundedPriority(priority, cachedMaxPriority);
+                        EntityModel tempVar = new EntityModel();
+                        tempVar.setEntity(value);
+                        before(callbacks);
+                        model.getPriority().setSelectedItem(tempVar);
+                        after(callbacks);
+                        updatePriority(callbacks);
 
-                                                                            }
-                                                                        }));
+                    }
+                }));
     }
 
     private void updatePriority(final PriorityUpdatingCallbacks callbacks) {
         if (cachedMaxPriority == null) {
-            AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
-                                                                            new INewAsyncCallback() {
-                                                                                @Override
-                                                                                public void onSuccess(Object target, Object returnValue) {
-                                                                                    cachedMaxPriority = (Integer) returnValue;
-                                                                                    postUpdatePriority(callbacks);
+            AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery<>(
+                    new AsyncCallback<Integer>() {
+                        @Override
+                        public void onSuccess(Integer returnValue) {
+                            cachedMaxPriority = returnValue;
+                            postUpdatePriority(callbacks);
 
-                                                                                }
-                                                                            }));
+                        }
+                    }));
         }
         else {
             postUpdatePriority(callbacks);

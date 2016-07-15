@@ -12,8 +12,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -139,10 +138,9 @@ public class VolumeBrickModel extends Model {
     private void updateBricksFromHost() {
         VDS selectedServer = getServers().getSelectedItem();
         if (selectedServer != null) {
-            AsyncDataProvider.getInstance().getUnusedBricksFromServer(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getUnusedBricksFromServer(new AsyncQuery<>(new AsyncCallback<List<StorageDevice>>() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    List<StorageDevice> bricks = (List<StorageDevice>) returnValue;
+                public void onSuccess(List<StorageDevice> bricks) {
                     List<String> brickDirectories = new ArrayList<>();
                     for (StorageDevice brick : bricks) {
                         String mountPoint = brick.getMountPoint();

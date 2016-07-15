@@ -19,9 +19,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -61,14 +60,13 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
             if (getClusterQuota().getIsAvailable()) {
                 Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
                     new IdQueryParameters(getCluster().getSelectedItem().getId()),
-                    new AsyncQuery(ImportVmModel.this,
-                            new INewAsyncCallback() {
+                    new AsyncQuery<>(
+                            new AsyncCallback<VdcQueryReturnValue>() {
 
                                 @Override
-                                public void onSuccess(Object model, Object returnValue) {
-                                    ImportVmModel importVmModel = (ImportVmModel) model;
-                                    ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                    importVmModel.getClusterQuota().setItems(quotaList);
+                                public void onSuccess(VdcQueryReturnValue returnValue) {
+                                    ArrayList<Quota> quotaList = returnValue.getReturnValue();
+                                    getClusterQuota().setItems(quotaList);
                                     if (quotaList.isEmpty()
                                             && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
                                         setMessage(ConstantsManager.getInstance()
@@ -96,10 +94,10 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private void fetchCpuProfiles(Guid clusterId) {
         Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery(new AsyncCallback() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object returnValue) {
                         List<CpuProfile> cpuProfiles =
                                 ((VdcQueryReturnValue) returnValue).getReturnValue();
                         getCpuProfiles().setItems(cpuProfiles);
@@ -143,14 +141,14 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         this.storagePool = storagePool;
     }
 
-    public void setItems(final INewAsyncCallback callback, final List<VM>  externalVms) {
+    public void setItems(final AsyncCallback callback, final List<VM>  externalVms) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<VM> vms = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<VM> vms = returnValue.getReturnValue();
 
                         Set<String> existingNames = new HashSet<>();
                         for (VM vm : vms) {
@@ -176,7 +174,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                             vmDataList.add(vmData);
                         }
                         setItems(vmDataList);
-                        callback.onSuccess(model, returnValue);
+                        callback.onSuccess(returnValue);
                     }
                 }));
     }

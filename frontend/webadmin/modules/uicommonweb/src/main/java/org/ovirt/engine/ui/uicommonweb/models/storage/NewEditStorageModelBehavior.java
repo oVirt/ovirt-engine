@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -21,27 +21,25 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
         // Allow Data storage type corresponding to the selected data-center type + ISO and Export that are NFS only:
         for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getStorageModels())) {
             if (item.getRole() == StorageDomainType.ISO) {
-                AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(getModel(),
-                        new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery<>(
+                        new AsyncCallback<StorageDomain>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                            public void onSuccess(StorageDomain returnValue) {
 
-                                NewEditStorageModelBehavior behavior = NewEditStorageModelBehavior.this;
                                 IStorageModel storageModelItem = item;
-                                behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
+                                postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
                         }), dataCenter.getId());
             }
             else if (item.getRole() == StorageDomainType.ImportExport) {
-                AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(getModel(),
-                        new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery<>(
+                        new AsyncCallback<StorageDomain>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                            public void onSuccess(StorageDomain returnValue) {
 
-                                NewEditStorageModelBehavior behavior = NewEditStorageModelBehavior.this;
                                 IStorageModel storageModelItem = item;
-                                behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
+                                postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
                         }), dataCenter.getId());

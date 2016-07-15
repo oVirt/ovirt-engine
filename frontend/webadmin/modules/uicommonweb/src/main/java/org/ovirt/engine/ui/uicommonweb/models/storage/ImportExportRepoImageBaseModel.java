@@ -11,8 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -153,25 +152,22 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     protected void updateDataCenters() {
-        INewAsyncCallback callback = new INewAsyncCallback() {
+        AsyncCallback<List<StoragePool>> callback = new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
-                List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
-
+            public void onSuccess(List<StoragePool> dataCenters) {
                 // Sorting by name
                 Collections.sort(dataCenters, new NameableComparator());
 
-                model.getDataCenter().setItems(dataCenters);
-                model.getDataCenter().setIsEmpty(dataCenters.isEmpty());
-                model.updateControlsAvailability();
+                getDataCenter().setItems(dataCenters);
+                getDataCenter().setIsEmpty(dataCenters.isEmpty());
+                updateControlsAvailability();
 
                 stopProgress();
             }
         };
 
         startProgress();
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, callback));
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(callback));
     }
 
     protected void updateControlsAvailability() {
@@ -190,14 +186,13 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     protected abstract List<StorageDomain> filterStorageDomains(List<StorageDomain> storageDomains);
 
     protected void updateStorageDomains(Guid storagePoolId) {
-        INewAsyncCallback callback = new INewAsyncCallback() {
+        AsyncCallback<List<StorageDomain>> callback = new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
-                List<StorageDomain> storageDomains = model.filterStorageDomains((List<StorageDomain>) returnValue);
-                model.getStorageDomain().setItems(storageDomains);
-                model.getStorageDomain().setIsEmpty(storageDomains.isEmpty());
-                model.updateControlsAvailability();
+            public void onSuccess(List<StorageDomain> returnValue) {
+                List<StorageDomain> storageDomains = filterStorageDomains(returnValue);
+                getStorageDomain().setItems(storageDomains);
+                getStorageDomain().setIsEmpty(storageDomains.isEmpty());
+                updateControlsAvailability();
                 stopProgress();
             }
         };
@@ -205,21 +200,20 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         startProgress();
 
         if (storagePoolId != null) {
-            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, callback), storagePoolId);
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(callback), storagePoolId);
         } else {
-            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, callback));
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(callback));
         }
     }
 
     protected void updateClusters(Guid storagePoolId) {
-        INewAsyncCallback callback = new INewAsyncCallback() {
+        AsyncCallback<List<Cluster>> callback = new AsyncCallback<List<Cluster>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
-                List<Cluster> clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture((List<Cluster>) returnValue);
-                model.getCluster().setItems(clusters);
-                model.getCluster().setIsEmpty(clusters.isEmpty());
-                model.updateControlsAvailability();
+            public void onSuccess(List<Cluster> returnValue) {
+                List<Cluster> clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(returnValue);
+                getCluster().setItems(clusters);
+                getCluster().setIsEmpty(clusters.isEmpty());
+                updateControlsAvailability();
                 stopProgress();
             }
         };
@@ -227,9 +221,9 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         startProgress();
 
         if (storagePoolId != null) {
-            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, callback), storagePoolId);
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(callback), storagePoolId);
         } else {
-            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, callback));
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(callback));
         }
     }
 
@@ -250,9 +244,9 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
 
         startProgress();
         AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
-                new INewAsyncCallback() {
+                new AsyncCallback() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object returnValue) {
                         List<Quota> quotas = (List<Quota>) returnValue;
                         quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
 

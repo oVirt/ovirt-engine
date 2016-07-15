@@ -13,8 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -158,10 +157,10 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                Iterator<InstanceImageLineModel> lineModelIterator = orderedDisksIterator((List<Disk>) returnValue, vm);
+            public void onSuccess(List<Disk> disks) {
+                Iterator<InstanceImageLineModel> lineModelIterator = orderedDisksIterator(disks, vm);
                 storeNextDisk(lineModelIterator, vm);
             }
         }), vm.getId());

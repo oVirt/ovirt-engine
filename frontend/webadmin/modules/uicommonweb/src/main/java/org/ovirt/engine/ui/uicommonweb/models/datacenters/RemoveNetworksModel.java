@@ -18,9 +18,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -102,17 +101,15 @@ public class RemoveNetworksModel extends ConfirmationModel {
      * @param externalProviderIds Set of all external provider id's to which the removed networks belong
      * @return callback object for backend query
      */
-    private AsyncQuery createProviderReadOnlyCallback(final Set<Guid> externalProviderIds) {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+    private AsyncQuery<VdcQueryReturnValue> createProviderReadOnlyCallback(final Set<Guid> externalProviderIds) {
+        return new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<Provider> providers = (List<Provider>) ((VdcQueryReturnValue)returnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<Provider> providers = returnValue.getReturnValue();
                 boolean isReadOnly = checkForRemoveExternalNetworkAvailability(providers, externalProviderIds);
                 makeRemoveExternalNetworkCheckboxAvailable(isReadOnly);
             }
-        };
-        return asyncQuery;
+        });
     }
 
     /**

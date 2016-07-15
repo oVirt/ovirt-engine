@@ -20,9 +20,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -241,72 +240,65 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     }
 
     private void initVmSnapshots() {
-        AsyncDataProvider.getInstance().getVmSnapshotList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmSnapshotList(new AsyncQuery<>(new AsyncCallback<List<Snapshot>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                SnapshotModel snapshotModel = (SnapshotModel) target;
-                ArrayList<Snapshot> snapshots = (ArrayList<Snapshot>) returnValue;
-
-                if (snapshotModel.showWarningForByVmSnapshotsValidation(snapshots)) {
+            public void onSuccess(List<Snapshot> snapshots) {
+                if (showWarningForByVmSnapshotsValidation(snapshots)) {
                     UICommand closeCommand = getCancelCommand()
                             .setTitle(ConstantsManager.getInstance().getConstants().close());
-                    snapshotModel.getCommands().add(closeCommand);
-                    snapshotModel.stopProgress();
+                    getCommands().add(closeCommand);
+                    stopProgress();
                 }
                 else {
-                    snapshotModel.initVmDisks();
+                    initVmDisks();
                 }
             }
         }), vm.getId());
     }
 
     private void initVmDisks() {
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                SnapshotModel snapshotModel = (SnapshotModel) target;
-                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+            public void onSuccess(List<Disk> disks) {
                 updateSnapshotDisks(disks);
 
-                VmModelHelper.sendWarningForNonExportableDisks(snapshotModel, disks, VmModelHelper.WarningType.VM_SNAPSHOT);
-                snapshotModel.getCommands().add(getOnSaveCommand());
-                snapshotModel.getCommands().add(getCancelCommand());
-                snapshotModel.stopProgress();
+                VmModelHelper.sendWarningForNonExportableDisks(SnapshotModel.this, disks, VmModelHelper.WarningType.VM_SNAPSHOT);
+                getCommands().add(getOnSaveCommand());
+                getCommands().add(getCancelCommand());
+                stopProgress();
             }
         }), vm.getId());
     }
 
-    private void updateSnapshotDisks(ArrayList<Disk> disks) {
+    private void updateSnapshotDisks(List<Disk> disks) {
         ArrayList<DiskImage> diskImages = Linq.toList(Linq.<DiskImage>filterNonSnapableDisks(disks));
         Collections.sort(diskImages, new DiskByDiskAliasComparator());
         getSnapshotDisks().setItems(diskImages);
     }
 
-    public void updateVmConfiguration(final INewAsyncCallback onUpdateAsyncCallback) {
+    public void updateVmConfiguration(final AsyncCallback<Void> onUpdateAsyncCallback) {
         Snapshot snapshot = getEntity();
         if (snapshot == null) {
             return;
         }
 
-        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                SnapshotModel snapshotModel = (SnapshotModel) target;
-                Snapshot snapshot = snapshotModel.getEntity();
-                VM vm = (VM) returnValue;
+            public void onSuccess(VM vm) {
+                Snapshot snapshot = getEntity();
 
                 if (vm != null && snapshot != null) {
-                    snapshotModel.setVm(vm);
-                    snapshotModel.setDisks(vm.getDiskList());
-                    snapshotModel.setNics(vm.getInterfaces());
-                    snapshotModel.setApps(Arrays.asList(snapshot.getAppList() != null ?
+                    setVm(vm);
+                    setDisks(vm.getDiskList());
+                    setNics(vm.getInterfaces());
+                    setApps(Arrays.asList(snapshot.getAppList() != null ?
                             snapshot.getAppList().split(",") : new String[]{})); //$NON-NLS-1$
 
-                    Collections.sort(snapshotModel.getDisks(), new DiskByDiskAliasComparator());
-                    Collections.sort(snapshotModel.getNics(), new LexoNumericNameableComparator<>());
+                    Collections.sort(getDisks(), new DiskByDiskAliasComparator());
+                    Collections.sort(getNics(), new LexoNumericNameableComparator<>());
                 }
 
-                onUpdateAsyncCallback.onSuccess(snapshotModel, null);
+                onUpdateAsyncCallback.onSuccess(null);
             }
         }), snapshot.getId());
     }
@@ -328,7 +320,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         return getDescription().getIsValid();
     }
 
-    private boolean showWarningForByVmSnapshotsValidation(ArrayList<Snapshot> snapshots) {
+    private boolean showWarningForByVmSnapshotsValidation(List<Snapshot> snapshots) {
         for (Snapshot snapshot : snapshots) {
             if (!validateNewSnapshotByStatus(snapshot.getStatus()) || !validateNewSnapshotByType(snapshot.getType())) {
                 getDescription().setIsAvailable(false);

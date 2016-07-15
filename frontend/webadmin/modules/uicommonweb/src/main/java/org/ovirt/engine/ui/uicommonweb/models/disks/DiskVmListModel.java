@@ -8,9 +8,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -41,12 +40,13 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM> {
             return;
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        IdQueryParameters getVmsByDiskGuidParameters = new IdQueryParameters(disk.getId());
+        getVmsByDiskGuidParameters.setRefresh(getIsQueryFirstTime());
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                diskVmMap = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                diskVmMap = returnValue.getReturnValue();
 
                 ArrayList<VM> vmList = new ArrayList<>();
                 ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
@@ -61,12 +61,7 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM> {
 
                 setItems(vmList);
             }
-        };
-
-        IdQueryParameters getVmsByDiskGuidParameters = new IdQueryParameters(disk.getId());
-        getVmsByDiskGuidParameters.setRefresh(getIsQueryFirstTime());
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, _asyncQuery);
+        }));
 
         setIsQueryFirstTime(false);
     }

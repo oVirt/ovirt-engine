@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,13 +11,10 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.common.utils.PairQueryable;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -111,18 +107,9 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
             return;
         }
 
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                setItems((Collection<PairQueryable<Cluster, NetworkCluster>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        };
-
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetClustersAndNetworksByNetworkId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetClustersAndNetworksByNetworkId, params, new SetItemsAsyncQuery());
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -12,9 +13,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
 import com.google.inject.Inject;
 
 public class ImportTemplateModel extends ImportVmFromExportDomainModel {
@@ -76,12 +77,12 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
     public void init(final Collection<VmTemplate> externalTemplates, final Guid storageDomainId) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(createSearchPattern(externalTemplates), SearchType.VmTemplate),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
                         UIConstants constants = ConstantsManager.getInstance().getConstants();
-                        List<VmTemplate> vmtList = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        List<VmTemplate> vmtList = returnValue.getReturnValue();
 
                         List<ImportTemplateData> templateDataList = new ArrayList<>();
                         for (VmTemplate template : externalTemplates) {
@@ -96,9 +97,9 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                             templateDataList.add(templateData);
                         }
                         setItems(templateDataList);
-                        withDataCenterLoaded(storageDomainId, new INewAsyncCallback() {
+                        withDataCenterLoaded(storageDomainId, new AsyncCallback<List<StoragePool>>() {
                             @Override
-                            public void onSuccess(Object model, Object returnValue) {
+                            public void onSuccess(List<StoragePool> returnValue) {
                                 doInit();
                             }
                         });

@@ -1,50 +1,53 @@
 package org.ovirt.engine.ui.frontend;
 
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-
-public class AsyncQuery {
+public class AsyncQuery<T> {
 
     /**
      * Null object singleton that represents an empty (no-op) query callback.
      */
-    private static final INewAsyncCallback EMPTY_CALLBACK = new INewAsyncCallback() {
+    private static final AsyncCallback EMPTY_CALLBACK = new AsyncCallback() {
         @Override
-        public void onSuccess(Object model, Object returnValue) {
+        public void onSuccess(Object returnValue) {
             // Empty
         }
     };
 
     public Object model;
-    public INewAsyncCallback asyncCallback;
-    public IAsyncConverter converterCallback = null;
+    public AsyncCallback<T> asyncCallback;
+    public Converter<T> converterCallback = null;
     private boolean handleFailure;
-    public VdcQueryReturnValue originalReturnValue;
 
     public AsyncQuery() {
         this.asyncCallback = EMPTY_CALLBACK;
     }
 
-    public AsyncQuery(INewAsyncCallback asyncCallback) {
+    public AsyncQuery(AsyncCallback<T> asyncCallback) {
         this(null, asyncCallback);
     }
 
-    public AsyncQuery(Object target, INewAsyncCallback asyncCallback) {
-        setModel(target);
+    public AsyncQuery(AsyncCallback<T> asyncCallback, boolean handleFailure) {
+        this(null, asyncCallback, handleFailure);
+    }
+
+    protected AsyncQuery(Object target, AsyncCallback<T> asyncCallback) {
+        this.model = target;
         this.asyncCallback = asyncCallback;
     }
 
-    public AsyncQuery(Object target, INewAsyncCallback asyncCallback, boolean handleFailure) {
-        setModel(target);
+    protected AsyncQuery(Object target, AsyncCallback<T> asyncCallback, boolean handleFailure) {
+        this.model = target;
         this.asyncCallback = asyncCallback;
         this.handleFailure = handleFailure;
     }
 
-    public VdcQueryReturnValue getOriginalReturnValue() {
-        return originalReturnValue;
+    public AsyncQuery<T> handleFailure() {
+        setHandleFailure(true);
+        return this;
     }
 
-    public void setOriginalReturnValue(VdcQueryReturnValue originalReturnValue) {
-        this.originalReturnValue = originalReturnValue;
+    public AsyncQuery<T> withConverter(Converter<T> converter) {
+        this.converterCallback = converter;
+        return this;
     }
 
     public boolean isHandleFailure() {
@@ -59,19 +62,15 @@ public class AsyncQuery {
         return model;
     }
 
-    public void setModel(Object model) {
-        this.model = model;
-    }
-
-    public INewAsyncCallback getDel() {
+    public AsyncCallback<T> getDel() {
         return asyncCallback;
     }
 
-    public void setDel(INewAsyncCallback asyncCallback) {
+    public void setDel(AsyncCallback<T> asyncCallback) {
         this.asyncCallback = asyncCallback;
     }
 
-    public IAsyncConverter getConverter() {
+    public Converter<T> getConverter() {
         return converterCallback;
     }
 

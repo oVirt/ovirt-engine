@@ -5,9 +5,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -164,33 +163,29 @@ public abstract class ConsoleModel extends EntityModel<VM> {
                 new HasAdElementReconnectPermissionParameters(Frontend.getInstance().getLoggedInUser().getId(),
                         vm.getId());
 
-        final AsyncQuery portalUserReconnectPermissionQuery = new AsyncQuery();
-        portalUserReconnectPermissionQuery.setModel(this);
-        portalUserReconnectPermissionQuery.asyncCallback = new INewAsyncCallback() {
+        final AsyncQuery<VdcQueryReturnValue> portalUserReconnectPermissionQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                boolean returnValue = ((VdcQueryReturnValue)result).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue result) {
+                boolean returnValue = result.getReturnValue();
                 if (returnValue) {
                     displayConsoleConnectConfirmPopup(command);
                 } else {
                     displayUserCantReconnectDialog();
                 }
             }
-        };
+        });
 
-        final AsyncQuery consoleUserReconnectPermissionQuery = new AsyncQuery();
-        consoleUserReconnectPermissionQuery.setModel(this);
-        consoleUserReconnectPermissionQuery.asyncCallback = new INewAsyncCallback() {
+        final AsyncQuery<VdcQueryReturnValue> consoleUserReconnectPermissionQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                boolean returnValue = ((VdcQueryReturnValue)result).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue result) {
+                boolean returnValue = result.getReturnValue();
                 if (returnValue) {
                     command.execute();
                 } else {
                     Frontend.getInstance().runQuery(VdcQueryType.HasAdElementReconnectPermission, portalUserReconnectPermParams, portalUserReconnectPermissionQuery);
                 }
             }
-        };
+        });
 
         Frontend.getInstance().runQuery(VdcQueryType.HasAdElementReconnectPermission, consoleUserReconnectPermParams, consoleUserReconnectPermissionQuery);
     }

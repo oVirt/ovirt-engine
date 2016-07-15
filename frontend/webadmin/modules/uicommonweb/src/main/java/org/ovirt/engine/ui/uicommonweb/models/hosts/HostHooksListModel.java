@@ -9,9 +9,8 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -65,13 +64,13 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
         super.syncSearch();
 
         setIsEmpty(false);
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
+        tempVar.setRefresh(getIsQueryFirstTime());
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsHooksById, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 ArrayList<HashMap<String, String>> list = new ArrayList<>();
-                HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = returnValue.getReturnValue();
                 HashMap<String, String> row;
                 for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) {
                     for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue()
@@ -88,10 +87,7 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
                 }
                 setItems(list);
             }
-        };
-        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
-        tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsHooksById, tempVar, _asyncQuery);
+        }));
 
     }
 

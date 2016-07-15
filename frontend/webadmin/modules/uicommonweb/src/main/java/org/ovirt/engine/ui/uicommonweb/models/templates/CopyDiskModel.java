@@ -13,9 +13,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
@@ -38,14 +37,11 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
 
         setDiskImages(disksImages);
 
-        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery<>(new AsyncCallback<List<DiskImage>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                CopyDiskModel copyDiskModel = (CopyDiskModel) target;
-                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-
-                copyDiskModel.onInitAllDisks(disks);
-                copyDiskModel.onInitDisks();
+            public void onSuccess(List<DiskImage> disks) {
+                onInitAllDisks((List) disks);
+                onInitDisks();
             }
         }));
     }
@@ -67,13 +63,10 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                CopyDiskModel copyDiskModel = (CopyDiskModel) target;
-                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
-
-                copyDiskModel.onInitStorageDomains(storageDomains);
+            public void onSuccess(List<StorageDomain> storageDomains) {
+                onInitStorageDomains(storageDomains);
             }
         }), ((DiskImage) disk).getStoragePoolId());
     }

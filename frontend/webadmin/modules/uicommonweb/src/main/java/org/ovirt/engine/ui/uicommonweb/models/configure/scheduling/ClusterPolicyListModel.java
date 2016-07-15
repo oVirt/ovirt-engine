@@ -12,9 +12,8 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -108,15 +107,14 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     protected void syncSearch() {
         super.syncSearch();
         if (getIsQueryFirstTime()) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery<>(
+                    new AsyncCallback<VdcQueryReturnValue>() {
 
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            ClusterPolicyListModel clusterPolicyListModel = (ClusterPolicyListModel) model;
-                            ArrayList<PolicyUnit> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            clusterPolicyListModel.setPolicyUnits(list);
-                            clusterPolicyListModel.fetchClusterPolicies();
+                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                            ArrayList<PolicyUnit> list = returnValue.getReturnValue();
+                            setPolicyUnits(list);
+                            fetchClusterPolicies();
                             if (policyUnitModel != null) {
                                 policyUnitModel.getPolicyUnits().setItems(sort(policyUnits));
                             }
@@ -129,11 +127,11 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     }
 
     private void fetchClusterPolicies() {
-        AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ArrayList<ClusterPolicy> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<ClusterPolicy> list = returnValue.getReturnValue();
                 Collections.sort(list, new Linq.ClusterPolicyComparator());
                 setItems(list);
             }

@@ -1,12 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -32,10 +31,9 @@ public class VirtioScsiUtil {
         }
 
         AsyncDataProvider.getInstance().getDiskInterfaceList(osId, cluster.getCompatibilityVersion(),
-                new AsyncQuery(model, new INewAsyncCallback() {
+                model.asyncQuery(new AsyncCallback<List<DiskInterface>>() {
                     @Override
-                    public void onSuccess(Object parentModel, Object returnValue) {
-                        ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) returnValue;
+                    public void onSuccess(List<DiskInterface> diskInterfaces) {
                         boolean isOsSupportVirtioScsi = diskInterfaces.contains(DiskInterface.VirtIO_SCSI);
 
                         callBeforeUpdates();
@@ -50,10 +48,10 @@ public class VirtioScsiUtil {
                                 model.getIsVirtioScsiEnabled().setEntity(true);
                                 callAfterUpdates();
                             } else {
-                                AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(model, new INewAsyncCallback() {
+                                AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(model.asyncQuery(new AsyncCallback<Boolean>() {
                                     @Override
-                                    public void onSuccess(Object parentModel, Object returnValue) {
-                                        model.getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
+                                    public void onSuccess(Boolean returnValue) {
+                                        model.getIsVirtioScsiEnabled().setEntity(returnValue);
                                         callAfterUpdates();
                                     }
                                 }), vmId);

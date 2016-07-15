@@ -1,17 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -46,21 +42,11 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel<StoragePo
         if (getEntity() == null) {
             return;
         }
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.model = this;
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                setItems((ArrayList<NetworkQoS>) ((VdcQueryReturnValue) returnValue).getReturnValue());
-
-            }
-        };
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId,
                 parameters,
-                asyncQuery);
+                new SetItemsAsyncQuery());
     }
 
     @Override

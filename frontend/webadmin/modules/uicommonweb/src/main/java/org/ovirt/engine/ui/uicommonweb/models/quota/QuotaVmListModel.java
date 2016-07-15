@@ -8,9 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -32,20 +31,15 @@ public class QuotaVmListModel extends SearchableListModel<Quota, VM> {
 
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                QuotaVmListModel vmModel = (QuotaVmListModel) model;
-                vmModel.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                vmModel.setIsEmpty(((List) vmModel.getItems()).size() == 0);
-            }
-        };
-
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsRelatedToQuotaId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsRelatedToQuotaId, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+            @Override
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                setItems((ArrayList<VM>) returnValue.getReturnValue());
+                setIsEmpty(((List) getItems()).size() == 0);
+            }
+        }));
     }
 
     @Override

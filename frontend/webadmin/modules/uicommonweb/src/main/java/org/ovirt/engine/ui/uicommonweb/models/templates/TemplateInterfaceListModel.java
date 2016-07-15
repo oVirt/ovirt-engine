@@ -7,8 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -178,11 +177,11 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
         super.setEntity(value);
 
         if (getEntity() != null) {
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
 
                 @Override
-                public void onSuccess(Object listModel, Object returnValue) {
-                    cluster = (Cluster) returnValue;
+                public void onSuccess(Cluster returnValue) {
+                    cluster = returnValue;
                     updateActionAvailability();
                 }
             }), getEntity().getClusterId());

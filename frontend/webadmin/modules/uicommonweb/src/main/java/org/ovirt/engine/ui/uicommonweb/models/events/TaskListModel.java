@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public class TaskListModel extends SearchableListModel {
@@ -30,14 +29,10 @@ public class TaskListModel extends SearchableListModel {
 
     @Override
     protected void syncSearch() {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                TaskListModel taskListModel = (TaskListModel) model;
-                ArrayList<Job> taskList =
-                        ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                ArrayList<Job> taskList = returnValue.getReturnValue();
                 if (taskList.size() == 0) {
                     detailedTaskMap.clear();
                 }
@@ -78,22 +73,22 @@ public class TaskListModel extends SearchableListModel {
 
                     for (Job task : entry.getValue()) {
                         switch (task.getStatus()) {
-                        case STARTED:
-                            hasStartedStatus = true;
-                            break;
-                        case FINISHED:
-                            finishedCount++;
-                            break;
-                        case FAILED:
-                            hasFailedStatus = true;
-                            break;
-                        case ABORTED:
-                            hasAbortedStatus = true;
-                            break;
-                        case UNKNOWN:
-                            break;
-                        default:
-                            break;
+                            case STARTED:
+                                hasStartedStatus = true;
+                                break;
+                            case FINISHED:
+                                finishedCount++;
+                                break;
+                            case FAILED:
+                                hasFailedStatus = true;
+                                break;
+                            case ABORTED:
+                                hasAbortedStatus = true;
+                                break;
+                            case UNKNOWN:
+                                break;
+                            default:
+                                break;
                         }
 
                         if (entry.getKey().getLastUpdateTime() == null
@@ -138,7 +133,7 @@ public class TaskListModel extends SearchableListModel {
                     boolean hadDetails = detailedTaskMap.containsKey(id) && detailedTaskMap.get(id) != null;
                     if (hadDetails
                             && task.getLastUpdateTime().getTime()
-                                    - detailedTaskMap.get(id).getLastUpdateTime().getTime() < 100) {
+                            - detailedTaskMap.get(id).getLastUpdateTime().getTime() < 100) {
                         task.setSteps(detailedTaskMap.get(id).getSteps());
                     } else if (hadDetails) {
                         detailedTaskMap.remove(id);
@@ -148,9 +143,9 @@ public class TaskListModel extends SearchableListModel {
                     newTaskList.add(task);
                 }
 
-                taskListModel.setItems(newTaskList);
+                setItems(newTaskList);
             }
-        };
+        });
         GetJobsByOffsetQueryParameters tempVar = new GetJobsByOffsetQueryParameters();
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetJobsByOffset,
@@ -167,17 +162,15 @@ public class TaskListModel extends SearchableListModel {
     public boolean updateSingleTask(final String guidOrCorrelationId) {
         if (!detailedTaskMap.containsKey(guidOrCorrelationId)) {
             detailedTaskMap.put(guidOrCorrelationId, null);
-            AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.setModel(this);
+            AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>();
 
             if (guidOrCorrelationId.startsWith(WEBADMIN)) {
-                asyncQuery.asyncCallback = new INewAsyncCallback() {
+                asyncQuery.asyncCallback = new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue) {
-                        TaskListModel taskListModel = (TaskListModel) model;
-                        ArrayList<Job> retTasks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        ArrayList<Job> retTasks = returnValue.getReturnValue();
 
-                        ArrayList<Job> taskList = (ArrayList<Job>) taskListModel.getItems();
+                        ArrayList<Job> taskList = (ArrayList<Job>) getItems();
                         ArrayList<Job> newTaskList = new ArrayList<>();
                         for (Job task : taskList) {
                             if (task.getCorrelationId().equals(guidOrCorrelationId)) {
@@ -220,7 +213,7 @@ public class TaskListModel extends SearchableListModel {
                             newTaskList.add(task);
                         }
 
-                        taskListModel.setItems(newTaskList);
+                        setItems(newTaskList);
                     }
                 };
                 GetJobsByCorrelationIdQueryParameters parameters = new GetJobsByCorrelationIdQueryParameters();
@@ -228,16 +221,15 @@ public class TaskListModel extends SearchableListModel {
                 Frontend.getInstance().runQuery(VdcQueryType.GetJobsByCorrelationId,
                         parameters, asyncQuery);
             } else {
-                asyncQuery.asyncCallback = new INewAsyncCallback() {
+                asyncQuery.asyncCallback = new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue) {
-                        TaskListModel taskListModel = (TaskListModel) model;
-                        Job retTask = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue ReturnValue) {
+                        Job retTask = ReturnValue.getReturnValue();
                         if (retTask == null) {
                             return;
                         }
                         detailedTaskMap.put(retTask.getId().toString(), retTask);
-                        ArrayList<Job> taskList = (ArrayList<Job>) taskListModel.getItems();
+                        ArrayList<Job> taskList = (ArrayList<Job>) getItems();
                         ArrayList<Job> newTaskList = new ArrayList<>();
                         for (Job task : taskList) {
                             if (task.getId().equals(retTask.getId())) {
@@ -247,7 +239,7 @@ public class TaskListModel extends SearchableListModel {
                             }
                         }
 
-                        taskListModel.setItems(newTaskList);
+                        setItems(newTaskList);
                     }
                 };
                 IdQueryParameters parameters = new IdQueryParameters(new Guid(guidOrCorrelationId));

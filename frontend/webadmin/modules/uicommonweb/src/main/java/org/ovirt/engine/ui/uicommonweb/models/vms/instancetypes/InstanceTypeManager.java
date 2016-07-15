@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -92,11 +92,10 @@ public abstract class InstanceTypeManager {
     public void updateAll() {
         final Guid selectedInstanceTypeId = getSelectedInstanceTypeId();
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllInstanceTypes, new VdcQueryParametersBase(), new AsyncQuery(this, new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllInstanceTypes, new VdcQueryParametersBase(), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue res = (VdcQueryReturnValue) returnValue;
-                if (res == null || !res.getSucceeded()) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                if (returnValue == null || !returnValue.getSucceeded()) {
                     return;
                 }
 
@@ -107,7 +106,7 @@ public abstract class InstanceTypeManager {
                     instanceTypes.add(CustomInstanceType.INSTANCE);
                 }
 
-                for (InstanceType instanceType : (Iterable<InstanceType>) res.getReturnValue()) {
+                for (InstanceType instanceType : (Iterable<InstanceType>) returnValue.getReturnValue()) {
                     instanceTypes.add(instanceType);
                 }
 
@@ -300,18 +299,18 @@ public abstract class InstanceTypeManager {
 
         activate();
 
-        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Boolean returnValue) {
                 deactivate();
-                getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
+                getModel().getIsSoundcardEnabled().setEntity(returnValue);
                 activate();
 
-                Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this, new INewAsyncCallback() {
+                Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
                         deactivate();
-                        List<String> consoleDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        List<String> consoleDevices = returnValue.getReturnValue();
                         getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
                         activate();
                         postDoUpdateManagedFieldsFrom(vmBase);
@@ -345,14 +344,12 @@ public abstract class InstanceTypeManager {
     }
 
     private void updateWatchdog(final VmBase vmBase, final boolean continueWithNext) {
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 deactivate();
-                UnitVmModel model = (UnitVmModel) target;
-                VdcQueryReturnValue val = (VdcQueryReturnValue) returnValue;
                 @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs = val.getReturnValue();
+                Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
 
                 if (watchdogs.size() == 0) {
                     model.getWatchdogAction().setSelectedItem(model.getWatchdogAction().getItems().iterator().next());
@@ -379,12 +376,12 @@ public abstract class InstanceTypeManager {
 
     protected void updateBalloon(final VmBase vmBase, final boolean continueWithNext) {
         if (model.getMemoryBalloonDeviceEnabled().getIsChangable() && model.getMemoryBalloonDeviceEnabled().getIsAvailable()) {
-            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(
+                    new AsyncCallback<VdcQueryReturnValue>() {
                         @Override
-                        public void onSuccess(Object parenModel, Object returnValue) {
+                        public void onSuccess(VdcQueryReturnValue returnValue) {
                             deactivate();
-                            getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue)returnValue).getReturnValue());
+                            getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
                             activate();
                             if (continueWithNext) {
                                 updateRngDevice(vmBase);
@@ -401,13 +398,12 @@ public abstract class InstanceTypeManager {
     protected void updateRngDevice(final VmBase vmBase) {
         if (model.getIsRngEnabled().getIsChangable() && model.getIsRngEnabled().getIsAvailable()) {
             if (!isNextRunConfigurationExists()) {
-                Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()), new AsyncQuery(
-                        this,
-                        new INewAsyncCallback() {
+                Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(
+                        new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
-                            public void onSuccess(Object model, Object returnValue) {
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
                                 deactivate();
-                                List<VmDevice> rngDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                List<VmDevice> rngDevices = returnValue.getReturnValue();
                                 getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
                                 if (!rngDevices.isEmpty()) {
                                     VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
@@ -480,9 +476,9 @@ public abstract class InstanceTypeManager {
         }
 
         // graphics
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this, new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object modelFromCallback, Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 deactivate();
                 // select display protocol
                 DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
@@ -492,7 +488,7 @@ public abstract class InstanceTypeManager {
                 maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
 
                 Set<GraphicsType> graphicsTypes = new HashSet<>();
-                List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
                 for (GraphicsDevice graphicsDevice : graphicsDevices) {
                     graphicsTypes.add(graphicsDevice.getGraphicsType());
                 }

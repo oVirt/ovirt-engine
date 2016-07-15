@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -411,9 +410,9 @@ public abstract class VmInterfaceModel extends Model {
 
     protected void initProfiles() {
         AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        _asyncQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model1, Object result1) {
+            public void onSuccess(Object result1) {
                 getProfile().setItems((List<VnicProfileView>) result1);
                 profileBehavior.initSelectedProfile(getProfile(), getNic());
                 updateProfileChangability();

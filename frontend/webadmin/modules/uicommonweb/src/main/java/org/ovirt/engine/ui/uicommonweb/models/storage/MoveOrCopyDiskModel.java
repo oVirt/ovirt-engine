@@ -20,8 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -108,7 +107,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return true;
     }
 
-    protected void onInitAllDisks(ArrayList<Disk> disks) {
+    protected void onInitAllDisks(List<Disk> disks) {
         for (Disk disk : disks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 allDisks.add(Linq.diskToModel(disk));
@@ -116,7 +115,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
     }
 
-    protected void onInitStorageDomains(ArrayList<StorageDomain> storages) {
+    protected void onInitStorageDomains(List<StorageDomain> storages) {
         for (StorageDomain storage : storages) {
             if (Linq.isDataActiveStorageDomain(storage)) {
                 getActiveStorageDomains().add(storage);
@@ -125,15 +124,12 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         Collections.sort(getActiveStorageDomains(), new NameableComparator());
 
         if (!storages.isEmpty()) {
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
-                    MoveOrCopyDiskModel model = (MoveOrCopyDiskModel) target;
-                    StoragePool dataCenter = (StoragePool) returnValue;
-
-                    model.setDataCenter(dataCenter);
-                    model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
-                    model.postInitStorageDomains();
+                public void onSuccess(StoragePool dataCenter) {
+                    setDataCenter(dataCenter);
+                    setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
+                    postInitStorageDomains();
                 }
             }), storages.get(0).getStoragePoolId());
         }

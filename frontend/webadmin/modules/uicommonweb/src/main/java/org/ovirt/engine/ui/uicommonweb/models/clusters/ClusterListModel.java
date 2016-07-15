@@ -33,9 +33,8 @@ import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -233,15 +232,14 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
             setGuideContext(cluster.getId());
         }
 
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                new AsyncCallback<Cluster>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        ClusterListModel<Void> clusterListModel = (ClusterListModel<Void>) target;
-                        ClusterGuideModel model = (ClusterGuideModel) clusterListModel.getWindow();
-                        model.setEntity((Cluster) returnValue);
+                    public void onSuccess(Cluster returnValue) {
+                        ClusterGuideModel model = (ClusterGuideModel) getWindow();
+                        model.setEntity(returnValue);
 
-                        UICommand tempVar = new UICommand("Cancel", clusterListModel); //$NON-NLS-1$
+                        UICommand tempVar = new UICommand("Cancel", ClusterListModel.this); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
                         tempVar.setIsDefault(true);
                         tempVar.setIsCancel(true);
@@ -311,20 +309,16 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
         clusterModel.getMigrationBandwidthLimitType().setSelectedItem(MigrationBandwidthLimitType.DEFAULT);
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                ClusterListModel<Void> clModel = (ClusterListModel<Void>) model;
-                ClusterModel cModel = (ClusterModel) clModel.getWindow();
-                List<StoragePool> dataCenters = (List<StoragePool>) result;
+            public void onSuccess(List<StoragePool> dataCenters) {
+                ClusterModel cModel = (ClusterModel) getWindow();
 
                 // Be aware of system tree selection.
                 // Strict data center as neccessary.
-                if (clModel.getSystemTreeSelectedItem() != null
-                        && clModel.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
-                    SystemTreeItemModel treeSelectedItem = clModel.getSystemTreeSelectedItem();
+                if (getSystemTreeSelectedItem() != null
+                        && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
+                    SystemTreeItemModel treeSelectedItem = getSystemTreeSelectedItem();
                     SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
                     StoragePool selectDataCenter = (StoragePool) treeSelectedDc.getEntity();
 
@@ -337,13 +331,12 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                     cModel.getDataCenter().setItems(dataCenters, Linq.firstOrNull(dataCenters));
                 }
 
-                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", clModel); //$NON-NLS-1$
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", ClusterListModel.this); //$NON-NLS-1$
                 cModel.getCommands().add(tempVar);
-                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", clModel); //$NON-NLS-1$
+                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", ClusterListModel.this); //$NON-NLS-1$
                 cModel.getCommands().add(tempVar2);
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+        }));
         clusterModel.initMigrationPolicies(false);
     }
 
@@ -405,16 +398,12 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         clusterModel.getAllowOverbooking()
                 .setEntity(OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType());
 
-        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                        final boolean isVirtGlusterAllowed = (Boolean) returnValue;
-                        AsyncQuery asyncQuery = new AsyncQuery();
-                        asyncQuery.setModel(clusterModel);
-                        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            public void onSuccess(final Boolean isVirtGlusterAllowed) {
+                        AsyncDataProvider.getInstance().getVolumeList(clusterModel.asyncQuery(new AsyncCallback<List<GlusterVolumeEntity>>() {
                             @Override
-                            public void onSuccess(Object model1, Object result) {
-                                List<GlusterVolumeEntity> volumes = (List<GlusterVolumeEntity>) result;
+                            public void onSuccess(List<GlusterVolumeEntity> volumes) {
                                 if (volumes.size() > 0) {
                                     clusterModel.getEnableGlusterService().setIsChangeable(false);
                                     if (!isVirtGlusterAllowed) {
@@ -422,8 +411,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                                     }
                                 }
                             }
-                        };
-                        AsyncDataProvider.getInstance().getVolumeList(asyncQuery, cluster.getName());
+                        }), cluster.getName());
                         if (cluster.getClusterHostsAndVms().getVms() > 0) {
                             clusterModel.getEnableOvirtService().setIsChangeable(false);
                             if (!isVirtGlusterAllowed) {
@@ -611,10 +599,10 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
     private void checkForActiveVms(ClusterModel model, final ConfirmationModel confirmModel) {
         Guid clusterId = model.getEntity().getId();
         Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInClusterByClusterId,
-                new IdQueryParameters(clusterId), new AsyncQuery(new INewAsyncCallback() {
+                new IdQueryParameters(clusterId), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            Integer numOfActiveVms = ((VdcQueryReturnValue)returnValue).getReturnValue();
+                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                            Integer numOfActiveVms = returnValue.getReturnValue();
                             if (numOfActiveVms != 0) {
                                 confirmModel.setMessage(constants.thereAreActiveVMsRequiringRestart());
                             }
@@ -656,11 +644,9 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         cancelConfirmation();
 
         Cluster cluster = buildCluster(model);
-        AsyncDataProvider.getInstance().getClusterEditWarnings(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterEditWarnings(new AsyncQuery<>(new AsyncCallback<ClusterEditWarnings>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ClusterEditWarnings warnings = ((VdcQueryReturnValue) returnValue).getReturnValue();
-
+            public void onSuccess(ClusterEditWarnings warnings) {
                 if (!warnings.isEmpty()) {
                     ClusterWarningsModel confirmWindow = new ClusterWarningsModel();
                     confirmWindow.init(warnings);
@@ -814,15 +800,12 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
 
     private void fetchAndImportClusterHosts(final ClusterModel clusterModel) {
         getWindow().startProgress();
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.setModel(this);
-        aQuery.setHandleFailure(true);
-        aQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> aQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(VdcQueryReturnValue result) {
                 getWindow().stopProgress();
 
-                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
+                VdcQueryReturnValue returnValue = result;
                 if (returnValue == null) {
                     onEmptyGlusterHosts(clusterModel);
                     return;
@@ -852,7 +835,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                 }
                 importClusterHosts(clusterModel, list);
             }
-        };
+        });
+        aQuery.setHandleFailure(true);
         AsyncDataProvider.getInstance().getGlusterHosts(aQuery,
                 clusterModel.getGlusterHostAddress().getEntity(),
                 clusterModel.getGlusterHostPassword().getEntity(),
@@ -1131,11 +1115,10 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(getSelectedItem().getId()),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery(new AsyncCallback() {
 
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        ClusterListModel<Void> model = (ClusterListModel<Void>) target;
+                    public void onSuccess(Object returnValue) {
                         List<VDS> hosts = null;
                         if (returnValue instanceof List) {
                             hosts = (List<VDS>) returnValue;
@@ -1163,7 +1146,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                                     constants.youAreAboutChangeClusterCompatibilityVersionMsg());
                         }
 
-                        model.stopProgress();
+                        stopProgress();
                     }
                 }));
     }

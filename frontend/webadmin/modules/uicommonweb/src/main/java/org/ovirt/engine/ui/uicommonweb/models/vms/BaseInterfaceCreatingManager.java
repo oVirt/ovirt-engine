@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 
 public abstract class BaseInterfaceCreatingManager {
 
@@ -38,11 +39,9 @@ public abstract class BaseInterfaceCreatingManager {
     public void updateVnics(final Guid vmId,
             final Iterable<VnicInstanceType> vnicsWithProfiles,
             final UnitVmModel unitVmModel) {
-        AsyncQuery getNicsQuery = new AsyncQuery();
-        getNicsQuery.asyncCallback = new INewAsyncCallback() {
+        getNics(new AsyncQuery<>(new AsyncCallback<List<VmNetworkInterface>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                Iterable<VmNetworkInterface> existingVnics = (Iterable<VmNetworkInterface>) result;
+            public void onSuccess(List<VmNetworkInterface> existingVnics) {
                 if (existingVnics == null) {
                     existingVnics = new ArrayList<>();
                 }
@@ -93,9 +92,7 @@ public abstract class BaseInterfaceCreatingManager {
                 doNicManipulation(createVnicParameters, updateVnicParameters, removeVnicParameters, unitVmModel.getIsNew(), vmId, unitVmModel);
             }
 
-        };
-
-        getNics(getNicsQuery, vmId, unitVmModel);
+        }), vmId, unitVmModel);
     }
 
     private void updateVnicType(VnicProfileView profile, VmNetworkInterface existingVnic, VmNetworkInterface editedVnic) {
@@ -127,7 +124,7 @@ public abstract class BaseInterfaceCreatingManager {
 
     protected abstract VdcActionParametersBase createRemoveInterfaceParameter(Guid id, Guid nicId);
 
-    protected abstract void getNics(AsyncQuery getNicsQuery, Guid id, UnitVmModel unitVmModel);
+    protected abstract void getNics(AsyncQuery<List<VmNetworkInterface>> getNicsQuery, Guid id, UnitVmModel unitVmModel);
 
     protected abstract void doNicManipulation(
             ArrayList<VdcActionParametersBase> createVnicParameters,

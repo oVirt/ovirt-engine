@@ -34,9 +34,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -486,48 +485,41 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         String name = model.getName().getEntity();
         model.getName().setIsValid(true);
 
-        AsyncDataProvider.getInstance().isStorageDomainNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isStorageDomainNameUnique(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(Boolean isNameUnique) {
 
-                StorageListModel storageListModel = (StorageListModel) target;
-                StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+                final StorageModel storageModel = (StorageModel) getWindow();
 
                 String name1 = storageModel.getName().getEntity();
                 String tempVar = storageModel.getOriginalName();
                 String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
-                boolean isNameUnique = (Boolean) returnValue;
 
                 if (!isNameUnique && name1.compareToIgnoreCase(originalName) != 0) {
                     storageModel.getName()
                         .getInvalidityReasons()
                         .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                     storageModel.getName().setIsValid(false);
-                    storageListModel.postStorageNameValidation();
+                    postStorageNameValidation();
                 } else {
 
-                    AsyncDataProvider.getInstance().getStorageDomainMaxNameLength(new AsyncQuery(storageListModel, new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getStorageDomainMaxNameLength(new AsyncQuery<>(new AsyncCallback<Integer>() {
                         @Override
-                        public void onSuccess(Object target1, Object returnValue1) {
-
-                            StorageListModel storageListModel1 = (StorageListModel) target1;
-                            StorageModel storageModel1 = (StorageModel) storageListModel1.getWindow();
-                            int nameMaxLength = (Integer) returnValue1;
+                        public void onSuccess(Integer nameMaxLength) {
                             RegexValidation tempVar2 = new RegexValidation();
                             tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
                             tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
                                                         .nameCanContainOnlyMsg(nameMaxLength));
-                            storageModel1.getName().validateEntity(new IValidation[] {
+                            storageModel.getName().validateEntity(new IValidation[] {
                                     new NotEmptyValidation(), tempVar2});
-                            storageListModel1.postStorageNameValidation();
+                            postStorageNameValidation();
 
                         }
                     }));
                 }
 
             }
-        }),
-            name);
+        }), name);
     }
 
     public void postStorageNameValidation() {
@@ -551,7 +543,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             return;
         }
 
-        RemoveStorageModel model = new RemoveStorageModel();
+        final RemoveStorageModel model = new RemoveStorageModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeStoragesTitle());
         model.setHelpTag(HelpTag.remove_storage);
@@ -560,28 +552,25 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         StorageDomain storage = getSelectedItem();
         boolean localFsOnly = storage.getStorageType() == StorageType.LOCALFS;
 
-        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery(new Object[]{this, model}, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(List<VDS> hosts) {
 
-                Object[] array = (Object[]) target;
-                RemoveStorageModel removeStorageModel = (RemoveStorageModel) array[1];
-                List<VDS> hosts = (List<VDS>) returnValue;
-                removeStorageModel.getHostList().setItems(hosts);
-                removeStorageModel.getHostList().setSelectedItem(Linq.firstOrNull(hosts));
+                model.getHostList().setItems(hosts);
+                model.getHostList().setSelectedItem(Linq.firstOrNull(hosts));
 
                 if (hosts.isEmpty()) {
                     UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
                     tempVar.setIsDefault(true);
-                    removeStorageModel.getCommands().add(tempVar);
+                    model.getCommands().add(tempVar);
                 } else {
 
                     UICommand command;
                     command = UICommand.createDefaultOkUiCommand("OnRemove", StorageListModel.this); //$NON-NLS-1$
-                    removeStorageModel.getCommands().add(command);
+                    model.getCommands().add(command);
 
                     command = createCancelCommand("Cancel"); //$NON-NLS-1$
-                    removeStorageModel.getCommands().add(command);
+                    model.getCommands().add(command);
                 }
 
             }
@@ -730,7 +719,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         final SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
 
         Guid hostId = sanStorageModel.getContainer().getHost().getSelectedItem().getId();
-        Model target = getWidgetModel() != null ? getWidgetModel() : sanStorageModel.getContainer();
         if (sanStorageModel.getAddedLuns().isEmpty()) {
             onSaveSanStorage();
             return;
@@ -745,10 +733,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                                 sanStorageModel.getType(),
                                 true,
                                 unkownStatusLuns),
-                        new AsyncQuery(target, new INewAsyncCallback() {
+                        new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                            public void onSuccess(VdcQueryReturnValue response) {
                                 if (response.getSucceeded()) {
                                     List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
                                     postGetLunsMessages(sanStorageModel.getUsedLunsMessages(checkedLuns));
@@ -1059,17 +1046,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
-            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
-
-                    StorageListModel storageListModel = (StorageListModel) target;
-                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
+                public void onSuccess(List<StorageDomain> storages) {
 
                     if (storages != null && storages.size() > 0) {
-                        handleDomainAlreadyExists(storageListModel, storages);
+                        handleDomainAlreadyExists(storages);
                     } else {
-                        storageListModel.saveNewPosixStorage();
+                        saveNewPosixStorage();
                     }
                 }
             }), null, path);
@@ -1186,16 +1170,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
-            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
+                public void onSuccess(List<StorageDomain> storages) {
 
-                    StorageListModel storageListModel = (StorageListModel) target;
-                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
                     if (storages != null && storages.size() > 0) {
-                        handleDomainAlreadyExists(storageListModel, storages);
+                        handleDomainAlreadyExists(storages);
                     } else {
-                        storageListModel.saveNewNfsStorage();
+                        saveNewNfsStorage();
                     }
                 }
             }), null, path);
@@ -1409,16 +1391,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         saveBaseStorageProperties(model);
 
         if (isNew) {
-            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
+                public void onSuccess(List<StorageDomain> storages) {
 
-                    StorageListModel storageListModel = (StorageListModel) target;
-                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
                     if (storages != null && storages.size() > 0) {
-                        handleDomainAlreadyExists(storageListModel, storages);
+                        handleDomainAlreadyExists(storages);
                     } else {
-                        storageListModel.saveNewLocalStorage();
+                        saveNewLocalStorage();
                     }
 
                 }
@@ -1433,12 +1413,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
     }
 
-    private void handleDomainAlreadyExists(StorageListModel storageListModel, ArrayList<StorageDomain> storages) {
+    private void handleDomainAlreadyExists(List<StorageDomain> storages) {
         String storageName = storages.get(0).getStorageName();
 
-        onFinish(storageListModel.context,
+        onFinish(context,
             false,
-            storageListModel.storageModel,
+            storageModel,
             ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
     }
 
@@ -1698,25 +1678,21 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
 
         // Check storage domain existence
-        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-
-                StorageListModel storageListModel = (StorageListModel) target;
-                ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
+            public void onSuccess(List<StorageDomain> storages) {
 
                 if (storages != null && storages.size() > 0) {
 
                     String storageName = storages.get(0).getStorageName();
-                    onFinish(storageListModel.context,
+                    onFinish(context,
                         false,
-                        storageListModel.storageModel,
+                        storageModel,
                         ConstantsManager.getInstance().getMessages().importFailedDomainAlreadyExistStorageMsg(storageName));
                 } else {
                     StorageServerConnections tempVar = new StorageServerConnections();
-                    storageModel = storageListModel.storageModel;
-                    tempVar.setConnection(storageListModel.path);
-                    tempVar.setStorageType(storageListModel.storageType);
+                    tempVar.setConnection(path);
+                    tempVar.setStorageType(storageType);
                     if (storageModel instanceof NfsStorageModel) {
                         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
                         if (isConnectionOverriden()) {
@@ -1730,7 +1706,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                         tempVar.setVfsType(posixModel.getVfsType().getEntity());
                         tempVar.setMountOptions(posixModel.getMountOptions().getEntity());
                     }
-                    storageListModel.fileConnection = tempVar;
+                    fileConnection = tempVar;
                     importFileStorageConnect();
                 }
             }
@@ -1767,14 +1743,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     private void getExistingStorageDomainList() {
-        AsyncDataProvider.getInstance().getExistingStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getExistingStorageDomainList(new AsyncQuery<>(
+                new AsyncCallback<List<StorageDomain>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        StorageListModel storageListModel = (StorageListModel) target;
-                        ArrayList<StorageDomain> domains = (ArrayList<StorageDomain>) returnValue;
+                    public void onSuccess(List<StorageDomain> domains) {
                         if (domains != null && !domains.isEmpty()) {
-                            storageListModel.storageDomainsToAdd = domains;
+                            storageDomainsToAdd = domains;
                             addExistingFileStorageDomain();
                         }
                         else {
@@ -1784,12 +1758,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                                     ConstantsManager.getInstance().getConstants()
                                             .thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
 
-                            postImportFileStorage(storageListModel.context,
+                            postImportFileStorage(context,
                                     false,
-                                    storageListModel.storageModel,
+                                    storageModel,
                                     errorMessage);
 
-                            storageListModel.cleanConnection(storageListModel.fileConnection, storageListModel.hostId);
+                            cleanConnection(fileConnection, hostId);
                         }
                     }
                 }),
@@ -1882,10 +1856,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         VDS host = storageModel.getHost().getSelectedItem();
 
         AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<List<StorageDomainStatic>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        List<StorageDomainStatic> attachedStorageDomains = (List<StorageDomainStatic>) returnValue;
+                    public void onSuccess(List<StorageDomainStatic> attachedStorageDomains) {
                         if (!attachedStorageDomains.isEmpty()) {
                             ConfirmationModel model = new ConfirmationModel();
                             setConfirmWindow(model);
@@ -1985,11 +1958,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                         : new ArrayList<StorageDomain>();
         StorageDomain storage = items.iterator().next();
 
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(List<StoragePool> dataCenters) {
 
-                List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
                 for (StoragePool dataCenter : dataCenters) {
                     reportModel.addDataCenterID(dataCenter.getId().toString());
                 }

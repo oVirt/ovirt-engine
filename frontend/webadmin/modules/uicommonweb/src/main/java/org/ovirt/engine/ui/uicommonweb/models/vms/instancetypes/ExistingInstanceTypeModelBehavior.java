@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
@@ -24,14 +24,13 @@ public class ExistingInstanceTypeModelBehavior extends ExistingNonClusterModelBe
 
     @Override
     protected void postBuild() {
-        AsyncQuery getVmNicsQuery = new AsyncQuery();
-        getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateNicList(new AsyncQuery<>(new AsyncCallback<List<VmNetworkInterface>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(List<VmNetworkInterface> result) {
                 List<VnicProfileView> profiles = new ArrayList<>(Arrays.asList(VnicProfileView.EMPTY));
                 List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
 
-                for (VmNetworkInterface nic : (List<VmNetworkInterface>) result) {
+                for (VmNetworkInterface nic : result) {
                     final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
                     vnicInstanceType.setItems(profiles);
                     vnicInstanceType.setSelectedItem(VnicProfileView.EMPTY);
@@ -42,7 +41,6 @@ public class ExistingInstanceTypeModelBehavior extends ExistingNonClusterModelBe
                 getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
                 getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrNull(vnicInstanceTypes));
             }
-        };
-        AsyncDataProvider.getInstance().getTemplateNicList(getVmNicsQuery, instanceType.getId());
+        }), instanceType.getId());
     }
 }

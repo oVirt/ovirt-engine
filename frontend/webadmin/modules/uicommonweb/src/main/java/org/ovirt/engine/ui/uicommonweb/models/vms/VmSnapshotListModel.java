@@ -27,9 +27,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -365,10 +364,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         }
 
         final Snapshot snapshot = getSelectedItem();
-        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VM vm = (VM) returnValue;
+            public void onSuccess(VM vm) {
                 ArrayList<DiskImage> snapshotDisks = vm.getDiskList();
                 List<DiskImage> disksExcludedFromSnapshot = Linq.imagesSubtract(getVmDisks(), snapshotDisks);
 
@@ -404,10 +402,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+            public void onSuccess(List<Disk> disks) {
                 getVmDisks().clear();
                 for (Disk disk : disks) {
                     if (disk.getDiskStorageType() == DiskStorageType.LUN) {
@@ -573,11 +570,10 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         setWindow(model);
         model.startProgress();
 
-        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
+            public void onSuccess(VM vm) {
                 NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) model.getBehavior();
-                VM vm = (VM) returnValue;
                 behavior.setVm(vm);
 
                 model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
@@ -624,12 +620,10 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             String name = model.getName().getEntity();
 
             // Check name unicitate.
-            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
+                    new AsyncCallback<Boolean>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            boolean isNameUnique = (Boolean) returnValue;
+                        public void onSuccess(Boolean isNameUnique) {
                             if (!isNameUnique) {
                                 model.getInvalidityReasons().clear();
                                 model.getName()
@@ -707,32 +701,30 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         model.startProgress();
 
-        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
-                UnitVmModel model = (UnitVmModel) vmSnapshotListModel.getWindow();
+            public void onSuccess(VM vm) {
+                UnitVmModel model = (UnitVmModel) getWindow();
 
                 CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
-                VM vm = (VM) returnValue;
                 behavior.setVm(vm);
 
                 model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmFromSnapshotTitle());
                 model.setHelpTag(HelpTag.clone_vm_from_snapshot);
                 model.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
                 model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
-                model.initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
+                model.initialize(getSystemTreeSelectedItem());
 
                 VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
                 switchModeCommand.init(model);
                 model.getCommands().add(switchModeCommand);
 
-                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnCloneVM", vmSnapshotListModel); //$NON-NLS-1$
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnCloneVM", VmSnapshotListModel.this); //$NON-NLS-1$
                 model.getCommands().add(tempVar);
-                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", vmSnapshotListModel); //$NON-NLS-1$
+                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", VmSnapshotListModel.this); //$NON-NLS-1$
                 model.getCommands().add(tempVar2);
 
-                vmSnapshotListModel.stopProgress();
+                stopProgress();
             }
         }), snapshot.getId());
     }

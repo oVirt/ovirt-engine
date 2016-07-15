@@ -13,9 +13,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -35,17 +34,15 @@ public class PreviewSnapshotModel extends Model {
     @Override
     public void initialize() {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmSnapshotsFromConfigurationByVmId,
-                new IdQueryParameters(vmId), new AsyncQuery(this, new INewAsyncCallback() {
+                new IdQueryParameters(vmId), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+            public void onSuccess(VdcQueryReturnValue response) {
                 if (response != null && response.getSucceeded()) {
-                    PreviewSnapshotModel previewSnapshotModel = (PreviewSnapshotModel) model;
                     ArrayList<SnapshotModel> snapshotModels = new ArrayList<>();
                     ArrayList<Snapshot> snapshots = response.getReturnValue();
-                    previewSnapshotModel.sortSnapshots(snapshots);
+                    sortSnapshots(snapshots);
 
-                    Guid userSelectedSnapshotId = previewSnapshotModel.getSnapshotModel().getEntity().getId();
+                    Guid userSelectedSnapshotId = getSnapshotModel().getEntity().getId();
 
                     for (Snapshot snapshot : snapshots) {
                         SnapshotModel snapshotModel = new SnapshotModel();
@@ -59,7 +56,7 @@ public class PreviewSnapshotModel extends Model {
                         }
                     }
 
-                    previewSnapshotModel.getSnapshots().setItems(snapshotModels);
+                    getSnapshots().setItems(snapshotModels);
                     updateDiskSnapshotsMap();
 
                     // Update disk-snapshots map
@@ -68,10 +65,10 @@ public class PreviewSnapshotModel extends Model {
                     // First selecting the active snapshot for ensuring default disks selection
                     // (i.e. when some disks are missing from the selected snapshot,
                     // the corresponding disks from the active snapshot should be selected).
-                    previewSnapshotModel.selectSnapshot(activeSnapshotId);
+                    selectSnapshot(activeSnapshotId);
 
                     // Selecting the snapshot the was selected by the user
-                    previewSnapshotModel.selectSnapshot(userSelectedSnapshotId);
+                    selectSnapshot(userSelectedSnapshotId);
                 }
             }}));
     }

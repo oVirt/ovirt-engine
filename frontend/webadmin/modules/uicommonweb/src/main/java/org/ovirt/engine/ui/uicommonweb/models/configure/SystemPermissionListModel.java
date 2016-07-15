@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -11,11 +10,8 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -64,19 +60,10 @@ public class SystemPermissionListModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                SystemPermissionListModel systemPermissionListModel = (SystemPermissionListModel) model;
-                systemPermissionListModel.setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        };
         VdcQueryParametersBase params = new VdcQueryParametersBase();
         params.setRefresh(false);
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetSystemPermissions, params, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetSystemPermissions, params, new SetItemsAsyncQuery());
     }
 
     private void updateActionAvailability() {

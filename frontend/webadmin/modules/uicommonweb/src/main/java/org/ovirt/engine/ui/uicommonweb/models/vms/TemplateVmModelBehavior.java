@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
@@ -47,17 +47,15 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getName().setIsChangeable(template.isBaseTemplate());
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty)) {
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(null,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
+                    new AsyncCallback<StoragePool>() {
                         @Override
-                        public void onSuccess(Object nothing, Object returnValue) {
-                            final StoragePool dataCenter = (StoragePool) returnValue;
+                        public void onSuccess(final StoragePool dataCenter) {
                             AsyncDataProvider.getInstance().getClusterListByService(
-                                    new AsyncQuery(null, new INewAsyncCallback() {
+                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
 
                                         @Override
-                                        public void onSuccess(Object nothing, Object returnValue) {
-                                            ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
+                                        public void onSuccess(List<Cluster> clusters) {
                                             ArrayList<Cluster> clustersSupportingVirt = new ArrayList<>();
                                             // filter clusters supporting virt service only
                                             for (Cluster cluster : clusters) {
@@ -75,30 +73,29 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                                     filteredClusters,
                                                     template.getClusterId());
 
-                                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(null,
-                                                    new INewAsyncCallback() {
-
+                                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(
+                                                    new AsyncCallback<Boolean>() {
                                                         @Override
-                                                        public void onSuccess(Object nothing, Object returnValue) {
-                                                            getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
+                                                        public void onSuccess(Boolean returnValue) {
+                                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
                                                             initTemplate();
                                                             initCdImage();
                                                         }
                                                     }), template.getId());
 
-                                            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery(
-                                                    new INewAsyncCallback() {
+                                            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery<>(
+                                                    new AsyncCallback<VdcQueryReturnValue>() {
                                                         @Override
-                                                        public void onSuccess(Object model, Object returnValue) {
-                                                            getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                                                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                                                            getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
                                                         }
                                                     }
                                             ));
 
-                                            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(new INewAsyncCallback() {
+                                            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
                                                 @Override
-                                                public void onSuccess(Object model, Object returnValue) {
-                                                    getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
+                                                public void onSuccess(Boolean returnValue) {
+                                                    getModel().getIsVirtioScsiEnabled().setEntity(returnValue);
                                                 }
                                             }), template.getId());
                                         }
@@ -110,9 +107,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     template.getStoragePoolId());
         }
 
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback() {
             @Override
-            public void onSuccess(Object nothing, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 UnitVmModel model = TemplateVmModelBehavior.this.getModel();
                 @SuppressWarnings("unchecked")
                 Collection<VmWatchdog> watchdogs =
@@ -133,13 +130,11 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     protected void setupBaseTemplate(Guid baseTemplateId) {
-        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
-                        new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(
+                        new AsyncCallback<VmTemplate>() {
                             @Override
-                            public void onSuccess(Object nothing, Object returnValue) {
-
+                            public void onSuccess(VmTemplate template) {
                                 UnitVmModel model = getModel();
-                                VmTemplate template = (VmTemplate) returnValue;
 
                                 model.getBaseTemplate().setItems(Collections.singletonList(template));
                                 model.getBaseTemplate().setSelectedItem(template);

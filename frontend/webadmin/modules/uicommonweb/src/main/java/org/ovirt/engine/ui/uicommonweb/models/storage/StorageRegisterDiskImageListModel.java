@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -85,10 +84,10 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         IdQueryParameters parameters = new IdAndBooleanQueryParameters(getEntity().getId(), true);
         parameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredDisksFromDB, parameters,
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object model, Object ReturnValue) {
-                        List<UnregisteredDisk> unregisteredDisks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<UnregisteredDisk> unregisteredDisks = returnValue.getReturnValue();
                         Collections.sort(unregisteredDisks, new UnregisteredDiskByDiskAliasComparator());
                         ArrayList<Disk> diskItems = new ArrayList<>();
                         for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
@@ -125,10 +124,9 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         registerDiskModel.setHashName("import_disks"); //$NON-NLS-1$
 
         registerDiskModel.startProgress();
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                StoragePool dataCenter = (StoragePool) returnValue;
+            public void onSuccess(StoragePool dataCenter) {
                 registerDiskModel.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                 registerDiskModel.setDisks(Linq.disksToDiskModelList(getSelectedItems()));
                 registerDiskModel.updateStorageDomain(getEntity());

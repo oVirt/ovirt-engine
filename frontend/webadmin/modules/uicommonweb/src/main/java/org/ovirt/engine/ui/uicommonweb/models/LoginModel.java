@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -101,16 +100,12 @@ public class LoginModel extends Model {
         getUserName().getEntityChangedEvent().addListener(this);
         setCreateInstanceOnly(new EntityModel<>(false));
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.setHandleFailure(true);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<List<String>> asyncQuery = new AsyncQuery<>(new AsyncCallback<List<String>>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
+            public void onSuccess(List<String> domains) {
 
-                LoginModel loginModel = (LoginModel) model;
-                if (ReturnValue == null) {
-                    loginModel.setMessages(Arrays.asList(ConstantsManager.getInstance()
+                if (domains == null) {
+                    setMessages(Arrays.asList(ConstantsManager.getInstance()
                             .getConstants()
                             .couldNotConnectToOvirtEngineServiceMsg()));
                     return;
@@ -120,17 +115,17 @@ public class LoginModel extends Model {
                     // Don't enable the screen when we are in the process of logging in automatically.
                     // If this happens to be executed before the AutoLogin() is executed,
                     // it is not a problem, as the AutoLogin() will disable the screen by itself.
-                    loginModel.getUserName().setIsChangeable(true);
-                    loginModel.getProfile().setIsChangeable(true);
+                    getUserName().setIsChangeable(true);
+                    getProfile().setIsChangeable(true);
                 }
 
-                List<String> domains = (List<String>) ReturnValue;
                 Collections.sort(domains);
-                loginModel.getProfile().setItems(domains);
+                getProfile().setItems(domains);
 
             }
-        };
-        AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(_asyncQuery, true);
+        });
+        asyncQuery.setHandleFailure(true);
+        AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(asyncQuery, true);
     }
 
     protected void raiseLoggedInEvent() {

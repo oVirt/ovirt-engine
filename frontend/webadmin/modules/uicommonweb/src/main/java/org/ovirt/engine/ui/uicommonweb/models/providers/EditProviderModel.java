@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -17,9 +18,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -147,14 +147,12 @@ public class EditProviderModel extends ProviderModel {
     @Override
     protected void updateDatacentersForVolumeProvider() {
         getDataCenter().setIsChangeable(false);
-        AsyncDataProvider.getInstance().getStorageDomainByName(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainByName(new AsyncQuery<>(new AsyncCallback<StorageDomainStatic>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                StorageDomainStatic storageDomainStatic = (StorageDomainStatic) returnValue;
-                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(target, new INewAsyncCallback() {
+            public void onSuccess(StorageDomainStatic storageDomainStatic) {
+                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
+                    public void onSuccess(List<StoragePool> dataCenters) {
                         if (dataCenters != null && !dataCenters.isEmpty()) {
                             getDataCenter().setSelectedItem(dataCenters.get(0));
                         } else {

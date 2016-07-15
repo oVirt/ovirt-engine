@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -344,11 +343,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setMessage(null);
 
         final SanStorageModelBase model = this;
-        Object target = getWidgetModel() != null ? getWidgetModel() : getContainer();
-        AsyncQuery asyncQuery = new AsyncQuery(target, new INewAsyncCallback() {
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                Object result = returnValue.getReturnValue();
                 model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
                         : new ArrayList<StorageServerConnections>());
             }

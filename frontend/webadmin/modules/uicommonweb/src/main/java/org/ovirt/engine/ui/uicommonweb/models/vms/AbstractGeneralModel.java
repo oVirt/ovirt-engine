@@ -11,9 +11,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -40,12 +39,11 @@ public class AbstractGeneralModel<E> extends EntityModel<E> {
         }
 
         Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices,
-                new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery(
-            this,
-            new INewAsyncCallback() {
+                new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery<>(
+            new AsyncCallback<VdcQueryReturnValue>() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                public void onSuccess(VdcQueryReturnValue returnValue) {
+                    List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
                     Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 
                     for (GraphicsDevice graphicsDevice : graphicsDevices) {

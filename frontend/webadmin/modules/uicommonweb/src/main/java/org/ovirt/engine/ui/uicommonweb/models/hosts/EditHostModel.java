@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,7 +26,7 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    protected void updateModelDataCenterFromVds(ArrayList<StoragePool> dataCenters, VDS vds) {
+    protected void updateModelDataCenterFromVds(List<StoragePool> dataCenters, VDS vds) {
         if (dataCenters != null) {
             getDataCenter().setItems(dataCenters);
             getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,

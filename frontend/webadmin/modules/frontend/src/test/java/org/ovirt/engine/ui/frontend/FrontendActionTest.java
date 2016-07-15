@@ -46,7 +46,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.gwt.user.client.rpc.XsrfToken;
@@ -91,15 +90,15 @@ public class FrontendActionTest {
     @Mock
     AsyncQuery mockAsyncQuery;
     @Mock
-    INewAsyncCallback mockAsyncCallback;
+    AsyncCallback mockAsyncCallback;
     @Mock
     EventBus mockEventBus;
     @Mock
     XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
     @Captor
-    ArgumentCaptor<AsyncCallback<ArrayList<VdcReturnValueBase>>> callbackMultipleActions;
+    ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback> callbackMultipleActions;
     @Captor
-    ArgumentCaptor<AsyncCallback<VdcReturnValueBase>> callbackAction;
+    ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback> callbackAction;
     @Captor
     ArgumentCaptor<FrontendMultipleActionAsyncResult> callbackMultipleParam;
     @Captor

@@ -14,12 +14,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -95,16 +92,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDiskSnapshotsByStorageDomainId, parameters,
-                new AsyncQuery(this, new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object ReturnValue) {
-                        StorageSnapshotListModel storageSnapshotListModel = (StorageSnapshotListModel) model;
-                        ArrayList<DiskImage> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                        Collections.sort(newItems, new Linq.DiskImageByActualSizeComparer());
-                        Collections.reverse(newItems);
-                        storageSnapshotListModel.setItems(newItems);
-                    }
-                }));
+                new SetSortedItemsAsyncQuery(Collections.reverseOrder(new Linq.DiskImageByActualSizeComparer())));
     }
 
     private void updateActionAvailability() {

@@ -12,8 +12,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -157,12 +156,11 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         }
 
         // Get all data centers
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(networkModel, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(List<StoragePool> dataCenters) {
 
-                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
                 networkModel.getDataCenters().setItems(dataCenters);
 
                 if (networkModel instanceof EditNetworkModel) {

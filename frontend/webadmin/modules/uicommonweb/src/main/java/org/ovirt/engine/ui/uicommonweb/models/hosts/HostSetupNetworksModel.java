@@ -37,9 +37,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.action.SimpleAction;
@@ -975,10 +974,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void queryLabels() {
         AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getEntity().getStoragePoolId(),
-            new AsyncQuery(new INewAsyncCallback() {
+            new AsyncQuery<>(new AsyncCallback<SortedSet<String>>() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    dcLabels = (SortedSet<String>) returnValue;
+                public void onSuccess(SortedSet<String> returnValue) {
+                    dcLabels = returnValue;
                     initLabelModels();
 
                     // chain the networks query
@@ -989,31 +988,28 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void queryFreeBonds() {
         // query for all unused, existing bonds on the host
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                allBonds = ((VdcQueryReturnValue) returnValue).getReturnValue();
-
-                initNetworkModels();
-                initNicModels();
-
-                stopProgress();
-            }
-        };
 
         VDS vds = getEntity();
         Frontend.getInstance().runQuery(VdcQueryType.GetVdsFreeBondsByVdsId,
             new IdQueryParameters(vds.getId()),
-            asyncQuery);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        allBonds = returnValue.getReturnValue();
+
+                        initNetworkModels();
+                        initNicModels();
+
+                        stopProgress();
+                    }
+                }));
     }
 
     private void queryVfMap() {
         final AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        asyncQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValueObj) {
+            public void onSuccess(Object returnValueObj) {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
                 vfMap = returnValue.getReturnValue();
                 if (vfMap == null) {
@@ -1032,13 +1028,13 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void queryInterfaces() {
+        VDS vds = getEntity();
+        IdQueryParameters params = new IdQueryParameters(vds.getId());
+        params.setRefresh(false);
         // query for interfaces
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValueObj) {
-                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 allExistingNics = returnValue.getReturnValue();
 
                 existingVlanDevicesByVlanId = mapVlanDevicesByVlanId();
@@ -1048,44 +1044,33 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 // chain the network attachments query
                 queryNetworkAttachments();
             }
-        };
-
-        VDS vds = getEntity();
-        IdQueryParameters params = new IdQueryParameters(vds.getId());
-        params.setRefresh(false);
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, asyncQuery);
+        }));
     }
 
     private void queryNetworkAttachments() {
+        VDS vds = getEntity();
+        IdQueryParameters params = new IdQueryParameters(vds.getId());
+        params.setRefresh(false);
         // query for network attachments
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetNetworkAttachmentsByHostId, params, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValueObj) {
-                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
-                Object returnValue2 = returnValue.getReturnValue();
-                hostSetupNetworksParametersData.getNetworkAttachments().addAll((List<NetworkAttachment>) returnValue2);
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                hostSetupNetworksParametersData.getNetworkAttachments().addAll((List<NetworkAttachment>) returnValue.getReturnValue());
 
                 initNetworkIdToExistingAttachmentMap();
 
                 // chain the vfsConfig query
                 queryVfsConfig();
             }
-        };
-
-        VDS vds = getEntity();
-        IdQueryParameters params = new IdQueryParameters(vds.getId());
-        params.setRefresh(false);
-        Frontend.getInstance().runQuery(VdcQueryType.GetNetworkAttachmentsByHostId, params, asyncQuery);
+        }));
     }
 
     private void queryVfsConfig() {
         // query for vfsConfigs
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        asyncQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValueObj) {
+            public void onSuccess(Object returnValueObj) {
                 Object returnValue = ((VdcQueryReturnValue) returnValueObj).getReturnValue();
                 List<HostNicVfsConfig> allHostVfs = (List<HostNicVfsConfig>) returnValue;
 
@@ -1104,28 +1089,25 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void queryNetworks() {
+        VDS vds = getEntity();
+
         // query for networks
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterNetworkList(new AsyncQuery<>(new AsyncCallback<List<Network>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                allNetworks = (List<Network>) returnValue;
+            public void onSuccess(List<Network> returnValue) {
+                allNetworks = returnValue;
                 // chain the qoss query
                 queryQoss();
             }
-        };
-
-        VDS vds = getEntity();
-        AsyncDataProvider.getInstance().getClusterNetworkList(asyncQuery, vds.getClusterId());
+        }), vds.getClusterId());
     }
 
     private void queryQoss() {
         // query for qoss
         AsyncQuery qossQuery = new AsyncQuery();
-        qossQuery.asyncCallback = new INewAsyncCallback() {
+        qossQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object returnValue) {
                 Collection<HostNetworkQos> qoss = (Collection<HostNetworkQos>) returnValue;
                 qosById = Entities.businessEntitiesById(qoss);
                 // chain the nic query
@@ -1178,11 +1160,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     public void onSetupNetworks() {
         // Determines the connectivity timeout in seconds
-        AsyncDataProvider.getInstance().getNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
-            new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery<>(
+            new AsyncCallback<Integer>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
-                    getConnectivityTimeout().setEntity((Integer) returnValue);
+                public void onSuccess(Integer returnValue) {
+                    getConnectivityTimeout().setEntity(returnValue);
                     postOnSetupNetworks();
                 }
             }));

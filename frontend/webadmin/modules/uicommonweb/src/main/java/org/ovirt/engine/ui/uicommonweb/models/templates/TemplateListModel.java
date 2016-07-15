@@ -27,9 +27,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -257,16 +256,13 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
+                new AsyncCallback<List<StoragePool>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        TemplateListModel templateListModel = (TemplateListModel) target;
-                        ArrayList<StoragePool> storagePools =
-                                (ArrayList<StoragePool>) returnValue;
+                    public void onSuccess(List<StoragePool> storagePools) {
                         StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
-                        templateListModel.postGetTemplatesNotPresentOnExportDomain(storagePool);
+                        postGetTemplatesNotPresentOnExportDomain(storagePool);
                     }
                 }), storageDomainId);
     }
@@ -276,17 +272,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         if (storagePool != null) {
-            AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery<>(
+                    new AsyncCallback<Map<VmTemplate, ArrayList<DiskImage>>>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            TemplateListModel templateListModel = (TemplateListModel) target;
-                            HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
-                                    (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
+                        public void onSuccess(Map<VmTemplate, ArrayList<DiskImage>> templatesDiskSet) {
                             ArrayList<String> verTempMissingBase = new ArrayList<>();
 
                             // check if relevant templates are already there
-                            for (Object selectedItem : templateListModel.getSelectedItems()) {
+                            for (Object selectedItem : getSelectedItems()) {
                                 VmTemplate template = (VmTemplate) selectedItem;
                                 // only relevant for template versions
                                 if (!template.isBaseTemplate()) {
@@ -304,7 +297,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                                 }
                             }
 
-                            templateListModel.postExportGetMissingTemplates(verTempMissingBase);
+                            postExportGetMissingTemplates(verTempMissingBase);
                         }
                     }),
                     storagePool.getId(),
@@ -442,9 +435,9 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         // populating VMInit
         AsyncQuery getVmInitQuery = new AsyncQuery();
-        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+        getVmInitQuery.asyncCallback = new AsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(Object result) {
                 vmInitLoaded((VmTemplate) result);
             }
         };
@@ -582,12 +575,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
 
         if (isBaseTemplate) {
-            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
+                    new AsyncCallback<Boolean>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            boolean isNameUnique = (Boolean) returnValue;
+                        public void onSuccess(Boolean isNameUnique) {
 
                             if (model.getBehavior().isExistingTemplateBehavior()) {
                                 selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
@@ -641,10 +632,9 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         commands.add(UICommand.createDefaultOkUiCommand("OnSaveVm", this)); //$NON-NLS-1$
         commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
-        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(new AsyncCallback<VmTemplate>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VmTemplate withVmInit = (VmTemplate) returnValue;
+            public void onSuccess(VmTemplate withVmInit) {
                 setupNewVmModel(new UnitVmModel(new NewVmFromTemplateModelBehavior(withVmInit), TemplateListModel.this),
                         withVmInit.getVmType(), getSystemTreeSelectedItem(), commands);
             }

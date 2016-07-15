@@ -247,15 +247,14 @@ public class Frontend implements HasHandlers {
                             handleNotLoggedInEvent(result.getExceptionString());
                         }
                         if (callback.isHandleFailure()) {
-                            callback.getDel().onSuccess(callback.getModel(), result);
+                            callback.getDel().onSuccess(result);
                         }
                     } else {
-                        callback.setOriginalReturnValue(result);
                         if (callback.getConverter() != null) {
-                            callback.getDel().onSuccess(callback.getModel(),
-                                    callback.getConverter().convert(result.getReturnValue(), callback));
+                            callback.getDel().onSuccess(
+                                    callback.getConverter().convert(result.getReturnValue()));
                         } else {
-                            callback.getDel().onSuccess(callback.getModel(), result);
+                            callback.getDel().onSuccess(result);
                         }
                     }
                 } finally {
@@ -274,7 +273,7 @@ public class Frontend implements HasHandlers {
                     getEventsHandler().runQueryFailed(null);
                     failureEventHandler(caught);
                     if (callback.isHandleFailure()) {
-                        callback.getDel().onSuccess(callback.getModel(), null);
+                        callback.getDel().onSuccess(null);
                     }
                 } finally {
                     fireAsyncQueryFailedEvent(callback.getModel());
@@ -824,14 +823,14 @@ public class Frontend implements HasHandlers {
      * Log off the currently logged in user.
      * @param callback The callback to call when the user is logged off.
      */
-    public void logoffAsync(final AsyncQuery callback) {
+    public void logoffAsync(final AsyncQuery<VdcReturnValueBase> callback) {
         logger.finer("Frontend: Invoking async logoff."); //$NON-NLS-1$
 
         getOperationManager().logoutUser(new UserCallback<VdcReturnValueBase>() {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from logoff."); //$NON-NLS-1$
-                callback.getDel().onSuccess(callback.getModel(), result);
+                callback.getDel().onSuccess(result);
             }
 
             @Override
@@ -842,7 +841,7 @@ public class Frontend implements HasHandlers {
                 logger.log(Level.SEVERE, "Failed to execute logoff: " + caught, caught); //$NON-NLS-1$
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
-                callback.getDel().onSuccess(callback.getModel(), null);
+                callback.getDel().onSuccess(null);
             }
         });
     }

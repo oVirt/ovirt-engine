@@ -21,9 +21,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -175,15 +174,8 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             return;
         }
 
-        AsyncDataProvider.getInstance().getGlusterVolumeGeoRepStatusForMasterVolume(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<GlusterGeoRepSession> geoRepSessions = (ArrayList<GlusterGeoRepSession>) returnValue;
-                Collections.sort(geoRepSessions, new Linq.GlusterVolumeGeoRepSessionComparer());
-                setItems(geoRepSessions);
-            }
-        }), getEntity().getId());
-
+        AsyncDataProvider.getInstance().getGlusterVolumeGeoRepStatusForMasterVolume(
+                new SetSortedRawItemsAsyncQuery(new Linq.GlusterVolumeGeoRepSessionComparer()), getEntity().getId());
     }
 
     private void updateActionAvailability(GlusterVolumeEntity volumeEntity) {
@@ -336,19 +328,18 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void fetchConfigForSession(GlusterGeoRepSession selectedSession) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepConfigList, new IdQueryParameters(selectedSession.getId()), new AsyncQuery(new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepConfigList, new IdQueryParameters(selectedSession.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue vdcQueryReturnValue = (VdcQueryReturnValue) returnValue;
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
                         (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
                 geoRepConfigModel.stopProgress();
-                boolean queryExecutionStatus = vdcQueryReturnValue.getSucceeded();
+                boolean queryExecutionStatus = returnValue.getSucceeded();
                 geoRepConfigModel.updateCommandExecutabilities(queryExecutionStatus);
                 if (!queryExecutionStatus) {
                     geoRepConfigModel.setMessage(ConstantsManager.getInstance().getConstants().errorInFetchingVolumeOptionList());
                 } else {
-                    List<GlusterGeoRepSessionConfiguration> sessionConfigs = vdcQueryReturnValue.getReturnValue();
+                    List<GlusterGeoRepSessionConfiguration> sessionConfigs = returnValue.getReturnValue();
                     List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities =
                             new ArrayList<>();
                             for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {

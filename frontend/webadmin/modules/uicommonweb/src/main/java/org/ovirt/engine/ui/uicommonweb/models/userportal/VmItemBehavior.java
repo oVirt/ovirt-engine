@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
@@ -163,15 +163,12 @@ public class VmItemBehavior extends ItemBehavior {
 
         // Check whether a VM is from the manual pool.
         if (entity.getVmPoolId() != null) {
-            AsyncDataProvider.getInstance().getPoolById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getPoolById(new AsyncQuery<>(
+                    new AsyncCallback<VmPool>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            VmItemBehavior behavior = (VmItemBehavior) target;
-                            VmPool pool = (VmPool) returnValue;
+                        public void onSuccess(VmPool pool) {
                             boolean isManualPool = pool.getVmPoolType() == VmPoolType.MANUAL;
-                            behavior.updateCommandsAccordingToPoolType(isManualPool);
+                            updateCommandsAccordingToPoolType(isManualPool);
 
                         }
                     }), entity.getVmPoolId());

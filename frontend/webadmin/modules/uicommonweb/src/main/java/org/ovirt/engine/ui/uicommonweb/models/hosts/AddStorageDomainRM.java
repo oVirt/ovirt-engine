@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Enlistment;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -89,12 +89,12 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
             context.waitTries++;
 
-            AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getHostById(new AsyncQuery<>(
+                    new AsyncCallback<VDS>() {
                         @Override
-                        public void onSuccess(Object model, Object returnValue) {
+                        public void onSuccess(VDS returnValue) {
 
-                            context.host = (VDS) returnValue;
+                            context.host = returnValue;
 
                             timer = new Timer() {
                                 @Override

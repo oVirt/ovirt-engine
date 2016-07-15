@@ -17,9 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -281,20 +280,20 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     private void retrieveMaxSpmPriority() {
-        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                spmMaxPriorityValue = (Integer) returnValue;
+            public void onSuccess(Integer returnValue) {
+                spmMaxPriorityValue = returnValue;
                 retrieveDefaultSpmPriority();
             }
         }));
     }
 
     private void retrieveDefaultSpmPriority() {
-        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                spmDefaultPriorityValue = (Integer) returnValue;
+            public void onSuccess(Integer returnValue) {
+                spmDefaultPriorityValue = returnValue;
                 updateSpmPriorityValues();
                 updateSpmPriority();
             }

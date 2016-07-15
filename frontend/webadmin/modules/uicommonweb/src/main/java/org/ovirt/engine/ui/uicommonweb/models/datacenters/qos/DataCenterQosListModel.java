@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,11 +8,8 @@ import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -59,23 +55,11 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
         if (getEntity() == null) {
             return;
         }
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.model = this;
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                DataCenterQosListModel<T, P> qosListModel = (DataCenterQosListModel) model;
-                qosListModel.setItems((ArrayList<T>) ((VdcQueryReturnValue) returnValue).getReturnValue());
-
-            }
-        };
         IdQueryParameters parameters = new QosQueryParameterBase(getEntity().getId(), getQosType());
         parameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
                 parameters,
-                asyncQuery);
+                new SetItemsAsyncQuery());
     }
 
     public UICommand getNewCommand() {

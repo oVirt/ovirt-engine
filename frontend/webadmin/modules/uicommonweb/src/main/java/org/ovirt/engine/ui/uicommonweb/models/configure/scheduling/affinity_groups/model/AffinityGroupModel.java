@@ -8,9 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -61,11 +60,10 @@ public abstract class AffinityGroupModel extends Model {
     public void init() {
         startProgress();
         //TODO: should be by cluster id and remove clusterName method from resolver.
-        AsyncDataProvider.getInstance().getVmListByClusterName(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmListByClusterName(new AsyncQuery<>(new AsyncCallback<List<VM>>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ArrayList<VM> vmList = (ArrayList<VM>) returnValue;
+            public void onSuccess(List<VM> vmList) {
                 List<Guid> vmIds = getAffinityGroup().getEntityIds();
                 getVmsSelectionModel().init(vmList, vmIds != null ? vmIds : new ArrayList<Guid>());
                 stopProgress();

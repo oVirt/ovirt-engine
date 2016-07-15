@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -140,25 +139,20 @@ public class BookmarkListModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                SearchableListModel bookmarkListModel = (BookmarkListModel) model;
-                List<Bookmark> resultList = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<Bookmark> resultList = returnValue.getReturnValue();
                 if (resultList != null) {
                     Collections.sort(resultList, COMPARATOR);
                 }
 
                 // Prevent bookmark list updates from clearing selected bookmark
                 setIsBookmarkInitiated(true);
-                bookmarkListModel.setItems(resultList);
+                setItems(resultList);
                 setIsBookmarkInitiated(false);
             }
-        };
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), _asyncQuery);
+        }));
     }
 
     public void remove() {

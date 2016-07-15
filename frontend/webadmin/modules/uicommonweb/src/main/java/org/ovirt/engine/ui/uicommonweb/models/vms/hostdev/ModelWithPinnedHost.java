@@ -1,12 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.hostdev;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -40,10 +38,10 @@ public class ModelWithPinnedHost extends Model {
 
     protected void initHosts() {
         startProgress();
-        AsyncDataProvider.getInstance().getHostListByClusterId(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostListByClusterId(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                getPinnedHost().setItems((Collection<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+            public void onSuccess(List<VDS> hosts) {
+                getPinnedHost().setItems(hosts);
                 stopProgress();
                 selectCurrentPinnedHost();
             }

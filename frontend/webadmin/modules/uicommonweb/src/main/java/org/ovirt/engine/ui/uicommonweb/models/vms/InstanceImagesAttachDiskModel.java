@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
@@ -17,17 +16,17 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
     public void loadAttachableDisks(int os, Version compatibilityVersion, final Disk prevSelectedDisk) {
         // Get image attachable disks
         AsyncDataProvider.getInstance().getAllAttachableDisks(
-                new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.IMAGE, prevSelectedDisk)
+                new AsyncQuery<>(new InstanceImageGetDisksCallback(DiskStorageType.IMAGE, prevSelectedDisk)
                 ), getVm().getStoragePoolId(), getVm().getId());
 
         // Get lun attachable disks
         AsyncDataProvider.getInstance().getAllAttachableDisks(
-                new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelectedDisk)
+                new AsyncQuery<>(new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelectedDisk)
                 ), null, getVm().getId());
 
         // Get cinder attachable disks
         AsyncDataProvider.getInstance().getAllAttachableDisks(
-                new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelectedDisk)
+                new AsyncQuery<>(new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelectedDisk)
                 ), getVm().getStoragePoolId(), getVm().getId());
     }
 
@@ -73,8 +72,7 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
         }
 
         @Override
-        protected List<Disk> adjustReturnValue(Object returnValue) {
-            List<Disk> disksFromServer = (List<Disk>) returnValue;
+        protected List<Disk> adjustReturnValue(List<Disk> disksFromServer) {
             List<Guid> inDialogIds = asIds(getAttachedNotSubmittedDisks());
 
             List<Disk> res = new ArrayList<>();

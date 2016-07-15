@@ -9,11 +9,8 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -85,15 +82,7 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> ex
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(vdcQueryType, parameters,
-                new AsyncQuery(this, new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object ReturnValue) {
-                        List<T> entities = (ArrayList<T>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                        Collections.sort(entities, comparator);
-                        setItems(entities);
-                    }
-                }));
+        Frontend.getInstance().runQuery(vdcQueryType, parameters, new SetSortedItemsAsyncQuery(comparator));
     }
 
     @Override

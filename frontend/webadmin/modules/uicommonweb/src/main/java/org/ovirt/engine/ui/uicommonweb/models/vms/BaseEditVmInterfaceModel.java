@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -12,8 +12,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.IModel;
@@ -49,16 +48,13 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void init() {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), new AsyncQuery<>(new AsyncCallback<List<VmInterfaceType>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                setSupportedVnicTypes((Collection<VmInterfaceType>) returnValue);
+            public void onSuccess(List<VmInterfaceType> returnValue) {
+                setSupportedVnicTypes(returnValue);
                 postNicInit();
             }
-        };
-
-        AsyncDataProvider.getInstance().getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), asyncQuery);
+        }));
     }
 
     private void postNicInit() {

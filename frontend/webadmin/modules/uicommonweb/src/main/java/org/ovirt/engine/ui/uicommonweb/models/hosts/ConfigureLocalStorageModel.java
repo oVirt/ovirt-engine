@@ -13,8 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -182,8 +181,8 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
     private void setDefaultNames8() {
 
         VDS host = context.host;
-        ArrayList<StoragePool> dataCenters = context.dataCenterList;
-        ArrayList<Cluster> clusters = context.clusterList;
+        List<StoragePool> dataCenters = context.dataCenterList;
+        List<Cluster> clusters = context.clusterList;
 
         setCommonName(host.getName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
@@ -268,7 +267,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
                     names = new ArrayList<>();
 
-                    ArrayList<Cluster> listClusters = context.clusterList;
+                    List<Cluster> listClusters = context.clusterList;
                     for (Cluster cluster : listClusters) {
                         names.add(cluster.getName());
                     }
@@ -353,7 +352,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         }
 
         // Always choose a available storage name.
-        ArrayList<StorageDomain> storages = context.storageList;
+        List<StorageDomain> storages = context.storageList;
         names = new ArrayList<>();
 
         for (StorageDomain storageDomain : storages) {
@@ -365,15 +364,15 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
     private void setDefaultNames7() {
 
         // Get all clusters.
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
-                                                                            new INewAsyncCallback() {
-                                                                                @Override
-                                                                                public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
+                new AsyncCallback<List<StorageDomain>>() {
+                    @Override
+                    public void onSuccess(List<StorageDomain> returnValue) {
 
-                                                                                    context.storageList = (ArrayList<StorageDomain>) returnValue;
-                                                                                    setDefaultNames8();
-                                                                                }
-                                                                            }));
+                        context.storageList = returnValue;
+                        setDefaultNames8();
+                    }
+                }));
     }
 
     public void setDefaultNames6() {
@@ -396,7 +395,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         iterator.iterate(
                 new AsyncIteratorFunc<StoragePool>() {
                     @Override
-                    public void run(StoragePool item, AsyncIteratorCallback<StoragePool> callback) {
+                    public void run(StoragePool item, AsyncIteratorCallback callback) {
 
                         AsyncDataProvider.getInstance().getClusterList(callback.getAsyncQuery(), item.getId());
                     }
@@ -431,7 +430,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         iterator.iterate(
                 new AsyncIteratorFunc<StoragePool>() {
                     @Override
-                    public void run(StoragePool item, AsyncIteratorCallback<StoragePool> callback) {
+                    public void run(StoragePool item, AsyncIteratorCallback callback) {
 
                         AsyncDataProvider.getInstance().getLocalStorageHost(callback.getAsyncQuery(), item.getName());
                     }
@@ -449,12 +448,12 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
     public void setDefaultNames4() {
 
         // Get data centers containing 'local' in name.
-        AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery(this,
-                new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery<>(
+                new AsyncCallback<List<StoragePool>>() {
                     @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                    public void onSuccess(List<StoragePool> returnValue) {
 
-                        context.dataCenterList = (ArrayList<StoragePool>) returnValue;
+                        context.dataCenterList = returnValue;
                         setDefaultNames5();
                     }
                 }),
@@ -464,15 +463,15 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
     public void setDefaultNames3() {
 
         // Get all clusters.
-        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this,
-                                                                      new INewAsyncCallback() {
-                                                                          @Override
-                                                                          public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(
+                new AsyncCallback<List<Cluster>>() {
+                    @Override
+                    public void onSuccess(List<Cluster> returnValue) {
 
-                                                                              context.clusterList = (ArrayList<Cluster>) returnValue;
-                                                                              setDefaultNames4();
-                                                                          }
-                                                                      }));
+                        context.clusterList = returnValue;
+                        setDefaultNames4();
+                    }
+                }));
     }
 
     public void setDefaultNames2() {
@@ -481,12 +480,12 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         // Get cluster of the host.
         if (host.getClusterId() != null) {
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                    new AsyncCallback<Cluster>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Cluster returnValue) {
 
-                            context.hostCluster = (Cluster) returnValue;
+                            context.hostCluster = returnValue;
                             setDefaultNames3();
                         }
                     }),
@@ -502,12 +501,12 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         // Get data center of the host.
         if (host.getStoragePoolId() != null) {
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
+                    new AsyncCallback<StoragePool>() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(StoragePool returnValue) {
 
-                            context.hostDataCenter = (StoragePool) returnValue;
+                            context.hostDataCenter = returnValue;
                             setDefaultNames2();
                         }
                     }),
@@ -579,9 +578,9 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         public VDS host;
         public StoragePool hostDataCenter;
         public Cluster hostCluster;
-        public ArrayList<StoragePool> dataCenterList;
-        public ArrayList<Cluster> clusterList;
-        public ArrayList<StorageDomain> storageList;
+        public List<StoragePool> dataCenterList;
+        public List<Cluster> clusterList;
+        public List<StorageDomain> storageList;
         public HashMap<StoragePool, VDS> localStorageHostByDataCenterMap;
         public HashMap<StoragePool, ArrayList<Cluster>> clusterListByDataCenterMap;
     }

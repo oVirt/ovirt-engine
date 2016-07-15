@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonNegativeLongNumberValidation;
@@ -82,12 +81,10 @@ public class EditDiskModel extends AbstractDiskModel {
         // this needs to be executed after the data center is loaded because the update quota needs both values
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             Guid storageDomainId = ((DiskImage) getDisk()).getStorageIds().get(0);
-            AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
                 @Override
-                public void onSuccess(Object target, Object returnValue) {
-                    DiskModel diskModel = (DiskModel) target;
-                    StorageDomain storageDomain = (StorageDomain) returnValue;
-                    diskModel.getStorageDomain().setSelectedItem(storageDomain);
+                public void onSuccess(StorageDomain storageDomain) {
+                    getStorageDomain().setSelectedItem(storageDomain);
                 }
             }), storageDomainId);
         } else if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
@@ -183,12 +180,10 @@ public class EditDiskModel extends AbstractDiskModel {
 
     @Override
     protected void updateStorageDomains(final StoragePool datacenter) {
-        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                DiskModel diskModel = (DiskModel) target;
-                StorageDomain storageDomain = (StorageDomain) returnValue;
-                diskModel.getStorageDomain().setSelectedItem(storageDomain);
+            public void onSuccess(StorageDomain storageDomain) {
+                getStorageDomain().setSelectedItem(storageDomain);
             }
         }), getStorageDomainId());
     }

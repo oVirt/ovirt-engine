@@ -19,8 +19,8 @@ import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.HostAdditionalStatusColu
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
+
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -70,26 +71,20 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     }
 
     private void InitSpmPriorities() {
-        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-
-                MainTabHostView view = (MainTabHostView) target;
-
-                view.maxSpmPriority = (Integer) returnValue;
+            public void onSuccess(Integer returnValue) {
+                maxSpmPriority = returnValue;
                 InitSpmPriorities1();
             }
         }));
     }
 
     private void InitSpmPriorities1() {
-        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-
-                MainTabHostView view = (MainTabHostView) target;
-
-                view.defaultSpmPriority = (Integer) returnValue;
+            public void onSuccess(Integer returnValue) {
+                defaultSpmPriority = returnValue;
                 InitSpmPriorities2();
             }
         }));

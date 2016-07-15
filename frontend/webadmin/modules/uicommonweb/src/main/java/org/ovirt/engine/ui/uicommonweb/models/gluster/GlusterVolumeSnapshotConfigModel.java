@@ -9,8 +9,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -113,13 +112,12 @@ public class GlusterVolumeSnapshotConfigModel extends Model {
     private void populateConfigOptions() {
         startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterSnapshotConfig(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterSnapshotConfig(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>> configs =
-                        vdcValue.getReturnValue();
+                        returnValue.getReturnValue();
                 Map<String, String> clusterConfigOptions = new HashMap<>();
                 Map<String, String> volumeConfigOptions = new HashMap<>();
                 for (GlusterVolumeSnapshotConfig config : configs.getFirst()) {

@@ -24,9 +24,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -223,100 +222,81 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
      * Create and run the query for all data centers.
      */
     private void doDataCenterSearch() {
-        final AsyncQuery dcQuery = new AsyncQuery();
-        dcQuery.setModel(this);
-        dcQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result) {
-                final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                systemTreeModel.setDataCenters((List<StoragePool>) result);
+            public void onSuccess(List<StoragePool> result) {
+                setDataCenters(result);
                 //These need to be here so we can get data center ids for use in the queries.
                 doNetworksSearch();
             }
-        };
-        AsyncDataProvider.getInstance().getDataCenterList(dcQuery, false);
+        }), false);
     }
 
     /**
      * Create and run the query for all clusters.
      */
     private void doClusterSearch() {
-        AsyncQuery clusterQuery = new AsyncQuery();
-        clusterQuery.setModel(this);
-        clusterQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result) {
-                SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                List<Cluster> clusters = (List<Cluster>) result;
-
-                systemTreeModel.setClusterMap(new HashMap<Guid, ArrayList<Cluster>>());
+            public void onSuccess(List<Cluster> clusters) {
+                setClusterMap(new HashMap<Guid, ArrayList<Cluster>>());
                 for (Cluster cluster : clusters) {
                     if (cluster.getStoragePoolId() != null) {
                         Guid key = cluster.getStoragePoolId();
-                        if (!systemTreeModel.getClusterMap().containsKey(key)) {
-                            systemTreeModel.getClusterMap().put(key, new ArrayList<Cluster>());
+                        if (!getClusterMap().containsKey(key)) {
+                            getClusterMap().put(key, new ArrayList<Cluster>());
                         }
-                        List<Cluster> list = systemTreeModel.getClusterMap().get(key);
+                        List<Cluster> list = getClusterMap().get(key);
                         list.add(cluster);
                     }
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getClusterList(clusterQuery, false);
+        }), false);
     }
 
     /**
      * Create and run the query for all hosts.
      */
     private void doHostSearch() {
-        AsyncQuery hostQuery = new AsyncQuery();
-        hostQuery.setModel(this);
-        hostQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result) {
-                SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                List<VDS> hosts = (List<VDS>) result;
-                systemTreeModel.setHostMap(new HashMap<Guid, ArrayList<VDS>>());
+            public void onSuccess(List<VDS> hosts) {
+                setHostMap(new HashMap<Guid, ArrayList<VDS>>());
                 for (VDS host : hosts) {
                     Guid key = host.getClusterId();
-                    if (!systemTreeModel.getHostMap().containsKey(key)) {
-                        systemTreeModel.getHostMap().put(key, new ArrayList<VDS>());
+                    if (!getHostMap().containsKey(key)) {
+                        getHostMap().put(key, new ArrayList<VDS>());
                     }
-                    List<VDS> list = systemTreeModel.getHostMap().get(key);
+                    List<VDS> list = getHostMap().get(key);
                     list.add(host);
                 }
             }
-        };
-        AsyncDataProvider.getInstance().getHostList(hostQuery, false);
+        }), false);
     }
 
     /**
      * Create and run the query for all volumes.
      */
     private void doVolumeSearch() {
-        AsyncQuery volumeQuery = new AsyncQuery();
-        volumeQuery.setModel(this);
-        volumeQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery<List<GlusterVolumeEntity>> volumeQuery = new AsyncQuery<>(new AsyncCallback<List<GlusterVolumeEntity>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object result) {
-                final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                List<GlusterVolumeEntity> volumes = (List<GlusterVolumeEntity>) result;
-                systemTreeModel.setVolumeMap(new HashMap<Guid, ArrayList<GlusterVolumeEntity>>());
+            public void onSuccess(List<GlusterVolumeEntity> volumes) {
+                setVolumeMap(new HashMap<Guid, ArrayList<GlusterVolumeEntity>>());
 
                 for (GlusterVolumeEntity volume : volumes) {
                     Guid key = volume.getClusterId();
-                    if (!systemTreeModel.getVolumeMap().containsKey(key)) {
-                        systemTreeModel.getVolumeMap().put(key, new ArrayList<GlusterVolumeEntity>());
+                    if (!getVolumeMap().containsKey(key)) {
+                        getVolumeMap().put(key, new ArrayList<GlusterVolumeEntity>());
                     }
-                    List<GlusterVolumeEntity> list = systemTreeModel.getVolumeMap().get(key);
+                    List<GlusterVolumeEntity> list = getVolumeMap().get(key);
                     list.add(volume);
                 }
             }
-        };
+        });
         AsyncDataProvider.getInstance().getVolumeList(volumeQuery, null, false);
     }
 
@@ -386,17 +366,14 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
      * Create and run the query for all providers.
      */
     private void doProviderSearch() {
-        AsyncQuery providersQuery = new AsyncQuery();
-        providersQuery.setModel(this);
-        providersQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProviders(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
 
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                setProviders((List<Provider>) returnValue);
+            public void onSuccess(List<Provider<?>> returnValue) {
+                setProviders((List) returnValue);
             }
-        };
-        AsyncDataProvider.getInstance().getAllProviders(providersQuery, false);
+        }), false);
     }
 
     @Override

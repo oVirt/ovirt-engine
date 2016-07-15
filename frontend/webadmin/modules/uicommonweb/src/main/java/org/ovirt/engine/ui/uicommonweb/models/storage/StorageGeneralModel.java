@@ -5,8 +5,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -152,33 +151,27 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
             setIsPosix(storageDomain.getStorageType() == StorageType.POSIXFS);
 
             if (getIsNfs() || getIsLocalS() || getIsPosix()) {
-                AsyncQuery _asyncQuery = new AsyncQuery();
-                _asyncQuery.setModel(this);
-                _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(new AsyncCallback<StorageServerConnections>() {
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        StorageServerConnections connection = (StorageServerConnections) returnValue;
-                        StorageGeneralModel generalModel = (StorageGeneralModel) model;
-
+                    public void onSuccess(StorageServerConnections connection) {
                         if (connection != null) {
-                            generalModel.setPath(connection.getConnection());
+                            setPath(connection.getConnection());
                             if (isNfs) {
                                 EnumTranslator translator = EnumTranslator.getInstance();
-                                generalModel.setNfsVersion(translator.translate(connection.getNfsVersion()));
-                                generalModel.setRetransmissions(connection.getNfsRetrans());
-                                generalModel.setTimeout(connection.getNfsTimeo());
+                                setNfsVersion(translator.translate(connection.getNfsVersion()));
+                                setRetransmissions(connection.getNfsRetrans());
+                                setTimeout(connection.getNfsTimeo());
                             }
 
                             if (isPosix) {
-                                generalModel.setVfsType(connection.getVfsType());
-                                generalModel.setMountOptions(connection.getMountOptions());
+                                setVfsType(connection.getVfsType());
+                                setMountOptions(connection.getMountOptions());
                             }
                         } else {
-                            generalModel.setPath(null);
+                            setPath(null);
                         }
                     }
-                };
-                AsyncDataProvider.getInstance().getStorageConnectionById(_asyncQuery, storageDomain.getStorage(), true);
+                }), storageDomain.getStorage(), true);
             }
             else {
                 setPath(null);

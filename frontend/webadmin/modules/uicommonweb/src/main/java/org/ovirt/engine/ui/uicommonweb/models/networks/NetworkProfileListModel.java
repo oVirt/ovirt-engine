@@ -1,14 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -136,15 +133,7 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
             return;
         }
 
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                setItems((Collection<VnicProfileView>) returnValue);
-            }
-        };
-        AsyncDataProvider.getInstance().getVnicProfilesByNetworkId(asyncQuery, getEntity().getId());
+        AsyncDataProvider.getInstance().getVnicProfilesByNetworkId(new SetRawItemsAsyncQuery(), getEntity().getId());
     }
 
     @Override

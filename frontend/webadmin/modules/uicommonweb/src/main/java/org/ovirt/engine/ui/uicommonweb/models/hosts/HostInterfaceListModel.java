@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +19,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -149,25 +147,15 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                Iterable<VdsNetworkInterface> iVdcQueryableItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                ArrayList<VdsNetworkInterface> items = new ArrayList<>();
-
-                Iterator<VdsNetworkInterface> networkInterfacesIterator = iVdcQueryableItems.iterator();
-                while (networkInterfacesIterator.hasNext()) {
-                    items.add((VdsNetworkInterface) networkInterfacesIterator.next());
-                }
-                updateItems(items);
-            }
-        };
-
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+            @Override
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                List<VdsNetworkInterface> items = returnValue.getReturnValue();
+                updateItems(items);
+            }
+        }));
     }
 
     private void updateItems(Iterable<VdsNetworkInterface> source) {

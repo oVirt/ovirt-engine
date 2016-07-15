@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -19,9 +19,8 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -234,9 +233,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     private void initExternalProviderList() {
-        AsyncQuery getProvidersQuery = new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery getProvidersQuery = new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @Override
-            public void onSuccess(Object model, Object result) {
+            public void onSuccess(List<Provider<?>> result) {
                 List<Provider> providers = getNonReadOnlyExternalNetworkProviders(result);
                 getExternalProviders().setItems(providers);
                 selectExternalProvider();
@@ -245,9 +244,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
 
-    private List<Provider> getNonReadOnlyExternalNetworkProviders(Object result) {
-        List<Provider> providers = new LinkedList();
-        for (Provider provider : (List<Provider>) result){
+    private List<Provider> getNonReadOnlyExternalNetworkProviders(List<Provider<?>> result) {
+        List<Provider> providers = new LinkedList<>();
+        for (Provider provider : result){
             if (isExternalNetworkProviderReadOnly(provider)){
                 continue;
             }
@@ -544,17 +543,13 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setSupportBridgesReportByVDSM();
         setMTUOverrideSupported();
 
-        AsyncQuery query = new AsyncQuery();
-        query.asyncCallback = new INewAsyncCallback() {
-
+        AsyncDataProvider.getInstance().getAllHostNetworkQos(dc.getId(), new AsyncQuery<>(new AsyncCallback<List<HostNetworkQos>>() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                Collection<HostNetworkQos> qos = (Collection<HostNetworkQos>) returnValue;
+            public void onSuccess(List<HostNetworkQos> qos) {
                 getQos().setItems(qos);
                 getQos().setSelectedItem(Linq.findHostNetworkQosById(qos, getNetwork().getQosId()));
             }
-        };
-        AsyncDataProvider.getInstance().getAllHostNetworkQos(dc.getId(), query);
+        }));
 
         updateDcLabels();
 
@@ -741,12 +736,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     private void updateDcLabels() {
         AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getSelectedDc().getId(),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<SortedSet<String>>() {
 
                     @Override
-                    public void onSuccess(Object model, Object returnValue) {
+                    public void onSuccess(SortedSet<String> returnValue) {
                         String label = getNetworkLabel().getSelectedItem();
-                        getNetworkLabel().setItems((Collection<String>) returnValue);
+                        getNetworkLabel().setItems(returnValue);
                         getNetworkLabel().setSelectedItem(label);
                         onExportChanged();
                     }

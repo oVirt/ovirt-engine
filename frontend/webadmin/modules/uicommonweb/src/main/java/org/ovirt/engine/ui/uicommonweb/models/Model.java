@@ -9,6 +9,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
@@ -596,5 +597,22 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
         setIsChangeable(featureSupported);
         setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(version.getValue()));
+    }
+
+    public class AsyncQuery<T> extends org.ovirt.engine.ui.frontend.AsyncQuery<T> {
+        public AsyncQuery(){
+        }
+
+        public AsyncQuery(AsyncCallback<T> callback) {
+            super(Model.this, callback);
+        }
+
+        public AsyncQuery(AsyncCallback<T> callback, boolean handleFailure) {
+            super(Model.this, callback, handleFailure);
+        }
+    }
+
+    public <T> AsyncQuery<T> asyncQuery(AsyncCallback<T> callback) {
+        return new AsyncQuery<>(callback);
     }
 }

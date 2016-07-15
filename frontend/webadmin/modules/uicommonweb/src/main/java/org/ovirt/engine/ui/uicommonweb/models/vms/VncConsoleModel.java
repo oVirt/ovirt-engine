@@ -8,9 +8,8 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
@@ -100,22 +99,6 @@ public class VncConsoleModel extends ConsoleModel {
             throw new IllegalStateException("Trying to invoke VNC console but VM GraphicsInfo is null."); //$NON-NLS-1$
         }
 
-        final AsyncQuery configureCallback = new ShowErrorAsyncQuery(new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                // overriding global server settings by frontend settings
-                configuredOptions.setRemapCtrlAltDelete(vncImpl.getOptions().isRemapCtrlAltDelete());
-                vncImpl.setOptions(configuredOptions);
-                vncImpl.getOptions().setTitle(getClientTitle());
-                vncImpl.getOptions().setVmName(getEntity().getName());
-                if (vncImpl instanceof HasForeignMenuData) {
-                    setForeignMenuData((HasForeignMenuData) vncImpl);
-                }
-                vncImpl.invokeClient();
-            }
-        });
-
         vncImpl.getOptions().setVmId(getEntity().getId());
         ConfigureConsoleOptionsParams parameters = new ConfigureConsoleOptionsParams(vncImpl.getOptions(), true);
         parameters.setEngineBaseUrl(FrontendUrlUtils.getRootURL());
@@ -123,7 +106,21 @@ public class VncConsoleModel extends ConsoleModel {
         Frontend.getInstance().runQuery(
                 VdcQueryType.ConfigureConsoleOptions,
                 parameters,
-                configureCallback);
+                new ShowErrorAsyncQuery(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        // overriding global server settings by frontend settings
+                        configuredOptions.setRemapCtrlAltDelete(vncImpl.getOptions().isRemapCtrlAltDelete());
+                        vncImpl.setOptions(configuredOptions);
+                        vncImpl.getOptions().setTitle(getClientTitle());
+                        vncImpl.getOptions().setVmName(getEntity().getName());
+                        if (vncImpl instanceof HasForeignMenuData) {
+                            setForeignMenuData((HasForeignMenuData) vncImpl);
+                        }
+                        vncImpl.invokeClient();
+                    }
+                }));
     }
 
 }
