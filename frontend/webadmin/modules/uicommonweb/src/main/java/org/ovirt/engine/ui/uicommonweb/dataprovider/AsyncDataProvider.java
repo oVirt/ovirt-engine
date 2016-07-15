@@ -2240,11 +2240,10 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetFenceConfigurationValue, param, aQuery);
     }
 
-    public void getPmOptions(AsyncQuery aQuery, String pmType, String version) {
+    public void getPmOptions(AsyncQuery aQuery, final String pmType, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                String pmtype = (String) _asyncQuery.data[0];
                 HashMap<String, ArrayList<String>> cachedPmMap = new HashMap<>();
                 HashMap<String, HashMap<String, Object>> dict =
                         (HashMap<String, HashMap<String, Object>>) source;
@@ -2256,10 +2255,9 @@ public class AsyncDataProvider {
 
                     cachedPmMap.put(pair.getKey(), list);
                 }
-                return cachedPmMap.get(pmtype);
+                return cachedPmMap.get(pmType);
             }
         };
-        aQuery.setData(new Object[] { pmType });
         Frontend.getInstance().runQuery(VdcQueryType.GetAgentFenceOptions, new GetAgentFenceOptionsQueryParameters(version), aQuery);
     }
 

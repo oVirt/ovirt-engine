@@ -19,7 +19,6 @@ public class AsyncQuery {
     public IAsyncConverter converterCallback = null;
     private boolean handleFailure;
     public VdcQueryReturnValue originalReturnValue;
-    public Object[] data;
 
     public AsyncQuery() {
         this.asyncCallback = EMPTY_CALLBACK;
@@ -38,14 +37,6 @@ public class AsyncQuery {
         setModel(target);
         this.asyncCallback = asyncCallback;
         this.handleFailure = handleFailure;
-    }
-
-    public Object[] getData() {
-        return data;
-    }
-
-    public void setData(Object[] data) {
-        this.data = data;
     }
 
     public VdcQueryReturnValue getOriginalReturnValue() {
