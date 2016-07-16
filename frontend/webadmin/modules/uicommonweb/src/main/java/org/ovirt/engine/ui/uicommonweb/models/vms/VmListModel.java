@@ -620,7 +620,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                                        public void onSuccess(Object target, Object returnValue) {
                                                            VmListModel<Void> vmListModel = (VmListModel<Void>) target;
                                                            VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
-                                                           model.setEntity(returnValue);
+                                                           model.setEntity((VM) returnValue);
 
                                                            UICommand tempVar = new UICommand("Cancel", vmListModel); //$NON-NLS-1$
                                                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());

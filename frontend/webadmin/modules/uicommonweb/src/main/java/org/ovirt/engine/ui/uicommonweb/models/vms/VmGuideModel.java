@@ -13,13 +13,8 @@ import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public class VmGuideModel extends GuideModel {
+public class VmGuideModel extends GuideModel<VM> {
     public final UIConstants constants = ConstantsManager.getInstance().getConstants();
-
-    @Override
-    public VM getEntity() {
-        return (VM) super.getEntity();
-    }
 
     @Override
     protected void onEntityChanged() {

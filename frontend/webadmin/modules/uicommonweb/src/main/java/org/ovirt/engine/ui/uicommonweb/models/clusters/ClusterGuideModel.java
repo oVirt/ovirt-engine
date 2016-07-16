@@ -42,7 +42,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import com.google.gwt.user.client.Timer;
 
-public class ClusterGuideModel extends GuideModel {
+public class ClusterGuideModel extends GuideModel<Cluster> {
 
     //Action command names
     private static final String ADD_DATA_CENTER = "AddDataCenter"; //$NON-NLS-1$
@@ -65,11 +65,6 @@ public class ClusterGuideModel extends GuideModel {
             ConstantsManager.getInstance().getConstants().selectHostsClusterGuide();
     private final String addDataCenterTitle = ConstantsManager.getInstance().getConstants().addDataCenter();
     private final String noAvailableActions = ConstantsManager.getInstance().getConstants().guidePopupNoActionsLabel();
-
-    @Override
-    public Cluster getEntity() {
-        return (Cluster) ((super.getEntity() instanceof Cluster) ? super.getEntity() : null);
-    }
 
     @Override
     protected void onEntityChanged() {
@@ -400,8 +395,7 @@ public class ClusterGuideModel extends GuideModel {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
-                        final ClusterGuideModel clusterGuideModel = (ClusterGuideModel) result.getState();
-                        List<MoveHostData> hosts = ((MoveHost) clusterGuideModel.getWindow()).getSelectedHosts();
+                        List<MoveHostData> hosts = ((MoveHost) getWindow()).getSelectedHosts();
                         List<VdcReturnValueBase> retVals = result.getReturnValue();
                         final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
                         if (retVals != null && hosts.size() == retVals.size()) {
@@ -421,14 +415,14 @@ public class ClusterGuideModel extends GuideModel {
                         }
 
                         if (activateVdsParameterList.isEmpty()) {
-                            clusterGuideModel.getWindow().stopProgress();
-                            clusterGuideModel.cancel();
-                            clusterGuideModel.postAction();
+                            getWindow().stopProgress();
+                            cancel();
+                            postAction();
                         } else {
-                            final String searchString = getVdsSearchString((MoveHost) clusterGuideModel.getWindow());
+                            final String searchString = getVdsSearchString((MoveHost) getWindow());
                             Timer timer = new Timer() {
                                 public void run() {
-                                    checkVdsClusterChangeSucceeded(clusterGuideModel, searchString, parameterList, activateVdsParameterList);
+                                    checkVdsClusterChangeSucceeded(searchString, parameterList, activateVdsParameterList);
                                 }
                             };
                             timer.schedule(2000);

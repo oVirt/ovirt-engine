@@ -80,7 +80,7 @@ import org.ovirt.engine.ui.uicompat.TaskContext;
 
 import com.google.gwt.user.client.Timer;
 
-public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
+public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITaskTarget {
 
     public final String DataCenterConfigureClustersAction = ConstantsManager.getInstance()
             .getConstants()
@@ -138,15 +138,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     private boolean noLocalStorageHost;
 
     public DataCenterGuideModel() {
-    }
-
-    @Override
-    public StoragePool getEntity() {
-        return (StoragePool) super.getEntity();
-    }
-
-    public void setEntity(StoragePool value) {
-        super.setEntity(value);
     }
 
     @Override
@@ -1387,7 +1378,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                             final String searchString = getVdsSearchString((MoveHost) dataCenterGuideModel.getWindow());
                             Timer timer = new Timer() {
                                 public void run() {
-                                    checkVdsClusterChangeSucceeded(dataCenterGuideModel, searchString, parameterList, activateVdsParameterList);
+                                    checkVdsClusterChangeSucceeded(searchString, parameterList, activateVdsParameterList);
                                 }
                             };
                             timer.schedule(2000);
@@ -1410,7 +1401,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.getDataCenter().setItems(Collections.singletonList(getEntity()), getEntity());
         model.getDataCenter().setIsChangeable(false);
 
-        model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {

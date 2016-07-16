@@ -31,9 +31,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> implements GuidePopupPresenterWidget.ViewDef {
+public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> implements GuidePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<GuideModel, GuidePopupView> {
+    interface Driver extends SimpleBeanEditorDriver<GuideModel<?>, GuidePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, GuidePopupView> {
@@ -106,13 +106,13 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
     }
 
     @Override
-    public void edit(GuideModel object) {
+    public void edit(GuideModel<?> object) {
         driver.edit(object);
 
         object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                GuideModel guideModel = (GuideModel) sender;
+                GuideModel<?> guideModel = (GuideModel<?>) sender;
                 String propertyName = args.propertyName;
 
                 if (PropertyChangedEventArgs.PROGRESS.equals(propertyName)) {
@@ -178,7 +178,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
         });
     }
 
-    private void updateActionsPanels(GuideModel object) {
+    private void updateActionsPanels(GuideModel<?> object) {
         compulsoryActionsPanel.clear();
         optionalActionsPanel.clear();
 
@@ -217,7 +217,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
         buttonsPanel.add(buttonContainer);
     }
 
-    private void updateCreatedLabel(GuideModel object) {
+    private void updateCreatedLabel(GuideModel<?> object) {
         if (object instanceof DataCenterGuideModel) {
             infoLabel.setText(datacenterCreated);
         }
@@ -230,7 +230,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
     }
 
     @Override
-    public GuideModel flush() {
+    public GuideModel<?> flush() {
         return driver.flush();
     }
 

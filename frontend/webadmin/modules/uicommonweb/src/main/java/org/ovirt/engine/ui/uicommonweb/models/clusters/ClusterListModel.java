@@ -239,7 +239,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                     public void onSuccess(Object target, Object returnValue) {
                         ClusterListModel<Void> clusterListModel = (ClusterListModel<Void>) target;
                         ClusterGuideModel model = (ClusterGuideModel) clusterListModel.getWindow();
-                        model.setEntity(returnValue);
+                        model.setEntity((Cluster) returnValue);
 
                         UICommand tempVar = new UICommand("Cancel", clusterListModel); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());

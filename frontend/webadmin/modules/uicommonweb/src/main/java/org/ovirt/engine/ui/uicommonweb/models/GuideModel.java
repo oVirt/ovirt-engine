@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.user.client.Timer;
 
 @SuppressWarnings("unused")
-public class GuideModel extends EntityModel {
+public class GuideModel<T> extends EntityModel<T> {
 
     private ErrorPopupManager errorPopupManager;
 
@@ -99,8 +99,7 @@ public class GuideModel extends EntityModel {
         return buf.toString();
     }
 
-    protected void checkVdsClusterChangeSucceeded(final GuideModel guideModel,
-                                                  final String searchStr,
+    protected void checkVdsClusterChangeSucceeded(final String searchStr,
                                                   final List<VdcActionParametersBase> changeVdsParameterList,
                                                   final List<VdcActionParametersBase> activateVdsParameterList) {
         final Map<Guid, Guid> hostClusterIdMap = new HashMap<>();
@@ -122,18 +121,17 @@ public class GuideModel extends EntityModel {
                                     }
                                 }
                                 if (!succeeded) {
-                                    guideModel.getWindow().stopProgress();
-                                    guideModel.cancel();
+                                    getWindow().stopProgress();
+                                    cancel();
                                     errorPopupManager.show(ConstantsManager.getInstance().getConstants().hostChangeClusterTimeOut());
                                 } else {
-                                    activateHostsAfterClusterChange(guideModel, searchStr, activateVdsParameterList);
+                                    activateHostsAfterClusterChange(searchStr, activateVdsParameterList);
                                 }
                             }
                         }));
     }
 
     protected void activateHostsAfterClusterChange(
-            final GuideModel guideModel,
             final String searchStr,
             final List<VdcActionParametersBase> activateVdsParameterList) {
         Frontend.getInstance().runMultipleAction(VdcActionType.ActivateVds, activateVdsParameterList,
@@ -142,7 +140,7 @@ public class GuideModel extends EntityModel {
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         Timer timer = new Timer() {
                             public void run() {
-                                checkVdsActivateSucceeded(guideModel, searchStr);
+                                checkVdsActivateSucceeded(searchStr);
                             }
                         };
 
@@ -153,7 +151,7 @@ public class GuideModel extends EntityModel {
                 this);
     }
 
-    protected void checkVdsActivateSucceeded(final GuideModel guideModel, final String searchStr) {
+    protected void checkVdsActivateSucceeded(final String searchStr) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(searchStr, SearchType.VDS),
                 new AsyncQuery(this,
@@ -167,10 +165,10 @@ public class GuideModel extends EntityModel {
                                         succeeded = false;
                                     }
                                 }
-                                guideModel.getWindow().stopProgress();
-                                guideModel.cancel();
+                                getWindow().stopProgress();
+                                cancel();
                                 if (succeeded) {
-                                    guideModel.postAction();
+                                    postAction();
                                 } else {
                                     errorPopupManager.show(ConstantsManager.getInstance().getConstants().hostActivationTimeOut());
                                 }

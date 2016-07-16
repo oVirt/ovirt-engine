@@ -20,9 +20,9 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<GuideModel, GuidePopupPresenterWidget.ViewDef> {
+public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<GuideModel<?>, GuidePopupPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<GuideModel> {
+    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<GuideModel<?>> {
     }
 
     private final Provider<ClusterPopupPresenterWidget> clusterPopupProvider;
@@ -66,7 +66,7 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(GuideModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(GuideModel<?> source,
             UICommand lastExecutedCommand, Model windowModel) {
         String lastExecutedCommandName = lastExecutedCommand.getName();
 
@@ -100,7 +100,7 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(GuideModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(GuideModel<?> source,
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand.getName().equals("OnAddStorage")) { //$NON-NLS-1$
             return forceCreateConfirmPopupProvider.get();
