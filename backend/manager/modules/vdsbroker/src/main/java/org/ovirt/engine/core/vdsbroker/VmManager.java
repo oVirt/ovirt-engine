@@ -156,8 +156,4 @@ public class VmManager {
     public void setStatistics(VmStatistics statistics) {
         this.statistics = statistics;
     }
-
-    public VmStatistics resetStatistics() {
-        return statistics = new VmStatistics(vmId);
-    }
 }
