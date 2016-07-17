@@ -191,8 +191,8 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         return true;
     }
 
-    private static boolean canRemoveVmPool(Guid vmPoolId) {
-        return getListOfVmsInPool(vmPoolId).size() == 0;
+    private boolean canRemoveVmPool(Guid vmPoolId) {
+        return getVmPoolDao().getVmPoolsMapByVmPoolId(vmPoolId).isEmpty();
     }
 
     private boolean removeVmPool() {

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,9 +21,8 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -31,6 +30,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -44,10 +44,15 @@ public class VmPoolMonitor implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(VmPoolMonitor.class);
 
     private String poolMonitoringJobId;
+
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
     @Inject
+    private VmPoolHandler vmPoolHandler;
+    @Inject
     private VmPoolDao vmPoolDao;
+    @Inject
+    private VmDao vmDao;
     @Inject
     private VmStaticDao vmStaticDao;
 
@@ -65,34 +70,31 @@ public class VmPoolMonitor implements BackendService {
                         TimeUnit.MINUTES);
     }
 
-    /**
-     * Goes over each Vmpool, and makes sure there are at least as much prestarted Vms as defined in the prestarted_vms
-     * field
-     */
-    @OnTimerMethodAnnotation("managePrestartedVmsInAllVmPools")
-    public void managePrestartedVmsInAllVmPools() {
-        getAllVmPools().stream()
-        .filter(pool -> pool.getPrestartedVms() > 0)
-        .forEach(this::managePrestartedVmsInPool);
-    }
-
-    private List<VmPool> getAllVmPools() {
-        return vmPoolDao.getAll();
-    }
-
     public void triggerPoolMonitoringJob() {
         schedulerUtil.triggerJob(poolMonitoringJobId);
     }
 
     /**
-     * Checks how many prestarted vms are missing in the pool, and attempts to prestart either that amount or BATCH_SIZE
+     * Goes over each VM Pool and makes sure there are at least as much prestarted VMs as defined in the prestartedVms
+     * field.
+     */
+    @OnTimerMethodAnnotation("managePrestartedVmsInAllVmPools")
+    public void managePrestartedVmsInAllVmPools() {
+        vmPoolDao.getAll()
+                .stream()
+                .filter(pool -> pool.getPrestartedVms() > 0)
+                .forEach(this::managePrestartedVmsInPool);
+    }
+
+    /**
+     * Checks how many prestarted VMs are missing in the pool, and attempts to prestart either that amount or BATCH_SIZE
      * (the minimum between the two).
      */
     private void managePrestartedVmsInPool(VmPool vmPool) {
-        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPool, new ArrayList<>());
+        int prestartedVms = getNumOfPrestartedVmsInPool(vmPool);
         int missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
         if (missingPrestartedVms > 0) {
-            // We do not want to start too many vms at once
+            // We do not want to start too many VMs at once
             int numOfVmsToPrestart =
                     Math.min(missingPrestartedVms, Config.<Integer> getValue(ConfigValues.VmPoolMonitorBatchSize));
 
@@ -104,38 +106,48 @@ public class VmPoolMonitor implements BackendService {
         }
     }
 
+    private int getNumOfPrestartedVmsInPool(VmPool pool) {
+        // TODO move to VmPoolHandler and rewrite. Worth to consider using a query that uses vms_monitoring_view
+        List<VM> vmsInPool = vmDao.getAllForVmPool(pool.getVmPoolId());
+        return vmsInPool == null ? 0
+                : vmsInPool.stream()
+                        .filter(vm -> vm.isStartingOrUp()
+                                && vmPoolHandler.isPrestartedVmFree(vm.getId(), pool.isStateful(), null))
+                        .collect(Collectors.counting())
+                        .intValue();
+    }
+
     /***
-     * Prestarts the given amount of vmsToPrestart, in the given Vm Pool
+     * Prestarts the given amount of VMs in the given VM Pool.
      */
     private void prestartVms(VmPool vmPool, int numOfVmsToPrestart) {
-        // Fetch all vms that are in status down
-        List<VmPoolMap> vmPoolMaps = vmPoolDao
-                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPool.getVmPoolId(), VMStatus.Down);
         int failedAttempts = 0;
-        int prestartedVmsCounter = 0;
-        final int maxFailedAttempts = Config.<Integer> getValue(ConfigValues.VmPoolMonitorMaxAttempts);
-        Map<String, Set<Guid>> failureReasonsForVms = new HashMap<>();
-        if (vmPoolMaps != null && vmPoolMaps.size() > 0) {
-            for (VmPoolMap map : vmPoolMaps) {
-                if (failedAttempts < maxFailedAttempts && prestartedVmsCounter < numOfVmsToPrestart) {
-                    List<String> messages = new ArrayList<>();
-                    if (prestartVm(map.getVmId(), !vmPool.isStateful(), vmPool.getName(), messages)) {
-                        prestartedVmsCounter++;
-                        failedAttempts = 0;
-                    } else {
-                        failedAttempts++;
-                        collectVmPrestartFailureReasons(map.getVmId(), failureReasonsForVms, messages);
-                    }
-                } else {
-                    // If we reached the required amount or we exceeded the number of allowed failures, stop
-                    break;
-                }
+        int prestartedVms = 0;
+        int maxFailedAttempts = Config.<Integer> getValue(ConfigValues.VmPoolMonitorMaxAttempts);
+        Map<String, Set<Guid>> failureReasons = new HashMap<>();
+
+        Iterator<Guid> iterator =
+                vmPoolHandler
+                        .selectNonPrestartedVms(vmPool.getVmPoolId(),
+                                (vmId, messages) -> collectVmPrestartFailureReasons(vmId, failureReasons, messages))
+                        .iterator();
+        while (failedAttempts < maxFailedAttempts && prestartedVms < numOfVmsToPrestart
+                && iterator.hasNext()) {
+            Guid vmId = iterator.next();
+            if (prestartVm(vmId, !vmPool.isStateful(), vmPool.getName())) {
+                prestartedVms++;
+                failedAttempts = 0;
+            } else {
+                failedAttempts++;
             }
-            logResultOfPrestartVms(prestartedVmsCounter,
-                    numOfVmsToPrestart,
-                    vmPool.getVmPoolId(),
-                    failureReasonsForVms);
-        } else {
+        }
+
+        logResultOfPrestartVms(prestartedVms,
+                numOfVmsToPrestart,
+                vmPool.getVmPoolId(),
+                failureReasons);
+
+        if (prestartedVms == 0) {
             log.info("No VMs available for prestarting");
         }
     }
@@ -148,7 +160,7 @@ public class VmPoolMonitor implements BackendService {
     }
 
     /**
-     * Logs the results of the attempt to prestart Vms in a Vm Pool
+     * Logs the results of the attempt to prestart VMs in a VM Pool.
      */
     private void logResultOfPrestartVms(int prestartedVmsCounter,
             int numOfVmsToPrestart,
@@ -174,27 +186,26 @@ public class VmPoolMonitor implements BackendService {
     }
 
     /**
-     * Prestarts the given Vm
-     * @return whether or not succeeded to prestart the Vm
+     * Prestarts the given VM.
+     * @return whether or not succeeded to prestart the VM
      */
-    private boolean prestartVm(Guid vmGuid, boolean runAsStateless, String poolName, List<String> messages) {
-        if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid, messages)) {
-            VmStatic vmToPrestart = vmStaticDao.get(vmGuid);
-            return runVmFromPool(vmToPrestart, runAsStateless, poolName);
-        }
-        return false;
+    private boolean prestartVm(Guid vmGuid, boolean runAsStateless, String poolName) {
+        VmStatic vmToPrestart = vmStaticDao.get(vmGuid);
+        return runVmFromPool(vmToPrestart, runAsStateless, poolName);
     }
 
     /**
-     * Run the given VM as stateless
+     * Run the given VM as stateless.
      */
     private boolean runVmFromPool(VmStatic vmToRun, boolean runAsStateless, String poolName) {
-        log.info("Running VM '{}' as {}", vmToRun, runAsStateless ? "stateless" : "stateful");
+        log.info("Running VM '{}' as {}", vmToRun.getName(), runAsStateless ? "stateless" : "stateful");
+
         RunVmParams runVmParams = new RunVmParams(vmToRun.getId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRun.getId()));
         runVmParams.setRunAsStateless(runAsStateless);
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
-                runVmParams, ExecutionHandler.createInternalJobContext());
+                runVmParams,
+                ExecutionHandler.createInternalJobContext().withLock(vmPoolHandler.createLock(vmToRun.getId())));
         boolean prestartingVmSucceeded = vdcReturnValue.getSucceeded();
 
         if (!prestartingVmSucceeded) {
@@ -207,6 +218,7 @@ public class VmPoolMonitor implements BackendService {
                 vmToRun.getName(),
                 runAsStateless ? "stateless" : "stateful",
                 prestartingVmSucceeded ? "succeeded" : "failed");
+
         return prestartingVmSucceeded;
     }
 

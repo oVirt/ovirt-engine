@@ -8,6 +8,10 @@ public class AttachUserToVmFromPoolAndRunParameters extends VmPoolUserParameters
 
     private static final long serialVersionUID = -5672324868972973061L;
 
+    private boolean internal;
+
+    private boolean vmPrestarted;
+
     public AttachUserToVmFromPoolAndRunParameters() {
     }
 
@@ -16,14 +20,20 @@ public class AttachUserToVmFromPoolAndRunParameters extends VmPoolUserParameters
         setInternal(internal);
     }
 
-    private boolean internal;
-
     public boolean isInternal() {
         return internal;
     }
 
     private void setInternal(boolean value) {
         internal = value;
+    }
+
+    public boolean isVmPrestarted() {
+        return vmPrestarted;
+    }
+
+    public void setVmPrestarted(boolean vmPrestarted) {
+        this.vmPrestarted = vmPrestarted;
     }
 
 }

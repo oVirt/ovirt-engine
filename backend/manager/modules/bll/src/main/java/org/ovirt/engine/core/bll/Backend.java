@@ -309,6 +309,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         loadService(VmsMonitoring.class);
         loadService(VmDevicesMonitoring.class);
+        loadService(VmPoolHandler.class);
         loadService(VmPoolMonitor.class);
         loadService(HaAutoStartVmsRunner.class);
         loadService(QuotaManager.class);
