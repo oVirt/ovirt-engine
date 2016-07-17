@@ -49,15 +49,13 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         SearchParameters searchParams = new SearchParameters(constraint, searchType);
         boolean caseSensitive = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CASE_SENSITIVE_CONSTRAINT_PARAMETER, true, false);
         int from = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, FROM_CONSTRAINT_PARAMETER, -1, -1);
-        int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, MAX, -1, -1);
+        int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, MAX, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
         searchParams.setCaseSensitive(caseSensitive);
         if (from != -1) {
             searchParams.setSearchFrom(from);
         }
-        if (max != -1) {
-            searchParams.setMaxCount(max);
-        }
+        searchParams.setMaxCount(max);
         return searchParams;
     }
 

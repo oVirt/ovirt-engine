@@ -26,7 +26,7 @@ public class SearchParameters extends VdcQueryParametersBase implements Serializ
         _searchType = searchType;
         _searchPattern = searchPattern;
         this.caseSensitive = caseSensitive;
-        _maxCount = -1;
+        _maxCount = Integer.MAX_VALUE;
     }
 
     public String getSearchPattern() {
