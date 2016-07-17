@@ -751,6 +751,7 @@ public class VmAnalyzer {
         resourceManager.internalSetVmStatus(dbVm, newVmStatus);
         // save the VM state
         saveDynamic(dbVm.getDynamicData());
+        saveVmInterfaces();
     }
 
     private boolean isVdsNonResponsive(Guid vdsId) {
