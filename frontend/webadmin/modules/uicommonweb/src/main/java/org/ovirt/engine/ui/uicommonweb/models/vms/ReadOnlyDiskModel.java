@@ -54,6 +54,8 @@ public class ReadOnlyDiskModel extends AbstractDiskModel {
     @Override
     protected void datacenter_SelectedItemChanged() {
         super.datacenter_SelectedItemChanged();
+        getIsModelDisabled().setEntity(true);
+        getDataCenter().setIsChangeable(false);
 
         // this needs to be executed after the data center is loaded because the update quota needs both values
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
@@ -76,11 +78,6 @@ public class ReadOnlyDiskModel extends AbstractDiskModel {
 
     @Override
     public boolean getIsNew() {
-        return false;
-    }
-
-    @Override
-    public boolean isEditEnabled() {
         return false;
     }
 
