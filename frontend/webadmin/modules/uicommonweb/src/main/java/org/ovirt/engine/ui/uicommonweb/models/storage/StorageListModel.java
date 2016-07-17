@@ -929,7 +929,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         getScanDisksCommand().setIsExecutionAllowed(item != null && items.size() == 1
                 && !items.get(0).getStorageType().isOpenStackDomain()
-                && item.getStatus() == StorageDomainStatus.Active);
+                && item.getStatus() == StorageDomainStatus.Active
+                && item.getStorageDomainType().isDataDomain());
 
         // System tree dependent actions.
         boolean isAvailable =
