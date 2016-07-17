@@ -51,7 +51,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -70,6 +69,7 @@ public class VmAnalyzer {
     private final VdsmVm vdsmVm;
 
     private VmDynamic vmDynamicToSave;
+    private boolean saveVmInterfaces;
     private boolean movedToDown;
     private boolean rerun;
     private boolean poweringUp;
@@ -87,7 +87,6 @@ public class VmAnalyzer {
     private List<VmJob> vmJobs;
     private List<VmNumaNode> vmNumaNodesNeedUpdate;
     private VmStatistics statistics;
-    private List<VmNetworkInterface> vmIfaces;
 
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
@@ -111,7 +110,6 @@ public class VmAnalyzer {
 
     private VdsDynamicDao vdsDynamicDao;
     private VmNumaNodeDao vmNumaNodeDao;
-    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     public VmAnalyzer(
             VM dbVm,
@@ -122,8 +120,7 @@ public class VmAnalyzer {
             ResourceManager resourceManager,
             VdsDynamicDao vdsDynamicDao,
             Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
-            VmNumaNodeDao vmNumaNodeDao,
-            VmNetworkInterfaceDao vmNetworkInterfaceDao) {
+            VmNumaNodeDao vmNumaNodeDao) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
         this.updateStatistics = updateStatistics;
@@ -133,7 +130,6 @@ public class VmAnalyzer {
         this.vdsDynamicDao = vdsDynamicDao;
         this.vdsNumaNodesProvider = vdsNumaNodesProvider;
         this.vmNumaNodeDao = vmNumaNodeDao;
-        this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
     }
 
     /**
@@ -352,7 +348,7 @@ public class VmAnalyzer {
             }
             saveDynamic(dbVm.getDynamicData());
             resetVmStatistics();
-            resetInterfaceStatistics();
+            saveVmInterfaces();
             if (!resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
             }
@@ -372,8 +368,8 @@ public class VmAnalyzer {
     }
 
     public List<VmNetworkStatistics> getVmNetworkStatistics() {
-        return vmIfaces != null ?
-                vmIfaces.stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList())
+        return saveVmInterfaces ?
+                dbVm.getInterfaces().stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList())
                 : Collections.emptyList();
     }
 
@@ -391,7 +387,7 @@ public class VmAnalyzer {
                 vdsmVm.getVmDynamic().getExitReason());
         saveDynamic(dbVm.getDynamicData());
         resetVmStatistics();
-        resetInterfaceStatistics();
+        saveVmInterfaces();
         auditVmMigrationAbort();
 
         resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
@@ -791,7 +787,7 @@ public class VmAnalyzer {
         proceedBalloonCheck();
         proceedGuaranteedMemoryCheck();
         updateVmStatistics();
-        resetInterfaceStatistics();
+        saveVmInterfaces();
         updateInterfaceStatistics();
         updateVmNumaNodeRuntimeInfo();
         updateDiskImageDynamics();
@@ -815,9 +811,6 @@ public class VmAnalyzer {
             return;
         }
 
-        // Note that the network interfaces returned by this method contain only
-        // partial data that is relevant for monitoring.
-        vmIfaces = vmNetworkInterfaceDao.getAllForMonitoredVm(getVmId());
         List<String> macs = new ArrayList<>();
 
         statistics.setUsageNetworkPercent(0);
@@ -827,7 +820,7 @@ public class VmAnalyzer {
         for (VmNetworkInterface ifStats : ifsStats) {
             boolean firstTime = !macs.contains(ifStats.getMacAddress());
 
-            VmNetworkInterface vmIface = vmIfaces.stream()
+            VmNetworkInterface vmIface = dbVm.getInterfaces().stream()
                     .filter(iface -> iface.getMacAddress().equals(ifStats.getMacAddress()))
                     .findFirst()
                     .orElse(null);
@@ -875,7 +868,7 @@ public class VmAnalyzer {
         statistics.addNetworkUsageHistory(statistics.getUsageNetworkPercent(), usageHistoryLimit);
     }
 
-    private void resetInterfaceStatistics() {
+    private void saveVmInterfaces() {
         saveVmInterfaces = true;
     }
 
