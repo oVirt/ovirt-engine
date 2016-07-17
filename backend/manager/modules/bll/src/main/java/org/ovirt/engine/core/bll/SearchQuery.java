@@ -328,6 +328,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         boolean isSafe = false;
         String searchKey = "";
         try {
+            if (getParameters().getMaxCount() < 0) {
+                throw new RuntimeException(String.format("Illegal max count value for query : %s", getParameters().getMaxCount()));
+            }
             String searchText = getParameters().getSearchPattern();
             // do not cache expressions with '*' since it is translated to specific IDs that might be changed
             useCache = useCache && !searchText.contains(ASTR);
@@ -399,7 +402,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // set the case-sensitive flag
                 searchObj.setCaseSensitive(getParameters().getCaseSensitive());
                 // If a number > maxValue is given then maxValue will be used
-                searchObj.setMaxCount(getParameters().getMaxCount() == -1 ? Integer.MAX_VALUE : Math.min(Integer.MAX_VALUE, getParameters().getMaxCount()));
+                searchObj.setMaxCount(Math.min(Integer.MAX_VALUE, getParameters().getMaxCount()));
                 // setting FromSearch value
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
                 if (searchObj.getError() != SyntaxError.NO_ERROR) {
@@ -450,7 +453,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         } catch (RuntimeException ex) {
             log.warn("Illegal search: {}: {}", getParameters().getSearchPattern(), ex.getMessage());
             log.debug("Exception", ex);
-            data = null;
+            throw ex;
         }
         return data;
     }
