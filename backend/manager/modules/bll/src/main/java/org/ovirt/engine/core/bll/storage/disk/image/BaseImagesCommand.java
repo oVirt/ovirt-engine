@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -109,16 +109,21 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
     }
 
-    protected boolean isDataOperationsBySpm() {
-        return isDataOperationsBySpm(getStoragePool());
+    protected boolean isDataOperationsBySpm(StorageDomainStatic targetSd) {
+        return !isDataOperationsByHSM(targetSd);
     }
 
-    protected boolean isDataOperationsBySpm(StoragePool storagePool) {
-        return !FeatureSupported.dataOperationsByHSM(storagePool.getCompatibilityVersion());
+    protected boolean isDataOperationsByHSM(StorageDomainStatic targetSd) {
+        return FeatureSupported.dataOperationsByHSM(getStoragePool().getCompatibilityVersion()) &&
+               !targetSd.getStorageType().isLocal() && targetSd.getStorageDomainType().isDataDomain();
     }
 
     protected boolean isDataOperationsByHSM() {
-        return FeatureSupported.dataOperationsByHSM(getStoragePool().getCompatibilityVersion());
+        return isDataOperationsByHSM(getStorageDomain().getStorageStaticData());
+    }
+
+    protected boolean isDataOperationsBySpm() {
+        return isDataOperationsBySpm(getStorageDomain().getStorageStaticData());
     }
 
     protected VDSReturnValue performImageVdsmOperation() {
@@ -322,9 +327,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage();
     }
 
+    protected StorageDomainStatic loadStorageDomainStaticData(Guid domainId) {
+        return getStorageDomainStaticDao().get(domainId);
+    }
+
     protected DiskImage getVolumeInfo(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
                                          Guid newImageId) {
-        if (isDataOperationsBySpm()) {
+        if (isDataOperationsBySpm(loadStorageDomainStaticData(newStorageDomainID))) {
             return (DiskImage) runVdsCommand(
                     VDSCommandType.GetImageInfo,
                     new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
