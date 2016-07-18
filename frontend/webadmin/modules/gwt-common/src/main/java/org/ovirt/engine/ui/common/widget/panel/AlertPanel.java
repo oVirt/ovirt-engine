@@ -1,17 +1,22 @@
 package org.ovirt.engine.ui.common.widget.panel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.Alert;
+import org.gwtbootstrap3.client.ui.Badge;
 import org.gwtbootstrap3.client.ui.constants.AlertType;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
+import org.gwtbootstrap3.client.ui.html.Text;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -35,8 +40,16 @@ public class AlertPanel extends Composite {
     @UiField
     Div messagePanel;
 
+    @UiField
+    Badge badge;
+
+    @UiField
+    Text badgeText;
+
     private Type type;
     private ColumnSize widgetColumnSize;
+    private int count = 1;
+    private List<SafeHtml> messagesList = new ArrayList<>();
 
     /**
      * The types of PatternFly alerts (currently 4).
@@ -75,6 +88,7 @@ public class AlertPanel extends Composite {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         setType(Type.INFO);
         setWidgetColumnSize(ColumnSize.SM_11);
+        badge.setVisible(false);
     }
 
     /**
@@ -95,6 +109,23 @@ public class AlertPanel extends Composite {
         addMessage(message, styleName);
     }
 
+    public void incCount() {
+        count++;
+        updateBadge();
+    }
+
+    private void updateBadge() {
+        badge.setVisible(count != 1);
+        badgeText.setText(String.valueOf(count));
+        if (badge.isVisible()) {
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            for (SafeHtml message: messagesList) {
+                builder.append(message);
+            }
+            TooltipMixin.updateTooltipContent(builder.toSafeHtml(), getElement());
+        }
+    }
+
     /**
      * Clear all messages from the panel.
      */
@@ -109,7 +140,7 @@ public class AlertPanel extends Composite {
     public void setMessages(List<SafeHtml> messages, String... styleNames) {
         clearMessages();
         for (SafeHtml message: messages) {
-            HTMLPanel messageLabel = new HTMLPanel(message);
+            HTMLPanel messageLabel = createMessageLabel(message);
             for (String s : styleNames) {
                 messageLabel.addStyleName(s);
             }
@@ -121,8 +152,13 @@ public class AlertPanel extends Composite {
      * Add a message to the alert panel. Note that this does not clear any messages already in the panel.
      */
     public void addMessage(SafeHtml message) {
+        messagePanel.add(createMessageLabel(message));
+    }
+
+    private HTMLPanel createMessageLabel(SafeHtml message) {
+        messagesList.add(message);
         HTMLPanel messageLabel = new HTMLPanel(message);
-        messagePanel.add(messageLabel);
+        return messageLabel;
     }
 
     /**
@@ -130,7 +166,7 @@ public class AlertPanel extends Composite {
      * Note that this does not clear any messages already in the panel.
      */
     public void addMessage(SafeHtml message, String styleName) {
-        HTMLPanel messageLabel = new HTMLPanel(message);
+        HTMLPanel messageLabel = createMessageLabel(message);
         messageLabel.addStyleName(styleName);
         messagePanel.add(messageLabel);
     }
