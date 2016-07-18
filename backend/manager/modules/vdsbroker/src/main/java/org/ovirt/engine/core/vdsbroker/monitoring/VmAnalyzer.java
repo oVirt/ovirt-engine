@@ -344,7 +344,6 @@ public class VmAnalyzer {
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
-                loadVmNetworkInterfaces();
                 resourceManager.internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         exitStatus,
@@ -353,6 +352,7 @@ public class VmAnalyzer {
             }
             saveDynamic(dbVm.getDynamicData());
             resetVmStatistics();
+            resetVmInterfaceStatistics();
             if (!resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
             }
@@ -361,6 +361,11 @@ public class VmAnalyzer {
 
     private void resetVmStatistics() {
         statistics = new VmStatistics(getVmId());
+    }
+
+    protected void resetVmInterfaceStatistics() {
+        loadVmNetworkInterfaces();
+        ifaces.stream().map(VmNetworkInterface::getStatistics).forEach(VmNetworkStatistics::resetVmStatistics);
     }
 
     public VmStatistics getVmStatisticsToSave() {
@@ -383,7 +388,6 @@ public class VmAnalyzer {
         if (dbVm.getMigratingToVds() != null) {
             destroyVmOnDestinationHost();
         }
-        loadVmNetworkInterfaces();
         // set vm status to down if source vm crushed
         resourceManager.internalSetVmStatus(dbVm,
                 VMStatus.Down,
@@ -392,6 +396,7 @@ public class VmAnalyzer {
                 vdsmVm.getVmDynamic().getExitReason());
         saveDynamic(dbVm.getDynamicData());
         resetVmStatistics();
+        resetVmInterfaceStatistics();
         auditVmMigrationAbort();
 
         resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());

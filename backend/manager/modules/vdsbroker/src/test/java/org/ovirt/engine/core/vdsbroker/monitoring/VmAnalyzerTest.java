@@ -327,7 +327,7 @@ public class VmAnalyzerTest {
                 null,
                 null,
                 null));
-        doNothing().when(vmAnalyzer).loadVmNetworkInterfaces();
+        doNothing().when(vmAnalyzer).resetVmInterfaceStatistics();
         doReturn(vmManager).when(vmAnalyzer).getVmManager();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(true);

@@ -262,6 +262,13 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
         return sampleTime;
     }
 
+    public void resetVmStatistics() {
+        setTransmitDropRate(0D);
+        setTransmitRate(0D);
+        setReceiveRate(0D);
+        setReceiveDropRate(0D);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
