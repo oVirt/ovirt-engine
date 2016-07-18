@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
@@ -33,7 +31,7 @@ public class BackendUserResource
     private BackendUsersResource parent;
 
     public BackendUserResource(String id, BackendUsersResource parent) {
-        super(id, User.class, DbUser.class, SUB_COLLECTIONS);
+        super(id, User.class, DbUser.class);
         this.parent = parent;
     }
 

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendDiskProfileResource extends AbstractBackendDiskProfileResource implements DiskProfileResource {
 
     protected BackendDiskProfileResource(String id) {
-        super(id, BackendDiskProfilesResource.SUB_COLLECTIONS);
+        super(id);
     }
 
     @Override

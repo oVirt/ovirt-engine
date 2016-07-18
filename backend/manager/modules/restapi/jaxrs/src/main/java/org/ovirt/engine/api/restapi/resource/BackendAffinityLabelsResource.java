@@ -17,10 +17,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityLabelsResource extends AbstractBackendCollectionResource<AffinityLabel, org.ovirt.engine.core.common.businessentities.Label>
         implements AffinityLabelsResource {
-    static final String[] SUB_COLLECTIONS = { "hosts", "vms" };
 
     public BackendAffinityLabelsResource() {
-        super(AffinityLabel.class, org.ovirt.engine.core.common.businessentities.Label.class, SUB_COLLECTIONS);
+        super(AffinityLabel.class, org.ovirt.engine.core.common.businessentities.Label.class);
     }
 
     @Override

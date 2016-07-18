@@ -33,8 +33,8 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     extends AbstractBackendSubResource<R, Q> {
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendActionableResource.class);
 
-    public AbstractBackendActionableResource(String id, Class<R> modelType, Class<Q> entityType, String... subCollections) {
-        super(id, modelType, entityType, subCollections);
+    public AbstractBackendActionableResource(String id, Class<R> modelType, Class<Q> entityType) {
+        super(id, modelType, entityType);
     }
 
     protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType, EntityResolver entityResolver) {

@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 public abstract class AbstractBackendExternalProviderResource<R extends ExternalProvider>
         extends AbstractBackendActionableResource<R, Provider>
         implements ExternalProviderResource {
-    public AbstractBackendExternalProviderResource(String id, Class<R> modelType, String... subCollections) {
-        super(id, modelType, Provider.class, subCollections);
+    public AbstractBackendExternalProviderResource(String id, Class<R> modelType) {
+        super(id, modelType, Provider.class);
     }
 
     @Override

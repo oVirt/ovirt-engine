@@ -22,10 +22,8 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class AbstractBackendCpuProfilesResource
         extends AbstractBackendCollectionResource<CpuProfile, org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> {
 
-    public AbstractBackendCpuProfilesResource(String... subCollections) {
-        super(CpuProfile.class,
-                org.ovirt.engine.core.common.businessentities.profiles.CpuProfile.class,
-                subCollections);
+    public AbstractBackendCpuProfilesResource() {
+        super(CpuProfile.class, org.ovirt.engine.core.common.businessentities.profiles.CpuProfile.class);
     }
 
     protected CpuProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> entities) {

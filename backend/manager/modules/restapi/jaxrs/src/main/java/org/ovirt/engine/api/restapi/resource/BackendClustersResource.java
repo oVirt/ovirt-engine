@@ -24,14 +24,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendClustersResource extends AbstractBackendCollectionResource<org.ovirt.engine.api.model.Cluster, Cluster>
         implements ClustersResource {
 
-    static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes", "glusterhooks",
-            "affinitygroups", "cpuprofiles" };
     static final String[] VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE = {"glustervolumes", "glusterhooks" };
 
     private final ManagementNetworkFinder managementNetworkFinder;
 
     public BackendClustersResource() {
-        super(org.ovirt.engine.api.model.Cluster.class, Cluster.class, SUB_COLLECTIONS);
+        super(org.ovirt.engine.api.model.Cluster.class, Cluster.class);
         managementNetworkFinder = new ManagementNetworkFinder(this);
     }
 

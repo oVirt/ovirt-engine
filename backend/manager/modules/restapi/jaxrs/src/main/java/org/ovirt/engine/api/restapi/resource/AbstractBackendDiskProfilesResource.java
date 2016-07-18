@@ -22,10 +22,9 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class AbstractBackendDiskProfilesResource
         extends AbstractBackendCollectionResource<DiskProfile, org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> {
 
-    public AbstractBackendDiskProfilesResource(String... subCollections) {
+    public AbstractBackendDiskProfilesResource() {
         super(DiskProfile.class,
-                org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class,
-                subCollections);
+                org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class);
     }
 
     protected DiskProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> entities) {

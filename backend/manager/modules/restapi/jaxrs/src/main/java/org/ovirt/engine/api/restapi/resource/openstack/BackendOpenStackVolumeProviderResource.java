@@ -16,8 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
@@ -40,7 +38,7 @@ public class BackendOpenStackVolumeProviderResource
     private BackendOpenStackVolumeProvidersResource parent;
 
     public BackendOpenStackVolumeProviderResource(String id, BackendOpenStackVolumeProvidersResource parent) {
-        super(id, OpenStackVolumeProvider.class, SUB_COLLECTIONS);
+        super(id, OpenStackVolumeProvider.class);
         this.parent = parent;
     }
 

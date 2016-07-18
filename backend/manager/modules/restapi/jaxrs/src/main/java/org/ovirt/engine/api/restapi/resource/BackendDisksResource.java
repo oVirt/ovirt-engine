@@ -24,9 +24,8 @@ public class BackendDisksResource
         extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements DisksResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "statistics" };
     public BackendDisksResource() {
-        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class, SUB_COLLECTIONS);
+        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
     }
 
     @Override

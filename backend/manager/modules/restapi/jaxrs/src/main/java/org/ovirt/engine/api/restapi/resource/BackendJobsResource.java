@@ -17,10 +17,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendJobsResource extends AbstractBackendCollectionResource<Job, org.ovirt.engine.core.common.job.Job> implements JobsResource {
 
-    static final String[] SUB_COLLECTIONS = { "steps" };
-
     public BackendJobsResource() {
-        super(Job.class, org.ovirt.engine.core.common.job.Job.class, SUB_COLLECTIONS);
+        super(Job.class, org.ovirt.engine.core.common.job.Job.class);
     }
 
     @Override

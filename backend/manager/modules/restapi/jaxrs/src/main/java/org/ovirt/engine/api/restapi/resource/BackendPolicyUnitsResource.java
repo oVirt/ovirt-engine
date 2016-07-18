@@ -15,11 +15,10 @@ public abstract class BackendPolicyUnitsResource<M extends BaseResources, N exte
         extends AbstractBackendCollectionResource<N, ClusterPolicy> {
 
     protected final Guid schedulingPolicyId;
-    private static final String[] SUB_COLLECTIONS = {};
 
     protected BackendPolicyUnitsResource(Guid schedulingPolicyId,
             Class<N> baseResourcesClass) {
-        super(baseResourcesClass, ClusterPolicy.class, SUB_COLLECTIONS);
+        super(baseResourcesClass, ClusterPolicy.class);
         this.schedulingPolicyId = schedulingPolicyId;
     }
 

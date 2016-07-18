@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResource.SUB_COLLECTIONS;
-
 import java.util.List;
 import javax.ws.rs.core.Response;
 
@@ -31,7 +29,7 @@ public class BackendHostNicResource
     private BackendHostNicsResource parent;
 
     public BackendHostNicResource(String id, BackendHostNicsResource parent) {
-        super(id, HostNic.class, VdsNetworkInterface.class, SUB_COLLECTIONS);
+        super(id, HostNic.class, VdsNetworkInterface.class);
         this.parent = parent;
     }
 

@@ -38,13 +38,11 @@ public class BackendGroupsResource
         extends AbstractBackendCollectionResource<Group, DbGroup>
         implements GroupsResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "roles", "tags" };
-
     private static final String GROUPS_SEARCH_PATTERN = "grpname != \"\"";
     private static final String AND_SEARCH_PATTERN = " and ";
 
     public BackendGroupsResource() {
-        super(Group.class, DbGroup.class, SUB_COLLECTIONS);
+        super(Group.class, DbGroup.class);
     }
 
     /**

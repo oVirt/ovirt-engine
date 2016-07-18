@@ -19,8 +19,7 @@ public abstract class AbstractBackendVnicProfileResource
 
     protected AbstractBackendVnicProfileResource(String id) {
         super(id, VnicProfile.class,
-                org.ovirt.engine.core.common.businessentities.network.VnicProfile.class,
-                AbstractBackendVnicProfilesResource.SUB_COLLECTIONS);
+                org.ovirt.engine.core.common.businessentities.network.VnicProfile.class);
     }
 
     protected VnicProfile get() {

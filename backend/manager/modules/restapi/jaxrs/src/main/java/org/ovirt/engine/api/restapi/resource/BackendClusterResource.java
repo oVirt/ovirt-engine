@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -35,7 +33,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     private final ManagementNetworkFinder managementNetworkFinder;
 
     public BackendClusterResource(String id, P parent) {
-        super(id, org.ovirt.engine.api.model.Cluster.class, Cluster.class, SUB_COLLECTIONS);
+        super(id, org.ovirt.engine.api.model.Cluster.class, Cluster.class);
         this.parent = parent;
         managementNetworkFinder = new ManagementNetworkFinder(this);
     }

@@ -45,14 +45,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendOpenStackVolumeProvidersResource
         extends AbstractBackendCollectionResource<OpenStackVolumeProvider, Provider>
         implements OpenstackVolumeProvidersResource {
-    static final String[] SUB_COLLECTIONS = {
-        "volumetypes",
-        "certificates",
-        "authenticationkeys"
-    };
 
     public BackendOpenStackVolumeProvidersResource() {
-        super(OpenStackVolumeProvider.class, Provider.class, SUB_COLLECTIONS);
+        super(OpenStackVolumeProvider.class, Provider.class);
     }
 
     @Override

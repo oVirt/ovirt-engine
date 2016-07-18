@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-import static org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterBricksResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -33,7 +31,7 @@ public class BackendGlusterBrickResource
     }
 
     public BackendGlusterBrickResource(String brickId) {
-        super(brickId, GlusterBrick.class, GlusterBrickEntity.class, SUB_COLLECTIONS);
+        super(brickId, GlusterBrick.class, GlusterBrickEntity.class);
     }
 
     @Override

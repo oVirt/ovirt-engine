@@ -16,7 +16,6 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
 import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
 
 import java.util.List;
@@ -114,7 +113,7 @@ public class BackendVmResource
     public static final String NEXT_RUN = "next_run";
 
     public BackendVmResource(String id, BackendVmsResource parent) {
-        super(id, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
+        super(id, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
         this.parent = parent;
     }
 

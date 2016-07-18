@@ -16,12 +16,10 @@ public class BackendHostNumaNodesResource
     extends AbstractBackendCollectionResource<NumaNode, VdsNumaNode>
         implements HostNumaNodesResource {
 
-    static final String[] SUB_COLLECTIONS = { "statistics" };
-
     private String hostId;
 
     public BackendHostNumaNodesResource(String hostId) {
-        super(NumaNode.class, VdsNumaNode.class, SUB_COLLECTIONS);
+        super(NumaNode.class, VdsNumaNode.class);
         this.hostId = hostId;
     }
 

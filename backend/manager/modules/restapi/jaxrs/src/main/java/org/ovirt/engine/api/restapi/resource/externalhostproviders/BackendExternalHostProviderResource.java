@@ -16,8 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExternalHostProvidersResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ExternalHostProvider;
@@ -40,7 +38,7 @@ public class BackendExternalHostProviderResource
         implements ExternalHostProviderResource {
 
     public BackendExternalHostProviderResource(String id) {
-        super(id, ExternalHostProvider.class, SUB_COLLECTIONS);
+        super(id, ExternalHostProvider.class);
     }
 
     @Override

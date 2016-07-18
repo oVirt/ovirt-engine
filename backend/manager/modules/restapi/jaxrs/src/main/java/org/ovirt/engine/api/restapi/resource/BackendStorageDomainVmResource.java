@@ -32,7 +32,7 @@ public class BackendStorageDomainVmResource
     org.ovirt.engine.core.common.businessentities.VM vm;
 
     public BackendStorageDomainVmResource(BackendStorageDomainVmsResource parent, String vmId) {
-        super(vmId, parent, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, "disks");
+        super(vmId, parent, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
     }
 
     @Override

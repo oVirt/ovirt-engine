@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendHostNumaNodesResource.SUB_COLLECTIONS;
-
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.resource.HostNumaNodeResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
@@ -15,7 +13,7 @@ public class BackendHostNumaNodeResource
     private BackendHostNumaNodesResource parent;
 
     public BackendHostNumaNodeResource(String id, BackendHostNumaNodesResource parent) {
-        super(id, NumaNode.class, VdsNumaNode.class, SUB_COLLECTIONS);
+        super(id, NumaNode.class, VdsNumaNode.class);
         this.parent = parent;
     }
 

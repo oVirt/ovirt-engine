@@ -46,7 +46,7 @@ public class BackendGlusterVolumeResource
     }
 
     public BackendGlusterVolumeResource(String volumeId) {
-        super(volumeId, GlusterVolume.class, GlusterVolumeEntity.class, BackendGlusterVolumesResource.SUB_COLLECTIONS);
+        super(volumeId, GlusterVolume.class, GlusterVolumeEntity.class);
     }
 
     @Override

@@ -9,7 +9,7 @@ public class BackendHostHookResource extends AbstractBackendSubResource<Hook, Ob
     private BackendHostHooksResource parent;
 
     public BackendHostHookResource(String id, BackendHostHooksResource parent) {
-        super(id, Hook.class, Object.class, new String[0]);
+        super(id, Hook.class, Object.class);
         this.parent = parent;
     }
 

@@ -31,10 +31,8 @@ public class BackendInstanceTypesResource
     extends AbstractBackendCollectionResource<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType>
     implements InstanceTypesResource {
 
-    static final String[] SUB_COLLECTIONS = {"nics", "watchdogs", "graphicsconsoles" };
-
     public BackendInstanceTypesResource() {
-        super(InstanceType.class, org.ovirt.engine.core.common.businessentities.InstanceType.class, SUB_COLLECTIONS);
+        super(InstanceType.class, org.ovirt.engine.core.common.businessentities.InstanceType.class);
     }
 
     @Override

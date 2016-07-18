@@ -2,13 +2,17 @@ package org.ovirt.engine.api.rsdl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
+import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.SystemResource;
 
 public class ServiceTree {
@@ -16,6 +20,16 @@ public class ServiceTree {
     private static boolean SUB_RESOURCES = true;
     private static boolean ACTIONS = false;
 
+    /**
+     * Some nodes will repeat themselves in the API tree. This map holds
+     * references to Nodes by the service class, allowing getting a node
+     * in O(1) with no need to traverse the tree.
+     */
+    private static Map<Class<?>, ServiceTreeNode> nodes = new HashMap<>();
+
+    /**
+     * Representation of the API tree
+     */
     private static ServiceTreeNode tree = buildTree();
 
     private static ServiceTreeNode buildTree() {
@@ -30,12 +44,16 @@ public class ServiceTree {
      * Build the API tree
      */
     private static ServiceTreeNode buildNode(Class<?> resource, String path) {
-        return new ServiceTreeNode.Builder()
+        ServiceTreeNode node = new ServiceTreeNode.Builder()
                 .name(resource.getSimpleName())
                 .path(path)
                 .subCollections(getSubServices(resource))
                 .actions(getActions(resource))
                 .build();
+        if (!nodes.containsKey(resource)) {
+            nodes.put(resource, node);
+        }
+        return node;
     }
 
     /**
@@ -47,7 +65,10 @@ public class ServiceTree {
         List<ServiceTreeNode> resources = new ArrayList<>();
         for (Method method : getMethods(resource, SUB_RESOURCES)) {
             Path path = method.getAnnotation(Path.class);
-            resources.add(buildNode(method.getReturnType(), path.value()));
+            if (!method.getReturnType().equals(ActionResource.class)
+                    && !method.getReturnType().equals(CreationResource.class)) {
+                resources.add(buildNode(method.getReturnType(), path.value()));
+            }
         }
         return resources;
     }
@@ -62,19 +83,20 @@ public class ServiceTree {
 
     public static List<Method> getMethods(Class<?> clazz, boolean subService) {
         List<Method> methods = new ArrayList<>();
-        while (clazz != null) {
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (isBlacklist(method)) {
-                    continue;
-                }
-                //XOR achieves the required behavior
-                if (isSubService(method) ^ !subService) {
-                    methods.add(method);
-                }
+        for (Method method : clazz.getMethods()) {
+            if (isBlacklist(method)) {
+                continue;
             }
-            clazz = clazz.getSuperclass();
+            //XOR achieves the required behavior
+            if (isSubService(method) ^ !subService) {
+                methods.add(method);
+            }
         }
         return methods;
+    }
+
+    public static ServiceTreeNode getNode(Class<?> service) {
+        return nodes.get(service);
     }
 
     /**

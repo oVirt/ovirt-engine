@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static java.util.stream.Collectors.toCollection;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResource.SUB_COLLECTIONS;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,8 +62,7 @@ public class BackendStorageDomainResource
     public BackendStorageDomainResource(String id, BackendStorageDomainsResource parent) {
         super(id,
                 StorageDomain.class,
-                org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                SUB_COLLECTIONS);
+                org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         this.parent = parent;
     }
 

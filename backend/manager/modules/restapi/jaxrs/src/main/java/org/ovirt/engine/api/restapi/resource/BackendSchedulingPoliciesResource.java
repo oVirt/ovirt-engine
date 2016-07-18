@@ -17,14 +17,12 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSchedulingPoliciesResource extends AbstractBackendCollectionResource<SchedulingPolicy, ClusterPolicy> implements SchedulingPoliciesResource {
 
-    static final String[] SUB_COLLECTIONS = { "filters", "weights", "balances", "clusters" };
-
     private final QueryIdResolver<Guid> queryIdResolver =
             new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById,
                     IdQueryParameters.class);
 
     public BackendSchedulingPoliciesResource() {
-        super(SchedulingPolicy.class, ClusterPolicy.class, SUB_COLLECTIONS);
+        super(SchedulingPolicy.class, ClusterPolicy.class);
     }
 
     @Override

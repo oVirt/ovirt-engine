@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResource.SUB_COLLECTIONS;
-
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -47,7 +45,7 @@ public class BackendTemplateResource
     implements TemplateResource {
 
     public BackendTemplateResource(String id) {
-        super(id, Template.class, VmTemplate.class, SUB_COLLECTIONS);
+        super(id, Template.class, VmTemplate.class);
     }
 
     @Override

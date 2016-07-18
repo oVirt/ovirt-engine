@@ -23,9 +23,8 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     public AbstractBackendStorageDomainContentResource(String id,
                                                        AbstractBackendStorageDomainContentsResource<C, R, Q>  parent,
                                                        Class<R> modelType,
-                                                       Class<Q> entityType,
-                                                       String... subCollection) {
-        super(id, modelType, entityType, subCollection);
+                                                       Class<Q> entityType) {
+        super(id, modelType, entityType);
         this.parent = parent;
     }
 

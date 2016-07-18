@@ -39,16 +39,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendExternalHostProvidersResource
         extends AbstractBackendCollectionResource<ExternalHostProvider, Provider>
         implements ExternalHostProvidersResource {
-    static final String[] SUB_COLLECTIONS = {
-        "certificates",
-        "computeresources",
-        "discoveredhosts",
-        "hostgroups",
-        "hosts",
-    };
 
     public BackendExternalHostProvidersResource() {
-        super(ExternalHostProvider.class, Provider.class, SUB_COLLECTIONS);
+        super(ExternalHostProvider.class, Provider.class);
     }
 
     @Override

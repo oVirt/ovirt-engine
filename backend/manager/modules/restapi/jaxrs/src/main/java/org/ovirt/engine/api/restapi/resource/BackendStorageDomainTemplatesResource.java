@@ -22,10 +22,8 @@ public class BackendStorageDomainTemplatesResource
         extends AbstractBackendStorageDomainContentsResource<Templates, Template, VmTemplate>
         implements StorageDomainTemplatesResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks" };
-
     public BackendStorageDomainTemplatesResource(Guid storageDomainId) {
-        super(storageDomainId, Template.class, VmTemplate.class, SUB_COLLECTIONS);
+        super(storageDomainId, Template.class, VmTemplate.class);
     }
 
     @Override

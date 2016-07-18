@@ -16,8 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProvidersResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackImageProvider;
@@ -37,7 +35,7 @@ public class BackendOpenStackImageProviderResource
         implements OpenstackImageProviderResource {
 
     public BackendOpenStackImageProviderResource(String id) {
-        super(id, OpenStackImageProvider.class, SUB_COLLECTIONS);
+        super(id, OpenStackImageProvider.class);
     }
 
     @Override

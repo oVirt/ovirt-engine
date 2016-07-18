@@ -42,24 +42,22 @@ public class BackendUsersResource
         extends AbstractBackendCollectionResource<User, DbUser>
         implements UsersResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "roles", "sshpublickeys", "tags" };
-
     private static final String USERS_SEARCH_PATTERN = "usrname != \"\"";
     private static final String AND_SEARCH_PATTERN = " and ";
 
     private BackendDomainResource parent;
 
     public BackendUsersResource() {
-        super(User.class, DbUser.class, SUB_COLLECTIONS);
+        super(User.class, DbUser.class);
     }
 
     public BackendUsersResource(String id, BackendDomainResource parent) {
-        super(User.class, DbUser.class, SUB_COLLECTIONS);
+        super(User.class, DbUser.class);
         this.parent = parent;
     }
 
-    public BackendUsersResource(Class<User> class1, Class<DbUser> class2, String[] subCollections) {
-        super(class1, class2, subCollections);
+    public BackendUsersResource(Class<User> class1, Class<DbUser> class2) {
+        super(class1, class2);
     }
 
     /**

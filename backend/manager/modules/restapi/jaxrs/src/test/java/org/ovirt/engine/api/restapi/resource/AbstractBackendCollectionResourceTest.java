@@ -18,6 +18,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -295,5 +296,14 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     protected void verifyRemove(Response response) {
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+    }
+
+    protected static Link getLinkByName(BaseResource model, String name) {
+        for (Link link : model.getLinks()) {
+            if (link.getRel().equals(name)) {
+                return link;
+            }
+        }
+        return null;
     }
 }

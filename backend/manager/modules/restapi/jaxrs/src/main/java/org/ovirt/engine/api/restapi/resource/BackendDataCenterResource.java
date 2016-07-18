@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.SUB_COLLECTIONS;
-
 import java.util.List;
 import javax.ws.rs.core.Response;
 
@@ -36,7 +34,7 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     private final BackendDataCentersResource parent;
 
     public BackendDataCenterResource(String id, BackendDataCentersResource parent) {
-        super(id, DataCenter.class, StoragePool.class, SUB_COLLECTIONS);
+        super(id, DataCenter.class, StoragePool.class);
         this.parent = parent;
     }
 

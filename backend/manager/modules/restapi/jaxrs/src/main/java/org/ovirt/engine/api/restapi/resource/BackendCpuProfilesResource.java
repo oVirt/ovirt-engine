@@ -15,12 +15,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResource implements CpuProfilesResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions" };
-
-    public BackendCpuProfilesResource() {
-        super(SUB_COLLECTIONS);
-    }
-
     @Override
     public CpuProfiles list() {
         return performList();

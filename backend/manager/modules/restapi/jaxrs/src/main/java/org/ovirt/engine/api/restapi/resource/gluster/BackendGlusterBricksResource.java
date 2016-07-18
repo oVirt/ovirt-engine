@@ -37,7 +37,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendGlusterBricksResource
         extends AbstractBackendCollectionResource<GlusterBrick, GlusterBrickEntity>
         implements GlusterBricksResource {
-    static final String[] SUB_COLLECTIONS = { "statistics" };
 
     public static final String REPLICA_COUNT = "replica_count";
     public static final String STRIPE_COUNT = "stripe_count";
@@ -49,7 +48,7 @@ public class BackendGlusterBricksResource
     }
 
     public BackendGlusterBricksResource(BackendGlusterVolumeResource parent) {
-        super(GlusterBrick.class, GlusterBrickEntity.class, SUB_COLLECTIONS);
+        super(GlusterBrick.class, GlusterBrickEntity.class);
         setParent(parent);
     }
 

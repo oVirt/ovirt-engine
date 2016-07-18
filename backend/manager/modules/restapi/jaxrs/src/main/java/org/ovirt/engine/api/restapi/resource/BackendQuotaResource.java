@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendQuotasResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Quota;
@@ -28,8 +26,7 @@ public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.
     public BackendQuotaResource(String id, BackendQuotasResource parent) {
         super(id,
                 Quota.class,
-                org.ovirt.engine.core.common.businessentities.Quota.class,
-                SUB_COLLECTIONS);
+                org.ovirt.engine.core.common.businessentities.Quota.class);
         this.parent = parent;
     }
 

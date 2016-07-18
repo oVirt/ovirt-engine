@@ -21,12 +21,8 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class AbstractBackendVnicProfilesResource
         extends AbstractBackendCollectionResource<VnicProfile, org.ovirt.engine.core.common.businessentities.network.VnicProfile> {
 
-    static final String[] SUB_COLLECTIONS = { "permissions" };
-
     public AbstractBackendVnicProfilesResource() {
-        super(VnicProfile.class,
-                org.ovirt.engine.core.common.businessentities.network.VnicProfile.class,
-                SUB_COLLECTIONS);
+        super(VnicProfile.class, org.ovirt.engine.core.common.businessentities.network.VnicProfile.class);
     }
 
     protected VnicProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> entities) {

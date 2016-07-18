@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendIscsiBondsResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.IscsiBond;
@@ -20,7 +18,7 @@ public class BackendIscsiBondResource
     implements IscsiBondResource {
 
     public  BackendIscsiBondResource(String id) {
-        super(id, IscsiBond.class, org.ovirt.engine.core.common.businessentities.IscsiBond.class, SUB_COLLECTIONS);
+        super(id, IscsiBond.class, org.ovirt.engine.core.common.businessentities.IscsiBond.class);
     }
 
     @Override

@@ -28,11 +28,10 @@ public class BackendSnapshotsResource
         extends AbstractBackendCollectionResource<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot>
         implements SnapshotsResource {
 
-    static final String[] SUB_COLLECTIONS = { "cdroms", "disks", "nics" };
     protected Guid parentId;
 
     public BackendSnapshotsResource(Guid parentId) {
-        super(Snapshot.class, org.ovirt.engine.core.common.businessentities.Snapshot.class, SUB_COLLECTIONS);
+        super(Snapshot.class, org.ovirt.engine.core.common.businessentities.Snapshot.class);
         this.parentId = parentId;
     }
 

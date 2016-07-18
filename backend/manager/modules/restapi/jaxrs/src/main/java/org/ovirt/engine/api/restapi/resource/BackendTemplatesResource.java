@@ -52,20 +52,10 @@ public class BackendTemplatesResource
     extends AbstractBackendCollectionResource<Template, VmTemplate>
     implements TemplatesResource {
 
-    static final String[] SUB_COLLECTIONS = {
-        "cdroms",
-        "diskattachments",
-        "graphicsconsoles",
-        "nics",
-        "permissions",
-        "tags",
-        "watchdogs",
-    };
-
     public static final String CLONE_PERMISSIONS = "clone_permissions";
 
     public BackendTemplatesResource() {
-        super(Template.class, VmTemplate.class, SUB_COLLECTIONS);
+        super(Template.class, VmTemplate.class);
     }
 
     @Override

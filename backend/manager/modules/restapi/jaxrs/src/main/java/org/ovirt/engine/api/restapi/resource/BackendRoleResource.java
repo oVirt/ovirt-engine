@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendRolesResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Role;
@@ -27,7 +25,7 @@ public class BackendRoleResource
     }
 
     public BackendRoleResource(String id, Guid userId) {
-        super(id, Role.class, org.ovirt.engine.core.common.businessentities.Role.class, SUB_COLLECTIONS);
+        super(id, Role.class, org.ovirt.engine.core.common.businessentities.Role.class);
         this.userId = userId;
     }
 

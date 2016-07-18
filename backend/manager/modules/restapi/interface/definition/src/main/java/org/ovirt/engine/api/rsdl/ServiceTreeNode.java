@@ -18,6 +18,12 @@ public class ServiceTreeNode {
 
     private String name;
     private String path;
+
+    //only for 'collection' services (such as VmsService) a reference
+    //to the sub-service representing the single-entity-context (such
+    //as VmService) is kept. When irrelevant, this will be 'null'.
+    private ServiceTreeNode son;
+
     private List<ServiceTreeNode> subServices = new ArrayList<>();
     private List<String> actions = new ArrayList<>();
 
@@ -32,6 +38,12 @@ public class ServiceTreeNode {
     }
     public void setPath(String path) {
         this.path = path;
+    }
+    public ServiceTreeNode getSon() {
+        return son;
+    }
+    public void setSon(ServiceTreeNode son) {
+        this.son = son;
     }
     public List<ServiceTreeNode> getSubServices() {
         return subServices;
@@ -105,6 +117,9 @@ public class ServiceTreeNode {
             return this;
         }
         public ServiceTreeNode build() {
+            if (node.subServices!=null) {
+                node.setSon(node.getSubService("{id}"));
+            }
             return node;
         }
     }
@@ -119,6 +134,7 @@ public class ServiceTreeNode {
         String tabs = getTabs(tabNum);
         builder.append(tabs).append("name: ").append(name).append("\n")
         .append(tabs).append("path: ").append(path).append("\n")
+        .append(tabs).append("son: ").append(son==null ? "" : son.getName()).append("\n")
         .append(tabs).append("actions: ").append(printActions()).append("\n")
         .append(tabs).append("sub-services:\n").append(printSubServices(++tabNum)).append("\n");
         return builder.toString();

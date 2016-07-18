@@ -25,7 +25,7 @@ public class BackendStorageDomainTemplateResource
     VmTemplate template;
 
     public BackendStorageDomainTemplateResource(BackendStorageDomainTemplatesResource parent, String templateId) {
-        super(templateId, parent, Template.class, VmTemplate.class, "disks");
+        super(templateId, parent, Template.class, VmTemplate.class);
     }
 
     @Override

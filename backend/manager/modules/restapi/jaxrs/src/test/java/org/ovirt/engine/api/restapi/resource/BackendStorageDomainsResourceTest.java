@@ -675,15 +675,15 @@ public class BackendStorageDomainsResourceTest
             assertEquals(getSafeEntry(index, ADDRESSES), model.getStorage().getAddress());
         }
         assertEquals(PATHS[index], model.getStorage().getPath());
-        assertEquals("permissions", model.getLinks().get(0).getRel());
+        assertNotNull(getLinkByName(model, "permissions"));
         if (model.getType() == StorageDomainType.ISO) {
             assertEquals(5, model.getLinks().size());
-            assertEquals("files", model.getLinks().get(1).getRel());
+            assertNotNull(getLinkByName(model, "files"));
 
         } else if (model.getType().equals(TYPES[2])) {
             assertEquals(7, model.getLinks().size());
-            assertEquals("templates", model.getLinks().get(1).getRel());
-            assertEquals("vms", model.getLinks().get(2).getRel());
+            assertNotNull(getLinkByName(model, "templates"));
+            assertNotNull(getLinkByName(model, "vms"));
         }
         assertNotNull(model.getLinks().get(0).getHref());
     }
@@ -719,7 +719,7 @@ public class BackendStorageDomainsResourceTest
         assertEquals(ADDRESSES[0], model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).getAddress());
         assertEquals(PORT, model.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits().get(0).getPort());
         assertEquals(7, model.getLinks().size());
-        assertEquals("permissions", model.getLinks().get(0).getRel());
+        assertNotNull(getLinkByName(model, "permissions"));
         assertNotNull(model.getLinks().get(0).getHref());
         verifyLinks(model);
     }

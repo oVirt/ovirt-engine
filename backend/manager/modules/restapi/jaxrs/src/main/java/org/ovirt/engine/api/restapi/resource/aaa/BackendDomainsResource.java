@@ -18,12 +18,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendDomainsResource extends AbstractBackendCollectionResource<Domain, Directory>
     implements DomainsResource {
 
-    static final String[] SUB_COLLECTIONS = { "users", "groups" };
-
     String id;
 
     public BackendDomainsResource() {
-        super(Domain.class, Directory.class, SUB_COLLECTIONS);
+        super(Domain.class, Directory.class);
     }
 
     @Override
@@ -34,7 +32,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     private Domains mapCollection(List<Directory> entities) {
         Domains collection = new Domains();
         for (Directory entity : entities) {
-            collection.getDomains().add(injectSearchLinks(addLinks(map(entity)), SUB_COLLECTIONS));
+            collection.getDomains().add(injectSearchLinks(addLinks(map(entity)), subCollections));
         }
         return collection;
     }

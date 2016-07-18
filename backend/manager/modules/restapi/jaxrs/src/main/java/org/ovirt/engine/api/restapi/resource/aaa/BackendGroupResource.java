@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
@@ -27,7 +25,7 @@ public class BackendGroupResource
     private BackendGroupsResource parent;
 
     public BackendGroupResource(String id, BackendGroupsResource parent) {
-        super(id, Group.class, DbGroup.class, SUB_COLLECTIONS);
+        super(id, Group.class, DbGroup.class);
         this.parent = parent;
     }
 

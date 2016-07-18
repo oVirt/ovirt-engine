@@ -18,12 +18,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendIscsiBondsResource extends AbstractBackendCollectionResource<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>
         implements IscsiBondsResource {
 
-    static final String[] SUB_COLLECTIONS = {"storageconnections", "networks", "add", };
-
     private Guid dataCenterId;
 
     protected BackendIscsiBondsResource(String datacenterId) {
-        super(IscsiBond.class, org.ovirt.engine.core.common.businessentities.IscsiBond.class, SUB_COLLECTIONS);
+        super(IscsiBond.class, org.ovirt.engine.core.common.businessentities.IscsiBond.class);
         this.dataCenterId = asGuid(datacenterId);
     }
 

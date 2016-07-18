@@ -20,8 +20,8 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
     protected String id;
     protected Guid guid;
 
-    protected AbstractBackendSubResource(String id, Class<R> modelType, Class<Q> entityType, String... subCollections) {
-        super(modelType, entityType, subCollections);
+    protected AbstractBackendSubResource(String id, Class<R> modelType, Class<Q> entityType) {
+        super(modelType, entityType);
         this.id = id;
         this.guid = asGuidOr404(id);
     }

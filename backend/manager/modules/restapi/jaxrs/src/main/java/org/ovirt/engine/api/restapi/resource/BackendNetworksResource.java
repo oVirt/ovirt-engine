@@ -21,14 +21,12 @@ public class BackendNetworksResource
     extends AbstractBackendNetworksResource
     implements NetworksResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "vnicprofiles", "networklabels" };
-
     public BackendNetworksResource() {
         this(VdcQueryType.GetAllNetworks);
     }
 
     public BackendNetworksResource(VdcQueryType queryType) {
-        super(queryType, VdcActionType.AddNetwork, SUB_COLLECTIONS);
+        super(queryType, VdcActionType.AddNetwork);
     }
 
     @Override

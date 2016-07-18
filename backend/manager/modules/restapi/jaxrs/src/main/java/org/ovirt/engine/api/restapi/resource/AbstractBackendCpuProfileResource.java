@@ -14,10 +14,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public abstract class AbstractBackendCpuProfileResource
         extends AbstractBackendSubResource<CpuProfile, org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> {
 
-    protected AbstractBackendCpuProfileResource(String id, String... subCollections) {
+    protected AbstractBackendCpuProfileResource(String id) {
         super(id, CpuProfile.class,
-                org.ovirt.engine.core.common.businessentities.profiles.CpuProfile.class,
-                subCollections);
+                org.ovirt.engine.core.common.businessentities.profiles.CpuProfile.class);
     }
 
     protected CpuProfile get() {

@@ -41,13 +41,16 @@ public class BackendVmDisksResource
         extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements VmDisksResource {
 
-    static final String[] SUB_COLLECTIONS = {"permissions", "statistics" };
+    //must state explicitly because in V4 this is not part of the API tree,
+    //and thus this information cannot be retrieved from ApiServiceTree.
+    static final String[] SUB_COLLECTIONS = {"permissions", "statistics"};
 
     private Guid vmId;
 
     public BackendVmDisksResource(Guid vmId) {
-        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class, SUB_COLLECTIONS);
+        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
         this.vmId = vmId;
+        this.subCollections = SUB_COLLECTIONS;
     }
 
     public Disks list() {

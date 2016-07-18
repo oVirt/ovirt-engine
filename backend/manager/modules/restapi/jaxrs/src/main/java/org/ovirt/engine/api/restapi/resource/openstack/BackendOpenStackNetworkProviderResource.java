@@ -16,8 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
@@ -39,7 +37,7 @@ public class BackendOpenStackNetworkProviderResource
         implements OpenstackNetworkProviderResource {
 
     public BackendOpenStackNetworkProviderResource(String id) {
-        super(id, OpenStackNetworkProvider.class, SUB_COLLECTIONS);
+        super(id, OpenStackNetworkProvider.class);
     }
 
     @Override

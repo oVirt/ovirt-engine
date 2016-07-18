@@ -11,6 +11,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -171,8 +172,9 @@ public class BackendDataCentersResourceTest
     static void verifyModelSpecific(DataCenter model, int index) {
         assertEquals(false, model.isLocal());
         assertFalse(model.getLinks().isEmpty());
-        assertEquals("storagedomains", model.getLinks().get(0).getRel());
-        assertEquals(BASE_PATH + "/datacenters/" + GUIDS[index] + "/storagedomains", model.getLinks().get(0).getHref());
+        Link link = getLinkByName(model, "permissions");
+        assertNotNull(link);
+        assertEquals(BASE_PATH + "/datacenters/" + GUIDS[index] + "/permissions", link.getHref());
         assertTrue(model.isSetSupportedVersions());
         assertEquals(1, model.getSupportedVersions().getVersions().size());
         assertEquals(2, model.getSupportedVersions().getVersions().get(0).getMajor().intValue());

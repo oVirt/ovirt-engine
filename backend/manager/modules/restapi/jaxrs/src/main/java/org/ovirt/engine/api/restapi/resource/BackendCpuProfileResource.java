@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendCpuProfileResource extends AbstractBackendCpuProfileResource implements CpuProfileResource {
 
     protected BackendCpuProfileResource(String id) {
-        super(id, BackendCpuProfilesResource.SUB_COLLECTIONS);
+        super(id);
     }
 
     @Override

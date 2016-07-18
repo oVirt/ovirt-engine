@@ -13,10 +13,8 @@ import org.ovirt.engine.core.common.scheduling.parameters.RemoveExternalPolicyUn
 public class BackendSchedulingPolicyUnitResource extends AbstractBackendSubResource<SchedulingPolicyUnit, PolicyUnit> implements
         SchedulingPolicyUnitResource {
 
-    private static final String[] SUB_COLLECTIONS = {};
-
     public BackendSchedulingPolicyUnitResource(String id) {
-        super(id, SchedulingPolicyUnit.class, PolicyUnit.class, SUB_COLLECTIONS);
+        super(id, SchedulingPolicyUnit.class, PolicyUnit.class);
     }
 
     @Override

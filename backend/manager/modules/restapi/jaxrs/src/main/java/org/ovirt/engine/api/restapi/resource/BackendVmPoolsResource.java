@@ -36,10 +36,8 @@ public class BackendVmPoolsResource
         extends AbstractBackendCollectionResource<VmPool, org.ovirt.engine.core.common.businessentities.VmPool>
     implements VmPoolsResource {
 
-    static final String SUB_COLLECTION = "permissions";
-
     public BackendVmPoolsResource() {
-        super(VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class, SUB_COLLECTION);
+        super(VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class);
     }
 
     @Override

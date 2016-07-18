@@ -14,10 +14,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public abstract class AbstractBackendDiskProfileResource
         extends AbstractBackendSubResource<DiskProfile, org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> {
 
-    protected AbstractBackendDiskProfileResource(String id, String... subCollections) {
+    protected AbstractBackendDiskProfileResource(String id) {
         super(id, DiskProfile.class,
-                org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class,
-                subCollections);
+                org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class);
     }
 
     protected DiskProfile get() {

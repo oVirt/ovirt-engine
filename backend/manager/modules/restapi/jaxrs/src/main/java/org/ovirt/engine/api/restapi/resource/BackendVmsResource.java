@@ -94,30 +94,11 @@ public class BackendVmsResource extends
         AbstractBackendCollectionResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements VmsResource {
 
-    static final String[] SUB_COLLECTIONS = {
-        "affinitylabels",
-        "applications",
-        "cdroms",
-        "diskattachments",
-        "graphicsconsoles",
-        "hostdevices",
-        "katelloerrata",
-        "nics",
-        "numanodes",
-        "permissions",
-        "reporteddevices",
-        "sessions",
-        "snapshots",
-        "statistics",
-        "tags",
-        "watchdogs",
-    };
-
     public static final String CLONE = "clone";
     public static final String CLONE_PERMISSIONS = "clone_permissions";
 
     public BackendVmsResource() {
-        super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
+        super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
     }
 
     @Override

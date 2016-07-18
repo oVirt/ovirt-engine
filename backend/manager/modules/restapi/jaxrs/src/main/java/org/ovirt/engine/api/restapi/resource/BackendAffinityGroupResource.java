@@ -14,11 +14,10 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 public class BackendAffinityGroupResource
         extends AbstractBackendSubResource<AffinityGroup, org.ovirt.engine.core.common.scheduling.AffinityGroup>
         implements AffinityGroupResource {
-    static final String[] SUB_COLLECTIONS = { "vms" };
 
     public BackendAffinityGroupResource(String id) {
         super(id, AffinityGroup.class,
-                org.ovirt.engine.core.common.scheduling.AffinityGroup.class, SUB_COLLECTIONS);
+                org.ovirt.engine.core.common.scheduling.AffinityGroup.class);
     }
 
     @Override

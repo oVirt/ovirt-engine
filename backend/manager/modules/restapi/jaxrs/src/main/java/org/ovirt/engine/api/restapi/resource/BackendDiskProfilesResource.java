@@ -15,12 +15,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesResource implements DiskProfilesResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions" };
-
-    public BackendDiskProfilesResource() {
-        super(SUB_COLLECTIONS);
-    }
-
     @Override
     public DiskProfiles list() {
         return performList();

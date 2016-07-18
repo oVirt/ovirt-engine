@@ -22,8 +22,6 @@ public class BackendAttachedStorageDomainsResource
     extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
     implements AttachedStorageDomainsResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks" };
-
     protected Guid dataCenterId;
 
     public BackendAttachedStorageDomainsResource(String dataCenterId) {
@@ -46,7 +44,7 @@ public class BackendAttachedStorageDomainsResource
 
     @Override
     public AttachedStorageDomainResource getStorageDomainResource(String id) {
-        return inject(new BackendAttachedStorageDomainResource(id, dataCenterId, SUB_COLLECTIONS));
+        return inject(new BackendAttachedStorageDomainResource(id, dataCenterId));
     }
 
     @Override

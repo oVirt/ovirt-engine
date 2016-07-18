@@ -24,10 +24,8 @@ public class BackendRolesResource
         extends AbstractBackendCollectionResource<Role, org.ovirt.engine.core.common.businessentities.Role>
         implements RolesResource {
 
-    static final String[] SUB_COLLECTIONS = { "permits" };
-
     public BackendRolesResource() {
-        super(Role.class, org.ovirt.engine.core.common.businessentities.Role.class, SUB_COLLECTIONS);
+        super(Role.class, org.ovirt.engine.core.common.businessentities.Role.class);
     }
 
     @Override

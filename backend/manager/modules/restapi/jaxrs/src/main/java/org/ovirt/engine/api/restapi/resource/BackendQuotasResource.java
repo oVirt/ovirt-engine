@@ -17,12 +17,10 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotasResource extends AbstractBackendCollectionResource<Quota, org.ovirt.engine.core.common.businessentities.Quota> implements QuotasResource {
 
-    static final String[] SUB_COLLECTIONS = { "quotastoragelimits", "quotaclusterlimits", "permissions" };
-
     protected Guid dataCenterId;
 
     protected BackendQuotasResource(String datacenterId) {
-        super(Quota.class, org.ovirt.engine.core.common.businessentities.Quota.class, SUB_COLLECTIONS);
+        super(Quota.class, org.ovirt.engine.core.common.businessentities.Quota.class);
         this.dataCenterId = asGuid(datacenterId);
     }
 

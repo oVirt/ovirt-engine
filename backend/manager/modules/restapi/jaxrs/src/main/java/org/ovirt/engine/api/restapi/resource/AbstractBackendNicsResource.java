@@ -9,13 +9,11 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class AbstractBackendNicsResource
         extends AbstractBackendCollectionResource<Nic, VmNetworkInterface> {
 
-    static final String SUB_COLLECTIONS = "statistics";
-
     private Guid parentId;
     private VdcQueryType queryType;
 
     public AbstractBackendNicsResource(Guid parentId, VdcQueryType queryType) {
-        super(Nic.class, VmNetworkInterface.class, SUB_COLLECTIONS);
+        super(Nic.class, VmNetworkInterface.class);
         this.parentId = parentId;
         this.queryType = queryType;
     }

@@ -12,10 +12,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollectionResource<SchedulingPolicyUnit, PolicyUnit> implements SchedulingPolicyUnitsResource {
 
-    static final String[] SUB_COLLECTIONS = {};
-
     public BackendSchedulingPolicyUnitsResource() {
-        super(SchedulingPolicyUnit.class, PolicyUnit.class, SUB_COLLECTIONS);
+        super(SchedulingPolicyUnit.class, PolicyUnit.class);
     }
 
     @Override

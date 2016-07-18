@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource.SUB_COLLECTIONS;
 import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
 import org.ovirt.engine.api.model.Domain;
@@ -17,7 +16,7 @@ implements DomainResource {
     private BackendDomainsResource parent;
 
     public BackendDomainResource(String id, BackendDomainsResource parent) {
-        super(id, Domain.class, Directory.class, SUB_COLLECTIONS);
+        super(id, Domain.class, Directory.class);
         this.id = id;
         this.parent = parent;
     }
@@ -25,7 +24,7 @@ implements DomainResource {
     @Override
     public Domain get() {
         Domain domain = parent.lookupDirectoryById(id, true);
-        return injectSearchLinks(addLinks(domain), SUB_COLLECTIONS);
+        return injectSearchLinks(addLinks(domain), subCollections);
     }
 
     public Domain getDirectory() {

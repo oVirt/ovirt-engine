@@ -18,10 +18,8 @@ public class BackendStorageDomainVmsResource
         extends AbstractBackendStorageDomainContentsResource<Vms, Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements StorageDomainVmsResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks" };
-
     public BackendStorageDomainVmsResource(Guid storageDomainId) {
-        super(storageDomainId, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
+        super(storageDomainId, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
     }
 
     @Override

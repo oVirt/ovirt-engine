@@ -10,6 +10,8 @@ public class BackendHostNicLabelResource
     extends AbstractBaseHostNicLabelResource
     implements NetworkLabelResource {
 
+    static final String LABELS = "networklabels";
+
     private String id;
     private BackendHostNicLabelsResource parent;
 
@@ -22,7 +24,7 @@ public class BackendHostNicLabelResource
 
     @Override
     protected String getUriPath() {
-        return BackendHostNicsResource.LABELS;
+        return LABELS;
     }
 
     @Override

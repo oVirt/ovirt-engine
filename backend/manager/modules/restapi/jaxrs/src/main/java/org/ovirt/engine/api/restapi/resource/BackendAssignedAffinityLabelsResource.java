@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendAffinityLabelsResource.SUB_COLLECTIONS;
-
 import java.util.List;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -28,7 +26,7 @@ public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollec
     }
 
     public BackendAssignedAffinityLabelsResource(String parentId, ReferencedEntityConstructor<BusinessEntity<Guid>> constructor) {
-        super(AffinityLabel.class, org.ovirt.engine.core.common.businessentities.Label.class, SUB_COLLECTIONS);
+        super(AffinityLabel.class, org.ovirt.engine.core.common.businessentities.Label.class);
         this.parentId = parentId;
         this.constructor = constructor;
     }

@@ -1,8 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
-import static org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource.SUB_COLLECTION;
-
 import java.util.List;
 import javax.ws.rs.core.Response;
 
@@ -37,7 +34,7 @@ public class BackendVmPoolResource
     private BackendVmPoolsResource parent;
 
     public BackendVmPoolResource(String id, BackendVmPoolsResource parent) {
-        super(id, VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class, SUB_COLLECTION);
+        super(id, VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class);
         this.parent = parent;
     }
 

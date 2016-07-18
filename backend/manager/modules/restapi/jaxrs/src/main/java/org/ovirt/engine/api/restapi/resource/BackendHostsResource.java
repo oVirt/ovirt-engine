@@ -32,27 +32,10 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     private static final String DEFAULT_NAME = "Default";
 
-    static final String[] SUB_COLLECTIONS = {
-        "affinitylabels",
-        "devices",
-        "fenceagents",
-        "hooks",
-        "katelloerrata",
-        "networkattachments",
-        "nics",
-        "numanodes",
-        "permissions",
-        "statistics",
-        "storage",
-        "storageconnectionextensions",
-        "tags",
-        "unmanagednetworks",
-    };
-
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {
-        super(Host.class, VDS.class, SUB_COLLECTIONS);
+        super(Host.class, VDS.class);
     }
 
     @Override

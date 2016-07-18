@@ -31,8 +31,8 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     public static final String CASE_SENSITIVE_CONSTRAINT_PARAMETER = "case_sensitive";
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendCollectionResource.class);
 
-    protected AbstractBackendCollectionResource(Class<R> modelType, Class<Q> entityType, String... subCollections) {
-        super(modelType, entityType, subCollections);
+    protected AbstractBackendCollectionResource(Class<R> modelType, Class<Q> entityType) {
+        super(modelType, entityType);
     }
 
     protected List<Q> getBackendCollection(SearchType searchType) {

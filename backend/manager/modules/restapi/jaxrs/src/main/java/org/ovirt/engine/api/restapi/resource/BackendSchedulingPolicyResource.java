@@ -18,10 +18,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<SchedulingPolicy, ClusterPolicy> implements
         SchedulingPolicyResource {
 
-    private static final String[] SUB_COLLECTIONS = { "filters", "weights", "balances", "clusters" };
-
     public BackendSchedulingPolicyResource(String id) {
-        super(id, SchedulingPolicy.class, ClusterPolicy.class, SUB_COLLECTIONS);
+        super(id, SchedulingPolicy.class, ClusterPolicy.class);
     }
 
     @Override

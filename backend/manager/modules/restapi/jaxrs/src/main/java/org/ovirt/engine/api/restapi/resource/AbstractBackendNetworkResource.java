@@ -15,9 +15,8 @@ public abstract class AbstractBackendNetworkResource
     public AbstractBackendNetworkResource(
             String id,
             AbstractBackendNetworksResource parent,
-            VdcActionType removeAction,
-            String... subCollections) {
-        super(id, Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class, subCollections);
+            VdcActionType removeAction) {
+        super(id, Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class);
         this.parent = parent;
         this.removeAction = removeAction;
     }

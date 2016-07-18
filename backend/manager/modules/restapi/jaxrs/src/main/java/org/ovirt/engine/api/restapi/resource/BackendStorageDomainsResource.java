@@ -49,14 +49,11 @@ public class BackendStorageDomainsResource
         extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
         implements StorageDomainsResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms", "disks",
-            "storageconnections", "images", "disksnapshots", "diskprofiles" };
-
     private final EntityIdResolver<Guid> ID_RESOLVER =
             new QueryIdResolver<>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
 
     public BackendStorageDomainsResource() {
-        super(StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, SUB_COLLECTIONS);
+        super(StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
     }
 
     @Override

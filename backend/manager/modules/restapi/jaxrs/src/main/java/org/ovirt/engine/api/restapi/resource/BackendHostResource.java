@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendHostsResource.SUB_COLLECTIONS;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +88,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     private BackendHostsResource parent;
 
     public BackendHostResource(String id, BackendHostsResource parent) {
-        super(id, Host.class, VDS.class, SUB_COLLECTIONS);
+        super(id, Host.class, VDS.class);
         this.parent = parent;
     }
 

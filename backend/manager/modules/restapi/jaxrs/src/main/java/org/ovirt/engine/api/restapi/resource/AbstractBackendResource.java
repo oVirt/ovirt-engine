@@ -13,6 +13,8 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
+import org.ovirt.engine.api.rsdl.ServiceTree;
+import org.ovirt.engine.api.rsdl.ServiceTreeNode;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -46,11 +48,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     protected AbstractBackendResource(Class<R> modelType, Class<Q> entityType) {
         this.modelType = modelType;
         this.entityType = entityType;
-    }
-
-    protected AbstractBackendResource(Class<R> modelType, Class<Q> entityType, String... subCollections) {
-        this(modelType, entityType);
-        this.subCollections = subCollections;
+        this.subCollections = getSubCollections();
     }
 
     protected <F, T> Mapper<F, T> getMapper(Class<F> from, Class<T> to) {
@@ -417,6 +415,40 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         @Override
         public Q lookupEntity(T id) throws BackendFailureException {
             return doGetEntity(entityType, query, getQueryParams(queryParamsClass, id), id.toString());
+        }
+    }
+
+    /**
+     * Returns an array with the names of subcollections of this resource,
+     * e.g, for BackendVmResource: ["affinitylabels", "applications", "cdroms",
+     * "diskattachments", "graphicsconsoles", "hostdevices", "katelloerrata"...]
+     */
+    protected String[] getSubCollections() {
+        Class<?>[] interfaces = getClass().getInterfaces();
+        List<String> subCollections = new ArrayList<>();
+        for (Class<?> clazz : interfaces) {
+            ServiceTreeNode node = getRequiredNode(clazz);
+            if (node != null) {
+                addSubCollections(node, subCollections);
+            }
+        }
+        return (String[])subCollections.toArray(new String[0]);
+    }
+
+    /**
+     * Get the node in the API ServiceTree which contains sub-collections info.
+     * For 'collection' services (such as VmsService) the sub-collections info
+     * is held in the 'son' node (VmService). So for both the collection and
+     * 'single' service, the node of the 'single' service is returned.
+     */
+    private ServiceTreeNode getRequiredNode(Class<?> clazz) {
+        ServiceTreeNode node = ServiceTree.getNode(clazz);
+        return node==null ? null : node.getSon()!=null ? node.getSon() : node;
+    }
+
+    private static void addSubCollections(ServiceTreeNode node, List<String> subCollections) {
+        for (ServiceTreeNode innerNode : node.getSubServices()) {
+            subCollections.add(innerNode.getPath());
         }
     }
 

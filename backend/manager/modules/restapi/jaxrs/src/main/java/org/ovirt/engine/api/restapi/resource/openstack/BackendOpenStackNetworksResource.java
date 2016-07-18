@@ -34,14 +34,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendOpenStackNetworksResource
         extends AbstractBackendCollectionResource<OpenStackNetwork, Network>
         implements OpenstackNetworksResource {
-    static final String[] SUB_COLLECTIONS = {
-        "subnets"
-    };
 
     private String providerId;
 
     public BackendOpenStackNetworksResource(String providerId) {
-        super(OpenStackNetwork.class, Network.class, SUB_COLLECTIONS);
+        super(OpenStackNetwork.class, Network.class);
         this.providerId = providerId;
     }
 

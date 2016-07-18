@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendSnapshotsResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -28,7 +26,7 @@ public class BackendSnapshotResource
     protected BackendSnapshotsResource collection;
 
     public BackendSnapshotResource(String id, Guid parentId, BackendSnapshotsResource collection) {
-        super(id, Snapshot.class, org.ovirt.engine.core.common.businessentities.Snapshot.class, SUB_COLLECTIONS);
+        super(id, Snapshot.class, org.ovirt.engine.core.common.businessentities.Snapshot.class);
         this.parentId = parentId;
         this.collection = collection;
     }

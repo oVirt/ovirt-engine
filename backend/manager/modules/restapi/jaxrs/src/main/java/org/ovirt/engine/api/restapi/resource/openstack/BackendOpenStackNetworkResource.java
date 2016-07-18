@@ -16,8 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworksResource.SUB_COLLECTIONS;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +46,7 @@ public class BackendOpenStackNetworkResource
     private String providerId;
 
     protected BackendOpenStackNetworkResource(String providerId, String id) {
-        super(id, OpenStackNetwork.class, Network.class, SUB_COLLECTIONS);
+        super(id, OpenStackNetwork.class, Network.class);
         this.providerId = providerId;
     }
 

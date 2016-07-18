@@ -39,13 +39,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendOpenStackImageProvidersResource
         extends AbstractBackendCollectionResource<OpenStackImageProvider, Provider>
         implements OpenstackImageProvidersResource {
-    static final String[] SUB_COLLECTIONS = {
-        "images",
-        "certificates"
-    };
 
     public BackendOpenStackImageProvidersResource() {
-        super(OpenStackImageProvider.class, Provider.class, SUB_COLLECTIONS);
+        super(OpenStackImageProvider.class, Provider.class);
     }
 
     @Override

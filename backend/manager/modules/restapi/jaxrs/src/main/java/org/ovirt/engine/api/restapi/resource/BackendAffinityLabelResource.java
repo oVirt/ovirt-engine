@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendAffinityLabelsResource.SUB_COLLECTIONS;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.AffinityLabel;
@@ -22,7 +20,7 @@ public class BackendAffinityLabelResource extends AbstractBackendActionableResou
         implements AffinityLabelResource {
 
     public BackendAffinityLabelResource(String id) {
-        super(id, AffinityLabel.class, org.ovirt.engine.core.common.businessentities.Label.class, SUB_COLLECTIONS);
+        super(id, AffinityLabel.class, org.ovirt.engine.core.common.businessentities.Label.class);
     }
 
     @Override

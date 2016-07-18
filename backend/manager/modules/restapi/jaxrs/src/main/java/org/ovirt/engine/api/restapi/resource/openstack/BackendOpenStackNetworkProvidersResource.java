@@ -40,13 +40,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendOpenStackNetworkProvidersResource
         extends AbstractBackendCollectionResource<OpenStackNetworkProvider, Provider>
         implements OpenstackNetworkProvidersResource {
-    static final String[] SUB_COLLECTIONS = {
-        "networks",
-        "certificates"
-    };
 
     public BackendOpenStackNetworkProvidersResource() {
-        super(OpenStackNetworkProvider.class, Provider.class, SUB_COLLECTIONS);
+        super(OpenStackNetworkProvider.class, Provider.class);
     }
 
     @Override

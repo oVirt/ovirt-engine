@@ -16,8 +16,6 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendVmDisksResource.SUB_COLLECTIONS;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -61,8 +59,9 @@ public class BackendVmDiskResource
     private Guid vmId;
 
     protected BackendVmDiskResource(String diskId, Guid vmId) {
-        super(diskId, Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class, SUB_COLLECTIONS);
+        super(diskId, Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
         this.vmId = vmId;
+        this.subCollections = BackendVmDisksResource.SUB_COLLECTIONS;
     }
 
     @Override
