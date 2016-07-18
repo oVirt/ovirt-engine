@@ -1490,7 +1490,6 @@ public class VmDeviceUtils {
      */
     private void addImportedOtherDevices(VmBase vmBase, List<VmDevice> vmDeviceToAdd) {
         boolean hasCd = false;
-        boolean hasSound = false;
 
         for (VmDevice vmDevice : vmBase.getManagedDeviceMap().values()) {
             switch (vmDevice.getType()) {
@@ -1509,10 +1508,6 @@ public class VmDeviceUtils {
 
                 case VIDEO:
                     vmDevice.setSpecParams(getVideoDeviceSpecParams(vmBase));
-                    break;
-
-                case SOUND:
-                    hasSound = true;
                     break;
 
                 case HOSTDEV:
