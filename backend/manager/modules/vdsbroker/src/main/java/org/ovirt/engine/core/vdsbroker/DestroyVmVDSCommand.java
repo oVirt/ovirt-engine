@@ -67,7 +67,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     private void changeStatus(DestroyVmVDSCommandParameters parameters, VM curVm) {
         // do the state transition only if that VM is really running on SRC
         if (getParameters().getVdsId().equals(curVm.getRunOnVds())) {
-            resourceManager.internalSetVmStatus(curVm, VMStatus.PoweringDown);
+            resourceManager.internalSetVmStatus(curVm.getDynamicData(), VMStatus.PoweringDown);
         }
     }
 }

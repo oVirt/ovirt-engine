@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -34,8 +33,7 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
         vmDynamic.setStatus(status);
         if (status.isNotRunning()) {
             resourceManager.removeAsyncRunningVm(getParameters().getVmId());
-            VM vm = new VM(null, vmDynamic, null);
-            resourceManager.internalSetVmStatus(vm, status, getParameters().getExitStatus());
+            resourceManager.internalSetVmStatus(vmDynamic, status, getParameters().getExitStatus());
             resourceManager.getVmManager(getParameters().getVmId()).update(new VmStatistics(getParameters().getVmId()));
             // TODO: update network statistics
         } else if (status == VMStatus.Unknown) {

@@ -210,7 +210,7 @@ public class VmAnalyzerTest {
         // when vm is migrating
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingFrom);
         //then
-        verify(resourceManager, never()).internalSetVmStatus(data.dbVm(), VMStatus.MigratingTo);
+        verify(resourceManager, never()).internalSetVmStatus(data.dbVm().getDynamicData(), VMStatus.MigratingTo);
     }
 
     @Theory
@@ -223,7 +223,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.dbVm().getStatus() == VMStatus.MigratingFrom);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
-        verify(resourceManager, times(1)).internalSetVmStatus(data.dbVm(), VMStatus.MigratingTo);
+        verify(resourceManager, times(1)).internalSetVmStatus(data.dbVm().getDynamicData(), VMStatus.MigratingTo);
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertEquals(VmTestPairs.DST_HOST_ID, data.dbVm().getRunOnVds());
     }

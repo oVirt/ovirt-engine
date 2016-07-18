@@ -255,7 +255,7 @@ public class VmAnalyzer {
         logVmStatusTransition();
         switch (dbVm.getStatus()) {
         case SavingState:
-            resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
+            resourceManager.internalSetVmStatus(dbVm.getDynamicData(), VMStatus.Suspended);
             clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                     vdsmVm.getVmDynamic().getExitMessage(),
                     vdsmVm.getVmDynamic().getExitReason());
@@ -344,7 +344,7 @@ public class VmAnalyzer {
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
-                resourceManager.internalSetVmStatus(dbVm,
+                resourceManager.internalSetVmStatus(dbVm.getDynamicData(),
                         VMStatus.Down,
                         exitStatus,
                         exitMessage,
@@ -389,7 +389,7 @@ public class VmAnalyzer {
             destroyVmOnDestinationHost();
         }
         // set vm status to down if source vm crushed
-        resourceManager.internalSetVmStatus(dbVm,
+        resourceManager.internalSetVmStatus(dbVm.getDynamicData(),
                 VMStatus.Down,
                 vdsmVm.getVmDynamic().getExitStatus(),
                 vdsmVm.getVmDynamic().getExitMessage(),
@@ -757,7 +757,7 @@ public class VmAnalyzer {
         dbVm.setRunOnVds(destinationHostId);
         logVmHandOver(destinationHostId, newVmStatus);
         // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
-        resourceManager.internalSetVmStatus(dbVm, newVmStatus);
+        resourceManager.internalSetVmStatus(dbVm.getDynamicData(), newVmStatus);
         // save the VM state
         saveDynamic(dbVm.getDynamicData());
     }

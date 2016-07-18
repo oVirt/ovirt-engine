@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -275,7 +276,7 @@ public class ResourceManager implements BackendService {
      */
     public void setVmUnknown(VM vm) {
         removeAsyncRunningVm(vm.getId());
-        internalSetVmStatus(vm, VMStatus.Unknown);
+        internalSetVmStatus(vm.getDynamicData(), VMStatus.Unknown);
         // log VM transition to unknown status
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVmId(vm.getId());
@@ -307,15 +308,15 @@ public class ResourceManager implements BackendService {
      * <p> Note: Calling this method with status=down, must be only when the
      *     VM went down normally, otherwise call {@link #InternalSetVmStatus(VM, VMStatus, VmExitStatus, String)}
      */
-    public void internalSetVmStatus(VM vm, final VMStatus status) {
+    public void internalSetVmStatus(VmDynamic vm, final VMStatus status) {
         internalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown);
     }
 
-    public void internalSetVmStatus(VM vm, final VMStatus status, VmExitStatus exitStatus) {
+    public void internalSetVmStatus(VmDynamic vm, final VMStatus status, VmExitStatus exitStatus) {
         internalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY, VmExitReason.Unknown);
     }
 
-    public void internalSetVmStatus(VM vm,
+    public void internalSetVmStatus(VmDynamic vm,
             final VMStatus status,
             final VmExitStatus exitStaus,
             final String exitMessage,
@@ -332,7 +333,7 @@ public class ResourceManager implements BackendService {
 
             if (isVmNotRunning) {
                 vm.setRunOnVds(null);
-                vm.setVmPauseStatus(VmPauseStatus.NONE);
+                vm.setPauseStatus(VmPauseStatus.NONE);
                 vm.setLastStopTime(new Date());
             }
         }
@@ -343,9 +344,8 @@ public class ResourceManager implements BackendService {
      * @param vm
      *            the VM to reset
      */
-    private void resetVmAttributes(VM vm) {
+    private void resetVmAttributes(VmDynamic vm) {
         vm.setMigratingToVds(null);
-        vm.setRunOnVdsName("");
         vm.getGraphicsInfos().clear();
         vm.setGuestCurrentUserName(null);
         vm.setConsoleCurrentUserName(null);
