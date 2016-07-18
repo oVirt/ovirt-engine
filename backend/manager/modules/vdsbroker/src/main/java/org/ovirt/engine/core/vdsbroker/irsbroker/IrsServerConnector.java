@@ -37,8 +37,6 @@ public interface IrsServerConnector {
     public Map<String, Object> deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
             String postZero, String force);
 
-    public Map<String, Object> getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID);
-
     public Map<String, Object> setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID, String description);
 
     public Map<String, Object> getStats();

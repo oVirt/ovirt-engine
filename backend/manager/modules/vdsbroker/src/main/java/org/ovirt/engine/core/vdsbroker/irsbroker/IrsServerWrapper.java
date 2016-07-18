@@ -87,13 +87,6 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public OneImageInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.getVolumeInfo(sdUUID, spUUID, imgGUID, volUUID);
-        OneImageInfoReturnForXmlRpc wrapper = new OneImageInfoReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID, String description) {
         Map<String, Object> xmlRpcReturnValue = irsServer.setVolumeDescription(sdUUID, spUUID, imgGUID, volUUID, description);
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);

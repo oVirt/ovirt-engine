@@ -31,8 +31,6 @@ public interface IIrsServer {
     OneUuidReturnForXmlRpc deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
             String postZero, String force);
 
-    OneImageInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID);
-
     StatusOnlyReturnForXmlRpc setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID, String description);
 
     IrsStatsAndStatusXmlRpc getIrsStats();

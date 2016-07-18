@@ -28,5 +28,9 @@ public final class VolumeInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
         XmlRpcObjectDescriptor.toStringBuilder(volumeInfo, builder);
         return builder.toString();
     }
+
+    public Map<String, Object> getVolumeInfo() {
+        return volumeInfo;
+    }
 }
 

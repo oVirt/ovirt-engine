@@ -9,7 +9,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.GetVmsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IIrsServer;
 import org.ovirt.engine.core.vdsbroker.irsbroker.ImagesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsStatsAndStatusXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneImageInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
@@ -197,19 +196,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
         return new OneUuidReturnForXmlRpc(response);
-    }
-
-    @Override
-    public OneImageInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID) {
-        JsonRpcRequest request =
-                new RequestBuilder("Volume.getInfo").withParameter("volumeID", volUUID)
-                        .withParameter("storagepoolID", spUUID)
-                        .withParameter("storagedomainID", sdUUID)
-                        .withParameter("imageID", imgGUID)
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request);
-        return new OneImageInfoReturnForXmlRpc(response);
     }
 
     @Override
