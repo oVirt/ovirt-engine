@@ -157,7 +157,7 @@ public class VmDeviceUtils {
      * Get CD-ROM device spec params.
      */
     private Map<String, Object> getCdDeviceSpecParams(String srcCdPath, String dstCdPath) {
-        return Collections.<String, Object> singletonMap(VdsProperties.Path, getCdPath(srcCdPath, dstCdPath));
+        return Collections.singletonMap(VdsProperties.Path, getCdPath(srcCdPath, dstCdPath));
     }
 
     /**
@@ -803,7 +803,7 @@ public class VmDeviceUtils {
     }
 
     private Map<String, Object> getMemoryBalloonSpecParams() {
-        return Collections.<String, Object> singletonMap(VdsProperties.Model, VdsProperties.Virtio);
+        return Collections.singletonMap(VdsProperties.Model, VdsProperties.Virtio);
     }
 
     /**
@@ -1685,7 +1685,7 @@ public class VmDeviceUtils {
                 ? Collections.emptyMap()
                 : deviceList.stream()
                         .filter(dev -> dev.getDevice() != null)
-                        .collect(Collectors.toMap(VmDevice::getDevice, Function.<E>identity()));
+                        .collect(Collectors.toMap(VmDevice::getDevice, Function.identity()));
     }
 
 }
