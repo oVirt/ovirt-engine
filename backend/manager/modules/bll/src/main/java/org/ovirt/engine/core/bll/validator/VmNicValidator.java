@@ -22,8 +22,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  */
 public class VmNicValidator {
 
-    protected static final String CLUSTER_VERSION_REPLACEMENT_FORMAT = "$clusterVersion %s";
-
     protected VmNic nic;
 
     protected Version version;
@@ -77,10 +75,6 @@ public class VmNicValidator {
         }
 
         return ValidationResult.VALID;
-    }
-
-    protected String clusterVersion() {
-        return String.format(CLUSTER_VERSION_REPLACEMENT_FORMAT, version.getValue());
     }
 
     /**
