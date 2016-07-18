@@ -1,18 +1,14 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +19,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
     @Inject
     private VmDao vmDao;
-    @Inject
-    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
 
@@ -37,7 +31,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         resourceManager.removeAsyncRunningVm(getParameters().getVmId());
 
         final VM curVm = vmDao.get(getParameters().getVmId());
-        curVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(curVm.getId()));
         curVm.setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(curVm.getId()));
 
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(
@@ -54,7 +47,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             TransactionSupport.executeInNewTransaction(() -> {
                 curVm.setStopReason(getParameters().getReason());
                 vmManager.update(curVm.getDynamicData());
-                update(curVm.getInterfaces());
                 vmNumaNodeDao.massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
                 return null;
             });
@@ -75,15 +67,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         // do the state transition only if that VM is really running on SRC
         if (getParameters().getVdsId().equals(curVm.getRunOnVds())) {
             resourceManager.internalSetVmStatus(curVm, VMStatus.PoweringDown);
-        }
-    }
-
-    private void update(List<VmNetworkInterface> interfaces) {
-        if (interfaces == null) {
-            return;
-        }
-        for (VmNetworkInterface ifc : interfaces) {
-            vmManager.update(ifc.getStatistics());
         }
     }
 }
