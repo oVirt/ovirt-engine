@@ -85,7 +85,6 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
@@ -103,8 +102,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmSlaPolicyUtils vmSlaPolicyUtils;
     @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
-    @Inject
-    private StoragePoolDao storagePoolDao;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -273,7 +270,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             VdcQueryReturnValue query =
                     runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
 
-            @SuppressWarnings("unchecked")
             List<VmRngDevice> rngDevs = query.getReturnValue();
 
             VdcReturnValueBase rngCommandResult = null;
