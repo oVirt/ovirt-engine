@@ -60,7 +60,6 @@ public class VmDeviceUtils {
     private static final int COMPANION_USB_CONTROLLERS = 3;
     private static final int VNC_MIN_MONITORS = 1;
     private static final int SINGLE_QXL_MONITORS = 1;
-    private static final Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
 
     private final VmDao vmDao;
     private final VmDeviceDao vmDeviceDao;
@@ -360,7 +359,7 @@ public class VmDeviceUtils {
             new VmDeviceId(Guid.newGuid(), vmId),
             VmDeviceGeneralType.CONTROLLER,
             VmDeviceType.VIRTIOSCSI,
-            EMPTY_SPEC_PARAMS,
+            Collections.emptyMap(),
             true,
             false);
     }
@@ -472,7 +471,7 @@ public class VmDeviceUtils {
                 new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.SOUND,
                 VmDeviceType.getSoundDeviceType(soundDevice),
-                EMPTY_SPEC_PARAMS,
+                Collections.emptyMap(),
                 true,
                 true);
     }
@@ -593,7 +592,7 @@ public class VmDeviceUtils {
             new VmDeviceId(deviceId, vmId),
             VmDeviceGeneralType.INTERFACE,
             hostDev ? VmDeviceType.HOST_DEVICE : VmDeviceType.BRIDGE,
-            EMPTY_SPEC_PARAMS,
+            Collections.emptyMap(),
             plugged,
             false,
             address,
@@ -736,7 +735,7 @@ public class VmDeviceUtils {
                     new VmDeviceId(Guid.newGuid(), vmId),
                     VmDeviceGeneralType.REDIR,
                     VmDeviceType.SPICEVMC,
-                    EMPTY_SPEC_PARAMS,
+                    Collections.emptyMap(),
                     true,
                     false);
         }
@@ -925,7 +924,7 @@ public class VmDeviceUtils {
                 if (srcDeviceIdToDstDeviceIdMapping.containsKey(device.getDeviceId())) {
                     Guid dstDeviceId = srcDeviceIdToDstDeviceIdMapping.get(device.getDeviceId());
                     device.setId(new VmDeviceId(dstDeviceId, dstId));
-                    device.setSpecParams(EMPTY_SPEC_PARAMS);
+                    device.setSpecParams(Collections.emptyMap());
                     vmDeviceDao.save(device);
                 }
             }
@@ -963,7 +962,7 @@ public class VmDeviceUtils {
                 new VmDeviceId(deviceId, vmId),
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK,
-                EMPTY_SPEC_PARAMS,
+                Collections.emptyMap(),
                 isPlugged,
                 isReadOnly,
                 address,
@@ -1640,7 +1639,7 @@ public class VmDeviceUtils {
                                     update.getType().getName(),
                                     "",
                                     0,
-                                    EMPTY_SPEC_PARAMS,
+                                    Collections.emptyMap(),
                                     true,
                                     true,
                                     update.isReadOnly(),
