@@ -134,6 +134,12 @@ public class TooltipMixin {
         return ElementTooltip.isTooltipConfigured(parent.getId());
     }
 
+    public static void updateTooltipContent(SafeHtml newContent, Element element) {
+        ElementTooltip toolTip = ElementTooltip.getTooltip(element.getId());
+        toolTip.setContent(newContent);
+        toolTip.reconfigure();
+    }
+
     /**
      * mouseover and mouseout aren't perfect
      * so give tooltip some time (50ms) to show, and then check to see if we should force show it

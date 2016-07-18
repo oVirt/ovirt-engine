@@ -56,6 +56,8 @@ public class AlertManager {
 
     private boolean canShowAlerts;
 
+    private AlertPanel alert;
+
     public AlertManager() {
         setCanShowAlerts(false);
     }
@@ -111,8 +113,13 @@ public class AlertManager {
         ScheduledCommand command = new ScheduledCommand() {
             @Override
             public void execute() {
-                final AlertPanel alert = createAlert(type, message);
-                attachAlert(alert);
+                if (alert == null) {
+                    alert = createAlert(type, message);
+                    attachAlert(alert);
+                } else {
+                    alert.incCount();
+                    updateAlert(type, message, alert);
+                }
 
                 if (autoHideMs > 0) {
                     final Timer timer = new Timer() {
@@ -125,9 +132,17 @@ public class AlertManager {
                         @Override
                         public void onClose(AlertCloseEvent evt) {
                             timer.cancel();
+                            alert = null;
                         }
                     });
                     timer.schedule(autoHideMs);
+                } else {
+                    alert.getWidget().addCloseHandler(new AlertCloseHandler() {
+                        @Override
+                        public void onClose(AlertCloseEvent evt) {
+                            alert = null;
+                        }
+                    });
                 }
             }
         };
@@ -143,7 +158,7 @@ public class AlertManager {
         // Add widget's DOM element straight into HTML body
         RootPanel.get().add(alertPanel);
 
-        // Use tooltip in case the textual content overflows
+        // Use tool tip in case the textual content overflows
         Element messageDivElement = alertPanel.getMessageAt(0).getElement();
         if (ElementUtils.detectOverflowUsingScrollWidth(messageDivElement)) {
             SafeHtml tooltipContent = SafeHtmlUtils.fromString(messageDivElement.getInnerText());
@@ -157,7 +172,12 @@ public class AlertManager {
 
     AlertPanel createAlert(Type type, SafeHtml message) {
         AlertPanel alertPanel = new AlertPanel();
+        updateAlert(type, message, alertPanel);
+        return alertPanel;
+    }
 
+    private void updateAlert(Type type, SafeHtml message, AlertPanel alertPanel) {
+        alertPanel.clearMessages();
         alertPanel.setType(type);
         alertPanel.setWidgetColumnSize(null);
         alertPanel.getWidget().setDismissable(true);
@@ -181,8 +201,6 @@ public class AlertManager {
         }
 
         alertPanel.addMessage(message, ALERT_MESSAGE_CLASS);
-
-        return alertPanel;
     }
 
 }
