@@ -38,7 +38,7 @@ public class ConvertVmCallback extends CommandCallback {
         case NOT_EXIST:
             jobInfo.setDescription(JOB_DOES_NOT_EXIST_MSG);
         case ERROR:
-            log.info("Conversion of VM from exteral enironment failed: {}", jobInfo.getDescription());
+            log.info("Conversion of VM from external environment failed: {}", jobInfo.getDescription());
         case ABORTED:
             updateProgress("Canceling", 0);
             getCommand().setCommandStatus(CommandStatus.FAILED);
