@@ -46,8 +46,7 @@ public class V3VmHelper {
             buffer.append(current.getVersion());
         }
         buffer.append(current.getPath());
-        if (!current.getPath().endsWith(vm.getId())) {
-            buffer.append("/");
+        if (!current.getPath().contains(vm.getId())) {
             buffer.append(vm.getId());
         }
         buffer.append("/disks");

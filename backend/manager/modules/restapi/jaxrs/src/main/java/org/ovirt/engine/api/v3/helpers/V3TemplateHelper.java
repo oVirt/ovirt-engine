@@ -46,7 +46,7 @@ public class V3TemplateHelper {
             buffer.append(current.getVersion());
         }
         buffer.append(current.getPath());
-        if (!current.getPath().endsWith(template.getId())) {
+        if (!current.getPath().contains(template.getId())) {
             buffer.append("/");
             buffer.append(template.getId());
         }
