@@ -236,8 +236,9 @@ SNMP_AUTH_PROTOCOL=
 # The SNMPv3 auth passphrase, used when SNMP_SECURITY_LEVEL is set to AUTH_NOPRIV and AUTH_PRIV
 SNMP_AUTH_PASSPHRASE=
 
-# The SNMPv3 privacy protocol. Supported values are AES128, AES 192 and AES256.
-# net-snmp only supports AES128 protocol.
+# The SNMPv3 privacy protocol. Supported values are AES128, AES192 and AES256.
+# Be aware that AES192 and AES256 are not defined in RFC3826, so please verify
+# that your SNMP server supports those protocols before enabling them.
 SNMP_PRIVACY_PROTOCOL=
 
 # The SNMPv3 privacy passphrase, used when SNMP_SECURITY_LEVEL is set to AUTH_PRIV
