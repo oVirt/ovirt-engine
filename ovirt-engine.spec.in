@@ -1316,6 +1316,9 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
+* Mon Jul 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.8.1-1
+- Bump version to 3.6.8.1
+
 * Tue Jul  5 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.8-1
 - Bump version to 3.6.8
 
