@@ -87,6 +87,7 @@ public class VmAnalyzer {
     private List<VmJob> vmJobs;
     private List<VmNumaNode> vmNumaNodesNeedUpdate;
     private VmStatistics statistics;
+    private List<VmNetworkInterface> ifaces;
 
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
@@ -371,8 +372,8 @@ public class VmAnalyzer {
     }
 
     public List<VmNetworkStatistics> getVmNetworkStatistics() {
-        return dbVm.getInterfaces() != null ?
-                dbVm.getInterfaces().stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList())
+        return ifaces != null ?
+                ifaces.stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList())
                 : Collections.emptyList();
     }
 
@@ -790,7 +791,6 @@ public class VmAnalyzer {
         proceedBalloonCheck();
         proceedGuaranteedMemoryCheck();
         updateVmStatistics();
-        loadVmNetworkInterfaces();
         updateInterfaceStatistics();
         updateVmNumaNodeRuntimeInfo();
         updateDiskImageDynamics();
@@ -814,6 +814,7 @@ public class VmAnalyzer {
             return;
         }
 
+        loadVmNetworkInterfaces();
         List<String> macs = new ArrayList<>();
 
         statistics.setUsageNetworkPercent(0);
@@ -823,7 +824,7 @@ public class VmAnalyzer {
         for (VmNetworkInterface ifStats : ifsStats) {
             boolean firstTime = !macs.contains(ifStats.getMacAddress());
 
-            VmNetworkInterface vmIface = dbVm.getInterfaces().stream()
+            VmNetworkInterface vmIface = ifaces.stream()
                     .filter(iface -> iface.getMacAddress().equals(ifStats.getMacAddress()))
                     .findFirst()
                     .orElse(null);
@@ -1014,7 +1015,7 @@ public class VmAnalyzer {
     }
 
     protected void loadVmNetworkInterfaces() {
-        dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForMonitoredVm(getVmId()));
+        ifaces = vmNetworkInterfaceDao.getAllForMonitoredVm(getVmId());
     }
 
     public boolean isColdRebootVmToRun() {
