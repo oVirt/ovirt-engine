@@ -3228,7 +3228,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public Guid getSelectedMigrationPolicy() {
-        if (getOverrideMigrationPolicy().getEntity()) {
+        if (Boolean.TRUE.equals(getOverrideMigrationPolicy().getEntity())) {
             return getMigrationPolicies().getSelectedItem().getId();
         } else {
             return null;
