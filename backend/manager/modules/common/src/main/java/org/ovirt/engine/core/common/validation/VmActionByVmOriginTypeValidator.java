@@ -30,6 +30,11 @@ public class VmActionByVmOriginTypeValidator {
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.VmLogon);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.UpdateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.RemoveVm);
+        /**
+         * Needed specifically to move the HE VM out of a cluster in order to increase its cluster
+         * compatibility version.
+         */
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.ChangeVMCluster);
 
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.AddVmInterface);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.RemoveVmInterface);
