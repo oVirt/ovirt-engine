@@ -346,15 +346,6 @@ public class ResourceManager implements BackendService {
      *            the VM to reset
      */
     private void resetVmAttributes(VM vm) {
-        vm.setUsageNetworkPercent(0);
-        vm.setElapsedTime(0D);
-        vm.setCpuSys(0D);
-        vm.setCpuUser(0D);
-        vm.setUsageCpuPercent(0);
-        vm.setUsageMemPercent(0);
-        vm.setMemoryUsageHistory(null);
-        vm.setCpuUsageHistory(null);
-        vm.setNetworkUsageHistory(null);
         vm.setMigratingToVds(null);
         vm.setRunOnVdsName("");
         vm.getGraphicsInfos().clear();
@@ -366,7 +357,6 @@ public class ResourceManager implements BackendService {
         vm.setVmFQDN(null);
         vm.setCpuName(null);
         vm.setEmulatedMachine(null);
-        vm.setMigrationProgressPercent(0);
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         for (VmNetworkInterface ifc : interfaces) {
             NetworkStatistics statistics = ifc.getStatistics();

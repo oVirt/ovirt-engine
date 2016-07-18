@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +21,6 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
 
     @Inject
     private VmDynamicDao vmDynamicDao;
-    @Inject
-    private VmStatisticsDao vmStatisticsDao;
     @Inject
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
 
@@ -43,10 +40,9 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
         vmDynamic.setStatus(status);
         if (status.isNotRunning()) {
             resourceManager.removeAsyncRunningVm(getParameters().getVmId());
-            VmStatistics vmStatistics = vmStatisticsDao.get(getParameters().getVmId());
-            VM vm = new VM(null, vmDynamic, vmStatistics);
+            VM vm = new VM(null, vmDynamic, null);
             resourceManager.internalSetVmStatus(vm, status, getParameters().getExitStatus());
-            resourceManager.getVmManager(getParameters().getVmId()).update(vm.getStatisticsData());
+            resourceManager.getVmManager(getParameters().getVmId()).update(new VmStatistics(getParameters().getVmId()));
             List<VmNetworkInterface> interfaces = vm.getInterfaces();
             if (interfaces != null && !interfaces.isEmpty()) {
                 for (VmNetworkInterface ifc : interfaces) {
