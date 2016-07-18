@@ -347,7 +347,7 @@ public class VmAnalyzer {
                         vmExistReason);
             }
             saveDynamic(dbVm.getDynamicData());
-            resetStatistics();
+            resetVmStatistics();
             saveVmInterfaces();
             if (!resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
@@ -355,7 +355,7 @@ public class VmAnalyzer {
         }
     }
 
-    private void resetStatistics() {
+    private void resetVmStatistics() {
         statistics = new VmStatistics(getVmId());
     }
 
@@ -386,7 +386,7 @@ public class VmAnalyzer {
                 vdsmVm.getVmDynamic().getExitMessage(),
                 vdsmVm.getVmDynamic().getExitReason());
         saveDynamic(dbVm.getDynamicData());
-        resetStatistics();
+        resetVmStatistics();
         saveVmInterfaces();
         auditVmMigrationAbort();
 
