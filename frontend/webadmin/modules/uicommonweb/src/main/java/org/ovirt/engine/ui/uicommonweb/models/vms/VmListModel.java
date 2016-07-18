@@ -1711,6 +1711,39 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     private void preSavePhase2() {
         final UnitVmModel model = (UnitVmModel) getWindow();
+
+        EntityModel<String> cpuPinning = model.getCpuPinning();
+        if (!cpuPinning.getIsChangable() && cpuPinning.getEntity() != null
+                && !cpuPinning.getEntity().isEmpty()) {
+            confirmCpuPinningLost();
+        } else {
+            preSavePhase3();
+        }
+    }
+
+    private void confirmCpuPinningLost() {
+        ConfirmationModel confirmModel = new ConfirmationModel();
+        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmCpuPinningClearTitle());
+        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmCpuPinningClearMessage());
+
+        confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+        confirmModel.setHashName("edit_clear_cpu_pinning"); //$NON-NLS-1$
+
+        confirmModel.getCommands().add(UICommand.createDefaultOkUiCommand("ClearCpuPinning", VmListModel.this)); //$NON-NLS-1$
+        confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
+
+        setConfirmWindow(confirmModel);
+    }
+
+    private void clearCpuPinning() {
+        final UnitVmModel model = (UnitVmModel) getWindow();
+        model.getCpuPinning().setEntity("");
+
+        preSavePhase3();
+    }
+
+    private void preSavePhase3() {
+        final UnitVmModel model = (UnitVmModel) getWindow();
         final String name = model.getName().getEntity();
         validateVm(model, name);
     }
@@ -2129,6 +2162,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
         else if ("PreSavePhase2".equals(command.getName())) { //$NON-NLS-1$
             preSavePhase2();
+        }
+        else if ("PreSavePhase3".equals(command.getName())) { //$NON-NLS-1$
+            preSavePhase3();
             cancelConfirmation();
         }
         else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
@@ -2186,6 +2222,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
             updateExistingVm(model.getApplyCpuLater().getEntity());
             cancelConfirmation();
+        }
+        else if ("ClearCpuPinning".equals(command.getName())) { // $NON-NLS-1$
+            clearCpuPinning();
         }
         else if (CMD_CONFIGURE_VMS_TO_IMPORT.equals(command.getName())) {
             onConfigureVmsToImport();

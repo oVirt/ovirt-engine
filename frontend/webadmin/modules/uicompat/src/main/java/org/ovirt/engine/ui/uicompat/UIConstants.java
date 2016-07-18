@@ -123,6 +123,10 @@ public interface UIConstants extends Constants {
 
     String vmUnsupportedCpuMessage();
 
+    String vmCpuPinningClearMessage();
+
+    String vmCpuPinningClearTitle();
+
     String dataCentersTitle();
 
     String newDataCenterGuideMeTitle();

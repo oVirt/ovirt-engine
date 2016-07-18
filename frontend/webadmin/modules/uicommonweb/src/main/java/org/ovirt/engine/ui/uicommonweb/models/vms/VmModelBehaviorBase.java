@@ -903,7 +903,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 } else {
                     getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
                 }
-                getModel().getCpuPinning().setEntity("");
             }
             getModel().getCpuPinning().setIsChangeable(hasCpuPinning);
         }
