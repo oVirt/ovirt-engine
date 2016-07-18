@@ -358,6 +358,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                loadProviders();
+
                 StoragePool dataCenter = dataCenters.getSelectedItem();
                 Frontend.getInstance().runQuery(
                         VdcQueryType.GetStorageDomainsByStoragePoolId,
