@@ -68,7 +68,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -89,6 +88,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
@@ -102,6 +102,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmSlaPolicyUtils vmSlaPolicyUtils;
     @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
+    @Inject
+    private ResourceManager resourceManager;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -206,7 +208,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         final List<Guid> oldIconIds = IconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
-        getVmStaticDao().update(newVmStatic);
+        resourceManager.getVmManager(getVmId()).update(newVmStatic);
         if (getVm().isNotRunning()) {
             updateVmPayload();
             getVmDeviceUtils().updateVmDevices(getParameters(), oldVm);
@@ -328,7 +330,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 vm,
                 true,
                 StringUtils.EMPTY,
-                Collections.<DiskImage> emptyList(),
+                Collections.emptyList(),
                 getVmDeviceUtils().getVmDevicesForNextRun(getVm(), getParameters()),
                 getCompensationContext());
     }

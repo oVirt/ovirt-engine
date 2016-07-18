@@ -6,10 +6,12 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -37,6 +39,8 @@ public class VmManager {
     private VmStatisticsDao vmStatisticsDao;
     @Inject
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     VmManager(Guid vmId) {
         this.vmId = vmId;
@@ -68,6 +72,10 @@ public class VmManager {
 
     public void update(VmNetworkStatistics networkStatistics) {
         vmNetworkStatisticsDao.update(networkStatistics);
+    }
+
+    public void update(VmStatic vmStatic) {
+        vmStaticDao.update(vmStatic);
     }
 
     public void succededToHibernate() {
