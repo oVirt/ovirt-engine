@@ -6,13 +6,13 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
@@ -29,7 +29,7 @@ public class VmAnalyzerFactory {
     private AuditLogDirector auditLogDirector;
     private ResourceManager resourceManager;
 
-    private VmDao vmDao;
+    private VmDynamicDao vmDynamicDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private VdsDynamicDao vdsDynamicDao;
     private VdsNumaNodeDao vdsNumaNodeDao;
@@ -40,7 +40,7 @@ public class VmAnalyzerFactory {
             boolean updateStatistics,
             AuditLogDirector auditLogDirector,
             ResourceManager resourceManager,
-            VmDao vmDao,
+            VmDynamicDao vmDynamicDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VdsDynamicDao vdsDynamicDao,
             VdsNumaNodeDao vdsNumaNodeDao,
@@ -49,7 +49,7 @@ public class VmAnalyzerFactory {
         this.updateStatistics = updateStatistics;
         this.auditLogDirector = auditLogDirector;
         this.resourceManager = resourceManager;
-        this.vmDao = vmDao;
+        this.vmDynamicDao = vmDynamicDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         this.vdsDynamicDao = vdsDynamicDao;
         this.vdsNumaNodeDao = vdsNumaNodeDao;
@@ -67,13 +67,13 @@ public class VmAnalyzerFactory {
         }
     }
 
-    protected VmAnalyzer getVmAnalyzer(Pair<VM, VdsmVm> monitoredVm) {
+    protected VmAnalyzer getVmAnalyzer(Pair<VmDynamic, VdsmVm> monitoredVm) {
         // the VM that was reported by vdsm
         VdsmVm vdsmVm = monitoredVm.getSecond();
 
         // VM from the database running on the monitored host, might be null
-        VM dbVmOnMonitoredHost = monitoredVm.getFirst();
-        VM dbVm = dbVmOnMonitoredHost != null ? dbVmOnMonitoredHost : vmDao.get(vdsmVm.getVmDynamic().getId());
+        VmDynamic dbVmOnMonitoredHost = monitoredVm.getFirst();
+        VmDynamic dbVm = dbVmOnMonitoredHost != null ? dbVmOnMonitoredHost : vmDynamicDao.get(vdsmVm.getVmDynamic().getId());
 
         return new VmAnalyzer(
                 dbVm,

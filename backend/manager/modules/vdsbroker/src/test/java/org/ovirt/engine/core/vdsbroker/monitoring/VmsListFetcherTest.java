@@ -20,13 +20,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
@@ -47,15 +47,15 @@ public class VmsListFetcherTest {
     @Mock
     VdsDao vdsDao;
     @Mock
-    private VmDao vmDao;
+    private VmDynamicDao vmDynamicDao;
     @Captor
-    ArgumentCaptor<List<VM>> vdsManagerArgumentCaptor;
+    ArgumentCaptor<List<VmDynamic>> vdsManagerArgumentCaptor;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getVmDao()).thenReturn(vmDao);
+        when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
         VDS vds = new VDS();
         vds.setId(VmTestPairs.SRC_HOST_ID);
         when(vdsManager.getCopyVds()).thenReturn(vds);
@@ -74,7 +74,7 @@ public class VmsListFetcherTest {
         assumeTrue(data.dbVm().getStatus() != data.vdsmVm().getVmDynamic().getStatus());
         //then
         Assert.assertTrue(vmsListFetcher.getChangedVms().size() == 1);
-        Assert.assertTrue(vmsListFetcher.getChangedVms().get(0).getFirst() == data.dbVm());
+        Assert.assertTrue(vmsListFetcher.getChangedVms().get(0).getFirst() == data.dbVm().getDynamicData());
     }
 
     @Theory
@@ -102,7 +102,7 @@ public class VmsListFetcherTest {
         verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
         Assert.assertEquals(
                 data.vdsmVm().getVmDynamic(),
-                vdsManagerArgumentCaptor.getValue().get(0).getDynamicData()
+                vdsManagerArgumentCaptor.getValue().get(0)
         );
     }
 
@@ -133,8 +133,8 @@ public class VmsListFetcherTest {
                 any(VdsIdAndVdsVDSCommandParametersBase.class))).
                 thenReturn(getVdsReturnValue(data.vdsmVm()));
         if (data.dbVm() != null) {
-            when(vmDao.getAllRunningByVds(VmTestPairs.SRC_HOST_ID)).
-                    thenReturn(Collections.singletonMap(data.dbVm().getId(), data.dbVm()));
+            when(vmDynamicDao.getAllRunningForVds(VmTestPairs.SRC_HOST_ID)).
+                    thenReturn(Collections.singletonList(data.dbVm().getDynamicData()));
         }
         if (data.vdsmVm() != null) {
             when(resourceManager.runVdsCommand(

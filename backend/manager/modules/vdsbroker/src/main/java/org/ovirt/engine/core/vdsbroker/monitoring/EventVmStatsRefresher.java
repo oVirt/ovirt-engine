@@ -6,11 +6,10 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -26,7 +25,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
     private static final Logger log = LoggerFactory.getLogger(EventVmStatsRefresher.class);
     private Subscription subscription;
     @Inject
-    private VmDao vmDao;
+    private VmDynamicDao vmDynamicDao;
     private ResourceManager resourceManager;
     private PollAllVmStatsOnlyRefresher allVmStatsOnlyRefresher;
 
@@ -55,7 +54,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 try {
                     long fetchTime = System.nanoTime();
                     printEventInDebug(map);
-                    List<Pair<VM, VdsmVm>> vms = convertEvent(map);
+                    List<Pair<VmDynamic, VdsmVm>> vms = convertEvent(map);
                     if (!vms.isEmpty()) {
                         getVmsMonitoring().perform(vms, fetchTime, vdsManager, false);
                         processDevices(vms.stream().map(pair -> pair.getSecond().getVmDynamic()),
@@ -77,7 +76,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
             }
 
             @SuppressWarnings("unchecked")
-            private List<Pair<VM, VdsmVm>> convertEvent(Map<String, Object> map) {
+            private List<Pair<VmDynamic, VdsmVm>> convertEvent(Map<String, Object> map) {
                 Double notifyTime = VdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
                 return map.entrySet().stream()
                         .map(idToMap -> toMonitoredVm(
@@ -87,11 +86,11 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                         .collect(Collectors.toList());
             }
 
-            private Pair<VM, VdsmVm> toMonitoredVm(Guid vmId, Map<String, Object> vmMap, Double notifyTime) {
-                VM dbVm = vmDao.get(vmId);
+            private Pair<VmDynamic, VdsmVm> toMonitoredVm(Guid vmId, Map<String, Object> vmMap, Double notifyTime) {
+                VmDynamic dbVm = vmDynamicDao.get(vmId);
                 VdsmVm vdsmVm = dbVm == null ?
                         createVdsmVm(vmId, vmMap, notifyTime)
-                        : createVdsmVm(dbVm.getDynamicData(), vmMap, notifyTime);
+                        : createVdsmVm(dbVm, vmMap, notifyTime);
                 return new Pair<>(dbVm, vdsmVm);
             }
 

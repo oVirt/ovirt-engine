@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -24,7 +24,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -68,8 +67,6 @@ public class VmsMonitoring implements BackendService {
     @Inject
     private VmGuestAgentInterfaceDao vmGuestAgentInterfaceDao;
     @Inject
-    private VmDao vmDao;
-    @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
@@ -107,7 +104,7 @@ public class VmsMonitoring implements BackendService {
      * @param updateStatistics Whether or not this monitoring should include VM statistics
      */
     public void perform(
-            List<Pair<VM, VdsmVm>> monitoredVms,
+            List<Pair<VmDynamic, VdsmVm>> monitoredVms,
             long fetchTime,
             VdsManager vdsManager,
             boolean updateStatistics) {
@@ -148,7 +145,7 @@ public class VmsMonitoring implements BackendService {
      * @return The analyzers which hold all the data per VM
      */
     private List<VmAnalyzer> analyzeVms(
-            List<Pair<VM, VdsmVm>> monitoredVms,
+            List<Pair<VmDynamic, VdsmVm>> monitoredVms,
             long fetchTime,
             VdsManager vdsManager,
             boolean updateStatistics) {
@@ -171,14 +168,14 @@ public class VmsMonitoring implements BackendService {
                 statistics,
                 auditLogDirector,
                 resourceManager,
-                vmDao,
+                vmDynamicDao,
                 vmNetworkInterfaceDao,
                 vdsDynamicDao,
                 vdsNumaNodeDao,
                 vmNumaNodeDao);
     }
 
-    private boolean shouldAnalyzeVm(Pair<VM, VdsmVm> pair, long fetchTime, Guid vdsId) {
+    private boolean shouldAnalyzeVm(Pair<VmDynamic, VdsmVm> pair, long fetchTime, Guid vdsId) {
         Guid vmId = getVmId(pair.getFirst(), pair.getSecond());
         VmManager vmManager = resourceManager.getVmManager(vmId);
 
@@ -370,7 +367,7 @@ public class VmsMonitoring implements BackendService {
 
     // ***** Helpers and sub-methods *****
 
-    static Guid getVmId(VM dbVm, VdsmVm vdsmVm) {
+    static Guid getVmId(VmDynamic dbVm, VdsmVm vdsmVm) {
         return dbVm != null ? dbVm.getId() : vdsmVm.getVmDynamic().getId();
     }
 

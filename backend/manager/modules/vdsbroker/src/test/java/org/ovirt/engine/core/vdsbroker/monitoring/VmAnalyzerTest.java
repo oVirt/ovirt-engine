@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -311,13 +312,15 @@ public class VmAnalyzerTest {
         when(vdsManager.getClusterId()).thenReturn(VmTestPairs.CLUSTER_ID);
         when(vdsManager.getCopyVds()).thenReturn(vdsManagerVds);
         when(vmManager.isColdReboot()).thenReturn(false);
+        when(vmManager.isAutoStart()).thenReturn(vmData.dbVm() != null ? vmData.dbVm().isAutoStartup() : false);
+        when(vmManager.getStatistics()).thenReturn(new VmStatistics());
         when(resourceManager.getVdsManager(any(Guid.class))).thenReturn(vdsManager);
         // -- default behaviors --
         // dst host is up
         mockDstHostStatus(VDSStatus.Up);
         // -- end of behaviors --
         vmAnalyzer = spy(new VmAnalyzer(
-                vmData.dbVm(),
+                vmData.dbVm() != null ? vmData.dbVm().getDynamicData() : null,
                 vmData.vdsmVm(),
                 false,
                 vdsManager,

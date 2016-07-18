@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -40,7 +40,7 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
     }
 
     @Override
-    protected void gatherChangedVms(VM dbVm, VdsmVm vdsmVm) {
+    protected void gatherChangedVms(VmDynamic dbVm, VdsmVm vdsmVm) {
         changedVms.add(new Pair<>(dbVm, vdsmVm));
         if (log.isDebugEnabled()) {
             logBuilder.append(String.format("%s:%s ",

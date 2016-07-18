@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -92,7 +93,7 @@ public class VdsManager {
     private boolean beforeFirstRefresh = true;
     private HostMonitoring hostMonitoring;
     private boolean monitoringNeeded;
-    private List<VM> lastVmsList = Collections.emptyList();
+    private List<VmDynamic> lastVmsList = Collections.emptyList();
     private final ResourceManager resourceManager;
     private final DbFacade dbFacade;
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
@@ -450,7 +451,7 @@ public class VdsManager {
         synchronized (getLockObj()) {
             cachedVds.setPendingVcpusCount(pendingCpuCount);
             cachedVds.setPendingVmemSize(pendingMemory);
-            HostMonitoring.refreshCommitedMemory(cachedVds, dbFacade.getVmDao().getAllRunningForVds(getVdsId()));
+            HostMonitoring.refreshCommitedMemory(cachedVds, dbFacade.getVmDynamicDao().getAllRunningForVds(getVdsId()), resourceManager);
             updateDynamicData(cachedVds.getDynamicData());
         }
     }
@@ -1055,14 +1056,14 @@ public class VdsManager {
         beforeFirstRefresh = value;
     }
 
-    public List<VM> getLastVmsList() {
+    public List<VmDynamic> getLastVmsList() {
         return lastVmsList;
     }
 
     /**
      * This method is not thread safe
      */
-    public void setLastVmsList(List<VM> lastVmsList) {
+    public void setLastVmsList(List<VmDynamic> lastVmsList) {
         this.lastVmsList = lastVmsList;
     }
 

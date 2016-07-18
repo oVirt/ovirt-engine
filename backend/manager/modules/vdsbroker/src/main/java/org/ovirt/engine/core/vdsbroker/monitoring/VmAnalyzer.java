@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
@@ -66,7 +65,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VmAnalyzer {
 
-    private final VM dbVm;
+    private final VmDynamic dbVm;
     private final VdsmVm vdsmVm;
 
     private VmDynamic vmDynamicToSave;
@@ -114,7 +113,7 @@ public class VmAnalyzer {
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     public VmAnalyzer(
-            VM dbVm,
+            VmDynamic dbVm,
             VdsmVm vdsmVm,
             boolean updateStatistics,
             VdsManager vdsManager,
@@ -181,7 +180,7 @@ public class VmAnalyzer {
             logExternalVmDiscovery();
             return true;
         }
-        if (dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
+        if (getVmManager().getOrigin() == OriginType.HOSTED_ENGINE) {
             logUnmanagedHostedEngineDiscovery();
             return true;
         }
@@ -219,8 +218,7 @@ public class VmAnalyzer {
             break;
 
         default:
-            VmDynamic vmDynamic = dbVm.getDynamicData();
-            if (vmDynamic.getRunOnVds() != null && vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
+            if (dbVm.getRunOnVds() != null && vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
                 log.info("RefreshVmList VM id '{}' status = '{}' on VDS '{}'({}) ignoring it in the refresh until migration is done",
                         vdsmVm.getVmDynamic().getId(), vdsmVm.getVmDynamic().getStatus(),
                         vdsManager.getVdsId(), vdsManager.getVdsName());
@@ -255,7 +253,7 @@ public class VmAnalyzer {
         logVmStatusTransition();
         switch (dbVm.getStatus()) {
         case SavingState:
-            resourceManager.internalSetVmStatus(dbVm.getDynamicData(), VMStatus.Suspended);
+            resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
             clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                     vdsmVm.getVmDynamic().getExitMessage(),
                     vdsmVm.getVmDynamic().getExitReason());
@@ -271,7 +269,7 @@ public class VmAnalyzer {
             case Error:
                 abortVmMigration();
 
-                if (dbVm.isAutoStartup()) {
+                if (getVmManager().isAutoStart()) {
                     setAutoRunFlag();
                     break;
                 }
@@ -291,7 +289,7 @@ public class VmAnalyzer {
                     break;
                 }
 
-                if (dbVm.isAutoStartup()) {
+                if (getVmManager().isAutoStart()) {
                     setAutoRunFlag();
                     break;
                 }
@@ -344,13 +342,13 @@ public class VmAnalyzer {
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
-                resourceManager.internalSetVmStatus(dbVm.getDynamicData(),
+                resourceManager.internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         exitStatus,
                         exitMessage,
                         vmExistReason);
             }
-            saveDynamic(dbVm.getDynamicData());
+            saveDynamic(dbVm);
             resetVmStatistics();
             resetVmInterfaceStatistics();
             if (!resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
@@ -389,12 +387,12 @@ public class VmAnalyzer {
             destroyVmOnDestinationHost();
         }
         // set vm status to down if source vm crushed
-        resourceManager.internalSetVmStatus(dbVm.getDynamicData(),
+        resourceManager.internalSetVmStatus(dbVm,
                 VMStatus.Down,
                 vdsmVm.getVmDynamic().getExitStatus(),
                 vdsmVm.getVmDynamic().getExitMessage(),
                 vdsmVm.getVmDynamic().getExitReason());
-        saveDynamic(dbVm.getDynamicData());
+        saveDynamic(dbVm);
         resetVmStatistics();
         resetVmInterfaceStatistics();
         auditVmMigrationAbort();
@@ -415,17 +413,16 @@ public class VmAnalyzer {
                 new DestroyVmVDSCommandParameters(dbVm.getMigratingToVds(), dbVm.getId(), true, false, 0));
         if (destoryReturnValue.getSucceeded()) {
             log.info("Stopped migrating VM: '{}'({}) on VDS: '{}'",
-                    dbVm.getId(), dbVm.getName(), dbVm.getMigratingToVds());
+                    dbVm.getId(), getVmManager().getName(), dbVm.getMigratingToVds());
         } else {
             log.info("Could not stop migrating VM: '{}'({}) on VDS: '{}', Error: '{}'",
-                    dbVm.getId(), dbVm.getName(), dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
+                    dbVm.getId(), getVmManager().getName(), dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
         }
     }
 
     private void proceedWatchdogEvents() {
         VmDynamic vmDynamic = vdsmVm.getVmDynamic();
-        VM vmTo = dbVm;
-        if (isNewWatchdogEvent(vmDynamic, vmTo)) {
+        if (isNewWatchdogEvent(vmDynamic, dbVm)) {
             AuditLogableBase auditLogable = new AuditLogableBase();
             auditLogable.setVmId(vmDynamic.getId());
             auditLogable.addCustomValue("wdaction", vmDynamic.getLastWatchdogAction());
@@ -435,7 +432,7 @@ public class VmAnalyzer {
         }
     }
 
-    protected static boolean isNewWatchdogEvent(VmDynamic vmDynamic, VM vmTo) {
+    protected static boolean isNewWatchdogEvent(VmDynamic vmDynamic, VmDynamic vmTo) {
         Long lastWatchdogEvent = vmDynamic.getLastWatchdogEvent();
         return lastWatchdogEvent != null
                 && (vmTo.getLastWatchdogEvent() == null || vmTo.getLastWatchdogEvent() < lastWatchdogEvent);
@@ -482,7 +479,7 @@ public class VmAnalyzer {
 
     private boolean isBalloonDeviceActiveOnVm() {
         VmBalloonInfo balloonInfo = vdsmVm.getVmBalloonInfo();
-        return dbVm.getMinAllocatedMem() < dbVm.getMemSizeMb() // minimum allocated mem of VM == total mem, ballooning is impossible
+        return getVmManager().getMinAllocatedMem() < getVmManager().getMemSizeMb() // minimum allocated mem of VM == total mem, ballooning is impossible
                 && balloonInfo.isBalloonDeviceEnabled()
                 && balloonInfo.getBalloonTargetMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue(); // ballooning was not requested/enabled on this VM
     }
@@ -492,11 +489,11 @@ public class VmAnalyzer {
         if (vmBalloonInfo != null &&
                 vmBalloonInfo.getCurrentMemory() != null &&
                 vmBalloonInfo.getCurrentMemory() > 0 &&
-                dbVm.getMinAllocatedMem() > vmBalloonInfo.getCurrentMemory() / TO_MEGA_BYTES) {
+                getVmManager().getMinAllocatedMem() > vmBalloonInfo.getCurrentMemory() / TO_MEGA_BYTES) {
             AuditLogableBase auditLogable = new AuditLogableBase();
-            auditLogable.addCustomValue("VmName", dbVm.getName());
+            auditLogable.addCustomValue("VmName", getVmManager().getName());
             auditLogable.addCustomValue("VdsName", vdsManager.getVdsName());
-            auditLogable.addCustomValue("MemGuaranteed", String.valueOf(dbVm.getMinAllocatedMem()));
+            auditLogable.addCustomValue("MemGuaranteed", String.valueOf(getVmManager().getMinAllocatedMem()));
             auditLogable.addCustomValue("MemActual",
                     Long.toString(vmBalloonInfo.getCurrentMemory() / TO_MEGA_BYTES));
             auditLog(auditLogable, AuditLogType.VM_MEMORY_UNDER_GUARANTEED_VALUE);
@@ -532,7 +529,7 @@ public class VmAnalyzer {
         }
 
         // log vm recovered from error
-        if (dbVm.getStatus() == VMStatus.Paused && dbVm.getVmPauseStatus().isError()
+        if (dbVm.getStatus() == VMStatus.Paused && dbVm.getPauseStatus().isError()
                 && vdsmVmDynamic.getStatus() == VMStatus.Up) {
             auditVmRecoveredFromError();
         }
@@ -573,7 +570,7 @@ public class VmAnalyzer {
     public void auditClientIpChange() {
         final AuditLogableBase event = new AuditLogableBase();
         event.setVmId(dbVm.getId());
-        event.setUserName(dbVm.getConsoleCurentUserName());
+        event.setUserName(dbVm.getConsoleCurrentUserName());
         String clientIp = vdsmVm.getVmDynamic().getClientIp();
         auditLogDirector.log(event, clientIp == null || clientIp.isEmpty() ?
                 AuditLogType.VM_CONSOLE_DISCONNECTED : AuditLogType.VM_CONSOLE_CONNECTED);
@@ -616,7 +613,7 @@ public class VmAnalyzer {
 
     private void updateVmDynamicData() {
         // check if dynamic data changed - update cache and DB
-        List<String> changedFields = getChangedFields(dbVm.getDynamicData(), vdsmVm.getVmDynamic());
+        List<String> changedFields = getChangedFields(dbVm, vdsmVm.getVmDynamic());
         // remove all fields that should not be checked:
         changedFields.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
 
@@ -627,8 +624,8 @@ public class VmAnalyzer {
 
         // if something relevant changed
         if (!changedFields.isEmpty()) {
-            dbVm.getDynamicData().updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
-            saveDynamic(dbVm.getDynamicData());
+            dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
+            saveDynamic(dbVm);
         }
     }
 
@@ -656,7 +653,7 @@ public class VmAnalyzer {
     private void logVmHandOver(Guid destinationHostId, VMStatus newVmStatus) {
         log.info("Handing over VM '{}'({}) to Host '{}'. Setting VM to status '{}'",
                 dbVm.getId(),
-                dbVm.getName(),
+                getVmManager().getName(),
                 destinationHostId,
                 newVmStatus);
     }
@@ -665,7 +662,7 @@ public class VmAnalyzer {
         if (dbVm.getStatus() != vdsmVm.getVmDynamic().getStatus()) {
             log.info("VM '{}'({}) moved from '{}' --> '{}'",
                     dbVm.getId(),
-                    dbVm.getName(),
+                    getVmManager().getName(),
                     dbVm.getStatus().name(),
                     vdsmVm.getVmDynamic().getStatus().name());
 
@@ -693,7 +690,7 @@ public class VmAnalyzer {
 
     private void logVmDisappeared() {
         log.info("VM '{}'({}) is running in db and not running on VDS '{}'({})",
-                dbVm.getId(), dbVm.getName(), vdsManager.getVdsId(), vdsManager.getVdsName());
+                dbVm.getId(), getVmManager().getName(), vdsManager.getVdsId(), vdsManager.getVdsName());
     }
 
     private void logVmDown() {
@@ -717,7 +714,7 @@ public class VmAnalyzer {
 
         case PoweringDown:
             clearVm(VmExitStatus.Normal,
-                    String.format("VM %s shutdown complete", dbVm.getName()),
+                    String.format("VM %s shutdown complete", getVmManager().getName()),
                     VmExitReason.Success);
 
             // not sure about that..
@@ -729,7 +726,7 @@ public class VmAnalyzer {
         default:
             clearVm(VmExitStatus.Error,
                     String.format("Could not find VM %s on host, assuming it went down unexpectedly",
-                            dbVm.getName()),
+                            getVmManager().getName()),
                     VmExitReason.GenericError);
 
             if (resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
@@ -742,7 +739,7 @@ public class VmAnalyzer {
                 break;
             }
 
-            if (dbVm.isAutoStartup()) {
+            if (getVmManager().isAutoStart()) {
                 setAutoRunFlag();
                 break;
             }
@@ -757,16 +754,16 @@ public class VmAnalyzer {
         dbVm.setRunOnVds(destinationHostId);
         logVmHandOver(destinationHostId, newVmStatus);
         // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
-        resourceManager.internalSetVmStatus(dbVm.getDynamicData(), newVmStatus);
+        resourceManager.internalSetVmStatus(dbVm, newVmStatus);
         // save the VM state
-        saveDynamic(dbVm.getDynamicData());
+        saveDynamic(dbVm);
     }
 
     private boolean isVdsNonResponsive(Guid vdsId) {
         return vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
     }
 
-    private void afterMigrationFrom(VmDynamic runningVm, VM vmToUpdate) {
+    private void afterMigrationFrom(VmDynamic runningVm, VmDynamic vmToUpdate) {
         VMStatus oldVmStatus = vmToUpdate.getStatus();
         VMStatus currentVmStatus = runningVm.getStatus();
 
@@ -775,9 +772,9 @@ public class VmAnalyzer {
         if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom
                 && currentVmStatus.isRunning()) {
             rerun = true;
-            log.info("Adding VM '{}'({}) to re-run list", vmToUpdate.getId(), vmToUpdate.getName());
+            log.info("Adding VM '{}'({}) to re-run list", vmToUpdate.getId(), getVmManager().getName());
             vmToUpdate.setMigratingToVds(null);
-            vmToUpdate.setMigrationProgressPercent(0);
+            getVmManager().getStatistics().setMigrationProgressPercent(0);
         }
     }
 
@@ -804,7 +801,7 @@ public class VmAnalyzer {
 
     private void updateVmStatistics() {
         statistics = getVmManager().getStatistics();
-        statistics.updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
+        statistics.updateRuntimeData(vdsmVm.getVmStatistics(), getVmManager().getNumOfCpus());
     }
 
     private void updateDiskImageDynamics() {
@@ -887,7 +884,7 @@ public class VmAnalyzer {
         int guestAgentNicHash = Objects.hashCode(vmGuestAgentInterfaces);
         if (guestAgentNicHash != dbVm.getGuestAgentNicsHash()) {
             if (vmDynamicToSave == null) {
-                saveDynamic(dbVm.getDynamicData());
+                saveDynamic(dbVm);
             }
             updateGuestAgentInterfacesChanges(
                     vmDynamicToSave,
@@ -973,18 +970,18 @@ public class VmAnalyzer {
 
     private void setAutoRunFlag() {
         autoVmToRun = true;
-        log.info("add VM '{}'({}) to HA rerun treatment", dbVm.getId(), dbVm.getName());
+        log.info("add VM '{}'({}) to HA rerun treatment", dbVm.getId(), getVmManager().getName());
     }
 
     private void setRerunFlag() {
         rerun = true;
-        log.info("add VM '{}'({}) to rerun treatment", dbVm.getId(), dbVm.getName());
+        log.info("add VM '{}'({}) to rerun treatment", dbVm.getId(), getVmManager().getName());
     }
 
     private void setColdRebootFlag() {
         coldRebootVmToRun = true;
         getVmManager().setColdReboot(false);
-        log.info("add VM '{}'({}) to cold reboot treatment", dbVm.getId(), dbVm.getName());
+        log.info("add VM '{}'({}) to cold reboot treatment", dbVm.getId(), getVmManager().getName());
     }
 
     public boolean isRerun() {
