@@ -2007,7 +2007,8 @@ SELECT vm_pools.vm_pool_id,
     storage_pool.id AS storage_pool_id,
     vm_pools.max_assigned_vms_per_user AS max_assigned_vms_per_user,
     vm_pools.spice_proxy AS spice_proxy,
-    vm_pools.is_being_destroyed AS is_being_destroyed
+    vm_pools.is_being_destroyed AS is_being_destroyed,
+    vm_pools.is_auto_storage_select AS is_auto_storage_select
 FROM vm_pools
 INNER JOIN cluster
     ON vm_pools.cluster_id = cluster.cluster_id
@@ -2052,7 +2053,8 @@ SELECT vmp.vm_pool_id,
         ) AS vm_running_count,
     vmp.storage_pool_name,
     vmp.storage_pool_id,
-    vmp.is_being_destroyed
+    vmp.is_being_destroyed,
+    vmp.is_auto_storage_select
 FROM vm_pools_view vmp;
 
 CREATE OR REPLACE VIEW permissions_view AS

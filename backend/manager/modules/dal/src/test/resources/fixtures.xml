@@ -1914,6 +1914,7 @@
         <column>max_assigned_vms_per_user</column>
         <column>spice_proxy</column>
         <column>is_being_destroyed</column>
+        <column>is_auto_storage_select</column>
         <row>
             <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
             <value>fedora13-pool</value>
@@ -1924,6 +1925,7 @@
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>1</value>
             <null/>
+            <value>false</value>
             <value>false</value>
         </row>
         <row>
@@ -1937,6 +1939,7 @@
             <value>1</value>
             <null/>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>103cfd1d-18b1-4790-8a0c-1e52621b0078</value>
@@ -1948,6 +1951,7 @@
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>1</value>
             <null/>
+            <value>false</value>
             <value>false</value>
         </row>
     </table>

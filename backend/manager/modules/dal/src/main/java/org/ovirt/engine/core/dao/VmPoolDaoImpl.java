@@ -93,7 +93,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("cluster_id", pool.getClusterId())
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
                 .addValue("spice_proxy", pool.getSpiceProxy())
-                .addValue("is_being_destroyed", pool.isBeingDestroyed());
+                .addValue("is_being_destroyed", pool.isBeingDestroyed())
+                .addValue("is_auto_storage_select", pool.isAutoStorageSelect());
 
         getCallsHandler().executeModification("InsertVm_pools", parameterSource);
     }
@@ -112,7 +113,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("cluster_id", pool.getClusterId())
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
                 .addValue("spice_proxy", pool.getSpiceProxy())
-                .addValue("is_being_destroyed", pool.isBeingDestroyed());
+                .addValue("is_being_destroyed", pool.isBeingDestroyed())
+                .addValue("is_auto_storage_select", pool.isAutoStorageSelect());
 
         getCallsHandler().executeModification("UpdateVm_pools", parameterSource);
     }
@@ -189,6 +191,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
             entity.setSpiceProxy(rs.getString("spice_proxy"));
             entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
+            entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
             return entity;
         }
     }
@@ -214,6 +217,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
             entity.setSpiceProxy(rs.getString("spice_proxy"));
             entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
+            entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
             return entity;
         }
     }

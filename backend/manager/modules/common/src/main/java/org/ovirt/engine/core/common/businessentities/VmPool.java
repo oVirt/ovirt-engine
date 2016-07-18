@@ -66,6 +66,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private String spiceProxy;
 
     private boolean beingDestroyed;
+    private boolean autoSelectStorage;
 
     public VmPool() {
         parameters = "";
@@ -75,6 +76,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         vmPoolRunningCount = 1;
         maxAssignedVmsPerUser = 1;
         beingDestroyed = false;
+        autoSelectStorage = false;
         type = VmPoolType.AUTOMATIC;
     }
 
@@ -275,6 +277,14 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public void setBeingDestroyed(boolean beingDestroyed) {
         this.beingDestroyed = beingDestroyed;
+    }
+
+    public boolean isAutoStorageSelect() {
+        return autoSelectStorage;
+    }
+
+    public void setAutoStorageSelect(boolean autoSelect) {
+        this.autoSelectStorage = autoSelect;
     }
 
     @Override

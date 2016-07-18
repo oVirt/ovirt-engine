@@ -42,6 +42,8 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -54,6 +56,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
 /**
@@ -75,9 +80,22 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    StorageDomainDao storageDomainDao;
+
+    @Inject
+    DiskProfileDao diskProfileDao;
+
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
+    private Map<Guid, Long> targetDomainsSize;
+    private List<Disk> templateDisks;
+    private Map<Guid, List<Guid>> diskToStorageIds;
+    private Map<Guid, List<Guid>> diskToProfileMap;
     /**
      * This flag is set to true if all of the VMs were added successfully, false otherwise.
      */
@@ -104,10 +122,10 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     }
 
     /*
-       this method exist not to do caching, but to deal with init being called from constructor in class hierarchy.
-       init method is not called via Postconstruct, but from constructor, meaning, that in tests
-       we're unable pro inject 'macPoolPerCluster' soon enough.
-    */
+     * this method exist not to do caching, but to deal with init being called from constructor in class hierarchy. init
+     * method is not called via Postconstruct, but from constructor, meaning, that in tests we're unable pro inject
+     * 'macPoolPerCluster' soon enough.
+     */
     protected MacPool getMacPool() {
         if (macPool == null) {
             macPool = macPoolPerCluster.getMacPoolForCluster(getClusterId(), getContext());
@@ -144,6 +162,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
         setVmTemplateId(templateIdToUse);
         initTemplate();
+        if (getVmPool().isAutoStorageSelect()) {
+            initTargetDomains();
+        }
         ensureDestinationImageMap();
 
         nameForVmInPoolGenerator = new NameForVmInPoolGenerator(getParameters().getVmPool().getName());
@@ -250,7 +271,12 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
         AddVmParameters parameters = new AddVmParameters(currVm);
         parameters.setPoolId(getVmPool().getVmPoolId());
-        parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
+        if (getVmPool().isAutoStorageSelect()) {
+            parameters.setDiskInfoDestinationMap(autoSelectTargetDomain());
+        }
+        else {
+            parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
+        }
         if (StringUtils.isEmpty(getParameters().getSessionId())) {
             parameters.setParametersCurrentUser(getCurrentUser());
         } else {
@@ -261,9 +287,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         // check if device is enabled or we need to override it to true
         parameters.setSoundDeviceEnabled(Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled())
                 || vmDeviceUtils.shouldOverrideSoundDevice(
-                            getParameters().getVmStaticData(),
-                            getEffectiveCompatibilityVersion(),
-                            getParameters().isSoundDeviceEnabled()));
+                        getParameters().getVmStaticData(),
+                        getEffectiveCompatibilityVersion(),
+                        getParameters().isSoundDeviceEnabled()));
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
         parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
@@ -375,7 +401,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         }
 
         if (getParameters().getVmPool().getPrestartedVms() >
-                getParameters().getVmPool().getAssignedVmsCount() + getParameters().getVmsCount()) {
+        getParameters().getVmPool().getAssignedVmsCount() + getParameters().getVmsCount()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
         }
 
@@ -409,15 +435,67 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
                 storageToDisksMap.get(storageId));
     }
 
+    private Guid findAvailableStorageDomain(long diskSize, List<Guid> storageIds) {
+        Guid dest = storageIds.get(0);
+        for (Guid storageId: storageIds) {
+            if (targetDomainsSize.get(storageId) > targetDomainsSize.get(dest)) {
+                dest = storageId;
+            }
+        }
+        long destSize = targetDomainsSize.get(dest);
+        targetDomainsSize.put(dest, destSize - diskSize);
+        return dest;
+    }
+
+    private void initTargetDomains() {
+        templateDisks= diskDao.getAllForVm(getParameters().getVmStaticData().getVmtGuid());
+        targetDomainsSize = new HashMap<>();
+        diskToProfileMap = new HashMap<>();
+        diskToStorageIds = new HashMap<>();
+
+        for (Disk disk: templateDisks) {
+            DiskImage diskImage = (DiskImage)disk;
+            diskToProfileMap.put(disk.getId(), diskImage.getDiskProfileIds());
+            diskToStorageIds.put(disk.getId(), diskImage.getStorageIds());
+            for (Guid storageId: diskImage.getStorageIds()) {
+                if (!targetDomainsSize.containsKey(storageId)) {
+                    StorageDomain domain = storageDomainDao.get(storageId);
+                    targetDomainsSize.put(domain.getId(), domain.getAvailableDiskSizeInBytes());
+                }
+            }
+        }
+    }
+
+    private HashMap<Guid, DiskImage> autoSelectTargetDomain() {
+        HashMap<Guid, DiskImage> destinationMap = new HashMap<>();
+        for (Disk disk: templateDisks) {
+            DiskImage diskImage = (DiskImage)disk;
+            ArrayList<Guid> storageIds = new ArrayList<>();
+            Guid storageId = findAvailableStorageDomain(disk.getSize(), diskToStorageIds.get(disk.getId()));
+            storageIds.add(storageId);
+            List<Guid> profileIds = diskToProfileMap.get(disk.getId());
+            for (Guid profileId: profileIds) {
+                DiskProfile profile = diskProfileDao.get(profileId);
+                if (profile.getStorageDomainId().equals(storageId)) {
+                    diskImage.setDiskProfileId(profile.getId());
+                    break;
+                }
+            }
+            diskImage.setStorageIds(storageIds);
+            destinationMap.put(disk.getId(), diskImage);
+        }
+        return destinationMap;
+    }
+
     private void ensureDestinationImageMap() {
-        if (MapUtils.isEmpty(getParameters().getDiskInfoDestinationMap())) {
+        if (getVmPool().isAutoStorageSelect() || MapUtils.isEmpty(getParameters().getDiskInfoDestinationMap())) {
             diskInfoDestinationMap = new HashMap<>();
 
             if (getVmTemplate() == null) {
                 return;
             }
 
-            if (!Guid.isNullOrEmpty(getParameters().getStorageDomainId())) {
+            if (!Guid.isNullOrEmpty(getParameters().getStorageDomainId()) && !getVmPool().isAutoStorageSelect()) {
                 Guid storageId = getParameters().getStorageDomainId();
                 ArrayList<Guid> storageIds = new ArrayList<>();
                 storageIds.add(storageId);
@@ -454,8 +532,8 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             if (storageToDisksMap.containsKey(domainId)) {
                 int numOfDisksOnDomain = storageToDisksMap.get(domainId).size();
                 if (numOfDisksOnDomain > 0
-                    && (domain.getStorageDomainType() == StorageDomainType.ImportExport)) {
-                        return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                        && (domain.getStorageDomainType() == StorageDomainType.ImportExport)) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 }
             }
             validDomains.add(domainId);

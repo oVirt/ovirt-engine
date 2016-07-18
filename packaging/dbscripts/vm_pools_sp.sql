@@ -14,7 +14,8 @@ CREATE OR REPLACE FUNCTION InsertVm_pools (
     v_prestarted_vms INT,
     v_cluster_id UUID,
     v_max_assigned_vms_per_user SMALLINT,
-    v_spice_proxy VARCHAR(255)
+    v_spice_proxy VARCHAR(255),
+    v_is_auto_storage_select BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -29,7 +30,8 @@ BEGIN
         prestarted_vms,
         cluster_id,
         max_assigned_vms_per_user,
-        spice_proxy
+        spice_proxy,
+        is_auto_storage_select
         )
     VALUES (
         v_vm_pool_id,
@@ -42,7 +44,8 @@ BEGIN
         v_prestarted_vms,
         v_cluster_id,
         v_max_assigned_vms_per_user,
-        v_spice_proxy
+        v_spice_proxy,
+        v_is_auto_storage_select
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -58,7 +61,8 @@ CREATE OR REPLACE FUNCTION UpdateVm_pools (
     v_prestarted_vms INT,
     v_cluster_id UUID,
     v_max_assigned_vms_per_user SMALLINT,
-    v_spice_proxy VARCHAR(255)
+    v_spice_proxy VARCHAR(255),
+    v_is_auto_storage_select BOOLEAN
     )
 RETURNS VOID
     --The [vm_pools] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -74,7 +78,8 @@ BEGIN
         prestarted_vms = v_prestarted_vms,
         cluster_id = v_cluster_id,
         max_assigned_vms_per_user = v_max_assigned_vms_per_user,
-        spice_proxy = v_spice_proxy
+        spice_proxy = v_spice_proxy,
+        is_auto_storage_select = v_is_auto_storage_select
     WHERE vm_pool_id = v_vm_pool_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -133,7 +138,8 @@ DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
         cluster_name VARCHAR(40),
         max_assigned_vms_per_user SMALLINT,
         spice_proxy VARCHAR(255),
-        is_being_destroyed BOOLEAN
+        is_being_destroyed BOOLEAN,
+        is_auto_storage_select BOOLEAN
         );
 
 CREATE OR REPLACE FUNCTION GetAllFromVm_pools ()
@@ -235,7 +241,8 @@ BEGIN
             cluster_name VARCHAR(40),
             max_assigned_vms_per_user SMALLINT,
             spice_proxy VARCHAR(255),
-            is_being_destroyed BOOLEAN
+            is_being_destroyed BOOLEAN,
+            is_auto_storage_select BOOLEAN
             )
             WITH OIDS;
 
@@ -259,7 +266,8 @@ BEGIN
         cluster_name,
         max_assigned_vms_per_user,
         spice_proxy,
-        is_being_destroyed
+        is_being_destroyed,
+        is_auto_storage_select
         )
     SELECT ppr.vm_pool_id,
         ppr.assigned_vm_count,
@@ -275,7 +283,8 @@ BEGIN
         p.cluster_name,
         p.max_assigned_vms_per_user,
         p.spice_proxy,
-        p.is_being_destroyed
+        p.is_being_destroyed,
+        p.is_auto_storage_select
     FROM tt_VM_POOL_PRERESULT ppr
     INNER JOIN vm_pools_view p
         ON ppr.vm_pool_id = p.vm_pool_id;
