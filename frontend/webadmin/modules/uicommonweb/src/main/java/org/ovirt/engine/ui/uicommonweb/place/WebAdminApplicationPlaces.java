@@ -202,7 +202,7 @@ public class WebAdminApplicationPlaces {
             + "permissions"; //$NON-NLS-1$
 
     public static final String virtualMachineGuestInfoSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "sessions"; //$NON-NLS-1$
+            + "guest_info"; //$NON-NLS-1$
 
     public static final String virtualMachineEventSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "events"; //$NON-NLS-1$
