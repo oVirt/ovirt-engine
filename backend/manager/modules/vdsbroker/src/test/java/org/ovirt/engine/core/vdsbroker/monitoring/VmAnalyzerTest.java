@@ -11,6 +11,7 @@ import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -324,7 +325,9 @@ public class VmAnalyzerTest {
                 resourceManager,
                 vdsDynamicDao,
                 null,
+                null,
                 null));
+        doNothing().when(vmAnalyzer).loadVmNetworkInterfaces();
         doReturn(vmManager).when(vmAnalyzer).getVmManager();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(true);

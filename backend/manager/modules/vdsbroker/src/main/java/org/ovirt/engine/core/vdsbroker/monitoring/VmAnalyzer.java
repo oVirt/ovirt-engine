@@ -51,6 +51,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -69,7 +70,6 @@ public class VmAnalyzer {
     private final VdsmVm vdsmVm;
 
     private VmDynamic vmDynamicToSave;
-    private boolean saveVmInterfaces;
     private boolean movedToDown;
     private boolean rerun;
     private boolean poweringUp;
@@ -110,6 +110,7 @@ public class VmAnalyzer {
 
     private VdsDynamicDao vdsDynamicDao;
     private VmNumaNodeDao vmNumaNodeDao;
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     public VmAnalyzer(
             VM dbVm,
@@ -120,7 +121,8 @@ public class VmAnalyzer {
             ResourceManager resourceManager,
             VdsDynamicDao vdsDynamicDao,
             Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
-            VmNumaNodeDao vmNumaNodeDao) {
+            VmNumaNodeDao vmNumaNodeDao,
+            VmNetworkInterfaceDao vmNetworkInterfaceDao) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
         this.updateStatistics = updateStatistics;
@@ -130,6 +132,7 @@ public class VmAnalyzer {
         this.vdsDynamicDao = vdsDynamicDao;
         this.vdsNumaNodesProvider = vdsNumaNodesProvider;
         this.vmNumaNodeDao = vmNumaNodeDao;
+        this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
     }
 
     /**
@@ -340,6 +343,7 @@ public class VmAnalyzer {
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
+                loadVmNetworkInterfaces();
                 resourceManager.internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         exitStatus,
@@ -348,7 +352,6 @@ public class VmAnalyzer {
             }
             saveDynamic(dbVm.getDynamicData());
             resetVmStatistics();
-            saveVmInterfaces();
             if (!resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
             }
@@ -368,7 +371,7 @@ public class VmAnalyzer {
     }
 
     public List<VmNetworkStatistics> getVmNetworkStatistics() {
-        return saveVmInterfaces ?
+        return dbVm.getInterfaces() != null ?
                 dbVm.getInterfaces().stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList())
                 : Collections.emptyList();
     }
@@ -379,6 +382,7 @@ public class VmAnalyzer {
         if (dbVm.getMigratingToVds() != null) {
             destroyVmOnDestinationHost();
         }
+        loadVmNetworkInterfaces();
         // set vm status to down if source vm crushed
         resourceManager.internalSetVmStatus(dbVm,
                 VMStatus.Down,
@@ -387,7 +391,6 @@ public class VmAnalyzer {
                 vdsmVm.getVmDynamic().getExitReason());
         saveDynamic(dbVm.getDynamicData());
         resetVmStatistics();
-        saveVmInterfaces();
         auditVmMigrationAbort();
 
         resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
@@ -787,7 +790,7 @@ public class VmAnalyzer {
         proceedBalloonCheck();
         proceedGuaranteedMemoryCheck();
         updateVmStatistics();
-        saveVmInterfaces();
+        loadVmNetworkInterfaces();
         updateInterfaceStatistics();
         updateVmNumaNodeRuntimeInfo();
         updateDiskImageDynamics();
@@ -866,10 +869,6 @@ public class VmAnalyzer {
         statistics.setUsageNetworkPercent(min(statistics.getUsageNetworkPercent(), 100));
         Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
         statistics.addNetworkUsageHistory(statistics.getUsageNetworkPercent(), usageHistoryLimit);
-    }
-
-    private void saveVmInterfaces() {
-        saveVmInterfaces = true;
     }
 
     /**
@@ -1012,6 +1011,10 @@ public class VmAnalyzer {
 
     protected VmManager getVmManager() {
         return resourceManager.getVmManager(dbVm.getId());
+    }
+
+    protected void loadVmNetworkInterfaces() {
+        dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForMonitoredVm(getVmId()));
     }
 
     public boolean isColdRebootVmToRun() {

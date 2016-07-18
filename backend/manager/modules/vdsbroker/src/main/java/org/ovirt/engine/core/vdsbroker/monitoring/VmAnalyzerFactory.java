@@ -2,14 +2,12 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import static java.util.stream.Collectors.toMap;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -76,9 +74,6 @@ public class VmAnalyzerFactory {
         // VM from the database running on the monitored host, might be null
         VM dbVmOnMonitoredHost = monitoredVm.getFirst();
         VM dbVm = dbVmOnMonitoredHost != null ? dbVmOnMonitoredHost : vmDao.get(vdsmVm.getVmDynamic().getId());
-        if (updateStatistics && dbVm != null) {
-            dbVm.setInterfaces(getVmNetworkInterfaces(dbVm));
-        }
 
         return new VmAnalyzer(
                 dbVm,
@@ -89,15 +84,8 @@ public class VmAnalyzerFactory {
                 resourceManager,
                 vdsDynamicDao,
                 vdsNumaNodesProvider,
-                vmNumaNodeDao);
-    }
-
-    /**
-     * Note that the network interfaces returned by this method contain only
-     * partial data that is relevant for monitoring.
-     */
-    private List<VmNetworkInterface> getVmNetworkInterfaces(VM vm) {
-        return vmNetworkInterfaceDao.getAllForMonitoredVm(vm.getId());
+                vmNumaNodeDao,
+                vmNetworkInterfaceDao);
     }
 
 }
