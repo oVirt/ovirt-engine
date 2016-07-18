@@ -67,7 +67,6 @@ public enum VDSCommandType {
     DestroyImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     GetImageInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),
     SetVolumeDescription("org.ovirt.engine.core.vdsbroker.irsbroker"),
-    DoesImageExist("org.ovirt.engine.core.vdsbroker.irsbroker"),
     CopyImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     DownloadImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     UploadImage("org.ovirt.engine.core.vdsbroker.irsbroker"),

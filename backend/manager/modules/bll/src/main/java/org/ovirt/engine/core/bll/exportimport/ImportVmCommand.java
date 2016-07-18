@@ -588,11 +588,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
 
             VDSReturnValue retValue = runVdsCommand(
-                    VDSCommandType.DoesImageExist,
+                    VDSCommandType.GetImageInfo,
                     new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                             imageGUID));
 
-            if (Boolean.FALSE.equals(retValue.getReturnValue())) {
+            if (!retValue.getSucceeded()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             }
         }
