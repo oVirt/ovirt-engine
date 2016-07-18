@@ -93,7 +93,9 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     @Override
     protected void executeCommand() {
-        getSessionDataContainer().updateSessionLastActiveTime(getParameters().getSessionId());
+        if (getParameters().getRefresh()) {
+            getSessionDataContainer().updateSessionLastActiveTime(getParameters().getSessionId());
+        }
         if (validatePermissions()) {
             if (validateInputs()) {
                 try {
