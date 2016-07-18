@@ -857,9 +857,7 @@ public class VmDeviceUtils {
         if (entityId != null) {
             List<VmDevice> devices = getGraphicsDevices(entityId);
             if (devices != null) {
-                for (VmDevice device : devices) {
-                    result.add(GraphicsType.fromString(device.getDevice()));
-                }
+                result.addAll(devices.stream().map(device -> GraphicsType.fromString(device.getDevice())).collect(Collectors.toList()));
             }
         }
 
@@ -1523,9 +1521,7 @@ public class VmDeviceUtils {
         }
 
         // add unmanaged devices
-        for (VmDevice vmDevice : vmBase.getUnmanagedDeviceList()) {
-            vmDeviceToAdd.add(vmDevice);
-        }
+        vmDeviceToAdd.addAll(vmBase.getUnmanagedDeviceList());
     }
 
     /**
