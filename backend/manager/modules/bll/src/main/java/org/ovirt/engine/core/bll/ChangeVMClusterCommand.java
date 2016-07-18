@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -19,6 +16,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
 
