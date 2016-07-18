@@ -149,7 +149,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<i>Replace '&lthostname&gt' with the hostname of the Xen hypervisor in the libvirt URI. <br />" +
             "Only SSH transport is allowed for Xen import and the connection has to be without password. <br /> <br />" +
             "To disable SSH host key verification add 'no_verify' parameter to the URI, " +
-            "i.e.: xen+ssh://root@xen.example.com?no_verify=1</i>")
+            "i.e.: xen+ssh://root@xen.example.com?<br>no_verify=1</i>")
     SafeHtml xenUriInfo();
 
     @Template("This is not the entire kernel command line. Parameters listed below will be added to default kernel parameters.")
