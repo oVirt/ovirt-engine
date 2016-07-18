@@ -157,6 +157,9 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     }
 
     private void fetchProfiles() {
+        if (getEntity() == null) {
+            return;
+        }
         Frontend.getInstance().runQuery(getQueryType(),
                 new IdQueryParameters(getEntity().getId()),
                 new AsyncQuery(new INewAsyncCallback() {
