@@ -424,6 +424,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 clearVms();
                 exportDomain.setEntity(null);
+                loadProviders();
 
                 StoragePool dataCenter = dataCenters.getSelectedItem();
                 Frontend.getInstance().runQuery(
