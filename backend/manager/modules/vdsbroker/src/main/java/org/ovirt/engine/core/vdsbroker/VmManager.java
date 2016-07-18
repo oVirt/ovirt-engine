@@ -2,8 +2,10 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -20,6 +22,15 @@ import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 public class VmManager {
 
     private final Guid vmId;
+
+    ///// Static fields ///////
+    private String name;
+    private OriginType origin;
+    private boolean autoStart;
+    private int memSizeMb;
+    private int minAllocatedMem;
+    private int numOfCpus;
+
     private final ReentrantLock lock;
     private Long vmDataChangedTime;
 
@@ -49,6 +60,20 @@ public class VmManager {
         statistics = new VmStatistics(vmId);
     }
 
+    @PostConstruct
+    public void init() {
+        updateStaticFields(vmStaticDao.get(vmId));
+    }
+
+    private void updateStaticFields(VmStatic vmStatic) {
+        name = vmStatic.getName();
+        origin = vmStatic.getOrigin();
+        autoStart = vmStatic.isAutoStartup();
+        memSizeMb = vmStatic.getMemSizeMb();
+        minAllocatedMem = vmStatic.getMinAllocatedMem();
+        numOfCpus = vmStatic.getNumOfCpus();
+    }
+
     public void lock() {
         lock.lock();
     }
@@ -76,6 +101,7 @@ public class VmManager {
 
     public void update(VmStatic vmStatic) {
         vmStaticDao.update(vmStatic);
+        updateStaticFields(vmStatic);
     }
 
     public void succededToHibernate() {
@@ -164,4 +190,29 @@ public class VmManager {
     public void setStatistics(VmStatistics statistics) {
         this.statistics = statistics;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public OriginType getOrigin() {
+        return origin;
+    }
+
+    public boolean isAutoStart() {
+        return autoStart;
+    }
+
+    public int getMemSizeMb() {
+        return memSizeMb;
+    }
+
+    public int getMinAllocatedMem() {
+        return minAllocatedMem;
+    }
+
+    public int getNumOfCpus() {
+        return numOfCpus;
+    }
+
 }
