@@ -25,6 +25,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -84,11 +86,14 @@ public class VmNicValidatorTest {
     @Mock
     private NetworkQoS networkQos;
 
+    private VM vm;
+
     @Before
     public void setup() {
         when(version.getValue()).thenReturn(CLUSTER_VERSION);
         validator = spy(new VmNicValidator(nic, version));
         doReturn(dbFacade).when(validator).getDbFacade();
+        vm = new VM();
     }
 
     @Test
@@ -309,5 +314,18 @@ public class VmNicValidatorTest {
         when(nic.isLinked()).thenReturn(isLinked);
 
         assertThat(validator.passthroughIsLinked(), matcher);
+    }
+
+    @Test
+    public void forbidEmptyProfileForHostedEngineVm(){
+        vm.setOrigin(OriginType.HOSTED_ENGINE);
+        assertThat(validator.validateProfileNotEmptyForHostedEngineVm(vm),
+                failsWith(EngineMessage.HOSTED_ENGINE_VM_CANNOT_HAVE_NIC_WITH_EMPTY_PROFILE));
+    }
+
+    @Test
+    public void allowEmptyProfileForNonHostedEngineVm(){
+        vm.setOrigin(OriginType.RHEV);
+        assertThat(validator.validateProfileNotEmptyForHostedEngineVm(vm), isValid());
     }
 }

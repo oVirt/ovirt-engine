@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -160,5 +161,10 @@ public class VmNicValidator {
         }
 
         return network;
+    }
+
+    public ValidationResult validateProfileNotEmptyForHostedEngineVm(VM vm) {
+        return ValidationResult.failWith(EngineMessage.HOSTED_ENGINE_VM_CANNOT_HAVE_NIC_WITH_EMPTY_PROFILE)
+                .when(vm.isHostedEngine() && nic.getVnicProfileId() == null);
     }
 }

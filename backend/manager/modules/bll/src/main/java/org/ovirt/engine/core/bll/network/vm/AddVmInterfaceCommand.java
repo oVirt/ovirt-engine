@@ -142,7 +142,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 || !validate(nicValidator.emptyNetworkValid())
                 || !validate(nicValidator.profileValid(vm.getVdsGroupId()))
                 || !validate(nicValidator.typeMatchesProfile())
-                || !validate(nicValidator.passthroughIsLinked())) {
+                || !validate(nicValidator.passthroughIsLinked())
+                || !validate(nicValidator.validateProfileNotEmptyForHostedEngineVm(getVm()))) {
             return false;
         }
 

@@ -219,7 +219,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 || !validate(nicValidator.profileValid(getVm().getVdsGroupId()))
                 || !validate(nicValidator.canVnicWithExternalNetworkBePlugged())
                 || !validate(nicValidator.typeMatchesProfile())
-                || !validate(nicValidator.passthroughIsLinked())) {
+                || !validate(nicValidator.passthroughIsLinked())
+                || !validate(nicValidator.validateProfileNotEmptyForHostedEngineVm(getVm()))) {
             return false;
         }
 
