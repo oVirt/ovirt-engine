@@ -77,6 +77,10 @@ public class HostJobInfo {
     }
 
     public enum HostJobStatus {
-        pending, running, done, aborted, failed
+        pending, running, done, aborted, failed;
+
+        public boolean isAlive() {
+            return this == running || this == pending;
+        }
     }
 }
