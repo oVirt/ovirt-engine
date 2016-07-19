@@ -29,9 +29,10 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -45,6 +46,10 @@ public class VmPoolMonitor implements BackendService {
     private String poolMonitoringJobId;
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private VmDao vmDao;
 
     @PostConstruct
     private void init() {
@@ -72,7 +77,7 @@ public class VmPoolMonitor implements BackendService {
     }
 
     private List<VmPool> getAllVmPools() {
-        return DbFacade.getInstance().getVmPoolDao().getAll();
+        return vmPoolDao.getAll();
     }
 
     public void triggerPoolMonitoringJob() {
@@ -104,7 +109,7 @@ public class VmPoolMonitor implements BackendService {
      */
     private void prestartVms(VmPool vmPool, int numOfVmsToPrestart) {
         // Fetch all vms that are in status down
-        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
+        List<VmPoolMap> vmPoolMaps = vmPoolDao
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPool.getVmPoolId(), VMStatus.Down);
         int failedAttempts = 0;
         int prestartedVmsCounter = 0;
@@ -174,7 +179,7 @@ public class VmPoolMonitor implements BackendService {
      */
     private boolean prestartVm(Guid vmGuid, boolean runAsStateless, List<String> messages) {
         if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid, messages)) {
-            VM vmToPrestart = DbFacade.getInstance().getVmDao().get(vmGuid);
+            VM vmToPrestart = vmDao.get(vmGuid);
             return runVmFromPool(vmToPrestart, runAsStateless);
         }
         return false;
