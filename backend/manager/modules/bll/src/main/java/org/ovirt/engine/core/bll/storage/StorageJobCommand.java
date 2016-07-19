@@ -11,7 +11,9 @@ public abstract class StorageJobCommand<T extends StorageJobCommandParameters> e
 
     public StorageJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        getParameters().setStorageJobId(Guid.newGuid());
+        if (getParameters().getStorageJobId() == null) {
+            getParameters().setStorageJobId(Guid.newGuid());
+        }
     }
 
     @Override
