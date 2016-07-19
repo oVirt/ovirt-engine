@@ -6,12 +6,9 @@ import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.cellview.client.Header;
 
 /**
@@ -22,13 +19,6 @@ import com.google.gwt.user.cellview.client.Header;
  */
 public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithElementId, TooltipHeader {
 
-    public interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<span class=\"hasTooltip\">{0}</span>")
-        SafeHtml hasTooltip(SafeHtml html);
-    }
-
-    protected static final CellTemplate templates = GWT.create(CellTemplate.class);
-
     private ValueUpdater<H> updater = null;
 
     private NativeContextMenuHandler contextMenuHandler;
@@ -37,6 +27,7 @@ public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithE
         super(cell);
     }
 
+    @Override
     public Cell<H> getCell() {
         return (Cell<H>) super.getCell();
     }
@@ -45,6 +36,7 @@ public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithE
      * This is copied from GWT's Header, but we also inject the tooltip content into the cell.
      * TODO-GWT: make sure that this method is in sync with Header::onBrowserEvent.
      */
+    @Override
     public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
         getCell().onBrowserEvent(context, elem, getValue(), getTooltip(), event, updater);
 
@@ -59,6 +51,7 @@ public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithE
         getCell().setColumnId(columnId);
     }
 
+    @Override
     public void setUpdater(ValueUpdater<H> updater) {
         this.updater = updater;
     }
