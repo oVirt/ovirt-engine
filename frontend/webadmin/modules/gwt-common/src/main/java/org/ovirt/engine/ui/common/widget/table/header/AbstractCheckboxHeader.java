@@ -54,11 +54,7 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
         }
 
         if (getLabel() != null) {
-            if (SafeHtmlUtils.EMPTY_SAFE_HTML.equals(getTooltip())) {
-                ((CheckboxCell) getCell()).setLabel(SafeHtmlUtils.fromString(getLabel()));
-            } else {
-                ((CheckboxCell) getCell()).setLabel(templates.hasTooltip(SafeHtmlUtils.fromString(getLabel())));
-            }
+            ((CheckboxCell) getCell()).setLabel(SafeHtmlUtils.fromString(getLabel()));
         }
 
         ((CheckboxCell) getCell()).setAdditionalStyles(CHECKBOX_HEADER_STYLE);

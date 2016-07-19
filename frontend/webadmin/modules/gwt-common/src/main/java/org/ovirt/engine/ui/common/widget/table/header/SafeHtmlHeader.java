@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
+
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -15,7 +16,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWithElementId, TooltipHeader {
 
     private SafeHtml headerText;
-    private SafeHtml renderedHeaderText;
     private SafeHtml tooltipText;
 
     public SafeHtmlHeader(SafeHtmlCell safeHtmlCell) {
@@ -56,6 +56,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
         return new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(headerText));
     }
 
+    @Override
     public SafeHtmlCell getCell() {
         return (SafeHtmlCell) super.getCell();
     }
@@ -71,28 +72,15 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
      */
     @Override
     public SafeHtml getValue() {
-        return renderedHeaderText;
+        return headerText;
     }
 
     protected void setValue(SafeHtml headerText) {
         this.headerText = headerText;
-        setHeaderTooltipStyle(this.tooltipText);
     }
 
     protected void setTooltip(SafeHtml tooltipText) {
         this.tooltipText = tooltipText;
-        setHeaderTooltipStyle(tooltipText);
-    }
-
-    /**
-     * Toggle the header tooltip style (to give a visual clue that this header can be hovered over).
-     */
-    protected void setHeaderTooltipStyle(SafeHtml tooltipText) {
-        if (tooltipText == null || tooltipText.asString().isEmpty()) {
-            renderedHeaderText = this.headerText;
-        } else {
-            renderedHeaderText = templates.hasTooltip(headerText);
-        }
     }
 
 }
