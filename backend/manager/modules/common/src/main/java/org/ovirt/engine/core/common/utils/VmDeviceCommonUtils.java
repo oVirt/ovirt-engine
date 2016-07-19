@@ -379,14 +379,14 @@ public class VmDeviceCommonUtils {
      * Check if device with the type given exists in the map.
      */
     public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
-        return isVmDeviceExists(vmManagedDeviceMap, type.getName());
+        return findVmDeviceByType(vmManagedDeviceMap, type) != null;
     }
 
     /**
-     * Check if device with the type given exists in the map.
+     * Check if device with the general type given exists in the map.
      */
-    public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, String typeName) {
-        return findVmDeviceByType(vmManagedDeviceMap, typeName) != null;
+    public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceGeneralType generalType) {
+        return findVmDeviceByGeneralType(vmManagedDeviceMap, generalType) != null;
     }
 
     /**
