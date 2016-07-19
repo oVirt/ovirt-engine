@@ -21,18 +21,18 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class VmPoolMonitor implements BackendService {
     @Inject
     private VmPoolDao vmPoolDao;
     @Inject
-    private VmDao vmDao;
+    private VmStaticDao vmStaticDao;
 
     @PostConstruct
     private void init() {
@@ -119,7 +119,7 @@ public class VmPoolMonitor implements BackendService {
             for (VmPoolMap map : vmPoolMaps) {
                 if (failedAttempts < maxFailedAttempts && prestartedVmsCounter < numOfVmsToPrestart) {
                     List<String> messages = new ArrayList<>();
-                    if (prestartVm(map.getVmId(), !vmPool.isStateful(), messages)) {
+                    if (prestartVm(map.getVmId(), !vmPool.isStateful(), vmPool.getName(), messages)) {
                         prestartedVmsCounter++;
                         failedAttempts = 0;
                     } else {
@@ -177,10 +177,10 @@ public class VmPoolMonitor implements BackendService {
      * Prestarts the given Vm
      * @return whether or not succeeded to prestart the Vm
      */
-    private boolean prestartVm(Guid vmGuid, boolean runAsStateless, List<String> messages) {
+    private boolean prestartVm(Guid vmGuid, boolean runAsStateless, String poolName, List<String> messages) {
         if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid, messages)) {
-            VM vmToPrestart = vmDao.get(vmGuid);
-            return runVmFromPool(vmToPrestart, runAsStateless);
+            VmStatic vmToPrestart = vmStaticDao.get(vmGuid);
+            return runVmFromPool(vmToPrestart, runAsStateless, poolName);
         }
         return false;
     }
@@ -188,7 +188,7 @@ public class VmPoolMonitor implements BackendService {
     /**
      * Run the given VM as stateless
      */
-    private boolean runVmFromPool(VM vmToRun, boolean runAsStateless) {
+    private boolean runVmFromPool(VmStatic vmToRun, boolean runAsStateless, String poolName) {
         log.info("Running VM '{}' as {}", vmToRun, runAsStateless ? "stateless" : "stateful");
         RunVmParams runVmParams = new RunVmParams(vmToRun.getId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRun.getId()));
@@ -199,12 +199,12 @@ public class VmPoolMonitor implements BackendService {
 
         if (!prestartingVmSucceeded) {
             AuditLogableBase log = new AuditLogableBase();
-            log.addCustomValue("VmPoolName", vmToRun.getVmPoolName());
+            log.addCustomValue("VmPoolName", poolName);
             new AuditLogDirector().log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
         }
 
         log.info("Running VM '{}' as {} {}",
-                vmToRun,
+                vmToRun.getName(),
                 runAsStateless ? "stateless" : "stateful",
                 prestartingVmSucceeded ? "succeeded" : "failed");
         return prestartingVmSucceeded;
