@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -198,7 +197,6 @@ public class IrsProxyData {
                             .get(_storagePoolId);
 
                     if (storagePool != null) {
-                        boolean poolStatusDeterminedByHostsStatus = FeatureSupported.dataOperationsByHSM(storagePool.getCompatibilityVersion());
                         // when there are no hosts in status up, it means that there shouldn't be domain monitoring
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
                         if (DbFacade.getInstance()
@@ -208,28 +206,12 @@ public class IrsProxyData {
                             StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
                                     StoragePoolDomainHelper.storageDomainMonitoredStatus,
                                     StorageDomainStatus.Unknown, "no reporting hosts");
-                            // TODO: need to check if it's fine to skip the update when the status is already NonResponsive (as domains status maybe be not updated.
-                            if (poolStatusDeterminedByHostsStatus && storagePool.getStatus() != StoragePoolStatus.NonResponsive) {
-                                updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.NonResponsive,
-                                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NON_RESPONSIVE_NO_REPORTING_HOSTS,
-                                        EngineError.ENGINE);
-                            }
-                        }  else if (poolStatusDeterminedByHostsStatus && storagePool.getStatus() != StoragePoolStatus.Up) {
-                                updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.Up,
-                                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_UP_REPORTING_HOSTS,
-                                        null);
                         }
 
                         if (storagePool.getStatus() == StoragePoolStatus.Up ||
                                 storagePool.getStatus() == StoragePoolStatus.NonResponsive ||
                                 storagePool.getStatus() == StoragePoolStatus.Contend) {
-                            if (!poolStatusDeterminedByHostsStatus) {
-                                proceedStoragePoolStats(storagePool);
-                            } else {
-                                List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao()
-                                        .getAllForStoragePool(storagePool.getId());
-                                domainsInMaintenanceCheck(storageDomains, storagePool);
-                            }
+                            proceedStoragePoolStats(storagePool);
                         }
                     }
                 }
@@ -1263,9 +1245,7 @@ public class IrsProxyData {
                 }
             }
 
-            else if ((inActiveDomainsInPool.contains(tempData.getDomainId()) ||
-                    // in data centers with spm, unknown domains are moving to Active status according to the pool metadata.
-                    (FeatureSupported.dataOperationsByHSM(storagePool.getCompatibilityVersion()) && unknownDomainsInPool.contains(tempData.getDomainId())))
+            else if (inActiveDomainsInPool.contains(tempData.getDomainId())
                     && analyzeDomainReport(tempData, false).validAndActual()) {
                 log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
                         getDomainIdTuple(tempData.getDomainId()),
