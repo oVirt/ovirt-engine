@@ -69,10 +69,10 @@ public class SsoRestApiAuthFilter implements Filter {
                                 new GetEngineSessionIdForSsoTokenQueryParameters(token));
                         if (queryRetVal.getSucceeded() && StringUtils.isNotEmpty(queryRetVal.getReturnValue())) {
                             log.debug("SsoRestApiAuthFilter successfully authenticated using BEARER header");
-                            req.getSession(true).setAttribute(
+                            req.setAttribute(
                                     SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
                                     queryRetVal.getReturnValue());
-                            req.getSession(true).setAttribute(
+                            req.setAttribute(
                                     FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE,
                                     true);
                             userSessionExists = true;
@@ -93,10 +93,6 @@ public class SsoRestApiAuthFilter implements Filter {
                     }
                     SsoUtils.createUserSession(req, payload, false);
                 }
-                req.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
-                        req.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY));
-                req.setAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE,
-                        req.getSession().getAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE));
             } catch (Exception e) {
                 log.error("Cannot authenticate using authentication Headers: {}", e.getMessage());
                 log.debug("Cannot authenticate using authentication Headers", e);

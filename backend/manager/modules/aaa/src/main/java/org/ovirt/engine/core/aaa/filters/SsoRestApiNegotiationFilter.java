@@ -30,7 +30,6 @@ import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.SsoUtils;
-import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,10 +118,6 @@ public class SsoRestApiNegotiationFilter implements Filter {
                         log.debug("SsoRestApiNegotiationFilter creating user session");
                         SsoUtils.createUserSession(req, FiltersHelper.getPayloadForToken(
                                 (String) jsonResponse.get("access_token")), false);
-                        req.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
-                                req.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY));
-                        req.setAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE,
-                                req.getSession().getAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE));
                     }
                     chain.doFilter(req, resp);
                 }

@@ -50,10 +50,10 @@ public class SsoUtils {
             }
             engineSessionId = queryRetVal.getActionReturnValue();
             if (req != null) {
-                req.getSession(true).setAttribute(
+                req.setAttribute(
                         SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
                         engineSessionId);
-                req.getSession(true).setAttribute(
+                req.setAttribute(
                         FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE,
                         true);
             }
