@@ -3,8 +3,9 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.compat.Guid;
 
-public class CopyVolumeDataVDSCommandParameters extends VdsIdVDSCommandParametersBase {
+public class CopyVolumeDataVDSCommandParameters extends StorageJobVdsCommandParameters {
 
     private LocationInfo srcInfo;
     private LocationInfo dstInfo;
@@ -14,11 +15,13 @@ public class CopyVolumeDataVDSCommandParameters extends VdsIdVDSCommandParameter
     }
 
 
-    public CopyVolumeDataVDSCommandParameters(LocationInfo srcInfo, LocationInfo dstInfo, boolean collapse) {
+    public CopyVolumeDataVDSCommandParameters(Guid jobId, LocationInfo srcInfo, LocationInfo dstInfo, boolean
+            collapse) {
         super(null);
         this.srcInfo = srcInfo;
         this.dstInfo = dstInfo;
         this.collapse = collapse;
+        setJobId(jobId);
     }
 
     public LocationInfo getSrcInfo() {

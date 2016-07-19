@@ -29,10 +29,10 @@ public class LocationInfoHelper {
         if (locationInfo instanceof VdsmImageLocationInfo) {
             VdsmImageLocationInfo info = (VdsmImageLocationInfo)locationInfo;
             Map<String, Object> infoMap = new HashMap<>();
-            infoMap.put("type", "image");
-            infoMap.put("sdUUID", info.getStorageDomainId().toString());
-            infoMap.put("imgUUID", info.getImageGroupId().toString());
-            infoMap.put("volUUID", info.getImageId().toString());
+            infoMap.put("endpoint_type", "div");
+            infoMap.put("sd_id", info.getStorageDomainId().toString());
+            infoMap.put("img_id", info.getImageGroupId().toString());
+            infoMap.put("vol_id", info.getImageId().toString());
             return infoMap;
         }
 

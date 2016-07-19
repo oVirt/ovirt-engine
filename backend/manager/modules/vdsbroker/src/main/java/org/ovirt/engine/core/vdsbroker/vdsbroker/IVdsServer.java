@@ -46,7 +46,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc createVolumeContainer(String jobId, Map<String, Object> createVolumeInfo);
 
-    StatusOnlyReturnForXmlRpc copyData(Map src, Map dst, boolean collapse);
+    StatusOnlyReturnForXmlRpc copyData(String jobId, Map src, Map dst);
 
     StatusOnlyReturnForXmlRpc allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size);
 

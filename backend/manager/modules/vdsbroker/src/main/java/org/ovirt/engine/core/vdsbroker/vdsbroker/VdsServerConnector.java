@@ -9,7 +9,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> createVolumeContainer(String jobId, Map<String, Object> volumeInfo);
 
-    public Map<String, Object> copyData(Map srcImage, Map dstImage, boolean collapse);
+    public Map<String, Object> copyData(String jobId, Map srcImage, Map dstImage);
 
     public Map<String, Object> allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size);
 
