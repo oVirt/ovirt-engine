@@ -324,7 +324,7 @@ public abstract class InstanceTypeManager {
         if (isNextRunConfigurationExists()) {
             deactivate();
             getModel().getIsSoundcardEnabled().setEntity(
-                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.SOUND));
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceGeneralType.SOUND));
             getModel().getIsConsoleDeviceEnabled().setEntity(
                     VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE));
 
