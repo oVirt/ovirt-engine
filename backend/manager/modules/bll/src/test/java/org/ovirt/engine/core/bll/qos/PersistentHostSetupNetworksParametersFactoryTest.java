@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -62,7 +63,7 @@ public class PersistentHostSetupNetworksParametersFactoryTest {
     private NetworkAttachment createNetworkAttachment(Network network, HostNetworkQos hostNetworkQos) {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setId(Guid.newGuid());
-        networkAttachment.setHostNetworkQos(hostNetworkQos);
+        networkAttachment.setHostNetworkQos(AnonymousHostNetworkQos.fromHostNetworkQos(hostNetworkQos));
         networkAttachment.setNetworkId(network.getId());
         return networkAttachment;
     }
