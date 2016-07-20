@@ -15,6 +15,7 @@ public class UpdateVmDynamicDataVDSCommandParameters extends VdsAndVmIDVDSParame
     }
 
     public UpdateVmDynamicDataVDSCommandParameters(VmDynamic vmDynamic) {
+        super(null, vmDynamic.getId());
         setVmDynamic(vmDynamic);
     }
 
