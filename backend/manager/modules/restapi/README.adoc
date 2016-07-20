@@ -1480,17 +1480,18 @@ DELETE /templates/{template:id}/disks/{disk:id}
 </action>
 ----
 
-This optional action parameter has been replaced with the optional
-matrix parameters `force` and `storage_domain`:
+In version 4 of the API this operation has been moved to the new
+`diskattachments` collection, and the request body has been replaced
+with the query parameters `force` and `storage_domain`:
 
 [source]
 ----
-DELETE /templates/{template:id}/disks/{disk:id};force=true
+DELETE /templates/{template:id}/disksattachments/{attachment:id}?force=true
 ----
 
 [source]
 ----
-DELETE /templates/{template:id}/disks/{disk:id};storage_domain=123
+DELETE /templates/{template:id}/disksattachments/{attachment:id}?storage_domain=123
 ----
 
 === Don't remove disks via the VM disk API
