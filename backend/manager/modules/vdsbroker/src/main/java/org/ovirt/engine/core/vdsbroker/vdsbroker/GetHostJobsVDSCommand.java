@@ -35,7 +35,7 @@ public class GetHostJobsVDSCommand<P extends GetHostJobsVDSCommandParameters> ex
         HostJobStatus status = HostJobStatus.valueOf((String) job.get(VdsProperties.jobStatus));
         String description = (String) job.get(VdsProperties.jobDescription);
         Integer jobProgress = job.containsKey(VdsProperties.jobProgress) ?
-                (Integer) job.get(VdsProperties.jobProgress) : null;
+                ((Double) job.get(VdsProperties.jobProgress)).intValue() : null;
         VDSError error = null;
         if (job.containsKey(VdsProperties.jobError)) {
             Map<String, Object> errorInfo = (Map<String, Object>) ((Map<String, Object>) job.get(VdsProperties
