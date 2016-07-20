@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent.SetDynamicTabAccessibleHandler;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.widget.tab.TabAccessibleChangeEvent;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
+
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -52,6 +56,7 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
     public static final int DEFAULT_SCROLL_DISTANCE = 20; //pixels.
     private HandlerRegistration resizeHandlerRegistration;
     private boolean wantsOffset = true;
+    private boolean scheduled = false;
 
     /**
      * Constructor.
@@ -73,8 +78,15 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
 
             @Override
             public void onTabAccessibleChange(TabAccessibleChangeEvent event) {
-                getView().recalculateSize();
-                getView().showScrollButtons();
+                onTabAccessibleChanged();
+            }
+        }));
+        //This handler is called when tab accessibility changes.
+        registerHandler(getEventBus().addHandler(SetDynamicTabAccessibleEvent.getType(),
+                new SetDynamicTabAccessibleHandler() {
+            @Override
+            public void onSetDynamicTabAccessible(SetDynamicTabAccessibleEvent event) {
+                onTabAccessibleChanged();
             }
         }));
         registerHandler(getEventBus().addHandler(HeaderOffsetChangeEvent.getType(),
@@ -97,8 +109,7 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
         resizeHandlerRegistration = Window.addResizeHandler(new ResizeHandler() {
             @Override
             public void onResize(ResizeEvent resizeEvent) {
-                getView().recalculateSize();
-                getView().showScrollButtons();
+                redraw();
             }
         });
     }
@@ -106,8 +117,7 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
     @Override
     protected void onReveal() {
         super.onReveal();
-        getView().recalculateSize();
-        getView().showScrollButtons();
+        redraw();
     }
 
     @Override
@@ -142,6 +152,24 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
      */
     public void setWantsOffset(boolean wantsOffset) {
         this.wantsOffset = wantsOffset;
+    }
+
+    private void redraw() {
+        getView().recalculateSize();
+        getView().showScrollButtons();
+    }
+
+    private void onTabAccessibleChanged() {
+        if (!scheduled) {
+            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                @Override
+                public void execute() {
+                    redraw();
+                    scheduled = false;
+                }
+            });
+            scheduled = true;
+        }
     }
 
 }
