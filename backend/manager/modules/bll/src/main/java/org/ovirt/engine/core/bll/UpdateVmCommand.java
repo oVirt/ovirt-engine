@@ -201,6 +201,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 throw new EngineException(EngineError.FAILED_UPDATE_RUNNING_VM);
             }
 
+            if (isClusterLevelChange()) {
+                // For backward compatibility after cluster version change: keep version until VM reboot
+                // Set temporarily custom compatibility version till the NextRun is applied
+                newVmStatic.setCustomCompatibilityVersion(getParameters().getClusterLevelChangeFromVersion());
+            }
         }
 
         updateVmNetworks();
@@ -953,8 +958,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean isClusterLevelChange() {
-        Version newVersion = getParameters().getClusterLevelChangeToVersion();
-        return newVersion != null &&
+        Version oldVersion = getParameters().getClusterLevelChangeFromVersion();
+        return oldVersion != null &&
                 (getVm().isRunningOrPaused() || getVm().isSuspended()) &&
                 getVm().getCustomCompatibilityVersion() == null;
     }

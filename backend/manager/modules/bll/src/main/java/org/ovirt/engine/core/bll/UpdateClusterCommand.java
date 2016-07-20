@@ -184,7 +184,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             This logic relies on assumption that UpdateVmCommand locks exactly only updated VM.
              */
             updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
-            updateParams.setClusterLevelChangeToVersion(getParameters().getCluster().getCompatibilityVersion());
+            updateParams.setClusterLevelChangeFromVersion(oldGroup.getCompatibilityVersion());
 
             VdcReturnValueBase result = runInternalAction(
                     VdcActionType.UpdateVm,
