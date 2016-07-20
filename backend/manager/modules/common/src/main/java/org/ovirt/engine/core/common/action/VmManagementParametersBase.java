@@ -75,7 +75,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     private boolean applyChangesLater;
     private boolean updateNuma;
     private String vmLargeIcon;
-    private Version clusterLevelChangeToVersion;
+    private Version clusterLevelChangeFromVersion;
 
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.BALLOON, type = VmDeviceType.MEMBALLOON)
     private Boolean balloonEnabled;
@@ -311,11 +311,11 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
         return graphicsDevices;
     }
 
-    public Version getClusterLevelChangeToVersion() {
-        return clusterLevelChangeToVersion;
+    public Version getClusterLevelChangeFromVersion() {
+        return clusterLevelChangeFromVersion;
     }
 
-    public void setClusterLevelChangeToVersion(Version clusterLevelChangeToVersion) {
-        this.clusterLevelChangeToVersion = clusterLevelChangeToVersion;
+    public void setClusterLevelChangeFromVersion(Version clusterLevelChangeFromVersion) {
+        this.clusterLevelChangeFromVersion = clusterLevelChangeFromVersion;
     }
 }
