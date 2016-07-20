@@ -172,6 +172,7 @@
 
         .warningLabel {
             color: red;
+            margin-bottom: 10px
         }
 
         .inline {
@@ -389,7 +390,12 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:Label text="{constants.kernelCmdlineWarning}" addStyleNames="{style.warningLabel}"/>
+                                        <g:Label text="{constants.modifyingkernelCmdlineWarning}" addStyleNames="{style.warningLabel}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <g:Label text="{constants.reinstallRequiredkernelCmdlineWarning}" addStyleNames="{style.warningLabel}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>

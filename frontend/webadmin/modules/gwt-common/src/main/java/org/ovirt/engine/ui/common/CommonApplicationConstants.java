@@ -1580,7 +1580,9 @@ public interface CommonApplicationConstants extends Constants {
 
     String kernelCmdlineBootParamsLabel();
 
-    String kernelCmdlineWarning();
+    String modifyingkernelCmdlineWarning();
+
+    String reinstallRequiredkernelCmdlineWarning();
 
     String hostKernelCmdlineIommu();
 
