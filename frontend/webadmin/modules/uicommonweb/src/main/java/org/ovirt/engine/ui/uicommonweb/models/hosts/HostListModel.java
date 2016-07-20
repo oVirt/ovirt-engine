@@ -769,13 +769,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 VDS host = hostListModel.getSelectedItem();
 
                 final EditHostModel hostModel = new EditHostModel();
-                hostListModel.setWindow(hostModel);
                 hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
                 hostModel.setSelectedCluster(host);
                 hostModel.onDataInitialized();
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
                 hostModel.setHelpTag(HelpTag.edit_host);
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
+
+                hostListModel.setWindow(hostModel);
 
                 if (host.getFenceProxySources() != null && !host.getFenceProxySources().isEmpty()) {
                     hostModel.setPmProxyPreferences(
