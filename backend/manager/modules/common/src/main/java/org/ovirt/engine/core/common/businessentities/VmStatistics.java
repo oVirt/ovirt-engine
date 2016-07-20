@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -244,12 +242,14 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
             return current;
         }
 
-        if (current == null || current.isEmpty()) {
-            return Arrays.asList(newValue);
+        if (limit == 0) {
+            return new ArrayList<>(0);
         }
 
-        if (limit == 0) {
-            return Collections.emptyList();
+        if (current == null || current.isEmpty()) {
+            List<Integer> res = new ArrayList<>();
+            res.add(newValue);
+            return res;
         }
 
         List<Integer> res = new ArrayList<>(current);
@@ -258,7 +258,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
             return res;
         }
 
-        return res.subList(res.size() - limit, res.size());
+        return new ArrayList<>(res.subList(res.size() - limit, res.size()));
     }
 
     public Long getGuestMemoryCached() {
