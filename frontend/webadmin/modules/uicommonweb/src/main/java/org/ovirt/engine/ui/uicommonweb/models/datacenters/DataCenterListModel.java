@@ -45,7 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -66,7 +66,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, StoragePool> implements ISupportSystemTreeContext {
+public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, StoragePool> implements ISupportSystemTreeContext {
 
     private UICommand privateNewCommand;
 

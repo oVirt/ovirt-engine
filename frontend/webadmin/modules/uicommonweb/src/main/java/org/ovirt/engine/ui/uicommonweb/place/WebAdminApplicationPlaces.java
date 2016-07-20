@@ -27,8 +27,6 @@ public class WebAdminApplicationPlaces {
 
     public static final String eventMainTabPlace = "events"; //$NON-NLS-1$
 
-    public static final String reportsMainTabPlace = "reports"; //$NON-NLS-1$
-
     public static final String quotaMainTabPlace = "quota"; //$NON-NLS-1$
 
     public static final String volumeMainTabPlace = "volumes"; //$NON-NLS-1$

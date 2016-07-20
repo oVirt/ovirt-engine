@@ -123,7 +123,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         if (loggedInUser != null) {
             String ssoToken = getSsoToken(engineSessionId);
             request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(),
-                    getUserInfoObject(loggedInUser, engineSessionId, ssoToken));
+                    getUserInfoObject(loggedInUser, ssoToken));
         }
 
         // Set attribute for engineRpmVersion object
@@ -264,14 +264,12 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         return (DbUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), sessionId);
     }
 
-    // TODO Engine session ID is required until the Reports portal is integrated with Engine SSO infra
-    protected ObjectNode getUserInfoObject(DbUser loggedInUser, String engineSessionId, String ssoToken) {
+    protected ObjectNode getUserInfoObject(DbUser loggedInUser, String ssoToken) {
         ObjectNode obj = createObjectNode();
         obj.put("id", loggedInUser.getId().toString()); //$NON-NLS-1$
         obj.put("userName", loggedInUser.getLoginName()); //$NON-NLS-1$
         obj.put("domain", loggedInUser.getDomain()); //$NON-NLS-1$
         obj.put("isAdmin", loggedInUser.isAdmin()); //$NON-NLS-1$
-        obj.put("engineSessionId", engineSessionId); //$NON-NLS-1$
         obj.put("ssoToken", ssoToken); //$NON-NLS-1$
         return obj;
     }

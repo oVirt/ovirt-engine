@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBui
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
@@ -44,7 +44,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsModel<E, T> {
+public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E, T> {
 
     private VM privatecurrentVm;
 

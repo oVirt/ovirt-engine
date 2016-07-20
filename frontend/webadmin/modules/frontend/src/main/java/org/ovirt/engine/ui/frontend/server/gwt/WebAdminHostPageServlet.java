@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginDataManager;
 
@@ -36,14 +35,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     protected static final String ATTR_APPLICATION_MODE = "applicationMode"; //$NON-NLS-1$
     protected static final String ATTR_PLUGIN_DEFS = "pluginDefinitions"; //$NON-NLS-1$
 
-    protected static final String ATTR_ENGINE_REPORTS_DASHBOARD_URL = "ENGINE_REPORTS_DASHBOARD_URL"; //$NON-NLS-1$
-    protected static final String ATTR_ENGINE_REPORTS_RIGHTCLICK_URL = "ENGINE_REPORTS_RIGHTCLICK_URL"; //$NON-NLS-1$
-    protected static final String ATTR_ENGINE_REPORTS_BASE_URL = "ENGINE_REPORTS_BASE_URL"; //$NON-NLS-1$
-
-    protected String reportRedirectUrl;
-    protected String reportRightClickRedirectUrl;
-    protected String reportBaseUrl;
-
     @Override
     protected String getSelectorScriptName() {
         return "webadmin.nocache.js"; //$NON-NLS-1$
@@ -52,23 +43,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     @Override
     protected boolean filterQueries() {
         return false;
-    }
-
-    @Override
-    public void init() {
-        super.init();
-
-        reportRedirectUrl = EngineLocalConfig.getInstance().expandString(
-                        makeEngineLocaleConfigParam(ATTR_ENGINE_REPORTS_DASHBOARD_URL));
-        reportRightClickRedirectUrl = EngineLocalConfig.getInstance().expandString(
-                        makeEngineLocaleConfigParam(ATTR_ENGINE_REPORTS_RIGHTCLICK_URL));
-        reportBaseUrl = EngineLocalConfig.getInstance().expandString(
-                makeEngineLocaleConfigParam(ATTR_ENGINE_REPORTS_BASE_URL));
-
-    }
-
-    private String makeEngineLocaleConfigParam(String input) {
-        return "${" + input + "}"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -82,25 +56,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         List<PluginData> pluginData = getPluginData();
         request.setAttribute(ATTR_PLUGIN_DEFS, getPluginDefinitionsArray(pluginData));
 
-        // Set attribute for engineReportsUrl object
-        request.setAttribute(ATTR_ENGINE_REPORTS_BASE_URL,
-                getReportInit(reportRedirectUrl.substring(reportBaseUrl.length()),
-                reportRightClickRedirectUrl.substring(reportBaseUrl.length())));
-
         super.doGet(request, response);
-    }
-
-    /**
-     * Generate Javascript {@code ObjectNode} based on the reportUrl and rightClickUrl passed in
-     * @param reportUrl The parameter part of the reporting URL.
-     * @param rightClickUrl The parameter part of the right click URL.
-     * @return A {@code ObjectNode} containing the URLs.
-     */
-    private ObjectNode getReportInit(String reportUrl, String rightClickUrl) {
-        ObjectNode obj = createObjectNode();
-        obj.put("reportUrl", reportUrl); //$NON-NLS-1$
-        obj.put("rightClickUrl", rightClickUrl); //$NON-NLS-1$
-        return obj;
     }
 
     @Override
@@ -113,9 +69,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
 
         // Update based on pluginDefinitions array
         digest.update(request.getAttribute(ATTR_PLUGIN_DEFS).toString().getBytes(StandardCharsets.UTF_8));
-
-        // Update based on report URL parameters.
-        digest.update(request.getAttribute(ATTR_ENGINE_REPORTS_BASE_URL).toString().getBytes());
 
         return digest;
     }

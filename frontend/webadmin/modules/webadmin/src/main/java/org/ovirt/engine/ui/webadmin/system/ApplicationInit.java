@@ -13,14 +13,10 @@ import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
-import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginsReadyCallback;
@@ -121,18 +117,6 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
 
     @Override
     protected void onLogin(final LoginModel loginModel) {
-        // Initialize reports
-        ReportInit.getInstance().setSsoToken(user.getEngineSessionId());
-        ReportInit.getInstance().init();
-
-        // Update Reports availability after reports xml has been retrieved
-        ReportInit.getInstance().getReportsInitEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                commonModelProvider.get().updateReportsAvailability();
-            }
-        });
-
         performLogin(loginModel);
     }
 

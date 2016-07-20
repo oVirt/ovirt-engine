@@ -45,13 +45,12 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
-import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -70,7 +69,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class StorageListModel extends ListWithDetailsAndReportsModel<Void, StorageDomain> implements ITaskTarget, ISupportSystemTreeContext {
+public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDomain> implements ITaskTarget, ISupportSystemTreeContext {
 
     private UICommand newDomainCommand;
 
@@ -1946,50 +1945,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     @Override
     protected String getListName() {
         return "StorageListModel"; //$NON-NLS-1$
-    }
-
-    @Override
-    protected void openReport() {
-
-        final ReportModel reportModel = super.createReportModel();
-
-        List<StorageDomain> items =
-                getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
-                        : new ArrayList<StorageDomain>();
-        StorageDomain storage = items.iterator().next();
-
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> dataCenters) {
-
-                for (StoragePool dataCenter : dataCenters) {
-                    reportModel.addDataCenterID(dataCenter.getId().toString());
-                }
-
-                if (reportModel == null) {
-                    return;
-                }
-
-                setWidgetModel(reportModel);
-            }
-        }), storage.getId());
-    }
-
-    @Override
-    protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
-        ArrayList<StorageDomain> items =
-                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
-                        : new ArrayList<StorageDomain>();
-
-        if (idParamName != null) {
-            for (StorageDomain item : items) {
-                if (isMultiple) {
-                    reportModel.addResourceId(idParamName, item.getId().toString());
-                } else {
-                    reportModel.setResourceId(idParamName, item.getId().toString());
-                }
-            }
-        }
     }
 
     private UICommand createCancelCommand(String commandName) {

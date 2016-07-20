@@ -64,7 +64,6 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         when(mockApplicationModeObject.toString()).thenReturn(APPLICATION_MODE);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE)).thenReturn(mockApplicationModeObject);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS)).thenReturn(mockPluginDefinitionsArray);
-        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_ENGINE_REPORTS_BASE_URL)).thenReturn("");
     }
 
     @Override
@@ -77,9 +76,6 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         super.setUpTestServlet();
         // Avoid touching PluginDataManager via getPluginData method
         doReturn(new ArrayList<PluginData>()).when(testServlet).getPluginData();
-        testServlet.reportBaseUrl = "";
-        testServlet.reportRedirectUrl = "";
-        testServlet.reportRightClickRedirectUrl = "";
     }
 
     @Test

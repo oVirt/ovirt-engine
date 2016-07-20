@@ -23,7 +23,6 @@ import org.ovirt.engine.core.searchbackend.SyntaxObject;
 import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent.ApplySearchStringHandler;
@@ -48,7 +47,6 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
-import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
@@ -98,7 +96,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private final EventListModel<Void> eventListModel;
     private final EventListModel<Void> mainTabEventListModel;
     private final QuotaListModel quotaListModel;
-    private final ReportsListModel reportsListModel;
     private final VolumeListModel volumeListModel;
     private final DiskListModel diskListModel;
     private final NetworkListModel networkListModel;
@@ -130,7 +127,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
             @Named("footer") final EventListModel<Void> eventListModel,
             @Named("main") final EventListModel<Void> mainTabEventListModel,
             final QuotaListModel quotaListModel,
-            final ReportsListModel reportsListModel,
             final VolumeListModel volumeListModel,
             final DiskListModel diskListModel,
             final NetworkListModel networkListModel,
@@ -162,7 +158,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
         this.eventListModel = eventListModel;
         this.mainTabEventListModel = mainTabEventListModel;
         this.quotaListModel = quotaListModel;
-        this.reportsListModel = reportsListModel;
         this.volumeListModel = volumeListModel;
         this.diskListModel = diskListModel;
         this.networkListModel = networkListModel;
@@ -241,7 +236,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
         modelList.add(this.volumeListModel);
         modelList.add(this.diskListModel);
         modelList.add(this.userListModel);
-        modelList.add(this.reportsListModel);
         modelList.add(this.networkListModel);
         modelList.add(this.providerListModel);
         modelList.add(this.vnicProfileListModel);
@@ -344,20 +338,11 @@ public class CommonModel extends ListModel<SearchableListModel> {
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
 
-        boolean performSearch = false;
-        // Do not Change Tab if the Selection is the Reports
-        if (!getReportsList().getIsAvailable() ||
-                (getSelectedItem() != getReportsList() && !getReportsList().isReportsTabSelected())) {
-            changeSelectedTabIfNeeded(model);
-            performSearch = true;
-        } else {
-            getReportsList().refreshReportModel();
-        }
+        changeSelectedTabIfNeeded(model);
 
         // Update search string if selected item was not changed. If it is,
         // search string will be updated in OnSelectedItemChanged method.
-        // dont perform search if refreshing reports
-        if (performSearch && getSelectedItem() == oldSelectedItem) {
+        if (getSelectedItem() == oldSelectedItem) {
             String prefix = ""; //$NON-NLS-1$
             String search = ""; //$NON-NLS-1$
             RefObject<String> tempRef_prefix = new RefObject<>(prefix);
@@ -382,22 +367,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 treeContext.setSystemTreeSelectedItem(getSystemTree().getSelectedItem());
             }
         }
-    }
-
-    public void updateReportsAvailability() {
-        updateReportsAvailability(getSystemTree().getSelectedItem() == null ?
-                SystemTreeItemType.System :
-                getSystemTree().getSelectedItem().getType());
-        getDataCenterList().updateReportsAvailability();
-        getClusterList().updateReportsAvailability();
-        getHostList().updateReportsAvailability();
-        getStorageList().updateReportsAvailability();
-        getVmList().updateReportsAvailability();
-    }
-
-    private void updateReportsAvailability(SystemTreeItemType type) {
-        getReportsList().setIsAvailable(ReportInit.getInstance().isReportsEnabled()
-                && ReportInit.getInstance().getDashboard(type.toString()) != null);
     }
 
     private void updateAvailability(SystemTreeItemType type, Object entity) {
@@ -481,8 +450,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 || type == SystemTreeItemType.Cluster_Gluster || type == SystemTreeItemType.Host
                 || type == SystemTreeItemType.Storage || type == SystemTreeItemType.System
                 || type == SystemTreeItemType.Volume);
-
-        updateReportsAvailability(type);
 
         getNetworkList().setIsAvailable(type == SystemTreeItemType.Network
                 || type == SystemTreeItemType.Networks
@@ -613,9 +580,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
     private void setAllListModelsUnavailable() {
         for (ListModel m : getItems()) {
-            if (!(m instanceof ReportsListModel)) {
-                m.setIsAvailable(false);
-            }
+            m.setIsAvailable(false);
         }
     }
 
@@ -1052,10 +1017,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
     public SharedMacPoolListModel getSharedMacPoolListModel() {
         return sharedMacPoolListModel;
-    }
-
-    public ReportsListModel getReportsList() {
-        return reportsListModel;
     }
 
     public PoolListModel getPoolList() {

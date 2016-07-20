@@ -586,8 +586,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String eventMainTabLabel();
 
-    String reportsMainTabLabel();
-
     String eventBasicViewLabel();
 
     String eventAdvancedViewLabel();
@@ -864,8 +862,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String forceRemoveDC();
 
-    String showReportDC();
-
     String guideMeDc();
 
     String reinitializeDC();
@@ -1062,8 +1058,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String removeCluster();
 
-    String showReportCluster();
-
     String guideMeCluster();
 
     String resetClusterEmulatedMachine();
@@ -1133,8 +1127,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String pmHost();
 
     String assignTagsHost();
-
-    String showReportHost();
 
     String refreshHostCapabilities();
 
@@ -1255,8 +1247,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String destroyStorage();
 
     String scanDisksStorage();
-
-    String showReportStorage();
 
     String statusStorage();
 
@@ -1395,8 +1385,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String disableGlobalHaMaintenanceVm();
 
     String setConsoleKey();
-
-    String showReportVm();
 
     String guideMeVm();
 
@@ -2763,10 +2751,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String allowOverbookingLabel();
 
     String guarantyResourcesLabel();
-
-    String reportsWebAppErrorMsg();
-
-    String reportsWebAppNotDeployedMsg();
 
     String consoleTabLabel();
 

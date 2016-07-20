@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.HasStoragePool;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -29,14 +25,10 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.RegistrationResult;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent.RefreshActiveModelHandler;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
-import org.ovirt.engine.ui.uicommonweb.ReportCommand;
-import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
-import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
@@ -61,8 +53,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 public abstract class SearchableListModel<E, T> extends SortedListModel<T> implements HasEntity<E>, GridController {
     private static final int UnknownInteger = -1;
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
-    private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$"; //$NON-NLS-1$
-    private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$"; //$NON-NLS-1$
 
     private UICommand privateSearchCommand;
     private HandlerRegistration timerChangeHandler;
@@ -103,25 +93,6 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
     private void setForceRefreshCommand(UICommand value) {
         privateForceRefreshCommand = value;
-    }
-
-    private final List<ReportCommand> openReportCommands = new LinkedList<>();
-
-    public ReportCommand addOpenReportCommand(String idParamName, boolean isMultiple, String uriId) {
-        return addOpenReportCommand(new ReportCommand("OpenReport", idParamName, isMultiple, uriId, this)); //$NON-NLS-1$
-    }
-
-    private ReportCommand addOpenReportCommand(ReportCommand reportCommand) {
-        if (openReportCommands.add(reportCommand)) {
-            List<IVdcQueryable> items =
-                    getSelectedItems() != null ? Linq.<IVdcQueryable> cast(getSelectedItems())
-                            : new ArrayList<IVdcQueryable>();
-            updateReportCommandAvailability(reportCommand, items);
-
-            return reportCommand;
-        } else {
-            return null;
-        }
     }
 
     private boolean privateIsQueryFirstTime;
@@ -210,7 +181,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
             return ""; //$NON-NLS-1$
         }
         int fromItemCount = getSearchPageSize() * (getSearchPageNumber() - 1) + 1;
-        int toItemCount = (fromItemCount - 1) + ((Collection) getItems()).size();
+        int toItemCount = (fromItemCount - 1) + ((Collection<T>) getItems()).size();
 
         if (toItemCount == 0 || fromItemCount > toItemCount) {
             return ""; //$NON-NLS-1$
@@ -238,8 +209,6 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         setForceRefreshCommand(new UICommand("ForceRefresh", this)); //$NON-NLS-1$
         setSearchPageSize(UnknownInteger);
         asyncCallback = new PrivateAsyncCallback<>(this);
-
-        updateActionAvailability();
 
         // Most of SearchableListModels will not have paging. The ones that
         // should have paging will set it explicitly in their constructors.
@@ -475,68 +444,6 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
-    protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
-
-    }
-
-    protected void openReport() {
-        setWidgetModel(createReportModel());
-    }
-
-    protected ReportModel createReportModel() {
-        ReportCommand reportCommand = (ReportCommand) getLastExecutedCommand();
-        ReportModel reportModel = new ReportModel(ReportInit.getInstance().getReportRightClickUrl(),
-                ReportInit.getInstance().getSsoToken());
-
-        reportModel.setReportUnit(reportCommand.getUriValue());
-
-        if (reportCommand.getIdParamName() != null) {
-            for (T item : getSelectedItems()) {
-                if (((ReportCommand) getLastExecutedCommand()).isMultiple) {
-                    reportModel.addResourceId(reportCommand.getIdParamName(), ((BusinessEntity<?>) item).getId()
-                            .toString());
-                } else {
-                    reportModel.setResourceId(reportCommand.getIdParamName(), ((BusinessEntity<?>) item).getId()
-                            .toString());
-                }
-            }
-        }
-
-        boolean firstItem = true;
-        String dcId = ""; //$NON-NLS-1$
-        for (T item : getSelectedItems()) {
-            if (item instanceof HasStoragePool) {
-                if (firstItem) {
-                    dcId = ((HasStoragePool<?>) item).getStoragePoolId().toString();
-                    firstItem = false;
-                } else if (!((HasStoragePool<?>) item).getStoragePoolId().toString().equals(dcId)) {
-                    reportModel.setDifferntDcError(true);
-                    continue;
-                }
-            }
-        }
-
-        if (!dcId.equals("")) { //$NON-NLS-1$
-            reportModel.setDataCenterID(dcId);
-        }
-
-        return reportModel;
-    }
-
-    private String dateStr(Date date) {
-        return date.getYear() + "-" + date.getMonth() + "-" + date.getDate(); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    private void asyncResultChanging(RegistrationResult newValue, RegistrationResult oldValue) {
-        if (oldValue != null) {
-            oldValue.getRetrievedEvent().removeListener(this);
-        }
-
-        if (newValue != null) {
-            newValue.getRetrievedEvent().addListener(this);
-        }
-    }
-
     @Override
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
@@ -557,7 +464,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         // (e.g in Monitor models, the different ListModels' Items are
         // of type 'valueObjectEnumerableList', which is not IList).
         if (getItems() != null) {
-            Iterator enumerator = getItems().iterator();
+            Iterator<T> enumerator = getItems().iterator();
             setIsEmpty(enumerator.hasNext() ? false : true);
         }
         else {
@@ -570,7 +477,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         // (e.g in Monitor models, the different ListModels' Items are
         // of type 'valueObjectEnumerableList', which is not IList).
         if (getItems() != null) {
-            Iterator enumerator = getItems().iterator();
+            Iterator<T> enumerator = getItems().iterator();
             if (enumerator.hasNext()) {
                 setIsEmpty(false);
             }
@@ -591,38 +498,6 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
         resetIsEmpty();
         updatePagingAvailability();
-    }
-
-    @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
-        updateActionAvailability();
-    }
-
-    @Override
-    protected void selectedItemsChanged() {
-        /*
-        NOTICE, that there's lot of methods overriding this one, looking 'just like' this one, which seems wrong.
-        But notice that all those 'updateActionAvailability()' are private, and does not extends each other.
-        Making #updateActionAvailability() protected seems not very straightforward, therefore it's not fixed.
-        * */
-        super.selectedItemsChanged();
-        updateActionAvailability();
-    }
-
-    private void updateReportCommandAvailability(ReportCommand reportCommand, List<?> selectedItems) {
-        reportCommand.setIsExecutionAllowed((!reportCommand.isMultiple() && (selectedItems.size() == 1))
-                || (reportCommand.isMultiple() && (selectedItems.size() > 1)));
-    }
-
-    private void updateActionAvailability() {
-        List<?> items =
-                getSelectedItems() != null ? getSelectedItems()
-                        : Collections.emptyList();
-
-        for (ReportCommand reportCommand : openReportCommands) {
-            updateReportCommandAvailability(reportCommand, items);
-        }
     }
 
     protected void updatePagingAvailability() {
@@ -878,7 +753,6 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
-
         vdcQueryParametersBase.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, new SetItemsAsyncQuery());
@@ -915,8 +789,6 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
         else if (command == getForceRefreshCommand()) {
             forceRefresh();
-        } else if (command instanceof ReportCommand) {
-            openReport();
         }
 
         if (command != null && command.isAutoRefresh()) {

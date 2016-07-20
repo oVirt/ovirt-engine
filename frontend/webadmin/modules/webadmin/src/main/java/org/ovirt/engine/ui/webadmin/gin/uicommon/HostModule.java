@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
@@ -23,7 +22,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
-import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -48,7 +46,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksBondModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
@@ -90,7 +87,6 @@ public class HostModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ManualFencePopupPresenterWidget> manualFenceConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
-            final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider,
             final Provider<HostInstallPopupPresenterWidget> installPopupProvider,
             final Provider<NumaSupportPopupPresenterWidget> numaSupportPopupProvider,
@@ -129,15 +125,6 @@ public class HostModule extends AbstractGinModule {
                             return manualFenceConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
-                        }
-                    }
-
-                    @Override
-                    protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
-                        if (lastExecutedCommand instanceof ReportCommand) {
-                            return reportWindowProvider.get();
-                        } else {
-                            return super.getModelBoundWidget(lastExecutedCommand);
                         }
                     }
                 };

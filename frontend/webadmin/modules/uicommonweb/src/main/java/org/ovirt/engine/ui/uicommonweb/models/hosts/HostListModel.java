@@ -70,7 +70,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
@@ -101,7 +101,7 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")
-public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> implements ISupportSystemTreeContext {
+public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> implements ISupportSystemTreeContext {
     private final HostGeneralModel generalModel;
 
     private UICommand privateNewCommand;

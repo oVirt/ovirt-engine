@@ -133,7 +133,6 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
@@ -222,8 +221,6 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     MainModelProvider<DbUser, UserListModel> getMainTabUserModelProvider();
 
     MainModelProvider<AuditLog, EventListModel<Void>> getMainTabEventModelProvider();
-
-    MainModelProvider<Void, ReportsListModel> getMainTabReportsModelProvider();
 
     MainModelProvider<Quota, QuotaListModel> getMainTabQuotaModelProvider();
 
