@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -37,7 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ReadOnlyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -453,6 +454,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
             ((DiskImage) getDiskModel().getDisk()).setVolumeFormat(getVolumeFormat().getSelectedItem());
             ((DiskImage) getDiskModel().getDisk()).setActualSizeInBytes(getImageSize());
             return true;
+        } else {
+            setIsValid(false);
         }
         return false;
     }
@@ -461,8 +464,19 @@ public class UploadImageModel extends Model implements ICommandTarget {
         boolean uploadImageIsValid;
 
         if (getImageSourceLocalEnabled().getEntity()) {
-            getImagePath().validateEntity(new IValidation[] { new NotEmptyValidation() });
+            getImagePath().validateEntity(new IValidation[] { new IValidation() {
+                @Override
+                public ValidationResult validate(Object value) {
+                    ValidationResult result = new ValidationResult();
+                    if (value == null || StringHelper.isNullOrEmpty((String) value)) {
+                        result.setSuccess(false);
+                        result.getReasons().add(ConstantsManager.getInstance().getConstants().emptyImagePath());
+                    }
+                    return result;
+                }
+            } });
             uploadImageIsValid = getImagePath().getIsValid();
+            getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
         } else {
             // TODO remote/download
             uploadImageIsValid = false;
