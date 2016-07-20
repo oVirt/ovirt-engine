@@ -155,8 +155,13 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
                 if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
                     setPanelMessage(uploadMessagePanel, model.getMessage());
                 }
-                if ("Progress".equals(args.propertyName)) { //$NON-NLS-1$
+                else if ("Progress".equals(args.propertyName)) { //$NON-NLS-1$
                     setPanelMessage(progressMessagePanel, model.getProgressStr());
+                }
+                else if ("IsValid".equals(args.propertyName)) { //$NON-NLS-1$
+                    if (!model.getIsValid()) {
+                        setPanelMessage(uploadMessagePanel, model.getInvalidityReasons().get(0));
+                    }
                 }
             }
         });

@@ -2000,5 +2000,7 @@ public interface UIConstants extends Constants {
     String currentKernelCmdLine();
 
     String cannotClusterVersionChangeWithActiveVm();
+
+    String emptyImagePath();
 }
 
