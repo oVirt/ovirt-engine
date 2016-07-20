@@ -404,6 +404,7 @@ Requires:	%{policycoreutils_python_utils}
 Requires:	python-psycopg2
 Requires:	yum
 Requires(pre):	shadow-utils
+Requires:	java-openjdk >= 1:1.8.0
 
 # We can drop these conflicts when
 # we drop Requires: mod_ssl
