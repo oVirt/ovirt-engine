@@ -135,15 +135,15 @@
     </init-param>
     <init-param>
         <param-name>trustStoreType</param-name>
-        <param-value>%{ENGINE_PKI_TRUST_STORE_TYPE}</param-value>
+        <param-value>%{ENGINE_HTTPS_PKI_TRUST_STORE_TYPE}</param-value>
     </init-param>
     <init-param>
         <param-name>trustStore</param-name>
-        <param-value>%{ENGINE_PKI_TRUST_STORE}</param-value>
+        <param-value>%{ENGINE_HTTPS_PKI_TRUST_STORE}</param-value>
     </init-param>
     <init-param>
         <param-name>trustStorePassword</param-name>
-        <param-value>%{ENGINE_PKI_TRUST_STORE_PASSWORD}</param-value>
+        <param-value>%{ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD}</param-value>
     </init-param>
     <init-param>
         <param-name>verifyHost</param-name>
