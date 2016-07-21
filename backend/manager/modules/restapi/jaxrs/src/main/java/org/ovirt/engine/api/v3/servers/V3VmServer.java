@@ -96,7 +96,9 @@ public class V3VmServer extends V3Server<VmResource> {
 
     @GET
     public V3VM get() {
-        return V3VmHelper.addDisksLink(adaptGet(getDelegate()::get));
+        V3VM vm = adaptGet(getDelegate()::get);
+        V3VmHelper.addDisksLink(vm);
+        return vm;
     }
 
     @POST
@@ -134,7 +136,9 @@ public class V3VmServer extends V3Server<VmResource> {
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3VM update(V3VM vm) {
-        return V3VmHelper.addDisksLink(adaptUpdate(getDelegate()::update, vm));
+        vm = adaptUpdate(getDelegate()::update, vm);
+        V3VmHelper.addDisksLink(vm);
+        return vm;
     }
 
     @POST

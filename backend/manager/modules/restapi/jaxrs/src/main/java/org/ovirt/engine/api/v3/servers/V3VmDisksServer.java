@@ -28,6 +28,7 @@ import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3VmHelper;
 import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Disks;
 
@@ -43,19 +44,26 @@ public class V3VmDisksServer extends V3Server<VmDisksResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Disk disk) {
-        return adaptAdd(getDelegate()::add, disk);
+        Response response = adaptAdd(getDelegate()::add, disk);
+        Object entity = response.getEntity();
+        if (entity instanceof V3Disk) {
+            disk = (V3Disk) entity;
+            V3VmHelper.fixDiskLinks(vmId, disk);
+        }
+        return response;
     }
 
     @GET
     public V3Disks list() {
         V3Disks disks = adaptList(getDelegate()::list);
+        disks.getDisks().forEach(disk -> V3VmHelper.fixDiskLinks(vmId, disk));
         loadAttachmentDataToDisks(disks);
         return disks;
     }
 
     @Path("{id}")
     public V3VmDiskServer getDiskResource(@PathParam("id") String id) {
-        return new V3VmDiskServer(id, getDelegate().getDiskResource(id));
+        return new V3VmDiskServer(vmId, id, getDelegate().getDiskResource(id));
     }
 
     private void loadAttachmentDataToDisks(V3Disks disks) {

@@ -32,15 +32,18 @@ import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3VmHelper;
 import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3Disk;
 
 @Produces({"application/xml", "application/json"})
 public class V3VmDiskServer extends V3Server<VmDiskResource> {
+    private String vmId;
     private String diskId;
 
-    public V3VmDiskServer(String diskId, VmDiskResource delegate) {
+    public V3VmDiskServer(String vmId, String diskId, VmDiskResource delegate) {
         super(delegate);
+        this.vmId = vmId;
         this.diskId = diskId;
     }
 
@@ -70,7 +73,9 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
 
     @GET
     public V3Disk get() {
-        return adaptGet(getDelegate()::get);
+        V3Disk disk = adaptGet(getDelegate()::get);
+        V3VmHelper.fixDiskLinks(vmId, disk);
+        return disk;
     }
 
     @POST
@@ -84,7 +89,9 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Disk update(V3Disk disk) {
-        return adaptUpdate(getDelegate()::update, disk);
+        disk = adaptUpdate(getDelegate()::update, disk);
+        V3VmHelper.fixDiskLinks(vmId, disk);
+        return disk;
     }
 
     @DELETE

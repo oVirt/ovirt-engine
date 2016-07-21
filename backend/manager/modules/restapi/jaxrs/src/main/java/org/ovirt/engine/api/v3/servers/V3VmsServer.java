@@ -65,13 +65,15 @@ public class V3VmsServer extends V3Server<VmsResource> {
             }
         }
 
-        return V3VmHelper.addDisksLinkToResponse(adaptAdd(getDelegate()::add, vm));
+        Response response = adaptAdd(getDelegate()::add, vm);
+        V3VmHelper.addDisksLink(response);
+        return response;
     }
 
     @GET
     public V3VMs list() {
         V3VMs vms = adaptList(getDelegate()::list);
-        vms.getVMs().stream().forEach(V3VmHelper::addDisksLink);
+        vms.getVMs().forEach(V3VmHelper::addDisksLink);
         return vms;
     }
 

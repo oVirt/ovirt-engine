@@ -28,13 +28,17 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3TemplateHelper;
 import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3Disk;
 
 @Produces({"application/xml", "application/json"})
 public class V3TemplateDiskServer extends V3Server<TemplateDiskResource> {
-    public V3TemplateDiskServer(TemplateDiskResource delegate) {
+    private String templateId;
+
+    public V3TemplateDiskServer(String templateId, TemplateDiskResource delegate) {
         super(delegate);
+        this.templateId = templateId;
     }
 
     @POST
@@ -55,7 +59,9 @@ public class V3TemplateDiskServer extends V3Server<TemplateDiskResource> {
 
     @GET
     public V3Disk get() {
-        return adaptGet(getDelegate()::get);
+        V3Disk disk = adaptGet(getDelegate()::get);
+        V3TemplateHelper.fixDiskLinks(templateId, disk);
+        return disk;
     }
 
     @DELETE
