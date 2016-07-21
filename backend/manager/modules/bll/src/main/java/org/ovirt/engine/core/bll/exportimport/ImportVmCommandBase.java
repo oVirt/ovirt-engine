@@ -428,6 +428,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         setSucceeded(true);
+        getReturnValue().setActionReturnValue(getVm());
     }
 
     private void reportExternalMacs() {

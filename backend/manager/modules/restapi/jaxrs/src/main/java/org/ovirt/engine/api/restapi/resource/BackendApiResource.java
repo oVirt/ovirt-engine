@@ -509,6 +509,11 @@ public class BackendApiResource
     }
 
     @Override
+    public ExternalVmImportsResource getExternalVmImportsResource() {
+        return inject(new BackendExternalVmImportsResource());
+    }
+
+    @Override
     public GroupsResource getGroupsResource() {
         return inject(new BackendGroupsResource());
     }
@@ -641,12 +646,6 @@ public class BackendApiResource
     @Override
     public ClusterLevelsResource getClusterLevelsResource() {
         return inject(new BackendClusterLevelsResource());
-    }
-
-    @Override
-    public ExternalVmImportsResource getExternalVmImportsResource() {
-        // TODO: Implement this.
-        return null;
     }
 
     @Override

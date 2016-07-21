@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.ExternalHostProvider;
+import org.ovirt.engine.api.model.ExternalVmProviderType;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.GraphicsConsole;
@@ -739,6 +740,19 @@ public class VmMapper extends VmBaseMapper {
         try {
             return OriginType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    public static OriginType mapExternalVmProviderToOrigin(ExternalVmProviderType provider) {
+        switch (provider) {
+        case KVM:
+            return OriginType.KVM;
+        case XEN:
+            return OriginType.XEN;
+        case VMWARE:
+            return OriginType.VMWARE;
+        default:
             return null;
         }
     }
