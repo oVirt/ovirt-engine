@@ -2,10 +2,10 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;

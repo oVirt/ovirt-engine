@@ -16,6 +16,9 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.invocation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -50,6 +53,12 @@ public class Current {
      * {@code /vms/123/disks}.
      */
     private String path;
+
+    /**
+     * The parameters of the current request. This is intended to comunicate parameters from one part to the application
+     * to another without using directly the HTTP request.
+     */
+    private Map<String, String> parameters = new HashMap<>();
 
     /**
      * The identifier of the backend session.
@@ -126,6 +135,14 @@ public class Current {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    /**
+     * Returns a reference to the map used to store parameters of this request. It can be modified, but it isn't
+     * thread safe, so if you plan to call it from multiple threads makes sure to explicitly avoid concurrency.
+     */
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     public String getSessionId() {

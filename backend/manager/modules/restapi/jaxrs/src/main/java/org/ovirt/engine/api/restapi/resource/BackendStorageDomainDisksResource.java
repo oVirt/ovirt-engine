@@ -3,11 +3,11 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.List;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;

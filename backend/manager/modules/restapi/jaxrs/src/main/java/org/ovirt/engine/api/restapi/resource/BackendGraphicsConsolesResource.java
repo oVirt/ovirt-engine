@@ -7,12 +7,12 @@ import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;

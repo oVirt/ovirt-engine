@@ -33,11 +33,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3API;
 import org.ovirt.engine.api.v3.types.V3Action;

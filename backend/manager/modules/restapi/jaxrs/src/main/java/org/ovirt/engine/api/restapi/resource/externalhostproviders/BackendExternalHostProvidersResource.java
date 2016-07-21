@@ -20,12 +20,12 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.model.ExternalHostProviders;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviderResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;

@@ -2,9 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;

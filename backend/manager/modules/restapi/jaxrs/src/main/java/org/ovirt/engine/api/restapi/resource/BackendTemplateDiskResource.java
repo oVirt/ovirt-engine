@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Objects;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
