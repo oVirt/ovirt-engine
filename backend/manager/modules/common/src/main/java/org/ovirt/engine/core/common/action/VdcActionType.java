@@ -63,6 +63,7 @@ public enum VdcActionType {
     ImportVmFromOva(49, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ConvertOva(50, QuotaDependency.NONE),
     CancelConvertVm(51, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    ImportVmFromExternalUrl(55, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
 
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
