@@ -16,7 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
-import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,12 +24,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.helpers.V3VmHelper;
 import org.ovirt.engine.api.v3.types.V3Disks;
@@ -46,16 +45,14 @@ public class V3VmsServer extends V3Server<VmsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(@Context UriInfo ui, V3VM vm) {
-        List<PathSegment> segments = ui.getPathSegments();
-        PathSegment segment = segments.get(segments.size() - 1);
-        MultivaluedMap<String, String> matrix = segment.getMatrixParameters();
+        Map<String, String> parameters = CurrentManager.get().getParameters();
 
         // V3 version of the API used the "clone" element of the disks as a parameter, but in V4 this has been replaced
-        // with equivalent matrix parameter:
+        // with equivalent parameter:
         if (vm.isSetDisks()) {
             V3Disks disks = vm.getDisks();
             if (disks.isSetClone() && disks.isClone()) {
-                matrix.putSingle("clone", String.valueOf(true));
+                parameters.put("clone", String.valueOf(true));
             }
         }
 
@@ -64,7 +61,7 @@ public class V3VmsServer extends V3Server<VmsResource> {
         if (vm.isSetPermissions()) {
             V3Permissions permissions = vm.getPermissions();
             if (permissions.isSetClone() && permissions.isClone()) {
-                matrix.putSingle("clone_permissions", String.valueOf(true));
+                parameters.put("clone_permissions", String.valueOf(true));
             }
         }
 

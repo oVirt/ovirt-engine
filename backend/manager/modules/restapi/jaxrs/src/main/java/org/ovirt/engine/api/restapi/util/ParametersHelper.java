@@ -14,10 +14,11 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.api.restapi.util;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.ws.rs.core.HttpHeaders;
@@ -27,6 +28,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +67,21 @@ public class ParametersHelper {
      * @return the value of the parameter, may be empty, or {@code null} if there is no such parameter in the request
      */
     public static String getParameter(HttpHeaders headers, UriInfo uri, String name) {
+        // Check if there is a request parameter providing the value:
+        Current current = CurrentManager.get();
+        if (current != null) {
+            Map<String, String> parameters = current.getParameters();
+            if (MapUtils.isNotEmpty(parameters)) {
+                if (parameters.containsKey(name)) {
+                    String value = parameters.get(name);
+                    if (value == null) {
+                        value = "";
+                    }
+                    return value;
+                }
+            }
+        }
+
         // Check if there is a query parameter providing the value:
         if (uri != null) {
             MultivaluedMap<String, String> parameters = uri.getQueryParameters();

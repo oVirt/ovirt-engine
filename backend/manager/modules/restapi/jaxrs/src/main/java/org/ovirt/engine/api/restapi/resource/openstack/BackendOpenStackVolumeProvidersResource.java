@@ -17,11 +17,9 @@
 package org.ovirt.engine.api.restapi.resource.openstack;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeProviders;
@@ -29,6 +27,7 @@ import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.types.DataCenterMapper;
+import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;

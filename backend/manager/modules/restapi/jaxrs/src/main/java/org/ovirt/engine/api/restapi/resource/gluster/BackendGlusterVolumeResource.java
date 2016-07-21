@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumeProfileDetails;
@@ -16,6 +15,7 @@ import org.ovirt.engine.api.restapi.resource.BackendStatisticsResource;
 import org.ovirt.engine.api.restapi.resource.VolumeStatisticalQuery;
 import org.ovirt.engine.api.restapi.types.GlusterVolumeProfileInfoMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;

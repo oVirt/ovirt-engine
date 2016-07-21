@@ -30,7 +30,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ApiSummary;
@@ -96,6 +95,7 @@ import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.VersionMapper;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.branding.BrandingManager;

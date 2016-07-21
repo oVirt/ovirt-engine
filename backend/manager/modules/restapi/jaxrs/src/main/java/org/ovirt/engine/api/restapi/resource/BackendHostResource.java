@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -36,6 +35,7 @@ import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKatelloErrataResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
