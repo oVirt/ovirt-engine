@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
@@ -12,6 +11,7 @@ import org.ovirt.engine.api.resource.aaa.DomainGroupResource;
 import org.ovirt.engine.api.resource.aaa.DomainGroupsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
+import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;

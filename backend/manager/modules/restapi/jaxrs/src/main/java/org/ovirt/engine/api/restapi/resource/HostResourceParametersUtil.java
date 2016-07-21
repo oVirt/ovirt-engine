@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.common.util.ParametersHelper.getBooleanParameter;
+import static org.ovirt.engine.api.restapi.util.ParametersHelper.getBooleanParameter;
 
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 

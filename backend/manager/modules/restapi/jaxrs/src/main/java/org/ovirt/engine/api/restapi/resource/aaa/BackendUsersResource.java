@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
@@ -18,6 +17,7 @@ import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
+import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;

@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.api.restapi.util;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
