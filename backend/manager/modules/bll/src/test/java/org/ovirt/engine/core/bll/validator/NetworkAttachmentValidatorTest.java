@@ -88,7 +88,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @Test
     public void testNetworkAttachmentIsSetWhenAttachmentIsNull() {
-        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
+        EngineMessage engineMessage = EngineMessage.NULL_PASSED_AS_NETWORK_ATTACHMENT;
         assertThat(createNetworkAttachmentValidator(null).networkAttachmentIsSet(),
                 failsWith(engineMessage, ReplacementUtils.getVariableAssignmentString(engineMessage, null)));
     }

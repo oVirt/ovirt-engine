@@ -425,12 +425,10 @@ public class HostSetupNetworksValidator {
             }
         }
 
-        Map<Guid, NetworkAttachment> removedNetworkAttachments =
-            Entities.businessEntitiesById(this.removedNetworkAttachments);
         for (NetworkAttachment existingAttachment : existingAttachments) {
             Guid existingAttachmentId = existingAttachment.getId();
             if (!networkAttachmentsMap.containsKey(existingAttachmentId) &&
-                !removedNetworkAttachments.containsKey(existingAttachmentId)) {
+                !params.getRemovedNetworkAttachments().contains(existingAttachmentId)) {
                 networkAttachmentsMap.put(existingAttachmentId, existingAttachment);
             }
         }
@@ -668,12 +666,11 @@ public class HostSetupNetworksValidator {
             NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
 
             vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
-            vr = skipValidation(vr) ? vr : referencedNetworkAttachmentActuallyExists(attachment.getId());
+            vr = skipValidation(vr) ? vr : modifiedAttachmentExists(attachment.getId());
 
             vr = skipValidation(vr) ? vr : validator.networkExists();
             vr = skipValidation(vr) ? vr : validateCoherentNicIdentification(attachment);
             vr = skipValidation(vr) ? vr : validateCoherentNetworkIdentification(attachment);
-            vr = skipValidation(vr) ? vr : modifiedAttachmentExists(attachment.getId());
             vr = skipValidation(vr) ? vr : modifiedAttachmentNotRemoved(attachment);
             vr = skipValidation(vr) ? vr : validateAttachmentNotReferenceVlanDevice(attachment);
             vr = skipValidation(vr) ? vr : validator.existingAttachmentIsReused(existingAttachmentsByNetworkId);
@@ -695,24 +692,6 @@ public class HostSetupNetworksValidator {
         }
 
         return vr;
-    }
-
-    private ValidationResult referencedNetworkAttachmentActuallyExists(Guid networkAttachmentId) {
-        boolean doesNotReferenceExistingNetworkAttachment = networkAttachmentId == null;
-        if (doesNotReferenceExistingNetworkAttachment) {
-            return ValidationResult.VALID;
-        }
-
-        for (NetworkAttachment existingAttachment : existingAttachments) {
-            if (existingAttachment.getId().equals(networkAttachmentId)) {
-                return ValidationResult.VALID;
-            }
-        }
-
-        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
-        String id = networkAttachmentId.toString();
-        String replacement = ReplacementUtils.getVariableAssignmentString(engineMessage, id);
-        return new ValidationResult(engineMessage, replacement);
     }
 
     private ValidationResult validateCoherentNetworkIdentification(NetworkAttachment attachment) {
@@ -747,15 +726,14 @@ public class HostSetupNetworksValidator {
         }
 
         for (NetworkAttachment existingAttachment : existingAttachments) {
-          if (existingAttachment.getId().equals(networkAttachmentId)) {
+            if (existingAttachment.getId().equals(networkAttachmentId)) {
                 return ValidationResult.VALID;
             }
         }
 
-        return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
-            ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
-                    networkAttachmentId.toString()));
-
+        EngineMessage engineMessage = EngineMessage.MODIFIED_NETWORK_ATTACHMENT_DOES_NOT_EXISTS;
+        String replacement = ReplacementUtils.getVariableAssignmentString(engineMessage, networkAttachmentId.toString());
+        return new ValidationResult(engineMessage, replacement);
     }
 
     ValidationResult modifiedAttachmentNotRemoved(NetworkAttachment networkAttachment) {
@@ -799,9 +777,9 @@ public class HostSetupNetworksValidator {
         List<Guid> invalidIds = Entities.idsNotReferencingExistingRecords(params.getRemovedNetworkAttachments(),
             existingAttachments);
         if (!invalidIds.isEmpty()) {
-            EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENTS_NOT_EXISTS;
+            EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENTS_TO_BE_REMOVED_DOES_NOT_EXISTS;
             return new ValidationResult(engineMessage,
-                ReplacementUtils.getListVariableAssignmentString(engineMessage, invalidIds));
+                    ReplacementUtils.getListVariableAssignmentString(engineMessage, invalidIds));
         }
 
         ValidationResult vr = ValidationResult.VALID;

@@ -55,7 +55,7 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkAttachmentIsSet() {
-        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
+        EngineMessage engineMessage = EngineMessage.NULL_PASSED_AS_NETWORK_ATTACHMENT;
         return ValidationResult.failWith(engineMessage,
             ReplacementUtils.getVariableAssignmentString(engineMessage, null))
             .when(attachment == null);
