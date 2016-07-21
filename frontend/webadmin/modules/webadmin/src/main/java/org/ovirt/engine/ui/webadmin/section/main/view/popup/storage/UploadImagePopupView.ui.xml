@@ -85,8 +85,8 @@
     <d:SimpleDialogPanel width="790px" height="640px">
         <d:content>
             <g:FlowPanel>
-
-                <g:HorizontalPanel addStyleNames="{style.obrand_diskTypePanel}">
+                <!-- Should be re-enabled once uploading from URI is supported -->
+                <g:HorizontalPanel addStyleNames="{style.obrand_diskTypePanel}" visible="false">
                     <g:Label ui:field="imageSourceLabel" addStyleNames="{style.sectionTitle}" />
                     <w:RadioButtonsHorizontalPanel ui:field="imageSourcePanel" name="imageSourcePanel" addStyleNames="{style.imageSourcePanel}" />
                 </g:HorizontalPanel>
