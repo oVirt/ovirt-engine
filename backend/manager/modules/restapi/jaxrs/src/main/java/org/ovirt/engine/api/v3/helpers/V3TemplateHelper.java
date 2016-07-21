@@ -15,50 +15,43 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.helpers;
 
+import java.util.List;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.restapi.invocation.Current;
-import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
+import org.ovirt.engine.api.v3.types.V3Actions;
+import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Link;
 import org.ovirt.engine.api.v3.types.V3Template;
 
 public class V3TemplateHelper {
-
-    public static Response addDisksLinkToResponse(Response response) {
-        if (response.getEntity() instanceof V3Template) {
-            V3Template template = (V3Template) response.getEntity();
-            addDisksLink(template);
+    public static void addDisksLink(Response response) {
+        Object entity = response.getEntity();
+        if (entity instanceof V3Template) {
+            addDisksLink((V3Template) entity);
         }
-        return response;
     }
 
-    public static V3Template addDisksLink(V3Template template) {
-        if (template == null) {
-            return null;
+    public static void addDisksLink(V3Template template) {
+        if (template != null) {
+            V3LinkHelper.addLink(template.getLinks(), "disks", "templates", template.getId(), "disks");
         }
+    }
 
-        Current current = CurrentManager.get();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            buffer.append("/v");
-            buffer.append(current.getVersion());
+    /**
+     * Version 4 of the API can't reliably build the links for the "disks" collection because it has been removed,
+     * so we need to remove all the links and re-add them explicitly.
+     */
+    public static void fixDiskLinks(String templateId, V3Disk disk) {
+        // Fix the link of the disk itself:
+        disk.setHref(V3LinkHelper.linkHref("templates", templateId, "disks", disk.getId()));
+
+        // Remove all the action links and add them again:
+        V3Actions actions = disk.getActions();
+        if (actions != null) {
+            List<V3Link> links = actions.getLinks();
+            links.clear();
+            V3LinkHelper.addLink(links, "copy", "templates", templateId, "disks", disk.getId(), "copy");
+            V3LinkHelper.addLink(links, "export", "templates", templateId, "disks", disk.getId(), "export");
         }
-        buffer.append(current.getPath());
-        if (!current.getPath().contains(template.getId())) {
-            buffer.append("/");
-            buffer.append(template.getId());
-        }
-        buffer.append("/disks");
-        String href = buffer.toString();
-
-        // Make the link:
-        V3Link link = new V3Link();
-        link.setRel("disks");
-        link.setHref(href);
-        template.getLinks().add(link);
-
-        return template;
     }
 }

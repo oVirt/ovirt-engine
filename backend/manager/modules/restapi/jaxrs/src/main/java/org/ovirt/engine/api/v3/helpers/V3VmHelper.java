@@ -15,49 +15,51 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.helpers;
 
+import java.util.List;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.restapi.invocation.Current;
-import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
+import org.ovirt.engine.api.v3.types.V3Actions;
+import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Link;
 import org.ovirt.engine.api.v3.types.V3VM;
 
 public class V3VmHelper {
-
-    public static Response addDisksLinkToResponse(Response response) {
-        if (response.getEntity() instanceof V3VM) {
-            V3VM vm = (V3VM) response.getEntity();
-            addDisksLink(vm);
+    public static void addDisksLink(Response response) {
+        Object entity = response.getEntity();
+        if (entity instanceof V3VM) {
+            addDisksLink((V3VM) entity);
         }
-        return response;
     }
 
-    public static V3VM addDisksLink(V3VM vm) {
-        if (vm == null) {
-            return null;
+    public static void addDisksLink(V3VM vm) {
+        if (vm != null) {
+            V3LinkHelper.addLink(vm.getLinks(), "disks", "vms", vm.getId(), "disks");
+        }
+    }
+
+    /**
+     * Version 4 of the API can't reliably build the links for the "disks" collection because it has been removed,
+     * so we need to remove all the links and re-add them explicitly.
+     */
+    public static void fixDiskLinks(String vmId, V3Disk disk) {
+        // Fix the link of the disk itself:
+        disk.setHref(V3LinkHelper.linkHref("vms", vmId, "disks", disk.getId()));
+
+        // Remove all the action links and add them again:
+        V3Actions actions = disk.getActions();
+        if (actions != null) {
+            List<V3Link> links = actions.getLinks();
+            links.clear();
+            V3LinkHelper.addLink(links, "activate", "vms", vmId, "disks", disk.getId(), "acivate");
+            V3LinkHelper.addLink(links, "deactivate", "vms", vmId, "disks", disk.getId(), "deactivate");
+            V3LinkHelper.addLink(links, "export", "vms", vmId, "disks", disk.getId(), "export");
+            V3LinkHelper.addLink(links, "move", "vms", vmId, "disks", disk.getId(), "move");
         }
 
-        Current current = CurrentManager.get();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            buffer.append("/v");
-            buffer.append(current.getVersion());
-        }
-        buffer.append(current.getPath());
-        if (!current.getPath().contains(vm.getId())) {
-            buffer.append(vm.getId());
-        }
-        buffer.append("/disks");
-        String href = buffer.toString();
-
-        // Make the link:
-        V3Link link = new V3Link();
-        link.setRel("disks");
-        link.setHref(href);
-        vm.getLinks().add(link);
-
-        return vm;
+        // Remove all the links and add them again:
+        List<V3Link> links = disk.getLinks();
+        links.clear();
+        V3LinkHelper.addLink(links, "permissions", "vms", vmId, "disks", disk.getId(), "permissions");
+        V3LinkHelper.addLink(links, "statistics", "vms", vmId, "disks", disk.getId(), "statistics");
     }
 }

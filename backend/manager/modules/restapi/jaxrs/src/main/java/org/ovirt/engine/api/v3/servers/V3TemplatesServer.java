@@ -51,18 +51,20 @@ public class V3TemplatesServer extends V3Server<TemplatesResource> {
                 parameters.put("clone_permissions", String.valueOf(true));
             }
         }
-        return V3TemplateHelper.addDisksLinkToResponse(adaptAdd(getDelegate()::add, template));
+        Response response = adaptAdd(getDelegate()::add, template);
+        V3TemplateHelper.addDisksLink(response);
+        return response;
     }
 
     @GET
     public V3Templates list() {
         V3Templates templates = adaptList(getDelegate()::list);
-        templates.getTemplates().stream().forEach(V3TemplateHelper::addDisksLink);
+        templates.getTemplates().forEach(V3TemplateHelper::addDisksLink);
         return templates;
     }
 
     @Path("{id}")
     public V3TemplateServer getTemplateResource(@PathParam("id") String id) {
-        return new V3TemplateServer(getDelegate().getTemplateResource(id));
+        return new V3TemplateServer(id, getDelegate().getTemplateResource(id));
     }
 }
