@@ -21,6 +21,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
@@ -63,5 +64,10 @@ public class V3InstanceTypeServer extends V3Server<InstanceTypeResource> {
     @Path("graphicsconsoles")
     public V3GraphicsConsolesServer getGraphicsConsolesResource() {
         return new V3GraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
+    }
+
+    @Path("creation_status/{oid}")
+    public V3CreationServer getCreationResource(@PathParam("oid") String oid) {
+        return new V3CreationServer(getDelegate().getCreationResource(oid));
     }
 }
