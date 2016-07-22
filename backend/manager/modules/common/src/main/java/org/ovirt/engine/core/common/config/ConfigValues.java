@@ -1482,7 +1482,7 @@ public enum ConfigValues {
     UseFqdnForRdpIfAvailable,
 
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
+    @DefaultValueAttribute("15")
     DwhHeartBeatInterval,
 
     @TypeConverterAttribute(Integer.class)
