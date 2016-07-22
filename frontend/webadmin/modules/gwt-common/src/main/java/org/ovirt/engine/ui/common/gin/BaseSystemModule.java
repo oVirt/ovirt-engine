@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
+import org.ovirt.engine.ui.common.logging.ApplicationLogManager;
 import org.ovirt.engine.ui.common.logging.ClientLogProvider;
 import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
@@ -51,9 +52,9 @@ public abstract class BaseSystemModule extends AbstractGinModule {
 
     protected void bindCommonInfrastructure(Class<? extends PlaceManager> placeManager) {
         install(new CommonGinModule());
-
         bindEventBus();
         bindFrontendInfrastructure();
+        bind(ApplicationLogManager.class).asEagerSingleton();
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
         bind(RootPresenter.class).asEagerSingleton();
         bindTypeAndImplAsSingleton(PlaceManager.class, placeManager);

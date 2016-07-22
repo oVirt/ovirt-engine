@@ -1,16 +1,12 @@
 package org.ovirt.engine.ui.common.system;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.DisplayUncaughtUIExceptions;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
-import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
-import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
+import org.ovirt.engine.ui.common.logging.ApplicationLogManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.widget.AlertManager;
@@ -30,9 +26,7 @@ import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.logging.client.SimpleRemoteLogHandler;
 import com.google.gwt.user.client.Window;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.Bootstrapper;
 
@@ -57,9 +51,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     private final Provider<T> loginModelProvider;
 
     private final LockInteractionManager lockInteractionManager;
-    private final LocalStorageLogHandler localStorageLogHandler;
 
-    private AlertManager alertManager;
+    private final ApplicationLogManager applicationLogManager;
+    private final AlertManager alertManager;
 
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
@@ -67,8 +61,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             CurrentUser user, EventBus eventBus,
             Provider<T> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            LocalStorageLogHandler localStorageLogHandler,
-            Frontend frontend, CurrentUserRole currentUserRole) {
+            Frontend frontend, CurrentUserRole currentUserRole,
+            ApplicationLogManager applicationLogManager,
+            AlertManager alertManager) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
@@ -76,24 +71,15 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.eventBus = eventBus;
         this.loginModelProvider = loginModelProvider;
         this.lockInteractionManager = lockInteractionManager;
-        this.localStorageLogHandler = localStorageLogHandler;
         this.frontend = frontend;
         this.currentUserRole = currentUserRole;
-    }
-
-    @Inject
-    public void setAlertManager(AlertManager alertManager) {
+        this.applicationLogManager = applicationLogManager;
         this.alertManager = alertManager;
     }
 
     @Override
     public final void onBootstrap() {
-        Logger rootLogger = Logger.getLogger(""); //$NON-NLS-1$
-        initLocalStorageLogHandler(rootLogger);
-
-        Logger remoteLogger = Logger.getLogger("remote"); //$NON-NLS-1$
-        remoteLogger.addHandler(new SimpleRemoteLogHandler());
-        initUncaughtExceptionHandler(rootLogger, remoteLogger);
+        initUncaughtExceptionHandler();
 
         // Perform actual bootstrap via deferred command to ensure that
         // UncaughtExceptionHandler is effective during the bootstrap
@@ -105,27 +91,13 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         });
     }
 
-    void initLocalStorageLogHandler(Logger rootLogger) {
-        // Configure and attach LocalStorageLogHandler
-        localStorageLogHandler.init();
-        rootLogger.addHandler(localStorageLogHandler);
-
-        // Enable/disable LocalStorageLogHandler when the application window gains/looses its focus
-        eventBus.addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
-            @Override
-            public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
-                localStorageLogHandler.setActive(event.isInFocus());
-            }
-        });
-    }
-
-    void initUncaughtExceptionHandler(final Logger rootLogger, final Logger remoteLogger) {
+    void initUncaughtExceptionHandler() {
         // Prevent uncaught exceptions from escaping application code
         GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
             @Override
             public void onUncaughtException(Throwable t) {
-                rootLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
-                remoteLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
+                applicationLogManager.logUncaughtException(t);
+
                 if (DisplayUncaughtUIExceptions.getValue()) {
                     alertManager.showUncaughtExceptionAlert(t);
                 }
