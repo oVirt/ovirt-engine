@@ -14,7 +14,8 @@
     <obrand:stylesheets />
 </head>
 <body>
-    <a href="${applicationScope['ovirt-ssoContext'].engineUrl}" class="obrand_loginPageLogoImageLink">
+    <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
+    <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoImageLink">
          <span class="obrand_loginPageLogoImage"></span>
     </a>
     <div class="login-pf">
@@ -25,14 +26,13 @@
                         <div class="obrand_loginFormLogoImage"></div>
                     </div>
                 </div>
-                <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
 
                 <c:if test="${ssoSession.status == 'authenticated'}">
                     <c:redirect url="/interactive-login" />
                 </c:if>
 
                 <c:if test="${ssoSession.clientId == null}">
-                    <c:redirect url="${applicationScope['ovirt-ssoContext'].engineUrl}" />
+                    <c:redirect url="${ssoSession.engineUrl}" />
                 </c:if>
 
                 <c:if test="${ssoSession.reauthenticate == true}">
