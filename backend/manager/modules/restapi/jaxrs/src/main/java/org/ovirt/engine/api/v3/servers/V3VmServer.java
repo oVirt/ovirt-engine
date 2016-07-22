@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.servers;
 
 import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,8 +26,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
+import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
@@ -95,9 +100,18 @@ public class V3VmServer extends V3Server<VmResource> {
     }
 
     @GET
-    public V3VM get() {
+    public V3VM get(@Context HttpHeaders headers, @Context UriInfo ui) {
+        // Transfor the object:
         V3VM vm = adaptGet(getDelegate()::get);
+
+        // Add the disks links:
         V3VmHelper.addDisksLink(vm);
+
+        // Add the required inline details:
+        Set<String> details = DetailHelper.getDetails(headers, ui);
+        if (details != null && !details.isEmpty()) {
+            V3VmHelper.addInlineDetails(vm, this, details);
+        }
         return vm;
     }
 
