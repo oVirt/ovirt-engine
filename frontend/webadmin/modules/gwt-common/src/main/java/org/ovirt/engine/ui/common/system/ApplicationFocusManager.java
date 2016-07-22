@@ -32,6 +32,10 @@ public class ApplicationFocusManager implements HasHandlers {
         attachWindowFocusEvents();
     }
 
+    public boolean isInFocus() {
+        return hasFocus;
+    }
+
     void onWindowFocus() {
         if (!hasFocus) {
             hasFocus = true;
