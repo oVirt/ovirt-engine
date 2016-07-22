@@ -575,7 +575,6 @@ public class BackendVmResource
     @Override
     protected Vm deprecatedPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
-        parent.addInlineDetails(details, model);
         if (details.contains("statistics")) {
             addStatistics(model, entity);
         }

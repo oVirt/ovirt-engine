@@ -16,8 +16,10 @@ limitations under the License.
 package org.ovirt.engine.api.v3.helpers;
 
 import java.util.List;
+import java.util.Set;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.v3.servers.V3VmServer;
 import org.ovirt.engine.api.v3.types.V3Actions;
 import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Link;
@@ -61,5 +63,22 @@ public class V3VmHelper {
         links.clear();
         V3LinkHelper.addLink(links, "permissions", "vms", vmId, "disks", disk.getId(), "permissions");
         V3LinkHelper.addLink(links, "statistics", "vms", vmId, "disks", disk.getId(), "statistics");
+    }
+
+    /**
+     * In version 3 of the API the user can include a {@code detail} parameter that indicates if additional details
+     * should be added to virtual machines. This has been removed in version 4 of the API, but needs to be preserved
+     * in version 3 of the API for backwards compatibility.
+     */
+    public static void addInlineDetails(V3VM vm, V3VmServer server, Set<String> details) {
+        if (details.contains("disks")) {
+            vm.setDisks(server.getDisksResource().list());
+        }
+        if (details.contains("nics")) {
+            vm.setNics(server.getNicsResource().list());
+        }
+        if (details.contains("tags")) {
+            vm.setTags(server.getTagsResource().list());
+        }
     }
 }

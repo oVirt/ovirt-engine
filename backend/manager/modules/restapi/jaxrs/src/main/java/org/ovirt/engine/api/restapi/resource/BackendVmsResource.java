@@ -526,19 +526,6 @@ public class BackendVmsResource extends
         return diskImages;
     }
 
-    protected Vm addInlineDetails(Set<String> details, Vm vm) {
-        if (details.contains("disks")) {
-            addInlineDisks(vm);
-        }
-        if (details.contains("nics")) {
-            addInlineNics(vm);
-        }
-        if (details.contains("tags")) {
-            addInlineTags(vm);
-        }
-        return vm;
-    }
-
     private void addInlineStatistics(Vm vm) {
         EntityIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(vm.getId()));
@@ -676,7 +663,6 @@ public class BackendVmsResource extends
     @Override
     protected Vm deprecatedPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
-        model = addInlineDetails(details, model);
         if (details.contains("statistics")) {
             addInlineStatistics(model);
         }

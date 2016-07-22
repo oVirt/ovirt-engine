@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.servers;
 
 import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,9 +25,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.v3.V3Server;
@@ -71,9 +74,22 @@ public class V3VmsServer extends V3Server<VmsResource> {
     }
 
     @GET
-    public V3VMs list() {
+    public V3VMs list(@Context HttpHeaders headers, @Context UriInfo ui) {
+        // Transform the data:
         V3VMs vms = adaptList(getDelegate()::list);
+
+        // Add the link to the disks collection:
         vms.getVMs().forEach(V3VmHelper::addDisksLink);
+
+        // Add the requested inline details:
+        Set<String> details = DetailHelper.getDetails(headers, ui);
+        if (details != null && !details.isEmpty()) {
+            vms.getVMs().forEach(vm -> {
+                V3VmServer server = getVmResource(vm.getId());
+                V3VmHelper.addInlineDetails(vm, server, details);
+            });
+        }
+
         return vms;
     }
 
