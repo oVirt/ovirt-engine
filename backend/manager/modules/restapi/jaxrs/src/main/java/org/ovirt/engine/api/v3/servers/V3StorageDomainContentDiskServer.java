@@ -17,6 +17,8 @@ limitations under the License.
 package org.ovirt.engine.api.v3.servers;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.resource.StorageDomainContentDiskResource;
@@ -32,5 +34,10 @@ public class V3StorageDomainContentDiskServer extends V3Server<StorageDomainCont
     @GET
     public V3Disk get() {
         return adaptGet(getDelegate()::get);
+    }
+
+    @Path("creation_status/{oid}")
+    public V3CreationServer getCreationResource(@PathParam("oid") String oid) {
+        return new V3CreationServer(getDelegate().getCreationResource(oid));
     }
 }

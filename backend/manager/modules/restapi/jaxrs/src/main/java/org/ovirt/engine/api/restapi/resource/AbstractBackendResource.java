@@ -255,7 +255,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     protected R linkSubResource(R model, String subResource, String oid) {
         String path = LinkHelper.getPath(model);
         if (path != null) {
-            String href = String.join("/", path, oid, subResource);
+            String href = String.join("/", path, subResource, oid);
             addOrUpdateLink(model, subResource, href);
         }
         return model;

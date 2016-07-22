@@ -74,4 +74,9 @@ public class V3SnapshotServer extends V3Server<SnapshotResource> {
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
+
+    @Path("creation_status/{oid}")
+    public V3CreationServer getCreationResource(@PathParam("oid") String oid) {
+        return new V3CreationServer(getDelegate().getCreationResource(oid));
+    }
 }
