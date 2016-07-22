@@ -819,6 +819,9 @@ select fn_db_update_default_config_value('vdsConnectionTimeout','2','20','genera
 -- Increase number of attempts during protocol detection
 select fn_db_update_default_config_value('ProtocolFallbackRetries','3','25','general',false);
 
+-- Lower default interval of DWH heartbeat from 30 to 15 seconds
+select fn_db_update_default_config_value('DwhHeartBeatInterval', '30', '15', 'general', false);
+
 ------------------------------------------------------------------------------------
 --                  SCALE
 ------------------------------------------------------------------------------------
