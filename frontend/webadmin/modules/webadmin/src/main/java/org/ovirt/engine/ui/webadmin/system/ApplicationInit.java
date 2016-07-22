@@ -2,11 +2,12 @@ package org.ovirt.engine.ui.webadmin.system;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
+import org.ovirt.engine.ui.common.logging.ApplicationLogManager;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -41,15 +42,16 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             EventBus eventBus,
             Provider<LoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            LocalStorageLogHandler localStorageLogHandler,
             Frontend frontend,
+            ApplicationLogManager applicationLogManager,
+            AlertManager alertManager,
             PlaceManager placeManager,
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
             Provider<CommonModel> commonModelProvider) {
-        super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager,
-                localStorageLogHandler, frontend, currentUserRole);
+        super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user,
+                eventBus, loginModelProvider, lockInteractionManager, frontend, currentUserRole,
+                applicationLogManager, alertManager);
         this.placeManager = placeManager;
         this.dynamicMessages = dynamicMessages;
         this.commonModelProvider = commonModelProvider;
