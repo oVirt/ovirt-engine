@@ -19,9 +19,6 @@ public class WelcomeContextListener implements ServletContextListener {
             String engineUri = EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_URI);
             String authSequence = EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_AUTH_SEQUENCE_welcome");
             event.getServletContext().setAttribute("engine_url", engineUri);
-            event.getServletContext().setAttribute("sso_credential_change_url",
-                    new URLBuilder(EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_SSO_AUTH_URL),
-                            WelcomeUtils.CREDENTIALS_CHANGE_FORM_URI).build());
             event.getServletContext().setAttribute("sso_logout_url",
                     new URLBuilder(engineUri, WelcomeUtils.LOGOUT_URI).build());
             event.getServletContext().setAttribute("sso_login_url", WelcomeUtils.getLoginUrl(

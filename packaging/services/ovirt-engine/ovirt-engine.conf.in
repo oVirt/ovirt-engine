@@ -283,8 +283,11 @@ ENGINE_SSO_CLIENT_SECRET=
 # Enable restapi nego using direct access.
 ENGINE_RESTAPI_NEGO=false
 
+# SSO URI to use
+ENGINE_SSO_SERVICE_URI="${ENGINE_URI}/sso"
+
 # SSO URL visible for user agent.
-ENGINE_SSO_AUTH_URL="https://${ENGINE_FQDN}${ENGINE_URI}/sso"
+ENGINE_SSO_AUTH_URL="https://${ENGINE_FQDN}${ENGINE_SSO_SERVICE_URI}"
 
 # SSO service URL for direct communications.
 ENGINE_SSO_SERVICE_URL="${ENGINE_SSO_AUTH_URL}"
@@ -306,6 +309,12 @@ ENGINE_SSO_AUTH_SEQUENCE_userportal=~
 
 # Welcome auth sequence
 ENGINE_SSO_AUTH_SEQUENCE_welcome=~
+
+# SSO service is installed on engine host. This flag can be used to specify if the SSO service is installed on the
+# same host as the engine or installed on a different host. If set to true the URL and port used to access engine is
+# used to redirect to the login page. If set to false the value set in ENGINE_SSO_AUTH_URL is used to redirect user to
+# login page.
+ENGINE_SSO_INSTALLED_ON_ENGINE_HOST=true
 
 #
 # SSO Configuration

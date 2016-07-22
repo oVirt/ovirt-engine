@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,6 +98,11 @@ public class WelcomeServletTest {
             @Override
             public Map<String, Object> isSsoWebappDeployed() {
                 return Collections.emptyMap();
+            }
+
+            @Override
+            public String getCredentialsChangeUrl(HttpServletRequest request) throws MalformedURLException {
+                return "http://localhost:8080/ovirt-engine/sso/credentials-change.html";
             }
         };
         testServlet.setBackend(mockBackend);

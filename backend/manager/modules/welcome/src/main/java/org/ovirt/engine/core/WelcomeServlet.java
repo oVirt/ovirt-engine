@@ -1,6 +1,7 @@
 package org.ovirt.engine.core;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Locale;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.SsoUtils;
+import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 import org.ovirt.engine.core.utils.servlet.UnsupportedLocaleHelper;
+import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,6 +145,7 @@ public class WelcomeServlet extends HttpServlet {
                 String oVirtVersion = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
                         new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
                                 ConfigCommon.defaultConfigurationVersion)).getReturnValue();
+                request.setAttribute("sso_credential_change_url", getCredentialsChangeUrl(request));
                 request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");
                 request.setAttribute(SECTIONS, brandingManager
                         .getWelcomeSections((Locale) request.getAttribute(LocaleFilter.LOCALE)));
@@ -173,6 +177,11 @@ public class WelcomeServlet extends HttpServlet {
         } finally {
             request.getSession(true).removeAttribute(WelcomeUtils.AUTH_CODE);
         }
+    }
+
+    public String getCredentialsChangeUrl(HttpServletRequest request) throws MalformedURLException {
+        return new URLBuilder(FiltersHelper.getEngineSsoUrl(request),
+                WelcomeUtils.CREDENTIALS_CHANGE_FORM_URI).build();
     }
 
     public String getCurrentSsoSessionUser(HttpServletRequest request, Map<String, Object> userInfoMap) {

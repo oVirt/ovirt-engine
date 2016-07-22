@@ -35,6 +35,7 @@ public class SsoSession implements Serializable {
     private ExtMap principalRecord;
     private String loginMessage;
     private String changePasswdMessage;
+    private String engineUrl;
     private boolean reauthenticate;
     private Credentials tempCredentials;
     private Credentials changePasswdCredentials;
@@ -243,6 +244,14 @@ public class SsoSession implements Serializable {
 
     public void setAuthStack(Stack<InteractiveAuth> authStack) {
         this.authStack = authStack;
+    }
+
+    public String getEngineUrl() {
+        return engineUrl;
+    }
+
+    public void setEngineUrl(String engineUrl) {
+        this.engineUrl = engineUrl;
     }
 
     public void cleanup() {

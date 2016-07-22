@@ -111,6 +111,25 @@ public class FiltersHelper {
         return new Base64(0, new byte[0], true).encodeToString(s);
     }
 
+    public static String getEngineUrl(HttpServletRequest request) {
+        return String.format("%s://%s:%s%s",
+                request.getScheme(),
+                FiltersHelper.getRedirectUriServerName(request.getServerName()),
+                request.getServerPort(),
+                EngineLocalConfig.getInstance().getProperty("ENGINE_URI"));
+    }
+
+    public static String getEngineSsoUrl(HttpServletRequest request) {
+        if (EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_INSTALLED_ON_ENGINE_HOST")) {
+            return String.format("%s://%s:%s%s",
+                    request.getScheme(),
+                    FiltersHelper.getRedirectUriServerName(request.getServerName()),
+                    request.getServerPort(),
+                    EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_SERVICE_URI"));
+        }
+        return EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_AUTH_URL");
+    }
+
     public static String getRedirectUriServerName(String name) {
         return InetAddressUtils.isIPv6Address(name) ? String.format("[%s]", name) : name;
     }

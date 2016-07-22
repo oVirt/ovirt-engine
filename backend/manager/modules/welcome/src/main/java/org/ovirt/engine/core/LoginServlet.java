@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.SsoUtils;
+import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 
@@ -27,11 +28,12 @@ public class LoginServlet extends HttpServlet {
                     WelcomeUtils.ERROR_PAGE_URI);
         } else {
             response.sendRedirect(
-                    new URLBuilder(EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_SSO_AUTH_URL),
+                    new URLBuilder(FiltersHelper.getEngineSsoUrl(request),
                             WelcomeUtils.OAUTH_AUTHORIZE_URI)
                     .addParameter(WelcomeUtils.HTTP_PARAM_CLIENT_ID,
                             EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_SSO_CLIENT_ID))
                     .addParameter(WelcomeUtils.HTTP_PARAM_RESPONSE_TYPE, WelcomeUtils.CODE)
+                    .addParameter(WelcomeUtils.HTTP_PARAM_ENGINE_URL, FiltersHelper.getEngineUrl(request))
                     .addParameter(WelcomeUtils.HTTP_PARAM_REDIRECT_URI, WelcomeUtils.getOauth2CallbackUrl(request))
                     .addParameter(WelcomeUtils.HTTP_PARAM_SCOPE, request.getParameter(WelcomeUtils.SCOPE))
                     .addParameter(WelcomeUtils.HTTP_PARAM_STATE, state)

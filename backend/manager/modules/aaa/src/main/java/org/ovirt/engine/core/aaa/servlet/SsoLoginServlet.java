@@ -45,9 +45,10 @@ public class SsoLoginServlet extends HttpServlet {
                 request.getServerPort(),
                 postActionUrl);
 
-        response.sendRedirect(new URLBuilder(EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_AUTH_URL"), "/oauth/authorize")
+        response.sendRedirect(new URLBuilder(FiltersHelper.getEngineSsoUrl(request), "/oauth/authorize")
                 .addParameter("client_id", EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_CLIENT_ID"))
                 .addParameter("response_type", "code")
+                .addParameter("engine_url", FiltersHelper.getEngineUrl(request))
                 .addParameter("redirect_uri", redirectUri)
                 .addParameter("scope", scope)
                 .addParameter("state", state).build());
