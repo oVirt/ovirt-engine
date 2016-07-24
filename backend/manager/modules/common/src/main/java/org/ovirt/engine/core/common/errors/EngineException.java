@@ -30,6 +30,10 @@ public class EngineException extends RuntimeException {
     public EngineException(EngineError errCode, String errorStr, VDSReturnValue vdsReturnValue) {
         this(errCode, errorStr);
         setVdsReturnValue(vdsReturnValue);
+        final RuntimeException causedBy = vdsReturnValue.getExceptionObject();
+        if (causedBy != null) {
+            initCause(causedBy);
+        }
     }
 
     private VDSError privateVdsError;
