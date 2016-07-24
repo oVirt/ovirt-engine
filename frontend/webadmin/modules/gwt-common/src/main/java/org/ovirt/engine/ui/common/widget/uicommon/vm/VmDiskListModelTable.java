@@ -80,7 +80,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             @Override
             public SafeHtml getTooltip() {
                 SafeHtml tooltip = null;
-                if (getModel().isHotPlugAvailable() && !getModel().getIsDiskHotPlugSupported()) {
+                if (getModel().isHotPlugAvailable() && !getModel().isPlugAvailableByDisks(true)) {
                     tooltip = SafeHtmlUtils.fromString(constants.diskHotPlugNotSupported());
                 }
                 return tooltip;
@@ -98,7 +98,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             @Override
             public SafeHtml getTooltip() {
                 SafeHtml tooltip = null;
-                if (getModel().isHotPlugAvailable() && !getModel().getIsDiskHotPlugSupported()) {
+                if (getModel().isHotPlugAvailable() && !getModel().isPlugAvailableByDisks(false)) {
                     tooltip = SafeHtmlUtils.fromString(constants.diskHotPlugNotSupported());
                 }
                 return tooltip;
