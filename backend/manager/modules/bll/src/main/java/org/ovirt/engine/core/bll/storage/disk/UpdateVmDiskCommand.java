@@ -571,7 +571,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     private VdcActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
         VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(
-                new DiskVmElement(newCinderDisk.getId(), getVmId()), newCinderDisk);
+                DiskVmElement.copyOf(getOldDiskVmElement()), newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
