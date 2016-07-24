@@ -147,19 +147,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         privateScanAlignmentCommand = value;
     }
 
-    private boolean privateIsDiskHotPlugSupported;
-
-    public boolean getIsDiskHotPlugSupported() {
-        return privateIsDiskHotPlugSupported;
-    }
-
-    private void setIsDiskHotPlugSupported(boolean value) {
-        if (privateIsDiskHotPlugSupported != value) {
-            privateIsDiskHotPlugSupported = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsDiskHotPlugSupported")); //$NON-NLS-1$
-        }
-    }
-
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
                 VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
@@ -191,7 +178,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         if (getEntity() != null) {
             updateDataCenterVersion();
             getSearchCommand().execute();
-            updateIsDiskHotPlugAvailable();
         }
 
         updateActionAvailability();
@@ -525,10 +511,10 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     private boolean isPlugCommandAvailable(boolean plug) {
         return getSelectedItems() != null && getSelectedItems().size() > 0
                 && isPlugAvailableByDisks(plug) &&
-                (isVmDown() || (isHotPlugAvailable() && getIsDiskHotPlugSupported()));
+                (isVmDown() || isHotPlugAvailable());
     }
 
-    private boolean isPlugAvailableByDisks(boolean plug) {
+    public boolean isPlugAvailableByDisks(boolean plug) {
         ArrayList<Disk> disks =
                 getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
@@ -668,17 +654,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();
-        }
-    }
-
-    protected void updateIsDiskHotPlugAvailable() {
-        VM vm = getEntity();
-        Version compatibilityVersion = vm.getCompatibilityVersion();
-        if (compatibilityVersion == null) {
-            setIsDiskHotPlugSupported(false);
-        } else {
-            setIsDiskHotPlugSupported(!AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(
-                    getEntity().getOs(), compatibilityVersion).isEmpty());
         }
     }
 
