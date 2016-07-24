@@ -1,9 +1,5 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.Hosts;
-import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
@@ -16,21 +12,6 @@ public class AffinityLabelMapper {
         entity.setId(model.getId().toString());
         entity.setName(model.getName());
         entity.setReadOnly(model.isReadOnly());
-
-        entity.setVms(new Vms());
-        entity.setHosts(new Hosts());
-
-        model.getVms().stream().forEach(vm -> {
-            Vm restVm = new Vm();
-            restVm.setId(vm.toString());
-            entity.getVms().getVms().add(restVm);
-        });
-
-        model.getHosts().stream().forEach(host -> {
-            Host restHost = new Host();
-            restHost.setId(host.toString());
-            entity.getHosts().getHosts().add(restHost);
-        });
 
         return entity;
     }
@@ -52,11 +33,11 @@ public class AffinityLabelMapper {
         }
 
         if (model.isSetVms() && model.getVms().isSetVms()) {
-            model.getVms().getVms().stream().forEach(v -> entity.vm(GuidUtils.asGuid(v.getId())));
+            model.getVms().getVms().forEach(vm -> entity.vm(GuidUtils.asGuid(vm.getId())));
         }
 
         if (model.isSetHosts() && model.getHosts().isSetHosts()) {
-            model.getHosts().getHosts().stream().forEach(v -> entity.host(GuidUtils.asGuid(v.getId())));
+            model.getHosts().getHosts().forEach(host -> entity.host(GuidUtils.asGuid(host.getId())));
         }
 
         return entity.build();

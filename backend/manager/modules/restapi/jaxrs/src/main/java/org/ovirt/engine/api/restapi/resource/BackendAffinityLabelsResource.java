@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.AffinityLabel;
@@ -41,7 +40,7 @@ public class BackendAffinityLabelsResource extends AbstractBackendCollectionReso
     }
 
     @Override
-    public AffinityLabelResource getLabelResource(@PathParam("id") String id) {
+    public AffinityLabelResource getLabelResource(String id) {
         return inject(new BackendAffinityLabelResource(id));
     }
 
