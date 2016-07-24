@@ -1,51 +1,69 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.AffinityLabelVmResource;
 import org.ovirt.engine.api.resource.AffinityLabelVmsResource;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.LabelActionParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Label;
+import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.VM;
 
-public class BackendAffinityLabelVmsResource extends AbstractBackendAffinityLabelledEntitiesResource<Vm, Vms, VM>
-        implements AffinityLabelVmsResource {
-    public BackendAffinityLabelVmsResource(String parentId) {
-        super(parentId, Vm.class, VM.class, VM::new);
+public class BackendAffinityLabelVmsResource
+    extends AbstractBackendCollectionResource<Vm, VM>
+    implements AffinityLabelVmsResource {
+
+    private String labelId;
+
+    public BackendAffinityLabelVmsResource(String labelId) {
+        super(Vm.class, VM.class);
+        this.labelId = labelId;
     }
 
     @Override
-    public Response add(Vm entity) {
-        return super.add(entity);
-    }
+    public Response add(Vm model) {
+        validateParameters(model, "id");
 
-    @Override
-    protected Vms mapCollection(List<VM> entities) {
-        Vms vms = new Vms();
-        for (VM vm: entities) {
-            Vm vmModel = new Vm();
-            vmModel.setId(vm.getId().toString());
-            vms.getVms().add(addLinks(vmModel));
+        Label label = BackendAffinityLabelHelper.getLabel(this, labelId);
+
+        VM entity = new VM();
+        entity.setId(GuidUtils.asGuid(model.getId()));
+
+        Label updatedLabel = new LabelBuilder(label)
+            .entity(entity)
+            .build();
+
+        // The command used to add the virtual machine to the label returns the label, but we need to return the virtual
+        // machine, so we ignore the result and return a link to the added virtual machine:
+        LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
+        try {
+            doAction(VdcActionType.UpdateLabel, updateParams);
         }
-        return vms;
+        catch (BackendFailureException exception) {
+            handleError(exception, false);
+        }
+        Vm result = BackendAffinityLabelHelper.makeVmLink(entity.getId());
+        return Response.ok(Response.Status.CREATED).entity(result).build();
     }
 
     @Override
     public Vms list() {
-        Label label = getLabel();
-        return mapCollection(label.getVms().stream().map(g -> {
-            VM vm = new VM();
-            vm.setId(g);
-            return vm;
-        }).collect(Collectors.toList()));
+        Vms vms = new Vms();
+        List<Vm> list = vms.getVms();
+        Label label = BackendAffinityLabelHelper.getLabel(this, labelId);
+        label.getVms().stream()
+            .map(BackendAffinityLabelHelper::makeVmLink)
+            .forEach(list::add);
+        return vms;
     }
 
     @Override
-    public AffinityLabelVmResource getVmResource(@PathParam("id") String id) {
-        return inject(new BackendAffinityLabelVmResource(parentId, id));
+    public AffinityLabelVmResource getVmResource(String id) {
+        return inject(new BackendAffinityLabelVmResource(labelId, id));
     }
 }

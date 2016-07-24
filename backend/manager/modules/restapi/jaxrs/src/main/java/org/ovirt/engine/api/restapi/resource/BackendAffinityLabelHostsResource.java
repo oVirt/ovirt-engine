@@ -1,51 +1,69 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.resource.AffinityLabelHostResource;
 import org.ovirt.engine.api.resource.AffinityLabelHostsResource;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.LabelActionParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Label;
+import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.VDS;
 
-public class BackendAffinityLabelHostsResource extends AbstractBackendAffinityLabelledEntitiesResource<Host, Hosts, VDS>
-        implements AffinityLabelHostsResource {
-    public BackendAffinityLabelHostsResource(String parentId) {
-        super(parentId, Host.class, VDS.class, VDS::new);
+public class BackendAffinityLabelHostsResource
+    extends AbstractBackendCollectionResource<Host, VDS>
+    implements AffinityLabelHostsResource {
+
+    private String labelId;
+
+    public BackendAffinityLabelHostsResource(String labelId) {
+        super(Host.class, VDS.class);
+        this.labelId = labelId;
     }
 
     @Override
-    public Response add(Host entity) {
-        return super.add(entity);
-    }
+    public Response add(Host model) {
+        validateParameters(model, "id");
 
-    @Override
-    protected Hosts mapCollection(List<VDS> entities) {
-        Hosts hosts = new Hosts();
-        for (VDS host: entities) {
-            Host hostModel = new Host();
-            hostModel.setId(host.getId().toString());
-            hosts.getHosts().add(addLinks(hostModel));
+        Label label = BackendAffinityLabelHelper.getLabel(this, labelId);
+
+        VDS entity = new VDS();
+        entity.setId(GuidUtils.asGuid(model.getId()));
+
+        Label updatedLabel = new LabelBuilder(label)
+            .entity(entity)
+            .build();
+
+        // The command used to add the host to the label returns the label, but we need to return the virtual machine,
+        // so we ignore the result and return a link to the added host:
+        LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
+        try {
+            doAction(VdcActionType.UpdateLabel, updateParams);
         }
-        return hosts;
+        catch (BackendFailureException exception) {
+            handleError(exception, false);
+        }
+        Host result = BackendAffinityLabelHelper.makeHostLink(entity.getId());
+        return Response.ok(Response.Status.CREATED).entity(result).build();
     }
 
     @Override
     public Hosts list() {
-        Label label = getLabel();
-        return mapCollection(label.getHosts().stream().map(g -> {
-            VDS host = new VDS();
-            host.setId(g);
-            return host;
-        }).collect(Collectors.toList()));
+        Hosts hosts = new Hosts();
+        List<Host> list = hosts.getHosts();
+        Label label = BackendAffinityLabelHelper.getLabel(this, labelId);
+        label.getHosts().stream()
+            .map(BackendAffinityLabelHelper::makeHostLink)
+            .forEach(list::add);
+        return hosts;
     }
 
     @Override
-    public AffinityLabelHostResource getHostResource(@PathParam("id") String id) {
-        return inject(new BackendAffinityLabelHostResource(parentId, id));
+    public AffinityLabelHostResource getHostResource(String id) {
+        return inject(new BackendAffinityLabelHostResource(labelId, id));
     }
 }
