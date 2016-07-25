@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -37,21 +37,21 @@ public class ImportValidatorTest {
     public void sufficientDiskSpace() {
         ImportValidator validator = setupDiskSpaceTest(createParameters());
         assertTrue(validator.validateSpaceRequirements(mockCreateDiskDummiesForSpaceValidations()).isValid());
-        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyListOf(DiskImage.class));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyListOf(DiskImage.class));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
     }
 
     @Test
     public void insufficientDiskSpaceWithCollapse() {
         ImportValidator validator = setupDiskSpaceTest(createParameters());
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))
-            .when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+            .when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyListOf(DiskImage.class));
         assertThat(validator.validateSpaceRequirements(Collections.emptyList()),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyListOf(DiskImage.class));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyListOf(DiskImage.class));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
     }
 
     @Test
@@ -60,12 +60,12 @@ public class ImportValidatorTest {
         ImportValidator validator = setupDiskSpaceTest(parameters);
         parameters.setCopyCollapse(false);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+                when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyListOf(DiskImage.class));
         assertThat(validator.validateSpaceRequirements(Collections.emptyList()),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
-        verify(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyListOf(DiskImage.class));
+        verify(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyListOf(DiskImage.class));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
     }
 
     @Test
@@ -120,9 +120,9 @@ public class ImportValidatorTest {
             image.setStorageIds(sdIds);
         }
 
-        doReturn(multipleSdValidator).when(validator).createMultipleStorageDomainsValidator(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        doReturn(multipleSdValidator).when(validator).createMultipleStorageDomainsValidator(anyListOf(DiskImage.class));
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyListOf(DiskImage.class));
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyListOf(DiskImage.class));
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
         return validator;
