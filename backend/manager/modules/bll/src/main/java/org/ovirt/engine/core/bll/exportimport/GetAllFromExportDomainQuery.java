@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExportDomainQueryParameters>
@@ -37,7 +36,7 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
     }
 
     private StorageDomain getStorage() {
-        return DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+        return getDbFacade().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
     }
