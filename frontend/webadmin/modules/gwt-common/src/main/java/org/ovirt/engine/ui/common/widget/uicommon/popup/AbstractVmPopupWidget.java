@@ -1690,9 +1690,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private void addDiskAllocation(UnitVmModel model) {
-        if (!model.getIsDisksAvailable()) {
-            return;
-        }
         disksAllocationView.edit(model.getDisksAllocationModel());
         model.getDisksAllocationModel().setDisks(model.getDisks());
     }
