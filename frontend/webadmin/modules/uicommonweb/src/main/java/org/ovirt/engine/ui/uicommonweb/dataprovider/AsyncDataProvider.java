@@ -1507,7 +1507,7 @@ public class AsyncDataProvider {
         }
     }
 
-    public VolumeType getTemplateVolumeType(VolumeFormat volumeFormat, StorageType storageType) {
+    public VolumeType getVolumeType(VolumeFormat volumeFormat, StorageType storageType) {
         switch (volumeFormat) {
         case COW:
             return VolumeType.Sparse;
