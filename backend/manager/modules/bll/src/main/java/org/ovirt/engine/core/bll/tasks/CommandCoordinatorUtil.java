@@ -447,4 +447,20 @@ public class CommandCoordinatorUtil {
     public static void subscribe(String eventKey, CommandEntity commandEntity) {
         coco.subscribe(eventKey, commandEntity);
     }
+
+    /**
+     * Finds all children commands for the given commandId.
+     *
+     * @param commandId
+     *            the parent command id
+     * @return the list of the children command entities
+     */
+    public static List<CommandEntity> findChildCommands(Guid commandId) {
+        final List<Guid> childCommandIds = getChildCommandIds(commandId);
+        final List<CommandEntity> childCommands = childCommandIds
+                .stream()
+                .map(CommandCoordinatorUtil::getCommandEntity)
+                .collect(Collectors.toList());
+        return childCommands;
+    }
 }
