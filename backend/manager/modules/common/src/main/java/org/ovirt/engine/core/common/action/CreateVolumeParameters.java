@@ -22,7 +22,6 @@ public class CreateVolumeParameters extends ImagesActionsParametersBase {
                                   Guid srcImageGroupId, Guid srcImageId,
                                   long imageSizeInBytes, Long initialSize, VolumeFormat volumeFormat, VolumeType volumeType,
                                   String description) {
-        super(srcImageId);
         this.imageSizeInBytes = imageSizeInBytes;
         this.newImageId = newImageId;
         this.srcImageGroupId = srcImageGroupId;
@@ -34,6 +33,7 @@ public class CreateVolumeParameters extends ImagesActionsParametersBase {
         this.storageDomainId = storageDomainId;
         this.imageSizeInBytes = imageSizeInBytes;
         this.initialSize = initialSize;
+        this.srcImageId = srcImageId;
     }
 
 
