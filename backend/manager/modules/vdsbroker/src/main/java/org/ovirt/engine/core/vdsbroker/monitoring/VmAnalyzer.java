@@ -442,12 +442,12 @@ public class VmAnalyzer {
     }
 
     private void proceedBalloonCheck() {
-        if (!vdsManager.getCopyVds().isBalloonEnabled()) {
+        VmBalloonInfo balloonInfo = vdsmVm.getVmBalloonInfo();
+        if (balloonInfo == null) {
             return;
         }
 
-        VmBalloonInfo balloonInfo = vdsmVm.getVmBalloonInfo();
-        if (balloonInfo == null) {
+        if (!vdsManager.getCopyVds().isBalloonEnabled()) {
             return;
         }
 
