@@ -166,7 +166,6 @@ public class DisksAllocationModel extends EntityModel {
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainNameAvailable;
     private boolean isWarningAvailable;
-    private boolean isSourceAvailable = true;
     private boolean isTargetAvailable = true;
 
     public DisksAllocationModel() {
@@ -457,11 +456,7 @@ public class DisksAllocationModel extends EntityModel {
     }
 
     public boolean isSourceAvailable() {
-        return isSourceAvailable;
-    }
-
-    public void setSourceAvailable(boolean sourceAvailable) {
-        isSourceAvailable = sourceAvailable;
+        return isSourceStorageDomainAvailable || isSourceStorageDomainNameAvailable;
     }
 
     public boolean isTargetAvailable() {

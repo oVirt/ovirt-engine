@@ -112,7 +112,6 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         }
 
         final RegisterDiskModel registerDiskModel = new RegisterDiskModel();
-        registerDiskModel.setSourceAvailable(false);
         registerDiskModel.setTargetAvailable(false);
         setWindow(registerDiskModel);
 
