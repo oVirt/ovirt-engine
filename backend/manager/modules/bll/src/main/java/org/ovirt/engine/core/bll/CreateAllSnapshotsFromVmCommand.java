@@ -321,22 +321,25 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getDisksList());
-        CreateAllCinderSnapshotsParameters params = new CreateAllCinderSnapshotsParameters(
-                cinderDisks, getParameters().getDescription(), getParameters().getSnapshotType(), newActiveSnapshotId);
+        if (!cinderDisks.isEmpty()) {
+            CreateAllCinderSnapshotsParameters params = new CreateAllCinderSnapshotsParameters(
+                    cinderDisks, getParameters().getDescription(), getParameters().getSnapshotType(), newActiveSnapshotId);
 
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.CreateAllCinderSnapshots,
-                params,
-                cloneContext().withoutCompensationContext().withoutLock());
-        try {
-            VdcReturnValueBase vdcReturnValueBase = future.get();
-            if (!vdcReturnValueBase.getSucceeded()) {
-                log.error("Error creating snapshots of Cinder disks on VM '{}'", getVm().getName());
+
+            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                    VdcActionType.CreateAllCinderSnapshots,
+                    params,
+                    cloneContext().withoutCompensationContext().withoutLock());
+            try {
+                VdcReturnValueBase vdcReturnValueBase = future.get();
+                if (!vdcReturnValueBase.getSucceeded()) {
+                    log.error("Error creating snapshots of Cinder disks on VM '{}'", getVm().getName());
+                    throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Error creating snapshots of Cinder disks on VM '{}': {}", getVm().getName(), e.getMessage());
                 throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
             }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Error creating snapshots of Cinder disks on VM '{}': {}", getVm().getName(), e.getMessage());
-            throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
         }
     }
 
