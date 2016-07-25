@@ -284,15 +284,23 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected void init() {
         super.init();
         T parameters = getParameters();
-        // before the execute phase, parameters.getVmId().equals(parameters.getVm().getId() == true
-        // afterwards if will be false if parameters.isImportAsNewEntity() == true, and there is no
-        // better way to check it (can't use the action-state since it will always be EXECUTE
-        // in the postConstruct phase.
-        if (parameters.isImportAsNewEntity() && parameters.getVmId().equals(parameters.getVm().getId())) {
-            parameters.getVm().setId(Guid.newGuid());
-        }
+
         setClusterId(parameters.getClusterId());
-        setVm(parameters.getVm());
+        final Guid dcId = getDcId();
+        setStoragePoolId(dcId);
+
+        final VM vm = parameters.getVm();
+        if (vm != null) {
+            // before the execute phase, parameters.getVmId().equals(parameters.getVm().getId() == true
+            // afterwards if will be false if parameters.isImportAsNewEntity() == true, and there is no
+            // better way to check it (can't use the action-state since it will always be EXECUTE
+            // in the postConstruct phase.
+            if (parameters.isImportAsNewEntity() && parameters.getVmId().equals(vm.getId())) {
+                vm.setId(Guid.newGuid());
+            }
+            vm.setStoragePoolId(dcId);
+            setVm(vm);
+        }
         initEffectiveCompatibilityVersion();
     }
 
@@ -477,6 +485,15 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
         getVmStaticDao().save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());
+    }
+
+    protected Guid getDcId() {
+        final Guid dcId = getParameters().getStoragePoolId();
+        if (Guid.isNullOrEmpty(dcId)) {
+            return getCluster().getStoragePoolId();
+        } else {
+            return dcId;
+        }
     }
 
     private void logImportEvents() {
