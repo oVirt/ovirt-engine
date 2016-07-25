@@ -37,7 +37,8 @@
         .messagePanel {
             color: #CD2127;
             text-align: center;
-            padding: 10px;
+            padding: 0;
+            margin: 0 !important;
         }
 
         .progressPanel {
@@ -84,7 +85,7 @@
 
     </ui:style>
 
-    <d:SimpleDialogPanel width="790px" height="640px">
+    <d:SimpleDialogPanel width="700px" height="480px">
         <d:content>
             <g:FlowPanel>
                 <!-- Should be re-enabled once uploading from URI is supported -->
@@ -93,7 +94,7 @@
                     <w:RadioButtonsHorizontalPanel ui:field="imageSourcePanel" name="imageSourcePanel" addStyleNames="{style.imageSourcePanel}" />
                 </g:HorizontalPanel>
 
-                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="180px">
+                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="100px">
                     <g:HorizontalPanel ui:field="imageFileUploadPanel">
                         <g:Label ui:field="imageFileUploadLabel" addStyleNames="{style.imageFileUploadLabel}" />
                         <g:FileUpload ui:field="imageFileUpload" addStyleNames="{style.imageFileUploadInput}" />
