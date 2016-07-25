@@ -45,7 +45,7 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
     private T getAllFromStorage(StorageDomain storage) {
         return buildFromOVFs(isValidExportDomain(storage) ?
                 (List<String>) executeVerb(storage.getStorageStaticData()).getReturnValue()
-                : Collections.<String>emptyList());
+                : Collections.emptyList());
     }
 
     private boolean isValidExportDomain(StorageDomain storage) {
