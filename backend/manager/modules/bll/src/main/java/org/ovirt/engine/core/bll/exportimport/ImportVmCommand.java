@@ -104,7 +104,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected void init() {
         super.init();
         setVmId(getParameters().getContainerId());
-        setStoragePoolId(getParameters().getStoragePoolId());
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         if (getParameters().getVm() != null && getVm().getDiskMap() != null) {
             imageList = new ArrayList<>();
@@ -169,7 +168,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         getVm().setId(guid);
         setVmId(guid);
         getVm().setName(getParameters().getVm().getName());
-        getVm().setStoragePoolId(getParameters().getStoragePoolId());
+        getVm().setStoragePoolId(getStoragePoolId());
         getParameters().setVm(getVm());
         for (VmNic iface : getVm().getInterfaces()) {
             iface.setId(Guid.newGuid());
@@ -304,6 +303,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         // preserve the given name
         if (getVmName() != null) {
             vm.setName(getVmName());
+        }
+        if (Guid.isNullOrEmpty(vm.getStoragePoolId())) {
+            vm.setStoragePoolId(getStoragePoolId());
         }
         setVm(vm);
         initGraphicsData();
