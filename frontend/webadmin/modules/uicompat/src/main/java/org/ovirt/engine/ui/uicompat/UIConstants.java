@@ -2001,6 +2001,8 @@ public interface UIConstants extends Constants {
 
     String cannotClusterVersionChangeWithActiveVm();
 
+    String openingNewConsoleWindowFailed();
+
     String emptyImagePath();
 }
 

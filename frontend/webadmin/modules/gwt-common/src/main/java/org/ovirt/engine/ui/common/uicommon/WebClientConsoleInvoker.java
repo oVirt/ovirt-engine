@@ -7,13 +7,17 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 
 public class WebClientConsoleInvoker {
 
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final String clientPage;
     private final WebsocketProxyConfig proxyConfig;
     private final String password;
@@ -44,25 +48,36 @@ public class WebClientConsoleInvoker {
                 }));
     }
 
+    private void openingWindowFailed() {
+        final ErrorPopupManager popupManager =
+                (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
+        popupManager.show(constants.openingNewConsoleWindowFailed());
+    }
+
     private native void invokeClientNative(String connectionTicket)/*-{
-       if (!this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::isClientBrowserSupported()()) {
-           alert("This feature is not supported in your browser.");
-       }
+        if (!this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::isClientBrowserSupported()()) {
+            alert("This feature is not supported in your browser.");
+        }
 
-       var that = this;
-       var clientUrl = this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::createClientUrl()();
-       var win = $wnd.open(clientUrl, "_blank");
+        var that = this;
+        var clientUrl = this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::createClientUrl()();
+        var win = $wnd.open(clientUrl, "_blank");
 
-       win.addEventListener('load', function() {
-           var dataToSend = {
-             connectionTicket: connectionTicket,
-             password: that.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::password
-           };
+        if (win === null) {
+            this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::openingWindowFailed()();
+            return;
+        }
 
-           win.postMessage(dataToSend, clientUrl);
-       }, false);
-       win.focus();
-       }-*/;
+        win.addEventListener('load', function () {
+            var dataToSend = {
+                connectionTicket: connectionTicket,
+                password: that.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::password
+            };
+
+            win.postMessage(dataToSend, clientUrl);
+        }, false);
+        win.focus();
+    }-*/;
 
    /**
      * Creates an urlencoded json object that represent target endpoint.
