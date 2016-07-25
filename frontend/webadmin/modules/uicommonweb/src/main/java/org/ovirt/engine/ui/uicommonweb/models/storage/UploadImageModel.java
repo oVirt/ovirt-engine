@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdates;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -40,8 +38,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ReadOnlyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -386,6 +382,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         setImagePath(new EntityModel<String>());
         setImageUri(new EntityModel<String>());
         setVolumeFormat(new ListModel<VolumeFormat>());
+        getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
 
         setUploadState(UploadState.NEW);
         setProgressStr(""); //$NON-NLS-1$
@@ -397,32 +394,12 @@ public class UploadImageModel extends Model implements ICommandTarget {
         getCommands().add(getOkCommand());
 
         getDiskModel().getStorageDomain().getSelectedItemChangedEvent().addListener(this);
-        getDiskModel().getVolumeType().getSelectedItemChangedEvent().addListener(this);
+        getDiskModel().getVolumeType().setIsAvailable(false);
     }
 
     @Override
     public void initialize() {
         getDiskModel().initialize();
-    }
-
-    @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-        super.eventRaised(ev, sender, args);
-        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
-            if (sender == getDiskModel().getStorageDomain()
-                    || sender == getDiskModel().getVolumeType()) {
-                updateVolumeType();
-            }
-        }
-    }
-
-    private void updateVolumeType() {
-        StorageDomain storageDomain = getDiskModel().getStorageDomain().getSelectedItem();
-        VolumeType volumeType = getDiskModel().getVolumeType().getSelectedItem();
-        if (storageDomain != null) {
-            getVolumeFormat().setItems(new ArrayList<>(Collections.singletonList(
-                    AsyncDataProvider.getInstance().getDiskVolumeFormat(volumeType, storageDomain.getStorageType()))));
-        }
     }
 
     @Override
@@ -451,8 +428,12 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public boolean flush() {
         if (validate()) {
             diskModel.flush();
-            ((DiskImage) getDiskModel().getDisk()).setVolumeFormat(getVolumeFormat().getSelectedItem());
-            ((DiskImage) getDiskModel().getDisk()).setActualSizeInBytes(getImageSize());
+            DiskImage diskImage = (DiskImage) getDiskModel().getDisk();
+            diskImage.setVolumeFormat(getVolumeFormat().getSelectedItem());
+            diskImage.setActualSizeInBytes(getImageSize());
+            diskImage.setVolumeType(AsyncDataProvider.getInstance().getTemplateVolumeType(
+                    getVolumeFormat().getSelectedItem(),
+                    getDiskModel().getStorageDomain().getSelectedItem().getStorageType()));
             return true;
         } else {
             setIsValid(false);
