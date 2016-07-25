@@ -12,7 +12,7 @@
         }
     </ui:style>
 
-    <b:Alert>
+    <b:Alert ui:field="alert">
         <h:Span ui:field="icon" addStyleNames="{PFICON}" />
         <b:Badge ui:field="badge" addStyleNames="{style.badge}">
             <h:Text ui:field="badgeText" />

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.panel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.shared.event.AlertClosedEvent;
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Badge;
 import org.gwtbootstrap3.client.ui.constants.AlertType;
@@ -19,8 +20,10 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Renders a PatternFly alert panel. @see https://www.patternfly.org/widgets/#alerts
@@ -45,6 +48,9 @@ public class AlertPanel extends Composite {
 
     @UiField
     Text badgeText;
+
+    @UiField(provided=true)
+    Alert alert;
 
     private Type type;
     private ColumnSize widgetColumnSize;
@@ -85,6 +91,18 @@ public class AlertPanel extends Composite {
      * Create a new alert panel of type 'info'.
      */
     public AlertPanel() {
+        //Need to override onClosed, this is called from JS code when closing the alert panel. The problem is that
+        //the Alert parent, is the AlertPanel, which doesn't implement HasWidgets. Since AlertPanel is a composite
+        //it is nearly impossible to have it implement HasWidget, and we also want to clean up the AlertPanel anyway
+        //So we override onClosed, and detach the AlertPanel from the DOM to clean it up.
+        alert = new Alert() {
+            @Override
+            protected void onClosed(final Event evt) {
+                TooltipMixin.hideAllTooltips();
+                RootPanel.detachNow(this);
+                fireEvent(new AlertClosedEvent(evt));
+            }
+        };
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         setType(Type.INFO);
         setWidgetColumnSize(ColumnSize.SM_11);
@@ -214,5 +232,4 @@ public class AlertPanel extends Composite {
     public HTMLPanel getMessageAt(int index) {
         return (HTMLPanel) messagePanel.getWidget(index);
     }
-
 }
