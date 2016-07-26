@@ -293,8 +293,7 @@ public class VdsManager {
 
     @OnTimerMethodAnnotation("availableUpdates")
     public void availableUpdates() {
-        if (cachedVds.getStatus() != VDSStatus.Maintenance
-                && cachedVds.getStatus() != VDSStatus.Up
+        if (cachedVds.getStatus() != VDSStatus.Up
                 && cachedVds.getStatus() != VDSStatus.NonOperational) {
             log.warn("Check for available updates is skipped for host '{}' due to unsupported host status '{}' ",
                     cachedVds.getName(),
