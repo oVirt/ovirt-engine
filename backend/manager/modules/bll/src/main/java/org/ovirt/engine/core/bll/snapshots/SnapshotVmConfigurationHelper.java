@@ -18,6 +18,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +119,7 @@ public class SnapshotVmConfigurationHelper {
     }
 
     public SnapshotsManager getSnapshotManager() {
-        return new SnapshotsManager();
+        return Injector.get(SnapshotsManager.class);
     }
 
     protected VmDao getVmDao() {

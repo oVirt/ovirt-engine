@@ -56,6 +56,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Inject
     protected VmStaticDao vmStaticDao;
 
+    @Inject
+    private SnapshotsManager snapshotsManager;
+
     protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
 
@@ -154,7 +157,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmSnapshots() {
-        new SnapshotsManager().removeSnapshots(getVmId());
+        getSnapshotsManager().removeSnapshots(getVmId());
     }
 
     protected void removeVmUsers() {
@@ -394,5 +397,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected VmDeviceUtils getVmDeviceUtils() {
         return vmDeviceUtils;
+    }
+
+    protected SnapshotsManager getSnapshotsManager() {
+        return snapshotsManager;
     }
 }

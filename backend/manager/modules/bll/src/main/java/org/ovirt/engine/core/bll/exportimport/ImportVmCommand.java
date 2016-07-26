@@ -31,7 +31,6 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -103,7 +102,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private List<DiskImage> imageList;
 
-    private final SnapshotsManager snapshotsManager = new SnapshotsManager();
     private MacPool macPool;
 
     @Override
@@ -862,7 +860,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         // snapshot that was taken for VM with different id
         String memoryVolume = activeSnapshot != null && !getParameters().isImportAsNewEntity() ?
                 activeSnapshot.getMemoryVolume() : StringUtils.EMPTY;
-        return snapshotsManager.addActiveSnapshot(
+        return getSnapshotsManager().addActiveSnapshot(
                 snapshotId,
                 getVm(),
                 memoryVolume,
@@ -1040,7 +1038,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     protected void removeVmSnapshots() {
         Guid vmId = getVmId();
-        Set<String> memoryStates = snapshotsManager.removeSnapshots(vmId);
+        Set<String> memoryStates = getSnapshotsManager().removeSnapshots(vmId);
         for (String memoryState : memoryStates) {
             removeMemoryVolumes(memoryState, vmId);
         }

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -39,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -52,7 +54,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
@@ -62,13 +63,48 @@ import org.slf4j.LoggerFactory;
 /**
  * The {@link Snapshot} manager is used to easily add/update/remove snapshots.
  */
+@Singleton
 public class SnapshotsManager {
     private static final Logger log = LoggerFactory.getLogger(SnapshotsManager.class);
-    private final VmDeviceUtils vmDeviceUtils;
 
-    public SnapshotsManager() {
-        vmDeviceUtils = Injector.get(VmDeviceUtils.class);
-    }
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
+
+    @Inject
+    private SnapshotDao snapshotDao;
+
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
+
+    @Inject
+    private QuotaDao quotaDao;
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
@@ -719,50 +755,50 @@ public class SnapshotsManager {
     }
 
     protected VmDeviceDao getVmDeviceDao() {
-        return DbFacade.getInstance().getVmDeviceDao();
+        return vmDeviceDao;
     }
 
     protected BaseDiskDao getBaseDiskDao() {
-        return DbFacade.getInstance().getBaseDiskDao();
+        return baseDiskDao;
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+        return snapshotDao;
     }
 
     protected VmDynamicDao getVmDynamicDao() {
-        return DbFacade.getInstance().getVmDynamicDao();
+        return vmDynamicDao;
     }
 
     protected VmStaticDao getVmStaticDao() {
-        return DbFacade.getInstance().getVmStaticDao();
+        return vmStaticDao;
     }
 
     protected DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
+        return diskImageDao;
     }
 
     protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
+        return diskDao;
     }
 
     protected DiskVmElementDao getDiskVmElementDao() {
-        return DbFacade.getInstance().getDiskVmElementDao();
+        return diskVmElementDao;
     }
 
     protected ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
+        return clusterDao;
     }
 
     protected VmTemplateDao getVmTemplateDao() {
-        return DbFacade.getInstance().getVmTemplateDao();
+        return vmTemplateDao;
     }
 
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDao();
+        return vmNetworkInterfaceDao;
     }
 
     protected QuotaDao getQuotaDao() {
-        return DbFacade.getInstance().getQuotaDao();
+        return quotaDao;
     }
 }

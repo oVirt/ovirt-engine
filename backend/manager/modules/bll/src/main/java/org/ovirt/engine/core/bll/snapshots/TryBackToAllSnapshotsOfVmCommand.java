@@ -53,7 +53,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfVmParameters> extends VmCommand<T> {
 
-    private final SnapshotsManager snapshotsManager = new SnapshotsManager();
     private Snapshot cachedSnapshot;
     private List<DiskImage> imagesToPreview;
 
@@ -101,7 +100,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         getSnapshotDao().remove(previouslyActiveSnapshot.getId());
         getSnapshotDao().remove(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
 
-        snapshotsManager.addActiveSnapshot(previouslyActiveSnapshot.getId(), getVm(),
+        getSnapshotsManager().addActiveSnapshot(previouslyActiveSnapshot.getId(), getVm(),
                 previouslyActiveSnapshot.getMemoryVolume(), getCompensationContext());
 
         super.endWithFailure();
@@ -130,7 +129,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 SnapshotStatus.LOCKED),
                 SnapshotStatus.OK);
 
-        snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
+        getSnapshotsManager().attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 getDstSnapshot(),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                 getImagesToPreview(),
@@ -161,13 +160,13 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntity(previousActiveSnapshot);
             getSnapshotDao().remove(previousActiveSnapshotId);
-            snapshotsManager.addSnapshot(previousActiveSnapshotId,
+            getSnapshotsManager().addSnapshot(previousActiveSnapshotId,
                     "Active VM before the preview",
                     SnapshotType.PREVIEW,
                     getVm(),
                     previousActiveSnapshot.getMemoryVolume(),
                     getCompensationContext());
-            snapshotsManager.addActiveSnapshot(newActiveSnapshotId,
+            getSnapshotsManager().addActiveSnapshot(newActiveSnapshotId,
                     getVm(),
                     restoreMemory ? snapshotToBePreviewed.getMemoryVolume() : StringUtils.EMPTY,
                     images,

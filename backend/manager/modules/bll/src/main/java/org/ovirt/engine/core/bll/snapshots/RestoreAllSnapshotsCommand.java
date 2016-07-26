@@ -456,12 +456,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      *            The snapshot to restore to.
      */
     private void restoreConfiguration(Snapshot targetSnapshot) {
-        SnapshotsManager snapshotsManager = new SnapshotsManager();
         removedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
         snapshotsToRemove.add(removedSnapshot.getId());
-        snapshotsManager.removeAllIllegalDisks(removedSnapshot.getId(), getVmId());
+        getSnapshotsManager().removeAllIllegalDisks(removedSnapshot.getId(), getVmId());
 
-        snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
+        getSnapshotsManager().attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 targetSnapshot,
                 targetSnapshot.getId(),
                 null,
@@ -470,7 +469,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 new VmInterfaceManager(getMacPool()));
         getSnapshotDao().remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
-        snapshotsManager.addActiveSnapshot(targetSnapshot.getId(),
+        getSnapshotsManager().addActiveSnapshot(targetSnapshot.getId(),
                 getVm(),
                 SnapshotStatus.LOCKED,
                 targetSnapshot.getMemoryVolume(),

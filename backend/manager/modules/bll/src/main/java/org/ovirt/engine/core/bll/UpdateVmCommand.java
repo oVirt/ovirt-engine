@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
@@ -323,7 +322,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         vm.setStaticData(getParameters().getVmStaticData());
 
         // create new snapshot with new configuration
-        new SnapshotsManager().addSnapshot(Guid.newGuid(),
+        getSnapshotsManager().addSnapshot(Guid.newGuid(),
                 "Next Run configuration snapshot",
                 Snapshot.SnapshotStatus.OK,
                 Snapshot.SnapshotType.NEXT_RUN,

@@ -29,7 +29,6 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
@@ -1504,7 +1503,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void addActiveSnapshot() {
         _vmSnapshotId = Guid.newGuid();
-        new SnapshotsManager().addActiveSnapshot(_vmSnapshotId, getVm(), getCompensationContext());
+        getSnapshotsManager().addActiveSnapshot(_vmSnapshotId, getVm(), getCompensationContext());
     }
 
     @Override

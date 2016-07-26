@@ -53,6 +53,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
 
+    @Inject
+    private SnapshotsManager snapshotsManager;
+
     private VmPool vmPoolCached;
 
     protected ProcessDownVmCommand(Guid commandId) {
@@ -241,7 +244,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         if (runSnap != null) {
             getSnapshotDao().remove(runSnap.getId());
             Date originalCreationDate = getVm().getVmCreationDate();
-            new SnapshotsManager().updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
+            snapshotsManager.updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
             // override creation date because the value in the config is the creation date of the config, not the vm
             getVm().setVmCreationDate(originalCreationDate);
 

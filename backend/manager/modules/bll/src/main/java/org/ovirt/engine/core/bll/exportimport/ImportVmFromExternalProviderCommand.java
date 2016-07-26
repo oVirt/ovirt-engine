@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -245,7 +244,7 @@ implements QuotaStorageDependent {
     @Override
     protected void addVmStatic() {
         super.addVmStatic();
-        new SnapshotsManager().addActiveSnapshot(
+        getSnapshotsManager().addActiveSnapshot(
                 Guid.newGuid(), getVm(), "", getCompensationContext());
     }
 
