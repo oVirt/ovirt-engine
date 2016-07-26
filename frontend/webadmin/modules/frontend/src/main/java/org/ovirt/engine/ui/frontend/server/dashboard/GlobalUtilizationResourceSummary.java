@@ -98,7 +98,11 @@ public class GlobalUtilizationResourceSummary {
      * @return used as a {@code double}
      */
     public double getUsed() {
-        return used;
+        double result = used;
+        if (used > getTotal()) {
+            result = getTotal();
+        }
+        return result;
     }
 
     /**
