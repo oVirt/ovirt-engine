@@ -63,6 +63,8 @@
         .imageFileUploadInput {
             float: right;
             width: 460px;
+            margin-left: 29px;
+            margin-top: -3px;
         }
 
         /* The following styles are applied within the application code */
