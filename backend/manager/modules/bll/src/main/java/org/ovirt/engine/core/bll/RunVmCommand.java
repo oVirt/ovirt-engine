@@ -123,19 +123,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         super(runVmParams, commandContext);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
-        // Load payload from Database (only if none was sent via the parameters)
-        loadPayloadDevice();
-
     }
 
     @Override
     protected void init() {
         super.init();
         if (getVm() != null) {
+            // Load payload from Database (only if none was sent via the parameters)
+            loadPayloadDevice();
             needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
+            loadVmInit();
+            fetchVmDisksFromDb();
         }
-        loadVmInit();
-        fetchVmDisksFromDb();
     }
 
     @Override
@@ -1015,7 +1014,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected void loadVmInit() {
-        if (getVm() != null && getVm().getVmInit() == null) {
+        if (getVm().getVmInit() == null) {
             VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
         }
     }
