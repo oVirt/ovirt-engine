@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 
@@ -50,9 +49,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -207,7 +203,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         } else {
             setLoggingForCommand();
-            log.warn("VmCommand::EndVmCommand: Vm is null - not performing endAction on Vm");
+            log.warn("VM is null - no unlocking");
         }
     }
 
