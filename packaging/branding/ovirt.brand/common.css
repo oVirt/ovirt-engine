@@ -123,20 +123,20 @@ popup windows, for instance for creating a new VM */
 
 /* LoginSectionView.ui.xml:
    background image */
-.obrand_loginPageBackground {
+.obrand_background {
+    height: 100%;
+}
+
+.obrand_background body {
     background-image: url(images/ovirt_bg.png);
     background-color: #282d33;
     background-size: auto;
     background-repeat: repeat-x;
     background-position: 50% 0;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
 }
+
 @media (min-width: 768px) {
-    .obrand_loginPageBackground {
+    .obrand_background body {
         background-size: 100% auto;
      }
 }
