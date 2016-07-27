@@ -491,6 +491,8 @@ public interface UIConstants extends Constants {
 
     String uploadImageLeaveWindowPopupWarning();
 
+    String uploadImageBackingFileUnsupported();
+
     String snapshotsTitle();
 
     String deleteSnapshotTitle();

@@ -3,10 +3,10 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-             xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm">
+             xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
+             xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
@@ -63,8 +63,7 @@
         .imageFileUploadInput {
             float: right;
             width: 460px;
-            margin-left: 29px;
-            margin-top: -3px;
+            margin-left: 10px;
         }
 
         /* The following styles are applied within the application code */
@@ -74,13 +73,6 @@
         .imageUriEditorContent {
             float: right;
             width: 460px;
-        }
-
-        .volumeFormatEditor {
-            width: 240px;
-        }
-        .volumeFormatEditorContent {
-            width: 140px;
         }
 
     </ui:style>
@@ -94,18 +86,18 @@
                     <w:RadioButtonsHorizontalPanel ui:field="imageSourcePanel" name="imageSourcePanel" addStyleNames="{style.imageSourcePanel}" />
                 </g:HorizontalPanel>
 
-                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="100px">
+                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="130px">
                     <g:HorizontalPanel ui:field="imageFileUploadPanel">
-                        <g:Label ui:field="imageFileUploadLabel" addStyleNames="{style.imageFileUploadLabel}" />
                         <g:FileUpload ui:field="imageFileUpload" addStyleNames="{style.imageFileUploadInput}" />
                     </g:HorizontalPanel>
+
+                    <s:ImageInfoForm ui:field="imageInfoForm"/>
 
                     <g:FlowPanel ui:field="imageFileDownloadPanel">
                         <g:FlowPanel ui:field="downloadMessagePanel" visible="false" addStyleNames="{style.messagePanel}" />
                         <ge:StringEntityModelTextBoxEditor ui:field="imageUriEditor" />
                     </g:FlowPanel>
 
-                    <e:ListModelListBoxEditor ui:field="volumeFormatEditor" />
                     <g:FlowPanel ui:field="uploadMessagePanel" visible="false" addStyleNames="{style.messagePanel}" />
                     <g:FlowPanel ui:field="progressMessagePanel" visible="false" addStyleNames="{style.progressPanel}" />
                 </g:FlowPanel>

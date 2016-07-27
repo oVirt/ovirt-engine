@@ -396,5 +396,10 @@ public interface Enums extends LocalizedEnums {
     String MigrationBandwidthLimitType___VDSM_CONFIG();
 
     String MigrationBandwidthLimitType___CUSTOM();
+
+    String ImageInfoModel$QemuCompat___V2();
+
+    String ImageInfoModel$QemuCompat___V3();
+
 }
 

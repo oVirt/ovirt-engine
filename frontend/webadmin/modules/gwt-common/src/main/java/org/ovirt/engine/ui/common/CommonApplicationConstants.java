@@ -1593,5 +1593,15 @@ public interface CommonApplicationConstants extends Constants {
     String hostedEngineLabel();
 
     String hostedEngineDeploymentAction();
+
+    String imageFormat();
+
+    String imageBackingFile();
+
+    String imageQcowCompat();
+
+    String imageActualSize();
+
+    String imageVirtualSize();
 }
 

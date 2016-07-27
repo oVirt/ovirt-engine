@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdates;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -125,7 +125,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private EntityModel<Boolean> imageSourceLocalEnabled;
     private EntityModel<String> imagePath;
     private EntityModel<String> imageUri;
-    private ListModel<VolumeFormat> volumeFormat;
     private AbstractDiskModel diskModel;
 
     private UICommand okCommand;
@@ -149,6 +148,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private UploadState uploadState;
     private boolean continuePolling;
     private AuditLogType auditLogType;
+
+    private ImageInfoModel imageInfoModel;
 
 
     public List<EntityModel> getEntities() {
@@ -184,14 +185,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
     public void setImageUri(EntityModel<String> imageUri) {
         this.imageUri = imageUri;
-    }
-
-    public ListModel<VolumeFormat> getVolumeFormat() {
-        return volumeFormat;
-    }
-
-    public void setVolumeFormat(ListModel<VolumeFormat> volumeFormat) {
-        this.volumeFormat = volumeFormat;
     }
 
     public AbstractDiskModel getDiskModel() {
@@ -371,7 +364,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
                 @Override
                 public int getMinimumDiskSize() {
-                    return (int) ((getImageSize() + SizeConverter.BYTES_IN_GB - 1) / SizeConverter.BYTES_IN_GB);
+                    return Math.max(getImageInfoModel().getActualSize(), getImageInfoModel().getVirtualSize());
                 }
             });
         } else {
@@ -388,8 +381,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         setImagePath(new EntityModel<String>());
         setImageUri(new EntityModel<String>());
-        setVolumeFormat(new ListModel<VolumeFormat>());
-        getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
 
         setUploadState(UploadState.NEW);
         setProgressStr(""); //$NON-NLS-1$
@@ -402,6 +393,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         getDiskModel().getStorageDomain().getSelectedItemChangedEvent().addListener(this);
         getDiskModel().getVolumeType().setIsAvailable(false);
+
+        imageInfoModel = new ImageInfoModel();
     }
 
     @Override
@@ -436,10 +429,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
         if (validate()) {
             diskModel.flush();
             DiskImage diskImage = (DiskImage) getDiskModel().getDisk();
-            diskImage.setVolumeFormat(getVolumeFormat().getSelectedItem());
             diskImage.setActualSizeInBytes(getImageSize());
+            diskImage.setVolumeFormat(getImageInfoModel().getFormat());
             diskImage.setVolumeType(AsyncDataProvider.getInstance().getVolumeType(
-                    getVolumeFormat().getSelectedItem(),
+                    diskImage.getVolumeFormat(),
                     getDiskModel().getStorageDomain().getSelectedItem().getStorageType()));
             return true;
         } else {
@@ -451,6 +444,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public boolean validate() {
         boolean uploadImageIsValid;
 
+        setIsValid(true);
+        getInvalidityReasons().clear();
+        getImageInfoModel().getInvalidityReasons().clear();
+
         if (getImageSourceLocalEnabled().getEntity()) {
             getImagePath().validateEntity(new IValidation[] { new IValidation() {
                 @Override
@@ -458,13 +455,42 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     ValidationResult result = new ValidationResult();
                     if (value == null || StringHelper.isNullOrEmpty((String) value)) {
                         result.setSuccess(false);
-                        result.getReasons().add(ConstantsManager.getInstance().getConstants().emptyImagePath());
+                        result.getReasons().add(constants.emptyImagePath());
                     }
                     return result;
                 }
             } });
-            uploadImageIsValid = getImagePath().getIsValid();
+
+            if (getImagePath().getIsValid()) {
+                getImageInfoModel().validateEntity(new IValidation[]{
+                        new IValidation() {
+                            @Override
+                            public ValidationResult validate(Object value) {
+                                ValidationResult result = new ValidationResult();
+
+                                ImageInfoModel.QemuCompat qcowCompat = getImageInfoModel().getQcowCompat();
+                                if (qcowCompat != null && qcowCompat != ImageInfoModel.QemuCompat.V2) {
+                                    StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
+                                    switch (storageFormatType) {
+                                        case V1:
+                                        case V2:
+                                        case V3:
+                                            result.setSuccess(false);
+                                            result.getReasons().add(messages.uploadImageQemuCompatUnsupported(
+                                                    qcowCompat.getValue(), storageFormatType.name()));
+                                            break;
+                                    }
+                                }
+                                return result;
+                            }
+                        }
+                });
+            }
+
+            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate();
+
             getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
+            getInvalidityReasons().addAll(getImageInfoModel().getInvalidityReasons());
         } else {
             // TODO remote/download
             uploadImageIsValid = false;
@@ -1031,7 +1057,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
     }-*/;
 
-
     /**
      * Build and display the Upload Image dialog.
      *
@@ -1171,6 +1196,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 && disks.get(0) instanceof DiskImage
                 && disks.get(0).getImageTransferPhase() != null
                 && disks.get(0).getImageTransferPhase().canBeResumed();
+    }
+
+    public ImageInfoModel getImageInfoModel() {
+        return imageInfoModel;
     }
 
 }
