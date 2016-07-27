@@ -119,7 +119,7 @@ public class SchedulingManager implements BackendService {
     }
 
     @Inject
-    private SchedulingManager() {
+    protected SchedulingManager() {
         policyMap = new ConcurrentHashMap<>();
         policyUnits = new ConcurrentHashMap<>();
     }

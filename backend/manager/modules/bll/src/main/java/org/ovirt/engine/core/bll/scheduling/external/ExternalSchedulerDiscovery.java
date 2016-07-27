@@ -26,7 +26,7 @@ public class ExternalSchedulerDiscovery {
     @Inject
     private PolicyUnitDao policyUnitDao;
 
-    private ExternalSchedulerDiscovery() {}
+    protected ExternalSchedulerDiscovery() {}
 
     /**
      * Discover external schedulers and process its policy units. This operation may take time and is recommended to run
