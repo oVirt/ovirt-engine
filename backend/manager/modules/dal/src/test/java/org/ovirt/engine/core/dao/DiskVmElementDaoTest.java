@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +37,12 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
     public void testVmElementDiskPluggedStatus() {
         DiskVmElement dvePlugged = dao.get(new VmDeviceId(PLUGGED_DISK_ID, FixturesTool.VM_RHEL5_POOL_57));
         assertTrue(dvePlugged.isPlugged());
+    }
+
+    @Test
+    public void testVmElementDiskLogicalName() {
+        DiskVmElement dveWithLogicalName = dao.get(new VmDeviceId(PLUGGED_DISK_ID, FixturesTool.VM_RHEL5_POOL_57));
+        assertEquals(dveWithLogicalName.getLogicalName(), "logical_name");
     }
 
     @Test

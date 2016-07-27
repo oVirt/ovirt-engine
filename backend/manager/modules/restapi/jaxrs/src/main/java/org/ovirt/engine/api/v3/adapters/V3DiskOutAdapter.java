@@ -72,9 +72,6 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
         if (from.isSetInstanceType()) {
             to.setInstanceType(adaptOut(from.getInstanceType()));
         }
-        if (from.isSetLogicalName()) {
-            to.setLogicalName(from.getLogicalName());
-        }
         if (from.isSetLunStorage()) {
             to.setLunStorage(adaptOut(from.getLunStorage()));
         }
@@ -165,8 +162,8 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
             if (attachment.isSetBootable()) {
                 to.setBootable(attachment.isBootable());
             }
-            if (attachment.isSetActive()) {
-                to.setActive(attachment.isActive());
+            if (attachment.isSetLogicalName()) {
+                to.setLogicalName(attachment.getLogicalName());
             }
         }
 
