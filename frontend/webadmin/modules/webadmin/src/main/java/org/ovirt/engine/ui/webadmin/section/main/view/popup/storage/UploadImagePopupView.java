@@ -1,14 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.ImageInfoForm;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -46,8 +44,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     interface WidgetStyle extends CssResource {
         String imageUriEditor();
         String imageUriEditorContent();
-        String volumeFormatEditor();
-        String volumeFormatEditorContent();
     }
 
     @UiField
@@ -71,10 +67,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     FlowPanel progressMessagePanel;
 
     @UiField
-    @Ignore
-    Label imageFileUploadLabel;
-
-    @UiField
     FileUpload imageFileUpload;
 
     @UiField
@@ -88,10 +80,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     @Editor.Path(value = "imageUri.entity")
     StringEntityModelTextBoxEditor imageUriEditor;
 
-    @UiField(provided = true)
-    @Editor.Path(value = "volumeFormat.selectedItem")
-    ListModelListBoxEditor<VolumeFormat> volumeFormatEditor;
-
     @UiField
     @Ignore
     Label diskOptionsLabel;
@@ -101,6 +89,10 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     @WithElementId("vmdisk")
     VmDiskPopupWidget vmDiskPopupWidget;
 
+    @UiField
+    @Ignore
+    ImageInfoForm imageInfoForm;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -108,7 +100,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     @Inject
     public UploadImagePopupView(EventBus eventBus) {
         super(eventBus);
-        initEditors();
         vmDiskPopupWidget = new VmDiskPopupWidget(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
@@ -116,23 +107,15 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         driver.initialize(this);
     }
 
-    void initEditors() {
-        volumeFormatEditor = new ListModelListBoxEditor<>(new EnumRenderer<VolumeFormat>());
-    }
-
     void localize() {
         imageSourceLabel.setText(constants.uploadImageSourceLabel());
-        imageFileUploadLabel.setText(constants.uploadImageFileLabel());
         imageUriEditor.setLabel(constants.uploadImageUriLabel());
-        volumeFormatEditor.setLabel(constants.uploadImageTypeLabel());
         diskOptionsLabel.setText(constants.uploadImageDiskOptionsLabel());
     }
 
     void addStyles() {
         imageUriEditor.addContentWidgetContainerStyleName(style.imageUriEditorContent());
         imageUriEditor.addStyleName(style.imageUriEditor());
-        volumeFormatEditor.addContentWidgetContainerStyleName(style.volumeFormatEditorContent());
-        volumeFormatEditor.addStyleName(style.volumeFormatEditor());
     }
 
     @Override
@@ -159,6 +142,7 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
                     setPanelMessage(progressMessagePanel, model.getProgressStr());
                 }
                 else if ("IsValid".equals(args.propertyName)) { //$NON-NLS-1$
+                    uploadMessagePanel.clear();
                     if (!model.getIsValid() && !model.getInvalidityReasons().isEmpty()) {
                         setPanelMessage(uploadMessagePanel, model.getInvalidityReasons().get(0));
                     }
@@ -199,6 +183,9 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         if (model.getIsResumeUpload()) {
             diskOptionsLabel.setText(constants.uploadImageDiskOptionsInfoOnlyLabel());
         }
+
+        imageInfoForm.initialize(model.getImageInfoModel());
+        model.getImageInfoModel().initialize(model.getImageFileUploadElement());
     }
 
     private void handleImageUploadBrowserSupport(final UploadImageModel model) {
@@ -207,7 +194,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         if (!model.getBrowserSupportsUpload()) {
             model.getOkCommand().setIsExecutionAllowed(false);
             imageFileUpload.setEnabled(false);
-            volumeFormatEditor.setEnabled(false);
             setPanelMessage(uploadMessagePanel, constants.uploadImageUploadNotSupportedMessage());
             model.getImageSourceLocalEnabled().setEntity(false);
         }
@@ -216,8 +202,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     private void setSourceVisibility(final UploadImageModel model) {
         imageFileUploadPanel.setVisible(model.getImageSourceLocalEnabled().getEntity());
         imageFileDownloadPanel.setVisible(!model.getImageSourceLocalEnabled().getEntity());
-        volumeFormatEditor.setEnabled(!model.getImageSourceLocalEnabled().getEntity()
-                || model.getBrowserSupportsUpload());
     }
 
     private void setPanelMessage(FlowPanel panel, String message) {
