@@ -5,7 +5,10 @@
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="messages" var="pageheader" />
 
-<div style="height: 40px; background-image: -webkit-gradient(linear, left 0%, left 100%, from(#474c50), to(#383f43));
+<div style="height: 41px;
+            position: relative;
+            top: 4px;
+            background-image: -webkit-gradient(linear, left 0%, left 100%, from(#474c50), to(#383f43));
             background-image: -webkit-linear-gradient(top, #474c50 0%, #383f43 100%);
             background-image: -moz-linear-gradient(top, #474c50 0%, #383f43 100%);
             background-image: linear-gradient(to bottom, #474c50 0%, #383f43 100%);
