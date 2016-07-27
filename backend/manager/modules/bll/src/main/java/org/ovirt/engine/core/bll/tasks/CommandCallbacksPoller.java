@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
@@ -185,8 +184,7 @@ public class CommandCallbacksPoller implements BackendService {
                     cmdEntity.getCommandStatus() != CommandStatus.EXECUTION_FAILED &&
                     cmdEntity.getCommandStatus() != CommandStatus.ENDED_WITH_FAILURE
                     ) {
-                CommandBase<?> failedCommand = commandsRepository.retrieveCommand(cmdEntity.getId());
-                failedCommand.setCommandStatus(CommandStatus.EXECUTION_FAILED);
+                commandsRepository.updateCommandStatus(cmdEntity.getId(), CommandStatus.EXECUTION_FAILED);
             }
 
             if (!cmdEntity.isCallbackNotified()) {
