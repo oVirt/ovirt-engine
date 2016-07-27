@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -190,26 +191,22 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     Set<GraphicsType> getGraphicsTypesForVm() {
-        Set<GraphicsType> graphicsTypes = new HashSet<>();
-
-        for (VmDevice graphics : getDevicesOfType(VmDeviceGeneralType.GRAPHICS)) {
-            graphicsTypes.add(GraphicsType.fromVmDeviceType(VmDeviceType.getByName(graphics.getDevice())));
-        }
-
-        return graphicsTypes;
+        return getDevicesOfType(VmDeviceGeneralType.GRAPHICS)
+                .stream()
+                .map(g -> GraphicsType.fromVmDeviceType(VmDeviceType.getByName(g.getDevice())))
+                .collect(Collectors.toSet());
     }
 
     private List<VmDevice> getDevicesOfType(VmDeviceGeneralType type) {
-        List<VmDevice> devices = new ArrayList<>();
-
-        if (getVm() != null && getVm().getStaticData() != null && getVm().getStaticData().getManagedDeviceMap() != null) {
-            for (VmDevice vmDevice : getVm().getStaticData().getManagedDeviceMap().values()) {
-                if (vmDevice.getType() == type) {
-                    devices.add(vmDevice);
-                }
-            }
+        if (getVm() == null || getVm().getStaticData() == null || getVm().getStaticData().getManagedDeviceMap() == null) {
+            return Collections.emptyList();
         }
-        return devices;
+        return getVm().getStaticData()
+                .getManagedDeviceMap()
+                .values()
+                .stream()
+                .filter(d -> d.getType() == type)
+                .collect(Collectors.toList());
     }
 
     protected boolean setAndValidateCpuProfile() {
