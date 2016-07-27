@@ -31,20 +31,15 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FiltersHelper {
 
-    public static final String VERSION = "0";
-    private static final Logger log = LoggerFactory.getLogger(FiltersHelper.class);
     private static SecureRandom secureRandom;
     public static class Constants {
         public static final String REQUEST_AUTH_RECORD_KEY = "ovirt_aaa_auth_record";
         public static final String REQUEST_SCHEMES_KEY = "ovirt_aaa_schemes";
         public static final String REQUEST_PROFILE_KEY = "ovirt_aaa_profile";
         public static final String REQUEST_AUTH_TYPE_KEY = "ovirt_aaa_auth_type";
-        public static final String REQUEST_PASSWORD_KEY = "ovirt_aaa_password";
         public static final String REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE =
                 "ovirt_aaa_login_filter_authentication_done";
         public static final String HEADER_AUTHORIZATION = "Authorization";
@@ -178,19 +173,5 @@ public class FiltersHelper {
             }
         }
         return ret;
-    }
-
-    public static String getTokenContent(String token) {
-        String[] s = token.split("\\|", 2);
-        if (s.length != 2) {
-            throw new IllegalArgumentException("Invalid session token format");
-        }
-        if (!"0".equals(s[0])) {
-            throw new IllegalArgumentException("Invalid session token version");
-        }
-        if (s[1].isEmpty()) {
-            throw new IllegalArgumentException("Invalid session token format");
-        }
-        return s[1];
     }
 }
