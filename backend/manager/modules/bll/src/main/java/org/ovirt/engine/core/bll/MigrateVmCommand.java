@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -675,7 +676,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     // initial hosts list picked for scheduling, currently
     // passed by load balancing process.
     protected List<Guid> getVdsWhiteList() {
-        return getParameters().getInitialHosts();
+        return getParameters().getInitialHosts() == null ?
+                Collections.emptyList() : getParameters().getInitialHosts();
     }
 
     @Override

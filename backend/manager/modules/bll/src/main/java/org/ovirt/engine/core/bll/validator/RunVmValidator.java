@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -90,8 +92,11 @@ public class RunVmValidator {
      * @param vdsWhiteList
      *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
      */
-    public boolean canRunVm(List<String> messages, StoragePool storagePool, List<Guid> vdsBlackList,
-            List<Guid> vdsWhiteList, List<Guid> destVdsList, Cluster cluster) {
+    public boolean canRunVm(List<String> messages, StoragePool storagePool,
+            @NotNull List<Guid> vdsBlackList,
+            @NotNull List<Guid> vdsWhiteList,
+            @NotNull List<Guid> destVdsList,
+            @NotNull Cluster cluster) {
 
         if (vm.getStatus() == VMStatus.Paused) {
             // if the VM is paused, we should only check the VDS status

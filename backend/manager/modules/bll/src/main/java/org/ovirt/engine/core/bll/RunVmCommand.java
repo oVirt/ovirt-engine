@@ -1241,9 +1241,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    // initial white list (null == all hosts)
+    /**
+     * Initial white list for scheduler (empty == all hosts)
+     */
     protected List<Guid> getVdsWhiteList() {
-        return null;
+        return Collections.emptyList();
     }
 
     /**

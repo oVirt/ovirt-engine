@@ -284,8 +284,8 @@ public class VmPoolHandler implements BackendService {
                         messages,
                         fetchStoragePool(vm.getStoragePoolId()),
                         Collections.<Guid> emptyList(),
-                        null,
-                        null,
+                        Collections.emptyList(),
+                        Collections.emptyList(),
                         clusterDao.get(vm.getClusterId()));
     }
 
