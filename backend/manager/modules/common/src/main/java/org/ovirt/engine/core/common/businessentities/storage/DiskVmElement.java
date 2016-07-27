@@ -28,6 +28,13 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
     @TransientField
     private boolean plugged;
 
+    /**
+     * This field is transient and is taken from the corresponding VM device.
+     * It is used solely for UI/API purposes and is not persisted or updated through DiskVmElement.
+     */
+    @TransientField
+    private String logicalName;
+
     public DiskVmElement() {
     }
 
@@ -70,6 +77,14 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     public void setPlugged(boolean plugged) {
         this.plugged = plugged;
+    }
+
+    public String getLogicalName() {
+        return logicalName;
+    }
+
+    public void setLogicalName(String logicalName) {
+        this.logicalName = logicalName;
     }
 
     public Guid getDiskId() {

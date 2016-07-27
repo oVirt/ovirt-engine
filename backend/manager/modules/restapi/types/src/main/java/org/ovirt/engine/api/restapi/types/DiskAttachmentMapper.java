@@ -62,6 +62,7 @@ public class DiskAttachmentMapper {
         model.setBootable(entity.isBoot());
         model.setInterface(DiskMapper.mapInterface(entity.getDiskInterface()));
         model.setActive(entity.isPlugged());
+        model.setLogicalName(entity.getLogicalName());
         return model;
     }
 }

@@ -56,6 +56,7 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
                 dve.setDiskInterface(DiskInterface.valueOf(diskInterfaceName));
             }
             dve.setPlugged(rs.getBoolean("is_plugged"));
+            dve.setLogicalName(rs.getString("logical_name"));
             return dve;
         }
     }
