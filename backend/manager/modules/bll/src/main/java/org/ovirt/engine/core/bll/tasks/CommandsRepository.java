@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -102,7 +103,9 @@ public class CommandsRepository {
                 .filter(x -> !x.isCallbackNotified())
                 .filter(x -> x.getCommandStatus().isDuringExecution())
                 .filter(x -> !asyncTaskManagerManagedCommands.contains(x.getId()))
-                .forEach(x -> retrieveCommand(x.getId()).reacquireLocks());
+                .map(x -> retrieveCommand(x.getId()))
+                .filter(Objects::nonNull)
+                .forEach(CommandBase::reacquireLocks);
     }
 
     public void addToCallbackMap(Guid commandId, CallbackTiming callbackTiming) {
@@ -158,15 +161,17 @@ public class CommandsRepository {
                 cmdContext = new CommandContext(new EngineContext()).withExecutionContext(new ExecutionContext());
             }
             command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getCommandParameters(), cmdContext);
-            command.setCommandStatus(cmdEntity.getCommandStatus(), false);
-            command.setCommandData(cmdEntity.getData());
-            command.setReturnValue(cmdEntity.getReturnValue());
-            if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
-                    !cmdEntity.getParentCommandId().equals(cmdEntity.getId()) &&
-                    command.getParameters().getParentParameters() == null) {
-                CommandBase<?> parentCommand = retrieveCommand(cmdEntity.getParentCommandId());
-                if (parentCommand != null) {
-                    command.getParameters().setParentParameters(parentCommand.getParameters());
+            if (command != null) {
+                command.setCommandStatus(cmdEntity.getCommandStatus(), false);
+                command.setCommandData(cmdEntity.getData());
+                command.setReturnValue(cmdEntity.getReturnValue());
+                if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
+                        !cmdEntity.getParentCommandId().equals(cmdEntity.getId()) &&
+                        command.getParameters().getParentParameters() == null) {
+                    CommandBase<?> parentCommand = retrieveCommand(cmdEntity.getParentCommandId());
+                    if (parentCommand != null) {
+                        command.getParameters().setParentParameters(parentCommand.getParameters());
+                    }
                 }
             }
         }

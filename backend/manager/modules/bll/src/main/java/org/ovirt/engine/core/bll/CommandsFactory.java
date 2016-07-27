@@ -98,13 +98,15 @@ public final class CommandsFactory {
             return Injector.injectMembers(command);
         }
         catch (InvocationTargetException ex) {
-            log.error("Error in invocating CTOR of command '{}': {}", action.name(), ex.getMessage());
+            log.error("Error in invocating CTOR of command '{}' with parameters '{}': {}",
+                    action.name(), parameters, ex.getMessage());
             log.debug("Exception", ex);
             return null;
         }
         catch (Exception ex) {
-            log.error("An exception has occured while trying to create a command object for command '{}': {}",
+            log.error("An exception has occurred while trying to create a command object for command '{}' with parameters '{}': {}",
                     action.name(),
+                    parameters,
                     ex.getMessage());
             log.debug("Exception", ex);
             return null;
