@@ -236,6 +236,7 @@ Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
 Requires:	yum-plugin-versionlock
+Requires:	ovirt-imageio-proxy
 
 %if 0%{?rhel}
 # FOP 1.1 is available only on EL7, Fedora >= 23 contains FOP 2.0, which is not
