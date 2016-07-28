@@ -22,7 +22,7 @@ public class VmwarePropertiesModel extends ProxyHostPropertiesModel {
     private EntityModel<String> esx = new EntityModel<>();
     private EntityModel<String> vmwareDatacenter = new EntityModel<>();
     private EntityModel<String> vmwareCluster = new EntityModel<>();
-    private EntityModel<Boolean> verifySSL = new EntityModel<>(false);
+    private EntityModel<Boolean> verifySSL = new EntityModel<>(true);
     private ListModel<VDS> proxyHost = new ListModel<>();
 
     public VmwarePropertiesModel() {

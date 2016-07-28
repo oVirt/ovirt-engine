@@ -12,6 +12,11 @@
 			width: 390px;
 		}
 
+		.checkBoxSourcePropertyStyle {
+			margin-bottom: 10px;
+			width: 390px;
+		}
+
 		.contentWithQuestionMarkLabel {
 			display: inline-block;
 			float: right;
@@ -99,8 +104,8 @@
 					    <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 					    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 				    </g:HorizontalPanel>
-					<ge:EntityModelCheckBoxEditor ui:field="verifyEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-				    <e:ListModelListBoxEditor ui:field="proxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					<ge:EntityModelCheckBoxEditor ui:field="verifyEditor" addStyleNames="{style.checkBoxSourcePropertyStyle}"/>
+					<e:ListModelListBoxEditor ui:field="proxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
 						<w:UiCommandButton ui:field="loadVmsFromVmwareButton"/>
 			        </g:FlowPanel>
