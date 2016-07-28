@@ -807,7 +807,7 @@ select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep
 select fn_db_update_default_config_value('ClientModeSpiceDefault','Plugin','Native','general',false);
 
 -- Minimal version of remote-viewer supporting "sso-token" in vv files, there is no build of remote-viewer supporting sso-token for rhel6
-select fn_db_update_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-160;rhev-win32:2.0-160;rhel7:2.0-8;rhel6:99.0-1','general');
+select fn_db_update_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-160;rhev-win32:2.0-160;rhel7:2.0-6;rhel6:99.0-1','general');
 
 -- Increase connection timeout from 2 to 20 seconds
 select fn_db_update_default_config_value('vdsConnectionTimeout','2','20','general',false);
