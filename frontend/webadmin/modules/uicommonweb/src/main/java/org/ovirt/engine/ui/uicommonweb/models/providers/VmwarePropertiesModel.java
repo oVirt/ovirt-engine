@@ -25,7 +25,7 @@ public class VmwarePropertiesModel extends Model {
     private EntityModel<String> esx = new EntityModel<>();
     private EntityModel<String> vmwareDatacenter = new EntityModel<>();
     private EntityModel<String> vmwareCluster = new EntityModel<>();
-    private EntityModel<Boolean> verifySSL = new EntityModel<>(false);
+    private EntityModel<Boolean> verifySSL = new EntityModel<>(true);
     private ListModel<VDS> proxyHost = new ListModel<>();
 
     private Guid lastStoragePoolId;

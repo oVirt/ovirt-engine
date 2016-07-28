@@ -145,7 +145,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setvCenter(new EntityModel<String>());
         setEsx(new EntityModel<String>());
         setVmwareDatacenter(new EntityModel<String>());
-        setVerify(new EntityModel<>(false));
+        setVerify(new EntityModel<>(true));
         setVmwareCluster(new EntityModel<String>());
 
         // OVA

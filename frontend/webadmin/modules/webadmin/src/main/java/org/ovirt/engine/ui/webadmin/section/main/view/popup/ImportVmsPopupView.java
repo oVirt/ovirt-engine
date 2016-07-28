@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.VerticalSplitTable;
@@ -140,7 +141,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @WithElementId("vmwareClusterEditor")
     StringEntityModelTextBoxEditor vmwareClusterEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("verify.entity")
     @WithElementId("verify")
     EntityModelCheckBoxEditor verifyEditor;
@@ -250,6 +251,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         super(eventBus);
 
         // Initialize Editors
+        verifyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         dataCentersEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         importSourcesEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<ImportSource>() {
             @Override
@@ -326,7 +328,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         esxEditor.setLabel(constants.esxi());
         vCenterEditor.setLabel(constants.vCenter());
         vmwareClusterEditor.setLabel(constants.vmwareCluster());
-        verifyEditor.setLabel(constants.vmwareSslVerification());
+        verifyEditor.setLabel(constants.vmwareVerifyServerSslCert());
         usernameEditor.setLabel(constants.usernameProvider());
         passwordEditor.setLabel(constants.passwordProvider());
         proxyHostsEditor.setLabel(constants.proxyHost());
