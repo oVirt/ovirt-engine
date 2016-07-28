@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -285,7 +284,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         baseSnapshot.setDiskImages(Collections.singletonList(baseImage));
         activeSnapshot.setDiskImages(Collections.singletonList(activeImage));
 
-        v.setDiskMap(Collections.<Guid, Disk>singletonMap(activeImage.getId(), activeImage));
+        v.setDiskMap(Collections.singletonMap(activeImage.getId(), activeImage));
         v.setImages(new ArrayList<>(Arrays.asList(baseImage, activeImage)));
         v.setSnapshots(new ArrayList<>(Arrays.asList(baseSnapshot, activeSnapshot)));
         v.setClusterId(Guid.Empty);
@@ -304,7 +303,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         v.setImages(new ArrayList<>(Collections.singletonList(activeImage)));
         v.setSnapshots(new ArrayList<>(Collections.singletonList(activeSnapshot)));
-        v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
+        v.setDiskMap(Collections.singletonMap(activeImage.getId(), activeImage));
         v.setClusterId(Guid.Empty);
 
         return v;
