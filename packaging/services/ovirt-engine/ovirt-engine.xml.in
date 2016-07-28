@@ -530,6 +530,9 @@
               {% if config.get('AAA_JAAS_KEYTAB_FILE') != "" %}
               <module-option name="keyTab" value="{{ config.get('AAA_JAAS_KEYTAB_FILE') }}"/>
               {% endif %}
+              {% if config.get('AAA_JAAS_PRINCIPAL_NAME') != "" %}
+              <module-option name="principal" value="{{ config.get('AAA_JAAS_PRINCIPAL_NAME') }}"/>
+              {% endif %}
               <module-option name="doNotPrompt" value="true"/>
             </login-module>
           </authentication>

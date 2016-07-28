@@ -16,6 +16,7 @@ exec "${JAVA_HOME}/bin/java" \
 	-Dorg.ovirt.engine.exttool.core.ticketCacheFile="${AAA_JAAS_TICKET_CACHE_FILE}" \
 	-Dorg.ovirt.engine.exttool.core.useKeytab="${AAA_JAAS_USE_KEYTAB}" \
 	-Dorg.ovirt.engine.exttool.core.keytabFile="${AAA_JAAS_KEYTAB_FILE}" \
+	-Dorg.ovirt.engine.exttool.core.principalName="${AAA_JAAS_PRINCIPAL_NAME}" \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
 	-dependencies org.ovirt.engine.core.extensions-tool \
 	-class org.ovirt.engine.exttool.core.ExtensionsToolExecutor \

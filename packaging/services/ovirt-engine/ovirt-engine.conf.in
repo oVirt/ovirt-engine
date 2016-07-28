@@ -408,6 +408,11 @@ AAA_JAAS_USE_KEYTAB=false
 #
 AAA_JAAS_KEYTAB_FILE=
 
+# Specify username (for example "testuser") or service name (for example
+# "host/host1.example.com") to set principal to use with ticket cache or keytab
+#
+AAA_JAAS_PRINCIPAL_NAME=
+
 #
 # Enable/disable updating the dashboard DB query caches at regular intervals.
 #

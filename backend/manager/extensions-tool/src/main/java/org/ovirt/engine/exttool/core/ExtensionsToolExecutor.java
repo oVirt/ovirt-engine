@@ -38,6 +38,7 @@ public class ExtensionsToolExecutor {
     private static String AAA_JAAS_TICKET_CACHE_FILE = System.getProperty("org.ovirt.engine.exttool.core.ticketCacheFile");
     private static String AAA_JAAS_USE_KEYTAB = System.getProperty("org.ovirt.engine.exttool.core.useKeytab");
     private static String AAA_JAAS_KEYTAB_FILE = System.getProperty("org.ovirt.engine.exttool.core.keytabFile");
+    private static String AAA_JAAS_PRINCIPAL_NAME = System.getProperty("org.ovirt.engine.exttool.core.principalName");
     private static String JAAS_CONF = System.getProperty("java.security.auth.login.config");
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ExtensionsToolExecutor.class);
@@ -161,6 +162,10 @@ public class ExtensionsToolExecutor {
                 keytabFile = String.format("keyTab=\"%s\"", AAA_JAAS_KEYTAB_FILE);
             }
 
+            String principalName = "";
+            if (StringUtils.isNotEmpty(AAA_JAAS_PRINCIPAL_NAME)) {
+                principalName = String.format("principal=\"%s\"", AAA_JAAS_PRINCIPAL_NAME);
+            }
             fw.write(
                 String.format(
                     "oVirtKerbAAA {%n" +
@@ -171,13 +176,15 @@ public class ExtensionsToolExecutor {
                         "%s%n" +  // ticket cache path
                         "useKeyTab=%s%n" +
                         "%s%n" +  // keytab path
+                        "%s%n" +  // principal name
                         "doNotPrompt=true%n" +
                         ";%n" +
                         "};%n",
                     AAA_JAAS_USE_TICKET_CACHE,
                     ticketCacheFile,
                     AAA_JAAS_USE_KEYTAB,
-                    keytabFile
+                    keytabFile,
+                    principalName
                 )
             );
         }
