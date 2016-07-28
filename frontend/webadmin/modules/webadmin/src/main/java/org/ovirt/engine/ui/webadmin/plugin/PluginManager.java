@@ -306,18 +306,23 @@ public class PluginManager implements HasHandlers {
     /**
      * Returns {@code true} when the given plugin can perform actions through the API.
      * <p>
-     * More precisely, returns {@code true} when all of the following conditions are met:
-     * <ul>
-     * <li>WebAdmin is currently in state that allows plugins to be invoked
-     * <li>the plugin is either {@linkplain PluginState#INITIALIZING initializing} (actions performed from UiInit
-     * function), or {@linkplain PluginState#IN_USE in use} (actions performed from other event handler functions)
-     * </ul>
+     * If {@code allowWhileLoading} is {@code false}, the plugin must be either
+     * {@linkplain PluginState#INITIALIZING initializing} (actions performed from UiInit function),
+     * or {@linkplain PluginState#IN_USE in use} (actions performed from other event handler functions).
+     * <p>
+     * If {@code allowWhileLoading} is {@code true}, above constraint is relaxed by allowing the plugin
+     * to be {@linkplain PluginState#LOADING loading} (at this point, infra expects the plugin to call
+     * {@code ready} API function to signal that the plugin is ready for use).
      */
-    boolean validatePluginAction(String pluginName) {
+    boolean validatePluginAction(String pluginName, boolean allowWhileLoading) {
         Plugin plugin = getPlugin(pluginName);
-        boolean pluginInitializingOrInUse = plugin != null
-                ? plugin.isInState(PluginState.INITIALIZING) || plugin.isInState(PluginState.IN_USE) : false;
-        return canInvokePlugins && pluginInitializingOrInUse;
+        if (plugin == null) {
+            return false;
+        }
+
+        boolean isInitializingOrInUse = plugin.isInState(PluginState.INITIALIZING) || plugin.isInState(PluginState.IN_USE);
+        boolean isLoading = plugin.isInState(PluginState.LOADING);
+        return isInitializingOrInUse || (allowWhileLoading && isLoading);
     }
 
     /**
@@ -432,8 +437,12 @@ public class PluginManager implements HasHandlers {
         var user = ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::user;
 
         var validatePluginAction = function(pluginName) {
-            return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::validatePluginAction(Ljava/lang/String;)(pluginName);
+            return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::validatePluginAction(Ljava/lang/String;Z)(pluginName,false);
         };
+
+        var validateSafePluginAction = function(pluginName) {
+            return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::validatePluginAction(Ljava/lang/String;Z)(pluginName,true);
+        }
 
         var getEntityType = function(entityTypeName) {
             return @org.ovirt.engine.ui.webadmin.plugin.entity.EntityType::from(Ljava/lang/String;)(entityTypeName);
@@ -544,27 +553,27 @@ public class PluginManager implements HasHandlers {
                 }
             },
             loginUserName: function() {
-                if (validatePluginAction(this.pluginName)) {
+                if (validateSafePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getFullUserName()();
                 }
             },
             loginUserId: function() {
-                if (validatePluginAction(this.pluginName)) {
+                if (validateSafePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getUserId()();
                 }
             },
             ssoToken: function() {
-                if (validatePluginAction(this.pluginName)) {
+                if (validateSafePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getSsoToken()();
                 }
             },
             engineBaseUrl: function() {
-                if (validatePluginAction(this.pluginName)) {
+                if (validateSafePluginAction(this.pluginName)) {
                     return @org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils::getRootURL()() + @org.ovirt.engine.ui.frontend.utils.BaseContextPathData::getRelativePath()();
                 }
             },
             currentLocale: function() {
-                if (validatePluginAction(this.pluginName)) {
+                if (validateSafePluginAction(this.pluginName)) {
                     return uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::getCurrentLocale()();
                 }
             }
