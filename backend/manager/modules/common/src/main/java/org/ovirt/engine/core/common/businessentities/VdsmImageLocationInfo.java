@@ -20,6 +20,9 @@ public class VdsmImageLocationInfo extends LocationInfo {
         this.imageId = diskImage.getImageId();
     }
 
+    public VdsmImageLocationInfo() {
+    }
+
     public Guid getStorageDomainId() {
         return storageDomainId;
     }
