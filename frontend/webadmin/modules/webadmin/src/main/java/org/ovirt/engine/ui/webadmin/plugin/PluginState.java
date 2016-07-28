@@ -23,8 +23,7 @@ public enum PluginState {
 
     /**
      * The plugin has indicated that it is ready for use. We expect the event handler object (object containing plugin
-     * event handler functions) to be registered at this point. We will proceed with plugin initialization after
-     * WebAdmin enters the state that allows plugins to be invoked.
+     * event handler functions) to be registered at this point. We will now proceed with plugin initialization.
      * <p>
      * Possible transitions: {@link #INITIALIZING}
      */
