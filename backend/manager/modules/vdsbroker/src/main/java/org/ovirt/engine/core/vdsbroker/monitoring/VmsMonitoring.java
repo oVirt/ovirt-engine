@@ -154,9 +154,18 @@ public class VmsMonitoring implements BackendService {
         monitoredVms.forEach(vm -> {
             // TODO filter out migratingTo VMs if no action is taken on them
             if (shouldAnalyzeVm(vm, fetchTime, vdsManager.getVdsId())) {
-                VmAnalyzer vmAnalyzer = vmAnalyzerFactory.getVmAnalyzer(vm);
-                vmAnalyzers.add(vmAnalyzer);
-                vmAnalyzer.analyze();
+                try {
+                    VmAnalyzer vmAnalyzer = vmAnalyzerFactory.getVmAnalyzer(vm);
+                    vmAnalyzer.analyze();
+                    vmAnalyzers.add(vmAnalyzer);
+                } catch (RuntimeException ex) {
+                    Guid vmId = getVmId(vm.getFirst(), vm.getSecond());
+                    VmManager vmManager = resourceManager.getVmManager(vmId);
+                    vmManager.unlock();
+
+                    log.error("Failed during monitoring vm: {} , error is: {}", vmId, ex);
+                    log.error("Exception:", ex);
+                }
             }
         });
         return vmAnalyzers;
