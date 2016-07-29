@@ -52,7 +52,7 @@ public class V3VmHelper {
         if (actions != null) {
             List<V3Link> links = actions.getLinks();
             links.clear();
-            V3LinkHelper.addLink(links, "activate", "vms", vmId, "disks", disk.getId(), "acivate");
+            V3LinkHelper.addLink(links, "activate", "vms", vmId, "disks", disk.getId(), "activate");
             V3LinkHelper.addLink(links, "deactivate", "vms", vmId, "disks", disk.getId(), "deactivate");
             V3LinkHelper.addLink(links, "export", "vms", vmId, "disks", disk.getId(), "export");
             V3LinkHelper.addLink(links, "move", "vms", vmId, "disks", disk.getId(), "move");
