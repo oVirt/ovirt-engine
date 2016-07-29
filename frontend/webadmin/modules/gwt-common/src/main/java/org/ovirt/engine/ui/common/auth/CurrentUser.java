@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.auth;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.FormatUtils;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -25,7 +27,6 @@ public class CurrentUser implements HasHandlers {
     private final EventBus eventBus;
 
     private boolean loggedIn = false;
-    private DbUser loggedUser;
     private AutoLoginData userInfo;
 
     // Indicates that the user should be logged in automatically
@@ -49,36 +50,22 @@ public class CurrentUser implements HasHandlers {
         this.loggedIn = loggedIn;
     }
 
-    void setLoggedUser(DbUser loggedUser) {
-        this.loggedUser = loggedUser;
+    DbUser getLoggedUser() {
+        return Frontend.getInstance().getLoggedInUser();
     }
 
     /**
-     * Returns the user name if the user is currently logged in, {@code null} otherwise.
-     */
-    public String getUserName() {
-        return isLoggedIn() ? loggedUser.getLoginName() : null;
-    }
-
-    /**
-     * Returns the user authentication domain if the user is currently logged in, {@code null} otherwise.
-     */
-    public String getDomain() {
-        return isLoggedIn() ? loggedUser.getDomain() : null;
-    }
-
-    /**
-     * Returns the user ID if the user is currently logged in, {@code null} otherwise.
+     * Returns the user ID of the current user.
      */
     public String getUserId() {
-        return isLoggedIn() ? loggedUser.getId().toString() : null;
+        return getLoggedUser().getId().toString();
     }
 
     /**
-     * Returns full user name ({@code user@domain}) if the user is currently logged in, {@code null} otherwise.
+     * Returns full user name ({@code user@domain}) of the current user.
      */
     public String getFullUserName() {
-        return isLoggedIn()? FormatUtils.getFullLoginName(loggedUser): null;
+        return FormatUtils.getFullLoginName(getLoggedUser());
     }
 
     public boolean isAutoLogin() {
@@ -93,8 +80,7 @@ public class CurrentUser implements HasHandlers {
         this.logoutHandler = logoutHandler;
     }
 
-    public void login(DbUser loggedUser) {
-        setLoggedUser(loggedUser);
+    public void login() {
         setLoggedIn(true);
     }
 

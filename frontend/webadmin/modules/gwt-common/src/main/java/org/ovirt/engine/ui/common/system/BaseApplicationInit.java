@@ -181,7 +181,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         frontend.initLoggedInUser(loggedUser);
 
         // UI login actions
-        user.login(loggedUser);
+        user.login();
 
         afterLogin();
 
