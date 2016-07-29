@@ -34,7 +34,7 @@ DEV_BUILD_GWT_DRAFT=0
 DEV_BUILD_GWT_SUPER_DEV_MODE=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
-PATTERNFLY_DIR=/usr/share/patternfly1/resources
+JS_DEPS_DIR=/usr/share/ovirt-js-dependencies
 VMCONSOLE_SYSCONF_DIR=/etc/ovirt-vmconsole
 VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 
@@ -482,8 +482,8 @@ install-layout: \
 	-rm -f "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 	ln -s "$(DATA_DIR)/branding/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 
-	-rm -f "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/patternfly"
-	ln -s "$(PATTERNFLY_DIR)" "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/patternfly"
+	-rm -f "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/ovirt-js-dependencies"
+	ln -s "$(JS_DEPS_DIR)" "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/ovirt-js-dependencies"
 
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 

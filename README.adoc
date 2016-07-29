@@ -19,11 +19,11 @@ Install the following system components:
 - python-daemon
 - otopi >= 1.1.0
 - ovirt-host-deploy >= 1.1.0
+- ovirt-js-dependencies
 - ovirt-setup-lib
 - maven-3
 - pyflakes (optional)
 - python-pep8 / pep8 (optional)
-- patternfly1 (optional)
 - python-docker-py (optional)
 
 Maven-3 is required, download and extract if not installed using
@@ -131,8 +131,8 @@ customization:
 
 PREFIX:: Installation root directory. Default is `/usr/local`.
 
-PATTERNFLY_DIR:: The loaction of the PatternFly installation. Default
-is `/usr/share/patternfly1/resources`.
+JS_DEPS_DIR:: The loaction of the ovirt-js-dependencies installation.
+Default is `/usr/share/ovirt-js-dependencies`.
 
 BUILD_GWT:: Build GWT. Default is `1`.
 

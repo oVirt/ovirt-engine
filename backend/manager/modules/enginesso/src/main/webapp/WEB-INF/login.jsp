@@ -12,6 +12,7 @@
     <obrand:favicon />
     <title><fmt:message key="product" /> <fmt:message key="loginpage.title" bundle="${loginpage}" /></title>
     <obrand:stylesheets />
+    <obrand:javascripts />
 </head>
 <body>
     <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
@@ -42,13 +43,13 @@
 
                 <div style="height:45px;vertical-align:top;display: table;">
                     <c:if test="${ssoSession.loginMessage != null && ssoSession.loginMessage != '' }">
-                        <span style="vertical-align:top;display:table-cell;">
-                            <span class="pficon-layered">
-                                <span class="pficon pficon-warning-triangle"></span>
-                                <span class="pficon pficon-warning-exclamation"></span>
-                            </span>
+                        <div class="alert alert-warning alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                <span class="pficon pficon-close"></span>
+                            </button>
+                            <span class="pficon pficon-warning-triangle-o"></span>
                             ${ssoSession.loginMessage}
-                        </span>
+                        </div>
                         <c:set target="${ssoSession}" property="loginMessage" value="" />
                     </c:if>
                 </div>

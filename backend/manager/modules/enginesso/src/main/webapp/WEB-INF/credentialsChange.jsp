@@ -12,6 +12,7 @@
     <obrand:favicon />
     <title><fmt:message key="product" /> <fmt:message key="changepasswordpage.title" bundle="${changepasswordpage}" /></title>
     <obrand:stylesheets />
+    <obrand:javascripts />
 </head>
 <body>
     <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
@@ -45,13 +46,13 @@
                 <div style="height:45px;vertical-align:top;display: table;">
                     <c:choose>
                         <c:when test="${ssoSession.changePasswdMessage != null && ssoSession.changePasswdMessage != '' }">
-                            <span style="vertical-align:top;display:table-cell;">
-                                <span class="pficon-layered">
-                                    <span class="pficon pficon-warning-triangle"></span>
-                                    <span class="pficon pficon-warning-exclamation"></span>
-                                </span>
+                            <div class="alert alert-warning alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                    <span class="pficon pficon-close"></span>
+                                </button>
+                                <span class="pficon pficon-warning-triangle-o"></span>
                                 ${ssoSession.changePasswdMessage}
-                            </span>
+                            </div>
                             <c:set target="${ssoSession}" property="changePasswdMessage" value="" />
                         </c:when>
                         <c:otherwise>
