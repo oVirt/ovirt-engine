@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -545,18 +546,22 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return DbFacade.getInstance().getDaoForEntity(entityClass);
     }
 
-    protected void startFinalizingStep() {
-        executionHandler.startFinalizingStep(getExecutionContext());
+    protected void handleStepsOnEnd() {
+        if (getCommandStep() != null && getExecutionContext().getStep() != null) {
+            executionHandler.endTaskStep(getExecutionContext().getStep().getId(),
+                    isEndSuccessfully() ? JobExecutionStatus.FINISHED : JobExecutionStatus.FAILED);
+        }
+
+        if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
+            executionHandler.startFinalizingStep(getExecutionContext());
+        }
     }
 
     @Override
     public VdcReturnValueBase endAction() {
         boolean shouldEndAction = handleCommandExecutionEnded();
         if (shouldEndAction) {
-            if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
-                startFinalizingStep();
-            }
-
+            handleStepsOnEnd();
             handleChildCommands();
             try {
                 initiateLockEndAction();
@@ -1480,6 +1485,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return false;
     }
 
+    protected void handleCommandStep() {
+        if (getCommandStep() != null) {
+            Step taskStep =
+                    executionHandler.addTaskStep(getExecutionContext(),
+                            getCommandStep(),
+                            null);
+            if (taskStep != null) {
+                getExecutionContext().setStep(taskStep);
+                persistCommandIfNeeded();
+            }
+        }
+    }
+
     protected final void execute() {
         setCommandStatus(CommandStatus.ACTIVE);
         getReturnValue().setValid(true);
@@ -1493,6 +1511,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         if (!hasTaskHandlers() || getExecutionIndex() == 0) {
             executionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
         }
+
+        handleCommandStep();
 
         try {
             handleTransactivity();
@@ -1842,6 +1862,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return CommandCoordinatorUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
+    }
+
+    protected StepEnum getCommandStep() {
+        return null;
     }
 
     public VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
