@@ -39,9 +39,6 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
         if (from.isSetActions()) {
             to.setActions(adaptIn(from.getActions()));
         }
-        if (from.isSetActive()) {
-            to.setActive(from.isActive());
-        }
         if (from.isSetActualSize()) {
             to.setActualSize(from.getActualSize());
         }

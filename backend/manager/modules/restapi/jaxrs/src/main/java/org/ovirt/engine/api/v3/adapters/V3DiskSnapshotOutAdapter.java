@@ -18,7 +18,13 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.DiskSnapshot;
+import org.ovirt.engine.api.resource.DiskAttachmentResource;
+import org.ovirt.engine.api.resource.DiskAttachmentsResource;
+import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3DiskSnapshot;
 import org.ovirt.engine.api.v3.types.V3Statistics;
@@ -35,9 +41,6 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
         }
         if (from.isSetActions()) {
             to.setActions(adaptOut(from.getActions()));
-        }
-        if (from.isSetActive()) {
-            to.setActive(from.isActive());
         }
         if (from.isSetActualSize()) {
             to.setActualSize(from.getActualSize());
@@ -143,6 +146,23 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
         if (from.isSetWipeAfterDelete()) {
             to.setWipeAfterDelete(from.isWipeAfterDelete());
         }
+
+        // In version 4 of the API the active attribute has been moved from the disk to the disk attachment, as it is
+        // specific to the relationship between a particular VM and the disk. But in version 3 of the API we need to
+        // continue supporting it. To do so we need to find the disk attachment and copy this attribute to the disk.
+        if (to.isSetId() && to.isSetVm() && to.getVm().isSetId()) {
+            String diskId = to.getId();
+            String vmId = to.getVm().getId();
+            VmsResource vmsResource = BackendApiResource.getInstance().getVmsResource();
+            VmResource vmResource = vmsResource.getVmResource(vmId);
+            DiskAttachmentsResource attachmentsResource = vmResource.getDiskAttachmentsResource();
+            DiskAttachmentResource attachmentResource = attachmentsResource.getAttachmentResource(diskId);
+            DiskAttachment attachment = attachmentResource.get();
+            if (attachment.isSetActive()) {
+                to.setActive(attachment.isActive());
+            }
+        }
+
         return to;
     }
 }

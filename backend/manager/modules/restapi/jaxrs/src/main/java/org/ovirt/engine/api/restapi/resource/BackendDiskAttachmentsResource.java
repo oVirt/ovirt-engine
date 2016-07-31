@@ -94,8 +94,8 @@ public class BackendDiskAttachmentsResource
         Disk disk = attachment.getDisk();
 
         boolean isDiskActive = false;
-        if (disk.isSetActive()) {
-            isDiskActive = BooleanUtils.toBoolean(disk.isActive());
+        if (attachment.isSetActive()) {
+            isDiskActive = BooleanUtils.toBoolean(attachment.isActive());
         }
         params.setPlugUnPlug(isDiskActive);
 
@@ -170,8 +170,8 @@ public class BackendDiskAttachmentsResource
         if (storageDomainId != null) {
             parameters.setStorageDomainId(storageDomainId);
         }
-        if (disk.isSetActive()) {
-            parameters.setPlugDiskToVm(disk.isActive());
+        if (attachment.isSetActive()) {
+            parameters.setPlugDiskToVm(attachment.isActive());
         }
         if (disk.isSetLunStorage() && disk.getLunStorage().isSetHost()) {
             parameters.setVdsId(getHostId(disk.getLunStorage().getHost()));
