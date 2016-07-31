@@ -73,7 +73,7 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
-        runInternalAction(VdcActionType.CopyData, parameters);
+        runInternalActionWithTasksContext(VdcActionType.CopyData, parameters);
     }
 
     @Override

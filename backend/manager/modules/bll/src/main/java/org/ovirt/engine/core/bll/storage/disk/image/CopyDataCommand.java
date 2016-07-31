@@ -6,6 +6,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.CopyVolumeDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
@@ -27,5 +28,10 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
                         getParameters().isCollapse()),
                 getParameters().getStoragePoolId(), this);
         setSucceeded(true);
+    }
+
+    @Override
+    protected StepEnum getCommandStep() {
+        return StepEnum.COPY_VOLUME;
     }
 }
