@@ -330,7 +330,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     protected void executeCommand() {
-        boolean success = true;
         TransactionSupport.executeInNewTransaction(() -> {
             initImportClonedTemplateDisks();
             addVmTemplateToDb();
@@ -352,7 +351,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             endMoveOrCopyCommand();
         }
         checkTrustedService();
-        setSucceeded(success);
+        setSucceeded(true);
     }
 
     private void updateOriginalTemplateNameOnDerivedVms() {
@@ -379,7 +378,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             for (DiskImage disk : disks) {
                 Guid originalDiskId = newDiskIdForDisk.get(disk.getId()).getId();
                 Guid destinationDomain = imageToDestinationDomainMap.get(originalDiskId);
-                MoveOrCopyImageGroupParameters tempVar =
+                MoveOrCopyImageGroupParameters p =
                         new MoveOrCopyImageGroupParameters(containerID,
                                 originalDiskId,
                                 newDiskIdForDisk.get(disk.getId()).getImageId(),
@@ -388,25 +387,24 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                                 destinationDomain,
                                 ImageOperation.Copy);
 
-                tempVar.setParentCommand(getActionType());
-                tempVar.setUseCopyCollapse(true);
-                tempVar.setVolumeType(disk.getVolumeType());
-                tempVar.setVolumeFormat(disk.getVolumeFormat());
-                tempVar.setCopyVolumeType(CopyVolumeType.SharedVol);
-                tempVar.setSourceDomainId(getParameters().getSourceDomainId());
-                tempVar.setForceOverride(getParameters().getForceOverride());
-                tempVar.setImportEntity(true);
-                tempVar.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
-                tempVar.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
+                p.setParentCommand(getActionType());
+                p.setUseCopyCollapse(true);
+                p.setVolumeType(disk.getVolumeType());
+                p.setVolumeFormat(disk.getVolumeFormat());
+                p.setCopyVolumeType(CopyVolumeType.SharedVol);
+                p.setSourceDomainId(getParameters().getSourceDomainId());
+                p.setForceOverride(getParameters().getForceOverride());
+                p.setImportEntity(true);
+                p.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
+                p.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
                 for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
                     if (originalDiskId.equals(diskImage.getId())) {
-                        tempVar.setQuotaId(diskImage.getQuotaId());
-                        tempVar.setDiskProfileId(diskImage.getDiskProfileId());
+                        p.setQuotaId(diskImage.getQuotaId());
+                        p.setDiskProfileId(diskImage.getDiskProfileId());
                         break;
                     }
                 }
 
-                MoveOrCopyImageGroupParameters p = tempVar;
                 p.setParentParameters(getParameters());
                 VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                         VdcActionType.CopyImageGroup,
