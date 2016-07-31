@@ -1089,6 +1089,9 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
+* Sun Jul 31 2016 Yedidyah Bar David <didi@redhat.com> - 4.0.2.2-1
+- Bump version to 4.0.2.3
+
 * Thu Jul 28 2016 Rafael Martins <rmartins@redhat.com> - 4.0.2.2-1
 - Bump version to 4.0.2.2
 
