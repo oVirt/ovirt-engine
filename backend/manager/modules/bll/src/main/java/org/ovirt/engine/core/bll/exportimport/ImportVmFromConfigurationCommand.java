@@ -146,7 +146,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     private static void clearVmDisks(VM vm) {
-        vm.setDiskMap(Collections.<Guid, Disk> emptyMap());
+        vm.setDiskMap(Collections.emptyMap());
         vm.getImages().clear();
         vm.getDiskList().clear();
     }
