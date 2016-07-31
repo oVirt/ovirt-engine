@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -183,7 +182,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 }
 
                 image.setStoragePoolId(getParameters().getStoragePoolId());
-                image.setStorageIds(new ArrayList<>(Arrays.asList(storageDomain.getId())));
+                image.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
                 imageMap.put(image.getImageId(), image);
             }
             getVmTemplate().setDiskImageMap(imageMap);
