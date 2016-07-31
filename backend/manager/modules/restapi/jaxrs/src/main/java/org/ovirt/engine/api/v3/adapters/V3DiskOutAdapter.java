@@ -42,9 +42,6 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
         if (from.isSetActions()) {
             to.setActions(adaptOut(from.getActions()));
         }
-        if (from.isSetActive()) {
-            to.setActive(from.isActive());
-        }
         if (from.isSetActualSize()) {
             to.setActualSize(from.getActualSize());
         }
@@ -150,10 +147,10 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
             to.setWipeAfterDelete(from.isWipeAfterDelete());
         }
 
-        // In version 4 of the API the interface and bootable attributes have been moved from the disk to the disk
-        // attachment, as they are specific of the relationship between a particular VM and the disk. But in version 3
-        // of the API we need to continue supporting them. To do so we need to find the disk attachment and copy both
-        // attributes to the disk.
+        // In version 4 of the API the interface, bootable and active attributes have been moved from the disk to the
+        // disk attachment, as they are specific of the relationship between a particular VM and the disk. But in
+        // version 3 of the API we need to continue supporting them. To do so we need to find the disk attachment and
+        // copy these attributes to the disk.
         if (to.isSetId() && to.isSetVm() && to.getVm().isSetId()) {
             String diskId = to.getId();
             String vmId = to.getVm().getId();
@@ -167,6 +164,9 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
             }
             if (attachment.isSetBootable()) {
                 to.setBootable(attachment.isBootable());
+            }
+            if (attachment.isSetActive()) {
+                to.setActive(attachment.isActive());
             }
         }
 

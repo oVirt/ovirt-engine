@@ -27,7 +27,6 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
     protected void verify(Disk model, Disk transform) {
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
-        assertEquals(model.isActive(), transform.isActive());
         assertEquals("unexpected propagate errors", model.isPropagateErrors(), transform.isPropagateErrors());
         assertEquals("unexpected wipe after delete", model.isWipeAfterDelete(), transform.isWipeAfterDelete());
         assertEquals("unexpected shareable", model.isShareable(), transform.isShareable());
