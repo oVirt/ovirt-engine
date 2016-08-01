@@ -52,4 +52,9 @@ public class AddLabelCommand<T extends LabelActionParameters> extends LabelComma
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ADDED_AFFINITY_LABEL : AuditLogType.USER_FAILED_TO_ADD_AFFINITY_LABEL;
     }
+
+    @Override
+    protected void setAuditCustomValues() {
+        addCustomValue("labelName", getParameters().getLabel().getName());
+    }
 }
