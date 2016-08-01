@@ -46,4 +46,13 @@ public abstract class LabelCommandBase<T extends LabelActionParametersBase> exte
                 ActionGroup.TAG_MANAGEMENT));
     }
 
+    protected void setAuditCustomValues() {
+        addCustomValue("labelName", getLabelName());
+    }
+
+    @Override
+    public void init() {
+        setAuditCustomValues();
+    }
+
 }
