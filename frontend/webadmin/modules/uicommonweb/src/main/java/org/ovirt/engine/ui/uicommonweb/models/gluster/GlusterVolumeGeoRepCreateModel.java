@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -279,7 +280,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
                     StringBuilder configViolations = new StringBuilder(constants.geoReplicationRecommendedConfigViolation());
                     for(GlusterGeoRepNonEligibilityReason currentViolator : eligibilityViolators) {
                         configViolations.append("\n* ");//$NON-NLS-1$
-                        configViolations.append(messages.geoRepEligibilityViolations(currentViolator));
+                        configViolations.append(EnumTranslator.getInstance().translate(currentViolator));
                     }
                     setRecommendationViolations(configViolations.toString());
                 } else {

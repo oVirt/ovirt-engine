@@ -1047,6 +1047,54 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String RaidType___RAID10();
 
+    String GlusterVolumeSnapshotScheduleRecurrence___INTERVAL();
+
+    String GlusterVolumeSnapshotScheduleRecurrence___HOURLY();
+
+    String GlusterVolumeSnapshotScheduleRecurrence___DAILY();
+
+    String GlusterVolumeSnapshotScheduleRecurrence___WEEKLY();
+
+    String GlusterVolumeSnapshotScheduleRecurrence___MONTHLY();
+
+    String GlusterVolumeSnapshotScheduleRecurrence___UNKNOWN();
+
+    String GlusterGeoRepNonEligibilityReason___SLAVE_AND_MASTER_VOLUMES_SHOULD_NOT_BE_IN_SAME_CLUSTER();
+
+    String GlusterGeoRepNonEligibilityReason___SLAVE_VOLUME_SIZE_SHOULD_BE_GREATER_THAN_MASTER_VOLUME_SIZE();
+
+    String GlusterGeoRepNonEligibilityReason___SLAVE_CLUSTER_AND_MASTER_CLUSTER_COMPATIBILITY_VERSIONS_DO_NOT_MATCH();
+
+    String GlusterGeoRepNonEligibilityReason___SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION();
+
+    String GlusterGeoRepNonEligibilityReason___SLAVE_VOLUME_SHOULD_BE_UP();
+
+    String GlusterGeoRepNonEligibilityReason___SLAVE_VOLUME_SIZE_TO_BE_AVAILABLE();
+
+    String GlusterGeoRepNonEligibilityReason___SLAVE_VOLUME_TO_BE_EMPTY();
+
+    String GlusterGeoRepNonEligibilityReason___NO_UP_SLAVE_SERVER();
+
+    String GlusterGeoRepNonEligibilityReason___MASTER_VOLUME_SIZE_TO_BE_AVAILABLE();
+
+    String SizeUnit___BYTES();
+
+    String SizeUnit___KiB();
+
+    String SizeUnit___MiB();
+
+    String SizeUnit___GiB();
+
+    String SizeUnit___TiB();
+
+    String SizeUnit___PiB();
+
+    String SizeUnit___EiB();
+
+    String SizeUnit___ZiB();
+
+    String SizeUnit___YiB();
+
     String VmWatchdogType___i6300esb();
 
     String VmWatchdogAction___NONE();

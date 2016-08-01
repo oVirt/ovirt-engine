@@ -23,11 +23,12 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel.EndDateOptions;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
+
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
@@ -194,7 +195,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
                 new ListModelListBoxEditor<>(new AbstractRenderer<GlusterVolumeSnapshotScheduleRecurrence>() {
                     @Override
                     public String render(GlusterVolumeSnapshotScheduleRecurrence object) {
-                        return ConstantsManager.getInstance().getMessages().recurrenceType(object);
+                        return EnumTranslator.getInstance().translate(object);
                     }
         });
     }
