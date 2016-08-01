@@ -7,10 +7,12 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -31,7 +33,8 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
             return constants.notAvailableLabel();
         } else {
             Pair<SizeUnit, Double> sizeWithUnits = SizeConverter.autoConvert(size.longValue(), inUnit);
-            return ConstantsManager.getInstance().getMessages().sizeUnitString(formatSize(sizeWithUnits.getSecond()), sizeWithUnits.getFirst());//$NON-NLS-1$
+            return ConstantsManager.getInstance().getMessages().sizeUnitString(formatSize(sizeWithUnits.getSecond()),
+                    EnumTranslator.getInstance().translate(sizeWithUnits.getFirst()));
         }
     }
 

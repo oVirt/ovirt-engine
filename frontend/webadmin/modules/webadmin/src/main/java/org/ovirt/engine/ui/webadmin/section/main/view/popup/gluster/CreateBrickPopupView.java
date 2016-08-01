@@ -23,12 +23,14 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.CreateBrickModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
@@ -168,7 +170,8 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
             @Override
             public String getValue(StorageDevice entity) {
                 Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(entity.getSize(), SizeUnit.MiB);
-                return messages.sizeUnitString(formatSize(convertedSize.getSecond()), convertedSize.getFirst()); //$NON-NLS-1$
+                return messages.sizeUnitString(formatSize(convertedSize.getSecond()),
+                        EnumTranslator.getInstance().translate(convertedSize.getFirst()));
             }
         }, constants.size(), "100px"); //$NON-NLS-1$
     }
