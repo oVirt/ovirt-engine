@@ -1112,6 +1112,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String reinstallHost();
 
+    String checkForHostUpgrade();
+
     String upgradeHost();
 
     String management();

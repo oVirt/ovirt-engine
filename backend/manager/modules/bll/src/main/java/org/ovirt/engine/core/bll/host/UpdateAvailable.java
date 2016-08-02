@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.host;
 
 import java.util.EnumSet;
 
+import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 
@@ -17,9 +18,9 @@ public interface UpdateAvailable {
      *
      * @param host
      *            The examined host
-     * @return {@code true} if updates are available, else {@code false}
+     * @return {@code HostUpgradeManagerResult} the result of host upgrade check
      */
-    boolean isUpdateAvailable(VDS host);
+    HostUpgradeManagerResult checkForUpdates(VDS host);
 
     /**
      * @return the host types

@@ -103,6 +103,8 @@ public enum VdcActionType {
     UpgradeHostInternal(138, QuotaDependency.NONE),
     HostEnrollCertificate(139, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     HostEnrollCertificateInternal(140, QuotaDependency.NONE),
+    HostUpgradeCheck(141, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
+    HostUpgradeCheckInternal(142, QuotaDependency.NONE),
 
     // Network
     AddNetwork(154, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),

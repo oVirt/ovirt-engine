@@ -27,6 +27,11 @@ public class UpgradeHostValidator {
                 .unless(VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.UpgradeHost));
     }
 
+    public ValidationResult statusSupportedForHostUpgradeCheck() {
+        return ValidationResult.failWith(EngineMessage.CANNOT_CHECK_FOR_HOST_UPGRADE_STATUS_ILLEGAL)
+                .unless(VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.HostUpgradeCheck));
+    }
+
     public ValidationResult statusSupportedForHostUpgradeInternal() {
         return ValidationResult.failWith(EngineMessage.CANNOT_UPGRADE_HOST_STATUS_ILLEGAL)
                 .when(host.getStatus() != VDSStatus.Maintenance);

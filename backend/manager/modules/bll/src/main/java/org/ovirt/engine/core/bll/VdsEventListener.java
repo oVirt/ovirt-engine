@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -585,8 +586,8 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public boolean isUpdateAvailable(VDS host) {
-        return availableUpdatesFinder.isUpdateAvailable(host);
+    public HostUpgradeManagerResult checkForUpdates(VDS host) {
+        return availableUpdatesFinder.checkForUpdates(host);
     }
 
     // TODO asynch event handler - design infra code to allow async events in segregated thread

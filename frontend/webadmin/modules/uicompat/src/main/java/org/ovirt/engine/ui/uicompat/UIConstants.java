@@ -661,6 +661,8 @@ public interface UIConstants extends Constants {
 
     String hostMustBeInstalledBeforeUpgrade();
 
+    String areYouSureYouWantToCheckTheFollowingHostForUpgradesMsg();
+
     String areYouSureYouWantToUpgradeTheFollowingHostWithRunningVmsMsg();
 
     String areYouSureYouWantToUpgradeTheFollowingHostMsg();

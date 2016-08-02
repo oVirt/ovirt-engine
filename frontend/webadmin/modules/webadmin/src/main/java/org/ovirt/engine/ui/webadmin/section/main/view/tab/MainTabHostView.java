@@ -392,6 +392,13 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getEnrollCertificateCommand();
             }
         });
+        // Check for upgrade button
+        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.checkForHostUpgrade()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getCheckForUpgradeCommand();
+            }
+        });
         // Upgrade button
         moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.upgradeHost()) {
             @Override

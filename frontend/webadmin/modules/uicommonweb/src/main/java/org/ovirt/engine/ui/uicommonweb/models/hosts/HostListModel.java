@@ -197,6 +197,16 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         privateInstallCommand = value;
     }
 
+    private UICommand privateCheckForUpgradeCommand;
+
+    public UICommand getCheckForUpgradeCommand() {
+        return privateCheckForUpgradeCommand;
+    }
+
+    private void setCheckForUpgradeCommand(UICommand value) {
+        privateCheckForUpgradeCommand = value;
+    }
+
     private UICommand privateUpgradeCommand;
 
     public UICommand getUpgradeCommand() {
@@ -412,6 +422,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         setMaintenanceCommand(new UICommand("Maintenance", this, true)); //$NON-NLS-1$
         setApproveCommand(new UICommand("Approve", this)); //$NON-NLS-1$
         setInstallCommand(new UICommand("Install", this)); //$NON-NLS-1$
+        setCheckForUpgradeCommand(new UICommand("CheckForUpgrade", this)); //$NON-NLS-1$
         setUpgradeCommand(new UICommand("Upgrade", this)); //$NON-NLS-1$
         setSshRestartCommand(new UICommand("Restart", this, true)); //$NON-NLS-1$
         setSshStopCommand(new UICommand("Stop", this, true)); //$NON-NLS-1$
@@ -1366,6 +1377,14 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     }
 
+    public void checkForUpgrade() {
+        final VDS host = getSelectedItem();
+        Model model = new HostUpgradeCheckConfirmationModel(host);
+        setWindow(model);
+        model.initialize();
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); // $NON-NLS-1$
+    }
+
     public void upgrade() {
         final VDS host = getSelectedItem();
         Model model = createUpgradeModel(host);
@@ -1813,6 +1832,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         getInstallCommand().setIsExecutionAllowed(installAvailability);
 
+        boolean checkForUpgradeAvailability = false;
+        if (singleHostSelected(items)) {
+            VDS host = items.get(0);
+            checkForUpgradeAvailability = canCheckForHostUpgrade(host);
+        }
+        getCheckForUpgradeCommand().setIsExecutionAllowed(checkForUpgradeAvailability);
+
         boolean upgradeAvailability = false;
         if (singleHostSelected(items)) {
             VDS host = items.get(0);
@@ -1860,6 +1886,10 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         getNumaSupportCommand().setIsVisible(numaVisible);
 
+    }
+
+    private boolean canCheckForHostUpgrade(VDS host) {
+        return VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.HostUpgradeCheck);
     }
 
     private boolean canUpgradeHost(VDS host) {
@@ -1962,6 +1992,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         else if (command == getInstallCommand()) {
             install();
+        }
+        else if (command == getCheckForUpgradeCommand()) {
+            checkForUpgrade();
         }
         else if (command == getUpgradeCommand()) {
             upgrade();

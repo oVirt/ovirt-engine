@@ -29,7 +29,9 @@ public final class VdcActionUtils {
         vdsMatrix.put(
                 VDSStatus.Maintenance,
                 EnumSet.of(VdcActionType.MaintenanceVds, VdcActionType.ClearNonResponsiveVdsVms,
-                        VdcActionType.ApproveVds));
+                        VdcActionType.ApproveVds,
+                        VdcActionType.HostUpgradeCheck,
+                        VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.Up,
                 EnumSet.of(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
@@ -42,6 +44,7 @@ public final class VdcActionUtils {
                         VdcActionType.ClearNonResponsiveVdsVms,
                         VdcActionType.ApproveVds,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.Installing,
@@ -49,16 +52,19 @@ public final class VdcActionUtils {
                         VdcActionType.ClearNonResponsiveVdsVms,
                         VdcActionType.ApproveVds, VdcActionType.MaintenanceVds, VdcActionType.StartVds,
                         VdcActionType.StopVds, VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost, VdcActionType.VdsPowerDown));
         vdsMatrix.put(
                 VDSStatus.NonResponsive,
                 EnumSet.of(VdcActionType.RemoveVds, VdcActionType.ActivateVds,
-                        VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities, VdcActionType.UpgradeHost));
+                        VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck, VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.PreparingForMaintenance,
                 EnumSet.of(VdcActionType.RemoveVds, VdcActionType.MaintenanceVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
-                        VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities, VdcActionType.UpgradeHost));
+                        VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck, VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.Reboot,
                 EnumSet.of(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
@@ -66,6 +72,7 @@ public final class VdcActionUtils {
                         VdcActionType.ApproveVds,
                         VdcActionType.MaintenanceVds,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.Unassigned,
@@ -75,12 +82,14 @@ public final class VdcActionUtils {
                         VdcActionType.ClearNonResponsiveVdsVms,
                         VdcActionType.ApproveVds,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.Initializing,
                 EnumSet.of(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
                         VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds,
-                        VdcActionType.MaintenanceVds, VdcActionType.RefreshHostCapabilities, VdcActionType.UpgradeHost));
+                        VdcActionType.MaintenanceVds, VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck, VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.NonOperational,
                 EnumSet.of(VdcActionType.RemoveVds,
@@ -92,6 +101,7 @@ public final class VdcActionUtils {
                         VdcActionType.AttachVdsToTag,
                         VdcActionType.ClearNonResponsiveVdsVms,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.InstallingOS,
@@ -103,6 +113,7 @@ public final class VdcActionUtils {
                         VdcActionType.RefreshHostCapabilities,
                         VdcActionType.ApproveVds,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.InstallFailed,
@@ -113,12 +124,14 @@ public final class VdcActionUtils {
                         VdcActionType.ActivateVds,
                         VdcActionType.ApproveVds,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost));
         vdsMatrix.put(
                 VDSStatus.Down,
                 EnumSet.of(VdcActionType.ActivateVds,
                         VdcActionType.ApproveVds,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost,
                         VdcActionType.SshHostReboot,
                         VdcActionType.VdsPowerDown));
@@ -132,6 +145,7 @@ public final class VdcActionUtils {
                         VdcActionType.MaintenanceVds,
                         VdcActionType.RemoveVds,
                         VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.HostUpgradeCheck,
                         VdcActionType.UpgradeHost));
 
         _matrix.put(VDS.class, vdsMatrix);

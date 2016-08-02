@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -29,18 +30,20 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
     private BackendInternal backendInternal;
 
     @Override
-    public boolean isUpdateAvailable(VDS host) {
+    public HostUpgradeManagerResult checkForUpdates(VDS host) {
         VdcQueryReturnValue returnValue =
                 backendInternal.runInternalQuery(VdcQueryType.GetoVirtISOs, new IdQueryParameters(host.getId()));
         List<RpmVersion> isos = returnValue.getReturnValue();
         boolean updateAvailable = RpmVersionUtils.isUpdateAvailable(isos, host.getHostOs());
+        HostUpgradeManagerResult hostUpgradeManagerResult = new HostUpgradeManagerResult();
+        hostUpgradeManagerResult.setUpdatesAvailable(updateAvailable);
         if (updateAvailable) {
             AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
             auditLog.setVds(host);
             auditLogDirector.log(auditLog, AuditLogType.OVIRT_NODE_UPDATES_ARE_AVAILABLE);
         }
 
-        return updateAvailable;
+        return hostUpgradeManagerResult;
     }
 
     @Override

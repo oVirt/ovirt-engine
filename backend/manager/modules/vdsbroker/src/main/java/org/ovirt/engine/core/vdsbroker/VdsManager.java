@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
@@ -360,27 +361,44 @@ public class VdsManager {
             return;
         }
 
-        boolean updateAvailable;
+        checkForUpdates(cachedVds);
+    }
+
+    public HostUpgradeManagerResult checkForUpdates(VDS vds) {
+        HostUpgradeManagerResult hostUpgradeManagerResult = null;
+        AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
+        auditLog.setVds(vds);
         try {
-            updateAvailable = resourceManager.isUpdateAvailable(cachedVds);
+            hostUpgradeManagerResult = resourceManager.checkForUpdates(vds);
+            if (hostUpgradeManagerResult.isUpdatesAvailable()) {
+                String message = hostUpgradeManagerResult.getAvailablePackages() == null ?
+                        "found updates." :
+                        String.format("found updates for packages %s",
+                                StringUtils.join(hostUpgradeManagerResult.getAvailablePackages(), ", "));
+                auditLog.addCustomValue("Message", message);
+            } else {
+                auditLog.addCustomValue("Message", "no updates found.");
+            }
+            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FINISHED);
         } catch (Exception e) {
-            log.error("Failed to check if updates are available for host '{}' with exception '{}'",
-                    cachedVds.getName(),
-                    StringUtils.defaultString(e.getMessage(), e.getCause().toString()));
+            log.error("Failed to check if updates are available for host '{}' with error message '{}'",
+                    vds.getName(),
+                    e.getMessage());
             log.debug("Exception", e);
-            AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
-            auditLog.setVds(cachedVds);
-            auditLog.addCustomValue("Message", StringUtils.defaultString(e.getMessage(), e.getCause().toString()));
+            auditLog.addCustomValue("Message",
+            StringUtils.defaultString(e.getMessage(), e.getCause() == null ? null : e.getCause().toString()));
             auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
-            return;
         }
 
         synchronized (this) {
-            if (updateAvailable != cachedVds.isUpdateAvailable()) {
-                cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
-                vdsDynamicDao.updateUpdateAvailable(cachedVds.getId(), updateAvailable);
+            if (hostUpgradeManagerResult != null &&
+                    hostUpgradeManagerResult.isUpdatesAvailable() != vds.isUpdateAvailable()) {
+                vds.getDynamicData().setUpdateAvailable(hostUpgradeManagerResult.isUpdatesAvailable());
+                vdsDynamicDao.updateUpdateAvailable(vds.getId(), hostUpgradeManagerResult.isUpdatesAvailable());
             }
         }
+
+        return hostUpgradeManagerResult;
     }
 
     /**

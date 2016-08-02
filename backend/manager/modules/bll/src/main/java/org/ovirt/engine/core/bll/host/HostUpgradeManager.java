@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.hostdeploy.VdsDeploy;
 import org.ovirt.engine.core.bll.hostdeploy.VdsDeployPackagesUnit;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
@@ -37,16 +38,18 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     private AuditLogDirector auditLogDirector;
 
     @Override
-    public boolean isUpdateAvailable(final VDS host) {
+    public HostUpgradeManagerResult checkForUpdates(final VDS host) {
         Collection<String> packages = getPackagesForCheckUpdate(host.getVdsType());
         try (final VdsDeploy hostPackagesManager = createPackagesManager(host, false)) {
             VdsDeployPackagesUnit unit = new VdsDeployPackagesUnit(packages, true);
             hostPackagesManager.addUnit(unit);
             hostPackagesManager.execute();
-
             Collection<String> availablePackages = unit.getUpdates();
             boolean updatesAvailable = !availablePackages.isEmpty();
+            HostUpgradeManagerResult hostUpgradeManagerResult = new HostUpgradeManagerResult();
+            hostUpgradeManagerResult.setUpdatesAvailable(updatesAvailable);
             if (updatesAvailable) {
+                hostUpgradeManagerResult.setAvailablePackages(availablePackages);
                 log.info("There are available packages ({}) for host '{}'",
                         StringUtils.join(availablePackages, ", "),
                         host.getName());
@@ -56,7 +59,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 auditLog.addCustomValue("Packages", StringUtils.join(filterPackages(packages, availablePackages), ","));
                 auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
             }
-            return updatesAvailable;
+            return hostUpgradeManagerResult;
         } catch (final Exception e) {
             log.error("Failed to refresh host '{}' packages '{}' availability.",
                     host.getName(),

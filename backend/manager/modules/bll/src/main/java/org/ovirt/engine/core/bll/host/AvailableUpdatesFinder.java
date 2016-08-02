@@ -1,13 +1,17 @@
 package org.ovirt.engine.core.bll.host;
 
 import java.util.EnumSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +23,25 @@ public class AvailableUpdatesFinder {
     @Inject
     private Instance<UpdateAvailable> hostUpdaters;
 
+    private ConcurrentMap<Guid, Boolean> upgradeCheckInProgressMap = new ConcurrentHashMap<>();
+
     private AvailableUpdatesFinder() {
     }
 
-    public boolean isUpdateAvailable(VDS host) {
-        return create(host.getVdsType()).isUpdateAvailable(host);
+    public HostUpgradeManagerResult checkForUpdates(VDS host) {
+        if (upgradeCheckInProgressMap.getOrDefault(host.getId(), false)) {
+            String error = String.format(
+                    "Failed to refresh host '%s' packages availability, another refresh process already running.",
+                    host.getName());
+            log.error(error);
+            throw new RuntimeException(error);
+        }
+        try {
+            upgradeCheckInProgressMap.put(host.getId(), true);
+            return create(host.getVdsType()).checkForUpdates(host);
+        } finally {
+            upgradeCheckInProgressMap.remove(host.getId());
+        }
     }
 
     private UpdateAvailable create(VDSType hostType) {
