@@ -185,6 +185,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='max-width: 500px; word-wrap:break-word; font-style: italic;'>{0}</div>")
     SafeHtml italicWordWrapMaxWidth(String text);
 
+    @Template("<div style='max-width: 500px; word-wrap:break-word; font-style: italic;'><b>{0}</b><br/>{1}</div>")
+    SafeHtml italicWordWrapMaxWidthWithBoldTitle(String title, SafeHtml text);
+
     @Template("<div style='max-width: 250px; display:inline-block;'>{0}</div>")
     SafeHtml maxWidthNteworkItemPopup(String text);
 

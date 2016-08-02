@@ -3173,5 +3173,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String bondInMode4HasNoPartnerMac();
 
     String GlusterSelfHealOk();
+
+    String bondProperties();
 }
 

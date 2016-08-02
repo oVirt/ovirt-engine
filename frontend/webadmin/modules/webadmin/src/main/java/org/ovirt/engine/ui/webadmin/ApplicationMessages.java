@@ -91,5 +91,13 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String brickStatusWithUnSyncedEntriesPresent(String brickStatus, int unSyncedEntries);
 
     String needsGlusterHealingWithVolumeStatus(String volumeStatus);
+
+    String bondAdPartnerMac(String adPartnerMac);
+
+    String bondAdAggregatorId(String adAggregatorId);
+
+    String bondSlaveAdAggregatorId(String nic, String adAggregatorId);
+
+    String bondStatus(String status);
 }
 
