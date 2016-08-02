@@ -65,6 +65,9 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
+
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
     private Set<Guid> movedVmDiskIds;
@@ -309,7 +312,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             DiskImage diskImage = getDiskImageByImageId(parameters.getImageId());
             map.put(diskImage, diskImage.getStorageIds().get(0));
         }
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+        return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
     }
 
     @Override

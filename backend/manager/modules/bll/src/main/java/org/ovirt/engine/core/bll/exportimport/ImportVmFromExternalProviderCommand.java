@@ -65,6 +65,9 @@ implements QuotaStorageDependent {
     @Inject
     private StorageDomainDao storageDomainDao;
 
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
+
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
     }
@@ -166,7 +169,7 @@ implements QuotaStorageDependent {
         for (DiskImage diskImage : getVm().getImages()) {
             map.put(diskImage, getStorageDomainId());
         }
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+        return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
     }
 
     private ValidationResult validateRequestedProxyHost() {

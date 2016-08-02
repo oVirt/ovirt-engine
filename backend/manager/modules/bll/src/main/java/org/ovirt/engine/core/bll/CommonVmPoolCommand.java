@@ -84,6 +84,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     private DiskDao diskDao;
 
     @Inject
+    private DiskProfileHelper diskProfileHelper;
+
+    @Inject
     StorageDomainDao storageDomainDao;
 
     @Inject
@@ -575,7 +578,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }

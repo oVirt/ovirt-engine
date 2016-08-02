@@ -107,6 +107,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private MacPool macPool;
 
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
+
     @Override
     protected void init() {
         super.init();
@@ -1108,7 +1111,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
                 }
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }
