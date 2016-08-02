@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
@@ -561,16 +562,13 @@ public class AsyncDataProvider {
     }
 
     public void initNicHotplugSupportMap() {
-        AsyncQuery callback = new AsyncQuery();
-        callback.asyncCallback = new AsyncCallback() {
-            @Override
-            public void onSuccess(Object returnValue) {
-                nicHotplugSupportMap = ((VdcQueryReturnValue) returnValue)
-                        .getReturnValue();
-            }
-        };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
-                OsRepositoryVerb.GetNicHotplugSupportMap), callback);
+                OsRepositoryVerb.GetNicHotplugSupportMap), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        nicHotplugSupportMap = returnValue.getReturnValue();
+                    }
+                }));
     }
 
     public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap() {
@@ -1381,7 +1379,7 @@ public class AsyncDataProvider {
     public void getVolumeList(AsyncQuery<List<GlusterVolumeEntity>> aQuery, String clusterName, boolean doRefresh) {
 
         if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.GlusterOnly.getValue()) == 0) {
-            aQuery.asyncCallback.onSuccess(new ArrayList<GlusterVolumeEntity>());
+            aQuery.getAsyncCallback().onSuccess(new ArrayList<GlusterVolumeEntity>());
             return;
         }
         aQuery.converterCallback = new ListConverter<>();
@@ -1538,7 +1536,7 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotConfig, new GlusterVolumeQueriesParameters(clusterId, volumeId), aQuery);
     }
 
-    public void getGlusterVolumeProfilingStatistics(AsyncQuery aQuery, Guid clusterId, Guid volumeId, boolean nfs) {
+    public void getGlusterVolumeProfilingStatistics(AsyncQuery<VdcQueryReturnValue> aQuery, Guid clusterId, Guid volumeId, boolean nfs) {
         aQuery.setHandleFailure(true);
         GlusterVolumeProfileParameters parameters = new GlusterVolumeProfileParameters(clusterId, volumeId, nfs);
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeProfileInfo, parameters, aQuery);
@@ -1863,12 +1861,12 @@ public class AsyncDataProvider {
 
     public void getMaxSpmPriority(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(0);
-        aQuery.asyncCallback.onSuccess(10);
+        aQuery.getAsyncCallback().onSuccess(10);
     }
 
     public void getDefaultSpmPriority(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(0);
-        aQuery.asyncCallback.onSuccess(5);
+        aQuery.getAsyncCallback().onSuccess(5);
     }
 
     public void getDefaultPmProxyPreferences(AsyncQuery<String> query) {
@@ -2207,7 +2205,7 @@ public class AsyncDataProvider {
                 cachedConfigValues.put(config_key, returnValue);
             }
         }
-        aQuery.asyncCallback.onSuccess(returnValue);
+        aQuery.getAsyncCallback().onSuccess(returnValue);
     }
 
     public ArrayList<QuotaEnforcementTypeEnum> getQuotaEnforcmentTypes() {
@@ -2242,7 +2240,7 @@ public class AsyncDataProvider {
         }
     }
 
-    public void getExternalProviderHostList(AsyncQuery aQuery,
+    public void getExternalProviderHostList(AsyncQuery<List<VDS>> aQuery,
                                                    Guid providerId,
                                                    boolean filterOutExistingHosts,
                                                    String searchFilter) {
@@ -2256,7 +2254,7 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getExternalProviderDiscoveredHostList(AsyncQuery aQuery, Provider provider) {
+    public void getExternalProviderDiscoveredHostList(AsyncQuery<List<ExternalDiscoveredHost>> aQuery, Provider provider) {
         aQuery.converterCallback = new ListConverter<>();
         ProviderQueryParameters params = new ProviderQueryParameters();
         params.setProvider(provider);
@@ -2673,7 +2671,7 @@ public class AsyncDataProvider {
     }
 
     public void getVmWatchdogTypes(int osId, Version version,
-            AsyncQuery asyncQuery) {
+            AsyncQuery<VdcQueryReturnValue> asyncQuery) {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetVmWatchdogTypes, osId, version), asyncQuery);
     }
@@ -2791,7 +2789,7 @@ public class AsyncDataProvider {
         }
     }
 
-    public void getExternalNetworkMap(AsyncQuery aQuery, Guid providerId) {
+    public void getExternalNetworkMap(AsyncQuery<Map<Network, Set<Guid>>> aQuery, Guid providerId) {
         aQuery.converterCallback = new MapConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllExternalNetworksOnProvider,
                 new IdQueryParameters(providerId),

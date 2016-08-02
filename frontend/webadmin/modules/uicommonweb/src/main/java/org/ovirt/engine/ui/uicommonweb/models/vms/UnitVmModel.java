@@ -1800,13 +1800,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public void initForemanProviders(final Guid selected) {
-        AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new AsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object result) {
-                List<Provider<OpenstackNetworkProviderProperties>> providers =
-                        (List<Provider<OpenstackNetworkProviderProperties>>) result;
+            public void onSuccess(List<Provider<?>> result) {
+                List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
                 Provider<OpenstackNetworkProviderProperties> noneProvider = createNoneProvider();
                 providers.add(0, noneProvider);
                 ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
@@ -1831,35 +1829,25 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 noneProvider.setName(constants.providerNone());
                 return noneProvider;
             }
-        };
-        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
+        }), ProviderType.FOREMAN);
     }
 
     private void updateLabelList() {
-        AsyncQuery getLabelsQuery = new AsyncQuery();
-        getLabelsQuery.asyncCallback = new AsyncCallback() {
-            @SuppressWarnings("unchecked")
+        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
             @Override
-            public void onSuccess(Object result) {
-                final List<Label> allLabels = (List<Label>) result;
+            public void onSuccess(final List<Label> allLabels) {
                 boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
 
                 if (isExistingVmBehavior) {
-                    AsyncQuery getLabelsByVmIdQuery = new AsyncQuery();
+                    Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
 
-                    getLabelsByVmIdQuery.asyncCallback = new AsyncCallback() {
+                    AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
                         @Override
-                        public void onSuccess(Object returnValue) {
-                            List<Label> vmLabelsList = (List<Label>) returnValue;
-
+                        public void onSuccess(List<Label> vmLabelsList) {
                             labelList.setItems(allLabels);
                             labelList.setSelectedItems(vmLabelsList);
                         }
-                    };
-
-                    Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
-
-                    AsyncDataProvider.getInstance().getLabelListByEntityId(getLabelsByVmIdQuery, vmId);
+                    }), vmId);
                 } else {
                     labelList.setItems(allLabels);
                     labelList.setSelectedItems(new ArrayList<Label>());
@@ -1867,9 +1855,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
                 labelList.setIsChangeable(false);
             }
-        };
-
-        AsyncDataProvider.getInstance().getLabelList(getLabelsQuery);
+        }));
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem) {
@@ -2393,20 +2379,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void updateWatchdogModels(Integer osType) {
         Cluster cluster = getSelectedCluster();
         if (osType != null && cluster != null && getWatchdogModel() != null) {
-            AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.asyncCallback = new AsyncCallback() {
+            AsyncDataProvider.getInstance().getVmWatchdogTypes(osType, getCompatibilityVersion(), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                 @Override
-                public void onSuccess(Object returnValue) {
+                public void onSuccess(VdcQueryReturnValue returnValue) {
                     getBehavior().deactivateInstanceTypeManager();
 
-                    updateWatchdogItems((HashSet<VmWatchdogType>) ((VdcQueryReturnValue) returnValue)
-                            .getReturnValue());
+                    updateWatchdogItems((HashSet<VmWatchdogType>) returnValue.getReturnValue());
 
                     getBehavior().activateInstanceTypeManager();
 
                 }
-            };
-            AsyncDataProvider.getInstance().getVmWatchdogTypes(osType, getCompatibilityVersion(), asyncQuery);
+            }));
         }
     }
 

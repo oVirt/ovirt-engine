@@ -123,7 +123,7 @@ public class FrontendActionTest {
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
         frontend.frontendFailureEvent = mockFrontendFailureEvent;
-        when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
+        when(mockAsyncQuery.getAsyncCallback()).thenReturn(mockAsyncCallback);
         when(mockConstants.noValidateMessage()).thenReturn(NO_MESSAGE);
     }
 

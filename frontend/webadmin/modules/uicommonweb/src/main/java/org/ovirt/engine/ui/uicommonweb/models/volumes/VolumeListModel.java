@@ -976,63 +976,53 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if(getConfirmWindow() != null) {
             setConfirmWindow(null);
         }
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.asyncCallback = new AsyncCallback() {
-            @Override
-            public void onSuccess(final Object result) {
-                AsyncQuery aQueryInner = new AsyncQuery();
-                aQueryInner.asyncCallback = new AsyncCallback() {
+        AsyncDataProvider.getInstance().getConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
+                new AsyncQuery<>(new AsyncCallback<String>() {
                     @Override
-                    public void onSuccess(final Object resultInner) {
+                    public void onSuccess(final String optionGroupVirt) {
+                        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
+                                        AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
+                                new AsyncQuery<>(new AsyncCallback<String>() {
+                                    @Override
+                                    public void onSuccess(final String optionOwnerUserVirt) {
 
-                        AsyncQuery aQueryInner1 = new AsyncQuery();
-                        aQueryInner1.asyncCallback = new AsyncCallback() {
-                            @Override
-                            public void onSuccess(Object resultInner1) {
-                                String optionGroupVirt = (String) result;
-                                String optionOwnerUserVirt = (String) resultInner;
-                                String optionOwnerGroupVirt = (String) resultInner1;
+                                        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
+                                                        AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
+                                                new AsyncQuery<>(new AsyncCallback<String>() {
+                                                    @Override
+                                                    public void onSuccess(String optionOwnerGroupVirt) {
 
-                                ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-                                for (GlusterVolumeEntity volume : volumeList) {
-                                    Guid volumeId = volume.getId();
+                                                        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+                                                        for (GlusterVolumeEntity volume : volumeList) {
+                                                            Guid volumeId = volume.getId();
 
-                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
+                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
 
-                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt)));//$NON-NLS-1$
+                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt)));//$NON-NLS-1$
 
-                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
+                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
 
-                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
+                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
 
-                                    final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "10");//$NON-NLS-1$//$NON-NLS-2$
-                                    IPredicate<GlusterVolumeOptionEntity> predicaetFilter = new IPredicate<GlusterVolumeOptionEntity>() {
-                                        @Override
-                                        public boolean match(GlusterVolumeOptionEntity obj) {
-                                            return obj.getKey().equalsIgnoreCase(checkOption.getKey());
-                                        }
-                                    };
-                                    if(!isOptionEnabledOnVolume(volume, predicaetFilter)) {
-                                        list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
+                                                            final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "10");//$NON-NLS-1$//$NON-NLS-2$
+                                                            IPredicate<GlusterVolumeOptionEntity> predicaetFilter = new IPredicate<GlusterVolumeOptionEntity>() {
+                                                                @Override
+                                                                public boolean match(GlusterVolumeOptionEntity obj) {
+                                                                    return obj.getKey().equalsIgnoreCase(checkOption.getKey());
+                                                                }
+                                                            };
+                                                            if(!isOptionEnabledOnVolume(volume, predicaetFilter)) {
+                                                                list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
+                                                            }
+                                                        }
+                                                        Frontend.getInstance().runMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
+                                                    }
+                                                }));
                                     }
-                                }
-                                Frontend.getInstance().runMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
-                            }
-                        };
-
-                        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
-                                                                                                 AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                                aQueryInner1);
+                                }));
                     }
-                };
-                AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
-                                                                                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                        aQueryInner);
-            }
-        };
-        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue,
-                                                                                 AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                aQuery);
+                }));
     }
 
     private boolean isOptionEnabledOnVolume(GlusterVolumeEntity volume, IPredicate<GlusterVolumeOptionEntity> predicate) {

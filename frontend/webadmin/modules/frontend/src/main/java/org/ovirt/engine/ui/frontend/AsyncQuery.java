@@ -12,12 +12,13 @@ public class AsyncQuery<T> {
         }
     };
 
-    public Object model;
-    public AsyncCallback<T> asyncCallback;
+    private final Object model;
+    private final AsyncCallback<T> asyncCallback;
     public Converter<T> converterCallback = null;
     private boolean handleFailure;
 
     public AsyncQuery() {
+        this.model = null;
         this.asyncCallback = EMPTY_CALLBACK;
     }
 
@@ -62,12 +63,8 @@ public class AsyncQuery<T> {
         return model;
     }
 
-    public AsyncCallback<T> getDel() {
+    public AsyncCallback<T> getAsyncCallback() {
         return asyncCallback;
-    }
-
-    public void setDel(AsyncCallback<T> asyncCallback) {
-        this.asyncCallback = asyncCallback;
     }
 
     public Converter<T> getConverter() {

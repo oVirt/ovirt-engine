@@ -210,13 +210,12 @@ public class VolumeProfileStatisticsModel extends Model {
     public void queryBackend(final boolean isBrickSelected) {
         startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
 
-        AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 stopProgress();
-                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
-                GlusterVolumeProfileInfo profileInfoEntity =vdcValue.getReturnValue();
-                if((profileInfoEntity == null) || !vdcValue.getSucceeded()) {
+                GlusterVolumeProfileInfo profileInfoEntity =returnValue.getReturnValue();
+                if((profileInfoEntity == null) || !returnValue.getSucceeded()) {
                     setSuccessfulProfileStatsFetch(false);
                     if(!isBrickSelected) {
                         showNfsProfileStats(profileInfoEntity);

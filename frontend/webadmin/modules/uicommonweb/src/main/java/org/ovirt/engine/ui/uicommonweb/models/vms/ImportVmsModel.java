@@ -463,11 +463,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             }
         });
 
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object returnValue) {
-                final List<StoragePool> dataCenters = new ArrayList<>();
-                for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
+            public void onSuccess(List<StoragePool> returnValue) {
+                List<StoragePool> dataCenters = new ArrayList<>();
+                for (StoragePool a : returnValue) {
                     if (a.getStatus() == StoragePoolStatus.Up) {
                         dataCenters.add(a);
                     }
@@ -518,11 +518,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void loadVmwareProviders() {
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @Override
-            public void onSuccess(Object returnValue) {
+            public void onSuccess(List<Provider<?>> returnValue) {
                 List<Provider<VmwareVmProviderProperties>> providers = new ArrayList<>();
-                for (Provider<VmwareVmProviderProperties> provider : (List<Provider<VmwareVmProviderProperties>>) returnValue) {
+                for (Provider<VmwareVmProviderProperties> provider : (List<Provider<VmwareVmProviderProperties>>) (List) returnValue) {
                     if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
                             || provider.getAdditionalProperties().getStoragePoolId() == null) {
                         providers.add(provider);
@@ -535,11 +535,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void loadKvmProviders() {
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @Override
-            public void onSuccess(Object returnValue) {
+            public void onSuccess(List<Provider<?>> returnValue) {
                 List<Provider<KVMVmProviderProperties>> providers = new ArrayList<>();
-                for (Provider<KVMVmProviderProperties> provider : (List<Provider<KVMVmProviderProperties>>) returnValue) {
+                for (Provider<KVMVmProviderProperties> provider : (List<Provider<KVMVmProviderProperties>>) (List) returnValue) {
                     if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
                             || provider.getAdditionalProperties().getStoragePoolId() == null) {
                         providers.add(provider);
@@ -552,11 +552,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void loadXenProviders() {
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @Override
-            public void onSuccess(Object returnValue) {
+            public void onSuccess(List<Provider<?>> returnValue) {
                 List<Provider<XENVmProviderProperties>> providers = new ArrayList<>();
-                for (Provider<XENVmProviderProperties> provider : (List<Provider<XENVmProviderProperties>>) returnValue) {
+                for (Provider<XENVmProviderProperties> provider : (List<Provider<XENVmProviderProperties>>) (List) returnValue) {
                     if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
                             || provider.getAdditionalProperties().getStoragePoolId() == null) {
                         providers.add(provider);

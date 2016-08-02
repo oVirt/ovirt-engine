@@ -138,11 +138,10 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         } else {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dcId, getQosType()),
-                new AsyncQuery(new AsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object returnValue) {
-                            List<Q> qosList =
-                                    (ArrayList<Q>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                            List<Q> qosList = (ArrayList<Q>) returnValue.getReturnValue();
                             qosMap = new HashMap<>();
                         if (qosList != null) {
                                 for (Q qos : qosList) {
@@ -161,11 +160,10 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         }
         Frontend.getInstance().runQuery(getQueryType(),
                 new IdQueryParameters(getEntity().getId()),
-                new AsyncQuery(new AsyncCallback() {
-
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object returnValue) {
-                        ProfileListModel.this.setItems((List<P>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        setItems((List<P>) returnValue.getReturnValue());
                     }
                 }));
     }

@@ -100,15 +100,13 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
                 createProviderReadOnlyCallback());
     }
 
-    private AsyncQuery createProviderReadOnlyCallback(){
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new AsyncCallback() {
+    private AsyncQuery<VdcQueryReturnValue> createProviderReadOnlyCallback(){
+        return new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object returnValue) {
-                setCommandExecutionAllowedForProvider((Provider) ( ((VdcQueryReturnValue)returnValue).getReturnValue()));
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                setCommandExecutionAllowedForProvider((Provider) (returnValue.getReturnValue()));
             }
-        };
-        return asyncQuery;
+        });
     }
 
     private void setCommandExecutionAllowedForProvider(Provider provider){

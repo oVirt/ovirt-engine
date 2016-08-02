@@ -47,20 +47,15 @@ public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfil
             return;
         }
 
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new AsyncCallback() {
-            @Override
-            public void onSuccess(Object ReturnValue) {
-                setItems((Collection<VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        };
-
-        IdQueryParameters params =
-                new IdQueryParameters(getEntity().getId());
+        IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesByVnicProfileId,
-                params,
-                asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesByVnicProfileId, params,
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        setItems((Collection<VmTemplate>) returnValue.getReturnValue());
+                    }
+                }));
     }
 
     @Override

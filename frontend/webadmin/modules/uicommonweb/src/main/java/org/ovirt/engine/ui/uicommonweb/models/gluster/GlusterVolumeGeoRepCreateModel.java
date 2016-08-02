@@ -129,13 +129,12 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
         }));
     }
 
-    private void showAvailableVolumes(Object returnValue) {
-        VdcQueryReturnValue vdcReturnValue = (VdcQueryReturnValue) returnValue;
-        GlusterVolumeGeoRepCreateModel.this.stopProgress();
-        if(!vdcReturnValue.getSucceeded()) {
-            setQueryFailureMessage(vdcReturnValue.getExceptionString());
+    private void showAvailableVolumes(VdcQueryReturnValue returnValue) {
+        stopProgress();
+        if(!returnValue.getSucceeded()) {
+            setQueryFailureMessage(returnValue.getExceptionString());
         } else {
-            setVolumeList((Collection) vdcReturnValue.getReturnValue());
+            setVolumeList((Collection) returnValue.getReturnValue());
             Set<String> clusterForVolumes = getClusterForVolumes(getVolumeList());
             getSlaveClusters().setItems(clusterForVolumes,
                     clusterForVolumes.isEmpty() ? null : clusterForVolumes.iterator().next());
@@ -144,14 +143,13 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void getEligibleVolumes() {
         this.startProgress(constants.fetchingDataMessage());
-        AsyncQuery aQuery = new AsyncQuery(new AsyncCallback() {
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterGeoReplicationEligibleVolumes, new IdQueryParameters(masterVolume.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object returnValue) {
+            public void onSuccess(VdcQueryReturnValue returnValue) {
                 showAvailableVolumes(returnValue);
             }
-        });
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterGeoReplicationEligibleVolumes, new IdQueryParameters(masterVolume.getId()), aQuery);
+        }));
     }
 
     protected Set<String> getClusterForVolumes(Collection<GlusterVolumeEntity> eligibleVolumes) {
@@ -271,11 +269,10 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void updateRecommendatonViolations() {
         startProgress(constants.fetchingDataMessage());
-        AsyncQuery aQuery = new AsyncQuery(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterVolumeGeoRepRecommendationViolations(new AsyncQuery<>(new AsyncCallback<List<GlusterGeoRepNonEligibilityReason>>() {
             @Override
-            public void onSuccess(Object returnValue) {
-                GlusterVolumeGeoRepCreateModel.this.stopProgress();
-                List<GlusterGeoRepNonEligibilityReason> eligibilityViolators = (List<GlusterGeoRepNonEligibilityReason>) returnValue;
+            public void onSuccess(List<GlusterGeoRepNonEligibilityReason> eligibilityViolators) {
+                stopProgress();
                 if(eligibilityViolators.size() > 0) {
                     StringBuilder configViolations = new StringBuilder(constants.geoReplicationRecommendedConfigViolation());
                     for(GlusterGeoRepNonEligibilityReason currentViolator : eligibilityViolators) {
@@ -287,8 +284,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
                     setRecommendationViolations(null);
                 }
             }
-        });
-        AsyncDataProvider.getInstance().getGlusterVolumeGeoRepRecommendationViolations(aQuery, masterVolume.getId(), getSlaveVolumes().getSelectedItem().getId());
+        }), masterVolume.getId(), getSlaveVolumes().getSelectedItem().getId());
     }
 
     public boolean validate() {

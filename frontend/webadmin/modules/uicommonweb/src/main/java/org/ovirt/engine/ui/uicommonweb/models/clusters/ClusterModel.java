@@ -1539,7 +1539,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getEnableBallooning().setEntity(getEntity().isEnableBallooning());
         getEnableKsm().setEntity(getEntity().isEnableKsm());
 
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new AsyncCallback<List<StoragePool>>() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
             public void onSuccess(List<StoragePool> dataCenters) {
                 getDataCenter().setItems(dataCenters);

@@ -409,11 +409,10 @@ public abstract class VmInterfaceModel extends Model {
     protected abstract VdcActionType getVdcActionType();
 
     protected void initProfiles() {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.asyncCallback = new AsyncCallback() {
+        profileBehavior.initProfiles(getVm().getClusterId(), dcId, new AsyncQuery<>(new AsyncCallback<List<VnicProfileView>>() {
             @Override
-            public void onSuccess(Object result1) {
-                getProfile().setItems((List<VnicProfileView>) result1);
+            public void onSuccess(List<VnicProfileView> result) {
+                getProfile().setItems(result);
                 profileBehavior.initSelectedProfile(getProfile(), getNic());
                 updateProfileChangability();
 
@@ -422,9 +421,7 @@ public abstract class VmInterfaceModel extends Model {
 
                 initSelectedType();
             }
-        };
-
-        profileBehavior.initProfiles(getVm().getClusterId(), dcId, _asyncQuery);
+        }));
     }
 
     protected void initCommands() {

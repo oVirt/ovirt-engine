@@ -309,23 +309,20 @@ public abstract class VnicProfileModel extends Model {
     }
 
     public void initNetworkFilterList(Version dcCompatibilityVersion) {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new AsyncCallback() {
-            @Override
-            public void onSuccess(Object returnValue) {
-                List<NetworkFilter> networkFilters =
-                        new ArrayList((Collection<NetworkFilter>) ((VdcQueryReturnValue) returnValue).getReturnValue());
-                networkFilters.add(EMPTY_FILTER);
-
-                getNetworkFilter().setItems(networkFilters);
-
-                initSelectedNetworkFilter();
-            }
-        };
-
         Frontend.getInstance().runQuery(VdcQueryType.GetAllSupportedNetworkFiltersByVersion,
                 new VersionQueryParameters(dcCompatibilityVersion),
-                asyncQuery);
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<NetworkFilter> networkFilters =
+                                new ArrayList((Collection<NetworkFilter>) returnValue.getReturnValue());
+                        networkFilters.add(EMPTY_FILTER);
+
+                        getNetworkFilter().setItems(networkFilters);
+
+                        initSelectedNetworkFilter();
+                    }
+                }));
     }
 
     protected abstract void initSelectedNetworkFilter();

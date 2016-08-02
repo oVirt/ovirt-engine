@@ -1117,7 +1117,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(getSelectedItem().getId()),
-                new AsyncQuery(new AsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<Object>() {
 
                     @Override
                     public void onSuccess(Object returnValue) {

@@ -417,9 +417,9 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         withDataCenterLoaded(storageDomainId, new AsyncCallback<List<StoragePool>>() {
             @Override
             public void onSuccess(List<StoragePool> returnValue) {
-                setItems(new AsyncCallback() {
+                setItems(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object returnValue) {
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
                         doInit();
                     }
                 }, externalVms);

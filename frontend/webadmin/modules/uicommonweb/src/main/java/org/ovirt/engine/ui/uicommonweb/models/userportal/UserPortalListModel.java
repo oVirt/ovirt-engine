@@ -624,18 +624,14 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         VM vm = (VM) selectedItem.getEntity();
 
         // populating VMInit
-        AsyncQuery getVmInitQuery = new AsyncQuery();
-        getVmInitQuery.asyncCallback = new AsyncCallback() {
+        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object result) {
-                RunOnceModel runOnceModel = new UserPortalRunOnceModel((VM) result,
-                        UserPortalListModel.this);
+            public void onSuccess(VM result) {
+                RunOnceModel runOnceModel = new UserPortalRunOnceModel(result, UserPortalListModel.this);
                 setWindow(runOnceModel);
                 runOnceModel.init();
             }
-        };
-
-        AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
+        }), vm.getId());
     }
 
     private void updateActionAvailability() {
@@ -715,14 +711,13 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         VM vm = (VM) selectedItem.getEntity();
 
         // populating VMInit
-        AsyncQuery getVmInitQuery = new AsyncQuery();
-        getVmInitQuery.asyncCallback = new AsyncCallback() {
+        AsyncQuery<VM> getVmInitQuery = new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object result) {
-                editedVm = (VM) result;
+            public void onSuccess(VM result) {
+                editedVm = result;
                 vmInitLoaded(editedVm);
             }
-        };
+        });
         if (vm.isNextRunConfigurationExists()) {
             AsyncDataProvider.getInstance().getVmNextRunConfiguration(getVmInitQuery, vm.getId());
         } else {

@@ -139,9 +139,9 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
 
             @Override
             public void onSuccess(StoragePool returnValue) {
-                setItems(new AsyncCallback() {
+                setItems(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
-                    public void onSuccess(Object returnValue) {
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
                         doInit();
                     }
                 }, externalVms);

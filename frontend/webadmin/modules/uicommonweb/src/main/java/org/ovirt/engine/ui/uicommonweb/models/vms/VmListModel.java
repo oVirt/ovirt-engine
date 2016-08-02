@@ -680,14 +680,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
 
         // populating VMInit
-        AsyncQuery getVmInitQuery = new AsyncQuery();
-        getVmInitQuery.asyncCallback = new AsyncCallback() {
+        AsyncQuery<VM> getVmInitQuery = new AsyncQuery<>(new AsyncCallback<VM>() {
             @Override
-            public void onSuccess(Object result) {
-                editedVm = (VM) result;
+            public void onSuccess(VM result) {
+                editedVm = result;
                 vmInitLoaded(editedVm);
             }
-        };
+        });
         if (vm.isNextRunConfigurationExists()) {
             AsyncDataProvider.getInstance().getVmNextRunConfiguration(getVmInitQuery, vm.getId());
         } else {

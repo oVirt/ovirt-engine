@@ -94,12 +94,11 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private void fetchCpuProfiles(Guid clusterId) {
         Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
-                new AsyncQuery(new AsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object returnValue) {
-                        List<CpuProfile> cpuProfiles =
-                                ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
                         getCpuProfiles().setItems(cpuProfiles);
                     }
                 }));
@@ -141,7 +140,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         this.storagePool = storagePool;
     }
 
-    public void setItems(final AsyncCallback callback, final List<VM>  externalVms) {
+    public void setItems(final AsyncCallback<VdcQueryReturnValue> callback, final List<VM>  externalVms) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
                 new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {

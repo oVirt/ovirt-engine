@@ -107,13 +107,12 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     template.getStoragePoolId());
         }
 
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(Object returnValue) {
-                UnitVmModel model = TemplateVmModelBehavior.this.getModel();
+            public void onSuccess(VdcQueryReturnValue returnValue) {
+                UnitVmModel model = getModel();
                 @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs =
-                        ((VdcQueryReturnValue) returnValue).getReturnValue();
+                Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
                 for (VmWatchdog watchdog : watchdogs) {
                     model.getWatchdogAction().setSelectedItem(watchdog.getAction());
                     model.getWatchdogModel().setSelectedItem(watchdog.getModel());

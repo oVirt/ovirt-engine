@@ -247,14 +247,14 @@ public class Frontend implements HasHandlers {
                             handleNotLoggedInEvent(result.getExceptionString());
                         }
                         if (callback.isHandleFailure()) {
-                            callback.getDel().onSuccess(result);
+                            callback.getAsyncCallback().onSuccess(result);
                         }
                     } else {
                         if (callback.getConverter() != null) {
-                            callback.getDel().onSuccess(
+                            callback.getAsyncCallback().onSuccess(
                                     callback.getConverter().convert(result.getReturnValue()));
                         } else {
-                            callback.getDel().onSuccess(result);
+                            callback.getAsyncCallback().onSuccess(result);
                         }
                     }
                 } finally {
@@ -273,7 +273,7 @@ public class Frontend implements HasHandlers {
                     getEventsHandler().runQueryFailed(null);
                     failureEventHandler(caught);
                     if (callback.isHandleFailure()) {
-                        callback.getDel().onSuccess(null);
+                        callback.getAsyncCallback().onSuccess(null);
                     }
                 } finally {
                     fireAsyncQueryFailedEvent(callback.getModel());
@@ -830,7 +830,7 @@ public class Frontend implements HasHandlers {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from logoff."); //$NON-NLS-1$
-                callback.getDel().onSuccess(result);
+                callback.getAsyncCallback().onSuccess(result);
             }
 
             @Override
@@ -841,7 +841,7 @@ public class Frontend implements HasHandlers {
                 logger.log(Level.SEVERE, "Failed to execute logoff: " + caught, caught); //$NON-NLS-1$
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
-                callback.getDel().onSuccess(null);
+                callback.getAsyncCallback().onSuccess(null);
             }
         });
     }

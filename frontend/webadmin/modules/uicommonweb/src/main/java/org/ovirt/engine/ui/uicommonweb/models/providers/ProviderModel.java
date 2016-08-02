@@ -363,10 +363,9 @@ public class ProviderModel extends Model {
     }
 
     protected void updateDatacentersForExternalProvider() {
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new AsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
-            public void onSuccess(Object returnValue) {
-                final List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
+            public void onSuccess(List<StoragePool> dataCenters) {
                 StoragePool prevDataCenter = getPreviousDataCenter(dataCenters);
                 Collections.sort(dataCenters, new NameableComparator());
                 dataCenters.add(0, null); //any data center

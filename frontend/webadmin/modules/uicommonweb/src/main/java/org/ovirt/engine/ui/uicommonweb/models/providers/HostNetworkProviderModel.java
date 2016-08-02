@@ -61,19 +61,17 @@ public class HostNetworkProviderModel extends EntityModel {
     }
 
     private void initNetworkProvidersList() {
-        AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new AsyncCallback() {
+        startProgress();
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @Override
-            public void onSuccess(Object result) {
+            public void onSuccess(List<Provider<?>> result) {
                 stopProgress();
-                List<Provider<OpenstackNetworkProviderProperties>> providers = (List<Provider<OpenstackNetworkProviderProperties>>) result;
+                List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
                 providers.add(0, null);
                 getNetworkProviders().setItems(providers);
                 getNetworkProviders().setSelectedItem(null);
             }
-        };
-        startProgress();
-        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.OPENSTACK_NETWORK);
+        }), ProviderType.OPENSTACK_NETWORK);
     }
 
     public boolean validate() {

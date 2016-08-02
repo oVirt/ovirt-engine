@@ -114,7 +114,7 @@ public class FrontendTest {
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
         when(mockAsyncQuery.getModel()).thenReturn(ASYNC_OPERATION_TARGET);
-        when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
+        when(mockAsyncQuery.getAsyncCallback()).thenReturn(mockAsyncCallback);
     }
 
     @After

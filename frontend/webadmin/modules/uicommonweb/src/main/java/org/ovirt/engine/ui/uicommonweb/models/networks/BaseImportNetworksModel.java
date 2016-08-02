@@ -142,57 +142,50 @@ public class BaseImportNetworksModel extends Model {
 
         final List<StoragePool> dataCenters = new LinkedList<>();
 
-        final AsyncQuery networkQuery = new AsyncQuery();
-        networkQuery.asyncCallback = new AsyncCallback() {
+        startProgress();
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
 
             @Override
-            public void onSuccess(Object returnValue) {
-                Map<Network, Set<Guid>> externalNetworkToDataCenters = (Map<Network, Set<Guid>>) returnValue;
-                List<ExternalNetwork> items = new LinkedList<>();
-                for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
-                    Network network = entry.getKey();
-                    Set<Guid> attachedDataCenters = entry.getValue();
-
-                    ExternalNetwork externalNetwork = new ExternalNetwork();
-                    externalNetwork.setNetwork(network);
-                    externalNetwork.setDisplayName(network.getName());
-                    externalNetwork.setPublicUse(true);
-
-                    List<StoragePool> availableDataCenters = new LinkedList<>();
-                    for (StoragePool dc : dataCenters) {
-                        if (!attachedDataCenters.contains(dc.getId())) {
-                            availableDataCenters.add(dc);
-                        }
-                    }
-                    externalNetwork.getDataCenters().setItems(availableDataCenters);
-                    externalNetwork.getDataCenters().setSelectedItem(treeSelectedDc != null
-                            && availableDataCenters.contains(treeSelectedDc) ? treeSelectedDc
-                            : Linq.firstOrNull(availableDataCenters));
-
-                    items.add(externalNetwork);
-                }
-                Collections.sort(items, new Linq.ExternalNetworkComparator());
-                providerNetworks.setItems(items);
-                importedNetworks.setItems(new LinkedList<ExternalNetwork>());
-
-                stopProgress();
-            }
-        };
-
-        final AsyncQuery dcQuery = new AsyncQuery();
-        dcQuery.asyncCallback = new AsyncCallback() {
-
-            @Override
-            public void onSuccess(Object returnValue) {
-                dataCenters.addAll((Collection<StoragePool>) returnValue);
+            public void onSuccess(List<StoragePool> returnValue) {
+                dataCenters.addAll(returnValue);
                 Collections.sort(dataCenters, new NameableComparator());
 
-                AsyncDataProvider.getInstance().getExternalNetworkMap(networkQuery, provider.getId());
-            }
-        };
+                AsyncDataProvider.getInstance().getExternalNetworkMap(new AsyncQuery<>(new AsyncCallback<Map<Network, Set<Guid>>>() {
 
-        startProgress();
-        AsyncDataProvider.getInstance().getDataCenterList(dcQuery);
+                    @Override
+                    public void onSuccess(Map<Network, Set<Guid>> externalNetworkToDataCenters) {
+                        List<ExternalNetwork> items = new LinkedList<>();
+                        for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
+                            Network network = entry.getKey();
+                            Set<Guid> attachedDataCenters = entry.getValue();
+
+                            ExternalNetwork externalNetwork = new ExternalNetwork();
+                            externalNetwork.setNetwork(network);
+                            externalNetwork.setDisplayName(network.getName());
+                            externalNetwork.setPublicUse(true);
+
+                            List<StoragePool> availableDataCenters = new LinkedList<>();
+                            for (StoragePool dc : dataCenters) {
+                                if (!attachedDataCenters.contains(dc.getId())) {
+                                    availableDataCenters.add(dc);
+                                }
+                            }
+                            externalNetwork.getDataCenters().setItems(availableDataCenters);
+                            externalNetwork.getDataCenters().setSelectedItem(treeSelectedDc != null
+                                    && availableDataCenters.contains(treeSelectedDc) ? treeSelectedDc
+                                    : Linq.firstOrNull(availableDataCenters));
+
+                            items.add(externalNetwork);
+                        }
+                        Collections.sort(items, new Linq.ExternalNetworkComparator());
+                        providerNetworks.setItems(items);
+                        importedNetworks.setItems(new LinkedList<ExternalNetwork>());
+
+                        stopProgress();
+                    }
+                }), provider.getId());
+            }
+        }));
     }
 
     private boolean validate() {

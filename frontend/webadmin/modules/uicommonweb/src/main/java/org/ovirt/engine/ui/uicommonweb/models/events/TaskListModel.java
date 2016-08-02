@@ -162,89 +162,85 @@ public class TaskListModel extends SearchableListModel {
     public boolean updateSingleTask(final String guidOrCorrelationId) {
         if (!detailedTaskMap.containsKey(guidOrCorrelationId)) {
             detailedTaskMap.put(guidOrCorrelationId, null);
-            AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>();
-
             if (guidOrCorrelationId.startsWith(WEBADMIN)) {
-                asyncQuery.asyncCallback = new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        ArrayList<Job> retTasks = returnValue.getReturnValue();
-
-                        ArrayList<Job> taskList = (ArrayList<Job>) getItems();
-                        ArrayList<Job> newTaskList = new ArrayList<>();
-                        for (Job task : taskList) {
-                            if (task.getCorrelationId().equals(guidOrCorrelationId)) {
-                                detailedTaskMap.put(guidOrCorrelationId, task);
-                                task.setStatus(JobExecutionStatus.FINISHED);
-                                for (Job job : retTasks) {
-                                    Step step = new Step();
-                                    step.setId(job.getId());
-                                    step.setDescription(job.getDescription());
-                                    step.setCorrelationId(job.getCorrelationId());
-                                    step.setStartTime(job.getStartTime());
-                                    step.setEndTime(job.getEndTime());
-                                    step.setStatus(job.getStatus());
-                                    step.setSteps(job.getSteps());
-                                    if (!task.getStatus().equals(JobExecutionStatus.FINISHED)
-                                            && !job.getStatus().equals(JobExecutionStatus.FINISHED)) {
-                                        task.setStatus(job.getStatus());
-                                    }
-                                    if (task.getLastUpdateTime() == null
-                                            || (task.getLastUpdateTime().before(job.getLastUpdateTime()) && !task.getLastUpdateTime()
-                                                    .equals(job.getLastUpdateTime()))) {
-                                        task.setLastUpdateTime(job.getEndTime());
-                                    }
-                                    Date tempDate = task.getLastUpdateTime();
-                                    if (task.getStartTime() == null
-                                            || task.getStartTime().after(job.getStartTime())) {
-                                        task.setStartTime(job.getStartTime());
-                                    }
-
-                                    if (task.getEndTime() != null && (task.getEndTime() == null
-                                            || task.getEndTime().before(job.getEndTime()))) {
-                                        task.setEndTime(job.getEndTime());
-                                    }
-                                    task.addStep(step);
-                                    task.setLastUpdateTime(tempDate);
-
-                                }
-
-                            }
-                            newTaskList.add(task);
-                        }
-
-                        setItems(newTaskList);
-                    }
-                };
                 GetJobsByCorrelationIdQueryParameters parameters = new GetJobsByCorrelationIdQueryParameters();
                 parameters.setCorrelationId(guidOrCorrelationId);
                 Frontend.getInstance().runQuery(VdcQueryType.GetJobsByCorrelationId,
-                        parameters, asyncQuery);
-            } else {
-                asyncQuery.asyncCallback = new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue ReturnValue) {
-                        Job retTask = ReturnValue.getReturnValue();
-                        if (retTask == null) {
-                            return;
-                        }
-                        detailedTaskMap.put(retTask.getId().toString(), retTask);
-                        ArrayList<Job> taskList = (ArrayList<Job>) getItems();
-                        ArrayList<Job> newTaskList = new ArrayList<>();
-                        for (Job task : taskList) {
-                            if (task.getId().equals(retTask.getId())) {
-                                newTaskList.add(retTask);
-                            } else {
-                                newTaskList.add(task);
-                            }
-                        }
+                        parameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                            @Override
+                            public void onSuccess(VdcQueryReturnValue returnValue) {
+                                ArrayList<Job> retTasks = returnValue.getReturnValue();
 
-                        setItems(newTaskList);
-                    }
-                };
+                                ArrayList<Job> taskList = (ArrayList<Job>) getItems();
+                                ArrayList<Job> newTaskList = new ArrayList<>();
+                                for (Job task : taskList) {
+                                    if (task.getCorrelationId().equals(guidOrCorrelationId)) {
+                                        detailedTaskMap.put(guidOrCorrelationId, task);
+                                        task.setStatus(JobExecutionStatus.FINISHED);
+                                        for (Job job : retTasks) {
+                                            Step step = new Step();
+                                            step.setId(job.getId());
+                                            step.setDescription(job.getDescription());
+                                            step.setCorrelationId(job.getCorrelationId());
+                                            step.setStartTime(job.getStartTime());
+                                            step.setEndTime(job.getEndTime());
+                                            step.setStatus(job.getStatus());
+                                            step.setSteps(job.getSteps());
+                                            if (!task.getStatus().equals(JobExecutionStatus.FINISHED)
+                                                    && !job.getStatus().equals(JobExecutionStatus.FINISHED)) {
+                                                task.setStatus(job.getStatus());
+                                            }
+                                            if (task.getLastUpdateTime() == null
+                                                    || (task.getLastUpdateTime().before(job.getLastUpdateTime()) && !task.getLastUpdateTime()
+                                                    .equals(job.getLastUpdateTime()))) {
+                                                task.setLastUpdateTime(job.getEndTime());
+                                            }
+                                            Date tempDate = task.getLastUpdateTime();
+                                            if (task.getStartTime() == null
+                                                    || task.getStartTime().after(job.getStartTime())) {
+                                                task.setStartTime(job.getStartTime());
+                                            }
+
+                                            if (task.getEndTime() != null && (task.getEndTime() == null
+                                                    || task.getEndTime().before(job.getEndTime()))) {
+                                                task.setEndTime(job.getEndTime());
+                                            }
+                                            task.addStep(step);
+                                            task.setLastUpdateTime(tempDate);
+
+                                        }
+
+                                    }
+                                    newTaskList.add(task);
+                                }
+
+                                setItems(newTaskList);
+                            }
+                        }));
+            } else {
                 IdQueryParameters parameters = new IdQueryParameters(new Guid(guidOrCorrelationId));
                 Frontend.getInstance().runQuery(VdcQueryType.GetJobByJobId,
-                        parameters, asyncQuery);
+                        parameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                            @Override
+                            public void onSuccess(VdcQueryReturnValue ReturnValue) {
+                                Job retTask = ReturnValue.getReturnValue();
+                                if (retTask == null) {
+                                    return;
+                                }
+                                detailedTaskMap.put(retTask.getId().toString(), retTask);
+                                ArrayList<Job> taskList = (ArrayList<Job>) getItems();
+                                ArrayList<Job> newTaskList = new ArrayList<>();
+                                for (Job task : taskList) {
+                                    if (task.getId().equals(retTask.getId())) {
+                                        newTaskList.add(retTask);
+                                    } else {
+                                        newTaskList.add(task);
+                                    }
+                                }
+
+                                setItems(newTaskList);
+                            }
+                        }));
             }
             return false;
         }

@@ -243,11 +243,10 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         }
 
         startProgress();
-        AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
-                new AsyncCallback() {
+        AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery<>(
+                new AsyncCallback<List<Quota>>() {
                     @Override
-                    public void onSuccess(Object returnValue) {
-                        List<Quota> quotas = (List<Quota>) returnValue;
+                    public void onSuccess(List<Quota> quotas) {
                         quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
 
                         getQuota().setItems(quotas);

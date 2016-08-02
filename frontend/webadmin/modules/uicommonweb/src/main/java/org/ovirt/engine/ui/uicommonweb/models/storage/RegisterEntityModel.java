@@ -98,11 +98,10 @@ public abstract class RegisterEntityModel<T> extends Model {
             return;
         }
 
-        AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
-                new AsyncCallback() {
+        AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery<>(
+                new AsyncCallback<List<Quota>>() {
                     @Override
-                    public void onSuccess(Object returnValue) {
-                        List<Quota> quotas = (List<Quota>)returnValue;
+                    public void onSuccess(List<Quota> quotas) {
                         quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
 
                         getStorageQuota().setItems(quotas);

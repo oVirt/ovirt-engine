@@ -163,12 +163,12 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dataCenterId, getQosType()),
-                new AsyncQuery(new AsyncCallback() {
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 
                     @Override
-                    public void onSuccess(Object returnValue) {
-                        ProfileBaseModel.this.postInitQosList(returnValue == null ? new ArrayList<Q>()
-                                : (List<Q>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        postInitQosList(returnValue == null ? new ArrayList<Q>()
+                                : (List<Q>) returnValue.getReturnValue());
                     }
 
                 }));

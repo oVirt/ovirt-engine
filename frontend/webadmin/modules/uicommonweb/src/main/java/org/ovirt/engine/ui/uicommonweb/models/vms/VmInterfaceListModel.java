@@ -107,15 +107,13 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         final VM vm = getEntity();
 
         // Initialize guest agent data
-        AsyncQuery getVmGuestAgentInterfacesByVmIdQuery = new AsyncQuery();
-        getVmGuestAgentInterfacesByVmIdQuery.asyncCallback = new AsyncCallback() {
+        AsyncDataProvider.getInstance().getVmGuestAgentInterfacesByVmId(new AsyncQuery<>(new AsyncCallback<List<VmGuestAgentInterface>>() {
             @Override
-            public void onSuccess(Object result) {
-                setGuestAgentData((List<VmGuestAgentInterface>) result);
+            public void onSuccess(List<VmGuestAgentInterface> result) {
+                setGuestAgentData(result);
                 VmInterfaceListModel.super.syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
             }
-        };
-        AsyncDataProvider.getInstance().getVmGuestAgentInterfacesByVmId(getVmGuestAgentInterfacesByVmIdQuery, vm.getId());
+        }), vm.getId());
     }
 
     private void newEntity() {

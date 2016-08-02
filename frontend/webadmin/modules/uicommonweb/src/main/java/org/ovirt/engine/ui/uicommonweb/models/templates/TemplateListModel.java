@@ -434,14 +434,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
 
         // populating VMInit
-        AsyncQuery getVmInitQuery = new AsyncQuery();
-        getVmInitQuery.asyncCallback = new AsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(new AsyncCallback<VmTemplate>() {
             @Override
-            public void onSuccess(Object result) {
-                vmInitLoaded((VmTemplate) result);
+            public void onSuccess(VmTemplate result) {
+                vmInitLoaded(result);
             }
-        };
-        AsyncDataProvider.getInstance().getTemplateById(getVmInitQuery, template.getId());
+        }), template.getId());
 
     }
 

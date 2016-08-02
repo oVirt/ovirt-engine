@@ -61,32 +61,28 @@ public class EditVnicProfileModel extends VnicProfileModel {
     }
 
     private void updateChangabilityIfVmsUsingTheProfile() {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new AsyncCallback() {
-            @Override
-            public void onSuccess(Object ReturnValue) {
-                Collection<VM> vms = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                if (vms != null && !vms.isEmpty()) {
-                    getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                            .getConstants()
-                            .portMirroringNotChangedIfUsedByVms());
-                    getPortMirroring().setIsChangeable(false);
-
-                    getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
-                            .getConstants()
-                            .passthroughNotChangedIfUsedByVms());
-                    getPassthrough().setIsChangeable(false);
-                }
-                stopProgress();
-            }
-        };
-
         IdQueryParameters params =
                 new IdQueryParameters(getProfile().getId());
         startProgress();
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByVnicProfileId,
-                params,
-                asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByVnicProfileId, params,
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        Collection<VM> vms = returnValue.getReturnValue();
+                        if (vms != null && !vms.isEmpty()) {
+                            getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .portMirroringNotChangedIfUsedByVms());
+                            getPortMirroring().setIsChangeable(false);
+
+                            getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .passthroughNotChangedIfUsedByVms());
+                            getPassthrough().setIsChangeable(false);
+                        }
+                        stopProgress();
+                    }
+                }));
     }
 
     @Override
