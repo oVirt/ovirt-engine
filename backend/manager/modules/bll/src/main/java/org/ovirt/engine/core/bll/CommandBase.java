@@ -2331,11 +2331,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return taskHandlers;
     }
 
-    protected void clearTaskHandlers() {
-        // For use when combining TaskHandler and CommandExecutor-driven child commands
-        taskHandlers = null;
-    }
-
     public boolean hasTaskHandlers() {
         return getTaskHandlers() != null;
     }

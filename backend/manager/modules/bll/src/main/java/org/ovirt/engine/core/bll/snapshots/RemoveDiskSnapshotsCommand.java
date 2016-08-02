@@ -24,8 +24,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -35,6 +33,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
@@ -43,7 +42,6 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -60,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters> extends BaseImagesCommand<T>
-        implements TaskHandlerCommand<RemoveDiskSnapshotsParameters> , SerialChildExecutingCommand {
+        implements SerialChildExecutingCommand {
 
     private static final Logger log = LoggerFactory.getLogger(RemoveDiskSnapshotsCommand.class);
     private List<DiskImage> images;
@@ -84,6 +82,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     protected void init(T parameters) {
         super.init(parameters);
 
+        sortImages();
         // Images must be specified in parameters and belong to a single Disk;
         // Otherwise, we'll fail on validate.
         if (getRepresentativeImage().isPresent()) {
@@ -201,9 +200,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         addValidationMessage(EngineMessage.VAR__TYPE__DISK__SNAPSHOT);
     }
 
-    @Override
-    protected List<SPMAsyncTaskHandler> initTaskHandlers() {
-        List<SPMAsyncTaskHandler> taskHandlers = new ArrayList<>();
+    private void sortImages() {
 
         // Sort images from parent to leaf (active) - needed only once as the sorted list is
         // being saved in the parameters.  The conditions to check vary between cold and live
@@ -221,26 +218,15 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                             .collect(Collectors.toList());
             getParameters().setImageIds(new ArrayList<>(ImagesHandler.getDiskImageIds(sortedImages)));
             getParameters().setImageIdsSorted(true);
+            getParameters().setImageGroupID(getImageGroupId());
         }
-
-        if (!isLiveMerge()) {
-            for (Guid imageId : getParameters().getImageIds()) {
-                taskHandlers.add(new RemoveDiskSnapshotTaskHandler(this, imageId, getImageGroupId(), getVmId()));
-            }
-        }
-
-        return !taskHandlers.isEmpty() ? taskHandlers : null;
     }
 
     @Override
     public CommandCallback getCallback() {
-        // Handle first execution based on vm status, and recovery based on isLiveMerge (VM may be down)
-        if (isLiveMerge()) {
-            return new SerialChildCommandsExecutionCallback();
-        } else if (getParameters().isUseCinderCommandCallback()) {
-            return new ConcurrentChildCommandsExecutionCallback();
-        }
-        return null;
+        return getParameters().isUseCinderCommandCallback() ?
+                new ConcurrentChildCommandsExecutionCallback() :
+                new SerialChildCommandsExecutionCallback();
     }
 
     private boolean isLiveMerge() {
@@ -252,15 +238,14 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     protected void executeCommand() {
         if (isLiveMerge()) {
             getParameters().setLiveMerge(true);
-            persistCommand(getParameters().getParentCommand(), true);
         }
+        persistCommand(getParameters().getParentCommand(), true);
         removeCinderSnapshotDisks();
         setSucceeded(true);
     }
 
     @Override
     public boolean performNextOperation(int completedChildren) {
-
         if (completedChildren == getParameters().getImageIds().size()) {
             return false;
         }
@@ -268,24 +253,50 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         if (completedChildren == 0) {
             // Lock all disk images in advance
             ImagesHandler.updateAllDiskImageSnapshotsStatus(getImageGroupId(), ImageStatus.LOCKED);
-        } else {
+        }
+
+        return isLiveMerge() ?
+                performNextOperationLiveMerge(completedChildren) :
+                performNextOperationColdMerge(completedChildren);
+    }
+
+    private boolean performNextOperationLiveMerge(int completedChildren) {
+        if (completedChildren != 0) {
             checkImageIdConsistency(completedChildren - 1);
         }
 
-        Guid imageId = getParameters().getImageIds().get(completedChildren);
+        Guid nextImageId = getParameters().getImageIds().get(completedChildren);
         log.info("Starting child command {} of {}, image '{}'",
-                completedChildren + 1, getParameters().getImageIds().size(), imageId);
+                completedChildren + 1, getParameters().getImageIds().size(), nextImageId);
 
-        RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskLiveParameters(imageId);
-        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        ImagesContainterParametersBase parameters =
+                buildRemoveSnapshotSingleDiskLiveParameters(nextImageId, completedChildren);
+
+        updateParameters(completedChildren, parameters.getDestinationImageId());
+        persistCommandIfNeeded();
+
+        CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveSnapshotSingleDiskLive,
+                parameters,
+                cloneContextAndDetachFromParent());
+
+        return true;
+    }
+
+    private void updateParameters(int completedChildren, Guid destinationImageId) {
         if (getParameters().getChildImageIds() == null) {
             getParameters().setChildImageIds(Arrays.asList(new Guid[getParameters().getImageIds().size()]));
         }
-        getParameters().getChildImageIds().set(completedChildren, parameters.getDestinationImageId());
-        persistCommand(getParameters().getParentCommand(), true);
+        getParameters().getChildImageIds().set(completedChildren, destinationImageId);
+    }
 
-        CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.RemoveSnapshotSingleDiskLive,
+    private boolean performNextOperationColdMerge(int completedChildren) {
+        Guid nextImageId = getParameters().getImageIds().get(completedChildren);
+        log.info("Starting child command {} of {}, image '{}'",
+                completedChildren + 1, getParameters().getImageIds().size(), nextImageId);
+
+        ImagesContainterParametersBase parameters = buildRemoveSnapshotSingleDiskParameters(nextImageId);
+
+        CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveSnapshotSingleDisk,
                 parameters,
                 cloneContextAndDetachFromParent());
 
@@ -294,7 +305,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     /**
      * Ensures that after a backwards merge (in which the current snapshot's image takes the
-     * place of the next snapshot's image), subsequent task handlers will refer to the correct
+     * place of the next snapshot's image), subsequent iterations will refer to the correct
      * image id and not the one that has been removed.
      */
     private void checkImageIdConsistency(int completedImageIndex) {
@@ -313,7 +324,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         }
     }
 
-    private RemoveSnapshotSingleDiskParameters buildRemoveSnapshotSingleDiskLiveParameters(Guid imageId) {
+    private RemoveSnapshotSingleDiskParameters buildRemoveSnapshotSingleDiskLiveParameters(Guid imageId, int completedChildren) {
         DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(imageId).get(0);
         RemoveSnapshotSingleDiskParameters parameters =
                 new RemoveSnapshotSingleDiskParameters(imageId, getVmId());
@@ -324,24 +335,23 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         parameters.setCommandType(VdcActionType.RemoveSnapshotSingleDiskLive);
         parameters.setVdsId(getVm().getRunOnVds());
         parameters.setSessionId(getParameters().getSessionId());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
 
-    protected void updateSnapshotVmConfiguration() {
-        Guid imageId = getParameters().getImageIds().get(getParameters().getExecutionIndex());
-        Snapshot snapshot = getSnapshotDao().get(getSnapshotId());
-
-        Snapshot snapshotWithoutImage = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, imageId);
-        getSnapshotDao().update(snapshotWithoutImage);
-    }
-
-    @Override
-    public void taskEndSuccessfully() {
-        lockVmSnapshotsWithWait(getVm());
-        updateSnapshotVmConfiguration();
-        if (getSnapshotsEngineLock() != null) {
-            getLockManager().releaseLock(getSnapshotsEngineLock());
-        }
+    private ImagesContainterParametersBase buildRemoveSnapshotSingleDiskParameters(Guid imageId) {
+        ImagesContainterParametersBase parameters = new ImagesContainterParametersBase(
+                imageId, getVmId());
+        DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(imageId).get(0);
+        parameters.setDestinationImageId(dest.getImageId());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
+        parameters.setParentParameters(getParameters());
+        parameters.setParentCommand(getActionType());
+        parameters.setWipeAfterDelete(dest.isWipeAfterDelete());
+        parameters.setSessionId(getParameters().getSessionId());
+        parameters.setVmSnapshotId(getDiskImageDao().getSnapshotById(imageId).getVmSnapshotId());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        return parameters;
     }
 
     @Override
@@ -369,10 +379,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             VdcReturnValueBase vdcReturnValueBase = future.get();
             if (!vdcReturnValueBase.getSucceeded()) {
                 log.error("Error removing snapshots for Cinder disks");
-                if (!hasTaskHandlers()) {
-                    endWithFailure();
-                    getParameters().setTaskGroupSuccess(false);
-                }
+                endWithFailure();
+                getParameters().setTaskGroupSuccess(false);
             } else {
                 Snapshot snapshotWithoutImage = null;
                 Snapshot snapshot = getSnapshotDao().get(cinderDisks.get(0).getSnapshotId());
@@ -385,17 +393,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 if (getSnapshotsEngineLock() != null) {
                     getLockManager().releaseLock(getSnapshotsEngineLock());
                 }
-                if (!hasTaskHandlers()) {
-                    endSuccessfully();
-                    getParameters().setTaskGroupSuccess(true);
-                }
+                endSuccessfully();
+                getParameters().setTaskGroupSuccess(true);
             }
         } catch (InterruptedException | ExecutionException e) {
             log.error("Error removing snapshots for Cinder disks");
-            if (!hasTaskHandlers()) {
-                endWithFailure();
-                getParameters().setTaskGroupSuccess(false);
-            }
+             endWithFailure();
+             getParameters().setTaskGroupSuccess(false);
         }
     }
 
@@ -411,13 +415,17 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     private void unlockImages() {
-        // Some Live Merge failure cases leave a subset of images illegal;
-        // they should remain illegal while the others are unlocked.
-        List<DiskImage> images = getAllImagesForDisk();
-        for (DiskImage image : images) {
-            if (image.getImageStatus() == ImageStatus.LOCKED) {
-                getImageDao().updateStatus(image.getImageId(), ImageStatus.OK);
+        if (isLiveMerge()) {
+            // Some Live Merge failure cases leave a subset of images illegal;
+            // they should remain illegal while the others are unlocked.
+            List<DiskImage> images = getAllImagesForDisk();
+            for (DiskImage image : images) {
+                if (image.getImageStatus() == ImageStatus.LOCKED) {
+                    getImageDao().updateStatus(image.getImageId(), ImageStatus.OK);
+                }
             }
+        } else {
+            ImagesHandler.updateAllDiskImageSnapshotsStatus(getParameters().getImageGroupID(), ImageStatus.OK);
         }
     }
 
@@ -530,25 +538,14 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     public AuditLogType getAuditLogTypeValue() {
         addAuditLogCustomValues();
         switch (getActionState()) {
-            case EXECUTE:
-                if (!hasTaskHandlers() && !getParameters().isUseCinderCommandCallback()) {
-                    return getParameters().getTaskGroupSuccess() ?
-                            AuditLogType.USER_REMOVE_DISK_SNAPSHOT :
-                            AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_FAILURE;
-                }
-                if (isFirstTaskHandler() && getSucceeded()) {
-                    return AuditLogType.USER_REMOVE_DISK_SNAPSHOT;
-                }
-                if (!getParameters().getTaskGroupSuccess()) {
-                    return AuditLogType.USER_FAILED_REMOVE_DISK_SNAPSHOT;
-                }
-                break;
+        case EXECUTE:
+            return AuditLogType.USER_REMOVE_DISK_SNAPSHOT;
 
-            case END_SUCCESS:
-                return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_SUCCESS;
+        case END_SUCCESS:
+            return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_SUCCESS;
 
-            case END_FAILURE:
-                return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_FAILURE;
+        case END_FAILURE:
+            return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_FAILURE;
         }
         return AuditLogType.UNASSIGNED;
     }
@@ -559,47 +556,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED));
     }
 
-    @Override
-    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
-    }
-
-    @Override
-    public Guid createTask(
-            Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
-            VdcObjectType entityType,
-            Guid... entityIds) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
-    }
-
-    @Override
-    public ArrayList<Guid> getTaskIdList() {
-        return super.getTaskIdList();
-    }
-
-    @Override
-    public void preventRollback() {
-        getParameters().setExecutionIndex(0);
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder() {
-        return super.persistAsyncTaskPlaceHolder(getActionType());
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
-    }
-
     protected Guid getSnapshotId() {
         return getImage() != null ? getImage().getSnapshotId() : null;
-    }
-
-    private boolean isFirstTaskHandler() {
-        return getParameters().getExecutionIndex() == 0;
     }
 
 }

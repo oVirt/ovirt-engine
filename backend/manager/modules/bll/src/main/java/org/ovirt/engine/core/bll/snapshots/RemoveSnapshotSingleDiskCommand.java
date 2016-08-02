@@ -6,10 +6,12 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -41,7 +43,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = mergeSnapshots(storagePoolId, storageDomainId);
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
-            getReturnValue().getInternalVdsmTaskIdList().add(createTask(taskId, vdsReturnValue, storageDomainId));
+            getTaskIdList().add(createTask(taskId, vdsReturnValue, storageDomainId));
             setSucceeded(vdsReturnValue.getSucceeded());
         } else {
             setSucceeded(false);
@@ -85,6 +87,17 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                     getImageInfoFromVdsm(getDestinationDiskImage()),
                     imagesToUpdate,
                     true);
+        }
+
+        if (getParameters().getVmSnapshotId() != null) {
+            lockVmSnapshotsWithWait(getVm());
+            Snapshot snapshot = getSnapshotDao().get(getParameters().getVmSnapshotId());
+            Snapshot snapshotWithoutImage =
+                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId());
+            getSnapshotDao().update(snapshotWithoutImage);
+            if (getSnapshotsEngineLock() != null) {
+                getLockManager().releaseLock(getSnapshotsEngineLock());
+            }
         }
 
         setSucceeded(true);
