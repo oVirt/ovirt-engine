@@ -8057,6 +8057,25 @@
         </row>
     </table>
 
+    <table name="step_subject_entity">
+        <column>step_id</column>
+        <column>entity_id</column>
+        <column>entity_type</column>
+        <column>step_entity_weight</column>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5229</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
+            <value>Storage</value>
+            <value>50</value>
+        </row>
+        <row>
+            <value>cd75984e-1fd4-48fb-baf8-e45800a61a67</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
+            <value>Storage</value>
+            <value>50</value>
+        </row>
+    </table>
+
     <table name="gluster_volumes">
         <column>id</column>
         <column>cluster_id</column>

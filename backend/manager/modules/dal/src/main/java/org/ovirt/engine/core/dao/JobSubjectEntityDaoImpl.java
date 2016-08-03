@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +11,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -61,12 +58,10 @@ public class JobSubjectEntityDaoImpl extends BaseDao implements JobSubjectEntity
         return getCallsHandler().executeReadList("GetAllJobIdsByEntityId", createGuidMapper(), parameterSource);
     }
 
-    private static class JobSubjectEntityRowMapper implements RowMapper<SubjectEntity> {
+    private static class JobSubjectEntityRowMapper extends AbstractSubjectEntityRowMapper<SubjectEntity> {
 
-        @Override
-        public SubjectEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new SubjectEntity(VdcObjectType.valueOf(rs.getString("entity_type")),
-                    getGuidDefaultEmpty(rs, "entity_id"));
+        protected SubjectEntity createSubjectEntity() {
+            return new SubjectEntity();
         }
     }
 }

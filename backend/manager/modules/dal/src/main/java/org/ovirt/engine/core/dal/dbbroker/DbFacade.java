@@ -101,6 +101,7 @@ import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.RoleGroupMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.StepSubjectEntityDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -859,6 +860,15 @@ public class DbFacade {
      */
     public JobSubjectEntityDao getJobSubjectEntityDao() {
         return getDao(JobSubjectEntityDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link StepSubjectEntityDao}.
+     *
+     * @return the dao
+     */
+    public StepSubjectEntityDao getStepSubjectEntityDao() {
+        return getDao(StepSubjectEntityDao.class);
     }
 
     /**

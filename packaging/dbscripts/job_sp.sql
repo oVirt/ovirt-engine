@@ -462,6 +462,45 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+---------------------------------------------------------------
+-- Inserts StepSubjectEntity to the step_subject_entity table
+---------------------------------------------------------------
+CREATE OR REPLACE FUNCTION InsertStepSubjectEntity (
+    v_step_id UUID,
+    v_entity_id UUID,
+    v_entity_type VARCHAR(32),
+    v_step_entity_weight SMALLINT
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO step_subject_entity (
+        step_id,
+        entity_id,
+        entity_type,
+        step_entity_weight
+        )
+    VALUES (
+        v_step_id,
+        v_entity_id,
+        v_entity_type,
+        v_step_entity_weight
+        );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-----------------------------------------------------
+-- Get Step Subject Entities of a step by the step id
+-----------------------------------------------------
+CREATE OR REPLACE FUNCTION GetStepSubjectEntitiesByStepId (v_step_id UUID)
+RETURNS SETOF step_subject_entity STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM step_subject_entity
+    WHERE step_id = v_step_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 ----------------------------------------------
 -- Updates steps related to a Job as completed
 ----------------------------------------------

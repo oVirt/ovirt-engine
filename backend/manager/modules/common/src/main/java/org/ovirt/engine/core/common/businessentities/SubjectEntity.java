@@ -55,11 +55,12 @@ public class SubjectEntity {
                 && Objects.equals(entityType, other.entityType);
     }
 
+    protected ToStringBuilder appendProperties(ToStringBuilder tsb) {
+        return tsb.append("entityId", entityId).append("entityType", entityType);
+    }
+
     @Override
     public String toString() {
-        return ToStringBuilder.forInstance(this)
-                .append("entityId", entityId)
-                .append("entityType", entityType)
-                .build();
+        return appendProperties(ToStringBuilder.forInstance(this)).build();
     }
 }

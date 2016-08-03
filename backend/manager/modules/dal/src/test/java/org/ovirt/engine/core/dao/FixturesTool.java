@@ -381,6 +381,11 @@ public class FixturesTool {
     protected static final Guid DISK_ID_2 = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a36");
 
     /**
+     * Predefined step for testing.
+     */
+    protected static final Guid STEP_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5229");
+
+    /**
      * Predefined image on a VM template for testing. <BR/>
      * The image is defined on storage domain STORAGE_DOAMIN_SCALE_SD5.
      */

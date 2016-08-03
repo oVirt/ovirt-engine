@@ -74,6 +74,7 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1485,7 +1486,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return false;
     }
 
-    protected void handleCommandStep() {
+    private void handleCommandStepAndEntities() {
         if (getCommandStep() != null) {
             Step taskStep =
                     executionHandler.addTaskStep(getExecutionContext(),
@@ -1494,6 +1495,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             if (taskStep != null) {
                 getExecutionContext().setStep(taskStep);
                 persistCommandIfNeeded();
+                getStepSubjectEntityDao().saveAll(getCommandStepSubjectEntities());
             }
         }
     }
@@ -1512,7 +1514,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             executionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
         }
 
-        handleCommandStep();
+        handleCommandStepAndEntities();
 
         try {
             handleTransactivity();
@@ -1866,6 +1868,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     protected StepEnum getCommandStep() {
         return null;
+    }
+
+    protected List<StepSubjectEntity> getCommandStepSubjectEntities() {
+        return Collections.emptyList();
     }
 
     public VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
