@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -154,13 +153,10 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     @SuppressWarnings("unchecked")
     protected Map<String, Object>[] getVmsInfo() {
         List<String> vmsToUpdate = getParameters().getVmIds().stream().map(Guid::toString).collect(Collectors.toList());
-        // TODO refactor commands to use vdsId only - the whole vds object here is useless
-        VDS vds = new VDS();
-        vds.setId(getVdsId());
         Map<String, Object>[] result = new Map[0];
         VDSReturnValue vdsReturnValue = runVdsCommand(
                 VDSCommandType.FullList,
-                new FullListVDSCommandParameters(vds, vmsToUpdate));
+                new FullListVDSCommandParameters(getVdsId(), vmsToUpdate));
         if (vdsReturnValue.getSucceeded()) {
             result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
         }

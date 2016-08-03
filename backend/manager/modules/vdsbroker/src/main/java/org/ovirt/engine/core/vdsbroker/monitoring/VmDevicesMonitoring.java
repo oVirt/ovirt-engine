@@ -25,7 +25,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -452,12 +451,10 @@ public class VmDevicesMonitoring implements BackendService {
 
         Map<String, Object>[] result = new Map[0];
 
-        VDS vds = new VDS(); // TODO refactor commands to use vdsId only - the whole vds object here is useless
-        vds.setId(vdsId);
         List<String> vmIds = vms.stream().map(Guid::toString).collect(Collectors.toList());
         VDSReturnValue vdsReturnValue =
                 getResourceManager().runVdsCommand(VDSCommandType.FullList,
-                        new FullListVDSCommandParameters(vds, vmIds));
+                        new FullListVDSCommandParameters(vdsId, vmIds));
         if (vdsReturnValue.getSucceeded()) {
             result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
         }

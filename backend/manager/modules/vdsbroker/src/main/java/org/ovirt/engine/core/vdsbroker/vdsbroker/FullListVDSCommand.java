@@ -9,7 +9,7 @@ public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends 
     private VMListReturnForXmlRpc fullVmListReturn;
 
     public FullListVDSCommand(P parameters) {
-        super(parameters, parameters.getVds());
+        super(parameters);
     }
 
     @Override

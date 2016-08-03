@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
@@ -99,10 +98,10 @@ public class MergeStatusCommand<T extends MergeParameters>
     private Set<Guid> getVolumeChain() {
         List<String> vmIds = new ArrayList<>();
         vmIds.add(getParameters().getVmId().toString());
-        VDS vds = getVdsDao().get(getParameters().getVdsId());
         Map[] vms = (Map[]) runVdsCommand(
                 VDSCommandType.FullList,
-                new FullListVDSCommandParameters(vds, vmIds)).getReturnValue();
+                new FullListVDSCommandParameters(getParameters().getVdsId(), vmIds))
+                .getReturnValue();
 
         if (vms == null || vms.length == 0) {
             log.error("Failed to retrieve VM information");
