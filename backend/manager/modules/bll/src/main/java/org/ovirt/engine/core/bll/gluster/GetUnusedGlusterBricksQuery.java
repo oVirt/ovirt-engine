@@ -31,7 +31,7 @@ public class GetUnusedGlusterBricksQuery<P extends IdQueryParameters> extends Qu
             if (storageDevice.getMountPoint() != null
                     && !storageDevice.getMountPoint().isEmpty()
                     && (storageDevice.getMountPoint()
-                            .startsWith(Config.<String> getValue(ConfigValues.GlusterDefaultBrickMountPoint))
+                            .startsWith(Config.getValue(ConfigValues.GlusterDefaultBrickMountPoint))
                     || storageDevice.isGlusterBrick())
                     && !isBrickUsed(usedBricks, storageDevice.getMountPoint())) {
                 freeBricks.add(storageDevice);
