@@ -80,6 +80,8 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
      */
     private ExternalSystem externalSystem;
 
+    private Integer progress;
+
     /**
      * The successors steps
      */
@@ -264,6 +266,14 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
 
     public List<Step> getSteps() {
         return steps;
+    }
+
+    public Integer getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
     }
 
     public Step getStep(StepEnum stepType) {

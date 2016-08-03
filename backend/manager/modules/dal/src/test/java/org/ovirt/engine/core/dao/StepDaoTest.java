@@ -71,6 +71,11 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     protected void updateExistingEntity() {
         existingEntity.setStatus(JobExecutionStatus.FINISHED);
         existingEntity.setEndTime(new Date());
+        existingEntity.setProgress(50);
+    }
+
+    protected void verifyUpdate(Step existingEntity, Step result) {
+        assertEquals("Progress should be equal", existingEntity.getProgress(), result.getProgress());
     }
 
     @Test

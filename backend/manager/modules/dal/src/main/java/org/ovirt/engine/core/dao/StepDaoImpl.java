@@ -48,6 +48,7 @@ public class StepDaoImpl extends DefaultGenericDao<Step, Guid> implements StepDa
                 .addValue("description", entity.getDescription())
                 .addValue("step_number", entity.getStepNumber())
                 .addValue("status", EnumUtils.nameOrNull(entity.getStatus()))
+                .addValue("progress", entity.getProgress())
                 .addValue("start_time", entity.getStartTime())
                 .addValue("end_time", entity.getEndTime())
                 .addValue("correlation_id", entity.getCorrelationId())
@@ -99,6 +100,7 @@ public class StepDaoImpl extends DefaultGenericDao<Step, Guid> implements StepDa
             step.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
             step.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
             step.setCorrelationId(rs.getString("correlation_id"));
+            step.setProgress(getInteger(rs, "progress"));
             step.getExternalSystem().setId(getGuid(rs, "external_id"));
             step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
             step.setExternal(rs.getBoolean("is_external"));

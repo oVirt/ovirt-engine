@@ -7843,6 +7843,7 @@
         <column>description</column>
         <column>step_number</column>
         <column>status</column>
+        <column>progress</column>
         <column>start_time</column>
         <column>end_time</column>
         <column>correlation_id</column>
@@ -7859,6 +7860,7 @@
             <value>Validaton step of the job</value>
             <value>0</value>
             <value>FINISHED</value>
+            <null/>
             <value>2012-01-08 10:52:24</value>
             <value>2012-01-08 10:55:24</value>
             <value>54947df8-job1</value>
@@ -7875,6 +7877,7 @@
             <value>Execution step of the job</value>
             <value>1</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-01-08 10:57:30</value>
             <null/>
             <value>54947df8-job1</value>
@@ -7890,6 +7893,7 @@
             <value>Create disk for some test</value>
             <value>0</value>
             <value>STARTED</value>
+            <value>25</value>
             <value>2012-01-08 10:57:38</value>
             <null/>
             <value>54947df8-job1</value>
@@ -7905,6 +7909,7 @@
             <value>Create disk for some test</value>
             <value>1</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-01-08 10:57:38</value>
             <null/>
             <value>54947df8-job1</value>
@@ -7920,6 +7925,7 @@
             <value>Create disk for some test</value>
             <value>2</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-01-08 10:57:38</value>
             <null/>
             <value>54947df8-job1</value>
@@ -7935,6 +7941,7 @@
             <value>Create disk for some test</value>
             <value>0</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-01-08 10:57:38</value>
             <null/>
             <value>54947df8-job1</value>
@@ -7950,6 +7957,7 @@
             <value>Create disk for some test</value>
             <value>0</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-01-08 10:57:38</value>
             <null/>
             <value>54947df8-job1</value>
@@ -7965,6 +7973,7 @@
             <value>Create disk for some test</value>
             <value>1</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-01-08 10:57:38</value>
             <null/>
             <value>54947df8-job1</value>
@@ -7982,6 +7991,7 @@
             <value>Validaton step of the job</value>
             <value>0</value>
             <value>FINISHED</value>
+            <null/>
             <value>2012-02-13 10:11:20</value>
             <value>2012-02-13 10:11:25</value>
             <value>54947df8-job2</value>
@@ -7999,6 +8009,7 @@
             <value>Validaton step of the job</value>
             <value>0</value>
             <value>FAILED</value>
+            <null/>
             <value>2012-02-08 10:11:00</value>
             <value>2012-02-08 10:11:00</value>
             <value>54947df8-job3</value>
@@ -8016,6 +8027,7 @@
             <value>Validaton step of the job</value>
             <value>0</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-02-08 10:11:00</value>
             <null/>
             <value>54947df8-job4</value>
@@ -8032,6 +8044,7 @@
             <value>Rebalancing V2 volume of Default.( STARTED  )</value>
             <value>0</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-02-08 10:11:00</value>
             <null/>
             <value>54947df8-job5</value>
@@ -8048,6 +8061,7 @@
             <value>Rebalancing V2 volume of Default.( STARTED  )</value>
             <value>0</value>
             <value>STARTED</value>
+            <null/>
             <value>2012-02-08 10:11:00</value>
             <null/>
             <value>54947df8-job6</value>

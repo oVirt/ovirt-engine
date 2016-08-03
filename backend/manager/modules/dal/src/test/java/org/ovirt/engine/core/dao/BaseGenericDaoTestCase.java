@@ -45,9 +45,13 @@ D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
 
         assertNotNull(result);
         assertEquals(existingEntity, result);
+        verifyUpdate(existingEntity, result);
     }
 
     protected abstract void updateExistingEntity();
+
+    protected void verifyUpdate(T existingEntity, T result) {
+    }
 
     /**
     * Ensures that removing a disk image works as expected.
