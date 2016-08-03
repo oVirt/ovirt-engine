@@ -225,13 +225,16 @@ public class VmDevicesMonitoring implements BackendService {
          * Process the changes and store the result in the DB.
          */
         public void flush() {
-            Map<String, Object>[] vmInfos = getVmInfo(vdsId, getVmsToProcess());
-            if (vmInfos != null) {
-                Arrays.stream(vmInfos).forEach(this::processFullList);
+            try {
+                Map<String, Object>[] vmInfos = getVmInfo(vdsId, getVmsToProcess());
+                if (vmInfos != null) {
+                    Arrays.stream(vmInfos).forEach(this::processFullList);
+                }
+                getDevicesToProcess().forEach(device -> processDevice(this, device));
+                saveDevicesToDb(this);
+            } finally {
+                unlockTouchedVms();
             }
-            getDevicesToProcess().forEach(device -> processDevice(this, device));
-            saveDevicesToDb(this);
-            unlockTouchedVms();
         }
 
     }
