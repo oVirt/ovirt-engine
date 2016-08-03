@@ -242,6 +242,10 @@ public class HostNicMapper {
                     model.getBonding().getOptions().getOptions().add(option);
                 }
             }
+            if (entity.getAdPartnerMac() != null) {
+                model.getBonding().setAdPartnerMac(new Mac());
+                model.getBonding().getAdPartnerMac().setAddress(entity.getAdPartnerMac());
+            }
         }
 
         model.setMtu(entity.getMtu());
