@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -226,13 +227,9 @@ public class VmDevicesMonitoring implements BackendService {
         public void flush() {
             Map<String, Object>[] vmInfos = getVmInfo(vdsId, getVmsToProcess());
             if (vmInfos != null) {
-                for (Map<String, Object> vmInfo : vmInfos) {
-                    processFullList(vmInfo);
-                }
+                Arrays.stream(vmInfos).forEach(this::processFullList);
             }
-            for (VmDevice deviceToProcess : getDevicesToProcess()) {
-                processDevice(this, deviceToProcess);
-            }
+            getDevicesToProcess().forEach(device -> processDevice(this, device));
             saveDevicesToDb(this);
             unlockTouchedVms();
         }
