@@ -182,6 +182,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     updateCpuProfile(getModel().getSelectedCluster().getId(), template.getCpuProfileId());
                 }
                 provisioning_SelectedItemChanged();
+                updateMigrationForLocalSD();
             }
         });
     }

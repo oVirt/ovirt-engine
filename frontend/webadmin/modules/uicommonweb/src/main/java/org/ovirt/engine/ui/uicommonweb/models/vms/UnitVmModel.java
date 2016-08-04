@@ -2309,7 +2309,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void templateWithVersion_SelectedItemChanged(Object sender, EventArgs args) {
         behavior.templateWithVersion_SelectedItemChanged();
-        behavior.updateMigrationForLocalSD();
     }
 
     private void timeZone_SelectedItemChanged(Object sender, EventArgs args) {
