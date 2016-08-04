@@ -60,6 +60,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>BrandingServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BrandingServlet</servlet-name>
+    <url-pattern>/theme/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>pki-resource</servlet-name>
     <servlet-class>org.ovirt.engine.core.services.PKIResourceServlet</servlet-class>
   </servlet>
@@ -200,5 +209,12 @@
       <http-only>true</http-only>
     </cookie-config>
   </session-config>
+
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <page-encoding>UTF-8</page-encoding>
+    </jsp-property-group>
+  </jsp-config>
 
 </web-app>

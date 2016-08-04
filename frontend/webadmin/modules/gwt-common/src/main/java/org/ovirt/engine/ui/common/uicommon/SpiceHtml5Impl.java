@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
 
     private static final String CLIENT_PAGE = BaseContextPathData.getRelativePath()
-            + "services/spicehtml5-main.html"; //$NON-NLS-1$
+            + "services/spicehtml5-main.jsp"; //$NON-NLS-1$
 
     private static final String SPICEHTML5_TITLE_SUFFIX = " - Spice Javascript Client"; //$NON-NLS-1$
 

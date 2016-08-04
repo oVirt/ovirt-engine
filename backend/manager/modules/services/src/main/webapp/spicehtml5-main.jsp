@@ -52,34 +52,32 @@
         <script src="files/spice-html5/ticket.js"></script>
         <link rel="stylesheet" type="text/css" href="files/spice-html5/spice.css" />
 
+        <script src="theme/00-ovirt.brand/patternfly/components/jquery/dist/jquery.min.js"></script>
+        <script src="theme/00-ovirt.brand/patternfly/components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="theme/00-ovirt.brand/patternfly/js/patternfly.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="theme/00-ovirt.brand/patternfly/components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="theme/00-ovirt.brand/patternfly/css/patternfly.min.css" />
+
+        <%@ include file="WEB-INF/warning-template.html"%>
+        <script src="html-console-common.js"></script>
+        <link rel="stylesheet" type="text/css" href="html-console-common.css" />
+
         <script>
             var host = null, port = null;
             var sc;
 
-            function spice_set_cookie(name, value, days) {
-                var date, expires;
-                date = new Date();
-                date.setTime(date.getTime() + (days*24*60*60*1000));
-                expires = "; expires=" + date.toGMTString();
-                document.cookie = name + "=" + value + expires + "; path=/";
-            };
-
             function spice_query_var(name, defvalue) {
-                var match = RegExp('[?&]' + name + '=([^&]*)')
-                                  .exec(window.location.search);
+                var match = new RegExp('[?&]' + name + '=([^&]*)')
+                        .exec(window.location.search);
                 return match ?
-                    decodeURIComponent(match[1].replace(/\+/g, ' '))
-                    : defvalue;
+                        decodeURIComponent(match[1].replace(/\+/g, ' '))
+                        : defvalue;
             }
 
             function spice_error(e)
             {
                 disconnect();
             }
-
-            function connect()
-            {
-                            }
 
             function disconnect()
             {
@@ -90,51 +88,79 @@
                 console.log("<< disconnect");
             }
 
+            /**
+             * @return {string} hostname of server to connect to
+             */
+            function getHost() {
+                return spice_query_var('host', window.location.hostname);
+            }
+
+            /**
+             * @return {URL} websocket url
+             */
+            function getUrls(connectionTicket) {
+                var host = getHost();
+                var port = spice_query_var('port', window.location.port);
+                var path = connectionTicket;
+
+                if ((!host) || (!port)) {
+                    throw new Error('Must specify host and port in URL');
+                }
+
+                var urlString = 'wss://' + host + ':' + port + '/' + path;
+                return new URL(urlString);
+            }
+
             function connectToConsole (evt) {
-                if (evt.data === null || evt.data.password === null || evt.data.connectionTicket === null) {
+                if (!(evt.data instanceof Object) || !evt.data.password || !evt.data.connectionTicket) {
                     alert("Incorrect connection data");
                     return;
                 }
+                var password = evt.data.password;
 
                 try {
                     // If title is sent as a parameter in the url, set the window title accordingly
                     document.title = spice_query_var('title', 'Spice Javascript client');
+                    var url = getUrls(evt.data.connectionTicket);
+                    checkConnection(url.toString(),
+                            doConnectToConsole.bind(undefined, url.toString(), password),
+                            reportServerUnreachable.bind(undefined, url.origin));
+                } catch(e) {
+                    alert(e);
+                }
+            }
 
-                    var host = spice_query_var('host', window.location.hostname);
-                    var port = spice_query_var('port', window.location.port);
-                    var password = evt.data.password;
-                    var path = evt.data.connectionTicket;
+            function reportServerUnreachable(websocketUrl) {
+                var certificateUrl = window.location.origin
+                        + '/ovirt-engine/services/pki-resource?resource=ca-certificate&format=X509-PEM-CA';
 
-                    if ((!host) || (!port)) {
-                        updateState('failed',
-                            "Must specify host and port in URL");
-                        return;
-                    }
+                var bullets = [];
+                bullets.push('websocket proxy service is running,');
+                bullets.push('firewalls are properly set,');
+                if (location.hostname != getHost()) {
+                    bullets.push('application is accessed using predefined hostname <code>' + getHost() + '</code>');
+                }
+                if (!SpiceMainConn) {
+                    bullets.push('package <code>spice-html5</code> is installed,');
+                }
+                bullets.push('websocket proxy certificate is trusted by your browser. <a href="' + certificateUrl + '">Default CA certificate</a>.');
+                var warningContent = $($.parseHTML('<strong>Can\'t connect to websocket proxy server</strong> <code>' + websocketUrl + '</code>. Please check that:'))
+                        .add(toBulletList(bullets));
+                showWarning(warningContent, $('#alert-container'));
+            }
 
-                    var scheme = "ws://";
-                    if (window.location.protocol === "https:") {
-                        scheme = "wss://";
-                    }
+            function doConnectToConsole(url, password) {
+                if (sc) {
+                    sc.stop();
+                }
 
-                    if (sc) {
-                        sc.stop();
-                    }
-
-                    var uri = scheme + host + ":" + port + '/' + path;
-
-                    try
-                    {
-                        sc = new SpiceMainConn({uri: uri, screen_id: "spice-screen", dump_id: "debug-div",
-                                    message_id: "message-div", password: password, onerror: spice_error });
-                    }
-                    catch (e)
-                    {
-                        alert(e.toString());
-                        disconnect();
-                    }
-
-
-                }catch(e) {alert(e);}
+                try {
+                    sc = new SpiceMainConn({uri: url, screen_id: "spice-screen", dump_id: "debug-div",
+                        message_id: "message-div", password: password, onerror: spice_error });
+                } catch (e) {
+                    alert(e.toString());
+                    disconnect();
+                }
             }
 
             /*
@@ -151,10 +177,10 @@
             }
 
             /*
-            * This functions emulates the sendCtrlAltDel from inputs.js from
-            * version 0.1.3. As soon as we upgrade to that version, this function
-            * should be removed!
-            */
+             * This functions emulates the sendCtrlAltDel from inputs.js from
+             * version 0.1.3. As soon as we upgrade to that version, this function
+             * should be removed!
+             */
             function sendCtrlAltDel() {
                 if (sc && sc.inputs && sc.inputs.state === "ready") {
                     var key = new SpiceMsgcKeyDown();
@@ -182,7 +208,12 @@
             }
         </script>
 
-        <style>
+        <style type="text/css">
+            body {
+                /* fix of patternfly override */
+                background-color: #999;
+            }
+
             .control-panel {
                 margin-top: 5px;
                 margin-left: auto;
@@ -198,6 +229,7 @@
     </head>
 
     <body>
+        <div id="alert-container"></div>
 
         <div id="login" style="display: none">
             <span class="logo">SPICE</span>
