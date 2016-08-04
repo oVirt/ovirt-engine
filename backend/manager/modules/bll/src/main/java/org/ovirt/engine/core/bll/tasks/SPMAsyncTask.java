@@ -9,8 +9,10 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -226,6 +228,15 @@ public class SPMAsyncTask implements SPMTask {
         if (getState() != AsyncTaskState.Ended) {
             setState(AsyncTaskState.Ended);
             setLastStatusAccessTime();
+        }
+
+        AsyncTask asyncTask = getParameters().getDbAsyncTask();
+        CommandEntity rootCmdEntity = coco.getCommandEntity(asyncTask.getRootCommandId());
+        // if the task's root command has failed
+        if (rootCmdEntity != null && !rootCmdEntity.isExecuted()) {
+            // mark it as a task of a partially completed command
+            // Will result in failure of the command
+            setPartiallyCompletedCommandTask(true);
         }
 
         // Fail zombie task and task that belongs to a partially submitted command
