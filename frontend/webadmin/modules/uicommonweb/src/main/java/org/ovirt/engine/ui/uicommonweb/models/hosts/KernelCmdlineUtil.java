@@ -40,9 +40,9 @@ public class KernelCmdlineUtil {
         }
         switch (cpuVendor) {
             case AMD:
-                return "kvm-amd.nested=on "; //$NON-NLS-1$
+                return "kvm-amd.nested=1 "; //$NON-NLS-1$
             case INTEL:
-                return "kvm-intel.nested=on "; //$NON-NLS-1$
+                return "kvm-intel.nested=1 "; //$NON-NLS-1$
             case IBM:
                 return "";
             default:
@@ -57,7 +57,7 @@ public class KernelCmdlineUtil {
         switch (cpuVendor) {
             case AMD:
             case INTEL:
-                return "vfio_iommu_type1.allow_unsafe_interrupts=on "; //$NON-NLS-1$
+                return "vfio_iommu_type1.allow_unsafe_interrupts=1 "; //$NON-NLS-1$
             case IBM:
                 return "";
             default:
