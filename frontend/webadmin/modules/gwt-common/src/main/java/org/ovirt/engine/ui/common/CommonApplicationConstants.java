@@ -1604,5 +1604,7 @@ public interface CommonApplicationConstants extends Constants {
     String imageActualSize();
 
     String imageVirtualSize();
+
+    String diskAllocationTargetEnabled();
 }
 

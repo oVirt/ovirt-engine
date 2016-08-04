@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,11 +28,14 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     private final VM pool;
+    private final VmPool actualPool;
 
     private InstanceTypeManager instanceTypeManager;
 
-    public ExistingPoolModelBehavior(VM pool) {
+    public ExistingPoolModelBehavior(VM pool, VmPool actualPool) {
+
         this.pool = pool;
+        this.actualPool = actualPool;
     }
 
     @Override
@@ -156,6 +160,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                 }
             }
         }), dataCenter.getId(), actionGroup);
+
+        getModel().getDisksAllocationModel().initializeAutoSelectTarget(false, actualPool.isAutoStorageSelect());
     }
 
     public boolean validate() {

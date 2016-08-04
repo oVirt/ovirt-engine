@@ -214,7 +214,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                     public void onSuccess(VdcQueryReturnValue result) {
                         final VM vm = result.getReturnValue();
 
-                        final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
+                        final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm, pool);
                         behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener<EventArgs>() {
                             @Override
                             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -438,6 +438,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         pool.setStateful(model.getPoolStateful().getEntity());
         pool.setPrestartedVms(model.getPrestartedVms().getEntity());
         pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().getEntity());
+        pool.setAutoStorageSelect(model.getDisksAllocationModel().getDiskAllocationTargetEnabled().getEntity());
 
         EntityModel<VmPoolType> poolTypeSelectedItem = model.getPoolType().getSelectedItem();
         pool.setVmPoolType(poolTypeSelectedItem.getEntity());

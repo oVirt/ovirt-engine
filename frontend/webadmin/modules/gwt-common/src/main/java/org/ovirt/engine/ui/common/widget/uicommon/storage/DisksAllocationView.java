@@ -9,9 +9,11 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
@@ -60,6 +62,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @UiField
     Label diskAllocationLabel;
 
+    @UiField(provided = true)
+    @Path(value = "diskAllocationTargetEnabled.entity")
+    public EntityModelCheckBoxEditor diskAllocationTargetEnabled;
+
     @Ignore
     EntityModelCellTable<ListModel> listHeader;
 
@@ -88,6 +94,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     }
 
     public DisksAllocationView() {
+        diskAllocationTargetEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
     }

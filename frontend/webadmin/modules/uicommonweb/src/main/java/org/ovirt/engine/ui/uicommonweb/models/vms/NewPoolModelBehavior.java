@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NewPoolNameLengthValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-
 public class NewPoolModelBehavior extends PoolModelBehaviorBase {
 
     private InstanceTypeManager instanceTypeManager;
@@ -34,6 +33,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         instanceTypeManager = new NewPoolInstanceTypeManager(getModel());
 
         getModel().getVmInitModel().init(null);
+        getModel().getDisksAllocationModel().initializeAutoSelectTarget(true, false);
     }
 
     @Override

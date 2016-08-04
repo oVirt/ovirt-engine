@@ -70,6 +70,16 @@ public class DisksAllocationModel extends EntityModel {
         this.container = container;
     }
 
+    private EntityModel<Boolean> diskAllocationTargetEnabled;
+
+    public EntityModel<Boolean> getDiskAllocationTargetEnabled() {
+        return diskAllocationTargetEnabled;
+    }
+
+    public void setDiskAllocationTargetEnabled(EntityModel<Boolean> enabled) {
+        this.diskAllocationTargetEnabled = enabled;
+    }
+
     public void setDisks(List<DiskModel> value) {
         disks = value;
 
@@ -173,6 +183,9 @@ public class DisksAllocationModel extends EntityModel {
 
         setDynamicWarning(new EntityModel<String>());
         getDynamicWarning().setIsAvailable(false);
+
+        setDiskAllocationTargetEnabled(new EntityModel<>(false));
+        getDiskAllocationTargetEnabled().setIsAvailable(false);
     }
 
     private void updateQuota(Guid storageDomainId, final ListModel<Quota> isItem, final Guid diskQuotaId) {
@@ -334,6 +347,15 @@ public class DisksAllocationModel extends EntityModel {
         }
     }
 
+    public void updateTargetChangeable(boolean enabled) {
+        if (disks != null) {
+            for (DiskModel diskModel : disks) {
+                diskModel.getStorageDomain().setIsChangeable(enabled);
+                diskModel.getDiskProfile().setIsChangeable(enabled);
+            }
+        }
+    }
+
     private void updateQuotaAvailability() {
         if (disks != null) {
             for (DiskModel diskModel : disks) {
@@ -465,5 +487,18 @@ public class DisksAllocationModel extends EntityModel {
 
     public void setTargetAvailable(boolean targetAvailable) {
         isTargetAvailable = targetAvailable;
+    }
+
+    public void initializeAutoSelectTarget(boolean changeable, boolean value) {
+        getDiskAllocationTargetEnabled().setIsAvailable(true);
+        getDiskAllocationTargetEnabled().setIsChangeable(changeable);
+        getDiskAllocationTargetEnabled().setEntity(value);
+        updateTargetChangeable(changeable);
+        getDiskAllocationTargetEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateTargetChangeable(!getDiskAllocationTargetEnabled().getEntity());
+            }
+        });
     }
 }
