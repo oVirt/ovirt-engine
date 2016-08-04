@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskProgressColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskUploadImageProgressColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
@@ -347,10 +348,13 @@ public class DisksViewColumns {
         };
 
         DiskUploadImageProgressColumn uploadImageProgressColumn = new DiskUploadImageProgressColumn();
+        DiskProgressColumn diskProgressColumn = new DiskProgressColumn();
+
 
         List<HasCell<Disk, ?>> list = new ArrayList<>();
         list.add(statusColumn);
         list.add(uploadImageProgressColumn);
+        list.add(diskProgressColumn);
 
         Cell<Disk> compositeCell = new StatusCompositeCell<>(list);
 
