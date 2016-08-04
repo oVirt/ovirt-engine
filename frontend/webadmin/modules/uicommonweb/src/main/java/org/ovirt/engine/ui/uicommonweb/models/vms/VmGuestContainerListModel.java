@@ -8,10 +8,13 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmGuestContainerListModel extends SearchableListModel<VM, GuestContainer> {
+
+    public static final String HASH_NAME = "guest_containers"; //$NON-NLS-1$
+
     public VmGuestContainerListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().containersTitle());
         setHelpTag(HelpTag.guest_containers);
-        setHashName("guest_containers"); //$NON-NLS-1$
+        setHashName(HASH_NAME);
     }
 
     @Override

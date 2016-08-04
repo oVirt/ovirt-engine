@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.place;
 
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
+
 /**
  * The central location of all application places.
  */
@@ -58,7 +60,7 @@ public class UserPortalApplicationPlaces {
             + SUB_TAB_PREFIX + "applications"; //$NON-NLS-1$
 
     public static final String extendedVirtualMachineGuestContainerSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "containers"; //$NON-NLS-1$
+            + SUB_TAB_PREFIX + VmGuestContainerListModel.HASH_NAME;
 
     public static final String extendedVirtualMachineMonitorSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "monitor"; //$NON-NLS-1$
