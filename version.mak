@@ -1,10 +1,4 @@
-# Version Information
-
-# Major and minor are taken from pom.xml
-
-# Fix release is manually specified,
-# increment after releasing/branching
-FIX_RELEASE=0
+# Version Information are taken from pom.xml
 
 # Milestone is manually specified,
 # example for ordering:
