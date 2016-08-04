@@ -223,6 +223,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
                     ? ImageTransferPhase.forValue(rs.getInt("image_transfer_phase")) : null);
             entity.setImageTransferBytesSent(rs.getLong("image_transfer_bytes_sent"));
             entity.setImageTransferBytesTotal(rs.getLong("image_transfer_bytes_total"));
+            entity.setProgress(getInteger(rs, "progress"));
             entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
                     : null);
             entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")

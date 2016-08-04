@@ -35,6 +35,16 @@ WHERE device = 'disk'
 GROUP BY device_id,
     entity_type;
 
+CREATE OR REPLACE VIEW entity_step_progress AS
+SELECT sse.entity_id, SUM(s.progress*sse.step_entity_weight/100) AS progress
+FROM step_subject_entity sse
+INNER JOIN step s
+    ON s.step_id = sse.step_id
+WHERE sse.step_entity_weight IS NOT NULL
+    AND s.status = 'STARTED'
+    AND s.progress IS NOT NULL
+GROUP BY sse.entity_id;
+
 CREATE OR REPLACE VIEW memory_and_disk_images_storage_domain_view AS
 
 SELECT images.image_guid AS image_guid,
@@ -86,7 +96,9 @@ SELECT images.image_guid AS image_guid,
     COALESCE(memory_snap.memory_metadata_disk_id, memory_snap.memory_dump_disk_id) IS NOT NULL AS memory_image,
     image_transfers.phase AS image_transfer_phase,
     image_transfers.bytes_sent AS image_transfer_bytes_sent,
-    image_transfers.bytes_total AS image_transfer_bytes_total
+    image_transfers.bytes_total AS image_transfer_bytes_total,
+    entity_step_progress.progress AS progress
+
 FROM images
 LEFT JOIN disk_image_dynamic
     ON images.image_guid = disk_image_dynamic.image_id
@@ -114,6 +126,8 @@ LEFT JOIN storage_pool
     ON storage_pool.id = storage_pool_iso_map.storage_pool_id
 LEFT JOIN image_transfers
     ON images.image_group_id = image_transfers.disk_id
+LEFT JOIN entity_step_progress
+    ON images.image_group_id = entity_step_progress.entity_id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
 CREATE OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
@@ -215,6 +229,7 @@ SELECT storage_for_image_view.storage_id AS storage_id,
     images_storage_domain_view.image_transfer_phase AS image_transfer_phase,
     images_storage_domain_view.image_transfer_bytes_sent AS image_transfer_bytes_sent,
     images_storage_domain_view.image_transfer_bytes_total AS image_transfer_bytes_total,
+    images_storage_domain_view.progress AS progress,
     images_storage_domain_view.disk_storage_type AS disk_storage_type,
     images_storage_domain_view.cinder_volume_type AS cinder_volume_type
 FROM images_storage_domain_view
@@ -280,6 +295,7 @@ FROM (
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
+        progress,
         storage_for_image_view.disk_profile_id AS disk_profile_id,
         -- disk profile fields
         storage_for_image_view.disk_profile_name AS disk_profile_name,
@@ -333,6 +349,7 @@ FROM (
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
+        progress,
         storage_for_image_view.disk_profile_id,
         storage_for_image_view.disk_profile_name
 
@@ -378,6 +395,7 @@ FROM (
         NULL AS image_transfer_phase,
         NULL AS image_transfer_bytes_sent,
         NULL AS image_transfer_bytes_total,
+        NULL AS progress,
         NULL AS disk_profile_id,
         -- disk profile fields
         NULL AS disk_profile_name,
@@ -458,6 +476,7 @@ FROM (
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
+        progress,
         storage_for_image_view.disk_profile_id AS disk_profile_id,
         -- disk profile fields
         storage_for_image_view.disk_profile_name AS disk_profile_name,
@@ -512,6 +531,7 @@ FROM (
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
+        progress,
         storage_for_image_view.disk_profile_id,
         storage_for_image_view.disk_profile_name,
         memory_image
@@ -558,6 +578,7 @@ FROM (
         NULL AS image_transfer_phase,
         NULL AS image_transfer_bytes_sent,
         NULL AS image_transfer_bytes_total,
+        NULL AS progress,
         NULL AS disk_profile_id,
         -- disk profile fields
         NULL AS disk_profile_name,

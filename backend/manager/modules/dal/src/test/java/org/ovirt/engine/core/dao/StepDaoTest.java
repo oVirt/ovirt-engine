@@ -5,15 +5,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
@@ -128,5 +133,41 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         List<Guid> externalIds = dao.getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
         assertEquals("Verify external ids present", 1, externalIds.size());
         assertEquals("Invalid TaskId", IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID, externalIds.get(0));
+    }
+
+    @Test
+    public void diskStepProgress() {
+        VdcObjectType type = VdcObjectType.Disk;
+        Guid entityId = FixturesTool.FLOATING_DISK_ID;
+
+        BaseDisk diskImage = getDiskDao().get(entityId);
+        assertProgress(null, diskImage);
+
+        getStepSubjectEntityDao().saveAll(Arrays.asList(new StepSubjectEntity(FixturesTool.STEP_ID, type, entityId, 30),
+                new StepSubjectEntity(FixturesTool.STEP_ID_2, type, entityId, 50)));
+
+        updateStepProgress(FixturesTool.STEP_ID, 10);
+        updateStepProgress(FixturesTool.STEP_ID_2, 80);
+
+        diskImage = getDiskDao().get(entityId);
+        assertProgress(43, diskImage);
+    }
+
+    private void updateStepProgress(Guid stepId, Integer progress) {
+        Step s = dao.get(stepId);
+        s.setProgress(progress);
+        dao.update(s);
+    }
+
+    private void assertProgress(Integer expectedProgress, BaseDisk disk) {
+        assertEquals("disk progress isn't as expected", expectedProgress, disk.getProgress());
+    }
+
+    private DiskDao getDiskDao() {
+        return dbFacade.getDiskDao();
+    }
+
+    private StepSubjectEntityDao getStepSubjectEntityDao() {
+        return dbFacade.getStepSubjectEntityDao();
     }
 }

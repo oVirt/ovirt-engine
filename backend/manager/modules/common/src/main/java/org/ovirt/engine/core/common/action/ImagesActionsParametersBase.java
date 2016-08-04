@@ -18,6 +18,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private Guid imageGroupID;
     private boolean importEntity;
     private boolean leaveLocked;
+    private Integer jobWeight;
 
     public ImagesActionsParametersBase() {
         imageId = Guid.Empty;
@@ -123,5 +124,13 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public void setLeaveLocked(boolean leaveLocked) {
         this.leaveLocked = leaveLocked;
+    }
+
+    public Integer getJobWeight() {
+        return jobWeight;
+    }
+
+    public void setJobWeight(Integer jobWeight) {
+        this.jobWeight = jobWeight;
     }
 }

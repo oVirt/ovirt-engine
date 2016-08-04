@@ -13,6 +13,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.ProgressEntity;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -32,7 +33,7 @@ import org.ovirt.engine.core.compat.Guid;
  * image the Template represents).<br>
  * The active image can also be <code>null</code>, in case that it's missing but should be there.
  */
-public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
+public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid>, ProgressEntity {
 
     /**
      * Needed for java serialization/deserialization mechanism.
@@ -67,6 +68,8 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
     private boolean shareable;
 
     private Map<Guid, DiskVmElement> diskVmElementsMap = Collections.emptyMap();
+
+    private Integer progress;
 
     /**
      * @return an unmodifiable collection, we don't want anyone messing with the values without going through the setter
@@ -208,6 +211,16 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
 
     public void setCinderVolumeType(String cinderVolumeType) {
         this.cinderVolumeType = cinderVolumeType;
+    }
+
+    @Override
+    public Integer getProgress() {
+        return progress;
+    }
+
+    @Override
+    public void setProgress(Integer progress) {
+        this.progress = progress;
     }
 
     /**
