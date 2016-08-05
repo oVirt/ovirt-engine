@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
@@ -15,12 +17,17 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.JobDao;
 
 public class EndExternalJobCommand <T extends EndExternalJobParameters> extends CommandBase<T>{
 
     private Job job;
+
+    @Inject
+    private JobRepository jobRepository;
+
+    @Inject
+    private JobDao jobDao;
 
     public EndExternalJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -63,7 +70,7 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
             job.setAutoCleared(true);
             getJobDao().update(job);
             // Set all job steps and sub steps that were not completed as ABORTED
-            JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.ABORTED);
+            jobRepository.closeCompletedJobSteps(job.getId(), JobExecutionStatus.ABORTED);
         }
         setSucceeded(true);
     }
@@ -78,6 +85,6 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
     }
 
     public JobDao getJobDao() {
-        return DbFacade.getInstance().getJobDao();
+        return jobDao;
     }
 }

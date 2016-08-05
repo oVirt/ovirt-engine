@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
@@ -1113,7 +1112,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // Retrieve the job object and its steps as this the endSuccessfully stage of command execution -
         // at this is a new instance of the command is used
         // (comparing with the execution state) so all information on the job and steps should be retrieved.
-        Job job = JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId());
+        Job job = jobRepository.getJobWithSteps(step.getJobId());
         Step executingStep = job.getDirectStep(StepEnum.EXECUTING);
         // We would like to to set the run stateless step as substep of executing step
         setInternalExecution(true);

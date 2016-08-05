@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddInternalJobParameters;
@@ -43,6 +42,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -289,7 +289,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     public JobRepository getJobRepository() {
-        return JobRepositoryFactory.getJobRepository();
+        return Injector.get(JobRepository.class);
     }
 
     /**

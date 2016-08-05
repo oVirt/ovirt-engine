@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
@@ -25,21 +28,20 @@ import org.slf4j.LoggerFactory;
 /**
  * Implements the CRUD operations for the Job entities.
  */
+@Singleton
 public class JobRepositoryImpl implements JobRepository {
 
     private static final Logger log = LoggerFactory.getLogger(JobRepositoryImpl.class);
 
-    private JobDao jobDao;
-    private JobSubjectEntityDao jobSubjectEntityDao;
-    private StepDao stepDao;
+    private final JobDao jobDao;
+    private final JobSubjectEntityDao jobSubjectEntityDao;
+    private final StepDao stepDao;
 
-    public JobRepositoryImpl() {
-    }
-
+    @Inject
     public JobRepositoryImpl(JobDao jobDao, JobSubjectEntityDao jobSubjectEntityDao, StepDao stepDao) {
-        setJobDao(jobDao);
-        setJobSubjectEntityDao(jobSubjectEntityDao);
-        setStepDao(stepDao);
+        this.jobDao = jobDao;
+        this.jobSubjectEntityDao = jobSubjectEntityDao;
+        this.stepDao = stepDao;
     }
 
     @Override
@@ -209,18 +211,6 @@ public class JobRepositoryImpl implements JobRepository {
             return null;
         });
 
-    }
-
-    public void setJobDao(JobDao jobDao) {
-        this.jobDao = jobDao;
-    }
-
-    public void setJobSubjectEntityDao(JobSubjectEntityDao jobSubjectEntityDao) {
-        this.jobSubjectEntityDao = jobSubjectEntityDao;
-    }
-
-    public void setStepDao(StepDao stepDao) {
-        this.stepDao = stepDao;
     }
 
 }

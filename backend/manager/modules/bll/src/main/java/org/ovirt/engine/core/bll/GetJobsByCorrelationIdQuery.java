@@ -2,15 +2,23 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.queries.GetJobsByCorrelationIdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.JobDao;
 
 /**
  * Returns a list of Jobs associated with the same correlation-ID
  */
 public class GetJobsByCorrelationIdQuery<P extends GetJobsByCorrelationIdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private JobRepository jobRepository;
+
+    @Inject
+    protected JobDao jobDao;
 
     public GetJobsByCorrelationIdQuery(P parameters) {
         super(parameters);
@@ -18,10 +26,10 @@ public class GetJobsByCorrelationIdQuery<P extends GetJobsByCorrelationIdQueryPa
 
     @Override
     protected void executeQueryCommand() {
-        List<Job> jobs = DbFacade.getInstance().getJobDao().getJobsByCorrelationId(getParameters().getCorrelationId());
+        List<Job> jobs = jobDao.getJobsByCorrelationId(getParameters().getCorrelationId());
 
         for (Job job : jobs) {
-            JobRepositoryFactory.getJobRepository().loadJobSteps(job);
+            jobRepository.loadJobSteps(job);
         }
 
         getQueryReturnValue().setReturnValue(jobs);

@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -65,6 +65,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    protected JobRepository jobRepository;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -131,7 +134,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             Job job = getExecutionContext().getJob();
             if (job != null) {
                 // mark previous steps as fail
-                JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
+                jobRepository.closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
             }
         }
         executeAction();

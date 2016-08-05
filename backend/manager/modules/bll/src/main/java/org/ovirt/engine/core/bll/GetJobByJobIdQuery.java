@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 /**
@@ -8,13 +10,15 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
  */
 public class GetJobByJobIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
+    @Inject
+    private JobRepository jobRepository;
+
     public GetJobByJobIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(JobRepositoryFactory.getJobRepository()
-                .getJobWithSteps(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(jobRepository.getJobWithSteps(getParameters().getId()));
     }
 }

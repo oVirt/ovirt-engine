@@ -5,12 +5,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
@@ -30,6 +32,9 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
 
     private Step asyncTaskStep;
+
+    @Inject
+    private JobRepository jobRepository;
 
     public GlusterAsyncCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
@@ -90,7 +95,7 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         step.setStatus(status);
         step.setEndTime(new Date());
         step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(), stepMessageMap));
-        JobRepositoryFactory.getJobRepository().updateStep(step);
+        jobRepository.updateStep(step);
 
         ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
         ExecutionHandler.endTaskStepAndJob(finalContext, exitStatus);

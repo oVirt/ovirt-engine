@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.common.action.AddJobParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.JobDao;
 
 public abstract class AddJobCommand<T extends AddJobParameters> extends CommandBase<T> {
@@ -18,6 +19,11 @@ public abstract class AddJobCommand<T extends AddJobParameters> extends CommandB
         super(parameters, cmdContext);
     }
 
+    @Inject
+    private JobRepository jobRepository;
+
+    @Inject
+    private JobDao jobDao;
 
     @Override
     protected boolean validate() {
@@ -29,18 +35,14 @@ public abstract class AddJobCommand<T extends AddJobParameters> extends CommandB
         return retValue;
     }
 
-    public JobDao getJobDao() {
-        return DbFacade.getInstance().getJobDao();
-    }
-
     protected void createJob(VdcActionType actionType, boolean isExternal) {
         Job job = ExecutionHandler.createJob(actionType, this);
         job.setDescription(getParameters().getDescription());
         job.setAutoCleared(getParameters().isAutoCleared());
         Guid id = job.getId();
         job.setExternal(isExternal);
-        JobRepositoryFactory.getJobRepository().saveJob(job);
-        if (getJobDao().get(id) != null) {
+        jobRepository.saveJob(job);
+        if (jobDao.get(id) != null) {
             setActionReturnValue(id);
             setSucceeded(true);
         }

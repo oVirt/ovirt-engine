@@ -39,8 +39,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
-import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.common.BackendService;
@@ -153,6 +153,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private BusinessEntitySnapshotDao businessEntitySnapshotDao;
     @Inject
     private OsInfoDao osInfoDao;
+    @Inject
+    private JobRepository jobRepository;
 
     @Inject
     private Instance<BackendActionExecutor> actionExecutor;
@@ -387,7 +389,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     private void initJobRepository() {
         try {
-            JobRepositoryFactory.getJobRepository().finalizeJobs();
+            jobRepository.finalizeJobs();
         } catch (Exception e) {
             log.error("Failed to finalize running Jobs", e);
         }
