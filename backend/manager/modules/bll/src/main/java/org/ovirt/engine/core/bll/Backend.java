@@ -291,8 +291,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // initializes the JobRepositoryCleanupManager
         JobRepositoryCleanupManager.getInstance().initialize();
 
-        // initialize the AutoRecoveryManager
-        AutoRecoveryManager.getInstance().initialize();
+        loadService(AutoRecoveryManager.class);
 
         initExecutionMessageDirector();
 
