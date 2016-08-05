@@ -54,7 +54,7 @@
 
 #
 # Supported distributions:
-# Fedora >= 22
+# Fedora >= 24
 # EL >= 7
 #
 
@@ -235,16 +235,17 @@ Requires:	postgresql-server >= 8.4.7
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
-Requires:	yum-plugin-versionlock
 Requires:	ovirt-imageio-proxy
 
 %if 0%{?rhel}
 # FOP 1.1 is available only on EL7, Fedora >= 23 contains FOP 2.0, which is not
 # backward compatible with 1.1
 Requires:	fop
+Requires:	yum-plugin-versionlock
 %endif
 
 %if 0%{?fedora}
+Requires:	(yum-plugin-versionlock if yum)
 Requires:	apache-sshd
 Requires:	openstack-java-cinder-client >= %{openstack_java_version}
 Requires:	openstack-java-cinder-model >= %{openstack_java_version}
@@ -256,6 +257,7 @@ Requires:	openstack-java-keystone-model >= %{openstack_java_version}
 Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
+Requires:	python-dnf-plugins-extras-versionlock
 Requires:	python3-dnf-plugins-extras-versionlock
 Requires:	quartz
 # On Fedora slf4j package is split and we need also jdk14 part
@@ -413,9 +415,17 @@ Requires:	m2crypto
 Requires:	nfs-utils
 Requires:	%{policycoreutils_python_utils}
 Requires:	python-psycopg2
-Requires:	yum
 Requires(pre):	shadow-utils
 Requires:	java-openjdk >= 1:1.8.0
+
+%if 0%{?fedora}
+Requires:	python2-dnf
+%if 0%{?with_python3}
+Requires:	python3-dnf
+%endif
+%else
+Requires:	yum
+%endif
 
 # We can drop these conflicts when
 # we drop Requires: mod_ssl
@@ -844,6 +854,10 @@ if [ "$1" -eq 0 ]; then
 
 	if [ -f "%{_sysconfdir}/yum/pluginconf.d/versionlock.list" ]; then
 		sed -i '/%{name}/d' "%{_sysconfdir}/yum/pluginconf.d/versionlock.list"
+	fi
+
+	if [ -f "%{_sysconfdir}/dnf/plugins/versionlock.list" ]; then
+		sed -i '/%{name}/d' "%{_sysconfdir}/dnf/plugins/versionlock.list"
 	fi
 fi
 
