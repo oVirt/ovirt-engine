@@ -63,12 +63,14 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.inject.Inject;
 
 public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Cluster> implements ISupportSystemTreeContext {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    private final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private UICommand privateNewCommand;
 
@@ -604,7 +606,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                         public void onSuccess(VdcQueryReturnValue returnValue) {
                             Integer numOfActiveVms = returnValue.getReturnValue();
                             if (numOfActiveVms != 0) {
-                                confirmModel.setMessage(constants.thereAreActiveVMsRequiringRestart());
+                                confirmModel.setMessage(messages.thereAreActiveVMsRequiringRestart(numOfActiveVms));
                             }
                             checkForNonResponsiveHosts(confirmModel);
                 }}));

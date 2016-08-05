@@ -386,5 +386,7 @@ public interface UIMessages extends Messages {
     String providerFailure();
 
     String userName(String firstName, String lastName);
+
+    String thereAreActiveVMsRequiringRestart(int count);
 }
 
