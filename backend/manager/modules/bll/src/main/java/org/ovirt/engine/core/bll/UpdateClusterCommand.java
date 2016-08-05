@@ -382,6 +382,18 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
         }
 
+        if (result && !oldCluster.getCompatibilityVersion().equals(getCluster().getCompatibilityVersion())) {
+            for (VM vm : vmList) {
+                if (vm.isPreviewSnapshot()) {// can't change cluster version when a VM is in preview
+                    if (result) {
+                        addValidationMessage(EngineMessage.CLUSTER_VERSION_CHANGE_VM_PREVIEW);
+                        result = false; // and continue with adding validation messages
+                    }
+                    addValidationMessage(vm.getName());
+                }
+            }
+        }
+
         if (result) {
             List<VDS> vdss = new ArrayList<>();
             isAddedToStoragePool = oldCluster.getStoragePoolId() == null
