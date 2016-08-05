@@ -2,9 +2,17 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
-public class VdcQueryParametersBase implements Serializable {
+import org.ovirt.engine.core.common.HasCorrelationId;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.group.PreRun;
+
+
+public class VdcQueryParametersBase implements Serializable, HasCorrelationId {
     private static final long serialVersionUID = -6766170283465888549L;
 
     /**
@@ -22,6 +30,14 @@ public class VdcQueryParametersBase implements Serializable {
      * (e.g., according to user permissions as opposed to the default, which is running as admin)
      */
     private boolean isFiltered;
+
+    /**
+     * A cross system identifier of the executed action
+     */
+    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS, message = "VALIDATION_INVALID_CORRELATION_ID",
+            groups = PreRun.class)
+    @Size(min = 1, max = BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, groups = PreRun.class)
+    private String correlationId;
 
     public VdcQueryParametersBase() {
         refresh = false;
@@ -57,6 +73,16 @@ public class VdcQueryParametersBase implements Serializable {
     public VdcQueryParametersBase withRefresh() {
         setRefresh(true);
         return this;
+    }
+
+    @Override
+    public void setCorrelationId(String value) {
+        correlationId = value;
+    }
+
+    @Override
+    public String getCorrelationId() {
+        return correlationId;
     }
 
     public boolean isFiltered() {

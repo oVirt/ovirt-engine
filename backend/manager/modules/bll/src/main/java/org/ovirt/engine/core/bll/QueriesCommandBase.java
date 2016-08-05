@@ -24,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
@@ -55,8 +56,14 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     }
 
     public QueriesCommandBase(P parameters, EngineContext engineContext) {
+        if (parameters.getCorrelationId() == null) {
+            parameters.setCorrelationId(CorrelationIdTracker.getCorrelationId());
+        } else {
+            CorrelationIdTracker.setCorrelationId(parameters.getCorrelationId());
+        }
         this.parameters = parameters;
         returnValue = new VdcQueryReturnValue();
+        returnValue.setCorrelationId(parameters.getCorrelationId());
         queryType = initQueryType();
         this.engineContext = engineContext == null ? new EngineContext().withSessionId(parameters.getSessionId()) : engineContext;
     }
@@ -95,6 +102,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         }
         if (validatePermissions()) {
             if (validateInputs()) {
+                long start = System.currentTimeMillis();
                 try {
                     returnValue.setSucceeded(true);
                     executeQueryCommand();
@@ -119,6 +127,8 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                                 ex.getMessage());
                         log.error("Exception", ex);
                     }
+                } finally {
+                    log.debug("Query {} took {} ms", getCommandName(), System.currentTimeMillis() - start);
                 }
             } else {
                 log.error("Query execution failed due to invalid inputs: {}", returnValue.getExceptionString());

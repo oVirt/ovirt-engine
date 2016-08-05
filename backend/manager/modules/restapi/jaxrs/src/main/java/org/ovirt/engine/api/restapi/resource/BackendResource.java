@@ -17,6 +17,7 @@ import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.HasCorrelationId;
 import org.ovirt.engine.core.common.action.RunAsyncActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class BackendResource extends BaseBackendResource {
     protected static final int NO_LIMIT = -1;
-    private static final String CORRELATION_ID = "Correlation-Id";
+    private static final String CORRELATION_ID = "correlation_id";
     private static final String ASYNC_CONSTRAINT = "async";
     public static final String FORCE_CONSTRAINT = "force";
     protected static final String MAX = "max";
@@ -78,6 +79,7 @@ public class BackendResource extends BaseBackendResource {
 
     public VdcQueryReturnValue runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams) {
         BackendLocal backend = getBackend();
+        setCorrelationId(queryParams);
         queryParams.setFiltered(isFiltered());
         return backend.runQuery(queryType, sessionize(queryParams));
     }
@@ -275,14 +277,11 @@ public class BackendResource extends BaseBackendResource {
             params.setJobId(asGuid(stepId));
         }
     }
-    private void setCorrelationId(VdcActionParametersBase params) {
-        if (httpHeaders == null) {
-            return;
-        }
 
-        List<String> correlationIds = httpHeaders.getRequestHeader(CORRELATION_ID);
-        if (correlationIds != null && correlationIds.size() > 0) {
-            params.setCorrelationId(correlationIds.get(0));
+    private void setCorrelationId(HasCorrelationId params) {
+        String correlationId = getCurrent().getParameters().get(CORRELATION_ID);
+        if (correlationId != null) {
+            params.setCorrelationId(correlationId);
         }
     }
 

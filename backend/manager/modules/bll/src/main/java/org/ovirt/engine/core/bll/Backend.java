@@ -85,6 +85,7 @@ import org.ovirt.engine.core.dao.dwh.OsInfoDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
@@ -568,9 +569,17 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 return getErrorQueryReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }
         }
+        if (parameters.getCorrelationId() == null) {
+            parameters.setCorrelationId(CorrelationIdTracker.getCorrelationId());
+        }
         QueriesCommandBase<?> command = createQueryCommand(actionType, parameters, engineContext);
         command.setInternalExecution(!isPerformUserCheck);
-        return queryExecutor.get().execute(command, actionType);
+        VdcQueryReturnValue returnValue = queryExecutor.get().execute(command, actionType);
+        if (returnValue.getCorrelationId() == null) {
+            returnValue.setCorrelationId(parameters.getCorrelationId());
+        }
+        CorrelationIdTracker.setCorrelationId(parameters.getCorrelationId());
+        return returnValue;
     }
 
     protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,

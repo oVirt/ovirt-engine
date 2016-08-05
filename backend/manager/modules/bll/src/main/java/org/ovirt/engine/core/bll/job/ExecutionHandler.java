@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.HasCorrelationId;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -760,7 +761,7 @@ public class ExecutionHandler {
      * @return A {@code null} object emphasis correlation-ID is valid or {@code VdcReturnValueBase} contains the
      *         correlation-ID violation message
      */
-    public static VdcReturnValueBase evaluateCorrelationId(VdcActionParametersBase parameters) {
+    public static VdcReturnValueBase evaluateCorrelationId(HasCorrelationId parameters) {
         VdcReturnValueBase returnValue = null;
         String correlationId = parameters.getCorrelationId();
         if (StringUtils.isEmpty(correlationId)) {

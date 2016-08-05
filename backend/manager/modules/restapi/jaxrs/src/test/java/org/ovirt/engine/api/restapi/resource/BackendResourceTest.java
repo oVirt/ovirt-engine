@@ -63,7 +63,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     @Test
     public void testActionWithCorrelationId() throws Exception {
         setUpGetEntityExpectations(false);
-        when(httpHeaders.getRequestHeader("Correlation-Id")).thenReturn(asList("Some-Correlation-id"));
+        resource.getCurrent().getParameters().put("correlation_id", "Some-Correlation-id");
         resource.setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword", "CorrelationId" },

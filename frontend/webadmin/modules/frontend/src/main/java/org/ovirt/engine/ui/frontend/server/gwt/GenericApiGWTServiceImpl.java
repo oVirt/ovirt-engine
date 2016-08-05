@@ -1,11 +1,17 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -14,6 +20,7 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +35,9 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
 
     private static final String UI_PREFIX = "UI_"; //$NON-NLS-1$
 
+    private static final String CORRELATION_ID_HEADER = "Correlation-Id"; //$NON-NLS-1$
+    private static final Pattern INVALID_CORRELATION_ID_CHARACTERS_RE = Pattern.compile("[^0-9a-zA-Z_-]+"); //$NON-NLS-1$
+
     private BackendLocal backend;
 
     @EJB(beanInterface = BackendLocal.class,
@@ -40,12 +50,42 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         return backend;
     }
 
+    private static String filterCorrelationIdCharacters(String correlationId) {
+        if (StringUtils.isNotEmpty(correlationId)) {
+            correlationId = INVALID_CORRELATION_ID_CHARACTERS_RE.matcher(correlationId).replaceAll("");
+            if (StringUtils.isNotEmpty(correlationId)) {
+                return correlationId.substring(0, Math.min(correlationId.length(), 36));
+            }
+        }
+        return null;
+    }
+
+    private static String getCorrelationId(HttpServletRequest request) {
+        String correlationId = filterCorrelationIdCharacters(request.getHeader(CORRELATION_ID_HEADER));
+        if (StringUtils.isEmpty(correlationId)) {
+            correlationId = UUID.randomUUID().toString();
+        }
+        return correlationId;
+    }
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String correlationId = getCorrelationId(request);
+        CorrelationIdTracker.setCorrelationId(correlationId);
+        response.addHeader(CORRELATION_ID_HEADER, correlationId);
+        super.service(request, response);
+    }
+
     @Override
     public VdcQueryReturnValue runQuery(VdcQueryType search,
             VdcQueryParametersBase searchParameters) {
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         debugQuery(search, searchParameters);
         searchParameters.setSessionId(getEngineSessionId());
+        if (searchParameters.getCorrelationId() == null) {
+            searchParameters.setCorrelationId(CorrelationIdTracker.getCorrelationId());
+        }
         return getBackend().runQuery(search, searchParameters);
     }
 
@@ -53,6 +93,9 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     public VdcQueryReturnValue runPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params) {
         log.debug("Server: runPublicQuery invoked! '{}'", queryType); //$NON-NLS-1$
+        if (params.getCorrelationId() == null) {
+            params.setCorrelationId(CorrelationIdTracker.getCorrelationId());
+        }
         debugQuery(queryType, params);
         return getBackend().runPublicQuery(queryType, params);
     }
@@ -67,15 +110,15 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
 
         if (queryTypeList == null || queryParamsList == null) {
             // TODO: LOG: "queryTypeList and/or queryParamsList is null."
-        }
-
-        else if (queryTypeList.size() != queryParamsList.size()) {
+        } else if (queryTypeList.size() != queryParamsList.size()) {
             // TODO: LOG:
             // "queryTypeList and queryParamsList don't have the same amount of items."
-        }
-
-        else {
+        } else {
+            String correlationId = CorrelationIdTracker.getCorrelationId();
             for (int i = 0; i < queryTypeList.size(); i++) {
+                if (queryParamsList.get(i).getCorrelationId() == null) {
+                    queryParamsList.get(i).setCorrelationId(correlationId);
+                }
                 debugQuery(queryTypeList.get(i), queryParamsList.get(i));
                 ret.add(runQuery(queryTypeList.get(i), queryParamsList.get(i)));
             }
@@ -101,8 +144,12 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
             ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: {}]", multipleParams.size()); //$NON-NLS-1$
 
+        String correlationId = CorrelationIdTracker.getCorrelationId();
         for (VdcActionParametersBase params : multipleParams) {
             params.setSessionId(getEngineSessionId());
+            if (params.getCorrelationId() == null) {
+                params.setCorrelationId(correlationId);
+            }
         }
 
         ArrayList<VdcReturnValueBase> returnValues =
@@ -117,6 +164,9 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);
         params.setSessionId(getEngineSessionId());
+        if (params.getCorrelationId() == null) {
+            params.setCorrelationId(CorrelationIdTracker.getCorrelationId());
+        }
 
         return getBackend().runAction(actionType, params);
     }
@@ -148,7 +198,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         Object value = session.getAttribute(UI_PREFIX + key);
         String result = null;
         if (value instanceof String) {
-            result = (String)value;
+            result = (String) value;
         } else if (value != null) {
             log.error("Retrieving non string value from session"); //$NON-NLS-1$
         }

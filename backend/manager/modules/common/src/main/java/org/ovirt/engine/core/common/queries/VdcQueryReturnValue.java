@@ -2,16 +2,19 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.HasCorrelationId;
+
 /**
  * Query return value class, If inheriting from this class add logic to QueriesCommandBase class.
  */
-public class VdcQueryReturnValue implements Serializable {
+public class VdcQueryReturnValue implements Serializable, HasCorrelationId {
     private static final long serialVersionUID = -7737597005584540781L;
 
     private boolean succeeded;
     private String exceptionString;
     private String exceptionCode;
     private Object returnValue;
+    private String correlationId;
 
     @SuppressWarnings("unchecked")
     public <T> T getReturnValue() {
@@ -56,5 +59,15 @@ public class VdcQueryReturnValue implements Serializable {
 
     public void setSucceeded(boolean value) {
         succeeded = value;
+    }
+
+    @Override
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    @Override
+    public void setCorrelationId(String value) {
+        correlationId = value;
     }
 }

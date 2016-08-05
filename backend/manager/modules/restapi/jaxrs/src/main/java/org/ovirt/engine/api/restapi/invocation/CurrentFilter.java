@@ -17,6 +17,8 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.invocation;
 
 import java.io.IOException;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import javax.ejb.EJB;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,6 +29,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.constants.SessionConstants;
@@ -42,6 +45,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
  * This filter is responsible for initializing and cleaning the information that is associated to the current request.
  */
 public class CurrentFilter implements Filter {
+
+    private static final String CORRELATION_ID_HEADER = "Correlation-Id";
+    private static final String CORRELATION_ID_PARAM = "correlation_id";
+    private static final Pattern INVALID_CORRELATION_ID_CHARACTERS_RE = Pattern.compile("[^0-9a-zA-Z_-]+");
+
     /**
      * The reference to the backend bean.
      */
@@ -63,8 +71,29 @@ public class CurrentFilter implements Filter {
         doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
 
+    private static String filterCorrelationIdCharacters(String correlationId) {
+        if (StringUtils.isNotEmpty(correlationId)) {
+            correlationId = INVALID_CORRELATION_ID_CHARACTERS_RE.matcher(correlationId).replaceAll("");
+            if (StringUtils.isNotEmpty(correlationId)) {
+                return correlationId.substring(0, Math.min(correlationId.length(), 36));
+            }
+        }
+        return null;
+    }
+
+    private static String getCorrelationId(HttpServletRequest request) {
+        String correlationId = filterCorrelationIdCharacters(request.getHeader(CORRELATION_ID_HEADER));
+        if (StringUtils.isEmpty(correlationId)) {
+            correlationId = filterCorrelationIdCharacters(request.getParameter(CORRELATION_ID_PARAM));
+        }
+        if (StringUtils.isEmpty(correlationId)) {
+            correlationId = UUID.randomUUID().toString();
+        }
+        return correlationId;
+    }
+
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         String sessionId = (String) request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
         if (sessionId == null) {
             throw new ServletException("Engine session missing");
@@ -78,6 +107,9 @@ public class CurrentFilter implements Filter {
         current.setPrefix(getPrefix(request));
         current.setPath(getPath(request));
         current.setBackend(backend);
+        String correlationId = getCorrelationId(request);
+        current.getParameters().put(CORRELATION_ID_PARAM, correlationId);
+        response.setHeader(CORRELATION_ID_HEADER, correlationId);
         CurrentManager.put(current);
 
         try {

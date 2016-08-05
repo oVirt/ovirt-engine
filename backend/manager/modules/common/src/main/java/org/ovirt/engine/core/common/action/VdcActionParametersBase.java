@@ -7,6 +7,7 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.HasCorrelationId;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -17,7 +18,7 @@ import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
-public class VdcActionParametersBase implements Serializable {
+public class VdcActionParametersBase implements Serializable, HasCorrelationId {
     private static final long serialVersionUID = 4872560145516614773L;
 
     private Guid commandId;

@@ -337,6 +337,7 @@
         <include name="common/businessentities/AsyncTaskResultEnum.java" />
 
         <!-- Sadly because VdcQueryParametersBase / VdcActionParametersBase :/ -->
+        <include name="common/HasCorrelationId.java" />
         <include name="common/queries/*.java" />
         <include name="common/action/*.java" />
         <include name="common/utils/*PersistentMap*.java" />
