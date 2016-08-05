@@ -25,12 +25,16 @@ import gettext
 import os
 
 from otopi import constants as otopicons
-from otopi import filetransaction, plugin, util
+from otopi import filetransaction
+from otopi import plugin
+from otopi import util
+
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_setup_lib import dialog
 from ovirt_engine_setup import firewall_manager_base
+
+from ovirt_setup_lib import dialog
 
 from . import process_firewalld_services
 

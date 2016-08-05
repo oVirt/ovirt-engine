@@ -17,9 +17,9 @@ import gettext
 import socket
 import time
 
-from ovirt_engine import base
-
 import db
+
+from ovirt_engine import base
 
 
 def _(m):

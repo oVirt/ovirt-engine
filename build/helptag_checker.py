@@ -9,7 +9,6 @@ import os
 import re
 import sys
 
-
 SKIP_FILES = [
     "Model.java", "AbstractModelBoundPopupPresenterWidget.java",
     "AbstractModelBoundPopupView.java"

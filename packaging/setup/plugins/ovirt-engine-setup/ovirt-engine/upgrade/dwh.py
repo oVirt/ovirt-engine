@@ -22,13 +22,15 @@
 import gettext
 import time
 
-from otopi import plugin, util
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import constants as oengcommcons
-from ovirt_engine_setup.engine_common import database, dwh_history_timekeeping
+from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.engine_common import dwh_history_timekeeping
 
 
 def _(m):

@@ -19,17 +19,19 @@
 """Simple plugin."""
 
 
+import configparser
 import gettext
 import glob
 import hashlib
 import os
 
-from otopi import plugin, util
+from otopi import plugin
+from otopi import util
 
-import configparser
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
+
+from ovirt_setup_lib import dialog
 
 
 def _(m):

@@ -19,7 +19,8 @@ import gettext
 import os
 import subprocess
 
-from . import base, config
+from . import base
+from . import config
 
 
 def _(m):

@@ -21,7 +21,9 @@
 
 import gettext
 
-from otopi import plugin, util
+from otopi import plugin
+from otopi import util
+
 from ovirt_engine import java
 
 from ovirt_engine_setup.engine_common import constants as oengcommcons

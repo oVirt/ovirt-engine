@@ -23,9 +23,11 @@ Firewall manager selection plugin.
 import gettext
 
 from otopi import constants as otopicons
-from otopi import plugin, util
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+
 from ovirt_setup_lib import dialog
 
 

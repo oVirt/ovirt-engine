@@ -26,16 +26,22 @@ import random
 import re
 
 from M2Crypto import X509
+
 from otopi import constants as otopicons
-from otopi import filetransaction, plugin, transaction, util
+from otopi import filetransaction
+from otopi import plugin
+from otopi import transaction
+from otopi import util
+
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_setup_lib import dialog
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import constants as oengcommcons
+
+from ovirt_setup_lib import dialog
 
 
 def _(m):

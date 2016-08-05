@@ -2,7 +2,9 @@ import base64
 import datetime
 import json
 
-from M2Crypto import EVP, X509, Rand
+from M2Crypto import EVP
+from M2Crypto import X509
+from M2Crypto import Rand
 
 
 class TicketEncoder():

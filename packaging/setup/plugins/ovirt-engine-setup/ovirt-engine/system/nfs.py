@@ -26,12 +26,15 @@ import os
 import platform
 
 from otopi import constants as otopicons
-from otopi import filetransaction, plugin, util
+from otopi import filetransaction
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
-from ovirt_setup_lib import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
+
+from ovirt_setup_lib import dialog
 
 
 def _(m):

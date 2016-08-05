@@ -16,7 +16,8 @@
 #
 
 
-from otopi import base, util
+from otopi import base
+from otopi import util
 
 
 @util.export

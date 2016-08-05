@@ -14,16 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import config
 import gettext
 import json
 import os
 import sys
 import urllib
 
+import config
 import websockify
 
-from ovirt_engine import configfile, service, ticket
+from ovirt_engine import configfile
+from ovirt_engine import service
+from ovirt_engine import ticket
 
 
 def websockify_has_plugins():

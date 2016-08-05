@@ -24,9 +24,9 @@ import grp
 import pwd
 import re
 
-from otopi import util
-from otopi import plugin
 from otopi import constants as otopicons
+from otopi import plugin
+from otopi import util
 
 
 def _(m):

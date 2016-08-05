@@ -56,7 +56,6 @@ import os
 import re
 import sys
 
-
 COMMAND_UPDATE = 'update'
 COMMAND_TEMPLATE = 'template'
 TYPE_WEBADMIN = 'webadmin'

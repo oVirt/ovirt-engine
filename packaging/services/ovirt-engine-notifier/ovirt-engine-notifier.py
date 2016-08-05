@@ -15,14 +15,17 @@
 # limitations under the License.
 
 
-import config
 import gettext
 import os
 import shlex
 import subprocess
 import sys
 
-from ovirt_engine import configfile, java, service
+import config
+
+from ovirt_engine import configfile
+from ovirt_engine import java
+from ovirt_engine import service
 
 
 def _(m):

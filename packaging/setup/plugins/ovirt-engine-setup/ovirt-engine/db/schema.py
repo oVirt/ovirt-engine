@@ -23,7 +23,9 @@ import gettext
 import os
 
 from otopi import constants as otopicons
-from otopi import plugin, transaction, util
+from otopi import plugin
+from otopi import transaction
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons

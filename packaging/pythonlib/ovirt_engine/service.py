@@ -31,7 +31,8 @@ import time
 
 import daemon
 
-from . import base, util
+from . import base
+from . import util
 
 
 def _(m):

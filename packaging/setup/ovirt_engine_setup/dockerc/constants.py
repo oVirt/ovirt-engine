@@ -23,7 +23,8 @@ import gettext
 
 from otopi import util
 
-from ovirt_engine_setup.constants import osetupattrs, osetupattrsclass
+from ovirt_engine_setup.constants import osetupattrs
+from ovirt_engine_setup.constants import osetupattrsclass
 
 
 def _(m):

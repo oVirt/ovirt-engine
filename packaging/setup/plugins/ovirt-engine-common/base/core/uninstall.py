@@ -19,15 +19,16 @@
 """Uninstall plugin."""
 
 
+import configparser
 import datetime
 import gettext
 import hashlib
 import os
 
 from otopi import constants as otopicons
-from otopi import plugin, util
+from otopi import plugin
+from otopi import util
 
-import configparser
 from ovirt_engine_setup import constants as osetupcons
 
 

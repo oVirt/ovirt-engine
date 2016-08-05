@@ -19,7 +19,9 @@
 import base64
 import gettext
 
-from M2Crypto import RSA, X509
+from M2Crypto import RSA
+from M2Crypto import X509
+
 from otopi import util
 
 from ovirt_engine_setup.engine import constants as oenginecons

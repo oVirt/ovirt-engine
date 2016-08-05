@@ -27,7 +27,8 @@ import gettext
 import os
 import shutil
 
-from otopi import plugin, util
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil

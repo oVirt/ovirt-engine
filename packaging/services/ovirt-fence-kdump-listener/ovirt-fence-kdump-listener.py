@@ -14,15 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import config
 import gettext
 import os
 import sys
 
-from ovirt_engine import configfile, service
-
+import config
 import db
 import listener
+
+from ovirt_engine import configfile
+from ovirt_engine import service
 
 
 def _(m):

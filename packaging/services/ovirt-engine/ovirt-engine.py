@@ -15,7 +15,6 @@
 # limitations under the License.
 
 
-import config
 import gettext
 import os
 import re
@@ -23,8 +22,13 @@ import shlex
 import subprocess
 import sys
 
+import config
+
+from ovirt_engine import configfile
+from ovirt_engine import java
+from ovirt_engine import service
+
 from jinja2 import Template
-from ovirt_engine import configfile, java, service
 
 
 def _(m):

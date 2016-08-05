@@ -22,7 +22,8 @@
 import gettext
 import os
 
-from otopi import plugin, util
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine_common import constants as oengcommcons

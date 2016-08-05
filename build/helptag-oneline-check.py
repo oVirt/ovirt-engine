@@ -24,7 +24,6 @@ import os
 import re
 import sys
 
-
 HELPTAG_SOURCE = (
     'frontend/webadmin/modules/uicommonweb/src/main/java/org/'
     'ovirt/engine/ui/uicommonweb/help/HelpTag.java'

@@ -23,7 +23,9 @@ import datetime
 import gettext
 import os
 
-from otopi import common, plugin, util
+from otopi import common
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 

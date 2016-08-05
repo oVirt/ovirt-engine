@@ -29,7 +29,9 @@ import urlparse
 
 import ovirt_vmconsole_conf as config
 
-from ovirt_engine import configfile, service, ticket
+from ovirt_engine import configfile
+from ovirt_engine import service
+from ovirt_engine import ticket
 
 if sys.version_info[0] < 3:
     from httplib import HTTPSConnection

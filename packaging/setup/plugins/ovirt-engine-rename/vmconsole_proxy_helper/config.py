@@ -22,12 +22,10 @@
 import gettext
 import urlparse
 
-
 from otopi import constants as otopicons
 from otopi import filetransaction
 from otopi import plugin
 from otopi import util
-
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons

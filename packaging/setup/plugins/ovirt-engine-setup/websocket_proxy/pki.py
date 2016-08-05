@@ -26,7 +26,9 @@ import time
 import urllib2
 
 from otopi import constants as otopicons
-from otopi import filetransaction, plugin, util
+from otopi import filetransaction
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import remote_engine

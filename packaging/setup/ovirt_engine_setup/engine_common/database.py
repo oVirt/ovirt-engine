@@ -25,13 +25,18 @@ import string
 import tempfile
 
 import psycopg2
-from otopi import base, util
+
+from otopi import base
+from otopi import util
+
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import util as osetuputil
-from ovirt_setup_lib import dialog
-from ovirt_setup_lib import hostname as osetuphostname
 from ovirt_engine_setup.engine_common import constants as oengcommcons
+
+from ovirt_setup_lib import hostname as osetuphostname
+from ovirt_setup_lib import dialog
+
 DEK = oengcommcons.DBEnvKeysConst
 
 

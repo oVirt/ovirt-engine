@@ -22,7 +22,10 @@
 import gettext
 
 from otopi import constants as otopicons
-from otopi import common, filetransaction, plugin, util
+from otopi import common
+from otopi import filetransaction
+from otopi import plugin
+from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 
