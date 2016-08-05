@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.transaction.Transaction;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -15,14 +17,18 @@ import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@Singleton
 public class CommandsCacheImpl implements CommandsCache {
 
     private Map<Guid, CommandEntity> commandMap;
     private volatile boolean cacheInitialized;
     private Object LOCK = new Object();
+
+    @Inject
+    private CommandEntityDao commandEntityDao;
 
     public CommandsCacheImpl() {
         commandMap = new HashMap<>();
@@ -32,7 +38,7 @@ public class CommandsCacheImpl implements CommandsCache {
         if (!cacheInitialized) {
             synchronized(LOCK) {
                 if (!cacheInitialized) {
-                    List<CommandEntity> cmdEntities = DbFacade.getInstance().getCommandEntityDao().getAll();
+                    List<CommandEntity> cmdEntities = commandEntityDao.getAll();
                     for (CommandEntity cmdEntity : cmdEntities) {
                         commandMap.put(cmdEntity.getId(), cmdEntity);
                     }
@@ -57,7 +63,7 @@ public class CommandsCacheImpl implements CommandsCache {
     @Override
     public void remove(final Guid commandId) {
         commandMap.remove(commandId);
-        DbFacade.getInstance().getCommandEntityDao().remove(commandId);
+        commandEntityDao.remove(commandId);
     }
 
     @Override
@@ -68,7 +74,7 @@ public class CommandsCacheImpl implements CommandsCache {
 
     @Override
     public void removeAllCommandsBeforeDate(DateTime cutoff) {
-        DbFacade.getInstance().getCommandEntityDao().removeAllBeforeDate(cutoff);
+        commandEntityDao.removeAllBeforeDate(cutoff);
         cacheInitialized = false;
         initializeCache();
     }
@@ -96,14 +102,14 @@ public class CommandsCacheImpl implements CommandsCache {
         CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setExecuted(true);
-            DbFacade.getInstance().getCommandEntityDao().updateExecuted(commandId);
+            commandEntityDao.updateExecuted(commandId);
         }
     }
 
     public void saveOrUpdateWithoutTransaction(CommandEntity cmdEntity) {
         Transaction transaction = TransactionSupport.suspend();
         try {
-            DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+            commandEntityDao.saveOrUpdate(cmdEntity);
         } finally {
             if (transaction != null) {
                 TransactionSupport.resume(transaction);
@@ -116,7 +122,7 @@ public class CommandsCacheImpl implements CommandsCache {
         CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setCallbackNotified(true);
-            DbFacade.getInstance().getCommandEntityDao().updateNotified(commandId);
+            commandEntityDao.updateNotified(commandId);
         }
     }
 
@@ -128,7 +134,7 @@ public class CommandsCacheImpl implements CommandsCache {
 
         Transaction transaction = TransactionSupport.suspend();
         try {
-            DbFacade.getInstance().getCommandEntityDao().insertCommandAssociatedEntities(cmdAssociatedEntities);
+            commandEntityDao.insertCommandAssociatedEntities(cmdAssociatedEntities);
         } finally {
             if (transaction != null) {
                 TransactionSupport.resume(transaction);
@@ -138,16 +144,16 @@ public class CommandsCacheImpl implements CommandsCache {
 
     @Override
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
-        return DbFacade.getInstance().getCommandEntityDao().getAllCommandAssociatedEntities(cmdId);
+        return commandEntityDao.getAllCommandAssociatedEntities(cmdId);
     }
 
     @Override
     public List<Guid> getCommandIdsByEntityId(Guid entityId) {
-        return DbFacade.getInstance().getCommandEntityDao().getCommandIdsByEntity(entityId);
+        return commandEntityDao.getCommandIdsByEntity(entityId);
     }
 
     @Override
     public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId) {
-        return DbFacade.getInstance().getCommandEntityDao().getCmdEntitiesByParentCmdId(cmdId);
+        return commandEntityDao.getCmdEntitiesByParentCmdId(cmdId);
     }
 }

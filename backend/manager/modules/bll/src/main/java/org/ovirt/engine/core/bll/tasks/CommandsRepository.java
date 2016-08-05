@@ -51,10 +51,12 @@ public class CommandsRepository {
     @Inject
     private AsyncTaskDao asyncTaskDao;
 
-    public CommandsRepository() {
+    @Inject
+    public CommandsRepository(CommandsCache commandsCache, CommandContextsCache contextsCache) {
+        this.commandsCache = commandsCache;
+        this.contextsCache = contextsCache;
+
         callbacksTiming = new ConcurrentHashMap<>();
-        commandsCache = new CommandsCacheImpl();
-        contextsCache = new CommandContextsCacheImpl(commandsCache);
         childHierarchy = new ConcurrentHashMap<>();
         subscriptions = new ConcurrentHashMap<>();
         LOCK = new Object();
