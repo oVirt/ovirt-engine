@@ -37,12 +37,16 @@ public class HostUpgradeCallback extends CommandCallback {
 
         CommandBase<?> rootCommand = CommandCoordinatorUtil.retrieveCommand(cmdId);
 
-        // Evaluate the host upgrade process. If wasn't started,
+        // If there are child commands and the host upgrade process was started, check the status of the host
+        // upgrade command.
         if (childCommandsExist(childCmdIds) && evaluateHostUpgradeInternalCommandProgress(childCmdIds, rootCommand)) {
             return;
         }
 
-        evaluateMaintenanceHostCommandProgress(childCmdIds, rootCommand);
+        // if the host upgrade command was not started check the status of maintenance command
+        if (Guid.isNullOrEmpty(getHostUpgradeInternalCmdId(childCmdIds))) {
+            evaluateMaintenanceHostCommandProgress(childCmdIds, rootCommand);
+        }
     }
 
     @Override
@@ -84,7 +88,7 @@ public class HostUpgradeCallback extends CommandCallback {
         // Any other status implies maintenance action failed, and the callback cannot proceed with the upgrade
         default:
             if (isMaintenanceCommandExecuted(childCmdIds)) {
-                log.info("Host '{}' failed to move to maintenance mode. Upgrade process is terminated.",
+                log.error("Host '{}' failed to move to maintenance mode. Upgrade process is terminated.",
                         getHostName(parameters.getVdsId()));
                 rootCommand.setCommandStatus(CommandStatus.FAILED);
             }
