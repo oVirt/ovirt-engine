@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.EndExternalStepParameters;
@@ -63,7 +62,7 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
         context.setStep(step);
         context.setMonitored(true);
         context.setExecutionMethod(ExecutionMethod.AsStep);
-        ExecutionHandler.endStep(context, step, getParameters().getStatus());
+        executionHandler.endStep(context, step, getParameters().getStatus());
         setSucceeded(true);
     }
 

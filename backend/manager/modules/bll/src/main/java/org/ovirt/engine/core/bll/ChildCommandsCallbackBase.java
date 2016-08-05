@@ -135,7 +135,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
                 CommandCoordinatorUtil.removeAllCommandsInHierarchy(commandBase.getCommandId());
             }
 
-            ExecutionHandler.endJob(commandBase.getExecutionContext(), succeeded);
+            ExecutionHandler.getInstance().endJob(commandBase.getExecutionContext(), succeeded);
         }
     }
 

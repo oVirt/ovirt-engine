@@ -150,7 +150,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             log();
             processVmOnDown();
             ExecutionHandler.setAsyncJob(getExecutionContext(), false);
-            ExecutionHandler.endJob(getExecutionContext(), false);
+            executionHandler.endJob(getExecutionContext(), false);
         }
         finally {
             freeLock();
@@ -176,7 +176,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             setActionReturnValue(VMStatus.Up);
             log();
             ExecutionHandler.setAsyncJob(getExecutionContext(), false);
-            ExecutionHandler.endJob(getExecutionContext(), true);
+            executionHandler.endJob(getExecutionContext(), true);
             notifyHostsVmFailed();
 
             if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
@@ -225,10 +225,10 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         ExecutionContext executionContext = getExecutionContext();
         switch (executionContext.getExecutionMethod()) {
         case AsJob:
-            ExecutionHandler.endJob(executionContext, false);
+            executionHandler.endJob(executionContext, false);
             break;
         case AsStep:
-            ExecutionHandler.endStep(executionContext, executionContext.getStep(), false);
+            executionHandler.endStep(executionContext, executionContext.getStep(), false);
             break;
         default:
         }

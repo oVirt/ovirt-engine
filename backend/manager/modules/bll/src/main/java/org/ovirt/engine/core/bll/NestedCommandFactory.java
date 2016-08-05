@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -10,6 +11,9 @@ import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
 @Singleton
 public class NestedCommandFactory {
+
+    @Inject
+    private ExecutionHandler executionHandler;
 
     public CommandBase<?> createWrappedCommand(CommandContext commandContext, VdcActionType actionType,
             VdcActionParametersBase parameter, boolean isInternal) {
@@ -25,7 +29,7 @@ public class NestedCommandFactory {
         CorrelationIdTracker.setCorrelationId(command.getCorrelationId());
         if (commandContext == null || commandContext.getExecutionContext() == null
                 || commandContext.getExecutionContext().isMonitored()) {
-            ExecutionHandler.prepareCommandForMonitoring(command,
+            executionHandler.prepareCommandForMonitoring(command,
                     command.getActionType(),
                     command.isInternalExecution());
         }

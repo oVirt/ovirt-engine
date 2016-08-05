@@ -195,7 +195,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
             Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getName());
-            Step installStep = ExecutionHandler.addSubStep(getExecutionContext(),
+            Step installStep = executionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.INSTALLING_HOST,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.INSTALLING_HOST, values));

@@ -135,6 +135,8 @@ public class VdsEventListener implements IVdsEventListener {
     private VDSBrokerFrontend vdsBroker;
     @Inject
     private VmJobsMonitoring vmJobsMonitoring;
+    @Inject
+    private ExecutionHandler executionHandler;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -143,7 +145,7 @@ public class VdsEventListener implements IVdsEventListener {
         try {
             processStorageOnVdsInactive(vds);
         } finally {
-            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, true);
+            executionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, true);
         }
     }
 
@@ -264,7 +266,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, Guid domainId,
             Map<String, String> customLogValues) {
-        ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintenanceVds, false);
+        executionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintenanceVds, false);
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
         tempVar.setStorageDomainId(domainId);
@@ -276,7 +278,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void vdsNotResponding(final VDS vds) {
-        ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
+        executionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
         ThreadPoolUtil.execute(() -> {
             log.info("ResourceManager::vdsNotResponding entered for Host '{}', '{}'",
                     vds.getId(),

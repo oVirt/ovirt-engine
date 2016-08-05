@@ -155,6 +155,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private OsInfoDao osInfoDao;
     @Inject
     private JobRepository jobRepository;
+    @Inject
+    private ExecutionHandler executionHandler;
 
     @Inject
     private Instance<BackendActionExecutor> actionExecutor;
@@ -510,7 +512,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             return returnValue;
         }
         command.setInternalExecution(runAsInternal);
-        ExecutionHandler.prepareCommandForMonitoring(command, command.getActionType(), runAsInternal);
+        executionHandler.prepareCommandForMonitoring(command, command.getActionType(), runAsInternal);
 
         returnValue = actionExecutor.get().execute(command);
         returnValue.setCorrelationId(command.getParameters().getCorrelationId());

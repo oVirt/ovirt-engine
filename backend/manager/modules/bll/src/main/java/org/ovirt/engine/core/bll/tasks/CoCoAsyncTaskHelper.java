@@ -64,7 +64,7 @@ public class CoCoAsyncTaskHelper {
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
         Step taskStep =
-                ExecutionHandler.addTaskStep(command.getExecutionContext(),
+                ExecutionHandler.getInstance().addTaskStep(command.getExecutionContext(),
                         StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
                         description);
         if (taskStep != null) {
@@ -75,7 +75,7 @@ public class CoCoAsyncTaskHelper {
         AsyncTaskUtils.addOrUpdateTaskInDB(task);
         getAsyncTaskManager().lockAndAddTaskToManager(task);
         Guid vdsmTaskId = task.getVdsmTaskId();
-        ExecutionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
+        ExecutionHandler.getInstance().updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
         return vdsmTaskId;
 
     }

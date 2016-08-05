@@ -160,7 +160,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VM.name().toLowerCase(), vm.getName());
             values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getRunOnVdsName());
-            Step step = ExecutionHandler.addSubStep(getExecutionContext(),
+            Step step = executionHandler.addSubStep(getExecutionContext(),
                     parentContext.getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.MIGRATE_VM,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.MIGRATE_VM, values));

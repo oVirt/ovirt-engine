@@ -112,7 +112,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
 
     private CommandContext createStepsContext(StepEnum step) {
-        Step addedStep = ExecutionHandler.addSubStep(getExecutionContext(),
+        Step addedStep = executionHandler.addSubStep(getExecutionContext(),
                 getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                 step,
                 ExecutionMessageDirector.resolveStepMessage(step, Collections.emptyMap()));

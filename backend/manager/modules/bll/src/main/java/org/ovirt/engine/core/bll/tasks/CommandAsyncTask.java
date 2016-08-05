@@ -159,7 +159,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                  */
                 Guid stepId = dbAsyncTask.getStepId();
                 if (stepId != null) {
-                    context = ExecutionHandler.createFinalizingContext(stepId);
+                    context = ExecutionHandler.getInstance().createFinalizingContext(stepId);
                 }
                 vdcReturnValue = coco.endAction(this, context);
             } catch (EngineException ex) {

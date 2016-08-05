@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -176,7 +175,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         boolean runAndPausedSucceeded =
                 Boolean.TRUE.equals(getParameters().getRunAndPause())
                         && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused;
-        ExecutionHandler.endJob(executionContext, runAndPausedSucceeded);
+        executionHandler.endJob(executionContext, runAndPausedSucceeded);
     }
 
     @Override

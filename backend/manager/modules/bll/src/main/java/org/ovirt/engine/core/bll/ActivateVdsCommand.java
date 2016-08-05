@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -56,7 +55,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
         final VDS vds = getVds();
         try (EngineLock monitoringLock = acquireMonitorLock("Activate host")) {
-            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
+            executionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
             setSucceeded(setVdsStatus(VDSStatus.Unassigned).getSucceeded());
 
             if (getSucceeded()) {

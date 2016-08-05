@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.common.action.AddStepParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -60,7 +59,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
                 context.setJob(job);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
                 jobRepository.loadJobSteps(job);
-                Step step = ExecutionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
+                Step step = executionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);
         }
@@ -68,7 +67,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
                 context.setStep(parentStep);
                 context.setExecutionMethod(ExecutionMethod.AsStep);
                 jobRepository.loadParentStepSteps(parentStep);
-                Step step = ExecutionHandler.addSubStep(context, parentStep, getParameters().getStepType(), getParameters().getDescription(), true);
+                Step step = executionHandler.addSubStep(context, parentStep, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);
         }

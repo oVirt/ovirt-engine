@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -217,7 +216,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         try {
             Map<String, String> values = Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), vm.getName());
 
-            Step removeVmStep = ExecutionHandler.addSubStep(getExecutionContext(),
+            Step removeVmStep = executionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.REMOVING_VM,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.REMOVING_VM, values));

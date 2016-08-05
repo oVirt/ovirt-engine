@@ -14,7 +14,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -299,7 +298,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         try {
             Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VM.name().toLowerCase(), currentVmName);
-            Step addVmStep = ExecutionHandler.addSubStep(getExecutionContext(),
+            Step addVmStep = executionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.ADD_VM_TO_POOL,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.ADD_VM_TO_POOL, values));

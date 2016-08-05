@@ -231,22 +231,22 @@ public class SPMAsyncTask implements SPMTask {
         // Fail zombie task and task that belongs to a partially submitted command
         if (isZombieTask() || isPartiallyCompletedCommandTask()) {
             getParameters().getDbAsyncTask().getTaskParameters().setTaskGroupSuccess(false);
-            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
+            ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
         }
 
         if (hasTaskEndedSuccessfully()) {
-            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
+            ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
             onTaskEndSuccess();
         }
 
         else if (hasTaskEndedInFailure()) {
-            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
+            ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
         }
 
         else if (!doesTaskExist()) {
-            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.UNKNOWN);
+            ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.UNKNOWN);
             onTaskDoesNotExist();
         }
     }

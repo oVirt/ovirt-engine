@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -77,7 +76,7 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
 
     protected void startSubStep() {
         asyncTaskStep =
-                ExecutionHandler.addSubStep(this.getExecutionContext(),
+                executionHandler.addSubStep(this.getExecutionContext(),
                         getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                         getStepType(),
                         ExecutionMessageDirector.resolveStepMessage(getStepType(),
@@ -97,14 +96,14 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(), stepMessageMap));
         jobRepository.updateStep(step);
 
-        ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
-        ExecutionHandler.endTaskStepAndJob(finalContext, exitStatus);
+        ExecutionContext finalContext = executionHandler.createFinalizingContext(step.getId());
+        executionHandler.endTaskStepAndJob(finalContext, exitStatus);
     }
 
     protected GlusterAsyncTask handleTaskReturn(GlusterAsyncTask asyncTask) {
         Guid externalTaskId = asyncTask.getTaskId();
         asyncTaskStep.setStatus(JobExecutionStatus.STARTED);
-        ExecutionHandler.updateStepExternalId(asyncTaskStep,
+        executionHandler.updateStepExternalId(asyncTaskStep,
                 externalTaskId,
                 ExternalSystemType.GLUSTER);
         getExecutionContext().getJob().setStatus(JobExecutionStatus.STARTED);

@@ -154,7 +154,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
         Guid asyncStepId = addAsyncTaskStep(cluster, task, step, execStepId);
         Step asyncStep = getStepDao().get(asyncStepId);
-        ExecutionHandler.updateStepExternalId(asyncStep,
+        ExecutionHandler.getInstance().updateStepExternalId(asyncStep,
                 task.getTaskId(),
                 ExternalSystemType.GLUSTER);
         updateVolumeBricksAndLock(cluster, task, vol);

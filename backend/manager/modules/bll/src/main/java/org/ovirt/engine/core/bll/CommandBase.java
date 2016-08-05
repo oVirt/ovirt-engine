@@ -145,6 +145,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     private ObjectCompensation objectCompensation;
 
     @Inject
+    protected ExecutionHandler executionHandler;
+
+    @Inject
     private EntityDao entityDao;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
@@ -383,7 +386,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         boolean actionAllowed;
         boolean isExternal = this.getParameters().getJobId() != null || this.getParameters().getStepId() != null;
         if (!isExternal) {
-            validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
+            validatingStep = executionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
         }
 
         try {
@@ -394,7 +397,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             actionAllowed = getReturnValue().isValid() || internalValidate();
 
             if (!isExternal) {
-                ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
+                executionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
             }
 
             if (actionAllowed) {
@@ -539,7 +542,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected void startFinalizingStep() {
-        ExecutionHandler.startFinalizingStep(getExecutionContext());
+        executionHandler.startFinalizingStep(getExecutionContext());
     }
 
     @Override
@@ -583,10 +586,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
 
         boolean succeeded = getSucceeded() && getParameters().getTaskGroupSuccess();
-        ExecutionHandler.endFinalizingStepAndCurrentStep(getContext().getExecutionContext(), succeeded);
+        executionHandler.endFinalizingStepAndCurrentStep(getContext().getExecutionContext(), succeeded);
 
         if (!parentHasCallback()) {
-            ExecutionHandler.endTaskJobIfNeeded(getContext().getExecutionContext(), getSucceeded() && getParameters()
+            executionHandler.endTaskJobIfNeeded(getContext().getExecutionContext(), getSucceeded() && getParameters()
                     .getTaskGroupSuccess());
         }
     }
@@ -1481,7 +1484,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
 
         if (!hasTaskHandlers() || getExecutionIndex() == 0) {
-            ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
+            executionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
         }
 
         try {
@@ -1509,8 +1512,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                     startPollingAsyncTasks();
                 }
             } finally {
-                if (noAsyncOperations() && !ExecutionHandler.checkIfJobHasTasks(getExecutionContext())) {
-                    ExecutionHandler.endJob(getExecutionContext(), getSucceeded());
+                if (noAsyncOperations() && !executionHandler.checkIfJobHasTasks(getExecutionContext())) {
+                    executionHandler.endJob(getExecutionContext(), getSucceeded());
                 }
             }
         }
@@ -2265,7 +2268,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @param description  description of step to be added
      */
     protected Step addSubStep(StepEnum parentStep, StepEnum newStep, String description) {
-        return ExecutionHandler.addSubStep(getExecutionContext(),
+        return executionHandler.addSubStep(getExecutionContext(),
                 (getExecutionContext().getJob() != null) ? getExecutionContext().getJob().getStep(parentStep)
                         : getExecutionContext().getStep(),
                 newStep,
@@ -2522,7 +2525,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return runInternalAction(
                 actionType,
                 parameters,
-                ExecutionHandler.createDefaultContextForTasks(getContext(), lock));
+                executionHandler.createDefaultContextForTasks(getContext(), lock));
     }
 
     protected VdcQueryReturnValue runInternalQuery(VdcQueryType type, VdcQueryParametersBase queryParams) {

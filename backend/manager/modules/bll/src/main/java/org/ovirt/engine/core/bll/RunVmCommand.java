@@ -530,7 +530,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void removeVmStatlessImages() {
         runInternalAction(VdcActionType.ProcessDownVm,
                 new ProcessDownVmParameters(getVm().getId(), true),
-                ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
+                executionHandler.createDefaultContextForTasks(getContext(), getLock()));
         // setting lock to null in order not to release lock twice
         setLock(null);
         setSucceeded(true);
@@ -1121,7 +1121,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // The internal command should be monitored for tasks
         runStatelessVmCtx.setMonitored(true);
         Step runStatelessStep =
-                ExecutionHandler.addSubStep(getExecutionContext(),
+                executionHandler.addSubStep(getExecutionContext(),
                         executingStep,
                         StepEnum.RUN_STATELESS_VM,
                         ExecutionMessageDirector.resolveStepMessage(StepEnum.RUN_STATELESS_VM,
@@ -1235,7 +1235,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVm().isRunAndPause() && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused) {
             final ExecutionContext executionContext = getExecutionContext();
             executionContext.setShouldEndJob(true);
-            ExecutionHandler.endJob(executionContext, true);
+            executionHandler.endJob(executionContext, true);
         } else {
             super.endExecutionMonitoring();
         }

@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
@@ -216,7 +215,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     protected CommandContext createAddExternalVmContext(VmStatic vmStatic) {
         ExecutionContext ctx = new ExecutionContext();
         try {
-            Step step = ExecutionHandler.addSubStep(getExecutionContext(),
+            Step step = executionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.ADD_VM,
                     ExecutionMessageDirector.resolveStepMessage(

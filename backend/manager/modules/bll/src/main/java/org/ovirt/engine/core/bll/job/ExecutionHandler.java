@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -24,8 +28,9 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.JobDao;
+import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -43,16 +48,32 @@ import org.slf4j.LoggerFactory;
  * <li>End job.</li>
  * </ul>
  */
+@Singleton
 public class ExecutionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(ExecutionHandler.class);
+    private final Logger log = LoggerFactory.getLogger(ExecutionHandler.class);
 
     private static final List<Class<?>> validationGroups = Arrays.asList(new Class<?>[] { PreRun.class });
 
-    private static final ExecutionHandler instance = new ExecutionHandler();
+    private static ExecutionHandler instance;
 
+    @Deprecated
     public static ExecutionHandler getInstance() {
         return instance;
+    }
+
+    @Inject
+    private JobRepository jobRepository;
+
+    @Inject
+    private JobDao jobDao;
+
+    @Inject
+    private StepDao stepDao;
+
+    @PostConstruct
+    private void init() {
+        instance = this;
     }
 
     /**
@@ -101,7 +122,7 @@ public class ExecutionHandler {
      * @param exitStatus
      *            Indicates if the execution described by the step ended successfully or not.
      */
-    public static void endStep(ExecutionContext context, Step step,
+    public void endStep(ExecutionContext context, Step step,
             boolean exitStatus) {
         if (context == null) {
             return;
@@ -111,7 +132,7 @@ public class ExecutionHandler {
             try {
                 if (step != null) {
                     step.markStepEnded(exitStatus);
-                    JobRepositoryFactory.getJobRepository().updateStep(step);
+                    jobRepository.updateStep(step);
                 }
 
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob
@@ -119,8 +140,7 @@ public class ExecutionHandler {
                     // step failure will cause the job to be marked as failed
                     context.setCompleted(true);
                     job.markJobEnded(false);
-                    JobRepositoryFactory.getJobRepository()
-                            .updateCompletedJobAndSteps(job);
+                    jobRepository.updateCompletedJobAndSteps(job);
                 } else {
                     Step parentStep = context.getStep();
                     if (context.getExecutionMethod() == ExecutionMethod.AsStep
@@ -128,8 +148,7 @@ public class ExecutionHandler {
                         context.setCompleted(true);
                         if (job != null && !exitStatus) {
                             job.markJobEnded(false);
-                            JobRepositoryFactory.getJobRepository()
-                                    .updateCompletedJobAndSteps(job);
+                            jobRepository.updateCompletedJobAndSteps(job);
                         }
                     }
                 }
@@ -149,14 +168,14 @@ public class ExecutionHandler {
      * @param exitStatus
      *            The status which the step should be ended with.
      */
-    public static void endTaskStep(Guid stepId, JobExecutionStatus exitStatus) {
+    public void endTaskStep(Guid stepId, JobExecutionStatus exitStatus) {
         try {
             if (stepId != null) {
-                Step step = JobRepositoryFactory.getJobRepository().getStep(stepId);
+                Step step = jobRepository.getStep(stepId);
 
                 if (step != null) {
                     step.markStepEnded(exitStatus);
-                    JobRepositoryFactory.getJobRepository().updateStep(step);
+                    jobRepository.updateStep(step);
                 }
             }
         } catch (Exception e) {
@@ -184,7 +203,7 @@ public class ExecutionHandler {
      * @param runAsInternal
      *            Indicates if the command should be run as internal action or not
      */
-    public static void prepareCommandForMonitoring(CommandBase<?> command,
+    public void prepareCommandForMonitoring(CommandBase<?> command,
             VdcActionType actionType,
             boolean runAsInternal) {
 
@@ -213,16 +232,16 @@ public class ExecutionHandler {
         }
     }
 
-    private static Job getJob(CommandBase<?> command, VdcActionType actionType) {
+    private Job getJob(CommandBase<?> command, VdcActionType actionType) {
         VdcActionParametersBase params = command.getParameters();
         Job job;
         // if Job is external, we had already created the Job by AddExternalJobCommand, so just get it from DB
         if (params.getJobId() != null) {
-            job = DbFacade.getInstance().getJobDao().get(params.getJobId());
+            job = jobDao.get(params.getJobId());
         }
         else {
             job = createJob(actionType, command);
-            JobRepositoryFactory.getJobRepository().saveJob(job);
+            jobRepository.saveJob(job);
         }
         return job;
     }
@@ -258,7 +277,7 @@ public class ExecutionHandler {
      *            {@code stepName}.
      * @return The created instance of the step or {@code null}.
      */
-    public static Step addStep(ExecutionContext context, StepEnum stepName, String description) {
+    public Step addStep(ExecutionContext context, StepEnum stepName, String description) {
         return addStep(context, stepName, description, false);
 
     }
@@ -277,7 +296,7 @@ public class ExecutionHandler {
      * @param isExternal
      *        Indicates if the step is invoked by a plug-in
      */
-    public static Step addStep(ExecutionContext context, StepEnum stepName, String description, boolean isExternal) {
+    public Step addStep(ExecutionContext context, StepEnum stepName, String description, boolean isExternal) {
         if (context == null) {
             return null;
         }
@@ -294,7 +313,7 @@ public class ExecutionHandler {
                     step = job.addStep(stepName, description);
                     try {
                         step.setExternal(isExternal);
-                        JobRepositoryFactory.getJobRepository().saveStep(step);
+                        jobRepository.saveStep(step);
                     } catch (Exception e) {
                         log.error("Failed to save new step '{}' for job '{}', '{}': {}",
                                 stepName.name(),
@@ -332,7 +351,7 @@ public class ExecutionHandler {
      *            {@code stepName}.
      * @return The created instance of the step or {@code null}.
      */
-    public static Step addTaskStep(ExecutionContext context, StepEnum stepName, String description) {
+    public Step addTaskStep(ExecutionContext context, StepEnum stepName, String description) {
         if (context == null) {
             return null;
         }
@@ -348,7 +367,7 @@ public class ExecutionHandler {
         return step;
     }
 
-    private static Step addSubStep(Step parentStep, StepEnum stepName, String description) {
+    private Step addSubStep(Step parentStep, StepEnum stepName, String description) {
         Step step = null;
 
         if (parentStep != null) {
@@ -358,7 +377,7 @@ public class ExecutionHandler {
             step = parentStep.addStep(stepName, description);
 
             try {
-                JobRepositoryFactory.getJobRepository().saveStep(step);
+                jobRepository.saveStep(step);
             } catch (Exception e) {
                 log.error("Failed to save new step '{}' for step '{}', '{}': {}",
                         stepName.name(),
@@ -388,7 +407,7 @@ public class ExecutionHandler {
      *            {@code stepName}.
      * @return The created instance of the step or {@code null}.
      */
-    public static Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description) {
+    public Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description) {
         return addSubStep(context, parentStep, newStepName, description, false);
     }
 
@@ -408,7 +427,7 @@ public class ExecutionHandler {
      * @param isExternal
      *        Indicates if the step is invoked by a plug-in
      */
-    public static Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description, boolean isExternal) {
+    public Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description, boolean isExternal) {
         Step step = null;
 
         if (context == null || parentStep == null) {
@@ -422,7 +441,7 @@ public class ExecutionHandler {
                 }
 
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob) {
-                    if (DbFacade.getInstance().getStepDao().exists(parentStep.getId())) {
+                    if (stepDao.exists(parentStep.getId())) {
                         if (parentStep.getJobId().equals(context.getJob().getId())) {
                             step = parentStep.addStep(newStepName, description);
                         }
@@ -433,7 +452,7 @@ public class ExecutionHandler {
             }
             if (step != null) {
                 step.setExternal(isExternal);
-                JobRepositoryFactory.getJobRepository().saveStep(step);
+                jobRepository.saveStep(step);
             }
         } catch (Exception e) {
             log.error("Exception", e);
@@ -453,7 +472,7 @@ public class ExecutionHandler {
      * @param exitStatus
      *            Indicates if the execution described by the job ended successfully or not.
      */
-    public static void endJob(ExecutionContext context, boolean exitStatus) {
+    public void endJob(ExecutionContext context, boolean exitStatus) {
         if (context == null) {
             return;
         }
@@ -472,7 +491,7 @@ public class ExecutionHandler {
                     if (context.getExecutionMethod() == ExecutionMethod.AsStep && step != null) {
                         if (context.shouldEndJob()) {
                             if (job == null) {
-                                job = JobRepositoryFactory.getJobRepository().getJob(step.getJobId());
+                                job = jobRepository.getJob(step.getJobId());
                             }
 
                             if (job != null) {
@@ -488,10 +507,10 @@ public class ExecutionHandler {
         }
     }
 
-    private static void endJob(boolean exitStatus, Job job) {
+    private void endJob(boolean exitStatus, Job job) {
         job.markJobEnded(exitStatus);
         try {
-            JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
+            jobRepository.updateCompletedJobAndSteps(job);
         } catch (Exception e) {
             log.error("Failed to end Job '{}', '{}': {}",
                     job.getId(),
@@ -604,23 +623,23 @@ public class ExecutionHandler {
      *            The unique identifier of the step. Must not be {@code null}.
      * @return The context for monitoring the finalizing step of the job, or {@code null} if no such step.
      */
-    public static ExecutionContext createFinalizingContext(Guid stepId) {
+    public ExecutionContext createFinalizingContext(Guid stepId) {
         ExecutionContext context = null;
         try {
-            Step step = JobRepositoryFactory.getJobRepository().getStep(stepId);
+            Step step = jobRepository.getStep(stepId);
             if (step != null && step.getParentStepId() != null) {
                 context = new ExecutionContext();
-                Step executionStep = JobRepositoryFactory.getJobRepository().getStep(step.getParentStepId());
+                Step executionStep = jobRepository.getStep(step.getParentStepId());
 
                 // indicates if a step is monitored at Job level or as an inner step
                 Guid parentStepId = executionStep.getParentStepId();
                 if (parentStepId == null) {
                     context.setExecutionMethod(ExecutionMethod.AsJob);
-                    context.setJob(JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId()));
+                    context.setJob(jobRepository.getJobWithSteps(step.getJobId()));
                 } else {
                     context.setExecutionMethod(ExecutionMethod.AsStep);
-                    Step parentStep = JobRepositoryFactory.getJobRepository().getStep(parentStepId);
-                    parentStep.setSteps(DbFacade.getInstance().getStepDao().getStepsByParentStepId(parentStep.getId()));
+                    Step parentStep = jobRepository.getStep(parentStepId);
+                    parentStep.setSteps(stepDao.getStepsByParentStepId(parentStep.getId()));
                     context.setStep(parentStep);
                 }
                 context.setMonitored(true);
@@ -639,7 +658,7 @@ public class ExecutionHandler {
      *            The context of the job
      * @return A created instance of the Finalizing step
      */
-    public static Step startFinalizingStep(ExecutionContext executionContext) {
+    public Step startFinalizingStep(ExecutionContext executionContext) {
         if (executionContext == null) {
             return null;
         }
@@ -656,10 +675,10 @@ public class ExecutionHandler {
 
                     if (executingStep != null) {
                         executingStep.markStepEnded(true);
-                        JobRepositoryFactory.getJobRepository().updateExistingStepAndSaveNewStep(executingStep,
+                        jobRepository.updateExistingStepAndSaveNewStep(executingStep,
                                 finalizingStep);
                     } else {
-                        JobRepositoryFactory.getJobRepository().saveStep(finalizingStep);
+                        jobRepository.saveStep(finalizingStep);
                     }
                 }
             } else if (executionContext.getExecutionMethod() == ExecutionMethod.AsStep) {
@@ -671,10 +690,10 @@ public class ExecutionHandler {
                                     .getStepMessage(StepEnum.FINALIZING));
                     if (executingStep != null) {
                         executingStep.markStepEnded(true);
-                        JobRepositoryFactory.getJobRepository().updateExistingStepAndSaveNewStep(executingStep,
+                        jobRepository.updateExistingStepAndSaveNewStep(executingStep,
                                 finalizingStep);
                     } else {
-                        JobRepositoryFactory.getJobRepository().saveStep(finalizingStep);
+                        jobRepository.saveStep(finalizingStep);
                     }
                 }
             }
@@ -694,12 +713,12 @@ public class ExecutionHandler {
      * @param systemType
      *            The type of the system
      */
-    public static void updateStepExternalId(Step step, Guid externalId, ExternalSystemType systemType) {
+    public void updateStepExternalId(Step step, Guid externalId, ExternalSystemType systemType) {
         if (step != null) {
             step.getExternalSystem().setId(externalId);
             step.getExternalSystem().setType(systemType);
             try {
-                JobRepositoryFactory.getJobRepository().updateStep(step);
+                jobRepository.updateStep(step);
             } catch (Exception e) {
                 log.error("Failed to save step '{}', '{}' for system-type '{}' with id '{}': {}",
                         step.getId(),
@@ -771,7 +790,7 @@ public class ExecutionHandler {
      * @param exitStatus
      *            Indicates if the execution ended successfully or not.
      */
-    public static void endFinalizingStepAndCurrentStep(ExecutionContext context, boolean exitStatus) {
+    public void endFinalizingStepAndCurrentStep(ExecutionContext context, boolean exitStatus) {
         if (context == null) {
             return;
         }
@@ -782,10 +801,10 @@ public class ExecutionHandler {
                 Step finalizingStep = parentStep.getStep(StepEnum.FINALIZING);
                 if (finalizingStep != null) {
                     finalizingStep.markStepEnded(exitStatus);
-                    JobRepositoryFactory.getJobRepository().updateStep(finalizingStep);
+                    jobRepository.updateStep(finalizingStep);
                 }
                 parentStep.markStepEnded(exitStatus);
-                JobRepositoryFactory.getJobRepository().updateStep(parentStep);
+                jobRepository.updateStep(parentStep);
             }
         } catch (RuntimeException e) {
             log.error("Exception", e);
@@ -801,7 +820,7 @@ public class ExecutionHandler {
      * @param exitStatus
      *            Indicates if the execution described by the job ended successfully or not.
      */
-    public static void endTaskJobIfNeeded(ExecutionContext context, boolean exitStatus) {
+    public void endTaskJobIfNeeded(ExecutionContext context, boolean exitStatus) {
         if (context == null) {
             return;
         }
@@ -811,7 +830,7 @@ public class ExecutionHandler {
         } else {
             Step parentStep = context.getStep();
             if (context.getExecutionMethod() == ExecutionMethod.AsStep && parentStep != null) {
-                List<Step> steps = DbFacade.getInstance().getStepDao().getStepsByJobId(parentStep.getJobId());
+                List<Step> steps = stepDao.getStepsByJobId(parentStep.getJobId());
                 boolean hasChildStepsRunning = false;
                 for (Step step : steps) {
                     if (step.getStatus() == JobExecutionStatus.STARTED && step.getParentStepId() != null) {
@@ -820,7 +839,7 @@ public class ExecutionHandler {
                     }
                 }
                 if (!hasChildStepsRunning) {
-                    endJob(exitStatus, JobRepositoryFactory.getJobRepository().getJob(parentStep.getJobId()));
+                    endJob(exitStatus, jobRepository.getJob(parentStep.getJobId()));
                 }
             }
         }
@@ -836,7 +855,7 @@ public class ExecutionHandler {
      * @param exitStatus
      *            Indicates if the execution described by the job ended successfully or not.
      */
-    public static void endTaskStepAndJob(ExecutionContext context, boolean exitStatus) {
+    public void endTaskStepAndJob(ExecutionContext context, boolean exitStatus) {
         endFinalizingStepAndCurrentStep(context, exitStatus);
         endTaskJobIfNeeded(context, exitStatus);
     }
@@ -848,7 +867,7 @@ public class ExecutionHandler {
      *            The context of the execution stores the Job
      * @return true if Job has any Step for VDSM Task, else false.
      */
-    public static boolean checkIfJobHasTasks(ExecutionContext context) {
+    public boolean checkIfJobHasTasks(ExecutionContext context) {
         if (context == null || !context.isMonitored()) {
             return false;
         }
@@ -862,7 +881,7 @@ public class ExecutionHandler {
             }
 
             if (jobId != null) {
-                return DbFacade.getInstance().getJobDao().checkIfJobHasTasks(jobId);
+                return jobDao.checkIfJobHasTasks(jobId);
             }
         } catch (RuntimeException e) {
             log.error("Exception", e);
@@ -881,14 +900,14 @@ public class ExecutionHandler {
      * @param status
      *            The exist status to be set for the job
      */
-    public static void updateSpecificActionJobCompleted(Guid entityId, VdcActionType actionType, boolean status) {
+    public void updateSpecificActionJobCompleted(Guid entityId, VdcActionType actionType, boolean status) {
         try {
-            List<Job> jobs = JobRepositoryFactory.getJobRepository().getJobsByEntityAndAction(entityId, actionType);
+            List<Job> jobs = jobRepository.getJobsByEntityAndAction(entityId, actionType);
             for (Job job : jobs) {
                 if (job.getStatus() == JobExecutionStatus.STARTED) {
                     job.markJobEnded(status);
                 }
-                JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
+                jobRepository.updateCompletedJobAndSteps(job);
             }
         } catch (RuntimeException e) {
             log.error("Exception", e);

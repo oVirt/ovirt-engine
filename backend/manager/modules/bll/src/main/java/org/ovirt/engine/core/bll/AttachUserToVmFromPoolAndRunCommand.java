@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -266,7 +265,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
     private ExecutionContext createRunVmContext() {
         ExecutionContext ctx = new ExecutionContext();
         try {
-            Step step = ExecutionHandler.addSubStep(getExecutionContext(),
+            Step step = executionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.TAKING_VM_FROM_POOL,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.TAKING_VM_FROM_POOL,
