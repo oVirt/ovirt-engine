@@ -288,8 +288,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         log.info("Mark incomplete jobs as {}", JobExecutionStatus.UNKNOWN.name());
         initJobRepository();
 
-        // initializes the JobRepositoryCleanupManager
-        JobRepositoryCleanupManager.getInstance().initialize();
+        loadService(JobRepositoryCleanupManager.class);
 
         loadService(AutoRecoveryManager.class);
 
