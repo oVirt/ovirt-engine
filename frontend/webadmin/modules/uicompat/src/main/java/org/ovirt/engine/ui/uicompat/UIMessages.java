@@ -384,5 +384,7 @@ public interface UIMessages extends Messages {
     String providerFailure();
 
     String uploadImageQemuCompatUnsupported(String compat, String storageFormatType);
+
+    String thereAreActiveVMsRequiringRestart(int count);
 }
 
