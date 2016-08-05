@@ -52,7 +52,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-compress.version>1.5</commons-compress.version>
     <quartz.version>2.1.2</quartz.version>
-    <postgres.jdbc.version>9.1-901-1.jdbc4</postgres.jdbc.version>
+    <postgres.jdbc.version>9.2-1002-jdbc4</postgres.jdbc.version>
     <commons-collections>3.2.1</commons-collections>
     <javax.transaction>1.1</javax.transaction>
     <javax.activation.version>1.1</javax.activation.version>
@@ -209,7 +209,7 @@
         <version>${spring.version}</version>
       </dependency>
       <dependency>
-        <groupId>postgresql</groupId>
+        <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${postgres.jdbc.version}</version>
       </dependency>

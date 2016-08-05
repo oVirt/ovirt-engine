@@ -167,7 +167,7 @@
     </dependency>
 
     <dependency>
-      <groupId>postgresql</groupId>
+      <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>${postgres.jdbc.version}</version>
     </dependency>
@@ -494,7 +494,7 @@
               </module>
 
               <module>
-                <groupId>postgresql</groupId>
+                <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <moduleName>org.postgresql</moduleName>
               </module>
