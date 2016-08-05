@@ -389,6 +389,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         vmInterfaceListModel.setIsAvailable(item != null && !item.isPool());
         vmEventListModel.setIsAvailable(item != null && !item.isPool());
         vmGuestInfoModel.setIsAvailable(item != null && !item.isPool());
+        vmGuestContainerListModel.setIsAvailable(item != null && !item.isPool());
 
         poolGeneralModel.setIsAvailable(item != null && item.isPool());
         poolDiskListModel.setIsAvailable(item != null && item.isPool());
