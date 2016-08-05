@@ -267,10 +267,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         log.info("Running ovirt-engine {}", Config.<String>getValue(ConfigValues.ProductRPMVersion));
 
         loadService(CpuFlagsManagerHandler.class);
-
-        // ResourceManager res = ResourceManager.Instance;
-        // Initialize the AuditLogCleanupManager
-        AuditLogCleanupManager.getInstance();
+        loadService(AuditLogCleanupManager.class);
 
         // Initialize the CommandEntityCleanupManager
         CommandEntityCleanupManager.getInstance();
