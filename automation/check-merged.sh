@@ -79,13 +79,6 @@ rpmbuild \
 # install any build requirements
 yum-builddep output/*src.rpm
 
-if [[ "$(rpm --eval "%{dist}")" ==  ".fc22" ]]; then
-    # Needed to download the deps before compilation, for some reason it fails
-    # inside fc22 chroot if not done first
-    mvn dependency:resolve-plugins \
-        $EXTRA_BUILD_FLAGS
-fi
-
 # create the rpms
 rpmbuild \
     -D "_rpmdir $PWD/output" \
