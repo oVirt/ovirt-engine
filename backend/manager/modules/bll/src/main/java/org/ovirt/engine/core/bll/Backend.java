@@ -268,9 +268,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         loadService(CpuFlagsManagerHandler.class);
         loadService(AuditLogCleanupManager.class);
-
-        // Initialize the CommandEntityCleanupManager
-        CommandEntityCleanupManager.getInstance();
+        loadService(CommandEntityCleanupManager.class);
 
         TagsDirector.getInstance().init();
 

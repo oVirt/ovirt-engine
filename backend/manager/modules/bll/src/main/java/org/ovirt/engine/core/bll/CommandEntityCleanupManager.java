@@ -4,26 +4,30 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommandEntityCleanupManager {
-    private static Logger log = LoggerFactory.getLogger(AuditLogCleanupManager.class);
+@Singleton
+public class CommandEntityCleanupManager implements BackendService {
 
-    private static final CommandEntityCleanupManager instance = new CommandEntityCleanupManager();
+    private static Logger log = LoggerFactory.getLogger(CommandEntityCleanupManager.class);
 
-    public static CommandEntityCleanupManager getInstance() {
-        return instance;
-    }
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
 
-    private CommandEntityCleanupManager() {
+    @PostConstruct
+    private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
         Calendar calendar = new GregorianCalendar();
         Date commandEntityCleanupTime = Config.<DateTime> getValue(ConfigValues.CommandEntityCleanupTime);
@@ -33,8 +37,7 @@ public class CommandEntityCleanupManager {
                 calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
 
         log.info("Setting command entity cleanup manager to run at: {}", cronExpression);
-        Injector.get(SchedulerUtilQuartzImpl.class).scheduleACronJob(this, "onTimer", new Class[] {}, new Object[] {},
-                cronExpression);
+        schedulerUtil.scheduleACronJob(this, "onTimer", new Class[] {}, new Object[] {}, cronExpression);
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
