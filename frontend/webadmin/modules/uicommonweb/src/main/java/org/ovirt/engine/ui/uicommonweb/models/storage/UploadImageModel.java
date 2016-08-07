@@ -955,7 +955,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
             }
             if (getUploadStateString() != UploadStates.TRANSFERRING) {
                 xhr.abort();
-                finalizeUpload();
             }
         }
 
