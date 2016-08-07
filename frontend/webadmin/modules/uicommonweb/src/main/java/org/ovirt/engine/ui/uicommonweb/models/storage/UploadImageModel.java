@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
 import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
@@ -147,6 +148,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private String errorMessage;
     private UploadState uploadState;
     private boolean continuePolling;
+    private AuditLogType auditLogType;
 
 
     public List<EntityModel> getEntities() {
@@ -325,6 +327,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
         this.uploadState = UploadState.valueOf(uploadState);
     }
 
+    public void setAuditLogType(AuditLogType auditLogType) {
+        this.auditLogType = auditLogType;
+    }
+
     private boolean getContinuePolling() {
         return continuePolling;
     }
@@ -370,6 +376,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             });
         } else {
             setDiskModel(new ReadOnlyDiskModel());
+            setImageId(resumeUploadDisk.getImageId());
             getDiskModel().setDisk(resumeUploadDisk);
             getDiskModel().getDiskInterface().setIsAvailable(false);
             setIsResumeUpload(true);
@@ -723,6 +730,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
         else if (getUploadState() == UploadState.CLIENT_ERROR) {
             setProgressStr("Pausing due to client error"); //$NON-NLS-1$
             statusParameters.getUpdates().setPhase(ImageTransferPhase.PAUSED_SYSTEM);
+            statusParameters.setDiskId(getImageId());
+            statusParameters.setAuditLogType(auditLogType);
         }
         else {
             setProgressStr("Finalizing failure..."); //$NON-NLS-1$
@@ -975,6 +984,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 log.ERROR('Transfer failed after ' + chunkErrorCount + '/' + maxRetries + ' errors');
                 setErrorMessage('Transfer to proxy failed, code: ' + xhr.status + ', text: ' + xhr.responseText + ', response: ' + xhr.response);
                 setUploadStateByString(UploadStates.CLIENT_ERROR);
+                setAuditLogMessageByXhrError();
                 finalizeUpload();
             }
         }
@@ -1009,6 +1019,15 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         function setUploadStateByString(state) {
             self.@org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel::setUploadStateByString(Ljava/lang/String;)(state);
+        }
+
+        function setAuditLogMessageByXhrError() {
+            // According to xhr specifications, all network errors set the status to 0.
+            if (xhr.status == 0) {
+                self.@org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel::setAuditLogType(Lorg/ovirt/engine/core/common/AuditLogType;)(
+                    @org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_NETWORK_ERROR
+                );
+            }
         }
     }-*/;
 

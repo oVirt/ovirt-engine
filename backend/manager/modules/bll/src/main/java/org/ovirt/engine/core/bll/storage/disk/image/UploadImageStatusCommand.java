@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -70,5 +71,16 @@ public class UploadImageStatusCommand<T extends UploadImageStatusParameters> ext
                 MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 ActionGroup.CREATE_DISK));
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        // An AuditLogType message is appended to the params when an error occurs.
+        if (getParameters().getAuditLogType() != null) {
+            addCustomValue("DiskId", getParameters().getDiskId().toString());
+            return getParameters().getAuditLogType();
+        } else {
+            return super.getAuditLogTypeValue();
+        }
     }
 }
