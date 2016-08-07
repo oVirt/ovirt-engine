@@ -130,7 +130,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private boolean isResumeUpload;
     private Guid commandId;
     private String transferToken;
-    private String imageId;
+    private Guid imageId;
     private String vdsId;
 
     private Element imageFileUploadElement;
@@ -240,11 +240,11 @@ public class UploadImageModel extends Model implements ICommandTarget {
         this.transferToken = transferToken;
     }
 
-    public String getImageId() {
+    public Guid getImageId() {
         return imageId;
     }
 
-    public void setImageId(String imageId) {
+    public void setImageId(Guid imageId) {
         this.imageId = imageId;
     }
 
@@ -624,7 +624,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             case TRANSFERRING:
                 if (getUploadState() == UploadState.NEW) {
                     setVdsId(rv.getVdsId().toString());
-                    setImageId(rv.getDiskId().toString());
+                    setImageId(rv.getDiskId());
                     setTransferToken(rv.getImagedTicketId().toString());
                     String proxyURI = rv.getProxyUri();
                     String signedTicket = rv.getSignedTicket();
