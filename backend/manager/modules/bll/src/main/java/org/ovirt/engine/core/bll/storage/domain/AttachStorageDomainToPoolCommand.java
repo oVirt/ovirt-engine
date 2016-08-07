@@ -87,7 +87,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
             VdcReturnValueBase returnValue = runInternalAction(
                     VdcActionType.AddStoragePoolWithStorages,
-                    parameters);
+                    parameters,
+                    getContext().clone().withoutCompensationContext());
             setSucceeded(returnValue.getSucceeded());
             if (!returnValue.getSucceeded()) {
                 getReturnValue().setFault(returnValue.getFault());
