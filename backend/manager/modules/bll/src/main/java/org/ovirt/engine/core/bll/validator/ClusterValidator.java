@@ -100,7 +100,7 @@ public class ClusterValidator {
     }
 
     private boolean attestationServerEnabled() {
-        String attestationServer = Config.<String> getValue(ConfigValues.AttestationServer);
+        String attestationServer = Config.getValue(ConfigValues.AttestationServer);
         return StringUtils.isNotEmpty(attestationServer);
     }
 
