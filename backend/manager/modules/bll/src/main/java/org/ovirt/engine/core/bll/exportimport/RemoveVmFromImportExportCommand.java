@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -179,7 +178,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<>();
+            jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
                     (getVmName() == null) ? "" : getVmName());
             jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
