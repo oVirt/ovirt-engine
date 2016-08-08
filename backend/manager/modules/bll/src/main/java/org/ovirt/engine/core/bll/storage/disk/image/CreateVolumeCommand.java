@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.AllocateImageGroupVolumeCommandParameters;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.action.CreateVolumeParameters;
@@ -16,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-public class CreateVolumeCommand<T extends CreateVolumeParameters> extends BaseImagesCommand<T> implements
+public class CreateVolumeCommand<T extends CreateVolumeParameters> extends CommandBase<T> implements
         SerialChildExecutingCommand {
 
     public CreateVolumeCommand(T parameters, CommandContext cmdContext) {
@@ -32,6 +37,11 @@ public class CreateVolumeCommand<T extends CreateVolumeParameters> extends BaseI
     protected void executeCommand() {
         createImage();
         setSucceeded(true);
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.emptyList();
     }
 
     private void updateStage(CreationState stage) {
