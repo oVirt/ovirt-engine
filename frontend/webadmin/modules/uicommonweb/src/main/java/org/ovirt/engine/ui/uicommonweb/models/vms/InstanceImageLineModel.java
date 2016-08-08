@@ -47,6 +47,8 @@ public class InstanceImageLineModel extends EntityModel {
 
     private boolean active = true;
 
+    private boolean changed;
+
     public InstanceImageLineModel(InstanceImagesModel parentModel) {
         this.parentModel = parentModel;
 
@@ -118,6 +120,10 @@ public class InstanceImageLineModel extends EntityModel {
                 if (validate()) {
                     flush();
                     getDiskModel().setEntity(this);
+
+                    // Flagging the model as 'changed'
+                    // Todo: perform a deep differentiation analyze on the disks (original/edited) objects.
+                    InstanceImageLineModel.this.setChanged(true);
 
                     // needed because the "entity" instances are the same so the event is not fired
                     fillData();
@@ -434,5 +440,13 @@ public class InstanceImageLineModel extends EntityModel {
     public void updateInterface(Version clusterVersion, AbstractDiskModel model) {
         model.getIsVirtioScsiEnabled().setEntity(Boolean.TRUE.equals(parentModel.getUnitVmModel().getIsVirtioScsiEnabled().getEntity()));
         model.updateInterfaceList(clusterVersion);
+    }
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
     }
 }
