@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AllocateImageGroupVolumeCommandParameters;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.vdscommands.AllocateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
@@ -17,8 +18,6 @@ public class AllocateImageGroupVolumeCommand<T extends AllocateImageGroupVolumeC
 
     public AllocateImageGroupVolumeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        setImageId(getParameters().getImageId());
-        setImageGroupId(getParameters().getImageGroupID());
     }
 
     public AllocateImageGroupVolumeCommand(T parameters) {
@@ -38,12 +37,16 @@ public class AllocateImageGroupVolumeCommand<T extends AllocateImageGroupVolumeC
 
     public AuditLogType getAuditLogTypeValue() {
         if (!getSucceeded()) {
-            addCustomValue("DiskId", getDiskImage().getId().toString());
-            addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
+            addCustomValue("DiskId", getParameters().getImageGroupID().toString());
+            addCustomValue("DiskAlias", getDisk().getDiskAlias());
             return AuditLogType.DISK_PREALLOCATION_FAILED;
         }
 
         return super.getAuditLogTypeValue();
+    }
+
+    private BaseDisk getDisk() {
+        return getBaseDiskDao().get(getParameters().getImageGroupID());
     }
 }
 
