@@ -120,7 +120,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
             commandBase.getReturnValue().setSucceeded(false);
             VdcReturnValueBase returnVal = commandBase.endAction();
 
-            if (!returnVal.getSucceeded() && shouldRepeatEndMethodsOnFail(returnVal)) {
+            if (!returnVal.getSucceeded()) {
                 if (shouldRepeatEndMethodsOnFail(returnVal)) {
                     throw new EngineException(EngineError.ENGINE, String.format("Command %1$s id: '%2$s' endAction() " +
                             "didn't complete successfully", commandBase.getActionType(), commandBase.getCommandId()));
