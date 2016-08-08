@@ -231,7 +231,7 @@ Requires:	ovirt-image-uploader >= 4.0.0
 Requires:	ovirt-iso-uploader >= 4.0.0
 Requires:	%{patternfly}
 Requires:	postgresql-jdbc >= 9.2.1002
-Requires:	postgresql-server >= 8.4.7
+Requires:	postgresql-server >= 9.2.15
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
@@ -516,7 +516,7 @@ Requires:	tar
 Requires:	bzip2
 Requires:	xz
 Requires:	otopi >= 1.5.0
-Requires:	postgresql >= 8.4.7
+Requires:	postgresql >= 9.2.15
 
 %description tools-backup
 %{ovirt_product_name_short} Tools (engine-backup)
