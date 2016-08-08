@@ -80,6 +80,10 @@ public class BackendVmDisksResource
             diskAttachment.setInterface(DiskInterface.VIRTIO);
         }
 
+        if (disk.isSetActive()) {
+            diskAttachment.setActive(disk.isActive());
+        }
+
         diskAttachment.setDisk(disk);
         if (disk.isSetId()) {
             Guid diskId = Guid.createGuidFromStringDefaultEmpty(disk.getId());
