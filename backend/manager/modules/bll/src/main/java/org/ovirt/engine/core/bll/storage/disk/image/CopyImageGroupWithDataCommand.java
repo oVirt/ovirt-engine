@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureCommandParameters;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
 import org.ovirt.engine.core.common.action.CopyImageGroupVolumesDataCommandParameters;
@@ -25,12 +28,12 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataCommandParameters>
-        extends BaseImagesCommand<T> implements SerialChildExecutingCommand {
+        extends CommandBase<T> implements SerialChildExecutingCommand {
+
+    private DiskImage diskImage;
 
     public CopyImageGroupWithDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        setImageId(getParameters().getImageId());
-        setImageGroupId(getParameters().getImageGroupID());
         setStoragePoolId(getParameters().getStoragePoolId());
     }
 
@@ -43,6 +46,11 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         }
 
         setSucceeded(true);
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.emptyList();
     }
 
     private void cloneStructureNotCollapsed() {
@@ -61,8 +69,8 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         List<DiskImage> images = getDiskImageDao()
                 .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         for (DiskImage image : images) {
-            getDiskImage().getSnapshots().add(getVolumeInfo(getParameters().getStoragePoolId(), getParameters()
-                    .getSrcDomain(), getParameters().getImageGroupID(), image.getImageId()));
+            getDiskImage().getSnapshots().add(ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+                    getParameters().getSrcDomain(), getParameters().getImageGroupID(), image.getImageId()));
         }
     }
 
@@ -132,5 +140,13 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
 
     private LocationInfo buildImageLocationInfo(Guid domId, Guid imageGroupId, Guid imageId) {
         return new VdsmImageLocationInfo(domId, imageGroupId, imageId);
+    }
+
+    private DiskImage getDiskImage() {
+        if (diskImage == null) {
+            diskImage = (DiskImage) getDiskDao().get(getParameters().getImageGroupID());
+        }
+
+        return diskImage;
     }
 }
