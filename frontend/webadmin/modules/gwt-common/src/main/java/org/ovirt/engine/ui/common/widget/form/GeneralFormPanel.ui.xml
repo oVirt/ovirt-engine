@@ -16,6 +16,7 @@
         .formPanelValue {
             color: #777777;
             font-family: Arial, sans-serif;
+            word-wrap: break-word;
         }
     </ui:style>
 
