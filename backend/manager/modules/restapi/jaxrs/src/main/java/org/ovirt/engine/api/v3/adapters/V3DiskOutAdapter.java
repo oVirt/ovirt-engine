@@ -165,6 +165,9 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
             if (attachment.isSetLogicalName()) {
                 to.setLogicalName(attachment.getLogicalName());
             }
+            if (attachment.isSetActive()) {
+                to.setActive(attachment.isActive());
+            }
         }
 
         return to;

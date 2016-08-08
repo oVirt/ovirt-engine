@@ -40,6 +40,9 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
         if (from.isSetActions()) {
             to.setActions(adaptIn(from.getActions()));
         }
+        if (from.isSetActive()) {
+            to.setActive(from.isActive());
+        }
         if (from.isSetActualSize()) {
             to.setActualSize(from.getActualSize());
         }
