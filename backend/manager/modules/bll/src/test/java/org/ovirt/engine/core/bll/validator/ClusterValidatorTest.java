@@ -66,7 +66,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void nameNotUsed() {
-        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<Cluster> emptyList());
+        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.emptyList());
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -75,7 +75,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void nameIsAlreadyUsed() {
-        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<Cluster> singletonList(mock(Cluster.class)));
+        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.singletonList(mock(Cluster.class)));
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -198,7 +198,7 @@ public class ClusterValidatorTest {
         when(dataCenter.isLocal()).thenReturn(true);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<Cluster> emptyList());
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -212,7 +212,7 @@ public class ClusterValidatorTest {
         when(dataCenter.isLocal()).thenReturn(true);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<Cluster> singletonList(mock(Cluster.class)));
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(mock(Cluster.class)));
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
