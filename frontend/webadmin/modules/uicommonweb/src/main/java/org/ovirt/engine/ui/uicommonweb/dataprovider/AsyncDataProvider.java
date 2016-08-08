@@ -144,7 +144,6 @@ import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParam
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
@@ -1227,7 +1226,7 @@ public class AsyncDataProvider {
 
     public void getRoleList(AsyncQuery<List<Role>> aQuery) {
         aQuery.converterCallback = new ListConverter<>();
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, new VdcQueryParametersBase(), aQuery);
     }
 
     public void getStorageDomainById(AsyncQuery<StorageDomain> aQuery, Guid storageDomainId) {

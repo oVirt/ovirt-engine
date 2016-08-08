@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -170,7 +170,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     protected void syncSearch() {
         super.syncSearch();
 
-        MultilevelAdministrationsQueriesParameters tempVar = new MultilevelAdministrationsQueriesParameters();
+        VdcQueryParametersBase tempVar = new VdcQueryParametersBase ();
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override

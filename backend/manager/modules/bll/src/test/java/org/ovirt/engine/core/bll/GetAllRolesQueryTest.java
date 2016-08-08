@@ -10,13 +10,13 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dao.RoleDao;
 
 /** A test case for the {@link GetAllRolesQuery} class. */
-public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdministrationsQueriesParameters, GetAllRolesQuery<MultilevelAdministrationsQueriesParameters>> {
+public class GetAllRolesQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetAllRolesQuery<VdcQueryParametersBase>> {
     @Override
-    protected void initQuery(GetAllRolesQuery<MultilevelAdministrationsQueriesParameters> query) {
+    protected void initQuery(GetAllRolesQuery<VdcQueryParametersBase> query) {
         doReturn(Boolean.TRUE).when(query).isAdminUser();
     }
 
