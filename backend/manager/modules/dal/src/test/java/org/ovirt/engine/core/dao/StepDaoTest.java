@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -136,6 +137,16 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     }
 
     @Test
+    public void updateStepProgress(){
+        Integer newProgress = 74;
+        Step s = dao.get(FixturesTool.STEP_ID);
+        assertNotEquals("New progress should be different than the current", s.getProgress(), newProgress);
+        updateStepProgress(FixturesTool.STEP_ID, newProgress);
+        s = dao.get(FixturesTool.STEP_ID);
+        assertEquals("New progress should be the same as the current", s.getProgress(), newProgress);
+    }
+
+    @Test
     public void diskStepProgress() {
         VdcObjectType type = VdcObjectType.Disk;
         Guid entityId = FixturesTool.FLOATING_DISK_ID;
@@ -154,9 +165,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     }
 
     private void updateStepProgress(Guid stepId, Integer progress) {
-        Step s = dao.get(stepId);
-        s.setProgress(progress);
-        dao.update(s);
+        dao.updateStepProgress(stepId, progress);
     }
 
     private void assertProgress(Integer expectedProgress, BaseDisk disk) {

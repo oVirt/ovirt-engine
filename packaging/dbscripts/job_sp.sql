@@ -525,6 +525,21 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+----------------------------------------------
+-- Updates step progress
+----------------------------------------------
+CREATE OR REPLACE FUNCTION updateStepProgress (
+    v_step_id UUID,
+    v_progress SMALLINT
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE step
+    SET progress = v_progress
+    WHERE step_id = v_step_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 -------------------------------------------
 -- Updates Job and Step statuses to UNKNOWN
 -------------------------------------------

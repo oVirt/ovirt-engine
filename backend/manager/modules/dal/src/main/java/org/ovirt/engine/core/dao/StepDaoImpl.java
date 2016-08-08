@@ -85,6 +85,14 @@ public class StepDaoImpl extends DefaultGenericDao<Step, Guid> implements StepDa
 
     }
 
+    @Override
+    public void updateStepProgress(Guid stepId, Integer progress) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("step_id", stepId)
+                        .addValue("progress", progress);
+        getCallsHandler().executeModification("updateStepProgress", parameterSource);
+    }
+
     private static class StepRowMapper implements RowMapper<Step> {
 
         @Override
