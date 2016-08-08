@@ -21,6 +21,7 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,11 @@ public class StorageJobCallback extends CommandCallback {
 
         if (vds.getStatus() == VDSStatus.Up) {
             try {
-                jobStatus = pollStorageJob(job, vdsId);
+                HostJobInfo jobInfo = pollStorageJob(job, vdsId);
+                if (jobInfo != null) {
+                    jobStatus = jobInfo.getStatus();
+                    updateStepProgress(commandEntity.getStepId(), jobInfo.getProgress());
+                }
             } catch (Exception e) {
                 // We shouldn't get an error when polling the host job (as it access the local storage only).
                 // If we got an error, it will usually be a network error - so the host will either move
@@ -88,7 +93,7 @@ public class StorageJobCallback extends CommandCallback {
         return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 
-    private HostJobStatus pollStorageJob(Guid jobId, Guid vdsId) {
+    private HostJobInfo pollStorageJob(Guid jobId, Guid vdsId) {
         if (jobId == null) {
             return null;
         }
@@ -97,8 +102,7 @@ public class StorageJobCallback extends CommandCallback {
                 .singletonList(jobId), HostJobType.storage);
         VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(VDSCommandType
                 .GetHostJobs, p);
-        HostJobInfo jobInfo = ((Map<Guid, HostJobInfo>) returnValue.getReturnValue()).get(jobId);
-        return jobInfo != null ? jobInfo.getStatus() : null;
+        return ((Map<Guid, HostJobInfo>) returnValue.getReturnValue()).get(jobId);
     }
 
     private HostJobStatus pollEntityIfSupported(CommandBase<?> cmd) {
@@ -120,6 +124,12 @@ public class StorageJobCallback extends CommandCallback {
         return null;
     }
 
+    private void updateStepProgress(Guid stepId, Integer progress) {
+        if (stepId != null) {
+            getStepDao().updateStepProgress(stepId, progress);
+        }
+    }
+
     @Override
     public boolean pollOnExecutionFailed() {
         return true;
@@ -127,5 +137,9 @@ public class StorageJobCallback extends CommandCallback {
 
     private VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
+    }
+
+    private StepDao getStepDao() {
+        return DbFacade.getInstance().getStepDao();
     }
 }
