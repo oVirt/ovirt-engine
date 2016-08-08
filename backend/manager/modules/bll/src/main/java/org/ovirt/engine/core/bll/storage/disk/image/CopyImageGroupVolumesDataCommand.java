@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
 import org.ovirt.engine.core.common.action.CopyImageGroupVolumesDataCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
@@ -20,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDataCommandParameters>
-        extends BaseImagesCommand<T> implements SerialChildExecutingCommand {
+        extends CommandBase<T> implements SerialChildExecutingCommand {
     public CopyImageGroupVolumesDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
@@ -34,6 +37,11 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images));
         persistCommand(getParameters().getParentCommand(), getCallback() != null);
         setSucceeded(true);
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.emptyList();
     }
 
     @Override
