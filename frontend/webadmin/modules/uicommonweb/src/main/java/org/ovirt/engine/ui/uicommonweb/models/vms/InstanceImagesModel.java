@@ -237,9 +237,10 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
             return;
         }
 
-        AbstractDiskModel diskModel = lineModelIterator.next().getDiskModel().getEntity();
+        InstanceImageLineModel instanceImageLineModel = lineModelIterator.next();
+        AbstractDiskModel diskModel = instanceImageLineModel.getDiskModel().getEntity();
 
-        if (diskModel == null) {
+        if (diskModel == null || !instanceImageLineModel.isChanged()) {
             storeNextDisk(lineModelIterator, vm);
         } else {
             diskModel.setVm(vm);
