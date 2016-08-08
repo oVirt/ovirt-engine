@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -19,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommandParameters> extends
-        BaseImagesCommand<T> {
+        CommandBase<T> {
 
     public CreateVolumeContainerCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -32,6 +36,11 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     @Override
     protected AsyncTaskType getTaskType() {
         return AsyncTaskType.createVolume;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.emptyList();
     }
 
     private CreateImageVDSCommandParameters getCreateVDSCommandParameters() {
