@@ -100,13 +100,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         setVmId(getParameters().getContainerId());
         setStorageDomainId(getParameters().getStorageDomainId());
-
-        // It would be better to not add the task handlers in the first place, but at
-        // the time they are added (via super.init()), setVm() hasn't been called and
-        // thus initTaskHandlers() can't yet tell if this is a live or cold merge.
-        if (isLiveMerge()) {
-            clearTaskHandlers();
-        }
     }
 
     protected List<DiskImage> getImages() {
@@ -217,21 +210,18 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
             // Get a sorted list of the selected images
             List<DiskImage> sortedImages =
-                    images.stream().filter(image -> getImages().contains(image)).collect(Collectors.toList());
+                    images.stream()
+                            .filter(image -> image.getDiskStorageType() == DiskStorageType.IMAGE)
+                            .filter(image -> getImages().contains(image))
+                            .collect(Collectors.toList());
             getParameters().setImageIds(new ArrayList<>(ImagesHandler.getDiskImageIds(sortedImages)));
             getParameters().setImageIdsSorted(true);
         }
 
-        ArrayList<Guid> imageIds = new ArrayList<>();
-        for (DiskImage diskImage : getImages()) {
-            if (diskImage.getDiskStorageType() == DiskStorageType.IMAGE) {
-                imageIds.add(diskImage.getImageId());
+        if (!isLiveMerge()) {
+            for (Guid imageId : getParameters().getImageIds()) {
+                taskHandlers.add(new RemoveDiskSnapshotTaskHandler(this, imageId, getImageGroupId(), getVmId()));
             }
-        }
-        getParameters().setImageIds(imageIds);
-
-        for (Guid imageId : imageIds) {
-            taskHandlers.add(new RemoveDiskSnapshotTaskHandler(this, imageId, getImageGroupId(), getVmId()));
         }
 
         return !taskHandlers.isEmpty() ? taskHandlers : null;
