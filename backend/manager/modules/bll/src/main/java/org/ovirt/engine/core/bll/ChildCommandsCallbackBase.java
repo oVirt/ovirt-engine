@@ -115,7 +115,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
     }
 
 
-    private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds, boolean succeeded) {
+    private void endAction(CommandBase<?> commandBase, boolean succeeded) {
         if (shouldExecuteEndMethod(commandBase)) {
             commandBase.getReturnValue().setSucceeded(false);
             VdcReturnValueBase returnVal = commandBase.endAction();
@@ -141,7 +141,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        endAction(getCommand(cmdId), childCmdIds, true);
+        endAction(getCommand(cmdId), true);
     }
 
     @Override
@@ -149,7 +149,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
         CommandBase<?> commandBase = getCommand(cmdId);
         // This should be removed as soon as infra bug will be fixed and failed execution will reach endWithFailure
         commandBase.getParameters().setTaskGroupSuccess(false);
-        endAction(commandBase, childCmdIds, false);
+        endAction(commandBase, false);
     }
 
     protected CommandBase<?> getCommand(Guid cmdId) {
