@@ -171,7 +171,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             getParameters().setCommandId(commandIdFromParameters);
         }
         commandId = commandIdFromParameters;
-        taskHandlers = initTaskHandlers();
     }
 
     /**
@@ -190,6 +189,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      */
     @PostConstruct
     protected final void postConstruct() {
+        taskHandlers = initTaskHandlers();
         if (!isCompensationContext()) {
             initCommandBase();
             init();
