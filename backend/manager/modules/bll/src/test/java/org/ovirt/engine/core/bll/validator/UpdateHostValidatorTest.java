@@ -167,7 +167,7 @@ public class UpdateHostValidatorTest {
     public void hostNNotUsed() {
         when(oldHost.getHostName()).thenReturn(generateRandomName());
         when(host.getHostName()).thenReturn(generateRandomName());
-        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.<VDS> emptyList());
+        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.emptyList());
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
