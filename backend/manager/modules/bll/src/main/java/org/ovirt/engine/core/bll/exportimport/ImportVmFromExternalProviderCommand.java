@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -315,6 +316,11 @@ implements QuotaStorageDependent {
         super.addVmToDb();
         if (getVm().getOrigin() == OriginType.KVM) {
             ImportUtils.updateGraphicsDevices(getVm().getStaticData(), getStoragePool().getCompatibilityVersion());
+            if (getParameters().isImportAsNewEntity()) {
+                for (VmDevice device : getVm().getStaticData().getManagedDeviceMap().values()) {
+                    device.getId().setVmId(getVmId());
+                }
+            }
             getVmDeviceDao().saveAll(getVm().getStaticData().getManagedDeviceMap().values());
         }
     }
