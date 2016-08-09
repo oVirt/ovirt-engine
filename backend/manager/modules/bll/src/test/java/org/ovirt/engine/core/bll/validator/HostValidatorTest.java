@@ -154,7 +154,7 @@ public class HostValidatorTest {
 
     @Test
     public void hostNameNotUsed() {
-        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.<VDS> emptyList());
+        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.emptyList());
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
@@ -208,7 +208,7 @@ public class HostValidatorTest {
         when(dataCenter.isLocal()).thenReturn(true);
         when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(hostStaticDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.<VdsStatic> emptyList());
+        when(hostStaticDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.emptyList());
         when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
         validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
@@ -222,7 +222,7 @@ public class HostValidatorTest {
         when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
         when(hostStaticDao.getAllForCluster(any(Guid.class)))
-                .thenReturn(Collections.<VdsStatic> singletonList(mock(VdsStatic.class)));
+                .thenReturn(Collections.singletonList(mock(VdsStatic.class)));
         when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
         validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
