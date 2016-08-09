@@ -85,6 +85,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Inject
     private NetworkDao networkDao;
 
+    @Inject
+    private InitGlusterCommandHelper glusterCommandHelper;
+
     private List<VDS> allForCluster;
     private Cluster oldGroup;
 
@@ -159,6 +162,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         getClusterDao().update(getParameters().getCluster());
         addOrUpdateAddtionalClusterFeatures();
+        if (!oldGroup.supportsGlusterService() && getCluster().supportsGlusterService()) {
+            //update gluster parameters on all hosts
+           updateGlusterHosts();
+        }
 
         if (isAddedToStoragePool) {
             for (VDS vds : allForCluster) {
@@ -262,6 +269,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             getClusterFeatureDao().addAllSupportedClusterFeature(featuresEnabled.values());
         }
 
+    }
+
+    private void updateGlusterHosts() {
+        allForCluster.stream().forEach(glusterCommandHelper::initGlusterHost);
     }
 
     private NetworkCluster createManagementNetworkCluster(Network managementNetwork) {
