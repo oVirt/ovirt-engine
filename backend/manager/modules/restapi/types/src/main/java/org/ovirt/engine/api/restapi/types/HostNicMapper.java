@@ -259,6 +259,9 @@ public class HostNicMapper {
             model.setQos(QosMapper.map(qos, null));
         }
 
+        if (entity.getAdAggregatorId() != null) {
+            model.setAdAggregatorId(entity.getAdAggregatorId());
+        }
         return model;
     }
 
