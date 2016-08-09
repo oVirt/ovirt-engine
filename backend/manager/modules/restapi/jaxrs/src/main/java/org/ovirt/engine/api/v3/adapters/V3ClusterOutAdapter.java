@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.helpers.V3ClusterHelper.getIntegerProperty
 
 import java.util.LinkedList;
 import java.util.List;
+import javax.ws.rs.WebApplicationException;
 
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Properties;
@@ -138,7 +139,14 @@ public class V3ClusterOutAdapter implements V3Adapter<Cluster, V3Cluster> {
             SystemResource systemResource = BackendApiResource.getInstance();
             SchedulingPoliciesResource policiesResource = systemResource.getSchedulingPoliciesResource();
             SchedulingPolicyResource policyResource = policiesResource.getPolicyResource(fromPolicy.getId());
-            fromPolicy = policyResource.get();
+            try {
+                fromPolicy = policyResource.get();
+            }
+            catch (WebApplicationException exception) {
+                // If an application exception is generated while retrieving the details of the scheduling policy it
+                // is safe to ignore it, as it may be that the user just doesn't have permission to see the policy, but
+                // she may still have permissions to see the other details of the cluster.
+            }
             V3SchedulingPolicy toPolicy = to.getSchedulingPolicy();
             if (toPolicy == null) {
                 toPolicy = new V3SchedulingPolicy();
