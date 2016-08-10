@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * The compensation context contains information needed for compensating failed command executions.
@@ -15,6 +16,11 @@ public interface CompensationContext {
      * @return true, if this CompensationContext does compensation logic. False if compensation is not performed.
      */
     boolean isCompensationEnabled();
+
+    /**
+     * @return  the command id for the compensation context
+     */
+    Guid getCommandId();
 
     /**
      * Save a snapshot of the entire entity before it is changed/deleted in the DB, so that it can be restored later on

@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * An implementation of COmpensation Context that does nothing - will be used by commands that do not implement
@@ -72,5 +73,10 @@ public class NoOpCompensationContext extends CompensationContextBase {
     @Override
     public boolean isCompensationEnabled() {
         return false;
+    }
+
+    @Override
+    public Guid getCommandId() {
+        return null;
     }
 }

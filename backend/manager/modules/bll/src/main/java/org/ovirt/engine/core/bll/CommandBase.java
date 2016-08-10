@@ -463,6 +463,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         } catch (NullPointerException e) {
             log.debug("RollbackQuota: failed (may be because quota is disabled)", e);
         }
+        // If the compensation data is not for the command do not perform compensation.
+        if (!commandId.equals(getCompensationContext().getCommandId())) {
+            return;
+        }
         TransactionSupport.executeInNewTransaction(() -> {
             Deserializer deserializer =
                     SerializationFactory.getDeserializer();
