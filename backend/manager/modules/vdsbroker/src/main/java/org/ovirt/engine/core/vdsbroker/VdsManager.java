@@ -988,13 +988,13 @@ public class VdsManager {
     }
 
     private void moveVmsToUnknown() {
-        List<VM> vms = getVmsToMoveToUnknown();
-        for (VM vm : vms) {
+        List<VmDynamic> vms = getVmsToMoveToUnknown();
+        for (VmDynamic vm : vms) {
             destroyVmOnDestination(vm);
             resourceManager.removeAsyncRunningVm(vm.getId());
         }
 
-        List<Guid> vmIds = vms.stream().map(VM::getId).collect(Collectors.toList());
+        List<Guid> vmIds = vms.stream().map(VmDynamic::getId).collect(Collectors.toList());
         getVmDynamicDao().updateVmsToUnknown(vmIds);
 
         vmIds.forEach(vmId -> {
@@ -1009,7 +1009,7 @@ public class VdsManager {
         return vmDynamicDao;
     }
 
-    private void destroyVmOnDestination(final VM vm) {
+    private void destroyVmOnDestination(final VmDynamic vm) {
         if (vm.getStatus() != VMStatus.MigratingFrom || vm.getMigratingToVds() == null) {
             return;
         }
@@ -1020,19 +1020,21 @@ public class VdsManager {
                     new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
 
             if (returnValue != null && returnValue.getSucceeded()) {
-                log.info("Stopped migrating VM: '{}' on VDS: '{}'", vm.getName(), vm.getMigratingToVds());
+                log.info("Stopped migrating VM: '{}' on VDS: '{}'",
+                        resourceManager.getVmManager(vm.getId()).getName(), vm.getMigratingToVds());
             }
             else {
-                log.info("Could not stop migrating VM: '{}' on VDS: '{}'", vm.getName(),
-                        vm.getMigratingToVds());
+                log.info("Could not stop migrating VM: '{}' on VDS: '{}'",
+                        resourceManager.getVmManager(vm.getId()).getName(), vm.getMigratingToVds());
             }
         });
     }
 
-    private List<VM> getVmsToMoveToUnknown() {
-        List<VM> vmList = vmDao.getAllRunningForVds(getVdsId());
-        List<VM> migratingVms = vmDao.getAllMigratingToHost(getVdsId());
-        for (VM incomingVm : migratingVms) {
+    private List<VmDynamic> getVmsToMoveToUnknown() {
+        List<VmDynamic> vmList = vmDynamicDao.getAllRunningForVds(getVdsId());
+        List<VmDynamic> migratingVms = vmDao.getAllMigratingToHost(getVdsId()).stream()
+                .map(VM::getDynamicData).collect(Collectors.toList());
+        for (VmDynamic incomingVm : migratingVms) {
             if (incomingVm.getStatus() == VMStatus.MigratingTo) {
                 // this VM is finished the migration handover and is running on this host now
                 // and should be treated as well.
