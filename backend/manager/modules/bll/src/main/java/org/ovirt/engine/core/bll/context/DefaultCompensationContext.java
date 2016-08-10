@@ -81,6 +81,14 @@ public class DefaultCompensationContext extends CompensationContextBase {
     }
 
     /**
+     * Return the command id for the compensation context
+     * @return the command id
+     */
+    public Guid getCommandId() {
+        return commandId;
+    }
+
+    /**
      * @param commandType
      *            the commandType to set
      */
