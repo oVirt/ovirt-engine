@@ -305,14 +305,14 @@ class Plugin(plugin.PluginBase):
                 '%s.p12' % entry['name'],
             )
 
+            enroll = not self._ca_cert_existed
+
             if not os.path.exists(pkcs12):
                 enroll = True
                 self.logger.debug(
                     "'%s' does not exist, enrolling",
                     pkcs12,
                 )
-            else:
-                enroll = not renew
 
             if not enroll:
                 enroll = self._ok_to_renew_cert(
@@ -351,6 +351,7 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
         self._ca_was_renewed = False
+        self._ca_cert_existed = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
@@ -392,6 +393,9 @@ class Plugin(plugin.PluginBase):
     )
     def _setup(self):
         self.command.detect('openssl')
+        self._ca_cert_existed = os.path.exists(
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -594,6 +598,9 @@ class Plugin(plugin.PluginBase):
                 )
 
             self._enrollCertificates(True, uninstall_files)
+
+        # Also enroll missing parts on upgrade
+        self._enrollCertificates(False, uninstall_files)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
