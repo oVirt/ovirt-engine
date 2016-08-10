@@ -174,8 +174,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null) {
                 log.error("ResourceManager::vdsMaintenance could not find VDS '{}'", vdsId);
-                addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
-                result = false;
+                result = failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
                 continue;
             }
             //TODO make a more efficient call but normally the command just loads one cluster anyway
@@ -190,8 +189,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 }
             }
             if (getParameters().isStopGlusterService() && !vds.getClusterSupportsGlusterService()) {
-                result = false;
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_SERVICE_MAINTENANCE_NOT_SUPPORTED_FOR_CLUSTER);
+                result = failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_SERVICE_MAINTENANCE_NOT_SUPPORTED_FOR_CLUSTER);
                 break;
             }
         }
@@ -202,18 +200,17 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             for (Guid vdsId : getParameters().getVdsIdList()) {
                 VDS vds = vdssToMaintenance.get(vdsId);
                 if (vds != null) {
-                    List<VM> vms = getVmDao().getAllRunningForVds(vdsId);
                     if ((vds.getStatus() != VDSStatus.Maintenance) && (vds.getStatus() != VDSStatus.NonResponsive)
                             && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)
                             && (vds.getStatus() != VDSStatus.PreparingForMaintenance)
                             && (vds.getStatus() != VDSStatus.Down)
                             && (vds.getStatus() != VDSStatus.NonOperational
                             && (vds.getStatus() != VDSStatus.InstallFailed))) {
-                        result = false;
-                        addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
+                        result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
                     }
                     else {
-                        if (vms.size() > 0) {
+                        List<VM> vms = getVmDao().getAllRunningForVds(vdsId);
+                        if (!vms.isEmpty()) {
                             vdsWithRunningVMs.add(vdsId);
                         }
                         clustersAsSet.add(vds.getClusterId());
@@ -240,22 +237,18 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             hostsWithVmsWithPluggedDiskSnapshots.add(vds.getName());
                             result = false;
                         } else if (vds.getStatus() == VDSStatus.Maintenance) {
-                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
-                            result = false;
+                            result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
                         } else if (vds.getSpmStatus() == VdsSpmStatus.Contending) {
-                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_CONTENDING);
-                            result = false;
+                            result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_CONTENDING);
                         } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getVmCount() > 0) {
                             result = false;
                             hostNotRespondingList.add(vds.getName());
                         } else if (vds.getStatus() == VDSStatus.NonResponsive
                                 && vds.getSpmStatus() != VdsSpmStatus.None) {
-                            result = false;
-                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
+                            result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
                         } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up &&
                                 getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
-                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
-                            result = false;
+                            result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                         } else if (!clusters.get(vds.getClusterId()).isInUpgradeMode()) {
                             result = handlePositiveEnforcingAffinityGroup(vdsId, vms);
                         }
