@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParamete
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -110,6 +111,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                     getParameters().getUseCopyCollapse());
             p.setParentParameters(getParameters());
             p.setParentCommand(getActionType());
+            p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             runInternalAction(VdcActionType.CopyImageGroupWithData, p);
             return true;
         } else {
