@@ -1077,4 +1077,14 @@ public abstract class AbstractDiskModel extends DiskModel {
     public void setStorageModel(StorageModel storageModel) {
         this.storageModel = storageModel;
     }
+
+    protected Guid getStorageDomainId() {
+        switch (getDisk().getDiskStorageType()) {
+            case IMAGE:
+                return  getDiskImage().getStorageIds().get(0);
+            case CINDER:
+                return  getCinderDisk().getStorageIds().get(0);
+        }
+        return null;
+    }
 }

@@ -108,16 +108,6 @@ public class ReadOnlyDiskModel extends AbstractDiskModel {
         return true;
     }
 
-    private Guid getStorageDomainId() {
-        switch (getDisk().getDiskStorageType()) {
-            case IMAGE:
-                return  getDiskImage().getStorageIds().get(0);
-            case CINDER:
-                return  getCinderDisk().getStorageIds().get(0);
-        }
-        return null;
-    }
-
     @Override
     protected void updateStorageDomains(final StoragePool datacenter) {
         AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
