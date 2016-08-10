@@ -183,10 +183,18 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @WithElementId
     ListModelListBoxEditor<VDS> xenProxyHostsEditor;
 
-    @UiField
     @Path("kvmUri.entity")
     @WithElementId("kvmUri")
-    StringEntityModelTextBoxEditor kvmUriEditor;
+    StringEntityModelTextBoxOnlyEditor kvmUriEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo kvmUriWithInfo;
+
+    @UiField(provided = true)
+    @Path("kvmRequiresAuthentication.entity")
+    @WithElementId("kvmRequiresAuthentication")
+    EntityModelCheckBoxEditor kvmRequiresAuthenticationEditor;
 
     @UiField
     @Path("kvmUsername.entity")
@@ -306,6 +314,14 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         xenUriWithInfo = new EntityModelWidgetWithInfo(xenUriLabel, xenUriEditor);
         xenUriWithInfo.setExplanation(templates.xenUriInfo());
 
+        kvmUriEditor = new StringEntityModelTextBoxOnlyEditor();
+        EnableableFormLabel kvmUriLabel = new EnableableFormLabel();
+        kvmUriLabel.setPaddingLeft(5);
+        kvmUriLabel.setText(constants.kvmUri());
+        kvmUriWithInfo = new EntityModelWidgetWithInfo(kvmUriLabel, kvmUriEditor);
+        kvmUriWithInfo.setExplanation(templates.kvmUriInfo());
+        kvmRequiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
         externalVms = new EntityModelCellTable<>(true, false, true);
         importedVms = new EntityModelCellTable<>(true, false, true);
         vmsTable =
@@ -341,6 +357,8 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         xenProxyHostsEditor.setLabel(constants.proxyHost());
 
         kvmUriEditor.setLabel(constants.kvmUri());
+        kvmUriEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
+        kvmRequiresAuthenticationEditor.setLabel(constants.requiresAuthenticationProvider());
         kvmUsernameEditor.setLabel(constants.usernameProvider());
         kvmPasswordEditor.setLabel(constants.passwordProvider());
         kvmProxyHostsEditor.setLabel(constants.proxyHost());

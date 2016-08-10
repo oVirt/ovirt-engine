@@ -92,6 +92,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private ListModel<VDS> xenProxyHosts;
 
     private EntityModel<String> kvmUri;
+    private EntityModel<Boolean> kvmRequiresAuthentication;
     private EntityModel<String> kvmUsername;
     private EntityModel<String> kvmPassword;
     private ListModel<VDS> kvmProxyHosts;
@@ -159,9 +160,19 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
         // Kvm
         setKvmUri(new EntityModel<String>());
+        setKvmRequiresAuthentication(new EntityModel<Boolean>(true));
         setKvmUsername(new EntityModel<String>());
         setKvmPassword(new EntityModel<String>());
         setKvmProxyHosts(new ListModel<VDS>());
+
+        getKvmRequiresAuthentication().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                boolean authenticationRequired = kvmRequiresAuthentication.getEntity();
+                getKvmUsername().setIsChangeable(authenticationRequired);
+                getKvmPassword().setIsChangeable(authenticationRequired);
+            }
+        });
 
         setInfoMessage(new EntityModel<String>());
 
@@ -574,7 +585,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         if (!validateKvmConfiguration()) {
             return;
         }
-        Guid proxyId = getXenProxyHosts().getSelectedItem() != null ? getXenProxyHosts().getSelectedItem().getId() : null;
+
+        if (!getKvmRequiresAuthentication().getEntity()) {
+            getKvmUsername().setEntity(null);
+            getKvmPassword().setEntity(null);
+        }
+
+        Guid proxyId = getKvmProxyHosts().getSelectedItem() != null ? getKvmProxyHosts().getSelectedItem().getId() : null;
         loadVMsFromExternalProvider(OriginType.KVM, getKvmUri().getEntity(), getKvmUsername().getEntity(), getKvmPassword().getEntity(), proxyId);
     }
 
@@ -649,10 +666,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 new NotEmptyValidation(),
                 new LengthValidation(255)});
         getKvmUsername().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new NameAndOptionalDomainValidation() });
+                new NotEmptyValidation() });
         getKvmPassword().validateEntity(new IValidation[] {
                 new NotEmptyValidation() });
+
         return getKvmUri().getIsValid() &&
                getKvmUsername().getIsValid() &&
                getKvmPassword().getIsValid();
@@ -1021,6 +1038,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void setKvmUri(EntityModel<String> uri) {
         this.kvmUri = uri;
+    }
+
+    public EntityModel<Boolean> getKvmRequiresAuthentication() {
+        return kvmRequiresAuthentication;
+    }
+
+    void setKvmRequiresAuthentication(EntityModel<Boolean> kvmRequiresAuthentication) {
+        this.kvmRequiresAuthentication = kvmRequiresAuthentication;
     }
 
     public EntityModel<String> getKvmUsername() {
