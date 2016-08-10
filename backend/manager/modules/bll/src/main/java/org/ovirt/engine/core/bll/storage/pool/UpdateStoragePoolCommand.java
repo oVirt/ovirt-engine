@@ -239,7 +239,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     validator.setDataCenter(getStoragePool());
                     if (!getManagementNetworkUtil().isManagementNetwork(network.getId())
                             || !validator.canNetworkCompatabilityBeDecreased()) {
-                        return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                        return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
                     }
                 }
             } else if (!checkAllClustersLevel()) {  // Check all clusters has at least the same compatibility version.

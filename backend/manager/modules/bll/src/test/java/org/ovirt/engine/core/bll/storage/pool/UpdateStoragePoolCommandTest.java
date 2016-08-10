@@ -196,7 +196,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
         addNonManagementNetworkToPool();
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -206,7 +206,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         addManagementNetworkToPool();
         addNonManagementNetworksToPool(2);
         setupNetworkValidator(true);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         addNonDefaultClusterToPool();
         addHostsToCluster();
         addNonManagementNetworkToPool();
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -233,7 +233,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(false);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
     }
 
     @Test

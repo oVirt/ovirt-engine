@@ -314,7 +314,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         if (result && getCluster().getCompatibilityVersion().compareTo(oldCluster.getCompatibilityVersion()) < 0) {
             if (!allForCluster.isEmpty()) {
                 result = false;
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_CLUSTER_WITH_HOSTS_COMPATIBILITY_VERSION);
             }
 
             if (oldCluster.getStoragePoolId() != null) {

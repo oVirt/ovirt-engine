@@ -233,7 +233,7 @@ public class UpdateClusterCommandTest {
         createCommandWithOlderVersion(true, false);
         setupCpu();
         vdsExist();
-        validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_CLUSTER_WITH_HOSTS_COMPATIBILITY_VERSION);
     }
 
     @Test
