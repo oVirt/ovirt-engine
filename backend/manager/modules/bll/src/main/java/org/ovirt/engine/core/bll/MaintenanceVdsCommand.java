@@ -38,7 +38,6 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 @NonTransactiveCommandAttribute
 public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends VdsCommand<T> {
 
-    private final boolean _isInternal;
     private List<VM> vms;
     private boolean haMaintenanceFailed;
     @Inject
@@ -46,7 +45,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     public MaintenanceVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        _isInternal = parameters.getIsInternal();
         haMaintenanceFailed = false;
     }
 
@@ -92,7 +90,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     }
 
     protected void orderListOfRunningVmsOnVds(Guid vdsId) {
-        vms = DbFacade.getInstance().getVmDao().getAllRunningForVds(vdsId);
+        vms = getVmDao().getAllRunningForVds(vdsId);
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
     }
 
@@ -180,7 +178,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (_isInternal) {
+        if (getParameters().getIsInternal()) {
             if (isSucceededWithHA()) {
                 return AuditLogType.VDS_MAINTENANCE;
             } else if (getSucceeded()) {
@@ -241,12 +239,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     }
 
     private boolean isHostedEngineOnVds() {
-        for (VM vm : vms) {
-            if (vm.isHostedEngine()) {
-                return true;
-            }
-        }
-        return false;
+        return vms.stream().anyMatch(VM::isHostedEngine);
     }
 
     @Override
