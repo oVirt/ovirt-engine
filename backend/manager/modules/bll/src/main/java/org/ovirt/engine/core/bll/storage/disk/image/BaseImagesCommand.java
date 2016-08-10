@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -339,10 +337,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
                             newImageId)).getReturnValue();
         } else {
-            return (DiskImage) VdsCommandsHelper.runVdsCommandWithFailover(
-                    VDSCommandType.GetVolumeInfo,
-                    new GetVolumeInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
-                            newImageId), storagePoolId, null).getReturnValue();
+            return ImagesHandler.getVolumeInfoFromVdsm(storagePoolId, newStorageDomainID, newImageGroupId, newImageId);
         }
     }
 

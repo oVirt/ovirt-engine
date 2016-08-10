@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -46,6 +47,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -907,6 +909,14 @@ public final class ImagesHandler {
             diskDummies.add(clone);
         }
         return diskDummies;
+    }
+
+    protected static DiskImage getVolumeInfoFromVdsm(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
+                                      Guid newImageId) {
+        return (DiskImage) VdsCommandsHelper.runVdsCommandWithFailover(
+                VDSCommandType.GetVolumeInfo,
+                new GetVolumeInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
+                        newImageId), storagePoolId, null).getReturnValue();
     }
 
     public static DiskImage cloneDiskImage(Guid storageDomainId,

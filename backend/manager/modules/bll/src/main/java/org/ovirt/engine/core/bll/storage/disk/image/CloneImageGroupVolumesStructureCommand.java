@@ -52,7 +52,8 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 ImagesHandler.isImageInitialSizeSupported(getStorageDomainStatic(getParameters().getDestDomain())
                         .getStorageType())) {
             //TODO: inspect if we can rely on the database to get the actual size.
-            DiskImage imageInfoFromStorage = getVolumeInfo(getParameters().getStoragePoolId(), getParameters()
+            DiskImage imageInfoFromStorage = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+                    getParameters()
                     .getSrcDomain(), getParameters().getImageGroupID(), sourceImage.getId());
             // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
             // case in which we won't have enough space. If the source is already COW we don't need the additional
