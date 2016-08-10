@@ -211,6 +211,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
         getTaskList().getSearchCommand().execute();
 
+        getReportsList().setIsAvailable(false);
+
         initItems();
 
         setLoggedInUser(Frontend.getInstance().getLoggedInUser());
