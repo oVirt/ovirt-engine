@@ -178,7 +178,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getParameters().getIsInternal()) {
+        if (getParameters().isInternal()) {
             if (isSucceededWithHA()) {
                 return AuditLogType.VDS_MAINTENANCE;
             } else if (getSucceeded()) {
