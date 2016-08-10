@@ -128,7 +128,8 @@
                 </g:FlowPanel>
 
                 <g:FlowPanel ui:field="kvmPanel" visible="false" addStyleNames="{style.kvmSectionStyle}">
-                    <ge:StringEntityModelTextBoxEditor ui:field="kvmUriEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+                    <w:EntityModelWidgetWithInfo ui:field="kvmUriWithInfo" addStyleNames="{style.sourcePropertyStyle}"/>
+					<ge:EntityModelCheckBoxEditor ui:field="kvmRequiresAuthenticationEditor" addStyleNames="{style.checkBoxSourcePropertyStyle}" />
                     <ge:StringEntityModelTextBoxEditor ui:field="kvmUsernameEditor" addStyleNames="{style.sourcePropertyStyle}"/>
                     <ge:StringEntityModelPasswordBoxEditor ui:field="kvmPasswordEditor" addStyleNames="{style.sourcePropertyStyle}"/>
                     <e:ListModelListBoxEditor ui:field="kvmProxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>

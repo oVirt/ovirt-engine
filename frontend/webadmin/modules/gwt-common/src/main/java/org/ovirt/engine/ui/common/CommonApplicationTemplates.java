@@ -152,6 +152,15 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             "i.e.: xen+ssh://root@xen.example.com?<br>no_verify=1</i>")
     SafeHtml xenUriInfo();
 
+    @Template("<i>Any valid libvirt URI format is allowed for KVM URI. <br />" +
+            "Examples: <br />" +
+            "qemu+tcp://&lthostname&gt/system <br />" +
+            "qemu+ssh://root@&lthostname&gt/path <br />" +
+            "Where '&lthostname&gt' is the host of the hypervisor. <br /> <br />" +
+            "Please see libvirt documentation for more information on libvirt URI formats and authentication.</i>")
+
+    SafeHtml kvmUriInfo();
+
     @Template("This is not the entire kernel command line. Parameters listed below will be added to default kernel parameters.")
     SafeHtml kernelCmdlineInfoIcon();
 
