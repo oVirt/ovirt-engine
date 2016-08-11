@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandActionState;
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -23,9 +23,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdate
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
@@ -35,13 +32,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +57,11 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     private static final String HTTP_SCHEME = "http://";
     private static final String HTTPS_SCHEME = "https://";
     private static final String IMAGES_PATH = "/images";
+
+    @Inject
+    private ImageTransferUpdater imageTransferUpdater;
+    @Inject
+    protected ImageTransferDao imageTransferDao;
 
     // Container for context needed by state machine handlers
     class StateContext {
@@ -560,77 +558,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     }
 
     private ImageTransfer updateEntity(ImageTransferUpdates updates) {
-        return updateEntity(updates, getCommandId());
-    }
-
-    public static ImageTransfer updateEntity(ImageTransferUpdates updates, Guid commandId) {
-        // TODO this lock might not be enough; analyze possible concurrent calls
-        LockManager lockManager = LockManagerFactory.getLockManager();
-        EngineLock lock = getEntityUpdateLock(commandId);
-        lockManager.acquireLockWait(lock);
-
-        ImageTransfer entity = DbFacade.getInstance().getImageTransferDao().get(commandId);
-        if (entity == null) {
-            staticLog.error("Attempt to update non-existent ImageUpload entity");
-            return null;
-        }
-
-        entity.setLastUpdated(new Date());
-
-        if (updates != null) {
-            if (updates.getId() != null) {
-                entity.setId(updates.getId());
-            }
-            if (updates.getPhase() != null) {
-                String disk = entity.getDiskId() != null
-                        ? String.format(" (image %s)", entity.getDiskId().toString()) : "";
-                String message = entity.getMessage() != null
-                        ? String.format(" (message: '%s')", entity.getMessage()) : "";
-                staticLog.info("Updating image upload {}{} phase to {}{}",
-                        commandId, disk, updates.getPhase(), message);
-                entity.setPhase(updates.getPhase());
-            }
-            if (updates.getMessage() != null) {
-                entity.setMessage(updates.getMessage());
-            }
-
-            if (updates.getVdsId() != null) {
-                entity.setVdsId(updates.getVdsId());
-            }
-            if (updates.getDiskId() != null) {
-                entity.setDiskId(updates.getDiskId());
-            }
-            if (updates.getImagedTicketId() != null || updates.isClearResourceId()) {
-                entity.setImagedTicketId(updates.getImagedTicketId());
-            }
-            if (updates.getProxyUri() != null) {
-                entity.setProxyUri(updates.getProxyUri());
-            }
-            if (updates.getSignedTicket() != null) {
-                entity.setSignedTicket(updates.getSignedTicket());
-            }
-
-            if (updates.getBytesSent() != null) {
-                entity.setBytesSent(updates.getBytesSent());
-            }
-            if (updates.getBytesTotal() != null) {
-                entity.setBytesTotal(updates.getBytesTotal());
-            }
-        }
-
-        DbFacade.getInstance().getImageTransferDao().update(entity);
-
-        lockManager.releaseLock(lock);
-        return entity;
-    }
-
-    private static EngineLock getEntityUpdateLock(Guid commandId) {
-        Map<String, Pair<String, String>> lockMap =
-                Collections.singletonMap(commandId.toString(),
-                        LockMessagesMatchUtil.makeLockingPair(
-                                LockingGroup.DISK,
-                                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        return new EngineLock(lockMap);
+        return imageTransferUpdater.updateEntity(updates, getCommandId());
     }
 
 

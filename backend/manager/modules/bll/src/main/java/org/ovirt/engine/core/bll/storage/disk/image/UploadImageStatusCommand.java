@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -13,8 +15,15 @@ import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 
 public class UploadImageStatusCommand<T extends UploadImageStatusParameters> extends CommandBase<T> {
+
+    @Inject
+    private ImageTransferDao imageTransferDao;
+
+    @Inject
+    private ImageTransferUpdater imageTransferUpdater;
 
     public UploadImageStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -42,7 +51,7 @@ public class UploadImageStatusCommand<T extends UploadImageStatusParameters> ext
 
         if (entity != null) {
             // Always update; this serves as a keepalive
-            entity = UploadImageCommand.updateEntity(getParameters().getUpdates(), entity.getId());
+            entity = imageTransferUpdater.updateEntity(getParameters().getUpdates(), entity.getId());
         } else {
             // Missing entity; this isn't unusual as the UI will poll until the entity is gone
             // due to upload completion or failure.  Instead of an error, we'll return an entity
