@@ -169,6 +169,10 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
         int startRow = originSelectedRow < selectedRow ? originSelectedRow : selectedRow;
         int endRow = originSelectedRow > selectedRow ? originSelectedRow : selectedRow;
 
+        int lastIndex = dataDisplay.getVisibleItems().size() - 1;
+        //Adjust the end row in cases where multiple items were deleted
+        endRow = endRow > lastIndex ? lastIndex : endRow;
+
         // Clear current selection and select row in range
         clearSelection();
         for (int row = startRow; row <= endRow; row++) {
