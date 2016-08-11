@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -12,8 +14,12 @@ import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 
 public class UploadImageStatusCommand<T extends UploadImageStatusParameters> extends CommandBase<T> {
+
+    @Inject
+    private ImageTransferDao imageTransferDao;
 
     public UploadImageStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -34,9 +40,9 @@ public class UploadImageStatusCommand<T extends UploadImageStatusParameters> ext
 
         ImageTransfer entity;
         if (getParameters().getUploadImageCommandId() != null) {
-            entity = getDbFacade().getImageTransferDao().get(getParameters().getUploadImageCommandId());
+            entity = imageTransferDao.get(getParameters().getUploadImageCommandId());
         } else {
-            entity = getDbFacade().getImageTransferDao().getByDiskId(getParameters().getDiskId());
+            entity = imageTransferDao.getByDiskId(getParameters().getDiskId());
         }
 
         if (entity != null) {
