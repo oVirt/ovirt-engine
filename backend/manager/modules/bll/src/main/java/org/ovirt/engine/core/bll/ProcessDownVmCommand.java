@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
     @Inject
     private SnapshotsManager snapshotsManager;
+
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     private VmPool vmPoolCached;
 
@@ -121,6 +126,14 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             Guid alternativeHostsList = vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVdsList().get(0) : null;
             refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
         }
+
+        clearVmNumaNodesPinning();
+    }
+
+    private void clearVmNumaNodesPinning() {
+        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(getVmId());
+        vmNumaNodes.forEach(node -> node.getVdsNumaNodeList().clear());
+        vmNumaNodeDao.massUpdateVmNumaNodeRuntimePinning(vmNumaNodes);
     }
 
     private boolean releaseUsedHostDevices() {

@@ -1,18 +1,13 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +17,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
     @Inject
     private VmDynamicDao vmDynamicDao;
-    @Inject
-    private VmNumaNodeDao vmNumaNodeDao;
 
     public DestroyVmVDSCommand(P parameters) {
         super(parameters);
@@ -34,7 +27,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         resourceManager.removeAsyncRunningVm(getParameters().getVmId());
 
         VmDynamic curVm = vmDynamicDao.get(getParameters().getVmId());
-        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(curVm.getId());
 
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(
                 VDSCommandType.Destroy,
@@ -46,14 +38,8 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             }
 
             changeStatus(getParameters(), curVm);
-
             curVm.setStopReason(getParameters().getReason());
-            TransactionSupport.executeInNewTransaction(() -> {
-                vmManager.update(curVm);
-                vmNumaNodes.forEach(node -> node.getVdsNumaNodeList().clear());
-                vmNumaNodeDao.massUpdateVmNumaNodeRuntimePinning(vmNumaNodes);
-                return null;
-            });
+            vmManager.update(curVm);
             getVDSReturnValue().setReturnValue(curVm.getStatus());
         } else if (vdsReturnValue.getExceptionObject() != null) {
             log.error("Failed to destroy VM '{}' in VDS = '{}' , error = '{}'",
