@@ -2,12 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import java.util.EnumSet;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Version;
 
+@Singleton
 public class SuspendedVMClusterEditChecker implements ClusterEditChecker<VM> {
 
     @Override
@@ -30,10 +33,5 @@ public class SuspendedVMClusterEditChecker implements ClusterEditChecker<VM> {
     @Override
     public String getMainMessage() {
         return EngineMessage.CLUSTER_WARN_VM_DUE_TO_UNSUPPORTED_MEMORY_RESTORE.name();
-    }
-
-    @Override
-    public String getDetailMessage(VM entity) {
-        return null;
     }
 }

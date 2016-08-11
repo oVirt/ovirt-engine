@@ -36,5 +36,7 @@ interface ClusterEditChecker<T> {
      * In case {@code entity} fails this check, returns optional detail text for this entity.
      * @return String detailing reasons of failing the check for given entity. {@code null} if no detail is available.
      */
-    String getDetailMessage(T entity);
+    default String getDetailMessage(T entity) {
+        return null;
+    }
 }

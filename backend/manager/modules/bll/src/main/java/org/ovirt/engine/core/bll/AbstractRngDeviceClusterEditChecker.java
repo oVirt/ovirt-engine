@@ -21,9 +21,4 @@ public abstract class AbstractRngDeviceClusterEditChecker implements ClusterEdit
     public boolean check(VDS vds) {
         return vds.getSupportedRngSources().contains(source);
     }
-
-    @Override
-    public String getDetailMessage(VDS entity) {
-        return null;
-    }
 }
