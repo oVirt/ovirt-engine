@@ -120,8 +120,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         final NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
-        final UpdateNetworkValidator validatorOld =
-                new UpdateNetworkValidator(getOldNetwork(), vmNetworkInterfaceDao, clusterDao, vmDao);
+        final UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork(), vmDao);
         return validate(validatorNew.dataCenterExists())
                 && validate(validatorNew.stpForVmNetworkOnly())
                 && validate(validatorNew.mtuValid())
@@ -191,18 +190,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     protected static class UpdateNetworkValidator extends NetworkValidator {
 
-        private final VmNetworkInterfaceDao vmNetworkInterfaceDao;
-        private final ClusterDao clusterDao;
-
         public UpdateNetworkValidator(
                 Network network,
-                VmNetworkInterfaceDao vmNetworkInterfaceDao,
-                ClusterDao clusterDao,
                 VmDao vmDao) {
             super(vmDao, network);
-
-            this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
-            this.clusterDao = clusterDao;
         }
 
         public ValidationResult notRenamingLabel(String newLabel) {
