@@ -106,6 +106,9 @@ public class ResourceManager implements BackendService {
     @Inject
     Instance<VdsCommandExecutor> commandExecutor;
 
+    @Inject
+    private VdsManagerFactory vdsManagerFactory;
+
     private ResourceManager() {
         this.parallelism = Config.getValue(ConfigValues.EventProcessingPoolSize);
     }
@@ -211,12 +214,7 @@ public class ResourceManager implements BackendService {
     }
 
     public void addVds(VDS vds, boolean isInternal) {
-        VdsManager vdsManager = new VdsManager(
-                vds,
-                auditLogDirector,
-                this,
-                dbFacade,
-                monitoringStrategyFactory);
+        VdsManager vdsManager = vdsManagerFactory.create(vds, this);
         if (isInternal) {
             VDSStatus status = vds.getStatus();
             switch (vds.getStatus()) {

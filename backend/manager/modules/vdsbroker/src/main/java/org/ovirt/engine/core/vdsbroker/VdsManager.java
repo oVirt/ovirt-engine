@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -46,12 +49,17 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
@@ -74,13 +82,57 @@ import org.slf4j.LoggerFactory;
 public class VdsManager {
     private static Logger log = LoggerFactory.getLogger(VdsManager.class);
     private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<>();
+
+    private final ResourceManager resourceManager;
+
+    @Inject
+    private LockManager lockManager;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private MonitoringStrategyFactory monitoringStrategyFactory;
+
+    @Inject
+    private RefresherFactory refresherFactory;
+
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
+
+    @Inject
+    private DbFacade dbFacade;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+
+    @Inject
+    private VdsStatisticsDao vdsStatisticsDao;
+
+    @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
+
+    @Inject
+    private SupportedHostFeatureDao hostFeatureDao;
+
+    @Inject
+    private HostNetworkTopologyPersister hostNetworkTopologyPersister;
+
     private final Object lockObj = new Object();
     private final AtomicInteger failedToRunVmAttempts;
     private final AtomicInteger unrespondedAttempts;
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
     private VDS cachedVds;
-    private final AuditLogDirector auditLogDirector;
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
@@ -94,8 +146,6 @@ public class VdsManager {
     private HostMonitoring hostMonitoring;
     private boolean monitoringNeeded;
     private List<VmDynamic> lastVmsList = Collections.emptyList();
-    private final ResourceManager resourceManager;
-    private final DbFacade dbFacade;
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
     private VmStatsRefresher vmsRefresher;
     protected int refreshIteration;
@@ -104,23 +154,21 @@ public class VdsManager {
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
 
-    public VdsManager(VDS vds,
-            AuditLogDirector auditLogDirector,
-            ResourceManager resourceManager,
-            DbFacade dbFacade,
-            MonitoringStrategyFactory monitoringStrategyFactory) {
+    VdsManager(VDS vds, ResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
         HOST_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
         NUMBER_HOST_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
         refreshIteration = NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1;
-        this.resourceManager = resourceManager;
-        this.dbFacade = dbFacade;
-        this.auditLogDirector = auditLogDirector;
         log.info("Entered VdsManager constructor");
         cachedVds = vds;
         vdsId = vds.getId();
-        monitoringStrategy = monitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         unrespondedAttempts = new AtomicInteger();
         failedToRunVmAttempts = new AtomicInteger();
+    }
+
+    @PostConstruct
+    private void init() {
+        monitoringStrategy = monitoringStrategyFactory.getMonitoringStrategyForVds(cachedVds);
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
                 new Pair<>(LockingGroup.VDS_INIT.name(), "")), null);
         registeredJobs = new ArrayList<>();
@@ -185,11 +233,11 @@ public class VdsManager {
     }
 
     private RefresherFactory getRefresherFactory() {
-        return Injector.get(RefresherFactory.class);
+        return refresherFactory;
     }
 
     private SchedulerUtil getSchedulUtil() {
-        return Injector.get(SchedulerUtilQuartzImpl.class);
+        return schedulerUtil;
     }
 
     private void initVdsBroker() {
@@ -212,7 +260,7 @@ public class VdsManager {
 
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer() {
-        if (LockManagerFactory.getLockManager().acquireLock(monitoringLock).getFirst()) {
+        if (lockManager.acquireLock(monitoringLock).getFirst()) {
             try {
                 setIsSetNonOperationalExecuted(false);
                 Guid storagePoolId = null;
@@ -282,13 +330,13 @@ public class VdsManager {
             } catch (Exception e) {
                 log.error("Timer update runtime info failed. Exception:", e);
             } finally {
-                LockManagerFactory.getLockManager().releaseLock(monitoringLock);
+                lockManager.releaseLock(monitoringLock);
             }
         }
     }
 
     private void refreshCachedVds() {
-        cachedVds = dbFacade.getVdsDao().get(getVdsId());
+        cachedVds = vdsDao.get(getVdsId());
         setMonitoringNeeded();
     }
 
@@ -317,7 +365,7 @@ public class VdsManager {
         synchronized (getLockObj()) {
             if (updateAvailable != cachedVds.isUpdateAvailable()) {
                 cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
-                dbFacade.getVdsDynamicDao().updateUpdateAvailable(cachedVds.getId(), updateAvailable);
+                vdsDynamicDao.updateUpdateAvailable(cachedVds.getId(), updateAvailable);
             }
         }
     }
@@ -375,7 +423,7 @@ public class VdsManager {
     private void handleVdsRecoveringException(VDSRecoveringException ex) {
         if (cachedVds.getStatus() != VDSStatus.Initializing && cachedVds.getStatus() != VDSStatus.NonOperational) {
             setStatus(VDSStatus.Initializing, cachedVds);
-            dbFacade.getVdsDynamicDao().updateStatus(cachedVds.getId(), VDSStatus.Initializing);
+            vdsDynamicDao.updateStatus(cachedVds.getId(), VDSStatus.Initializing);
             AuditLogableBase logable = new AuditLogableBase(cachedVds.getId());
             logable.addCustomValue("ErrorMessage", ex.getMessage());
             logable.updateCallStackFromThrowable(ex);
@@ -396,7 +444,7 @@ public class VdsManager {
     @OnTimerMethodAnnotation("onTimerHandleVdsRecovering")
     public void onTimerHandleVdsRecovering() {
         recoveringJobIdMap.remove(getVdsId());
-        VDS vds = dbFacade.getVdsDao().get(getVdsId());
+        VDS vds = vdsDao.get(getVdsId());
         if (vds.getStatus() == VDSStatus.Initializing) {
             try {
                 resourceManager.getEventListener().vdsNonOperational(vds.getId(),
@@ -419,21 +467,21 @@ public class VdsManager {
      * Save dynamic data to cache and DB.
      */
     public void updateDynamicData(VdsDynamic dynamicData) {
-        dbFacade.getVdsDynamicDao().updateIfNeeded(dynamicData);
+        vdsDynamicDao.updateIfNeeded(dynamicData);
         cachedVds.setDynamicData(dynamicData);
     }
 
     public void updatePartialDynamicData(NonOperationalReason nonOperationalReason, String maintenanceReason) {
         cachedVds.getDynamicData().setNonOperationalReason(nonOperationalReason);
         cachedVds.getDynamicData().setMaintenanceReason(maintenanceReason);
-        dbFacade.getVdsDynamicDao().updateStatusAndReasons(cachedVds.getDynamicData());
+        vdsDynamicDao.updateStatusAndReasons(cachedVds.getDynamicData());
     }
 
     /**
      * Save statistics data to cache and DB.
      */
     public void updateStatisticsData(VdsStatistics statisticsData) {
-        dbFacade.getVdsStatisticsDao().update(statisticsData);
+        vdsStatisticsDao.update(statisticsData);
         cachedVds.setStatisticsData(statisticsData);
     }
 
@@ -451,7 +499,7 @@ public class VdsManager {
         synchronized (getLockObj()) {
             cachedVds.setPendingVcpusCount(pendingCpuCount);
             cachedVds.setPendingVmemSize(pendingMemory);
-            HostMonitoring.refreshCommitedMemory(cachedVds, dbFacade.getVmDynamicDao().getAllRunningForVds(getVdsId()), resourceManager);
+            HostMonitoring.refreshCommitedMemory(cachedVds, getVmDynamicDao().getAllRunningForVds(getVdsId()), resourceManager);
             updateDynamicData(cachedVds.getDynamicData());
         }
     }
@@ -468,7 +516,7 @@ public class VdsManager {
         final List<VdsNumaNode> numaNodesToUpdate = new ArrayList<>();
         final List<Guid> numaNodesToRemove = new ArrayList<>();
 
-        List<VdsNumaNode> dbVdsNumaNodes = dbFacade.getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vds.getId());
+        List<VdsNumaNode> dbVdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vds.getId());
         for (VdsNumaNode node : vds.getNumaNodeList()) {
             VdsNumaNode searchNode = NumaUtils.getVdsNumaNodeByIndex(dbVdsNumaNodes, node.getIndex());
             if (searchNode != null) {
@@ -489,13 +537,13 @@ public class VdsManager {
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
                 () -> {
                     if (!numaNodesToRemove.isEmpty()) {
-                        dbFacade.getVdsNumaNodeDao().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
+                        vdsNumaNodeDao.massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
                     }
                     if (!numaNodesToUpdate.isEmpty()) {
-                        dbFacade.getVdsNumaNodeDao().massUpdateNumaNode(numaNodesToUpdate);
+                        vdsNumaNodeDao.massUpdateNumaNode(numaNodesToUpdate);
                     }
                     if (!numaNodesToSave.isEmpty()) {
-                        dbFacade.getVdsNumaNodeDao().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
+                        vdsNumaNodeDao.massSaveNumaNode(numaNodesToSave, vds.getId(), null);
                     }
                     return null;
                 });
@@ -531,7 +579,7 @@ public class VdsManager {
             }
 
             if (vds == null) {
-                vds = dbFacade.getVdsDao().get(getVdsId());
+                vds = vdsDao.get(getVdsId());
             }
             if (vds.getStatus() != status) {
                 if (status == VDSStatus.PreparingForMaintenance) {
@@ -593,14 +641,14 @@ public class VdsManager {
      */
     @OnTimerMethodAnnotation("recoverFromError")
     public void recoverFromError() {
-        VDS vds = dbFacade.getVdsDao().get(getVdsId());
+        VDS vds = vdsDao.get(getVdsId());
 
         /**
          * Move cachedVds to Up status from error
          */
         if (vds != null && vds.getStatus() == VDSStatus.Error) {
             setStatus(VDSStatus.Up, vds);
-            dbFacade.getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
+            vdsDynamicDao.updateStatus(getVdsId(), VDSStatus.Up);
             log.info("Settings host '{}' to up after {} failed attempts to run a VM",
                     vds.getName(),
                     failedToRunVmAttempts);
@@ -705,7 +753,7 @@ public class VdsManager {
             if (oldStatus != VDSStatus.Up) {
                 // persist to db the host's cpu_flags.
                 // TODO this needs to be revisited - either all the logic is in-memory or based on db
-                dbFacade.getVdsDynamicDao().updateCpuFlags(vds.getId(), vds.getCpuFlags());
+                vdsDynamicDao.updateCpuFlags(vds.getId(), vds.getCpuFlags());
                 processHostFeaturesReported(vds);
                 monitoringStrategy.processHardwareCapabilities(vds);
             }
@@ -729,7 +777,6 @@ public class VdsManager {
     }
 
     private void processHostFeaturesReported(VDS host) {
-        SupportedHostFeatureDao hostFeatureDao = DbFacade.getInstance().getSupportedHostFeatureDao();
         Set<String> supportedHostFeatures = hostFeatureDao.getSupportedHostFeaturesByHostId(host.getId());
         Set<String> featuresReturnedByVdsCaps = new HashSet<>(host.getAdditionalFeatures());
         host.getAdditionalFeatures().removeAll(supportedHostFeatures);
@@ -743,7 +790,7 @@ public class VdsManager {
     }
 
     private HostNetworkTopologyPersister getHostNetworkTopologyPersister() {
-        return Injector.get(HostNetworkTopologyPersister.class);
+        return hostNetworkTopologyPersister;
     }
 
     private long calcTimeoutToFence(int vmCount, VdsSpmStatus spmStatus) {
@@ -959,7 +1006,7 @@ public class VdsManager {
     }
 
     private VmDynamicDao getVmDynamicDao() {
-        return dbFacade.getInstance().getVmDynamicDao();
+        return vmDynamicDao;
     }
 
     private void destroyVmOnDestination(final VM vm) {
@@ -983,8 +1030,8 @@ public class VdsManager {
     }
 
     private List<VM> getVmsToMoveToUnknown() {
-        List<VM> vmList = dbFacade.getVmDao().getAllRunningForVds(getVdsId());
-        List<VM> migratingVms = dbFacade.getVmDao().getAllMigratingToHost(getVdsId());
+        List<VM> vmList = vmDao.getAllRunningForVds(getVdsId());
+        List<VM> migratingVms = vmDao.getAllMigratingToHost(getVdsId());
         for (VM incomingVm : migratingVms) {
             if (incomingVm.getStatus() == VMStatus.MigratingTo) {
                 // this VM is finished the migration handover and is running on this host now

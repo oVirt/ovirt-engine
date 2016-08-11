@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -43,7 +44,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     private final VmDynamicDao vmDynamicDao;
     private final InterfaceDao interfaceDao;
     private final NetworkDao networkDao;
-    private final ResourceManager resourceManager;
+    private final Instance<ResourceManager> resourceManager;
     private final ManagementNetworkUtil managementNetworkUtil;
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private final NetworkAttachmentDao networkAttachmentDao;
@@ -54,7 +55,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                      InterfaceDao interfaceDao,
                                      NetworkAttachmentDao networkAttachmentDao,
                                      NetworkDao networkDao,
-                                     ResourceManager resourceManager,
+                                     Instance<ResourceManager> resourceManager,
                                      NetworkImplementationDetailsUtils networkImplementationDetailsUtils,
                                      ManagementNetworkUtil managementNetworkUtil) {
         Validate.notNull(networkDao, "networkAttachmentDao can not be null");
@@ -315,6 +316,6 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     }
 
     private void setNonOperational(VDS host, NonOperationalReason reason, Map<String, String> customLogValues) {
-        resourceManager.getEventListener().vdsNonOperational(host.getId(), reason, true, Guid.Empty, customLogValues);
+        resourceManager.get().getEventListener().vdsNonOperational(host.getId(), reason, true, Guid.Empty, customLogValues);
     }
 }
