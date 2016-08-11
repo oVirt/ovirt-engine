@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -65,6 +67,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     private static final String HTTPS_SCHEME = "https://";
     private static final String IMAGES_PATH = "/images";
 
+    @Inject
+    protected ImageTransferDao imageTransferDao;
+
     // Container for context needed by state machine handlers
     class StateContext {
         ImageTransfer entity;
@@ -84,7 +89,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         entity.setPhase(ImageTransferPhase.INITIALIZING);
         entity.setLastUpdated(new Date());
         entity.setBytesTotal(getParameters().getUploadSize());
-        getImageTransferDao().save(entity);
+        imageTransferDao.save(entity);
 
         log.info("Creating {} image", getUploadType());
         createImage();
@@ -94,7 +99,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
-        ImageTransfer entity = getImageTransferDao().get(getCommandId());
+        ImageTransfer entity = imageTransferDao.get(getCommandId());
         if (entity == null || entity.getPhase() == null) {
             log.error("Image Upload status entity corrupt or missing from database"
                     + " for image transfer command '{}'", getCommandId());
@@ -661,11 +666,6 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         return HTTPS_SCHEME + daemonHostname + ":" + port;
     }
 
-    protected ImageTransferDao getImageTransferDao() {
-        return getDbFacade().getImageTransferDao();
-    }
-
-
     protected void setAuditLogTypeFromPhase(ImageTransferPhase phase) {
         if (getParameters().getAuditLogType() != null) {
             // Some flows, e.g. cancellation, may set the log type more than once.
@@ -711,7 +711,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     public void onSucceeded() {
         updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
         log.debug("Removing ImageUpload id {}", getCommandId());
-        getImageTransferDao().remove(getCommandId());
+        imageTransferDao.remove(getCommandId());
         endSuccessfully();
         log.info("Successfully uploaded {} (command id '{}')",
                 getUploadDescription(), getCommandId());
@@ -720,7 +720,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     public void onFailed() {
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
         log.debug("Removing ImageUpload id {}", getCommandId());
-        getImageTransferDao().remove(getCommandId());
+        imageTransferDao.remove(getCommandId());
         endWithFailure();
         log.error("Failed to upload {} (command id '{}')",
                 getUploadDescription(), getCommandId());
