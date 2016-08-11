@@ -5,6 +5,8 @@ import static java.util.stream.Collectors.toMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.VdsArchitectureHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -24,9 +26,11 @@ import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -45,7 +49,20 @@ import org.slf4j.LoggerFactory;
 public class FenceAgentExecutor {
     private static final Logger log = LoggerFactory.getLogger(FenceAgentExecutor.class);
 
+    @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private ResourceManager resourceManager;
+
+    @Inject
+    private VdsSpmIdMapDao vdsSpmIdMapDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private GlusterServerDao glusterServerDao;
 
     private final VDS fencedHost;
     private final FencingPolicy fencingPolicy;
@@ -200,7 +217,7 @@ public class FenceAgentExecutor {
             }
             if (fencedHost.getClusterSupportsGlusterService() && (fencingPolicy.isSkipFencingIfGlusterBricksUp()
                     || fencingPolicy.isSkipFencingIfGlusterQuorumNotMet())) {
-                GlusterServer glusterServer = getDbFacade().getGlusterServerDao().getByServerId(fencedHost.getId());
+                GlusterServer glusterServer = glusterServerDao.getByServerId(fencedHost.getId());
                 if (glusterServer != null) {
                     map.put(VdsProperties.GLUSTER_SERVER_UUID, glusterServer.getGlusterServerUuid().toString());
                     if (fencingPolicy.isSkipFencingIfGlusterBricksUp()) {
@@ -220,8 +237,8 @@ public class FenceAgentExecutor {
      */
     protected Map<Guid, Integer> createStorageDomainHostIdMap() {
         if (fencingPolicy.isSkipFencingIfSDActive()) {
-            VdsSpmIdMap hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(fencedHost.getId());
-            return getDbFacade().getStorageDomainDao().getAllForStoragePool(fencedHost.getStoragePoolId()).stream()
+            VdsSpmIdMap hostIdRecord = vdsSpmIdMapDao.get(fencedHost.getId());
+            return storageDomainDao.getAllForStoragePool(fencedHost.getStoragePoolId()).stream()
                     .filter(sd -> sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Master
                             || sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Data)
                     .collect(toMap(
@@ -277,21 +294,11 @@ public class FenceAgentExecutor {
         return architectureType;
     }
 
-    // TODO Investigate if injection is possible
     protected ResourceManager getResourceManager() {
-        return ResourceManager.getInstance();
+        return resourceManager;
     }
 
-    // TODO Investigate if injection is possible
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
-    }
-
-    // TODO Investigate if injection is possible
     protected AuditLogDirector getAuditLogDirector() {
-        if (auditLogDirector == null) {
-            auditLogDirector = new AuditLogDirector();
-        }
         return auditLogDirector;
     }
 }

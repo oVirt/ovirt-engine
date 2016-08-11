@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,9 +100,7 @@ public class SingleAgentFenceActionExecutor implements FenceActionExecutor{
      * Returns new instance of {@link FenceAgentExecutor}
      */
     protected FenceAgentExecutor createAgentExecutor() {
-        return new FenceAgentExecutor(
-                fencedHost,
-                fencingPolicy);
+        return Injector.injectMembers(new FenceAgentExecutor(fencedHost, fencingPolicy));
     }
 
     /**
