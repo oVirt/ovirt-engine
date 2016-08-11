@@ -64,6 +64,9 @@ public class FenceAgentExecutor {
     @Inject
     private GlusterServerDao glusterServerDao;
 
+    @Inject
+    private VdsArchitectureHelper vdsArchitectureHelper;
+
     private final VDS fencedHost;
     private final FencingPolicy fencingPolicy;
     private FenceProxyLocator proxyLocator;
@@ -289,7 +292,7 @@ public class FenceAgentExecutor {
 
     protected ArchitectureType getArchitectureType() {
         if (architectureType == null) {
-            architectureType = new VdsArchitectureHelper().getArchitecture(fencedHost.getStaticData());
+            architectureType = vdsArchitectureHelper.getArchitecture(fencedHost.getStaticData());
         }
         return architectureType;
     }
