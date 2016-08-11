@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -101,7 +103,6 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -127,6 +128,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
     private MacPool macPool;
+
+    @Inject
+    private InClusterUpgradeValidator clusterUpgradeValidator;
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);
@@ -697,8 +701,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (getCluster().isInUpgradeMode()) {
             getParameters().getVm().setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
-            if (!validate(Injector.get(InClusterUpgradeValidator.class)
-                    .isVmReadyForUpgrade(getParameters().getVm()))) {
+            if (!validate(getClusterUpgradeValidator().isVmReadyForUpgrade(getParameters().getVm()))) {
                 return false;
             }
         }
@@ -1679,6 +1682,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Override
     public CommandCallback getCallback() {
         return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+    }
+
+    protected InClusterUpgradeValidator getClusterUpgradeValidator() {
+        return clusterUpgradeValidator;
     }
 
 }

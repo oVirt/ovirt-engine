@@ -182,7 +182,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         injectorRule.bind(DbFacade.class, dbFacade);
-        injectorRule.bind(InClusterUpgradeValidator.class, inClusterUpgradeValidator);
 
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
 
@@ -236,6 +235,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
         doReturn(numaValidator).when(command).getNumaValidator();
+        doReturn(inClusterUpgradeValidator).when(command).getClusterUpgradeValidator();
     }
 
     @Test

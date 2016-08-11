@@ -85,7 +85,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
@@ -103,6 +102,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmDevicesMonitoring vmDevicesMonitoring;
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private InClusterUpgradeValidator clusterUpgradeValidator;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -899,8 +900,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (getCluster().isInUpgradeMode()) {
             getParameters().getVm().setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
-            if (!validate(Injector.get(InClusterUpgradeValidator.class)
-                    .isVmReadyForUpgrade(getParameters().getVm()))) {
+            if (!validate(getClusterUpgradeValidator().isVmReadyForUpgrade(getParameters().getVm()))) {
                 return false;
             }
         }
@@ -1171,6 +1171,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         public void onRollback() {
             // No notification is needed
         }
+    }
+
+    protected InClusterUpgradeValidator getClusterUpgradeValidator() {
+        return clusterUpgradeValidator;
     }
 
 }
