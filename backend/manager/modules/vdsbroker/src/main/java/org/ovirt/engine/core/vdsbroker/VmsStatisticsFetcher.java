@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class VmsStatisticsFetcher extends VmsListFetcher {
     private static final Logger log = LoggerFactory.getLogger(VmsStatisticsFetcher.class);
+    private static final Map<Guid, Integer> vdsIdToNumOfVms = new HashMap<>();
     private StringBuilder logBuilder;
 
 
@@ -44,11 +46,18 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
             logBuilder = new StringBuilder();
         }
         super.onFetchVms();
-        log.info("Fetched {} VMs from VDS '{}'",
-                vdsmVms.size(),
-                vdsManager.getVdsId());
+        logNumOfVmsIfChanged();
         if (log.isDebugEnabled()) {
             log.debug(logBuilder.toString());
+        }
+    }
+
+    private void logNumOfVmsIfChanged() {
+        int numOfVms = vdsmVms.size();
+        Guid vdsId = vdsManager.getVdsId();
+        Integer prevNumOfVms = vdsIdToNumOfVms.put(vdsId, numOfVms);
+        if (prevNumOfVms == null || prevNumOfVms.intValue() != numOfVms) {
+            log.info("Fetched {} VMs from VDS '{}'", numOfVms, vdsId);
         }
     }
 
