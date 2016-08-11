@@ -26,21 +26,16 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     protected void executeVmCommand() {
         resourceManager.removeAsyncRunningVm(getParameters().getVmId());
 
-        VmDynamic curVm = vmDynamicDao.get(getParameters().getVmId());
-
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(
                 VDSCommandType.Destroy,
                 getParameters());
 
         if (vdsReturnValue.getSucceeded()) {
-            if (curVm.getStatus() == VMStatus.Down) {
-                getVDSReturnValue().setReturnValue(VMStatus.Down);
-            }
-
-            changeStatus(getParameters(), curVm);
-            curVm.setStopReason(getParameters().getReason());
-            vmManager.update(curVm);
-            getVDSReturnValue().setReturnValue(curVm.getStatus());
+            VmDynamic vm = vmDynamicDao.get(getParameters().getVmId());
+            changeStatus(vm);
+            vm.setStopReason(getParameters().getReason());
+            vmManager.update(vm);
+            getVDSReturnValue().setReturnValue(vm.getStatus());
         } else if (vdsReturnValue.getExceptionObject() != null) {
             log.error("Failed to destroy VM '{}' in VDS = '{}' , error = '{}'",
                     getParameters().getVmId(),
@@ -53,7 +48,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         }
     }
 
-    private void changeStatus(DestroyVmVDSCommandParameters parameters, VmDynamic curVm) {
+    private void changeStatus(VmDynamic curVm) {
         // do the state transition only if that VM is really running on SRC
         if (getParameters().getVdsId().equals(curVm.getRunOnVds())) {
             resourceManager.internalSetVmStatus(curVm, VMStatus.PoweringDown);
