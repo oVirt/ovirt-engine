@@ -36,6 +36,7 @@ public class StorageJobCallback extends CommandCallback {
         Guid vdsId = cmdParams.getVdsRunningOn();
         HostJobStatus jobStatus = null;
         VDS vds = getVdsDao().get(vdsId);
+
         if (vds.getStatus() == VDSStatus.Up) {
             try {
                 jobStatus = pollStorageJob(job, vdsId);
@@ -48,8 +49,8 @@ public class StorageJobCallback extends CommandCallback {
                 return;
             }
         } else {
-            log.warn("Can't poll the status of job '{}' as Host '{}' (id: '{}') isn't in status UP",
-                     job, vds.getName(), vds.getId());
+            log.warn("Command {} id: '{}': can't poll the job '{}' as host '{}' (id: '{}') isn't in status UP",
+                    commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
         }
 
         // We need to poll the entity if the host isn't up or if the job wasn't return from the job polling on vdsm
@@ -59,20 +60,19 @@ public class StorageJobCallback extends CommandCallback {
         }
 
         if (jobStatus == null) {
-            log.info("Couldn't get status of job '{}' running on Host '{}' of '{}' (id: '{}'), Assuming it's still " +
-                    "running", job, vdsId, commandEntity.getCommandType(), cmdId);
+            log.info("Command {} id: '{}': couldn't get the status of job '{}' on host '{}' (id: '{}'), assuming it's " +
+                    "still running",
+                    commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
             return;
         }
 
         if (jobStatus.isAlive()) {
-            log.info("Waiting on vdsm job: '{}' of '{}' (id: '{}') to complete",
-                    job,
-                    commandEntity.getCommandType(),
-                    cmdId);
+            log.info("Command {} id: '{}': waiting for job '{}' on host '{}' (id: '{}') to complete",
+                    commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
             return;
         }
 
-        log.info("Command '{}' id: '{}' job '{}' execution was completed with VDSM job status '{}'",
+        log.info("Command {} id: '{}': job '{}' execution was completed with VDSM job status '{}'",
                 commandEntity.getCommandType(), cmdId, job, jobStatus);
         CommandBase<?> command = getCommand(cmdId);
         CommandExecutionStatus status = CommandCoordinatorUtil.getCommandExecutionStatus(cmdId);
@@ -80,7 +80,7 @@ public class StorageJobCallback extends CommandCallback {
                 && jobStatus == HostJobStatus.done);
         command.setCommandStatus(command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
                 : CommandStatus.FAILED);
-        log.info("Command '{}' (id: '{}') execution was completed, the command status is '{}'",
+        log.info("Command {} id: '{}': execution was completed, the command status is '{}'",
                 command.getActionType(), command.getCommandId(), command.getCommandStatus());
     }
 
@@ -103,7 +103,7 @@ public class StorageJobCallback extends CommandCallback {
 
     private HostJobStatus pollEntityIfSupported(CommandBase<?> cmd) {
         if (!(cmd instanceof EntityPollingCommand)) {
-            log.error("Entity polling isn't supported for command '{}' (id: '{}'), will retry to poll the job soon",
+            log.error("Command {} id: '{}': entity polling isn't supported, will retry to poll the job soon",
                     cmd.getActionType(),
                     cmd.getCommandId());
             return null;
@@ -112,7 +112,7 @@ public class StorageJobCallback extends CommandCallback {
         try {
             return ((EntityPollingCommand) cmd).poll();
         } catch (Exception e) {
-            log.error("Failed to poll entity for command '{}' (id: '{}'), will retry soon",
+            log.error("Command {} id: '{}': failed to poll the command entity",
                     cmd.getActionType(),
                     cmd.getCommandId());
         }
