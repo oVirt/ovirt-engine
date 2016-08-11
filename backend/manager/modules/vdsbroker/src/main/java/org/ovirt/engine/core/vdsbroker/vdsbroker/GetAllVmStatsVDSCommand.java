@@ -4,16 +4,17 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 
 @Logged(executionLevel = LogLevel.DEBUG)
-public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VmStatsVdsBrokerCommand<P> {
+public class GetAllVmStatsVDSCommand<P extends VdsIdVDSCommandParametersBase> extends VmStatsVdsBrokerCommand<P> {
+
     public GetAllVmStatsVDSCommand(P parameters) {
-        super(parameters, parameters.getVds());
+        super(parameters);
     }
 
     @Override

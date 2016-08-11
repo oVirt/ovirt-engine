@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
     protected VDSReturnValue poll() {
         return getResourceManager().runVdsCommand(
                 VDSCommandType.GetAllVmStats,
-                new VdsIdAndVdsVDSCommandParametersBase(vdsManager.getCopyVds()));
+                new VdsIdVDSCommandParametersBase(vdsManager.getVdsId()));
     }
 
     @Override

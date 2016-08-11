@@ -107,7 +107,7 @@ public class VmsListFetcher {
             VDSReturnValue vmStats =
                     getResourceManager().runVdsCommand(
                             VDSCommandType.GetVmStats,
-                            new GetVmStatsVDSCommandParameters(vdsManager.getCopyVds(), vdsmVm.getVmDynamic().getId()));
+                            new GetVmStatsVDSCommandParameters(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId()));
             if (vmStats.getSucceeded()) {
                 changedVms.add(new Pair<>(dbVm, (VdsmVm) vmStats.getReturnValue()));
             } else {

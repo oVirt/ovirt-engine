@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -139,7 +140,7 @@ public class VmsListFetcherTest {
         if (data.vdsmVm() != null) {
             when(resourceManager.runVdsCommand(
                     eq(VDSCommandType.GetVmStats),
-                    any(VdsIdAndVdsVDSCommandParametersBase.class))).
+                    any(VdsIdVDSCommandParametersBase.class))).
                     thenReturn(getStatsReturnValue(data.vdsmVm()));
         }
     }

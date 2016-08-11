@@ -11,7 +11,6 @@ import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,8 +19,8 @@ import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
     protected VMInfoListReturnForXmlRpc vmListReturn;
 
-    protected VmStatsVdsBrokerCommand(P parameters, VDS vds) {
-        super(parameters, vds);
+    protected VmStatsVdsBrokerCommand(P parameters) {
+        super(parameters);
     }
 
     @Override
