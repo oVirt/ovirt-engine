@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -12,6 +14,13 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * Returns a list of all snapshots for a specified VM ID including configuration data.
  */
 public class GetAllVmSnapshotsFromConfigurationByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
+
+    @Inject
+    private SnapshotDao snapshotDao;
+
     public GetAllVmSnapshotsFromConfigurationByVmIdQuery(P parameters) {
         super(parameters);
     }
@@ -31,10 +40,10 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQuery<P extends IdQueryPara
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
+        return snapshotDao;
     }
 
     protected SnapshotVmConfigurationHelper getSnapshotVmConfigurationHelper() {
-        return new SnapshotVmConfigurationHelper();
+        return snapshotVmConfigurationHelper;
     }
 }

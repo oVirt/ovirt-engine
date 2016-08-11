@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -11,6 +13,12 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * This class implements the logic of the query responsible for getting a VM configuration by snapshot.
  */
 public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
+
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public GetVmConfigurationBySnapshotQuery(P parameters) {
         super(parameters);
@@ -38,11 +46,11 @@ public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> exte
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
+        return snapshotDao;
     }
 
     protected SnapshotVmConfigurationHelper getSnapshotVmConfigurationHelper() {
-        return new SnapshotVmConfigurationHelper();
+        return snapshotVmConfigurationHelper;
     }
 
 }

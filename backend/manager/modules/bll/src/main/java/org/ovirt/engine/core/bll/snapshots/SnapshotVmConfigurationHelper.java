@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -13,18 +16,32 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class SnapshotVmConfigurationHelper {
 
     private static final Logger log = LoggerFactory.getLogger(SnapshotVmConfigurationHelper.class);
+
+    @Inject
+    private SnapshotsManager snapshotsManager;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private SnapshotDao snapshotDao;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     /**
      * Creates a VM by a specified OVF string.
@@ -119,23 +136,23 @@ public class SnapshotVmConfigurationHelper {
     }
 
     public SnapshotsManager getSnapshotManager() {
-        return Injector.get(SnapshotsManager.class);
+        return snapshotsManager;
     }
 
     protected VmDao getVmDao() {
-        return DbFacade.getInstance().getVmDao();
+        return vmDao;
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+        return snapshotDao;
     }
 
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDao();
+        return vmNetworkInterfaceDao;
     }
 
     protected DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
+        return diskImageDao;
     }
 
 }

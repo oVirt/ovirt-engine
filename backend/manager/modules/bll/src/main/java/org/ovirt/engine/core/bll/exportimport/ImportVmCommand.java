@@ -100,6 +100,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Inject
     private VmNicMacsUtils vmNicMacsUtils;
 
+    @Inject
+    private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
+
     private List<DiskImage> imageList;
 
     private MacPool macPool;
@@ -915,7 +918,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private DiskImage createMemoryDisk(Snapshot snapshot) {
         List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
-        SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = new SnapshotVmConfigurationHelper();
         VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
                 snapshot.getVmConfiguration(),
                 snapshot.getVmId(), snapshot.getId());

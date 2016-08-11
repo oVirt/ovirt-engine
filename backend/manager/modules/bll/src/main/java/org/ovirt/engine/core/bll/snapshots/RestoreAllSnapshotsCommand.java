@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -71,6 +73,9 @@ import org.ovirt.engine.core.compat.Guid;
  * since this command can only handle the aforementioned cases.
  */
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements QuotaStorageDependent {
+
+    @Inject
+    private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     private final Set<Guid> snapshotsToRemove = new HashSet<>();
     private Snapshot snapshot;
@@ -378,7 +383,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         Snapshot previewedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
         if (previewedSnapshot != null) {
-            SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = new SnapshotVmConfigurationHelper();
             VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(
                     previewedSnapshot.getVmConfiguration(), previewedSnapshot.getVmId(), previewedSnapshot.getId());
             List<DiskImage> previewedImagesFromDB = getDiskImageDao().getAllSnapshotsForVmSnapshot(previewedSnapshot.getId());
