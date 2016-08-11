@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,11 +20,9 @@ public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
     protected void executeVdsBrokerCommand() {
         vmListReturn = getBroker().getAllVmStats();
         proceedProxyReturnValue();
-        Map<Guid, VdsmVm> returnVMs = new HashMap<>();
-        for (int idx = 0; idx < vmListReturn.infoList.length; ++idx) {
-            VdsmVm vmInternalData = createVdsmVm(vmListReturn.infoList[idx]);
-            returnVMs.put(vmInternalData.getVmDynamic().getId(), vmInternalData);
-        }
+        Map<Guid, VdsmVm> returnVMs = Arrays.stream(vmListReturn.infoList)
+                .map(this::createVdsmVm)
+                .collect(Collectors.toMap(vm -> vm.getVmDynamic().getId(), vm -> vm));
         setReturnValue(returnVMs);
     }
 
