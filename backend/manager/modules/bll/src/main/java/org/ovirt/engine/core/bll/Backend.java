@@ -128,11 +128,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     // If that is here in order to declare the dependency on BeanManager - that should be re-considered.
     private Injector injector;
     @Inject
+    private ServiceLoader serviceLoader;
+    @Inject
     private DbFacade dbFacade;
     @Inject @Any
     private Instance<SchedulerUtil> taskSchedulers;
-    @Inject @Any
-    private Instance<BackendService> services;
     @Inject
     private SessionDataContainer sessionDataContainer;
     @Inject
@@ -325,7 +325,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void loadService(Class<? extends BackendService> service) {
-        log.info("Start {} ", services.select(service).get());
+        serviceLoader.loadService(service);
     }
 
     /**

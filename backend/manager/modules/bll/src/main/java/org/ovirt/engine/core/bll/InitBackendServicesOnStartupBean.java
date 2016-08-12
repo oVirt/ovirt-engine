@@ -35,18 +35,18 @@ import org.slf4j.LoggerFactory;
 @Singleton
 @Startup
 @DependsOn({ "Backend"})
-public class InitBackendServicesOnStartupBean implements InitBackendServicesOnStartup{
+public class InitBackendServicesOnStartupBean implements InitBackendServicesOnStartup {
 
     private static final Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
-
-    @Inject
-    private Instance<BackendService> services;
 
     @Inject
     private Instance<SchedulingManager> schedulingManagerProvider;
 
     @Inject
     private SessionDataContainer sessionDataContainer;
+
+    @Inject
+    private ServiceLoader serviceLoader;
 
     /**
      * This method is called upon the bean creation as part
@@ -100,13 +100,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         }
     }
 
-    /**
-     * Load CDI beans of type {@code BackendService} by simply getting their reference from
-     * the bean manager. If the instance doesn't exist (which is the assumption) it will be created
-     * and post-constructed (using {@code @PostConstruct} annotated method)
-     * @param service a provider of {@code BackendService} instances. see {@linkplain Instance}
-     */
     private void loadService(Class<? extends BackendService> service) {
-        log.info("Start {} ", services.select(service).get());
+        serviceLoader.loadService(service);
     }
 }
