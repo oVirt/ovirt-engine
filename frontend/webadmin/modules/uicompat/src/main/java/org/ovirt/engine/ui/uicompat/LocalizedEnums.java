@@ -1077,23 +1077,23 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String GlusterGeoRepNonEligibilityReason___MASTER_VOLUME_SIZE_TO_BE_AVAILABLE();
 
-    String SizeUnit___BYTES();
+    String SizeConverter$SizeUnit___BYTES();
 
-    String SizeUnit___KiB();
+    String SizeConverter$SizeUnit___KiB();
 
-    String SizeUnit___MiB();
+    String SizeConverter$SizeUnit___MiB();
 
-    String SizeUnit___GiB();
+    String SizeConverter$SizeUnit___GiB();
 
-    String SizeUnit___TiB();
+    String SizeConverter$SizeUnit___TiB();
 
-    String SizeUnit___PiB();
+    String SizeConverter$SizeUnit___PiB();
 
-    String SizeUnit___EiB();
+    String SizeConverter$SizeUnit___EiB();
 
-    String SizeUnit___ZiB();
+    String SizeConverter$SizeUnit___ZiB();
 
-    String SizeUnit___YiB();
+    String SizeConverter$SizeUnit___YiB();
 
     String VmWatchdogType___i6300esb();
 
