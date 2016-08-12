@@ -14,7 +14,7 @@ public class BaseUtilsModule extends AbstractGinModule {
     protected void configure() {
         bind(ConsoleOptionsFrontendPersister.class).to(ConsoleOptionsFrontendPersisterImpl.class).in(Singleton.class);
         bind(ConsoleUtils.class).to(ConsoleUtilsImpl.class).in(Singleton.class);
-        bind(PluginActionButtonHandler.class).in(Singleton.class);
+        bind(PluginActionButtonHandler.class).asEagerSingleton();
     }
 
 }
