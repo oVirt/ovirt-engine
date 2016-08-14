@@ -25,7 +25,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.DataCenterResource;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3DataCenter;
 
 @Produces({"application/xml", "application/json"})
@@ -47,6 +49,19 @@ public class V3DataCenterServer extends V3Server<DataCenterResource> {
 
     @DELETE
     public Response remove() {
+        return adaptRemove(getDelegate()::remove);
+    }
+
+    @DELETE
+    @Consumes({"application/xml", "application/json"})
+    public Response remove(V3Action action) {
+        // In version 3 of the API it was possible to remove a data center adding the "force" attribute of the Action
+        // included in the request body. But in version 4 of the API body is forbidden for DELETE requests, so this
+        // isn't possible. In order to preserve backwards compatibility we need to take the attribute from the body
+        // and make it a request parameter.
+        if (action != null && action.isSetForce()) {
+            CurrentManager.get().getParameters().put("force", action.isForce().toString());
+        }
         return adaptRemove(getDelegate()::remove);
     }
 
