@@ -19,7 +19,7 @@
             bottom: 0px;
             position: absolute;
             overflow: auto;
-            max-height: 100px;
+            max-height: 200px;
 		}
 
         .warningPanel {
