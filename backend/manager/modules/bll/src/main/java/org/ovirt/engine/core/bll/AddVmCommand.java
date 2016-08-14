@@ -1169,9 +1169,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         getDiskCreationCommandType(),
                         buildDiskCreationParameters(image));
 
-                /**
-                 * if couldn't create snapshot then stop the transaction and the command
-                 */
+                // if couldn't create snapshot then stop the transaction and the command
                 if (!result.getSucceeded()) {
                     throw new EngineException(result.getFault().getError());
                 } else {
