@@ -1052,18 +1052,28 @@ DROP FUNCTION create_uuid_sequence();
 
 --
 -- This function replaces the same function from the uuid-ossp extension
--- so that we don't need that extension any more:
+-- so that we don't need that extension any more.
+-- This function is not RFC4122-compliant
+-- TODO:
+-- In case that we will be forced to use any other extension in the future
+-- and to do the work to install it with engine-setup, we should consider to
+-- install the uuid-ossp extension as well and use the PG native UUID generation,
+-- probably uuid_generate_v4() if it's truly random.
 --
 CREATE OR REPLACE FUNCTION uuid_generate_v1()
 RETURNS uuid STABLE
 AS $PROCEDURE$
 DECLARE
     v_val BIGINT;
-    v_4_part CHAR(4);
+    v_4_1_part CHAR(4);
+    v_4_2_part CHAR(4);
+    v_4_3_part CHAR(4);
     v_8_part CHAR(8);
     v_12_part CHAR(12);
     v_4_part_max INT;
 BEGIN
+    PERFORM setseed(random());
+
     -- The only part we should use modulo is the 4 digit part, all the
     -- rest are really big numbers (i.e 16^8 - 1 and 16^12 - 1)
     -- The use of round(random() * 1000 is for getting a different id
@@ -1071,16 +1081,19 @@ BEGIN
     v_4_part_max = 65535;-- this is 16^4 -1
 
     v_val := nextval('uuid_sequence');
+    v_4_1_part := lpad(to_hex((v_val + (round(random() * 1000))::BIGINT)), 4, '0');
+    v_4_2_part := lpad(to_hex((v_val + (round(random() * 1000))::BIGINT)), 4, '0');
+    v_4_3_part := lpad(to_hex((v_val + (round(random() * 1000))::BIGINT)), 4, '0');
 
-    v_4_part := lpad(to_hex(v_val % v_4_part_max), 4, '0');
-
-    v_8_part := lpad(to_hex(v_val), 8, '0');
+    -- generate this part using the clock timestamp
+    v_8_part := lpad(to_hex(cast(FLOOR(EXTRACT(EPOCH FROM clock_timestamp())) as bigint)), 8 , '0');
 
     v_12_part := lpad(to_hex((v_val + (round(random() * 1000))::BIGINT)), 12, '0');
 
-    RETURN v_8_part || v_4_part || v_4_part || v_4_part || v_12_part;
+    RETURN v_8_part || v_4_1_part || v_4_2_part || v_4_3_part || v_12_part;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
 
 -- This function turns a string of IP addresses to an array of IP
 -- addreses, in order to correct sorting.
