@@ -1355,7 +1355,7 @@ this has been changed to use a wrapper element, in this case
 </vm>
 ----
 
-=== Use `force` matrix parameter to force remove a data center
+=== Use `force` parameter to force remove a data center
 
 The operation that removes a data center supports a `force` parameter.
 In order to use it the `DELETE` operation used to support an optional
@@ -1369,12 +1369,11 @@ DELETE /datacenters/{datacenter:id}
 </action>
 ----
 
-This optional action parameter has been replaced with an optional matrix
-parameter:
+This optional action parameter has been replaced with an optional parameter:
 
 [source]
 ----
-DELETE /datacenters/{datacenter:id};force=true
+DELETE /datacenters/{datacenter:id}?force=true
 ----
 
 === Use `force` matrix parameter to force remove a host
