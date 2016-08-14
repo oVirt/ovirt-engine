@@ -70,6 +70,7 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
@@ -746,6 +747,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
+    }
+
+    public VmNetworkStatisticsDao getVmNetworkStatisticsDao() {
+        return getDbFacade().getVmNetworkStatisticsDao();
     }
 
     public VmNicDao getVmNicDao() {

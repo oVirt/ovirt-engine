@@ -100,7 +100,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -293,8 +292,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected List<DiskVmElement> getDiskVmElements() {
         if (diskVmElements == null) {
-            diskVmElements = DbFacade.getInstance().getDiskVmElementDao()
-                            .getAllForVm(vmDisksSource.getId());
+            diskVmElements = getDiskVmElementDao().getAllForVm(vmDisksSource.getId());
         }
 
         return diskVmElements;
@@ -415,7 +413,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return true;
         }
         for (Guid candidateHostGuid : dedicatedHostsList) {
-            if (DbFacade.getInstance().getVdsDao().get(candidateHostGuid) == null) {
+            if (getVdsDao().get(candidateHostGuid) == null) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
                 return false;
             }
@@ -790,8 +788,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
             Guid storageDomainId = diskImage.getStorageIds().get(0);
             if (destStorages.get(storageDomainId) == null) {
-                StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
-                        storageDomainId, getStoragePoolId());
+                StorageDomain storage = getStorageDomainDao().getForStoragePool(storageDomainId, getStoragePoolId());
                 StorageDomainValidator validator =
                         new StorageDomainValidator(storage);
                 if (!validate(validator.isDomainExistAndActive()) || !validate(validator.domainIsValidDestination())) {
@@ -1030,11 +1027,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      */
     private void copyDiskDevicesFromTemplate() {
         List<VmDevice> disks =
-                DbFacade.getInstance()
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vmDisksSource.getId(),
-                                VmDeviceGeneralType.DISK,
-                                VmDeviceType.DISK.getName());
+                getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmDisksSource.getId(),
+                        VmDeviceGeneralType.DISK,
+                        VmDeviceType.DISK.getName());
         getVmDeviceUtils().copyDiskDevices(
                 getVmId(),
                 disks,
@@ -1042,9 +1037,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         );
     }
 
-    protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
+    protected boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
-        Cluster cluster = DbFacade.getInstance().getClusterDao().get(clusterId);
+        Cluster cluster = getClusterDao().get(clusterId);
         boolean legalClusterId = cluster != null;
         if (!legalClusterId) {
             reasons.add(EngineError.VM_INVALID_SERVER_CLUSTER_ID.toString());
@@ -1088,7 +1083,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             updateProfileOnNic(iface);
             getVmNicDao().save(iface);
             getCompensationContext().snapshotNewEntity(iface);
-            DbFacade.getInstance().getVmNetworkStatisticsDao().save(iface.getStatistics());
+            getVmNetworkStatisticsDao().save(iface.getStatistics());
             getCompensationContext().snapshotNewEntity(iface.getStatistics());
         }
     }
@@ -1145,13 +1140,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         vmDynamic.setVmIp("");
         vmDynamic.setVmFQDN("");
         vmDynamic.setLastStopTime(new Date());
-        getDbFacade().getVmDynamicDao().save(vmDynamic);
+        getVmDynamicDao().save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);
     }
 
     void addVmStatistics() {
         VmStatistics stats = new VmStatistics(getVmId());
-        DbFacade.getInstance().getVmStatisticsDao().save(stats);
+        getVmStatisticsDao().save(stats);
         getCompensationContext().snapshotNewEntity(stats);
     }
 
@@ -1454,7 +1449,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
-        PermissionDao dao = getDbFacade().getPermissionDao();
+        PermissionDao dao = getPermissionDao();
 
         List<Permission> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getEngineSessionSeqId(), false);
 

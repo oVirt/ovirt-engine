@@ -74,7 +74,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -154,9 +153,6 @@ public class AddVmCommandTest extends BaseCommandTest {
     VmDeviceDao deviceDao;
 
     @Mock
-    DbFacade dbFacade;
-
-    @Mock
     private VmDeviceDao vmDeviceDao;
 
     @Mock
@@ -169,7 +165,6 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void initTest() {
         mockCpuFlagsManagerHandler();
         mockOsRepository();
-        doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
 
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
         VmHandler.init();
@@ -835,7 +830,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(Collections.<DiskImageBase> emptyList()).when(cmd).getImagesToCheckDestinationStorageDomains();
         Cluster cluster = createPpcCluster();
         when(clusterDao.get(any(Guid.class))).thenReturn(cluster);
-        doReturn(clusterDao).when(dbFacade).getClusterDao();
         doReturn(true).when(cmd).areParametersLegal(Collections.<String> emptyList());
         doReturn(true).when(cmd).validateAddVmCommand();
         doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
