@@ -1114,7 +1114,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         VmStatic vmStatic = getParameters().getVmStaticData();
 
         if (vmStatic.getOrigin() == null) {
-            vmStatic.setOrigin(OriginType.valueOf(Config.<String> getValue(ConfigValues.OriginType)));
+            vmStatic.setOrigin(OriginType.valueOf(Config.getValue(ConfigValues.OriginType)));
         }
         vmStatic.setId(getVmId());
         vmStatic.setQuotaId(getQuotaId());
