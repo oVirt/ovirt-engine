@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -19,7 +21,6 @@ import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
-import org.ovirt.engine.core.bll.validator.network.DetachNetworkUsedByVmValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
@@ -61,12 +62,14 @@ public class HostSetupNetworksValidator {
 
     static final String VAR_BOND_NAME = "BondName";
     static final String VAR_NETWORK_NAME = "networkName";
+    static final String VAR_VM_NAMES = "vmNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
     static final String VAR_INTERFACE_NAME = "interfaceName";
     static final String VAR_NIC_ID = "nicId";
     static final String VAR_LABELED_NIC_NAME = "labeledNicName";
     static final String VAR_NIC_NAME = "nicName";
     static final String VAR_LABEL = "label";
+    private static final String SEPARATOR = ",";
 
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
@@ -343,9 +346,16 @@ public class HostSetupNetworksValidator {
         final List<String> vmsNames =
                 findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(host.getId(), removedNetworkNames);
 
-        DetachNetworkUsedByVmValidator detachNetworkUsedByVmValidator =
-                new DetachNetworkUsedByVmValidator(vmsNames, removedNetworkNames);
-        return detachNetworkUsedByVmValidator.validate();
+        if (vmsNames.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+
+        EngineMessage engineMessage = EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS;
+        return new ValidationResult(engineMessage,
+                Stream.concat(
+                        ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworkNames, SEPARATOR).stream(),
+                        ReplacementUtils.replaceWith(VAR_VM_NAMES, vmsNames, SEPARATOR).stream()
+                ).collect(Collectors.toList()));
     }
 
     ValidationResult validRemovedBonds(Collection<NetworkAttachment> attachmentsToConfigure) {

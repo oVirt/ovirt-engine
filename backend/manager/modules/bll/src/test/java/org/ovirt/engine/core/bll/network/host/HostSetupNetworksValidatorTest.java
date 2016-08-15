@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -13,6 +14,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_NETWORK_NAME;
+import static org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator.VAR_VM_NAMES;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.ReplacementUtils.replaceWith;
@@ -25,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
@@ -34,6 +38,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -75,6 +81,8 @@ import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 @RunWith(MockitoJUnitRunner.class)
 public class HostSetupNetworksValidatorTest {
 
+    private static final String SEPARATOR = ",";
+
     private VDS host;
 
     @Mock
@@ -112,6 +120,9 @@ public class HostSetupNetworksValidatorTest {
     private NetworkExclusivenessValidator mockNetworkExclusivenessValidator;
     @Mock
     private NetworkAttachmentIpConfigurationValidator mockNetworkAttachmentIpConfigurationValidator;
+
+    @Captor
+    private ArgumentCaptor<Collection<String>> collectionArgumentCaptor;
 
     @Before
     public void setUp() throws Exception {
@@ -623,6 +634,43 @@ public class HostSetupNetworksValidatorTest {
         networkAttachment.setNetworkId(network.getId());
         networkAttachment.setNetworkName(network.getName());
         return networkAttachment;
+    }
+
+    @Test
+    public void testValidateNotRemovingUsedNetworkByVmsWhenUsedByVms() {
+        String nameOfNetworkA = "networkA";
+        Network networkA = createNetworkWithName(nameOfNetworkA);
+
+        NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA);
+        VdsNetworkInterface nicA = createNic("nicA");
+        networkAttachmentA.setNicId(nicA.getId());
+
+        final HostSetupNetworksValidator underTest =
+                new HostSetupNetworksValidatorBuilder()
+                        .setParams(new ParametersBuilder()
+                                .addRemovedNetworkAttachments(networkAttachmentA)
+                                .build())
+                        .addExistingInterfaces(Arrays.asList(nicA))
+                        .addExistingAttachments(Arrays.asList(networkAttachmentA))
+                        .addNetworks(Arrays.asList(networkA))
+                        .build();
+
+        List<String> vmNames = Arrays.asList("vmName1", "vmName2");
+        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
+                .thenReturn(vmNames);
+
+        final List<String> removedNetworkNames = Collections.singletonList(nameOfNetworkA);
+        assertThat(underTest.validateNotRemovingUsedNetworkByVms(nameOfNetworkA),
+                failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+                        Stream.concat(
+                                ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworkNames, SEPARATOR).stream(),
+                                ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNames, SEPARATOR).stream()
+                        ).collect(Collectors.toList())));
+
+        verify(findActiveVmsUsingNetwork).findNamesOfActiveVmsUsingNetworks(
+                eq(host.getId()),
+                collectionArgumentCaptor.capture());
+        assertThat(collectionArgumentCaptor.getValue(), contains(nameOfNetworkA));
     }
 
     public VdsNetworkInterface createNic(String nicName) {
