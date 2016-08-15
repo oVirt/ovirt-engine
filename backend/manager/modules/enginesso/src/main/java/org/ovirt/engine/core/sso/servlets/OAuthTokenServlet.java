@@ -146,7 +146,7 @@ public class OAuthTokenServlet extends HttpServlet {
                     ssoContext);
             String token = null;
             if (credentials != null && credentials.isValid()) {
-                AuthenticationUtils.handleCredentials(ssoContext, request, credentials);
+                AuthenticationUtils.handleCredentials(ssoContext, request, credentials, false);
                 token = (String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
             }
             log.debug("Attempting to issueTokenForPasswd for user: {}", credentials.getUsername());

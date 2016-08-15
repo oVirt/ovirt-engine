@@ -62,7 +62,8 @@ public class AuthenticationUtils {
                         null,
                         profile,
                         SsoUtils.getSsoContext(request).getSsoProfiles().contains(profile)),
-                authRecord);
+                authRecord,
+                false);
         log.info("User {}@{} successfully logged in using login-on-behalf with client id : {} and scopes : {}",
                 username,
                 profile,
@@ -74,6 +75,14 @@ public class AuthenticationUtils {
             SsoContext ssoContext,
             HttpServletRequest request,
             Credentials credentials) throws Exception {
+        handleCredentials(ssoContext, request, credentials, true);
+    }
+
+    public static void handleCredentials(
+            SsoContext ssoContext,
+            HttpServletRequest request,
+            Credentials credentials,
+            boolean interactive) throws Exception {
         log.debug("Entered AuthenticationUtils.handleCredentials");
         if (StringUtils.isEmpty(credentials.getUsername()) || StringUtils.isEmpty(credentials.getProfile())) {
             throw new AuthenticationException(
@@ -81,7 +90,7 @@ public class AuthenticationUtils {
                             SsoConstants.APP_ERROR_PROVIDE_USERNAME_PASSWORD_AND_PROFILE,
                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
-        SsoSession ssoSession = login(ssoContext, request, credentials, null);
+        SsoSession ssoSession = login(ssoContext, request, credentials, null, interactive);
         log.info("User {}@{} successfully logged in with scopes: {}",
                 credentials.getUsername(),
                 credentials.getProfile(),
@@ -92,7 +101,8 @@ public class AuthenticationUtils {
             SsoContext ssoContext,
             HttpServletRequest request,
             Credentials credentials,
-            ExtMap authRecord) throws Exception {
+            ExtMap authRecord,
+            boolean interactive) throws Exception {
         ExtensionProfile profile = getExtensionProfile(ssoContext, credentials.getProfile());
         String user = mapUser(profile, credentials);
         if (authRecord == null) {
@@ -110,7 +120,9 @@ public class AuthenticationUtils {
             );
             if (outputMap.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
                     outputMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-                SsoUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
+                if (interactive) {
+                    SsoUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
+                }
                 log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn failed");
                 throw new AuthenticationException(
                         AuthnMessageMapper.mapMessageErrorCode(
