@@ -13,15 +13,20 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostFenceAgentPopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -41,6 +46,13 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private final Driver driver = GWT.create(Driver.class);
+
+    interface Style extends CssResource {
+        String fencingOptionsLink();
+    }
+
+    @UiField
+    Style style;
 
     @UiField
     @Path(value = "managementIp.entity")
@@ -98,11 +110,18 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
     @UiField
     UiCommandButton testButton;
 
+    @Ignore
+    Anchor fencingOptionsUrl;
+
+    private final DynamicMessages dynamicMessages;
+
     @Inject
-    public HostFenceAgentPopupView(EventBus eventBus) {
+    public HostFenceAgentPopupView(EventBus eventBus, DynamicMessages dynamicMessages) {
         super(eventBus);
+        this.dynamicMessages = dynamicMessages;
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        asWidget().addStatusWidget(fencingOptionsUrl);
         localize();
         driver.initialize(this);
     }
@@ -113,6 +132,8 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
         pmEncryptOptionsEditor.setUsePatternFly(true);
         pmSecureEditor= new EntityModelCheckBoxEditor(Align.RIGHT);
         pmSecureEditor.setUsePatternFly(true);
+        fencingOptionsUrl = new Anchor(dynamicMessages.fencingOptions());
+        fencingOptionsUrl.asWidget().addStyleName(style.fencingOptionsLink());
     }
 
     private void localize() {
@@ -177,6 +198,11 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
     @Override
     public HasUiCommandClickHandlers getTestButton() {
         return testButton;
+    }
+
+    @Override
+    public HasClickHandlers getFencingOptionsAnchor() {
+        return fencingOptionsUrl;
     }
 
 }

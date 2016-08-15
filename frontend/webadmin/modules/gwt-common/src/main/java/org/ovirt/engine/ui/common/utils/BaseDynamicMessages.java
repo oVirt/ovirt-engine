@@ -43,7 +43,9 @@ public class BaseDynamicMessages implements DynamicMessages {
         CONSOLE_CLIENT_RESOURCES("console_client_resources"), //$NON-NLS-1$
         CONSOLE_CLIENT_RESOURCES_URL("console_client_resources_url"), //$NON-NLS-1$
         VENDOR_URL("vendor_url"), //$NON-NLS-1$
-        DOC("doc"); //$NON-NLS-1$
+        DOC("doc"), //$NON-NLS-1$
+        FENCING_OPTIONS("fencing_options"), //$NON-NLS-1$
+        FENCING_OPTIONS_URL("fencing_options_url"); //$NON-NLS-1$
 
         private final String value;
 
@@ -264,5 +266,20 @@ public class BaseDynamicMessages implements DynamicMessages {
     @Override
     public final String applicationDocTitle() {
         return getString(DynamicMessageKey.DOC);
+    }
+
+    @Override
+    public final String fencingOptions() {
+        return getString(DynamicMessageKey.FENCING_OPTIONS);
+    }
+
+    @Override
+    public final String fencingOptionsUrl() {
+        String url = getString(DynamicMessageKey.FENCING_OPTIONS_URL);
+        boolean isAbsolute = UriUtils.extractScheme(url) != null;
+
+        return isAbsolute
+                ? url
+                : "/" + BaseContextPathData.getRelativePath() + url; //$NON-NLS-1$
     }
 }

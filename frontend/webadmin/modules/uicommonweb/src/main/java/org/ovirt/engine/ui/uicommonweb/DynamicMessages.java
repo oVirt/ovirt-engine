@@ -112,4 +112,21 @@ public interface DynamicMessages {
      */
     String applicationDocTitle();
 
+    /**
+     *
+     * Get the fencing options link name using the {@code Dictionary} in the host page. With a fall back to
+     * the standard GWT Constant.
+     *
+     * @return The fencing options page name.
+     */
+    String fencingOptions();
+
+    /**
+     *
+     * Get the fencing options link name using the {@code Dictionary} in the host page. With a fall back to
+     * the standard GWT Constant.
+     *
+     * @return The fencing options page name.
+     */
+    String fencingOptionsUrl();
 }

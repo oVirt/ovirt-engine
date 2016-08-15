@@ -8,13 +8,17 @@
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:style>
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostFenceAgentPopupView.Style">
         .container {
             padding-top: 10px !important;
         }
 
         .optionsExplanationLabel {
             padding: 0px 5px;
+        }
+
+        .fencingOptionsLink {
+          margin-left: 12px;
         }
     </ui:style>
 
