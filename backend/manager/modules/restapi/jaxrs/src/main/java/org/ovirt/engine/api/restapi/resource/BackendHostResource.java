@@ -160,8 +160,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response upgradeCheck(Action action) {
-        // TODO: Implement this.
-        return null;
+        VdsActionParameters params = new VdsActionParameters(guid);
+
+        return doAction(VdcActionType.HostUpgradeCheck, params, action);
     }
 
     @Override
