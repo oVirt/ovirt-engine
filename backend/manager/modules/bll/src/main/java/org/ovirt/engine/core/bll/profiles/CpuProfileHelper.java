@@ -30,7 +30,7 @@ public class CpuProfileHelper {
         }
 
         if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase);
+            return assignFirstCpuProfile(vmBase, userId);
         }
 
         /* Getting the entire list inorder to get all the cpu profiles that the user has permissions for. */
@@ -56,8 +56,10 @@ public class CpuProfileHelper {
                         chosenCpuProfile.getName()));
     }
 
-    private static ValidationResult assignFirstCpuProfile(VmBase vmBase) {
-        List<CpuProfile> cpuProfilesWithPermissions = getCpuProfileDao().getAllForCluster(vmBase.getVdsGroupId());
+    public static ValidationResult assignFirstCpuProfile(VmBase vmBase, Guid userId) {
+        List<CpuProfile> cpuProfilesWithPermissions = getCpuProfileDao().getAllForCluster(
+                vmBase.getVdsGroupId(), userId, userId != null, ActionGroup.ASSIGN_CPU_PROFILE);
+
             /* TODO use a properly selected default CPU profile for the cluster once the API becomes available
                see bug https://bugzilla.redhat.com/show_bug.cgi?id=1262293 for the explanation. We should probably
                add a permission check as well to make sure the profile is available to the user who added the VM. */
@@ -73,7 +75,7 @@ public class CpuProfileHelper {
         if (!FeatureSupported.cpuQoS(version))
             return ValidationResult.VALID;
         if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase);
+            return assignFirstCpuProfile(vmBase, null);
         } else {
             return new CpuProfileValidator(vmBase.getCpuProfileId()).isParentEntityValid(vmBase.getVdsGroupId());
         }
