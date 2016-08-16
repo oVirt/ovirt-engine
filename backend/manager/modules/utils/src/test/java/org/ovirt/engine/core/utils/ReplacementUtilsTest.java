@@ -63,6 +63,15 @@ public class ReplacementUtilsTest {
     }
 
     @Test
+    public void replaceWithCustomSeparator() {
+        List<Object> items = createItems();
+        String separator = ",";
+
+        Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator);
+        assertTrue(validateReplacementElementCount(replacements, separator, ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS));
+    }
+
+    @Test
     public void containLowerThanDefaultNumberOfElements() {
         List<Object> items = createItems();
         String separator = "sep";

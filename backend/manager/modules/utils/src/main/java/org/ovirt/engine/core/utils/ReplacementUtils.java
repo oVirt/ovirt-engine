@@ -96,6 +96,29 @@ public class ReplacementUtils {
     }
 
     /**
+     * Replace a property defined within a message with a bounded number of elements.<br>
+     * In addition, if a counter appears in the message, it will be replaced with the elements size:<br>
+     * <ul>
+     * <li>The elements' size property name is expected to be {propertyName}_COUNTER</li>
+     * </ul>
+     *
+     * @param propertyName
+     *            the property name which represents the collection.
+     * @param items
+     *            the collection of items to be shown in the message.
+     * @param separator
+     *            the separator that will separate between the elements.
+     * @return a mutable collection contains two elements:<br>
+     *         <ul>
+     *         <li>The property name and its replacement items.</li>
+     *         <li>The property counter name and the items size.</li>
+     *         </ul>
+     */
+    public static Collection<String> replaceWith(String propertyName, Collection<?> items, String separator) {
+        return replaceWith(propertyName, items, separator, DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS);
+    }
+
+    /**
      * Replace a property defined within a message with a bounded number of elements of {@link Nameable}.<br>
      * In addition, if a counter appears in the message, it will be replaced with the elements size:<br>
      * <ul>
