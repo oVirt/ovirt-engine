@@ -396,6 +396,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.0
 Requires:	ovirt-engine-extension-aaa-jdbc
+Requires:	ovirt-imageio-proxy-setup
 Requires:	openssh
 Conflicts:	%{name} < 3.6.0
 
