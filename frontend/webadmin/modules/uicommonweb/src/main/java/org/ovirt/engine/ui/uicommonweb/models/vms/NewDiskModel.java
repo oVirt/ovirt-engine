@@ -79,6 +79,9 @@ public class NewDiskModel extends AbstractDiskModel {
         setDiskVmElement(new DiskVmElement(new VmDeviceId(null, getIsFloating() ? null : getVm().getId())));
 
         if (!getIsFloating()) {
+            if (getIsBootable().getIsChangable()) {
+                getIsBootable().setEntity(true);
+            }
             updateSuggestedDiskAliasFromServer();
             getIsPlugged().setIsAvailable(true);
         } else {

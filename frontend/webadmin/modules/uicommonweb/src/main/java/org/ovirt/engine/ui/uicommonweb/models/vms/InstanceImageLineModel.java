@@ -312,6 +312,10 @@ public class InstanceImageLineModel extends EntityModel {
 
         model.initialize(parentModel.getAllCurrentDisksModels());
 
+        if (model.getIsBootable().getIsChangable()) {
+            model.getIsBootable().setEntity(true);
+        }
+
         if (getVm() != null) {
             model.setVm(getVm());
             ((NewDiskModel)model).updateSuggestedDiskAliasFromServer();
