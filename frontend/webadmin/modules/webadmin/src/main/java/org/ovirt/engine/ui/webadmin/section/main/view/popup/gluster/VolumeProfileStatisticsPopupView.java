@@ -236,7 +236,7 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
 
     private void initAnchor(String url, Anchor anchor) {
         anchor.setHref(url);
-        anchor.setText(constants.exportToPdf());
+        anchor.setText(constants.exportToText());
         anchor.setTarget("_blank");//$NON-NLS-1$
     }
 

@@ -2850,7 +2850,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String brickProfileErrorMessage();
 
-    String exportToPdf();
+    String exportToText();
 
     String fencingEnabledInfo();
 

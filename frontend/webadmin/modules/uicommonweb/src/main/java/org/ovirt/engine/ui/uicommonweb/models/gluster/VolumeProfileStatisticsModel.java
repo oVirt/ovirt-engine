@@ -287,7 +287,7 @@ public class VolumeProfileStatisticsModel extends Model {
 
     private String formProfileUrl(String clusterId, String volumeId, boolean isBrickProfileSelected) {
         String apiMatrixParam = !isBrickProfileSelected ? ";nfsStatistics=true" : "";//$NON-NLS-1$//$NON-NLS-2$
-        return StringFormat.format("/ovirt-engine/api/clusters/%s/glustervolumes/%s/profilestatistics%s?accept=application/pdf", clusterId, volumeId, apiMatrixParam);//$NON-NLS-1$
+        return StringFormat.format("/ovirt-engine/api/clusters/%s/glustervolumes/%s/profilestatistics%s?accept=application/json", clusterId, volumeId, apiMatrixParam);//$NON-NLS-1$
     }
 
     public String getProfileExportUrl() {

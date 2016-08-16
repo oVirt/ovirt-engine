@@ -110,12 +110,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>fop</artifactId>
-      <version>${fop.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-types</artifactId>
       <version>${engine.version}</version>

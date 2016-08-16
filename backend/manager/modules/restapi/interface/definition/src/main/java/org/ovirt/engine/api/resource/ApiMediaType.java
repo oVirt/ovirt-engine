@@ -17,6 +17,5 @@
 package org.ovirt.engine.api.resource;
 
 public class ApiMediaType extends javax.ws.rs.core.MediaType {
-    public static final String APPLICATION_PDF = "application/pdf";
     public static final String APPLICATION_X_VIRT_VIEWER = "application/x-virt-viewer";
 }

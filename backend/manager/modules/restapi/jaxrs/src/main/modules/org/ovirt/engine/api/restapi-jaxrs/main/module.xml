@@ -31,7 +31,6 @@ limitations under the License.
     <module name="org.apache.commons.codec"/>
     <module name="org.apache.commons.collections"/>
     <module name="org.apache.commons.lang"/>
-    <module name="org.apache.xmlgraphics.fop"/>
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.codehaus.jackson.jackson-jaxrs"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
@@ -47,16 +46,6 @@ limitations under the License.
     <module name="org.ovirt.engine.core.utils"/>
     <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.slf4j"/>
-
-    <!-- This dependency is needed to workaround the following WildFly issue:
-
-           Xalan Linkage error : TransformerConfigurationException
-           https://issues.jboss.org/browse/WFCORE-519
-
-         Without this the FOP message body writer used to generate PDF
-         documents won't work correctly. -->
-    <module name="org.apache.xalan"/>
-
   </dependencies>
 
 </module>
