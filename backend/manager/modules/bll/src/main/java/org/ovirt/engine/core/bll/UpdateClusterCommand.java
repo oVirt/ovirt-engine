@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -219,6 +220,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
              */
             updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
             updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
+            upgradeGraphicsDevices(vm, updateParams);
 
             VdcReturnValueBase result = runInternalAction(
                     VdcActionType.UpdateVm,
@@ -231,6 +233,20 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
         }
         return true;
+    }
+
+    /**
+     * If upgrading cluster from 3.6 to 4.0 then switch from VNC/cirrus to VNC/vga
+     */
+    private void upgradeGraphicsDevices(VmStatic dbVm, VmManagementParametersBase updateParams) {
+        Version oldVersion = updateParams.getClusterLevelChangeFromVersion();
+        if (Version.v4_0.greater(oldVersion)) {
+            VmStatic paramVm = updateParams.getVmStaticData();
+
+            if (dbVm.getDefaultDisplayType() == DisplayType.cirrus) {
+                paramVm.setDefaultDisplayType(DisplayType.vga);
+            }
+        }
     }
 
     private String getEmulatedMachineOfHostInCluster(VDS vds) {
