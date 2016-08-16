@@ -2159,7 +2159,7 @@ public class VdsBrokerObjectsBuilder {
             throw new IllegalStateException("Required SwitchType is not reported.");
         }
 
-        return SwitchType.parse(Objects.toString(switchType, null));
+        return SwitchType.parse(Objects.toString(switchType, SwitchType.LEGACY.getOptionValue()));
     }
 
     // we check for old bonding options,
