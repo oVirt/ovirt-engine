@@ -45,6 +45,8 @@ public interface CommandCRUDOperations {
 
     void removeCommand(Guid commandId);
 
+    CommandContext retrieveCommandContext(Guid cmdId);
+
     void removeAllCommandsInHierarchy(Guid commandId);
 
     void removeAllCommandsBeforeDate(DateTime cutoff);

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.tasks.interfaces;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -15,5 +14,5 @@ public interface AsyncCommandCallback {
 
     ArrayList<AsyncTaskCreationInfo> getAllTasksInfo(Guid storagePoolID);
 
-    VdcReturnValueBase endAction(SPMTask task, ExecutionContext context);
+    VdcReturnValueBase endAction(SPMTask task);
 }

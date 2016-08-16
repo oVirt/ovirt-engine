@@ -148,8 +148,12 @@ public class CommandsRepository {
         }
     }
 
+    public CommandContext retrieveCommandContext(Guid cmdId) {
+        return contextsCache.get(cmdId);
+    }
+
     public CommandBase<?> retrieveCommand(Guid commandId) {
-        return retrieveCommand(commandsCache.get(commandId), contextsCache.get(commandId));
+        return retrieveCommand(commandsCache.get(commandId), retrieveCommandContext(commandId));
     }
 
     public void updateCommandStatus(final Guid commandId, final CommandStatus status) {

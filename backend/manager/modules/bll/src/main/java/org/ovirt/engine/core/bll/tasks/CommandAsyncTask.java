@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandMultiAsyncTasks;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -152,14 +151,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     dbAsyncTask.getActionParameters().getCommandType());
 
             try {
-                /**
-                 * Creates context for the job which monitors the action
-                 */
-                Guid stepId = dbAsyncTask.getStepId();
-                if (stepId != null) {
-                    context = ExecutionHandler.getInstance().createFinalizingContext(stepId);
-                }
-                vdcReturnValue = coco.endAction(this, context);
+                vdcReturnValue = coco.endAction(this);
             } catch (EngineException ex) {
                 log.error("{}: {}", getErrorMessage(), ex.getMessage());
                 log.debug("Exception", ex);

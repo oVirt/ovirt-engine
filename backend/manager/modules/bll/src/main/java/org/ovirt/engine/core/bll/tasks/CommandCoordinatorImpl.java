@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
@@ -337,8 +336,13 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     }
 
     @Override
-    public VdcReturnValueBase endAction(SPMTask task, ExecutionContext context) {
-        return coCoAsyncTaskHelper.endAction(task, context);
+    public VdcReturnValueBase endAction(SPMTask task) {
+        return coCoAsyncTaskHelper.endAction(task);
+    }
+
+    @Override
+    public CommandContext retrieveCommandContext(Guid cmdId) {
+        return commandsRepository.retrieveCommandContext(cmdId);
     }
 
     protected BackendInternal getBackend() {

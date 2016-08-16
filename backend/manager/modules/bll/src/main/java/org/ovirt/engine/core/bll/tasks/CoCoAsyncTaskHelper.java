@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
@@ -326,11 +325,13 @@ public class CoCoAsyncTaskHelper {
         return cmdEntity;
     }
 
-    public VdcReturnValueBase endAction(SPMTask task, ExecutionContext context) {
+    public VdcReturnValueBase endAction(SPMTask task) {
         AsyncTask dbAsyncTask = task.getParameters().getDbAsyncTask();
         VdcActionType actionType = getEndActionType(dbAsyncTask);
         VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
-        CommandBase<?> command = CommandHelper.buildCommand(actionType, parameters, context, coco.getCommandStatus(dbAsyncTask.getCommandId()));
+        CommandBase<?> command = CommandHelper.buildCommand(actionType, parameters,
+                coco.retrieveCommandContext(dbAsyncTask.getRootCommandId()).getExecutionContext(),
+                coco.getCommandStatus(dbAsyncTask.getCommandId()));
         return new DecoratedCommand<>(command).endAction();
     }
 
