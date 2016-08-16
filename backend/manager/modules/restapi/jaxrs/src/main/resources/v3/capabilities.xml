@@ -27,7 +27,7 @@
             <feature>
                 <name>Display Server Time</name>
                 <api>
-                    <time>2016-02-03T12:58:43.173+01:00</time>
+                    <time>2016-08-16T10:01:33.890+02:00</time>
                 </api>
             </feature>
             <feature>
@@ -433,6 +433,11 @@
             </power_management>
             <power_management type="ilo4">
                 <options/>
+            </power_management>
+            <power_management type="ilo_ssh">
+                <options>
+                    <option name="port" type="int"/>
+                </options>
             </power_management>
             <power_management type="rsa">
                 <options>
@@ -1009,6 +1014,22 @@
                 <name>access_image_storage</name>
                 <administrative>false</administrative>
             </permit>
+            <permit id="1667">
+                <name>create_cpu_profile</name>
+                <administrative>true</administrative>
+            </permit>
+            <permit id="1665">
+                <name>delete_cpu_profile</name>
+                <administrative>true</administrative>
+            </permit>
+            <permit id="1666">
+                <name>update_cpu_profile</name>
+                <administrative>true</administrative>
+            </permit>
+            <permit id="1668">
+                <name>assign_cpu_profile</name>
+                <administrative>true</administrative>
+            </permit>
             <permit id="1203">
                 <name>configure_network_vnic_profile</name>
                 <administrative>true</administrative>
@@ -1566,6 +1587,22 @@
         <permit id="1106">
             <name>access_image_storage</name>
             <administrative>false</administrative>
+        </permit>
+        <permit id="1667">
+            <name>create_cpu_profile</name>
+            <administrative>true</administrative>
+        </permit>
+        <permit id="1665">
+            <name>delete_cpu_profile</name>
+            <administrative>true</administrative>
+        </permit>
+        <permit id="1666">
+            <name>update_cpu_profile</name>
+            <administrative>true</administrative>
+        </permit>
+        <permit id="1668">
+            <name>assign_cpu_profile</name>
+            <administrative>true</administrative>
         </permit>
         <permit id="1203">
             <name>configure_network_vnic_profile</name>
