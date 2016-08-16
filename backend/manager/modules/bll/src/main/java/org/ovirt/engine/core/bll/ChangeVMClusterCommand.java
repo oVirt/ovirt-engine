@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -85,12 +86,12 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             dedicatedHostWasCleared = true;
         }
 
-        // Since CPU profile is coupled to cluster, when changing a cluster
-        // the 'old' CPU profile is invalid. The update VM command is called straight after
-        // will validate a right profile for VM and its cluster
-        vm.setCpuProfileId(null);
         vm.setVdsGroupId(getParameters().getClusterId());
-        DbFacade.getInstance().getVmStaticDao().update(vm.getStaticData());
+
+        // Set cpu profile from the new cluster
+        CpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserId());
+
+        getVmStaticDao().update(vm.getStaticData());
 
         // change vm cluster should remove the vm from all associated affinity groups
         List<AffinityGroup> allAffinityGroupsByVmId =

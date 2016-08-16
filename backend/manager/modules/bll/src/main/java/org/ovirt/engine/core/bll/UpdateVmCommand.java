@@ -219,7 +219,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void liveUpdateCpuProfile(){
-        if (getVm().getStatus().isQualifiedForQosChange() && !oldVm.getCpuProfileId().equals(newVmStatic.getCpuProfileId())) {
+        if (getVm().getStatus().isQualifiedForQosChange() &&
+                !Objects.equals(oldVm.getCpuProfileId(), newVmStatic.getCpuProfileId())) {
             vmSlaPolicyUtils.refreshCpuQosOfRunningVm(getVm());
         }
     }
@@ -838,8 +839,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
-        if (!Objects.equals(vmFromDB.getCpuProfileId(), vmFromParams.getCpuProfileId()) && !setAndValidateCpuProfile()) {
-            return false;
+        if (vmFromParams.getCpuProfileId() == null ||
+                !Objects.equals(vmFromDB.getCpuProfileId(), vmFromParams.getCpuProfileId())) {
+            if (!setAndValidateCpuProfile()) {
+                return false;
+            }
         }
 
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
