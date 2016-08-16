@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -24,14 +25,13 @@ public class CpuProfileHelper {
 
     public static ValidationResult setAndValidateCpuProfileForUser(VmBase vmBase, Guid userId) {
         if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase);
+            return assignFirstCpuProfile(vmBase, userId);
         }
 
-        Optional<CpuProfile> authorizedCpuProfile = getCpuProfileDao().getAllForCluster(vmBase.getClusterId(), userId, true, ActionGroup.ASSIGN_CPU_PROFILE).stream()
-                    .filter(
-                            cp ->
-                                    cp.getId().equals(vmBase.getCpuProfileId())
-                    ).findFirst();
+        Optional<CpuProfile> authorizedCpuProfile = getCpuProfileDao().getAllForCluster(
+                vmBase.getClusterId(), userId, true, ActionGroup.ASSIGN_CPU_PROFILE).stream()
+                    .filter(cp -> cp.getId().equals(vmBase.getCpuProfileId()))
+                    .findFirst();
 
         if (authorizedCpuProfile.isPresent()) {
             vmBase.setCpuProfileId(authorizedCpuProfile.get().getId());
@@ -52,23 +52,24 @@ public class CpuProfileHelper {
                         chosenCpuProfile.getName()));
     }
 
-    private static ValidationResult assignFirstCpuProfile(VmBase vmBase) {
-        Optional<CpuProfile> cpuProfileWithPermissions = getCpuProfileDao().getAllForCluster(vmBase.getClusterId()).stream()
-                .findFirst();
+    public static ValidationResult assignFirstCpuProfile(VmBase vmBase, Guid userId) {
+        List<CpuProfile> cpuProfileWithPermissions = getCpuProfileDao().getAllForCluster(
+                vmBase.getClusterId(), userId, userId != null, ActionGroup.ASSIGN_CPU_PROFILE);
+
             /* TODO use a properly selected default CPU profile for the cluster once the API becomes available
                see bug https://bugzilla.redhat.com/show_bug.cgi?id=1262293 for the explanation. We should probably
                add a permission check as well to make sure the profile is available to the user who added the VM. */
-        if (!cpuProfileWithPermissions.isPresent()) {
+        if (cpuProfileWithPermissions.isEmpty()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_EMPTY);
-        } else {
-            vmBase.setCpuProfileId(cpuProfileWithPermissions.get().getId());
-            return ValidationResult.VALID;
         }
+
+        vmBase.setCpuProfileId(cpuProfileWithPermissions.get(0).getId());
+        return ValidationResult.VALID;
     }
 
     public static ValidationResult setAndValidateCpuProfile(VmBase vmBase) {
         if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase);
+            return assignFirstCpuProfile(vmBase, null);
         } else {
             return new CpuProfileValidator(vmBase.getCpuProfileId()).isParentEntityValid(vmBase.getClusterId());
         }

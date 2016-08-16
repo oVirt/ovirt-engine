@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -107,6 +109,15 @@ public class ChangeVmClusterValidator {
             } else if (targetCluster.getArchitecture() != vm.getClusterArch()) {
                 return parentCommand.failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
             }
+
+            // Cluster must have a cpu profile
+            List<CpuProfile> cpuProfiles = DbFacade.getInstance().getCpuProfileDao().getAllForCluster(
+                    targetClusterId, parentCommand.getUserId(), true, ActionGroup.ASSIGN_CPU_PROFILE);
+
+            if (cpuProfiles.isEmpty()) {
+                return parentCommand.failValidation(EngineMessage.ACTION_TYPE_CPU_PROFILE_EMPTY);
+            }
+
         }
         return true;
     }

@@ -437,7 +437,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         List<VmTemplate> result = dao.getAllForCpuProfile(FixturesTool.CPU_PROFILE_1);
 
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(4, result.size());
     }
 
     @Test
