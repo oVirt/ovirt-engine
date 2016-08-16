@@ -556,7 +556,7 @@ public class VmDaoTest extends BaseDaoTestCase {
         List<VM> result = dao.getAllForCpuProfiles(Collections.singleton(FixturesTool.CPU_PROFILE_1));
 
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(6, result.size());
     }
 
     @Test
@@ -581,6 +581,7 @@ public class VmDaoTest extends BaseDaoTestCase {
         vmStatic.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         vmStatic.setName("HostedEngine");
         vmStatic.setOrigin(OriginType.HOSTED_ENGINE);
+        vmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
         getDbFacade().getVmStaticDao().save(vmStatic);
 
         VmDynamic vmDynamic = new VmDynamic();

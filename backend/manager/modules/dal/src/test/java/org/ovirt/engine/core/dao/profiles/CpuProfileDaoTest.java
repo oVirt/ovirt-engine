@@ -84,7 +84,7 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
         List<CpuProfile> result = dao.getAll();
 
         assertNotNull(result);
-        assertEquals(5, result.size());
+        assertEquals(6, result.size());
     }
 
     /**
