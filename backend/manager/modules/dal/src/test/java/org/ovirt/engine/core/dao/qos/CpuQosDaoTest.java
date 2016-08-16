@@ -99,7 +99,7 @@ public class CpuQosDaoTest extends BaseDaoTestCase {
 
     @Test
     public void getNoQosByVmId() {
-        Map<Guid, CpuQos> cpuQosMap = dao.getCpuQosByVmIds(Collections.singleton(FixturesTool.VM_RHEL5_POOL_57));
+        Map<Guid, CpuQos> cpuQosMap = dao.getCpuQosByVmIds(Collections.singleton(FixturesTool.VM_RHEL5_POOL_59));
         assertNotNull(cpuQosMap);
         assertNull(cpuQosMap.get(FixturesTool.VM_RHEL5_POOL_57));
     }

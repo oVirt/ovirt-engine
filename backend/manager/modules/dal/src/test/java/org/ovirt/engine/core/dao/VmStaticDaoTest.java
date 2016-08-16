@@ -516,15 +516,9 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateVmCpuProfileIdForClusterId() {
-        updateCpuProfile(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.CPU_PROFILE_2);
-    }
+        Guid clusterId = FixturesTool.CLUSTER_RHEL6_ISCSI;
+        Guid cpuProfileId = FixturesTool.CPU_PROFILE_2;
 
-    @Test
-    public void testUpdateNullVmCpuProfileIdForClusterId() {
-        updateCpuProfile(FixturesTool.CLUSTER_RHEL6_ISCSI, null);
-    }
-
-    private void updateCpuProfile(Guid clusterId, Guid cpuProfileId) {
         testAllCpuProfileValuesEqualTo(clusterId, cpuProfileId, false);
         dao.updateVmCpuProfileIdForClusterId(clusterId, cpuProfileId);
         testAllCpuProfileValuesEqualTo(clusterId, cpuProfileId, true);
