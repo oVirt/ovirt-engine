@@ -106,15 +106,6 @@ public final class Linq {
         }
     }
 
-    public static class VdsSPMPriorityComparer implements Comparator<VDS>, Serializable {
-        private static final long serialVersionUID = 1114793850392069219L;
-
-        @Override
-        public int compare(VDS vds1, VDS vds2) {
-            return Integer.compare(vds2.getVdsSpmPriority(), vds1.getVdsSpmPriority());
-        }
-    }
-
     public static class ServerBricksComparer implements Comparator<GlusterBrickEntity>, Serializable {
 
         private static final long serialVersionUID = 1L;

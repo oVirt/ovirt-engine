@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -1130,7 +1131,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void activate() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
 
-        Collections.sort(getSelectedItems(), new Linq.VdsSPMPriorityComparer());
+        Collections.sort(getSelectedItems(), new HostSpmPriorityComparator());
 
         for (VDS vds : getSelectedItems()) {
             list.add(new VdsActionParameters(vds.getId()));

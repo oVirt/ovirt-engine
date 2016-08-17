@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.dao;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
@@ -484,12 +483,5 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         Collections.sort(results, new HostSpmPriorityComparator());
         return results;
 
-    }
-
-    private static class HostSpmPriorityComparator implements Comparator<VDS>, Serializable {
-        @Override
-        public int compare(VDS host1, VDS host2) {
-            return Integer.compare(host2.getVdsSpmPriority(), host1.getVdsSpmPriority());
-        }
     }
 }
