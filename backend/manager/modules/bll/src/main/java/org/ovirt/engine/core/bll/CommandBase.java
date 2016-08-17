@@ -116,6 +116,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         extends AuditLogableBase
         implements TransactionMethod<Object>, Command<T> {
 
+    protected static final String SYSTEM_USER_NAME = "SYSTEM";
     private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
     private T parameters;
     private VdcReturnValueBase returnValue;
@@ -212,7 +213,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         if (getSessionDataContainer().getPrincipalName(context.getEngineContext().getSessionId()) == null) {
             // command was most probably executed from Quartz job, so session doesn't contain any user info
             // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
-            setUserName("SYSTEM");
+            setUserName(SYSTEM_USER_NAME);
         } else {
             setUserName(getSessionDataContainer().getUserName(context.getEngineContext().getSessionId()));
         }
