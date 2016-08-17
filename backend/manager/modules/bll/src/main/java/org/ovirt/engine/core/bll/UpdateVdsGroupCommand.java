@@ -183,6 +183,12 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     }
 
     private boolean updateVms() {
+        final boolean versionUnchanged =
+                Objects.equals(oldGroup.getCompatibilityVersion(), getVdsGroup().getCompatibilityVersion());
+        if (versionUnchanged) {
+            return true;
+        }
+
         List<VM> vmList = getVmDao().getAllForVdsGroup(getParameters().getVdsGroup().getId());
 
         for (VM vm : vmList) {
