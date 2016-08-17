@@ -879,11 +879,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             prevValue = currentValue;
         }
 
-        // Delete 'never' item if it's not selected.
-        if (selectedItem != neverItem) {
-            items.remove(neverItem);
-        }
-
         getSpmPriority().setItems(items);
         getSpmPriority().setSelectedItem(selectedItem);
     }
