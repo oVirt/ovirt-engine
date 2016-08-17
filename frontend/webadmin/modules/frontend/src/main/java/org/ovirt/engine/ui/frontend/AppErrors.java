@@ -679,6 +679,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__RECONSTRUCT_MASTER();
 
+    String VAR__ACTION__UPDATE_OVFS();
+
     String VAR__ACTION__RECOVER_POOL();
 
     String VAR__ACTION__DESTROY_DOMAIN();
@@ -902,6 +904,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND();
 
     String ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS();
+
+    String ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_DATA_DOMAINS();
 
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY();
 

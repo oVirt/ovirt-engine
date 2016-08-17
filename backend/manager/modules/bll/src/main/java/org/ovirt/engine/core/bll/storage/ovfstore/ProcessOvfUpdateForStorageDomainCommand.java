@@ -16,7 +16,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandActionState;
-import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
@@ -38,6 +37,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -54,7 +54,6 @@ import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.archivers.tar.InMemoryTar;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
-@InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateForStorageDomainCommandParameters> extends StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
     private LinkedList<Pair<StorageDomainOvfInfo, DiskImage>> domainOvfStoresInfoForUpdate = new LinkedList<>();
@@ -65,14 +64,30 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
     public ProcessOvfUpdateForStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        setStorageDomainId(parameters.getStorageDomainId());
-        setStoragePoolId(parameters.getStoragePoolId());
-        populateStorageDomainOvfData();
     }
 
     public ProcessOvfUpdateForStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
+
+    @Override
+    protected void init() {
+        super.init();
+        setStorageDomainId(getParameters().getStorageDomainId());
+
+        Guid poolId = getParameters().getStoragePoolId();
+        Guid storageDomainId = getParameters().getStorageDomainId();
+        if (poolId == null || poolId.equals(Guid.Empty)) {
+            List<StoragePool> pool = getStoragePoolDao().getAllForStorageDomain(storageDomainId);
+            if (!pool.isEmpty()) {
+                getParameters().setStoragePoolId(pool.get(0).getId());
+            }
+        }
+        setStoragePoolId(getParameters().getStoragePoolId());
+
+        populateStorageDomainOvfData();
+    }
+
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
@@ -88,11 +103,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     protected boolean validate() {
         if (!getParameters().isSkipDomainChecks()) {
             StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
-            if (!validate(storageDomainValidator.isDomainExistAndActive())) {
-                return false;
-            }
+            return validate(storageDomainValidator.isDomainExistAndActive()) &&
+                    validate(storageDomainValidator.isDataDomain());
         }
-
         return true;
     }
 
@@ -245,6 +258,12 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             auditLogableBase.addCustomValue("DisksIds", StringUtils.join(failedOvfDisks, ", "));
             auditLogDirector.log(auditLogableBase, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
         }
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE_OVFS);
     }
 
     private void setOvfVolumeDescription(Guid storagePoolId,

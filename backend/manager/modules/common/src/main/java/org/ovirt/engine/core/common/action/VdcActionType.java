@@ -270,6 +270,8 @@ public enum VdcActionType {
     ExtendSANStorageDomain(911, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, QuotaDependency.NONE),
     ReconstructMasterDomain(913, QuotaDependency.NONE),
     DeactivateStorageDomainWithOvfUpdate(914, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    ProcessOvfUpdateForStorageDomain(1902, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    CreateOvfVolumeForStorageDomain(1903, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     RecoveryStoragePool(915, ActionGroup.CREATE_STORAGE_POOL, QuotaDependency.NONE),
     RefreshLunsSize(917, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, QuotaDependency.NONE),
     AddEmptyStoragePool(950, ActionGroup.CREATE_STORAGE_POOL, false, QuotaDependency.NONE),
@@ -432,8 +434,6 @@ public enum VdcActionType {
 
     UpdateMomPolicy(1900, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
     UploadStream(1901, QuotaDependency.NONE),
-    ProcessOvfUpdateForStorageDomain(1902, QuotaDependency.NONE),
-    CreateOvfVolumeForStorageDomain(1903, QuotaDependency.NONE),
     RetrieveImageData(1905, QuotaDependency.NONE),
     ProcessOvfUpdateForStoragePool(1906, QuotaDependency.NONE),
 
