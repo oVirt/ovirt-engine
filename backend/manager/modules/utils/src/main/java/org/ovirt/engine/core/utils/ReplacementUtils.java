@@ -51,15 +51,16 @@ public class ReplacementUtils {
         int maxNumOfItems = Math.min(maxNumberOfPrintedItems, items.size());
         List<String> printedItems = new ArrayList<>(maxNumOfItems);
 
+        String itemPrefix = separator.equals(DEFAULT_SEPARATOR) ? "\t" : " ";
         for (Object item : items) {
             if (--maxNumOfItems < 0) {
                 break;
             }
-            printedItems.add(String.format("\t%s", String.valueOf(item)));
+            printedItems.add(String.format("%s%s", itemPrefix, String.valueOf(item)));
         }
 
         if (items.size() > maxNumberOfPrintedItems) {
-            printedItems.add("\t...");
+            printedItems.add(String.format("%s...", itemPrefix));
         }
 
         ArrayList<String> replacements = new ArrayList<>();
