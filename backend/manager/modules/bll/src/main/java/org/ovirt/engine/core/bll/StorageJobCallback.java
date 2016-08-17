@@ -135,6 +135,24 @@ public class StorageJobCallback extends CommandCallback {
         return true;
     }
 
+    @Override
+    public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
+        endAction(getCommand(cmdId));
+    }
+
+    @Override
+    public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
+        CommandBase<?> commandBase = getCommand(cmdId);
+        // This should be removed as soon as infra bug will be fixed and failed execution will reach endWithFailure
+        commandBase.getParameters().setTaskGroupSuccess(false);
+        endAction(commandBase);
+    }
+
+    private void endAction(CommandBase<?> commandBase) {
+        commandBase.getReturnValue().setSucceeded(false);
+        commandBase.endAction();
+    }
+
     private VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
