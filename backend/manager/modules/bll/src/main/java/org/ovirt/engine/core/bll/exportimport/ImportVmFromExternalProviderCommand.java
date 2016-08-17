@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -34,6 +37,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -50,6 +54,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -58,6 +63,9 @@ implements QuotaStorageDependent {
 
     private static final Pattern VMWARE_DISK_NAME_PATTERN = Pattern.compile("\\[.*?\\] .*/(.*).vmdk");
     private static final Pattern DISK_NAME_PATTERN = Pattern.compile(".*/([^.]+).*");
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
@@ -74,6 +82,7 @@ implements QuotaStorageDependent {
         setVdsId(getParameters().getProxyHostId());
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
+        checkImageTarget();
     }
 
     @Override
@@ -284,6 +293,21 @@ implements QuotaStorageDependent {
 
         getTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
         return vdcReturnValueBase.getActionReturnValue();
+    }
+
+    private void checkImageTarget() {
+        // TODO:
+        // This is a workaround until bz 1332019 will be merged
+        // since KVM is currently the only source for which we use Libvirt streaming API.
+        // Libvirt currently reports the actual disk size and the virtual one,
+        // when using preallocated qcow2 on block domain the size that the Libvirt stream emits
+        // can be larger then the actual size.
+        if (getVm().getOrigin() == OriginType.KVM && getActionState() == CommandActionState.EXECUTE) {
+            StorageDomain domain = storageDomainDao.get(getStorageDomainId());
+            if (domain.getStorageType().isBlockDomain()) {
+                getVm().getImages().forEach(image -> image.setActualSizeInBytes(image.getSize()));
+            }
+        }
     }
 
     protected static String renameDiskAlias(OriginType originType, String alias) {
