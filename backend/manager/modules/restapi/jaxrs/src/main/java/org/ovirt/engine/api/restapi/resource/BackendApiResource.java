@@ -51,6 +51,7 @@ import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.api.resource.DiskProfilesResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.api.resource.ExternalVmImportsResource;
 import org.ovirt.engine.api.resource.HostsResource;
 import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
@@ -639,5 +640,11 @@ public class BackendApiResource
     @Override
     public ClusterLevelsResource getClusterLevelsResource() {
         return inject(new BackendClusterLevelsResource());
+    }
+
+    @Override
+    public ExternalVmImportsResource getExternalVmImportsResource() {
+        // TODO: Implement this.
+        return null;
     }
 }
