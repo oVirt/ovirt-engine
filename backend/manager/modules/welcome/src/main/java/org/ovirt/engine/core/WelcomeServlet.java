@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
-import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -98,7 +97,6 @@ public class WelcomeServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
             ServletException {
         log.debug("Entered WelcomeServlet");
-        SsoUtils.createUniqueStateInSessionIfNotExists(request);
 
         String reauthenticate = (String) request.getSession(true).getAttribute(WelcomeUtils.REAUTHENTICATE);
         if (StringUtils.isEmpty(reauthenticate)) {

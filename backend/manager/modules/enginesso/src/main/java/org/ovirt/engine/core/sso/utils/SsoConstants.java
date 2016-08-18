@@ -49,7 +49,6 @@ public class SsoConstants {
     public static final String HTTP_PARAM_ENGINE_URL = "engine_url";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";
-    public static final String HTTP_PARAM_STATE = "state";
     public static final String HTTP_PARAM_CLIENT_ID = "client_id";
     public static final String HTTP_PARAM_CLIENT_SECRET = "client_secret";
     public static final String HTTP_REQ_ATTR_ACCESS_TOKEN = "access_token";

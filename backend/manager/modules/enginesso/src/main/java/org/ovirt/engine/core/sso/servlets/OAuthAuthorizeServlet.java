@@ -45,7 +45,6 @@ public class OAuthAuthorizeServlet extends HttpServlet {
             String clientId = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID);
             String responseType = SsoUtils.getRequestParameter(request, SsoConstants.JSON_RESPONSE_TYPE);
             String scope = SsoUtils.getScopeRequestParameter(request, "");
-            String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
             String engineUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_ENGINE_URL, "");
             String redirectUri = SsoUtils.getParameter(request, SsoConstants.HTTP_PARAM_REDIRECT_URI);
             SsoUtils.validateClientRequest(request, clientId, null, scope, redirectUri);
@@ -60,7 +59,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
                                 SsoConstants.JSON_RESPONSE_TYPE));
             }
 
-            login(request, response, clientId, scope, state, engineUrl, redirectUri);
+            login(request, response, clientId, scope, engineUrl, redirectUri);
         } catch (Exception ex) {
             SsoUtils.redirectToErrorPage(request, response, ex);
         }
@@ -71,7 +70,6 @@ public class OAuthAuthorizeServlet extends HttpServlet {
             HttpServletResponse response,
             String clientId,
             String scope,
-            String state,
             String engineUrl,
             String redirectUri) throws Exception {
         log.debug("Entered login queryString: {}", request.getQueryString());
@@ -84,7 +82,6 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         ssoSession.setClientId(clientId);
         ssoSession.setRedirectUri(redirectUri);
         ssoSession.setScope(scope);
-        ssoSession.setState(state);
         ssoSession.getHttpSession().setMaxInactiveInterval(-1);
         if (StringUtils.isNotEmpty(engineUrl)) {
             ssoSession.setEngineUrl(engineUrl);

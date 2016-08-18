@@ -21,7 +21,6 @@ public class WelcomeUtils {
     public static final String REAUTHENTICATE = "reauthenticate";
     public static final String SCOPE = "scope";
     public static final String SSO_USER = "sso_user";
-    public static final String STATE = "state";
     public static final String TOKEN = "token";
     public static final String UTF8 = "UTF-8";
 
@@ -38,7 +37,6 @@ public class WelcomeUtils {
     public static final String HTTP_PARAM_LOCALE = "locale";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";
-    public static final String HTTP_PARAM_STATE = "state";
     public static final String HTTP_PARAM_CLIENT_ID = "client_id";
     public static final String HTTP_PARAM_RESPONSE_TYPE = "response_type";
 

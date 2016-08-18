@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
-import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
@@ -19,7 +18,6 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String state = SsoUtils.createUniqueStateInSessionIfNotExists(request);
         Map<String, Object> deployedResponse = SsoOAuthServiceUtils.isSsoDeployed();
         if (deployedResponse.containsKey(WelcomeUtils.ERROR)) {
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, deployedResponse.get(WelcomeUtils.ERROR));
@@ -36,7 +34,6 @@ public class LoginServlet extends HttpServlet {
                     .addParameter(WelcomeUtils.HTTP_PARAM_ENGINE_URL, FiltersHelper.getEngineUrl(request))
                     .addParameter(WelcomeUtils.HTTP_PARAM_REDIRECT_URI, WelcomeUtils.getOauth2CallbackUrl(request))
                     .addParameter(WelcomeUtils.HTTP_PARAM_SCOPE, request.getParameter(WelcomeUtils.SCOPE))
-                    .addParameter(WelcomeUtils.HTTP_PARAM_STATE, state)
                     .addParameter(WelcomeUtils.HTTP_PARAM_LOCALE, request.getAttribute(WelcomeUtils.LOCALE).toString())
                     .build());
         }

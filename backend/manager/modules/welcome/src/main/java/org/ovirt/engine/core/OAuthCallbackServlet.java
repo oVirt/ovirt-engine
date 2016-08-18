@@ -25,19 +25,15 @@ public class OAuthCallbackServlet extends HttpServlet {
             ServletException {
         log.debug("Entered OAuthCallbackServlet");
         String authCode = request.getParameter(WelcomeUtils.CODE);
-        String state = request.getParameter(WelcomeUtils.STATE);
-        String stateInSession = (String) request.getSession(true).getAttribute(WelcomeUtils.STATE);
         String engineUri = EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_URI) + "/";
         String redirectUri = engineUri + "oauth2-callback";
         String token = "";
-        if (StringUtils.isNotEmpty(stateInSession) && stateInSession.equals(state)) {
-            if (StringUtils.isNotEmpty(authCode)) {
-                String tokenForAuthCode = getTokenForAuthCode(request, authCode, moduleScope, redirectUri);
-                if (StringUtils.isNotEmpty(tokenForAuthCode)) {
-                    token = tokenForAuthCode;
-                } else {
-                    authCode = null;
-                }
+        if (StringUtils.isNotEmpty(authCode)) {
+            String tokenForAuthCode = getTokenForAuthCode(request, authCode, moduleScope, redirectUri);
+            if (StringUtils.isNotEmpty(tokenForAuthCode)) {
+                token = tokenForAuthCode;
+            } else {
+                authCode = null;
             }
         }
 
