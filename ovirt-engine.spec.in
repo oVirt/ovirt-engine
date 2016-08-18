@@ -1090,6 +1090,9 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
+* Thu Aug 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.2.7-1
+- Bump version to 4.0.2.7
+
 * Tue Aug  9 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.2.6-1
 - Bump version to 4.0.2.6
 
