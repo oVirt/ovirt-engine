@@ -25,7 +25,6 @@ public class SsoSession implements Serializable {
     private String userId;
     private String scope;
     private List<String> scopeAsList;
-    private String state;
     private String password;
     private String redirectUri;
     private String profile;
@@ -204,14 +203,6 @@ public class SsoSession implements Serializable {
 
     public void setReauthenticate(boolean reauthenticate) {
         this.reauthenticate = reauthenticate;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 
     public Credentials getTempCredentials() {

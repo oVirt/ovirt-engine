@@ -6,7 +6,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
@@ -72,17 +71,4 @@ public class SsoUtils {
         return engineSessionId;
     }
 
-    public static String createUniqueStateInSessionIfNotExists(HttpServletRequest request) {
-        String state = (String) request.getSession(true).getAttribute("state");
-        try {
-            if (StringUtils.isEmpty(state)) {
-                state = FiltersHelper.generateState();
-                request.getSession(true).setAttribute("state", state);
-            }
-        } catch (Exception ex) {
-            log.error("Unable to generate unique state: {}", ex.getMessage());
-            log.debug("Unable to generate unique state", ex);
-        }
-        return state;
-    }
 }

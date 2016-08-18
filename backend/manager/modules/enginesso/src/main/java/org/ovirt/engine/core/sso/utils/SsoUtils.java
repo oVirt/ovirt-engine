@@ -61,10 +61,6 @@ public class SsoUtils {
             SsoSession ssoSession = getSsoSession(request);
             URLBuilder redirectUrl = new URLBuilder(getRedirectUrl(request).toString())
                     .addParameter("code", ssoSession.getAuthorizationCode());
-            String state = ssoSession.getState();
-            if (StringUtils.isNotEmpty(state)) {
-                redirectUrl.addParameter("state", state);
-            }
             response.sendRedirect(redirectUrl.build());
             log.debug("Redirecting back to module: {}", redirectUrl);
         } catch (Exception ex) {
@@ -313,7 +309,6 @@ public class SsoUtils {
             ssoSession = ssoSession == null ? new SsoSession() : ssoSession;
             ssoSession.setClientId(getClientId(request));
             ssoSession.setScope(getScopeRequestParameter(request, ""));
-            ssoSession.setState(getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, ""));
             ssoSession.setRedirectUri(getParameter(request, SsoConstants.HTTP_PARAM_REDIRECT_URI));
         }
         return ssoSession;

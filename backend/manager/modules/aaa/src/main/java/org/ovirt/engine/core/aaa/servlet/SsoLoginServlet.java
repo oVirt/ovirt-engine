@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
@@ -35,7 +34,6 @@ public class SsoLoginServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String state = SsoUtils.createUniqueStateInSessionIfNotExists(request);
         String scope = String.format("ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=%s",
                 EngineLocalConfig.getInstance().getProperty(authSequencePriorityPropertyName));
         request.getSession(true).setAttribute("app_url", request.getParameter("app_url"));
@@ -50,8 +48,7 @@ public class SsoLoginServlet extends HttpServlet {
                 .addParameter("response_type", "code")
                 .addParameter("engine_url", FiltersHelper.getEngineUrl(request))
                 .addParameter("redirect_uri", redirectUri)
-                .addParameter("scope", scope)
-                .addParameter("state", state).build());
+                .addParameter("scope", scope).build());
     }
 
 }

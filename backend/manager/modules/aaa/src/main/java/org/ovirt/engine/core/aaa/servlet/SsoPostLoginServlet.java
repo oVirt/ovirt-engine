@@ -59,11 +59,6 @@ public class SsoPostLoginServlet extends HttpServlet {
             if (StringUtils.isEmpty(code)){
                 throw new RuntimeException("No authorization code found in request");
             }
-            String stateInSession = (String) request.getSession(true).getAttribute("state");
-            String state = request.getParameter("state");
-            if (StringUtils.isEmpty(stateInSession) || !stateInSession.equals(state)) {
-                throw new RuntimeException("Request state does not match session state.");
-            }
             Map<String, Object> jsonResponse = FiltersHelper.getPayloadForAuthCode(
                     code,
                     "ovirt-app-admin ovirt-app-portal ovirt-app-api",
