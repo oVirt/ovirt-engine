@@ -36,7 +36,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
-public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
+public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions, Comparable<VmBase> {
     private static final long serialVersionUID = 1078548170257965614L;
 
     @EditableVmField
@@ -1429,5 +1429,10 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public void setMigrationPolicyId(Guid migrationPolicyId) {
         this.migrationPolicyId = migrationPolicyId;
+    }
+
+    @Override
+    public int compareTo(VmBase other) {
+        return id.compareTo(other.id);
     }
 }
