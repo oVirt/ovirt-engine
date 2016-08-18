@@ -334,11 +334,12 @@ public class VmsMonitoring implements BackendService {
     }
 
     private void saveVmStatistics(List<VmAnalyzer> vmAnalyzers) {
-        Map<Guid, VmStatistics> vmIdToStatistics = vmAnalyzers.stream()
-                .filter(analyzer -> analyzer.getVmStatisticsToSave() != null)
-                .collect(Collectors.toMap(VmAnalyzer::getVmId, VmAnalyzer::getVmStatisticsToSave));
-        vmStatisticsDao.updateAllInBatch(vmIdToStatistics.values());
-        vmIdToStatistics.forEach((vmId, stats) -> resourceManager.getVmManager(vmId).setStatistics(stats));
+        List<VmStatistics> statistics = vmAnalyzers.stream()
+                .map(VmAnalyzer::getVmStatisticsToSave)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        vmStatisticsDao.updateAllInBatch(statistics);
+        statistics.forEach(stats -> resourceManager.getVmManager(stats.getId()).setStatistics(stats));
     }
 
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
