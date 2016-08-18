@@ -2004,5 +2004,7 @@ public interface UIConstants extends Constants {
     String cannotClusterVersionChangeWithActiveVm();
 
     String emptyImagePath();
+
+    String kvmBlockDomainWraning();
 }
 
