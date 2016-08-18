@@ -33,8 +33,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
@@ -48,12 +46,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     @Inject
     private InClusterUpgradeValidator upgradeValidator;
-
-    @Inject
-    private VdsDao vdsDao;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;

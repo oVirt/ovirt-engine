@@ -166,6 +166,7 @@ public class VmsMonitoring implements BackendService {
                 }
             }
         });
+        vmAnalyzers.sort((a1, a2) -> a1.getVmId().compareTo(a2.getVmId()));
         return vmAnalyzers;
     }
 
