@@ -434,6 +434,8 @@
         <column>lun_mapping</column>
         <column>vendor_id</column>
         <column>product_id</column>
+        <column>discard_max_size</column>
+        <column>discard_zeroes_data</column>
         <row>
             <value></value>
             <value>DOMAIN_METADATA_LUN-1</value>
@@ -442,6 +444,9 @@
             <value>1</value>
             <value>IET</value>
             <value>DOMAIN_METADATA_LUN-1</value>
+            <value>0</value>
+            <value>false</value>
+
         </row>
         <row>
             <value></value>
@@ -451,6 +456,8 @@
             <value>1</value>
             <value>IET</value>
             <value>VG_DOMAIN_METADATA_LUN-1</value>
+            <value>0</value>
+            <value>true</value>
         </row>
         <row>
             <value></value>
@@ -460,6 +467,8 @@
             <value>1</value>
             <value>IET</value>
             <value>DOMAIN_METADATA_LUN-2</value>
+            <value>8388608</value>
+            <value>false</value>
         </row>
         <row>
             <value></value>
@@ -469,6 +478,8 @@
             <value>1</value>
             <value>IET</value>
             <value>VIRTUAL-DISK</value>
+            <value>8388608</value>
+            <value>true</value>
         </row>
         <row>
             <value></value>
@@ -478,6 +489,8 @@
             <value>1</value>
             <value>IET</value>
             <value>VIRTUAL-DISK</value>
+            <value>1024</value>
+            <value>true</value>
         </row>
         <row>
             <value></value>
@@ -487,6 +500,8 @@
             <value>1</value>
             <value>IET</value>
             <value>VIRTUAL-DISK</value>
+            <value>2147450880</value>
+            <value>true</value>
         </row>
         <row>
             <value></value>
@@ -496,6 +511,8 @@
             <value>1</value>
             <value>IET</value>
             <value>VIRTUAL-DISK</value>
+            <value>2147450880</value>
+            <value>false</value>
         </row>
     </table>
 

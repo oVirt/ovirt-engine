@@ -2,10 +2,17 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extends VdsBrokerCommand<P> {
     private OneVGReturnForXmlRpc _result;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     public GetVGInfoVDSCommand(P parameters) {
         super(parameters);
@@ -27,7 +34,8 @@ public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extend
                 pvList[i].put("vgName", vgName);
             }
         }
-        setReturnValue(GetDeviceListVDSCommand.parseLUNList(pvList));
+        Version compatibilityVersion = storagePoolDao.getForVds(getParameters().getVdsId()).getCompatibilityVersion();
+        setReturnValue(GetDeviceListVDSCommand.parseLUNList(pvList, compatibilityVersion));
     }
 
     @Override

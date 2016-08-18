@@ -3,16 +3,21 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
@@ -20,6 +25,10 @@ public class GetDeviceListVDSCommandTest {
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false));
 
     @Test
     public void parseLunFromXmlRpcReturnsIscsiByDefault() throws Exception {
@@ -43,7 +52,7 @@ public class GetDeviceListVDSCommandTest {
         Map<String, Object> xlun = new HashMap<>();
         xlun.put(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
 
-        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
+        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, Version.v4_1);
 
         assertEquals(expectedStorageType, lun.getLunType());
     }
@@ -51,7 +60,7 @@ public class GetDeviceListVDSCommandTest {
     @Test
     public void parseLunFromXmlRpcReturnsUnknownForNoField() throws Exception {
         Map<String, Object> xlun = new HashMap<>();
-        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
+        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, Version.v4_1);
 
         assertEquals(StorageType.UNKNOWN, lun.getLunType());
     }
@@ -79,7 +88,7 @@ public class GetDeviceListVDSCommandTest {
         xlun.put(GetDeviceListVDSCommand.PATHSTATUS, paths.toArray(new Map[paths.size()]));
 
         // Parse the XmlRpc
-        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
+        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, Version.v4_1);
 
         // Go over the directory
         assertEquals("wrong number of paths", numPaths, lun.getPathCount());
@@ -95,5 +104,27 @@ public class GetDeviceListVDSCommandTest {
 
         // After remove all the expected devices, the directory should be empty
         assertTrue("Wrong devices in the device map", pathDir.isEmpty());
+    }
+
+    @Test
+    public void discardFieldsAreParsed() {
+        testDiscardFieldsParsing(Version.v4_1, 1024L, true);
+    }
+
+    @Test
+    public void passDiscardNotSupported() {
+        testDiscardFieldsParsing(Version.v4_0, null, null);
+    }
+
+    private void testDiscardFieldsParsing(Version poolCompatibilityVersion,
+            Long expectedDiscardMaxSize, Boolean expectedDiscardZeroesData) {
+        Map<String, Object> xlun = new HashMap<>();
+        xlun.put("discard_max_bytes", 1024L);
+        xlun.put("discard_zeroes_data", 1);
+
+        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, poolCompatibilityVersion);
+
+        assertEquals(lun.getDiscardMaxSize(), expectedDiscardMaxSize);
+        assertEquals(lun.getDiscardZeroesData(), expectedDiscardZeroesData);
     }
 }

@@ -1910,5 +1910,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     VirtIOScsiIOThread,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    PassDiscardSupported,
+
     Invalid
 }

@@ -40,6 +40,12 @@ public class StorageLogicalUnitMapper {
         if (entity.getStatus() != null) {
             model.setStatus(map(entity.getStatus(), null));
         }
+        if (entity.getDiscardMaxSize() != null) {
+            model.setDiscardMaxSize(entity.getDiscardMaxSize());
+        }
+        if (entity.getDiscardZeroesData() != null) {
+            model.setDiscardZeroesData(entity.getDiscardZeroesData());
+        }
         model.setSize(SizeConverter.convert((long)entity.getDeviceSize(),
                 SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
 

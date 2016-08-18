@@ -42,6 +42,10 @@ public class LUNs implements BusinessEntity<String> {
 
     private int pvSize;
 
+    private Long discardMaxSize;
+
+    private Boolean discardZeroesData;
+
     private String vendorName;
 
     private HashMap<String, Boolean> pathsDictionary;
@@ -82,6 +86,8 @@ public class LUNs implements BusinessEntity<String> {
                 physicalVolumeId,
                 deviceSize,
                 pvSize,
+                discardMaxSize,
+                discardZeroesData,
                 lunType,
                 pathsDictionary,
                 pathsCapacity,
@@ -113,6 +119,8 @@ public class LUNs implements BusinessEntity<String> {
                 && Objects.equals(physicalVolumeId, other.physicalVolumeId)
                 && deviceSize == other.deviceSize
                 && pvSize == other.pvSize
+                && Objects.equals(discardMaxSize, other.discardMaxSize)
+                && Objects.equals(discardZeroesData, other.discardZeroesData)
                 && lunType == other.lunType
                 && Objects.equals(pathsDictionary, other.pathsDictionary)
                 && Objects.equals(pathsCapacity, other.pathsCapacity)
@@ -206,6 +214,22 @@ public class LUNs implements BusinessEntity<String> {
 
     public void setPvSize(int value) {
         pvSize = value;
+    }
+
+    public Long getDiscardMaxSize() {
+        return discardMaxSize;
+    }
+
+    public void setDiscardMaxSize(Long discardMaxSize) {
+        this.discardMaxSize = discardMaxSize;
+    }
+
+    public Boolean getDiscardZeroesData() {
+        return discardZeroesData;
+    }
+
+    public void setDiscardZeroesData(Boolean discardZeroesData) {
+        this.discardZeroesData = discardZeroesData;
     }
 
     public String getVendorName() {
@@ -331,6 +355,8 @@ public class LUNs implements BusinessEntity<String> {
                 .append("diskAlias", getDiskAlias())
                 .append("storageDomainId", getStorageDomainId())
                 .append("storageDomainName", getStorageDomainName())
+                .append("discardMaxSize", getDiscardMaxSize())
+                .append("discardZeroesData", getDiscardZeroesData())
                 .build();
     }
 

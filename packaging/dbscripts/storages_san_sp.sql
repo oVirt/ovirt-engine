@@ -11,7 +11,9 @@ CREATE OR REPLACE FUNCTION InsertLUNs (
     v_lun_mapping INT,
     v_vendor_id VARCHAR(50),
     v_product_id VARCHAR(50),
-    v_device_size INT
+    v_device_size INT,
+    v_discard_max_size BIGINT,
+    v_discard_zeroes_data BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -23,7 +25,9 @@ BEGIN
         lun_mapping,
         vendor_id,
         product_id,
-        device_size
+        device_size,
+        discard_max_size,
+        discard_zeroes_data
         )
     VALUES (
         v_LUN_id,
@@ -33,7 +37,9 @@ BEGIN
         v_lun_mapping,
         v_vendor_id,
         v_product_id,
-        v_device_size
+        v_device_size,
+        v_discard_max_size,
+        v_discard_zeroes_data
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -46,7 +52,9 @@ CREATE OR REPLACE FUNCTION UpdateLUNs (
     v_lun_mapping INT,
     v_vendor_id VARCHAR(50),
     v_product_id VARCHAR(50),
-    v_device_size INT
+    v_device_size INT,
+    v_discard_max_size BIGINT,
+    v_discard_zeroes_data BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -58,7 +66,9 @@ BEGIN
         lun_mapping = v_lun_mapping,
         vendor_id = v_vendor_id,
         product_id = v_product_id,
-        device_size = v_device_size
+        device_size = v_device_size,
+        discard_max_size = v_discard_max_size,
+        discard_zeroes_data = v_discard_zeroes_data
     WHERE LUN_id = v_LUN_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

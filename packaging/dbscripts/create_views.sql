@@ -314,7 +314,9 @@ FROM (
         NULL AS lun_mapping,
         NULL AS vendor_id,
         NULL AS product_id,
-        NULL AS device_size
+        NULL AS device_size,
+        NULL AS discard_max_size,
+        NULL AS discard_zeroes_data
     FROM images_storage_domain_view
     INNER JOIN storage_for_image_view
         ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
@@ -414,7 +416,9 @@ FROM (
         l.lun_mapping,
         l.vendor_id,
         l.product_id,
-        l.device_size
+        l.device_size,
+        l.discard_max_size,
+        l.discard_zeroes_data
     FROM disk_lun_map dlm
     INNER JOIN luns l
         ON l.lun_id = dlm.lun_id
@@ -496,7 +500,9 @@ FROM (
         NULL AS lun_mapping,
         NULL AS vendor_id,
         NULL AS product_id,
-        NULL AS device_size
+        NULL AS device_size,
+        NULL AS discard_max_size,
+        NULL AS discard_zeroes_data
     FROM memory_and_disk_images_storage_domain_view
     INNER JOIN storage_for_image_view
         ON memory_and_disk_images_storage_domain_view.image_guid = storage_for_image_view.image_id
@@ -598,7 +604,9 @@ FROM (
         l.lun_mapping,
         l.vendor_id,
         l.product_id,
-        l.device_size
+        l.device_size,
+        l.discard_max_size,
+        l.discard_zeroes_data
     FROM disk_lun_map dlm
     INNER JOIN luns l
         ON l.lun_id = dlm.lun_id

@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
@@ -14,6 +17,8 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -31,6 +36,9 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     protected static final String PHYSICAL_DEVICE_FIELD = "physdev";
     protected static final String DEVICE_PATH_CAPACITY_FIELD = "capacity";
 
+    @Inject
+    private StoragePoolDao storagePoolDao;
+
     private LUNListReturnForXmlRpc _result;
 
     public GetDeviceListVDSCommand(P parameters) {
@@ -45,18 +53,19 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         _result = getBroker().getDeviceList(storageType, lunsIdArray, getParameters().isCheckStatus());
 
         proceedProxyReturnValue();
-        setReturnValue(parseLUNList(_result.lunList));
+        Version compatibilityVersion = storagePoolDao.getForVds(getParameters().getVdsId()).getCompatibilityVersion();
+        setReturnValue(parseLUNList(_result.lunList, compatibilityVersion));
     }
 
-    public static ArrayList<LUNs> parseLUNList(Map<String, Object>[] lunList) {
+    public static ArrayList<LUNs> parseLUNList(Map<String, Object>[] lunList, Version compatibilityVersion) {
         ArrayList<LUNs> result = new ArrayList<>(lunList.length);
         for (Map<String, Object> xlun : lunList) {
-            result.add(parseLunFromXmlRpc(xlun));
+            result.add(parseLunFromXmlRpc(xlun, compatibilityVersion));
         }
         return result;
     }
 
-    public static LUNs parseLunFromXmlRpc(Map<String, Object> xlun) {
+    protected static LUNs parseLunFromXmlRpc(Map<String, Object> xlun, Version compatibilityVersion) {
         LUNs lun = new LUNs();
         if (xlun.containsKey("GUID")) {
             lun.setLUNId(xlun.get("GUID").toString());
@@ -143,6 +152,14 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                     lun.setPvSize(SizeConverter.convert(pvSize,
                             SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue());
                 }
+            }
+        }
+        if (FeatureSupported.passDiscardSupported(compatibilityVersion)) {
+            if (xlun.containsKey("discard_max_bytes")) {
+                lun.setDiscardMaxSize(((Number) xlun.get("discard_max_bytes")).longValue());
+            }
+            if (xlun.containsKey("discard_zeroes_data")) {
+                lun.setDiscardZeroesData((int) xlun.get("discard_zeroes_data") > 0);
             }
         }
         if (xlun.containsKey("vendorID")) {
