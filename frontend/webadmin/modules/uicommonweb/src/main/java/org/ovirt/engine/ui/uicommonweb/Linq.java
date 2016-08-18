@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -237,64 +236,6 @@ public final class Linq {
         return firstOrNull(items, new IdPredicate<>(id)) != null;
     }
 
-    public static VdsNetworkInterface findInterfaceByName(List<VdsNetworkInterface> items, String name) {
-        return firstOrNull(items, new NamePredicate(name));
-    }
-
-    public static VdsNetworkInterface findInterfaceByNetworkName(List<VdsNetworkInterface> items, final String name) {
-        return firstOrNull(items, new IPredicate<VdsNetworkInterface>() {
-            @Override
-            public boolean match(VdsNetworkInterface i) {
-                return Objects.equals(i.getNetworkName(), name);
-            }
-        });
-    }
-
-    public static VdsNetworkInterface findInterfaceByIsBond(List<VdsNetworkInterface> items) {
-        return firstOrNull(items, new IPredicate<VdsNetworkInterface>() {
-            @Override
-            public boolean match(VdsNetworkInterface i) {
-                return i.getBonded() != null && i.getBonded();
-            }
-        });
-    }
-
-    public static VdsNetworkInterface findInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
-        return firstOrNull(items, new IPredicate<VdsNetworkInterface>() {
-            @Override
-            public boolean match(VdsNetworkInterface i) {
-                return !StringHelper.isNullOrEmpty(i.getNetworkName());
-            }
-        });
-    }
-
-    public static Collection<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
-        return where(items, new IPredicate<VdsNetworkInterface>() {
-            @Override
-            public boolean match(VdsNetworkInterface i) {
-                return !StringHelper.isNullOrEmpty(i.getNetworkName());
-            }
-        });
-    }
-
-    public static Collection<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(List<VdsNetworkInterface> items) {
-        return where(items, new IPredicate<VdsNetworkInterface>() {
-            @Override
-            public boolean match(VdsNetworkInterface i) {
-                return StringHelper.isNullOrEmpty(i.getBondName());
-            }
-        });
-    }
-
-    public static Collection<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(List<VdsNetworkInterface> items) {
-        return where(items, new IPredicate<VdsNetworkInterface>() {
-            @Override
-            public boolean match(VdsNetworkInterface i) {
-                return i.getVlanId() == null;
-            }
-        });
-    }
-
     public static Network findManagementNetwork(List<Network> networks) {
         return firstOrNull(networks, new IPredicate<Network>() {
             @Override
@@ -302,11 +243,6 @@ public final class Linq {
                 return network.getCluster().isManagement();
             }
         });
-    }
-
-    public static Network findNetworkByName(List<Network> items, String name) {
-        return firstOrNull(items, new NamePredicate(name));
-
     }
 
     public static NetworkQoS findNetworkQosById(Iterable<NetworkQoS> items, Guid qosId) {
