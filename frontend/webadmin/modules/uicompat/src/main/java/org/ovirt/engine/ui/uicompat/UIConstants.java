@@ -2014,5 +2014,7 @@ public interface UIConstants extends Constants {
     String openingNewConsoleWindowFailed();
 
     String emptyImagePath();
+
+    String kvmBlockDomainWraning();
 }
 

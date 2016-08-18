@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameter
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -15,9 +16,15 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
@@ -27,6 +34,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
     private String username;
     private String password;
     private Guid proxyHostId;
+    private static UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     @Inject
     public ImportVmFromExternalSourceModel(VmImportGeneralModel vmImportGeneralModel,
@@ -35,6 +43,30 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
             ClusterListModel<Void> cluster,
             QuotaListModel clusterQuota) {
         super(vmImportGeneralModel, importDiskListModel, vmImportInterfaceListModel, cluster, clusterQuota);
+
+        getStorage().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                @SuppressWarnings("unchecked")
+                ListModel<StorageDomain> list = (ListModel<StorageDomain>)sender;
+                if (list.getSelectedItem().getStorageType().isBlockDomain() &&
+                        containsKvmOrigin()) {
+                    setMessage(constants.kvmBlockDomainWraning());
+                } else {
+                    setMessage(""); //$NON-NLS-1$
+                }
+            }
+        });
+    }
+
+    private boolean containsKvmOrigin() {
+        for (Object item : getItems()) {
+            ImportVmData importVmData = (ImportVmData) item;
+            if (importVmData.getVm().getOrigin() == OriginType.KVM) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void setUrl(String url) {
