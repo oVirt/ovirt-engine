@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -15,7 +14,6 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -353,26 +351,25 @@ public class VmsMonitoring implements BackendService {
     // ***** DB interaction *****
 
     private void saveVmGuestAgentNetworkDevices(List<VmAnalyzer> vmAnalyzers) {
-        Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = vmAnalyzers.stream()
+        List<VmAnalyzer> analyzersWithChangeGuestAgentNics = vmAnalyzers.stream()
                 .filter(analyzer -> !analyzer.getVmGuestAgentNics().isEmpty())
-                .map(analyzer -> new Pair<>(analyzer.getVmId(), analyzer.getVmGuestAgentNics()))
-                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        if (!vmGuestAgentNics.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                for (Guid vmId : vmGuestAgentNics.keySet()) {
-                    vmGuestAgentInterfaceDao.removeAllForVm(vmId);
-                }
-
-                for (List<VmGuestAgentInterface> nics : vmGuestAgentNics.values()) {
-                    if (nics != null) {
-                        for (VmGuestAgentInterface nic : nics) {
-                            vmGuestAgentInterfaceDao.save(nic);
-                        }
-                    }
-                }
-                return null;
-            });
+                .collect(Collectors.toList());
+        if (analyzersWithChangeGuestAgentNics.isEmpty()) {
+            return;
         }
+
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+            analyzersWithChangeGuestAgentNics.stream()
+                .map(VmAnalyzer::getVmId)
+                .distinct()
+                .forEach(vmId -> vmGuestAgentInterfaceDao.removeAllForVm(vmId));
+
+            analyzersWithChangeGuestAgentNics.stream()
+                .map(VmAnalyzer::getVmGuestAgentNics)
+                .flatMap(List::stream)
+                .forEach(nic -> vmGuestAgentInterfaceDao.save(nic));
+            return null;
+        });
     }
 
     // ***** Helpers and sub-methods *****
