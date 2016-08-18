@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -61,6 +64,7 @@ import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -104,6 +108,8 @@ public class UpdateClusterCommandTest {
     @Mock
     DbFacade dbFacadeMock;
 
+    @Mock
+    private VmStaticDao vmStaticDao;
     @Mock
     private ClusterDao clusterDao;
     @Mock
@@ -509,6 +515,20 @@ public class UpdateClusterCommandTest {
         verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
     }
 
+    @Test
+    public void vmsAreUpdatedByTheOrderOfTheirIds() {
+        createSimpleCommand();
+        VmStatic vm1 = new VmStatic();
+        vm1.setId(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
+        VmStatic vm2 = new VmStatic();
+        vm2.setId(new Guid("87296e00-0cad-4e5a-9299-008a7b6f4355"));
+        VmStatic vm3 = new VmStatic();
+        vm3.setId(new Guid("67296e00-0cad-4e5a-9299-008a7b6f4355"));
+        when(vmStaticDao.getAllByCluster(any())).thenReturn(Arrays.asList(vm1, vm2, vm3));
+        // the VMs ordered by Guids: v2, v3, v1
+        assertEquals(Arrays.asList(vm2, vm3, vm1), cmd.filterVmsInClusterNeedUpdate());
+    }
+
     private void createSimpleCommand() {
         createCommand(createNewCluster());
     }
@@ -576,6 +596,7 @@ public class UpdateClusterCommandTest {
 
         doReturn(0).when(cmd).compareCpuLevels(any(Cluster.class));
 
+        doReturn(vmStaticDao).when(cmd).getVmStaticDao();
         doReturn(cpuFlagsManagerHandler).when(cmd).getCpuFlagsManagerHandler();
         doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(clusterDao).when(cmd).getClusterDao();

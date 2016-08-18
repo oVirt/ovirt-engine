@@ -97,6 +97,17 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     protected void init() {
         updateMigrateOnError();
         oldGroup = getClusterDao().get(getCluster().getId());
+        if (oldGroup!= null && !Objects.equals(oldGroup.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+            vmsLockedForUpdate = filterVmsInClusterNeedUpdate();
+        }
+    }
+
+    protected List<VmStatic> filterVmsInClusterNeedUpdate() {
+        return getVmStaticDao().getAllByCluster(getCluster().getId()).stream()
+                .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
+                .filter(vm -> vm.getCustomCompatibilityVersion() == null) // no need for VM device update
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     public UpdateClusterCommand(T parameters, CommandContext commandContext) {
@@ -674,17 +685,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        final boolean versionChanged =
-                !Objects.equals(oldGroup.getCompatibilityVersion(), getCluster().getCompatibilityVersion());
-        if (!versionChanged) {
-            return null;
-        }
         final String lockMessage = EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_BEING_UPDATED.name()
                 + ReplacementUtils.createSetVariableString("clusterName", oldGroup.getName());
-        vmsLockedForUpdate = getVmStaticDao().getAllByCluster(oldGroup.getId()).stream()
-                .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
-                .filter(vm -> vm.getCustomCompatibilityVersion() == null) // no need for VM device update
-                .collect(Collectors.toList());
         return vmsLockedForUpdate.stream()
                 .collect(Collectors.toMap(
                         vm -> vm.getId().toString(),
