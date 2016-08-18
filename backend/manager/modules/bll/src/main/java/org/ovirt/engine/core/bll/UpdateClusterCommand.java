@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -93,7 +95,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private NetworkCluster managementNetworkCluster;
 
-    private List<VM> vmsLockedForUpdate = Collections.emptyList();
+    private List<VmStatic> vmsLockedForUpdate = Collections.emptyList();
 
     @Override
     protected void init() {
@@ -198,7 +200,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     private boolean updateVms() {
-        for (VM vm : vmsLockedForUpdate) {
+        for (VmStatic vm : vmsLockedForUpdate) {
             VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
             /*
             Locking by UpdateVmCommand is disabled since VMs are already locked in #getExclusiveLocks method.
@@ -725,8 +727,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
         final LockMessage lockMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_BEING_UPDATED)
                 .with("clusterName", oldCluster.getName());
-        vmsLockedForUpdate = getVmDao().getAllForCluster(oldCluster.getId()).stream()
-                .filter(vm -> !vm.isExternalVm() && !vm.isHostedEngine())
+        vmsLockedForUpdate = getVmStaticDao().getAllByCluster(oldCluster.getId()).stream()
+                .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
                 .filter(vm -> vm.getCustomCompatibilityVersion() == null) // no need for VM device update
                 .collect(Collectors.toList());
         return vmsLockedForUpdate.stream()
