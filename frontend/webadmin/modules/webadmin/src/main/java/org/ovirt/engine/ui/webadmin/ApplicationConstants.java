@@ -3179,5 +3179,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String bondProperties();
 
     String kvmBlockDomainWraning();
+
+    String hostedEngineVmTooltip();
 }
 
