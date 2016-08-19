@@ -31,7 +31,6 @@ public class BackendStorageDomainDiskSnapshotResourceTest
         setUpEntityQueryExpectations(VdcQueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,
                 new String[]{"Id"}, new Object[]{IMAGE_ID},
                 getEntity(1));
-        control.replay();
 
         DiskSnapshot diskSnapshot = resource.get();
         verifyModelSpecific(diskSnapshot, 1);

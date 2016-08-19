@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.same;
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.STATISTICS;
 import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.getPrototype;
 import static org.ovirt.engine.api.restapi.resource.BackendStatisticsResourceTest.verify;
@@ -36,7 +37,7 @@ public class BackendStatisticResourceTest extends AbstractBackendSubResourceTest
 
     @SuppressWarnings("unchecked")
     private AbstractStatisticalQuery<Host, VDS> getQuery() {
-        return (AbstractStatisticalQuery<Host, VDS>)control.createMock(AbstractStatisticalQuery.class);
+        return mock(AbstractStatisticalQuery.class);
     }
 
     @Test
@@ -62,21 +63,19 @@ public class BackendStatisticResourceTest extends AbstractBackendSubResourceTest
 
     private void setUpQueryExpectations(String[] names, boolean link) throws Exception {
         VDS entity = getEntity(0);
-        expect(query.resolve(eq(GUIDS[1]))).andReturn(entity);
+        when(query.resolve(eq(GUIDS[1]))).thenReturn(entity);
         List<Statistic> statistics = new ArrayList<>();
         for (String name : names) {
             statistics.add(getPrototype(name));
         }
-        expect(query.getStatistics(same(entity))).andReturn(statistics);
+        when(query.getStatistics(same(entity))).thenReturn(statistics);
         if (link) {
-            expect(query.getParentType()).andReturn(Host.class);
+            when(query.getParentType()).thenReturn(Host.class);
         }
-        control.replay();
     }
 
     @Override
     protected VDS getEntity(int index) {
-        VDS entity = control.createMock(VDS.class);
-        return entity;
+        return mock(VDS.class);
     }
 }

@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpStatisticalEntityExpectations;
@@ -10,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -100,7 +103,6 @@ public class BackendVmResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendVmResource("foo", new BackendVmsResource());
             fail("expected WebApplicationException");
@@ -113,7 +115,6 @@ public class BackendVmResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -130,7 +131,6 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
-        control.replay();
         Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
@@ -144,7 +144,6 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetNextRunGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
-        control.replay();
         Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
@@ -159,7 +158,6 @@ public class BackendVmResourceTest
             setUpGetPayloadExpectations(0, 1);
             setUpGetBallooningExpectations();
             setUpGetGraphicsExpectations(1);
-            control.replay();
 
             Vm vm = resource.get();
             assertTrue(vm.isSetStatistics());
@@ -184,7 +182,7 @@ public class BackendVmResourceTest
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
             setUpGetConsoleExpectations(0);
             setUpGetVirtioScsiExpectations(0);
             setUpGetSoundcardExpectations(0);
@@ -196,7 +194,6 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
-        control.replay();
         Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
@@ -210,7 +207,6 @@ public class BackendVmResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -320,7 +316,6 @@ public class BackendVmResourceTest
 
     @Test
     public void testUpdateSetAndUploadIconFailure() throws Exception {
-        control.replay();
         final Vm model = getModel(0);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIconWithData());
@@ -519,7 +514,6 @@ public class BackendVmResourceTest
         setUpGetGraphicsExpectations(1);
 
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
 
         Vm model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -762,7 +756,7 @@ public class BackendVmResourceTest
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
-                control.createMock(org.ovirt.engine.core.common.businessentities.VM.class));
+                mock(org.ovirt.engine.core.common.businessentities.VM.class));
 
         setUriInfo(setUpActionExpectations(VdcActionType.ReorderVmNics,
                                            VmOperationParameterBase.class,
@@ -907,9 +901,9 @@ public class BackendVmResourceTest
 
     @Test
     public void testCloneVm() throws Exception {
-        org.ovirt.engine.core.common.businessentities.VM mockedVm = control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
-        VmStatic vmStatic = control.createMock(VmStatic.class);
-        expect(mockedVm.getStaticData()).andReturn(vmStatic).anyTimes();
+        org.ovirt.engine.core.common.businessentities.VM mockedVm = mock(org.ovirt.engine.core.common.businessentities.VM.class);
+        VmStatic vmStatic = mock(VmStatic.class);
+        when(mockedVm.getStaticData()).thenReturn(vmStatic);
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId, IdQueryParameters.class, new String[]{"Id"}, new Object[]{GUIDS[0]}, mockedVm);
 
@@ -1022,7 +1016,6 @@ public class BackendVmResourceTest
     public void testIncompleteExport() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.export(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
@@ -1084,7 +1077,6 @@ public class BackendVmResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmResource.FORCE, Boolean.TRUE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -1105,7 +1097,6 @@ public class BackendVmResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmResource.DETACH_ONLY, Boolean.TRUE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -1126,7 +1117,6 @@ public class BackendVmResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmResource.DETACH_ONLY, Boolean.FALSE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -1138,7 +1128,6 @@ public class BackendVmResourceTest
                 new Object[] { GUIDS[0] },
                 null);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -1189,7 +1178,6 @@ public class BackendVmResourceTest
         org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
         setUpStatisticalEntityExpectations(entity, entity.getStatisticsData());
         setUpGetEntityExpectations(1, false, entity);
-        control.replay();
         return entity;
     }
 
@@ -1398,7 +1386,7 @@ public class BackendVmResourceTest
     }
 
     protected void setUpGetHostByNameExpectations(int idx) throws Exception {
-        VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), idx);
+        VDS host = BackendHostsResourceTest.setUpEntityExpectations(spy(new VDS()), idx);
         setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
                 NameQueryParameters.class,
                 new String[]{"Name"},

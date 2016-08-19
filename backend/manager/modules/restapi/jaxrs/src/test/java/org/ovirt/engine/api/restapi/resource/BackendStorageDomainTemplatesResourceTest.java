@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
@@ -71,17 +72,17 @@ public class BackendStorageDomainTemplatesResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 1);
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, true);
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpQueryExpectations(query, failure, StorageDomainType.Data, true);
+        setUpQueryExpectations(query, failure, StorageDomainType.Data);
     }
 
-    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType, boolean replay) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) throws Exception {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
@@ -110,15 +111,11 @@ public class BackendStorageDomainTemplatesResourceTest
         default:
             break;
         }
-
-        if (replay) {
-            control.replay();
-        }
     }
 
     @Override
     protected VmTemplate getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
+        return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
     protected List<VmTemplate> setUpTemplates() {

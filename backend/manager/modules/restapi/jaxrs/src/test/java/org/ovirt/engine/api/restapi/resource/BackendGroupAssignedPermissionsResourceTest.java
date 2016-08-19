@@ -33,7 +33,6 @@ public class BackendGroupAssignedPermissionsResourceTest
         model.getRole().setId(GUIDS[3].toString());
 
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
         } catch (WebApplicationException wae) {

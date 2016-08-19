@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,6 @@ public class BackendDataCentersResourceTest
     public void testAddIncompleteParameters() throws Exception {
         DataCenter model = new DataCenter();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -130,14 +130,14 @@ public class BackendDataCentersResourceTest
 
     @Override
     protected StoragePool getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(StoragePool.class), index);
+        return setUpEntityExpectations(mock(StoragePool.class), index);
     }
 
     static StoragePool setUpEntityExpectations(StoragePool entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.isLocal()).andReturn(false).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getdescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.isLocal()).thenReturn(false);
         return entity;
     }
 
@@ -155,9 +155,9 @@ public class BackendDataCentersResourceTest
     }
 
     protected List<Version> getVersions() {
-        Version version = control.createMock(Version.class);
-        expect(version.getMajor()).andReturn(2);
-        expect(version.getMinor()).andReturn(3);
+        Version version = mock(Version.class);
+        when(version.getMajor()).thenReturn(2);
+        when(version.getMinor()).thenReturn(3);
         List<Version> versions = new ArrayList<>();
         versions.add(version);
         return versions;

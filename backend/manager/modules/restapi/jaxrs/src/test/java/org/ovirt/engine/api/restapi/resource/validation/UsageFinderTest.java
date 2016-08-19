@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,9 +13,6 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMock;
-import org.easymock.IMocksControl;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,17 +21,10 @@ import org.ovirt.engine.api.model.Fault;
 public class UsageFinderTest extends Assert {
 
     private UsageFinder usageFinder;
-    private IMocksControl control;
 
     @Before
     public void init() {
         usageFinder = new UsageFinder();
-        control = EasyMock.createNiceControl();
-    }
-
-    @After
-    public void tearDown() {
-        control.verify();
     }
 
     @Test
@@ -41,7 +32,6 @@ public class UsageFinderTest extends Assert {
         try {
             UriInfo uriInfo = mockUri("hosts", "00000001-0001-0001-0001-000000000011", "nics");
             Request request = mockRequest("POST");
-            control.replay();
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
             assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/api/model#services/host-nics/methods/add", fault.getDetail());
         } catch (ClassNotFoundException | IOException | URISyntaxException e) {
@@ -54,7 +44,6 @@ public class UsageFinderTest extends Assert {
         try {
             UriInfo uriInfo = mockUri("vms", "00000001-0001-0001-0001-000000000011", "freezefilesystems");
             Request request = mockRequest("POST");
-            control.replay();
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
             assertEquals( "For correct usage, see: http://localhost:8080/ovirt-engine/api/model#services/vm/methods/freeze-filesystems", fault.getDetail());
         } catch (URISyntaxException | ClassNotFoundException | IOException e) {
@@ -67,7 +56,6 @@ public class UsageFinderTest extends Assert {
         try {
             UriInfo uriInfo = mockUri("hosts", "00000001-0001-0001-0001-000000000011", "nics", "116"); //LUN id.
             Request request = mockRequest("PUT");
-            control.replay();
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
             assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/api/model#services/host-nic/methods/update", fault.getDetail());
         } catch (URISyntaxException | ClassNotFoundException | IOException e) {
@@ -76,21 +64,21 @@ public class UsageFinderTest extends Assert {
     }
 
     private Request mockRequest(String httpMethod) {
-        Request requestMock = control.createMock(Request.class);
-        expect(requestMock.getMethod()).andReturn(httpMethod);
+        Request requestMock = mock(Request.class);
+        when(requestMock.getMethod()).thenReturn(httpMethod);
         return requestMock;
     }
 
     private UriInfo mockUri(String...strings) throws URISyntaxException {
-        UriInfo uriInfoMock = control.createMock(UriInfo.class);
-        expect(uriInfoMock.getBaseUri()).andReturn(new URI("http://localhost:8080/ovirt-engine/api/"));
+        UriInfo uriInfoMock = mock(UriInfo.class);
+        when(uriInfoMock.getBaseUri()).thenReturn(new URI("http://localhost:8080/ovirt-engine/api/"));
         List<PathSegment> pathSegments = new ArrayList<>();
         for (String s : strings) {
-            PathSegment segment = control.createMock(PathSegment.class);
-            expect(segment.getPath()).andReturn(s).anyTimes();
+            PathSegment segment = mock(PathSegment.class);
+            when(segment.getPath()).thenReturn(s);
             pathSegments.add(segment);
         }
-        expect(uriInfoMock.getPathSegments()).andReturn(pathSegments);
+        when(uriInfoMock.getPathSegments()).thenReturn(pathSegments);
         return uriInfoMock;
     }
 }

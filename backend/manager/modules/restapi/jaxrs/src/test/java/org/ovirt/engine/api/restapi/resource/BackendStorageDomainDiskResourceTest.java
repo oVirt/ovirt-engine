@@ -48,7 +48,6 @@ public class BackendStorageDomainDiskResourceTest
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
                 Collections.emptyMap());
-        control.replay();
 
         Disk disk = resource.get();
         verifyModelSpecific(disk, 1);
@@ -70,7 +69,6 @@ public class BackendStorageDomainDiskResourceTest
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
                 Collections.emptyMap());
-        control.replay();
 
         try {
             resource.get();
@@ -100,7 +98,6 @@ public class BackendStorageDomainDiskResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
@@ -113,7 +110,6 @@ public class BackendStorageDomainDiskResourceTest
     public void testIncompleteExport() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.export(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {

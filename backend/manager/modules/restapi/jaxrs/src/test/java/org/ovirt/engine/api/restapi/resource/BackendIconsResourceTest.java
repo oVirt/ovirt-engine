@@ -59,7 +59,6 @@ public class BackendIconsResourceTest
                 new Object[] {},
                 setUpVmIcons(),
                 failure);
-        control.replay();
     }
 
     public static List<VmIcon> setUpVmIcons() {

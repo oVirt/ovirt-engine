@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,6 @@ public class BackendExternalHostsResourceTest
             getHosts(),
             failure
         );
-        control.replay();
     }
 
     private List<VDS> getHosts() {
@@ -69,9 +69,9 @@ public class BackendExternalHostsResourceTest
 
     @Override
     protected VDS getEntity(int index) {
-        VDS host = control.createMock(VDS.class);
-        expect(host.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(host.getName()).andReturn(NAMES[index]).anyTimes();
+        VDS host = mock(VDS.class);
+        when(host.getId()).thenReturn(GUIDS[index]);
+        when(host.getName()).thenReturn(NAMES[index]);
         return host;
     }
 

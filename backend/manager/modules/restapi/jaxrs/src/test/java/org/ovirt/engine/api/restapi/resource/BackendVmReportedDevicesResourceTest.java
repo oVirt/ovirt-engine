@@ -50,7 +50,6 @@ public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollect
                 new Object[] { PARENT_ID },
                 getEntities(),
                 failure);
-        control.replay();
     }
 
     @Override

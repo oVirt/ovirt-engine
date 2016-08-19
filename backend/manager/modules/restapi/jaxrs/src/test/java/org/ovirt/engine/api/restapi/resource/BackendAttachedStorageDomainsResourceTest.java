@@ -1,7 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 
 import java.util.ArrayList;
@@ -144,7 +145,6 @@ public class BackendAttachedStorageDomainsResourceTest
     public void testAddIncompleteParameters() throws Exception {
         StorageDomain model = new StorageDomain();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -170,11 +170,11 @@ public class BackendAttachedStorageDomainsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         String[] paramNames = new String[] { "ServerConnectionId" };
         Object[] paramValues = new Object[] { GUIDS[0].toString() };
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(backend.runQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqQueryParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
-        .andReturn(queryResult).anyTimes();
-        expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
-        expect(queryResult.getReturnValue()).andReturn(setUpStorageServerConnection()).anyTimes();
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        when(backend.runQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqQueryParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
+        .thenReturn(queryResult);
+        when(queryResult.getSucceeded()).thenReturn(true);
+        when(queryResult.getReturnValue()).thenReturn(setUpStorageServerConnection());
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -192,7 +192,6 @@ public class BackendAttachedStorageDomainsResourceTest
                                      setUpStorageDomains(),
                                      failure);
 
-        control.replay();
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> setUpStorageDomains() {
@@ -205,32 +204,32 @@ public class BackendAttachedStorageDomainsResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getEntityStatic(int index) {
         org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity =
-                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
+                mock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
         return setUpEntityExpectations(entity, index, StorageType.NFS);
     }
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = mock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         return setUpEntityExpectations(entity, index, StorageType.NFS);
     }
 
     private static org.ovirt.engine.core.common.businessentities.StorageDomainStatic setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity,
             int index,
             StorageType storageType) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(entity.getStorageType()).andReturn(storageType).anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getStorageDomainType()).thenReturn(StorageDomainType.Master);
+        when(entity.getStorageType()).thenReturn(storageType);
+        when(entity.getStorage()).thenReturn(GUIDS[0].toString());
         return entity;
     }
 
     private static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index, StorageType storageType) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getStatus()).andReturn(StorageDomainStatus.Active).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(entity.getStorageType()).andReturn(storageType).anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getStatus()).thenReturn(StorageDomainStatus.Active);
+        when(entity.getStorageDomainType()).thenReturn(StorageDomainType.Master);
+        when(entity.getStorageType()).thenReturn(storageType);
+        when(entity.getStorage()).thenReturn(GUIDS[0].toString());
         return entity;
     }
 

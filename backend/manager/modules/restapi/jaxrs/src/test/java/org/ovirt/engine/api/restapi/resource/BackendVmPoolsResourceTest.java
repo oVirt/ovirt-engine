@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,40 +42,40 @@ public class BackendVmPoolsResourceTest extends
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.VmPool getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.VmPool entity = control.createMock(org.ovirt.engine.core.common.businessentities.VmPool.class);
-        expect(entity.getVmPoolId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getVmPoolDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getVmPoolType()).andReturn(VmPoolType.AUTOMATIC).anyTimes();
-        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
+        org.ovirt.engine.core.common.businessentities.VmPool entity = mock(org.ovirt.engine.core.common.businessentities.VmPool.class);
+        when(entity.getVmPoolId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getVmPoolDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getVmPoolType()).thenReturn(VmPoolType.AUTOMATIC);
+        when(entity.getClusterId()).thenReturn(GUIDS[2]);
         return entity;
     }
 
     protected org.ovirt.engine.core.common.businessentities.VmTemplate getTemplateEntity() {
-        VmTemplate entity = control.createMock(VmTemplate.class);
-        expect(entity.getId()).andReturn(GUIDS[1]).anyTimes();
-        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[1]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[1]).anyTimes();
-        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
-        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
-        expect(entity.getDefaultDisplayType()).andReturn(DisplayType.vga).anyTimes();
-        expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
-        expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
+        VmTemplate entity = mock(VmTemplate.class);
+        when(entity.getId()).thenReturn(GUIDS[1]);
+        when(entity.getClusterId()).thenReturn(GUIDS[2]);
+        when(entity.getName()).thenReturn(NAMES[1]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[1]);
+        when(entity.getNumOfCpus()).thenReturn(8);
+        when(entity.getNumOfSockets()).thenReturn(2);
+        when(entity.getDefaultDisplayType()).thenReturn(DisplayType.vga);
+        when(entity.getNumOfMonitors()).thenReturn(2);
+        when(entity.getVmType()).thenReturn(VmType.Server);
         return entity;
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getVmEntity() {
-        org.ovirt.engine.core.common.businessentities.VM entity = control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
-        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(entity.getStaticData()).andReturn(new VmStatic());
-        expect(entity.getDedicatedVmForVdsList()).andReturn(Collections.emptyList()).anyTimes();
+        org.ovirt.engine.core.common.businessentities.VM entity = mock(org.ovirt.engine.core.common.businessentities.VM.class);
+        when(entity.getId()).thenReturn(GUIDS[0]);
+        when(entity.getStaticData()).thenReturn(new VmStatic());
+        when(entity.getDedicatedVmForVdsList()).thenReturn(Collections.emptyList());
         return entity;
     }
 
     protected org.ovirt.engine.core.common.businessentities.Cluster getClusterEntity() {
-        org.ovirt.engine.core.common.businessentities.Cluster entity = control.createMock(org.ovirt.engine.core.common.businessentities.Cluster.class);
-        expect(entity.getId()).andReturn(GUIDS[2]).anyTimes();
+        org.ovirt.engine.core.common.businessentities.Cluster entity = mock(org.ovirt.engine.core.common.businessentities.Cluster.class);
+        when(entity.getId()).thenReturn(GUIDS[2]);
         return entity;
     }
 

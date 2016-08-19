@@ -1,13 +1,15 @@
 package org.ovirt.engine.api.restapi.test.util;
 
+import static org.mockito.Matchers.argThat;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.easymock.EasyMock;
-import org.easymock.IArgumentMatcher;
+import org.hamcrest.Description;
+import org.mockito.ArgumentMatcher;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -16,8 +18,7 @@ public class TestHelper {
 
     public static VdcActionParametersBase eqActionParams(
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values) {
-        EasyMock.reportMatcher(new ActionParametersEquals(clz, names, values));
-        return null;
+        return argThat(new ActionParametersEquals(clz, names, values));
     }
 
     protected static Method getMethod(Class<?> clz, String name) throws NoSuchMethodException {
@@ -98,7 +99,7 @@ public class TestHelper {
      * This generic matcher for ActionParameters is required because this types
      * don't override Object.equals() with a deep comparison
      */
-    protected static class ActionParametersEquals implements IArgumentMatcher {
+    protected static class ActionParametersEquals extends ArgumentMatcher<VdcActionParametersBase> {
         Class<? extends VdcActionParametersBase> clz;
         String[] names;
         Object[] values;
@@ -124,30 +125,29 @@ public class TestHelper {
         }
 
         @Override
-        public void appendTo(StringBuffer buffer) {
-            buffer.append("eqActionParams(");
+        public void describeTo(Description description) {
+            description.appendText("eqActionParams(");
             for (int i = 0; i < names.length; i++) {
                 if (i > 0) {
-                    buffer.append(", ");
+                    description.appendText(", ");
                 }
-                buffer.append(names[i]);
-                buffer.append("=");
-                buffer.append(values[i]);
+                description.appendText(names[i]);
+                description.appendText("=");
+                description.appendText(String.valueOf(values[i]));
             }
-            buffer.append(")");
+            description.appendText(")");
         }
     }
 
     public static SearchParameters eqSearchParams(SearchParameters expected) {
-        EasyMock.reportMatcher(new SearchParametersEquals(expected));
-        return null;
+        return argThat(new SearchParametersEquals(expected));
     }
 
     /**
      * This specialized matcher for SearchParameters is required because this
      * type doesn't override Object.equals() with a deep comparison
      */
-    protected static class SearchParametersEquals implements IArgumentMatcher {
+    protected static class SearchParametersEquals extends ArgumentMatcher<SearchParameters> {
         private SearchParameters expected;
 
         public SearchParametersEquals(SearchParameters expected) {
@@ -166,26 +166,25 @@ public class TestHelper {
         }
 
         @Override
-        public void appendTo(StringBuffer buffer) {
-            buffer.append("eqSearchParams(");
-            buffer.append(expected.getSearchPattern());
-            buffer.append(" on type ");
-            buffer.append(expected.getSearchTypeValue() != null ? expected.getSearchTypeValue()
+        public void describeTo(Description description) {
+            description.appendText("eqSearchParams(");
+            description.appendText(expected.getSearchPattern());
+            description.appendText(" on type ");
+            description.appendText(expected.getSearchTypeValue() != null ? expected.getSearchTypeValue()
                     .toString() : "none");
         }
     }
 
     public static VdcQueryParametersBase eqQueryParams(Class<? extends VdcQueryParametersBase> clz,
             String[] names, Object[] values) {
-        EasyMock.reportMatcher(new QueryParametersEquals(clz, names, values));
-        return null;
+        return argThat(new QueryParametersEquals(clz, names, values));
     }
 
     /**
      * This generic matcher for QueryParameters is required because this types
      * don't override Object.equals() with a deep comparison
      */
-    protected static class QueryParametersEquals implements IArgumentMatcher {
+    protected static class QueryParametersEquals extends ArgumentMatcher<VdcQueryParametersBase> {
         Class<? extends VdcQueryParametersBase> clz;
         String[] names;
         Object[] values;
@@ -211,17 +210,17 @@ public class TestHelper {
         }
 
         @Override
-        public void appendTo(StringBuffer buffer) {
-            buffer.append("eqQueryParams(");
+        public void describeTo(Description description) {
+            description.appendText("eqQueryParams(");
             for (int i = 0; i < names.length; i++) {
                 if (i > 0) {
-                    buffer.append(", ");
+                    description.appendText(", ");
                 }
-                buffer.append(names[i]);
-                buffer.append("=");
-                buffer.append(values[i]);
+                description.appendText(names[i]);
+                description.appendText("=");
+                description.appendText(String.valueOf(values[i]));
             }
-            buffer.append(")");
+            description.appendText(")");
         }
     }
 }

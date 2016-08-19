@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
@@ -37,15 +38,14 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
 
     @Test
     public void testList() throws Exception {
-        BackendUserResource userResourceMock = control.createMock(BackendUserResource.class);
-        expect(userResourceMock.getUserByNameAndDomain("admin", "internal")).andReturn(getUser()).anyTimes();
+        BackendUserResource userResourceMock = mock(BackendUserResource.class);
+        when(userResourceMock.getUserByNameAndDomain("admin", "internal")).thenReturn(getUser());
         resource.setUserResource(userResourceMock);
         resource.setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] }, getEntity(0));
-        control.replay();
         Sessions sessions = resource.list();
         assertEquals(2, sessions.getSessions().size());
         assertNotNull(sessions.getSessions().get(0).getVm());

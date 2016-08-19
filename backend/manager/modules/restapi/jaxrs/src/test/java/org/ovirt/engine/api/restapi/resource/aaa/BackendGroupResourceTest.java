@@ -26,7 +26,6 @@ public class BackendGroupResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendGroupResource("foo", null);
             fail("expected WebApplicationException");
@@ -39,7 +38,6 @@ public class BackendGroupResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -52,7 +50,6 @@ public class BackendGroupResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -72,7 +69,6 @@ public class BackendGroupResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception {
         setUpGetEntityExpectations(GUIDS[0], true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

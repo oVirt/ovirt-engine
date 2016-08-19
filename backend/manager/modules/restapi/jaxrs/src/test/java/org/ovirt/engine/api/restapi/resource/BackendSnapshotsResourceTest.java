@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,7 +85,6 @@ public class BackendSnapshotsResourceTest
         setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[0]);
         setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
         collection.setUriInfo(uriInfo);
-        control.replay();
         verifyCollection(getCollection());
     }
 
@@ -99,7 +99,7 @@ public class BackendSnapshotsResourceTest
         org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot1 = new org.ovirt.engine.core.common.businessentities.Snapshot();
         resultSnapshot1.setVmConfiguration(ovfData);
         resultSnapshot1.setId(SNAPSHOT_IDS[1]);
-        expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+        when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
         UriInfo uriInfo = setUpUriExpectations(null);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
@@ -116,7 +116,6 @@ public class BackendSnapshotsResourceTest
                 new Object[]{SNAPSHOT_IDS[0]},
                 resultSnapshot1);
         collection.setUriInfo(uriInfo);
-        control.replay();
         List<Snapshot> snapshots =  getCollection();
         verifyCollection(snapshots);
         for (int i = 0; i < 2; i++) {
@@ -242,8 +241,8 @@ public class BackendSnapshotsResourceTest
     }
 
     private void mockOsRepository() {
-        OsRepository mockOsRepository = control.createMock(OsRepository.class);
-        expect(mockOsRepository.getUniqueOsNames()).andReturn(new HashMap<>()).anyTimes();
+        OsRepository mockOsRepository = mock(OsRepository.class);
+        when(mockOsRepository.getUniqueOsNames()).thenReturn(new HashMap<>());
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, mockOsRepository);
     }
 }

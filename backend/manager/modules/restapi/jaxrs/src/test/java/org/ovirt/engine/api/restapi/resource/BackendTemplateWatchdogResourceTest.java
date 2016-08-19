@@ -43,7 +43,6 @@ public class BackendTemplateWatchdogResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        control.replay();
         Watchdog watchdog = resource.get();
         verifyModel(watchdog);
     }

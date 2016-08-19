@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendClusterNetworksResourceTest.CLUSTER_ID;
 
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class BackendClusterNetworkResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendClusterNetworkResource("foo", null);
             fail("expected WebApplicationException");
@@ -44,7 +44,6 @@ public class BackendClusterNetworkResourceTest
                                      new String[] { "Id" },
                                      new Object[] { CLUSTER_ID },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -57,7 +56,6 @@ public class BackendClusterNetworkResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, false, false, false);
-        control.replay();
 
         verifyModel(resource.get(), 1);
     }
@@ -86,7 +84,6 @@ public class BackendClusterNetworkResourceTest
             new Object[] { CLUSTER_ID },
             new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>()
         );
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -145,8 +142,8 @@ public class BackendClusterNetworkResourceTest
     }
 
     protected Cluster setUpClusterExpectations(Guid id) {
-        Cluster group = control.createMock(Cluster.class);
-        expect(group.getId()).andReturn(id).anyTimes();
+        Cluster group = mock(Cluster.class);
+        when(group.getId()).thenReturn(id);
 
         setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                                      IdQueryParameters.class,

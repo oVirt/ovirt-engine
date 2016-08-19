@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.when;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ public class BackendCreationResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendCreationResource("foo");
             fail("expected WebApplicationException");
@@ -42,14 +41,13 @@ public class BackendCreationResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpUriInfoExpectations());
         setUpGetEntityExpectations();
-        control.replay();
 
         verifyModel(resource.get());
     }
 
     protected UriInfo setUpUriInfoExpectations() {
         UriInfo uriInfo = setUpBasicUriExpectations();
-        expect(uriInfo.getPath()).andReturn("").anyTimes();
+        when(uriInfo.getPath()).thenReturn("");
         return uriInfo;
     }
 

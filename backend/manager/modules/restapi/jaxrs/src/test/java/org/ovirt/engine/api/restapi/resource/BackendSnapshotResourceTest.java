@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,6 @@ public class BackendSnapshotResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
-        control.replay();
         verifyModel(resource.get(), 1);
     }
 
@@ -62,7 +62,7 @@ public class BackendSnapshotResourceTest
         org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot = new org.ovirt.engine.core.common.businessentities.Snapshot();
         resultSnapshot.setVmConfiguration(ovfData);
         resultSnapshot.setId(SNAPSHOT_ID);
-        expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+        when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
         setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
@@ -70,7 +70,6 @@ public class BackendSnapshotResourceTest
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_ID},
                 resultSnapshot);
-        control.replay();
         Snapshot snapshot = resource.get();
         verifyModel(snapshot, 1);
         assertNotNull(snapshot.getInitialization());
@@ -84,7 +83,6 @@ public class BackendSnapshotResourceTest
     public void testGetNotFound1() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(new ArrayList<>());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -99,7 +97,6 @@ public class BackendSnapshotResourceTest
     public void testGetNotFound2() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(2)));
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -113,7 +110,6 @@ public class BackendSnapshotResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpTryBackExpectations();
         setUpRestoreExpectations();
-        control.replay();
         resource.restore(new Action());
     }
 
@@ -188,8 +184,7 @@ public class BackendSnapshotResourceTest
                 new Object[] { VM_ID, SnapshotActionEnum.COMMIT },
                 true,
                 true,
-                null,
-                false);
+                null);
     }
 
     protected void setUpGetEntityExpectations(List<org.ovirt.engine.core.common.businessentities.Snapshot> result) throws Exception {
@@ -202,9 +197,9 @@ public class BackendSnapshotResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.Snapshot getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.Snapshot snapshot = control.createMock(org.ovirt.engine.core.common.businessentities.Snapshot.class);
-        expect(snapshot.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(snapshot.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        org.ovirt.engine.core.common.businessentities.Snapshot snapshot = mock(org.ovirt.engine.core.common.businessentities.Snapshot.class);
+        when(snapshot.getId()).thenReturn(GUIDS[index]);
+        when(snapshot.getDescription()).thenReturn(DESCRIPTIONS[index]);
         return snapshot;
     }
 

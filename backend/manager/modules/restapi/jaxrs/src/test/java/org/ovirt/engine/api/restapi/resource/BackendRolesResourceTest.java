@@ -62,7 +62,6 @@ public class BackendRolesResourceTest
     @Test
     public void testAddRoleInvalidPermit() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         Role model = new Role();
         model.setName(NAMES[0]);
         model.setPermits(new Permits());
@@ -83,7 +82,6 @@ public class BackendRolesResourceTest
         Role model = new Role();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -99,7 +97,6 @@ public class BackendRolesResourceTest
         model.getPermits().getPermits().add(new Permit());
         model.getPermits().getPermits().get(0).setId("1");
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -124,7 +121,6 @@ public class BackendRolesResourceTest
                                      setUpRoles(),
                                      failure);
 
-        control.replay();
     }
 
     @Override

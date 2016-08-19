@@ -40,7 +40,6 @@ public class BackendAssignedRolesResourceTest
                                      setUpPermissions(),
                                      failure);
 
-        control.replay();
     }
 
     @Override

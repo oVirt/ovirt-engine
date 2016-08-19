@@ -39,7 +39,6 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             collection.getTagResource("foo");
             fail("expected WebApplicationException");
@@ -108,7 +107,6 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     @Test
     public void testAddIncompleteParameters() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(new Tag());
             fail("expected WebApplicationException on incomplete parameters");
@@ -156,7 +154,6 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
                                      setUpTags(),
                                      failure);
 
-        control.replay();
     }
 
     @Override

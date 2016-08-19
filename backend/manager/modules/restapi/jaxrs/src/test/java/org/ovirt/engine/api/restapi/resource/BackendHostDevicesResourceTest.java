@@ -23,7 +23,6 @@ public class BackendHostDevicesResourceTest
                 new Object[] { HOST_ID },
                 getHostDeviceCollection());
 
-        control.replay();
 
         verifyHostDevices(resource.list().getHostDevices());
     }

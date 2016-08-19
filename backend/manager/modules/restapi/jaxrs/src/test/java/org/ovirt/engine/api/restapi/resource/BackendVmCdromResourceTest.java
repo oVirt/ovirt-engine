@@ -16,7 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -51,7 +52,6 @@ public class BackendVmCdromResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -65,7 +65,6 @@ public class BackendVmCdromResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(getVm());
-        control.replay();
 
         Cdrom cdrom = resource.get();
         verifyModel(cdrom);
@@ -77,7 +76,6 @@ public class BackendVmCdromResourceTest
         uriInfo = addMatrixParameterExpectations(uriInfo, "current");
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(getVm());
-        control.replay();
 
         Cdrom cdrom = resource.get();
         verifyModelWithCurrentCd(cdrom);
@@ -89,7 +87,6 @@ public class BackendVmCdromResourceTest
         uriInfo = addMatrixParameterExpectations(uriInfo, "current", "true");
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(getVm());
-        control.replay();
 
         Cdrom cdrom = resource.get();
         verifyModelWithCurrentCd(cdrom);
@@ -101,7 +98,6 @@ public class BackendVmCdromResourceTest
         uriInfo = addMatrixParameterExpectations(uriInfo, "current", "false");
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(getVm());
-        control.replay();
 
         Cdrom cdrom = resource.get();
         verifyModel(cdrom);
@@ -111,7 +107,6 @@ public class BackendVmCdromResourceTest
     public void testChangeCdNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
-        control.replay();
         try {
             resource.update(getCdrom(B_ISO));
             fail("expected WebApplicationException");
@@ -178,10 +173,10 @@ public class BackendVmCdromResourceTest
 
     protected UriInfo setUpChangeCdUriQueryExpectations() {
         UriInfo uriInfo = setUpBasicUriExpectations();
-        MultivaluedMap<String, String> queries = control.createMock(MultivaluedMap.class);
-        expect(queries.containsKey("current")).andReturn(true).anyTimes();
-        expect(queries.getFirst("current")).andReturn("true").anyTimes();
-        expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
+        MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
+        when(queries.containsKey("current")).thenReturn(true);
+        when(queries.getFirst("current")).thenReturn("true");
+        when(uriInfo.getQueryParameters()).thenReturn(queries);
         return uriInfo;
     }
 
@@ -189,7 +184,6 @@ public class BackendVmCdromResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
-        control.replay();
         try {
             Cdrom cdrom = getCdrom(A_ISO);
             resource.update(cdrom);
@@ -224,7 +218,6 @@ public class BackendVmCdromResourceTest
         setUriInfo(setUpBasicUriExpectations());
         Cdrom cdrom = new Cdrom();
         cdrom.setFile(null);
-        control.replay();
         try {
             resource.update(cdrom);
             fail("expected WebApplicationException on incomplete parameters");
@@ -266,7 +259,6 @@ public class BackendVmCdromResourceTest
             null
         );
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

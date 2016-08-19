@@ -16,19 +16,15 @@
 
 package org.ovirt.engine.api.restapi.util;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMock;
-import org.easymock.IMocksControl;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -42,13 +38,6 @@ import org.ovirt.engine.api.model.Vm;
 public class QueryHelperTest extends Assert {
 
     private static final String QUERY = "name=zibert AND id=0*";
-
-    protected IMocksControl control;
-
-    @Before
-    public void setUp() {
-        control = EasyMock.createNiceControl();
-    }
 
     @Test
     public void testGetVMConstraint() throws Exception {
@@ -86,23 +75,19 @@ public class QueryHelperTest extends Assert {
     }
 
     private void doTestGetConstraint(Class<?> clz, String expectedPrefix) throws Exception {
-        UriInfo uriInfo = createMock(UriInfo.class);
-        expect(uriInfo.getPathSegments()).andReturn(Collections.emptyList()).anyTimes();
-        MultivaluedMap<String, String> queries = createMock(MultivaluedMap.class);
-        expect(queries.containsKey("search")).andReturn(true).anyTimes();
-        expect(queries.getFirst("search")).andReturn(QUERY).anyTimes();
-        expect(queries.isEmpty()).andReturn(false).anyTimes();
-        expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
-
-        replay(uriInfo, queries);
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getPathSegments()).thenReturn(Collections.emptyList());
+        MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
+        when(queries.containsKey("search")).thenReturn(true);
+        when(queries.getFirst("search")).thenReturn(QUERY);
+        when(queries.isEmpty()).thenReturn(false);
+        when(uriInfo.getQueryParameters()).thenReturn(queries);
 
         if ("".equals(expectedPrefix)) {
             assertEquals(QUERY, QueryHelper.getConstraint(null, uriInfo, clz, false));
         } else {
             assertEquals(expectedPrefix + QUERY, QueryHelper.getConstraint(null, uriInfo, clz));
         }
-
-        verify(uriInfo, queries);
     }
 
     @Test
@@ -171,16 +156,12 @@ public class QueryHelperTest extends Assert {
     }
 
     private void doTestGetDefaultConstraint(Class<?> clz, String expectedConstraint) throws Exception {
-        UriInfo uriInfo = createMock(UriInfo.class);
-        expect(uriInfo.getPathSegments()).andReturn(Collections.emptyList()).anyTimes();
-        MultivaluedMap<String, String> queries = createMock(MultivaluedMap.class);
-        expect(queries.isEmpty()).andReturn(true).anyTimes();
-        expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
-
-        replay(uriInfo, queries);
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getPathSegments()).thenReturn(Collections.emptyList());
+        MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
+        when(queries.isEmpty()).thenReturn(true);
+        when(uriInfo.getQueryParameters()).thenReturn(queries);
 
         assertEquals(expectedConstraint, QueryHelper.getConstraint(null, uriInfo, "", clz));
-
-        verify(uriInfo, queries);
     }
 }

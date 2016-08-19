@@ -188,7 +188,6 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new String[] { "Id" },
                 new Object[] {GUIDS[3]},
                 entities);
-        control.replay();
         verifyCollection(getCollection());
     }
 
@@ -213,7 +212,6 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new String[] {"StorageDomainId", "StoragePoolId"},
                 new Object[] {GUIDS[3], storagePoolId},
                 entities);
-        control.replay();
         verifyCollection(getCollection());
     }
 

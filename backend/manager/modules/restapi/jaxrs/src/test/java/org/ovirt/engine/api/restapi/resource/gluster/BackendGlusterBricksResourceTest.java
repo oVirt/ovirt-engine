@@ -1,9 +1,11 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.brickDir;
 import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.clusterId;
 import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.serverId;
@@ -12,6 +14,7 @@ import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.vo
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -57,7 +60,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     protected void init() {
         super.init();
         setUpParentMocks();
-        helper = new GlusterTestHelper(control);
+        helper = new GlusterTestHelper();
     }
 
     @Override
@@ -76,7 +79,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setUpBricksQueryExpectations(null);
         UriInfo uriInfo = setUpActionsUriExpectations();
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         verifyCollection(getCollection());
     }
@@ -87,7 +89,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setUpGetEntityExpectationsAllContent(false);
         UriInfo uriInfo = setUpActionsUriExpectations();
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         verifyCollection(getCollection());
     }
@@ -98,7 +99,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setUpBricksQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         try {
             getCollection();
@@ -118,7 +118,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
 
-        control.replay();
 
         try {
             getCollection();
@@ -138,7 +137,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setUpBricksQueryExpectations(t);
         collection.setUriInfo(uriInfo);
 
-        control.replay();
         try {
             getCollection();
             fail("expected WebApplicationException");
@@ -152,8 +150,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     @Test
     public void testAdd() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
-        expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
-                .anyTimes();
+        when(uriInfo.getPath()).thenReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks");
         setUriInfo(uriInfo);
         setUpBrickCreationExpectation(false);
         Response response = collection.add(createModel());
@@ -165,14 +162,13 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     @Test
     public void testAddForce() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
-        expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
-                .anyTimes();
+        when(uriInfo.getPath()).thenReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks");
         setUriInfo(setUpGetMatrixConstraintsExpectations(
                 BackendResource.FORCE_CONSTRAINT,
                 true,
                 "true",
-                uriInfo,
-                false));
+                uriInfo
+        ));
         setUpBrickCreationExpectation(true);
         Response response = collection.add(createModel());
         assertEquals(201, response.getStatus());
@@ -183,14 +179,13 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     @Test
     public void testAddForceFalse() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
-        expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
-                .anyTimes();
+        when(uriInfo.getPath()).thenReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks");
         setUriInfo(setUpGetMatrixConstraintsExpectations(
                 BackendResource.FORCE_CONSTRAINT,
                 false,
                 "false",
-                uriInfo,
-                false));
+                uriInfo
+        ));
         setUpBrickCreationExpectation(false);
         Response response = collection.add(createModel());
         assertEquals(201, response.getStatus());
@@ -259,8 +254,8 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         volume.setId(volumeId.toString());
         brick.setGlusterVolume(volume);
 
-        GlusterBricks bricks = control.createMock(GlusterBricks.class);
-        expect(bricks.getGlusterBricks()).andReturn(Collections.singletonList(brick)).anyTimes();
+        GlusterBricks bricks = mock(GlusterBricks.class);
+        when(bricks.getGlusterBricks()).thenReturn(Collections.singletonList(brick));
 
         setUriInfo(setUpActionExpectations(VdcActionType.StartRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
@@ -282,8 +277,8 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         volume.setId(volumeId.toString());
         brick.setGlusterVolume(volume);
 
-        GlusterBricks bricks = control.createMock(GlusterBricks.class);
-        expect(bricks.getGlusterBricks()).andReturn(Collections.singletonList(brick)).anyTimes();
+        GlusterBricks bricks = mock(GlusterBricks.class);
+        when(bricks.getGlusterBricks()).thenReturn(Collections.singletonList(brick));
 
         setUriInfo(setUpActionExpectations(VdcActionType.StopRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
@@ -305,8 +300,8 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         volume.setId(volumeId.toString());
         brick.setGlusterVolume(volume);
 
-        GlusterBricks bricks = control.createMock(GlusterBricks.class);
-        expect(bricks.getGlusterBricks()).andReturn(Collections.singletonList(brick)).anyTimes();
+        GlusterBricks bricks = mock(GlusterBricks.class);
+        when(bricks.getGlusterBricks()).thenReturn(Collections.singletonList(brick));
 
         setUriInfo(setUpActionExpectations(VdcActionType.StopRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
@@ -403,62 +398,55 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         cluster.setId(clusterId.toString());
         volume.setCluster(cluster);
 
-        ClusterResource clusterResourceMock = control.createMock(ClusterResource.class);
-        expect(clusterResourceMock.get()).andReturn(cluster).anyTimes();
+        ClusterResource clusterResourceMock = mock(ClusterResource.class);
+        when(clusterResourceMock.get()).thenReturn(cluster);
 
-        BackendGlusterVolumesResource volumesResourceMock = control.createMock(BackendGlusterVolumesResource.class);
-        expect(volumesResourceMock.getParent()).andReturn(clusterResourceMock).anyTimes();
+        BackendGlusterVolumesResource volumesResourceMock = mock(BackendGlusterVolumesResource.class);
+        when(volumesResourceMock.getParent()).thenReturn(clusterResourceMock);
 
-        parentMock = control.createMock(BackendGlusterVolumeResource.class);
-        expect(parentMock.getParent()).andReturn(volumesResourceMock).anyTimes();
-        expect(parentMock.get()).andReturn(volume).anyTimes();
+        parentMock = mock(BackendGlusterVolumeResource.class);
+        when(parentMock.getParent()).thenReturn(volumesResourceMock);
+        when(parentMock.get()).thenReturn(volume);
 
         collection.setParent(parentMock);
 
-        expect(parentMock.addParents(isA(GlusterVolume.class))).andDelegateTo(
-                new BackendGlusterVolumeResource(volumeId.toString()) {
-
-                    @Override
-                    protected GlusterVolume addParents(GlusterVolume model) {
-                        Cluster cluster = new Cluster();
-                        cluster.setId(clusterId.toString());
-                        model.setCluster(cluster);
-                        model.setId(volumeId.toString());
-                        return model;
-                    }
-
-                }).anyTimes();
-
+        doAnswer(invocation -> {
+            GlusterVolume model = (GlusterVolume) invocation.getArguments()[0];
+            Cluster clusterModel = new Cluster();
+            clusterModel.setId(clusterId.toString());
+            model.setCluster(clusterModel);
+            model.setId(volumeId.toString());
+            return model;
+        }).when(parentMock).addParents(isA(GlusterVolume.class));
     }
 
     private void setUpBricksQueryExpectations(Object failure) {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        when(queryResult.getSucceeded()).thenReturn(failure == null);
         List<GlusterBrickEntity> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < NAMES.length; i++) {
                 entities.add(getEntity(i));
             }
-            expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
+            when(queryResult.getReturnValue()).thenReturn(entities);
         } else {
             if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andThrow((Exception) failure)
-                        .anyTimes();
+                when(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenThrow((Exception) failure);
                 return;
             }
         }
-        expect(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andReturn(
+        when(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenReturn(
                 queryResult);
     }
 
     private void setUpGetEntityExpectationsAllContent(boolean notFound) throws Exception {
         List<String> populateValue = new ArrayList<>();
         populateValue.add("true");
-        expect(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).andReturn(populateValue).anyTimes();
+        when(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).thenReturn(populateValue);
 
         setupEntityExpectationAdvancedDetails(NAMES.length, notFound);
     }

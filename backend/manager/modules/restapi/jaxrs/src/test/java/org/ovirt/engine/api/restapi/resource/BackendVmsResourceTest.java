@@ -1,14 +1,17 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -81,7 +84,7 @@ public class BackendVmsResourceTest
     public void init() {
         super.init();
         OsTypeMockUtils.mockOsTypes();
-        osRepository = control.createMock(OsRepository.class);
+        osRepository = mock(OsRepository.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
@@ -317,7 +320,7 @@ public class BackendVmsResourceTest
                 getTemplateEntity(0));
 
 
-        expect(osRepository.isBalloonEnabled(anyInt(), anyObject(Version.class))).andReturn(false).anyTimes();
+        when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(false);
 
         setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
@@ -773,7 +776,6 @@ public class BackendVmsResourceTest
         Vm model = createModel(null);
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -1148,7 +1150,7 @@ public class BackendVmsResourceTest
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
             setUpGetPayloadExpectations(3);
             setUpGetBallooningExpectations(3);
             setUpGetConsoleExpectations(0, 1, 2);
@@ -1169,7 +1171,7 @@ public class BackendVmsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         List<String> populates = new ArrayList<>();
         populates.add("true");
-        expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+        when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
         setUpGetPayloadExpectations(3);
         setUpGetBallooningExpectations(3);
         setUpGetGraphicsMultipleExpectations(3);
@@ -1250,7 +1252,6 @@ public class BackendVmsResourceTest
         Vm model = new Vm();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -1264,7 +1265,6 @@ public class BackendVmsResourceTest
         Vm model = createModel(null);
         model.setTemplate(null);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -1334,7 +1334,6 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAddSetAndUploadIconFailure() throws Exception {
-        control.replay();
         final Vm model = createModel(null);
         model.setLargeIcon(IconTestHelpler.createIconWithData());
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
@@ -1661,14 +1660,14 @@ public class BackendVmsResourceTest
     private List<VmInit> setUpVmInit() {
         List<VmInit> vminits = new ArrayList<>(NAMES.length);
         for (int i = 0; i < NAMES.length; i++) {
-            VmInit vmInit = control.createMock(VmInit.class);
+            VmInit vmInit = mock(VmInit.class);
             vminits.add(vmInit);
         }
         return vminits;
     }
 
     protected void setUpGetHostByNameExpectations(int idx) throws Exception {
-        VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), idx);
+        VDS host = BackendHostsResourceTest.setUpEntityExpectations(spy(new VDS()), idx);
         setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
                 NameQueryParameters.class,
                 new String[]{"Name"},

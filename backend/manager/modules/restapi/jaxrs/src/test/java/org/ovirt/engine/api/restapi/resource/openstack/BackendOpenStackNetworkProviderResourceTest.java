@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -39,7 +40,6 @@ public class BackendOpenStackNetworkProviderResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendOpenStackNetworkProviderResource("foo");
             fail("expected WebApplicationException");
@@ -53,7 +53,6 @@ public class BackendOpenStackNetworkProviderResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -66,7 +65,6 @@ public class BackendOpenStackNetworkProviderResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -74,7 +72,6 @@ public class BackendOpenStackNetworkProviderResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -134,7 +131,6 @@ public class BackendOpenStackNetworkProviderResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
 
         OpenStackNetworkProvider model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -170,11 +166,11 @@ public class BackendOpenStackNetworkProviderResourceTest
 
     @Override
     protected Provider getEntity(int index) {
-        Provider provider = control.createMock(Provider.class);
-        expect(provider.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(provider.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(provider.getType()).andReturn(ProviderType.OPENSTACK_NETWORK).anyTimes();
+        Provider provider = mock(Provider.class);
+        when(provider.getId()).thenReturn(GUIDS[index]);
+        when(provider.getName()).thenReturn(NAMES[index]);
+        when(provider.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(provider.getType()).thenReturn(ProviderType.OPENSTACK_NETWORK);
         return provider;
     }
 

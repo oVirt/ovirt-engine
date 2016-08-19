@@ -36,7 +36,6 @@ public class BackendUserResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendUserResource("foo", null);
             fail("expected WebApplicationException");
@@ -49,7 +48,6 @@ public class BackendUserResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -62,7 +60,6 @@ public class BackendUserResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -75,7 +72,6 @@ public class BackendUserResourceTest
                 new String[] { "UserName", "DomainName" },
                 new Object[] { "admin", "internal" },
                 getEntity(0));
-        control.replay();
         verifyModel(resource.getUserByNameAndDomain("admin", "internal"), 0);
     }
 
@@ -100,7 +96,6 @@ public class BackendUserResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

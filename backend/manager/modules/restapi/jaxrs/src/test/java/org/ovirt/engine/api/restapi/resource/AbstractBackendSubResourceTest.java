@@ -42,7 +42,6 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
     @SuppressWarnings("unchecked")
     @Test
     public void testSubCollectionInjection() throws Exception {
-        control.replay();
         // walk super-interface hierarchy to find non-inherited method annotations
         injectSubCollectionAndTest();
     }

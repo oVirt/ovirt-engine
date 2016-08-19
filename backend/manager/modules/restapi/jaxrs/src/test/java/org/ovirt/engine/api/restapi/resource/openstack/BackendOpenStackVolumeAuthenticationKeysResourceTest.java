@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,6 @@ public class BackendOpenStackVolumeAuthenticationKeysResourceTest extends
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] }, getLibvirtSecrets(),
                 failure);
-        control.replay();
     }
 
     private List<LibvirtSecret> getLibvirtSecrets() {
@@ -61,11 +61,11 @@ public class BackendOpenStackVolumeAuthenticationKeysResourceTest extends
 
     @Override
     protected LibvirtSecret getEntity(int index) {
-        LibvirtSecret libvirtSecret = control.createMock(LibvirtSecret.class);
-        expect(libvirtSecret.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(libvirtSecret.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(libvirtSecret.getProviderId()).andReturn(GUIDS[0]).anyTimes();
-        expect(libvirtSecret.getUsageType()).andReturn(LibvirtSecretUsageType.CEPH).anyTimes();
+        LibvirtSecret libvirtSecret = mock(LibvirtSecret.class);
+        when(libvirtSecret.getId()).thenReturn(GUIDS[index]);
+        when(libvirtSecret.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(libvirtSecret.getProviderId()).thenReturn(GUIDS[0]);
+        when(libvirtSecret.getUsageType()).thenReturn(LibvirtSecretUsageType.CEPH);
         return libvirtSecret;
     }
 

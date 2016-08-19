@@ -79,7 +79,6 @@ public class BackendDataCenterNetworksResourceTest
     public void testAddIncompleteParameters() throws Exception {
         Network model = new Network();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -101,7 +100,6 @@ public class BackendDataCenterNetworksResourceTest
                                          new Object[] { DATA_CENTER_ID },
                                          getEntityList(),
                                          failure);
-        control.replay();
     }
 
     @Override

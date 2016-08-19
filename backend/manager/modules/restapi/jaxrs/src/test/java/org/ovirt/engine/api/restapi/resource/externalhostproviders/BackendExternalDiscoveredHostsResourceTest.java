@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,13 +65,12 @@ public class BackendExternalDiscoveredHostsResourceTest
             getHosts(),
             failure
         );
-        control.replay();
     }
 
     private Provider getProvider() {
-        Provider provider = control.createMock(Provider.class);
-        expect(provider.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[0]).anyTimes();
+        Provider provider = mock(Provider.class);
+        when(provider.getId()).thenReturn(GUIDS[0]);
+        when(provider.getName()).thenReturn(NAMES[0]);
         return provider;
     }
 
@@ -85,9 +85,9 @@ public class BackendExternalDiscoveredHostsResourceTest
     @Override
     protected org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost host =
-                control.createMock(org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost.class);
-        expect(host.getIp()).andReturn(NAMES[index]).anyTimes();
-        expect(host.getName()).andReturn(NAMES[index]).anyTimes();
+                mock(org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost.class);
+        when(host.getIp()).thenReturn(NAMES[index]);
+        when(host.getName()).thenReturn(NAMES[index]);
         return host;
     }
 

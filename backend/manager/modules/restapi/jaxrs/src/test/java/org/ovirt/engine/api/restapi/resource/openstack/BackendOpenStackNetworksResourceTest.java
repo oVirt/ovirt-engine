@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
 import java.util.HashMap;
@@ -58,7 +59,6 @@ public class BackendOpenStackNetworksResourceTest
             getNetworks(),
             failure
         );
-        control.replay();
     }
 
     private Map<Network, Set<Guid>> getNetworks() {
@@ -71,13 +71,13 @@ public class BackendOpenStackNetworksResourceTest
 
     @Override
     protected Network getEntity(int index) {
-        Network network = control.createMock(Network.class);
-        expect(network.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(network.getName()).andReturn(NAMES[index]).anyTimes();
+        Network network = mock(Network.class);
+        when(network.getId()).thenReturn(GUIDS[index]);
+        when(network.getName()).thenReturn(NAMES[index]);
         ProviderNetwork providedBy = new ProviderNetwork();
         providedBy.setProviderId(GUIDS[0]);
         providedBy.setExternalId(string2hex(NAMES[index]));
-        expect(network.getProvidedBy()).andReturn(providedBy).anyTimes();
+        when(network.getProvidedBy()).thenReturn(providedBy);
         return network;
     }
 

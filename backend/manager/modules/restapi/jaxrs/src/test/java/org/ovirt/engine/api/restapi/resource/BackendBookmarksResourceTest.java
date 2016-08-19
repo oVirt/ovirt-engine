@@ -40,7 +40,6 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     @Test
     public void testAddIncompleteParameters() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(new Bookmark());
             fail("expected WebApplicationException on incomplete parameters");
@@ -98,7 +97,6 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
                                      new Object[] { },
                                      setUpBookmarks(),
                                      failure);
-        control.replay();
     }
 
     static List<org.ovirt.engine.core.common.businessentities.Bookmark> setUpBookmarks() {

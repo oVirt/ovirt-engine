@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.setUpEntityExpectations;
 
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ public class AbstractBackendNetworkResourceTest<N extends AbstractBackendNetwork
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class), index);
+        return setUpEntityExpectations(mock(org.ovirt.engine.core.common.businessentities.network.Network.class), index);
     }
 
     protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index,
             boolean isDisplay,
             boolean isMigration,
             boolean isRequired) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class),
+        return setUpEntityExpectations(mock(org.ovirt.engine.core.common.businessentities.network.Network.class),
                 isDisplay,
                 isMigration,
                 isRequired,

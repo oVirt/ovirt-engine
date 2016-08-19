@@ -1,22 +1,23 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMockSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class BackendApiResourceTest extends EasyMockSupport {
+public class BackendApiResourceTest {
 
     private static final String ROOT_TAG_HREF = "/ovirt-engine/api/tags/00000000-0000-0000-0000-000000000000";
     private static final String BLANK_TEMPLATE_HREF = "/ovirt-engine/api/templates/00000000-0000-0000-0000-000000000000";
@@ -225,7 +226,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
 
     @Before
     public void setUp() {
-        backend = createMock(BackendLocal.class);
+        backend = mock(BackendLocal.class);
 
         currentUser = new DbUser();
         currentUser.setLoginName(USER);
@@ -246,18 +247,17 @@ public class BackendApiResourceTest extends EasyMockSupport {
         messageBundle.populate();
         resource.setMessageBundle(messageBundle);
 
-        httpHeaders = createMock(HttpHeaders.class);
+        httpHeaders = mock(HttpHeaders.class);
         List<Locale> locales = new ArrayList<>();
-        expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
+        when(httpHeaders.getAcceptableLanguages()).thenReturn(locales);
         List<String> filterValue = new ArrayList<>();
         filterValue.add("false");
-        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
+        when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
         resource.setHttpHeaders(httpHeaders);
     }
 
     @After
     public void tearDown() {
-        verifyAll();
         CurrentManager.remove();
     }
 
@@ -407,27 +407,26 @@ public class BackendApiResourceTest extends EasyMockSupport {
     }
 
     protected UriInfo setUpUriInfo() {
-        UriBuilder uriBuilder = createMock(UriBuilder.class);
-        expect(uriBuilder.clone()).andReturn(uriBuilder).anyTimes();
+        UriBuilder uriBuilder = mock(UriBuilder.class);
+        when(uriBuilder.clone()).thenReturn(uriBuilder);
 
-        UriInfo uriInfo = createMock(UriInfo.class);
-        expect(uriInfo.getQueryParameters()).andReturn(null).anyTimes();
-        expect(uriInfo.getPathSegments()).andReturn(null).anyTimes();
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getQueryParameters()).thenReturn(null);
+        when(uriInfo.getPathSegments()).thenReturn(null);
 
         return uriInfo;
     }
 
     protected void setUpGetSystemVersionExpectations() {
-        VdcQueryReturnValue productRpmQueryResult = createMock(VdcQueryReturnValue.class);
-        expect(productRpmQueryResult.getSucceeded()).andReturn(true).anyTimes();
-        expect(productRpmQueryResult.getReturnValue()).andReturn(SYSTEM_VERSION).anyTimes();
-        expect(backend.runQuery(eq(VdcQueryType.GetConfigurationValue), getProductRPMVersionParams())).andReturn(productRpmQueryResult);
+        VdcQueryReturnValue productRpmQueryResult = mock(VdcQueryReturnValue.class);
+        when(productRpmQueryResult.getSucceeded()).thenReturn(true);
+        when(productRpmQueryResult.getReturnValue()).thenReturn(SYSTEM_VERSION);
+        when(backend.runQuery(eq(VdcQueryType.GetConfigurationValue), getProductRPMVersionParams())).thenReturn(productRpmQueryResult);
 
-        VdcQueryReturnValue productVersionQueryResult = createMock(VdcQueryReturnValue.class);
-        expect(productVersionQueryResult.getSucceeded()).andReturn(true).anyTimes();
-        expect(productVersionQueryResult.getReturnValue()).andReturn(new Version(MAJOR, MINOR, BUILD, REVISION))
-                .anyTimes();
-        expect(backend.runQuery(eq(VdcQueryType.GetProductVersion), getProductVersionParams())).andReturn(productVersionQueryResult);
+        VdcQueryReturnValue productVersionQueryResult = mock(VdcQueryReturnValue.class);
+        when(productVersionQueryResult.getSucceeded()).thenReturn(true);
+        when(productVersionQueryResult.getReturnValue()).thenReturn(new Version(MAJOR, MINOR, BUILD, REVISION));
+        when(backend.runQuery(eq(VdcQueryType.GetProductVersion), getProductVersionParams())).thenReturn(productVersionQueryResult);
     }
 
     private VdcQueryParametersBase getProductVersionParams() {
@@ -435,14 +434,12 @@ public class BackendApiResourceTest extends EasyMockSupport {
     }
 
     protected void setUpGetSystemStatisticsExpectations() {
-        VdcQueryReturnValue queryResult = createMock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
 
-        expect(backend.runQuery(eq(VdcQueryType.GetSystemStatistics), queryParams())).andReturn(queryResult);
+        when(backend.runQuery(eq(VdcQueryType.GetSystemStatistics), queryParams())).thenReturn(queryResult);
 
-        expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
-        expect(queryResult.getReturnValue()).andReturn(setUpStats()).anyTimes();
-
-        replayAll();
+        when(queryResult.getSucceeded()).thenReturn(true);
+        when(queryResult.getReturnValue()).thenReturn(setUpStats());
     }
 
     protected VdcQueryParametersBase getProductRPMVersionParams() {

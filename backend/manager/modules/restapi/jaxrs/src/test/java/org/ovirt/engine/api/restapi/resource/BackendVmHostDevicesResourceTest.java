@@ -19,8 +19,6 @@ public class BackendVmHostDevicesResourceTest
     public void testList() throws Exception {
         setUpGetVmHostDevicesExpectations();
 
-        control.replay();
-
         verifyHostDevices(resource.list().getHostDevices());
     }
 

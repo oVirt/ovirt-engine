@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,7 +76,6 @@ public class BackendTemplateTagResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetTagsExpectations(false);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -106,9 +106,9 @@ public class BackendTemplateTagResourceTest
     }
 
     private Tags setUpTagExpectations(Guid tagId) {
-        Tags mock = control.createMock(Tags.class);
-        expect(mock.getTagId()).andReturn(tagId).anyTimes();
-        expect(mock.getParentId()).andReturn(TEMPLATE_ID).anyTimes();
-        return mock;
+        Tags tags = mock(Tags.class);
+        when(tags.getTagId()).thenReturn(tagId);
+        when(tags.getParentId()).thenReturn(TEMPLATE_ID);
+        return tags;
     }
 }

@@ -28,7 +28,6 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
         Quota quota = getQuota();
         quota.setGlobalQuotaCluster(getClusterGlobalCpuLimit());
         setUpGetEntityExpectations(quota);
-        control.replay();
         QuotaClusterLimits clusterLimits = collection.list();
         assertClusterLimitsFound(clusterLimits, 1);
         QuotaClusterLimit clusterLimit = clusterLimits.getQuotaClusterLimits().get(0);
@@ -49,7 +48,6 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
         clusterLimits.add(clusterLimit2);
         quota.setQuotaClusters(clusterLimits);
         setUpGetEntityExpectations(quota);
-        control.replay();
         QuotaClusterLimits list = collection.list();
         assertClusterLimitsFound(list, 2);
         for (QuotaClusterLimit clusterLimit: list.getQuotaClusterLimits()) {

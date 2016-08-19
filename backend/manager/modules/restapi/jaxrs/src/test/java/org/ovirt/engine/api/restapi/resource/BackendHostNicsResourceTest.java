@@ -99,7 +99,6 @@ public class BackendHostNicsResourceTest
                                      setUpInterfaces(),
                                      failure);
 
-        control.replay();
     }
 
     public static List<VdsNetworkInterface> setUpInterfaces() {

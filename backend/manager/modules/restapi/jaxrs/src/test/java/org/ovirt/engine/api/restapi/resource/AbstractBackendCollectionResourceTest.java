@@ -1,7 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
@@ -9,6 +12,7 @@ import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -125,7 +129,6 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     @SuppressWarnings("unchecked")
     @Test
     public void testSubResourceInjection() throws Exception {
-        control.replay();
         // walk super-interface hierarchy to find non-inherited method annotations
         for (Class<?> resourceInterface : collection.getClass().getInterfaces()) {
             for (Method method : resourceInterface.getDeclaredMethods()) {
@@ -160,13 +163,13 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     @SuppressWarnings("unchecked")
     protected UriInfo setUpUriExpectations(String query) {
         UriInfo uriInfo = setUpBasicUriExpectations();
-        MultivaluedMap<String, String> queries = control.createMock(MultivaluedMap.class);
+        MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
         if (!(query == null || "".equals(query))) {
             query = QUERY;
         }
-        expect(queries.containsKey("search")).andReturn(query != null).anyTimes();
-        expect(queries.getFirst("search")).andReturn(query).anyTimes();
-        expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
+        when(queries.containsKey("search")).thenReturn(query != null);
+        when(queries.getFirst("search")).thenReturn(query);
+        when(uriInfo.getQueryParameters()).thenReturn(queries);
         return uriInfo;
     }
 
@@ -175,26 +178,26 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     }
 
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
         SearchParameters params = new SearchParameters(prefix + query, searchType);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
+        when(queryResult.getSucceeded()).thenReturn(failure == null);
         if (failure == null) {
             List<Q> entities = new ArrayList<>();
             for (int i = 0; i < NAMES.length; i++) {
                 entities.add(getEntity(i));
             }
-            expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
+            when(queryResult.getReturnValue()).thenReturn(entities);
         } else {
             if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String)failure);
             } else if (failure instanceof Exception) {
-                expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenThrow((Exception) failure);
             }
         }
-        expect(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).andReturn(
+        when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
                 queryResult);
-        control.replay();
+        enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.Search), eqSearchParams(params)));
     }
 
     protected void setUpCreationExpectations(VdcActionType task,
@@ -239,48 +242,53 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              String[] queryNames,
                                              Object[] queryValues,
                                              Object queryReturn) {
-        VdcReturnValueBase taskResult = control.createMock(VdcReturnValueBase.class);
-        expect(taskResult.isValid()).andReturn(valid).anyTimes();
+        VdcReturnValueBase taskResult = mock(VdcReturnValueBase.class);
+        when(taskResult.isValid()).thenReturn(valid);
         if (valid) {
-            expect(taskResult.getSucceeded()).andReturn(success).anyTimes();
+            when(taskResult.getSucceeded()).thenReturn(success);
             if (success) {
-                expect(taskResult.getActionReturnValue()).andReturn(taskReturn).anyTimes();
+                when(taskResult.getActionReturnValue()).thenReturn(taskReturn);
             } else {
-                expect(taskResult.getExecuteFailedMessages()).andReturn(asList(FAILURE)).anyTimes();
+                when(taskResult.getExecuteFailedMessages()).thenReturn(asList(FAILURE));
                 setUpL10nExpectations(asList(FAILURE));
             }
         } else {
-            expect(taskResult.getValidationMessages()).andReturn(asList(CANT_DO)).anyTimes();
+            when(taskResult.getValidationMessages()).thenReturn(asList(CANT_DO));
             setUpL10nExpectations(asList(CANT_DO));
         }
-        expect(taskResult.getHasAsyncTasks()).andReturn(asyncTasks != null).anyTimes();
+        when(taskResult.getHasAsyncTasks()).thenReturn(asyncTasks != null);
         if (asyncTasks != null) {
-            expect(taskResult.getVdsmTaskIdList()).andReturn(asyncTasks).anyTimes();
-            VdcQueryReturnValue monitorResult = control.createMock(VdcQueryReturnValue.class);
-            expect(monitorResult.getSucceeded()).andReturn(success).anyTimes();
-            expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
-            expect(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+            when(taskResult.getVdsmTaskIdList()).thenReturn(asyncTasks);
+            VdcQueryReturnValue monitorResult = mock(VdcQueryReturnValue.class);
+            when(monitorResult.getSucceeded()).thenReturn(success);
+            when(monitorResult.getReturnValue()).thenReturn(asyncStatuses);
+            when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                                     eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
                                                   addSession(),
-                                                  addSession(new Object[]{})))).andReturn(monitorResult);
+                                                  addSession(new Object[]{})))).thenReturn(monitorResult);
+            enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+                    eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
+                            addSession(),
+                            addSession(new Object[]{}))));
         }
-        expect(backend.runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))))
-                .andReturn(taskResult);
+        when(backend.runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))))
+                .thenReturn(taskResult);
+        enqueueInteraction(() ->
+                verify(backend, atLeastOnce()).runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))));
 
         if (valid && success && query != null) {
             setUpEntityQueryExpectations(query, queryClass, queryNames, queryValues, queryReturn);
         }
-        control.replay();
     }
 
     protected void setUpHttpHeaderExpectations(String name, String value) {
-        expect(httpHeaders.getRequestHeader(eq(name))).andReturn(asList(value));
+        when(httpHeaders.getRequestHeader(eq(name))).thenReturn(asList(value));
     }
 
     protected Cluster setUpCluster(Guid id) {
-        Cluster cluster = control.createMock(Cluster.class);
-        expect(cluster.getId()).andReturn(id).anyTimes();
-        expect(cluster.getCompatibilityVersion()).andReturn(Version.getLast()).anyTimes();
+        Cluster cluster = mock(Cluster.class);
+        when(cluster.getId()).thenReturn(id);
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.getLast());
         return cluster;
     }
 

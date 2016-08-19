@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
@@ -49,11 +50,11 @@ public class BackendEventResourceTest extends AbstractBackendSubResourceTest<Eve
 
     @Override
     protected AuditLog getEntity(int index) {
-        AuditLog mock = control.createMock(AuditLog.class);
-        expect(mock.getAuditLogId()).andReturn(LOG_IDS[index]).anyTimes();
-        expect(mock.getLogType()).andReturn(AuditLogType.EXTERNAL_ALERT).anyTimes();
-        expect(mock.getSeverity()).andReturn(AuditLogSeverity.ALERT).anyTimes();
-        expect(mock.getLogTime()).andReturn(new Date()).anyTimes();
-        return mock;
+        AuditLog auditLog = mock(AuditLog.class);
+        when(auditLog.getAuditLogId()).thenReturn(LOG_IDS[index]);
+        when(auditLog.getLogType()).thenReturn(AuditLogType.EXTERNAL_ALERT);
+        when(auditLog.getSeverity()).thenReturn(AuditLogSeverity.ALERT);
+        when(auditLog.getLogTime()).thenReturn(new Date());
+        return auditLog;
     }
 }

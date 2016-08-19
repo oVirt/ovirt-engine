@@ -26,8 +26,6 @@ public class BackendVmHostDeviceResourceTest
     public void testGet() {
         setUpGetVmHostDevicesExpectations();
 
-        control.replay();
-
         HostDevice device = resource.get();
         verifyHostDevice(device);
     }

@@ -69,7 +69,6 @@ public class BackendFilesResourceTest
             UriInfo uriInfo = setUpUriExpectations(null);
 
             setupGetStorageDomainExpectations(StorageDomainType.Data);
-            control.replay();
 
             collection.setUriInfo(uriInfo);
             verifyCollection(getCollection());
@@ -95,7 +94,6 @@ public class BackendFilesResourceTest
                 AbstractBackendCollectionResourceTest.FAILURE);
         collection.setUriInfo(uriInfo);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
-        control.replay();
         try {
             getCollection();
             fail("expected WebApplicationException");
@@ -119,7 +117,6 @@ public class BackendFilesResourceTest
                 setUpFiles(),
                 AbstractBackendCollectionResourceTest.FAILURE);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
-        control.replay();
         collection.setUriInfo(uriInfo);
         try {
             getCollection();
@@ -150,7 +147,6 @@ public class BackendFilesResourceTest
                 setUpFiles(),
                 AbstractBackendCollectionResourceTest.FAILURE);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
-        control.replay();
         collection.setUriInfo(uriInfo);
         try {
             getCollection();
@@ -186,7 +182,6 @@ public class BackendFilesResourceTest
                                      new Object[] { GUIDS[0], ImageFileType.All },
                                      setUpFiles(),
                                      failure);
-        control.replay();
     }
 
     private List<RepoImage> setUpFiles() {

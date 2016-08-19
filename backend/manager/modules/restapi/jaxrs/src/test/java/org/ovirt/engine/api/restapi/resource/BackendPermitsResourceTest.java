@@ -66,7 +66,6 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
                                      setUpActionGroups(),
                                      failure);
 
-        control.replay();
     }
 
     static List<ActionGroup> setUpActionGroups() {

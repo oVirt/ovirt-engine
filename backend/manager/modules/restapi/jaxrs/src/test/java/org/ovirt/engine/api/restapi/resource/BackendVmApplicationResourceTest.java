@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
@@ -68,7 +69,6 @@ public class BackendVmApplicationResourceTest
         BackendVmApplicationResource resource = getNotFoundResource();
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations();
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -81,7 +81,6 @@ public class BackendVmApplicationResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations();
-        control.replay();
 
         Application application = resource.get();
         assertEquals(NAMES[APPLICATION_INDEX], application.getName());
@@ -97,14 +96,14 @@ public class BackendVmApplicationResourceTest
     }
 
     protected VM getVm() {
-        return setUpEntityExpectations(control.createMock(VM.class),
-                control.createMock(VmDynamic.class));
+        return setUpEntityExpectations(mock(VM.class),
+                mock(VmDynamic.class));
     }
 
     static VM setUpEntityExpectations(VM entity, VmDynamic dynamicVm) {
-        expect(entity.getQueryableId()).andReturn(VM_ID).anyTimes();
-        expect(entity.getDynamicData()).andReturn(dynamicVm).anyTimes();
-        expect(entity.getAppList()).andReturn(getAppList()).anyTimes();
+        when(entity.getQueryableId()).thenReturn(VM_ID);
+        when(entity.getDynamicData()).thenReturn(dynamicVm);
+        when(entity.getAppList()).thenReturn(getAppList());
         return entity;
     }
 

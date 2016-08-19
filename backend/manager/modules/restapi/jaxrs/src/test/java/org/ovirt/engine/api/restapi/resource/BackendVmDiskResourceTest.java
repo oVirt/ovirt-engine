@@ -16,7 +16,9 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,7 +29,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
@@ -81,7 +82,6 @@ public class BackendVmDiskResourceTest
             new Object[] { DISK_ID },
             null
         );
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -95,7 +95,6 @@ public class BackendVmDiskResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        control.replay();
 
         Disk disk = resource.get();
         verifyModelSpecific(disk, 1);
@@ -108,7 +107,6 @@ public class BackendVmDiskResourceTest
             accepts.add("application/xml; detail=statistics");
             setUriInfo(setUpBasicUriExpectations());
             setUpEntityQueryExpectations(1);
-            control.replay();
 
             Disk disk = resource.get();
             assertTrue(disk.isSetStatistics());
@@ -129,7 +127,6 @@ public class BackendVmDiskResourceTest
             new Object[] { DISK_ID },
             null
         );
-        control.replay();
         try {
             resource.update(getUpdate());
             fail("expected WebApplicationException");
@@ -244,7 +241,6 @@ public class BackendVmDiskResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
@@ -258,7 +254,6 @@ public class BackendVmDiskResourceTest
     public void testIncompleteExport() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.export(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         }
@@ -281,7 +276,6 @@ public class BackendVmDiskResourceTest
             false
         );
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -318,17 +312,16 @@ public class BackendVmDiskResourceTest
     }
 
     protected DiskImage setUpStatisticalExpectations() throws Exception {
-        DiskImage entity = control.createMock(DiskImage.class);
-        expect(entity.getId()).andReturn(DISK_ID).anyTimes();
-        expect(entity.getReadRate()).andReturn(10);
-        expect(entity.getWriteRate()).andReturn(20);
-        expect(entity.getReadLatency()).andReturn(30.0).times(2);
-        expect(entity.getWriteLatency()).andReturn(40.0).times(2);
-        expect(entity.getFlushLatency()).andReturn(50.0).times(2);
-        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
+        DiskImage entity = mock(DiskImage.class);
+        when(entity.getId()).thenReturn(DISK_ID);
+        when(entity.getReadRate()).thenReturn(10);
+        when(entity.getWriteRate()).thenReturn(20);
+        when(entity.getReadLatency()).thenReturn(30.0);
+        when(entity.getWriteLatency()).thenReturn(40.0);
+        when(entity.getFlushLatency()).thenReturn(50.0);
+        when(entity.getDiskStorageType()).thenReturn(DiskStorageType.IMAGE);
         setUpGetEntityExpectations(1, entity);
-        control.replay();
-        return entity;
+                return entity;
     }
 
     protected void verifyQuery(AbstractStatisticalQuery<Disk, DiskImage> query, DiskImage entity) throws Exception {
@@ -368,7 +361,7 @@ public class BackendVmDiskResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(DiskImage.class), index);
+        return setUpEntityExpectations(mock(DiskImage.class), index);
     }
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
@@ -488,8 +481,8 @@ public class BackendVmDiskResourceTest
     protected void setUpFilteredQueryExpectations() {
         List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
-        EasyMock.reset(httpHeaders);
-        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
+        reset(httpHeaders);
+        when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
@@ -511,7 +504,6 @@ public class BackendVmDiskResourceTest
     public void testIncompleteMove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.move(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         }
@@ -545,28 +537,28 @@ public class BackendVmDiskResourceTest
     }
 
     private org.ovirt.engine.core.common.businessentities.storage.Disk setUpEntityExpectations(DiskImage entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
-        expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
-        expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
-        expect(entity.isShareable()).andReturn(false).anyTimes();
-        expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
-        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
-        expect(entity.getImageId()).andReturn(GUIDS[1]).anyTimes();
-        expect(entity.getReadOnly()).andReturn(true).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getVmSnapshotId()).thenReturn(GUIDS[2]);
+        when(entity.getVolumeFormat()).thenReturn(VolumeFormat.RAW);
+        when(entity.getImageStatus()).thenReturn(ImageStatus.OK);
+        when(entity.getVolumeType()).thenReturn(VolumeType.Sparse);
+        when(entity.isShareable()).thenReturn(false);
+        when(entity.getPropagateErrors()).thenReturn(PropagateErrors.On);
+        when(entity.getDiskStorageType()).thenReturn(DiskStorageType.IMAGE);
+        when(entity.getImageId()).thenReturn(GUIDS[1]);
+        when(entity.getReadOnly()).thenReturn(true);
         ArrayList<Guid> sdIds = new ArrayList<>();
         sdIds.add(Guid.Empty);
-        expect(entity.getStorageIds()).andReturn(sdIds).anyTimes();
+        when(entity.getStorageIds()).thenReturn(sdIds);
         return setUpStatisticalEntityExpectations(entity);
     }
 
     private org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        expect(entity.getReadRate()).andReturn(1).anyTimes();
-        expect(entity.getWriteRate()).andReturn(2).anyTimes();
-        expect(entity.getReadLatency()).andReturn(3.0).anyTimes();
-        expect(entity.getWriteLatency()).andReturn(4.0).anyTimes();
-        expect(entity.getFlushLatency()).andReturn(5.0).anyTimes();
+        when(entity.getReadRate()).thenReturn(1);
+        when(entity.getWriteRate()).thenReturn(2);
+        when(entity.getReadLatency()).thenReturn(3.0);
+        when(entity.getWriteLatency()).thenReturn(4.0);
+        when(entity.getFlushLatency()).thenReturn(5.0);
         return entity;
     }
 

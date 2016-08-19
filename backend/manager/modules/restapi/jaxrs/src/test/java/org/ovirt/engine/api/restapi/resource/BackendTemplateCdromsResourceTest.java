@@ -38,12 +38,10 @@ public class BackendTemplateCdromsResourceTest
 
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
-        control.replay();
     }
 
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(1, failure);
-        control.replay();
     }
 
     private void setUpEntityQueryExpectations(int times) throws Exception {
@@ -76,7 +74,6 @@ public class BackendTemplateCdromsResourceTest
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
-        control.replay();
         try {
             collection.getCdromResource("foo");
             fail("expected WebApplicationException");

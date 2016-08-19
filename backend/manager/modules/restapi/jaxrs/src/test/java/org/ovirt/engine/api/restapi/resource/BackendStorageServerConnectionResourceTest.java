@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
@@ -41,14 +42,13 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
 
     @Override
     protected StorageServerConnections getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(StorageServerConnections.class), index);
+        return setUpEntityExpectations(mock(StorageServerConnections.class), index);
     }
 
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        control.replay();
         verifyModel(resource.get(), 3);
     }
 
@@ -56,7 +56,6 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetNotExistingEntityExpectations();
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -74,8 +73,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     public void testUpdateNotExistingConnection() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetNotExistingEntityExpectations();
-        control.replay();
-         try {
+        try {
             resource.update(getModel(3));
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
@@ -128,7 +126,6 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
             GUIDS[1].toString()
         );
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -142,7 +139,6 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
             GUIDS[1].toString()
         );
         setUriInfo(uriInfo);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -175,7 +171,6 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
                 GUIDS[1].toString()
         );
         setUriInfo(uriInfo);
-        control.replay();
         try {
             resource.remove();
         } catch (WebApplicationException wae) {
@@ -221,16 +216,16 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     static StorageServerConnections setUpEntityExpectations(StorageServerConnections entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index].toString()).anyTimes();
-        expect(entity.getStorageType()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index].toString());
+        when(entity.getStorageType()).thenReturn(STORAGE_TYPES_MAPPED[index]);
 
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.ISCSI)) {
-            expect(entity.getPort()).andReturn("3260").anyTimes();
-            expect(entity.getConnection()).andReturn("1.122.10.125").anyTimes();
+            when(entity.getPort()).thenReturn("3260");
+            when(entity.getConnection()).thenReturn("1.122.10.125");
         }
 
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.NFS)) {
-            expect(entity.getConnection()).andReturn("1.122.10.125:/data1").anyTimes();
+            when(entity.getConnection()).thenReturn("1.122.10.125:/data1");
         }
 
         return entity;

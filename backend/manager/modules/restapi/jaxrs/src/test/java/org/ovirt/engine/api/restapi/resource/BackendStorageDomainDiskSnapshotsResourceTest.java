@@ -55,7 +55,6 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
                 new String[] { "Id" },
                 new Object[] {DOMAIN_ID},
                 entities);
-        control.replay();
         verifyCollection(getCollection());
     }
 

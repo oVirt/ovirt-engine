@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.setUpStorageServerConnection;
@@ -49,7 +50,6 @@ public class BackendStorageDomainResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendStorageDomainResource("foo", null);
             fail("expected WebApplicationException");
@@ -62,7 +62,6 @@ public class BackendStorageDomainResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true, getEntity(0));
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -76,7 +75,6 @@ public class BackendStorageDomainResourceTest
         setUpGetEntityExpectations(1, getEntity(0));
         setUpGetStorageServerConnectionExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -90,7 +88,6 @@ public class BackendStorageDomainResourceTest
                 new Object[] { GUIDS[0].toString() },
                 setUpLuns());
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         verifyGetFcp(resource.get());
     }
 
@@ -112,12 +109,12 @@ public class BackendStorageDomainResourceTest
     }
 
     private org.ovirt.engine.core.common.businessentities.StorageDomain getFcpEntity() {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
-        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data).anyTimes();
-        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP).anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = mock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        when(entity.getId()).thenReturn(GUIDS[0]);
+        when(entity.getStorageName()).thenReturn(NAMES[0]);
+        when(entity.getStorageDomainType()).thenReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data);
+        when(entity.getStorageType()).thenReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP);
+        when(entity.getStorage()).thenReturn(GUIDS[0].toString());
         return entity;
     }
 
@@ -125,7 +122,6 @@ public class BackendStorageDomainResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true, getEntity(0));
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -183,7 +179,6 @@ public class BackendStorageDomainResourceTest
         setUpGetEntityExpectations(1, getEntity(0));
         setUpGetStorageServerConnectionExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
 
         StorageDomain model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -199,7 +194,6 @@ public class BackendStorageDomainResourceTest
     public void testRemoveStorageDomainNull() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -222,7 +216,6 @@ public class BackendStorageDomainResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainResource.HOST, GUIDS[1].toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -243,7 +236,6 @@ public class BackendStorageDomainResourceTest
         parameters.put(BackendStorageDomainResource.FORMAT, Boolean.TRUE.toString());
         uriInfo = addMatrixParameterExpectations(uriInfo, parameters);
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -264,7 +256,6 @@ public class BackendStorageDomainResourceTest
         parameters.put(BackendStorageDomainResource.DESTROY, Boolean.TRUE.toString());
         uriInfo = addMatrixParameterExpectations(uriInfo, parameters);
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -289,7 +280,6 @@ public class BackendStorageDomainResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainResource.HOST, NAMES[1]);
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -316,7 +306,6 @@ public class BackendStorageDomainResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainResource.HOST, GUIDS[1].toString());
         setUriInfo(uriInfo);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -359,7 +348,7 @@ public class BackendStorageDomainResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index);
+        return setUpEntityExpectations(mock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.List;
@@ -76,14 +77,14 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
 
 
     protected org.ovirt.engine.core.common.businessentities.AuditLog getEntity(int index) {
-        AuditLog auditLogMock = control.createMock(org.ovirt.engine.core.common.businessentities.AuditLog.class);
-        expect(auditLogMock.getAuditLogId()).andReturn(LOG_IDS[index]).anyTimes();
-        expect(auditLogMock.getSeverity()).andReturn(AuditLogSeverity.ALERT).anyTimes();
-        expect(auditLogMock.getMessage()).andReturn(MESSAGES[index]).anyTimes();
-        expect(auditLogMock.getOrigin()).andReturn(ORIGIN_NAMES[index]).anyTimes();
-        expect(auditLogMock.getCustomEventId()).andReturn(CUSTOMER_EVENT_IDS[index]).anyTimes();
-        expect(auditLogMock.getLogType()).andReturn(AuditLogType.EXTERNAL_ALERT).anyTimes();
-        expect(auditLogMock.getLogTime()).andReturn(new Date()).anyTimes();
+        AuditLog auditLogMock = mock(org.ovirt.engine.core.common.businessentities.AuditLog.class);
+        when(auditLogMock.getAuditLogId()).thenReturn(LOG_IDS[index]);
+        when(auditLogMock.getSeverity()).thenReturn(AuditLogSeverity.ALERT);
+        when(auditLogMock.getMessage()).thenReturn(MESSAGES[index]);
+        when(auditLogMock.getOrigin()).thenReturn(ORIGIN_NAMES[index]);
+        when(auditLogMock.getCustomEventId()).thenReturn(CUSTOMER_EVENT_IDS[index]);
+        when(auditLogMock.getLogType()).thenReturn(AuditLogType.EXTERNAL_ALERT);
+        when(auditLogMock.getLogTime()).thenReturn(new Date());
         return auditLogMock;
     }
 

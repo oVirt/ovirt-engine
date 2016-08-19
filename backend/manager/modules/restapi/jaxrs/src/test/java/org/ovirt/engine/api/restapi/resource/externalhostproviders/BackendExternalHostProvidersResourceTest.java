@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -56,10 +57,10 @@ public class BackendExternalHostProvidersResourceTest
 
     @Override
     protected Provider getEntity(int index) {
-        Provider provider = control.createMock(Provider.class);
-        expect(provider.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(provider.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        Provider provider = mock(Provider.class);
+        when(provider.getId()).thenReturn(GUIDS[index]);
+        when(provider.getName()).thenReturn(NAMES[index]);
+        when(provider.getDescription()).thenReturn(DESCRIPTIONS[index]);
         return provider;
     }
 }

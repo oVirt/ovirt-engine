@@ -44,7 +44,6 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
                                      setUpSteps(),
                                      failure);
 
-        control.replay();
     }
 
     @Override

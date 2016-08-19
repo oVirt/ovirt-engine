@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -141,7 +142,7 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
     @Override
     protected GlusterVolumeEntity getEntity(int index) {
         return setUpEntityExpectations(
-                control.createMock(GlusterVolumeEntity.class),
+                mock(GlusterVolumeEntity.class),
                 index);
     }
 
@@ -164,8 +165,8 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
                 BackendResource.FORCE_CONSTRAINT,
                 true,
                 "true",
-                uriInfo,
-                false));
+                uriInfo
+        ));
         setUpVolumeCreationExpectations(true);
 
         collection.setParent(parentMock);
@@ -182,8 +183,8 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
                 BackendResource.FORCE_CONSTRAINT,
                 false,
                 "false",
-                uriInfo,
-                false));
+                uriInfo
+        ));
         setUpVolumeCreationExpectations(false);
 
         collection.setParent(parentMock);
@@ -240,10 +241,10 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
 
     static GlusterVolumeEntity setUpEntityExpectations(
             GlusterVolumeEntity entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getVolumeType()).andReturn(GlusterVolumeType.DISTRIBUTE).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getClusterId()).thenReturn(GUIDS[2]);
+        when(entity.getVolumeType()).thenReturn(GlusterVolumeType.DISTRIBUTE);
         return entity;
     }
 
@@ -259,7 +260,7 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
         cluster.setName(defaultClusterName);
         cluster.setId(clusterId.toString());
 
-        parentMock = control.createMock(ClusterResource.class);
-        expect(parentMock.get()).andReturn(cluster).anyTimes();
+        parentMock = mock(ClusterResource.class);
+        when(parentMock.get()).thenReturn(cluster);
     }
 }

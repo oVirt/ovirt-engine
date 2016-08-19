@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.hex2string;
 
 import java.util.ArrayList;
@@ -49,7 +50,6 @@ public class BackendVmKatelloErrataResourceTest extends AbstractBackendCollectio
                 new Object[] { GUIDS[0] },
                 getErrataData(),
                 failure);
-        control.replay();
     }
 
     private ErrataData getErrataData() {
@@ -69,9 +69,9 @@ public class BackendVmKatelloErrataResourceTest extends AbstractBackendCollectio
 
     @Override
     protected Erratum getEntity(int index) {
-        Erratum erratum = control.createMock(Erratum.class);
-        expect(erratum.getId()).andReturn(NAMES[index]).anyTimes();
-        expect(erratum.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        Erratum erratum = mock(Erratum.class);
+        when(erratum.getId()).thenReturn(NAMES[index]);
+        when(erratum.getDescription()).thenReturn(DESCRIPTIONS[index]);
         return erratum;
     }
 

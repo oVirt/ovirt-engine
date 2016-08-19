@@ -1,10 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
@@ -40,7 +42,6 @@ public class BackendHostNicLabelResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(Collections.emptyList());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -54,7 +55,6 @@ public class BackendHostNicLabelResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(getEntityList());
-        control.replay();
         NetworkLabel model = resource.get();
         assertEquals(LABELS[0], model.getId());
         verifyLinks(model);
@@ -79,7 +79,6 @@ public class BackendHostNicLabelResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception {
         setUpEntityQueryExpectations(Collections.emptyList());
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -142,8 +141,8 @@ public class BackendHostNicLabelResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel entity = control.createMock(org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel.class);
-        expect(entity.getId()).andReturn(LABELS[index]).anyTimes();
+        org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel entity = mock(org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel.class);
+        when(entity.getId()).thenReturn(LABELS[index]);
         return entity;
     }
 }

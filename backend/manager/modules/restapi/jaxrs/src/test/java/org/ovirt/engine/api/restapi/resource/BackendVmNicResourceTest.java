@@ -16,12 +16,14 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -66,7 +68,6 @@ public class BackendVmNicResourceTest
             new Object[] { VM_ID },
             Collections.emptyList()
         );
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -82,7 +83,6 @@ public class BackendVmNicResourceTest
         setAllContentHeaderExpectation();
         setUpEntityQueryExpectations(1);
         setGetGuestAgentQueryExpectations(1);
-        control.replay();
 
         Nic nic = resource.get();
         verifyModelSpecific(nic, 1);
@@ -97,7 +97,6 @@ public class BackendVmNicResourceTest
             setAllContentHeaderExpectation();
             setUpEntityQueryExpectations(1);
             setGetGuestAgentQueryExpectations(1);
-            control.replay();
 
             Nic nic = resource.get();
             assertTrue(nic.isSetStatistics());
@@ -118,7 +117,6 @@ public class BackendVmNicResourceTest
             new Object[] { VM_ID },
             new ArrayList<VmNetworkInterface>()
         );
-        control.replay();
         try {
             resource.update(getNic(false));
             fail("expected WebApplicationException");
@@ -211,17 +209,17 @@ public class BackendVmNicResourceTest
     }
 
     protected VmNetworkInterface setUpStatisticalExpectations() throws Exception {
-        VmNetworkStatistics stats = control.createMock(VmNetworkStatistics.class);
-        VmNetworkInterface entity = control.createMock(VmNetworkInterface.class);
-        expect(entity.getStatistics()).andReturn(stats);
-        expect(entity.getSpeed()).andReturn(50).anyTimes();
-        expect(entity.getId()).andReturn(NIC_ID).anyTimes();
-        expect(stats.getReceiveRate()).andReturn(10D);
-        expect(stats.getTransmitRate()).andReturn(20D);
-        expect(stats.getReceiveDropRate()).andReturn(30D);
-        expect(stats.getTransmitDropRate()).andReturn(40D);
-        expect(stats.getReceivedBytes()).andReturn(50L);
-        expect(stats.getTransmittedBytes()).andReturn(60L);
+        VmNetworkStatistics stats = mock(VmNetworkStatistics.class);
+        VmNetworkInterface entity = mock(VmNetworkInterface.class);
+        when(entity.getStatistics()).thenReturn(stats);
+        when(entity.getSpeed()).thenReturn(50);
+        when(entity.getId()).thenReturn(NIC_ID);
+        when(stats.getReceiveRate()).thenReturn(10D);
+        when(stats.getTransmitRate()).thenReturn(20D);
+        when(stats.getReceiveDropRate()).thenReturn(30D);
+        when(stats.getTransmitDropRate()).thenReturn(40D);
+        when(stats.getReceivedBytes()).thenReturn(50L);
+        when(stats.getTransmittedBytes()).thenReturn(60L);
         List<VmNetworkInterface> ifaces = new ArrayList<>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(
@@ -231,7 +229,6 @@ public class BackendVmNicResourceTest
             new Object[] { VM_ID },
             ifaces
         );
-        control.replay();
         return entity;
     }
 
@@ -282,8 +279,8 @@ public class BackendVmNicResourceTest
 
     @Override
     protected VmNetworkInterface getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmNetworkInterface.class),
-                                       control.createMock(VmNetworkStatistics.class),
+        return setUpEntityExpectations(mock(VmNetworkInterface.class),
+                                       mock(VmNetworkStatistics.class),
                                        index);
     }
 
@@ -344,7 +341,7 @@ public class BackendVmNicResourceTest
     private void setAllContentHeaderExpectation() {
         List<String> allContentHeaders = new ArrayList<>();
         allContentHeaders.add("true");
-        expect(httpHeaders.getRequestHeader("All-Content")).andReturn(allContentHeaders).anyTimes();
+        when(httpHeaders.getRequestHeader("All-Content")).thenReturn(allContentHeaders);
     }
 
     @Test
@@ -408,24 +405,24 @@ public class BackendVmNicResourceTest
             VmNetworkStatistics statistics,
             int index,
             String networkName) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVmId()).andReturn(VM_ID).anyTimes();
-        expect(entity.getNetworkName()).andReturn(networkName).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getMacAddress()).andReturn(ADDRESSES[2]).anyTimes();
-        expect(entity.getType()).andReturn(0).anyTimes();
-        expect(entity.getSpeed()).andReturn(50).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getVmId()).thenReturn(VM_ID);
+        when(entity.getNetworkName()).thenReturn(networkName);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getMacAddress()).thenReturn(ADDRESSES[2]);
+        when(entity.getType()).thenReturn(0);
+        when(entity.getSpeed()).thenReturn(50);
         return setUpStatisticalEntityExpectations(entity, statistics);
     }
 
     private VmNetworkInterface setUpStatisticalEntityExpectations(VmNetworkInterface entity, VmNetworkStatistics statistics) {
-        expect(entity.getStatistics()).andReturn(statistics).anyTimes();
-        expect(statistics.getReceiveRate()).andReturn(1D).anyTimes();
-        expect(statistics.getReceiveDropRate()).andReturn(2D).anyTimes();
-        expect(statistics.getTransmitRate()).andReturn(3D).anyTimes();
-        expect(statistics.getTransmitDropRate()).andReturn(4D).anyTimes();
-        expect(statistics.getReceivedBytes()).andReturn(5L).anyTimes();
-        expect(statistics.getTransmittedBytes()).andReturn(6L).anyTimes();
+        when(entity.getStatistics()).thenReturn(statistics);
+        when(statistics.getReceiveRate()).thenReturn(1D);
+        when(statistics.getReceiveDropRate()).thenReturn(2D);
+        when(statistics.getTransmitRate()).thenReturn(3D);
+        when(statistics.getTransmitDropRate()).thenReturn(4D);
+        when(statistics.getReceivedBytes()).thenReturn(5L);
+        when(statistics.getTransmittedBytes()).thenReturn(6L);
         return entity;
     }
 

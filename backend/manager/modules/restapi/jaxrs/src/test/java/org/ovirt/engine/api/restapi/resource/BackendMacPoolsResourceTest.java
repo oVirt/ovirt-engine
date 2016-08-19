@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,6 @@ public class BackendMacPoolsResourceTest
     public void testAddIncompleteParameters() throws Exception {
         MacPool model = createIncompleteMacPool();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -123,7 +123,6 @@ public class BackendMacPoolsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpMacPoolsQueryExpectations(null);
-        control.replay();
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }
@@ -134,7 +133,6 @@ public class BackendMacPoolsResourceTest
         setUpMacPoolsQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         try {
             getCollection();
@@ -154,7 +152,6 @@ public class BackendMacPoolsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
 
-        control.replay();
 
         try {
             getCollection();
@@ -174,7 +171,6 @@ public class BackendMacPoolsResourceTest
         setUpMacPoolsQueryExpectations(t);
         collection.setUriInfo(uriInfo);
 
-        control.replay();
         try {
             getCollection();
             fail("expected WebApplicationException");
@@ -186,26 +182,26 @@ public class BackendMacPoolsResourceTest
     }
 
     private void setUpMacPoolsQueryExpectations(Object failure) {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        when(queryResult.getSucceeded()).thenReturn(failure == null);
         List<org.ovirt.engine.core.common.businessentities.MacPool> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < NAMES.length; i++) {
                 entities.add(getEntity(i));
             }
-            expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
+            when(queryResult.getReturnValue()).thenReturn(entities);
         } else {
             if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(backend.runQuery(eq(listQueryType),
-                        anyObject(listQueryParamsClass))).andThrow((Exception) failure).anyTimes();
+                when(backend.runQuery(eq(listQueryType),
+                        any(listQueryParamsClass))).thenThrow((Exception) failure);
                 return;
             }
         }
-        expect(backend.runQuery(eq(listQueryType), anyObject(listQueryParamsClass))).andReturn(
+        when(backend.runQuery(eq(listQueryType), any(listQueryParamsClass))).thenReturn(
                 queryResult);
     }
 
@@ -219,15 +215,15 @@ public class BackendMacPoolsResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.MacPool getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.MacPool.class),
+        return setUpEntityExpectations(mock(org.ovirt.engine.core.common.businessentities.MacPool.class),
                 index);
     }
 
     static org.ovirt.engine.core.common.businessentities.MacPool setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.MacPool entity,
             int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
         return entity;
     }
 }

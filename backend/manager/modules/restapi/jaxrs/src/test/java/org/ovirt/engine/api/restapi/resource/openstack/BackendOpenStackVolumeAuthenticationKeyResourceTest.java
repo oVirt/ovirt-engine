@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -41,7 +42,6 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
 
     @Test
     public void testBadId() throws Exception {
-        control.replay();
         try {
             new BackendOpenStackImageProviderResource("foo");
             fail("expected WebApplicationException");
@@ -54,7 +54,6 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -67,17 +66,16 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
-        control.replay();
         verifyModel(resource.get(), 1);
     }
 
     @Override
     protected LibvirtSecret getEntity(int index) {
-        LibvirtSecret libvirtSecret = control.createMock(LibvirtSecret.class);
-        expect(libvirtSecret.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(libvirtSecret.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(libvirtSecret.getProviderId()).andReturn(GUIDS[0]).anyTimes();
-        expect(libvirtSecret.getUsageType()).andReturn(LibvirtSecretUsageType.CEPH).anyTimes();
+        LibvirtSecret libvirtSecret = mock(LibvirtSecret.class);
+        when(libvirtSecret.getId()).thenReturn(GUIDS[index]);
+        when(libvirtSecret.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(libvirtSecret.getProviderId()).thenReturn(GUIDS[0]);
+        when(libvirtSecret.getUsageType()).thenReturn(LibvirtSecretUsageType.CEPH);
         return libvirtSecret;
     }
 
@@ -112,7 +110,6 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(1));
             fail("expected WebApplicationException");

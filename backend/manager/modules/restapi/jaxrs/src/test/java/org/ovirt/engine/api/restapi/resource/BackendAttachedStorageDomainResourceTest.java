@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,6 @@ public class BackendAttachedStorageDomainResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendAttachedStorageDomainResource("foo", null);
             fail("expected WebApplicationException");
@@ -56,7 +56,6 @@ public class BackendAttachedStorageDomainResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetDomainExpectations(StorageType.NFS, false);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -71,7 +70,6 @@ public class BackendAttachedStorageDomainResourceTest
         setUpGetDomainExpectations(StorageType.NFS, true);
         setUpGetConnectionExpectations();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         verifyStorageDomain(resource.get());
     }
 
@@ -162,7 +160,6 @@ public class BackendAttachedStorageDomainResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetDomainExpectations(StorageType.NFS, false);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -255,11 +252,11 @@ public class BackendAttachedStorageDomainResourceTest
 
     private org.ovirt.engine.core.common.businessentities.StorageDomain setUpDomainExpectations(StorageType type) {
         org.ovirt.engine.core.common.businessentities.StorageDomain domain =
-            control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
-        expect(domain.getId()).andReturn(STORAGE_DOMAIN_ID).anyTimes();
-        expect(domain.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(domain.getStorageType()).andReturn(type).anyTimes();
-        expect(domain.getStorage()).andReturn(STORAGE_CONNECTION_ID.toString()).anyTimes();
+            mock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        when(domain.getId()).thenReturn(STORAGE_DOMAIN_ID);
+        when(domain.getStorageDomainType()).thenReturn(StorageDomainType.Master);
+        when(domain.getStorageType()).thenReturn(type);
+        when(domain.getStorage()).thenReturn(STORAGE_CONNECTION_ID.toString());
         return domain;
     }
 

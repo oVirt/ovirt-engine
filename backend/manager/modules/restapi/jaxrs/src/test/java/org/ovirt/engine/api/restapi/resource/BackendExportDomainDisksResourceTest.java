@@ -1,7 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
@@ -113,7 +114,6 @@ public class BackendExportDomainDisksResourceTest
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport, null);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, failure);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
     }
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType, Object failure) throws Exception {
@@ -173,22 +173,22 @@ public class BackendExportDomainDisksResourceTest
             Object[] queryValues,
             Object queryReturn,
             Object failure) {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        when(queryResult.getSucceeded()).thenReturn(failure == null);
         if (failure == null) {
-            expect(queryResult.getReturnValue()).andReturn(queryReturn).anyTimes();
+            when(queryResult.getReturnValue()).thenReturn(queryReturn);
         } else {
             if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenThrow((Exception) failure);
             }
         }
-        expect(backend.runQuery(eq(query),
+        when(backend.runQuery(eq(query),
             eqQueryParams(queryClass,
                     addSession(queryNames),
-                    addSession(queryValues)))).andReturn(queryResult).anyTimes();
+                    addSession(queryValues)))).thenReturn(queryResult);
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
@@ -203,8 +203,8 @@ public class BackendExportDomainDisksResourceTest
     }
 
     protected VmTemplate getVmTemplateEntity(int index) {
-        VmTemplate vm = setUpEntityExpectations(control.createMock(VmTemplate.class), index);
-        org.easymock.EasyMock.expect(vm.getDiskTemplateMap()).andReturn(getDiskMap()).anyTimes();
+        VmTemplate vm = setUpEntityExpectations(mock(VmTemplate.class), index);
+        when(vm.getDiskTemplateMap()).thenReturn(getDiskMap());
         return vm;
     }
 }

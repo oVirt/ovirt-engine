@@ -41,7 +41,6 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
                 new Object[] { STORAGE_CONNECTION_ID.toString() },
                 getEntity(0));
 
-        control.replay();
 
         StorageConnection model = resource.get();
         assertEquals(GUIDS[0].toString(), model.getId());
@@ -52,7 +51,6 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
     public void testGetWithInvalidStorageId() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondWithNoMatchingStorages());
-        control.replay();
 
         try {
             resource.get();
@@ -72,7 +70,6 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
                 new String[] { "ServerConnectionId" },
                 new Object[] { STORAGE_CONNECTION_ID.toString() },
                 null);
-        control.replay();
 
         try {
             resource.get();

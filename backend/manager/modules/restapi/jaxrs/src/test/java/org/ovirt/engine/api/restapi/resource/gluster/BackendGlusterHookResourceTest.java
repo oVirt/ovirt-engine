@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
+import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.clusterId;
 
 import javax.ws.rs.WebApplicationException;
@@ -34,7 +35,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     @Override
     protected void init() {
         super.init();
-        hooksResourceMock = control.createMock(BackendGlusterHooksResource.class);
+        hooksResourceMock = mock(BackendGlusterHooksResource.class);
         resource.setParent(hooksResourceMock);
     }
 
@@ -42,7 +43,6 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -50,7 +50,6 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");

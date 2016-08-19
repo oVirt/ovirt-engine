@@ -28,7 +28,6 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
         Quota quota = getQuota();
         quota.setGlobalQuotaStorage(getStorageGlobalCpuLimit());
         setUpGetEntityExpectations(quota);
-        control.replay();
         QuotaStorageLimits storageLimits = collection.list();
         assertStorageLimitsFound(storageLimits, 1);
         QuotaStorageLimit storageLimit = storageLimits.getQuotaStorageLimits().get(0);
@@ -49,7 +48,6 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
         storageLimits.add(storageLimit2);
         quota.setQuotaStorages(storageLimits);
         setUpGetEntityExpectations(quota);
-        control.replay();
         QuotaStorageLimits list = collection.list();
         assertStorageLimitsFound(list, 2);
         for (QuotaStorageLimit storageLimit : list.getQuotaStorageLimits()) {

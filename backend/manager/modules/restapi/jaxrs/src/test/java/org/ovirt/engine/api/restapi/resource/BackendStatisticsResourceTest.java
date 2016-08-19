@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.same;
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.UUID;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.easymock.IExpectationSetters;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
@@ -49,13 +49,12 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
     @Test
     public void testSubResourceLocator() throws Exception {
         String id = UUID.nameUUIDFromBytes(STATISTICS[1].getBytes()).toString();
-        control.replay();
         assertTrue(collection.getStatisticResource(id) instanceof StatisticResource);
     }
 
     @SuppressWarnings("unchecked")
     private AbstractStatisticalQuery<Host, VDS> getQuery() {
-        return (AbstractStatisticalQuery<Host, VDS>)control.createMock(AbstractStatisticalQuery.class);
+        return (AbstractStatisticalQuery<Host, VDS>) mock(AbstractStatisticalQuery.class);
     }
 
     static Statistic getPrototype(String name) {
@@ -81,30 +80,24 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
     protected void setUpQueryExpectations(String unused, final Object failure) throws Exception {
         VDS entity = getEntity(0);
         if (failure == null) {
-            expect(query.resolve(eq(GUIDS[1]))).andReturn(entity);
+            when(query.resolve(eq(GUIDS[1]))).thenReturn(entity);
             List<Statistic> statistics = new ArrayList<>();
             for (String name : STATISTICS) {
                 statistics.add(getPrototype(name));
             }
-            expect(query.getStatistics(same(entity))).andReturn(statistics);
-            expect(query.getParentType()).andReturn(Host.class).anyTimes();
+            when(query.getStatistics(same(entity))).thenReturn(statistics);
+            when(query.getParentType()).thenReturn(Host.class);
         } else  if (failure instanceof String) {
-            IExpectationSetters<VDS> expectation = expect(query.resolve(eq(GUIDS[1])));
             String detail = mockl10n((String)failure);
-            expectation.andThrow(new BaseBackendResource.BackendFailureException(detail, Status.CONFLICT));
+            when(query.resolve(eq(GUIDS[1]))).thenThrow(new BaseBackendResource.BackendFailureException(detail, Status.CONFLICT));
         } else  if (failure instanceof Exception) {
-            IExpectationSetters<VDS> expectation = expect(query.resolve(eq(GUIDS[1])));
-            expectation.andThrow((Exception) failure).anyTimes();
-//            String detail = ((Exception)failure).getMessage();
-//            expectation.andThrow(new BaseBackendResource.BackendFailureException(detail));
+            when(query.resolve(eq(GUIDS[1]))).thenThrow((Exception) failure);
         }
-        control.replay();
     }
 
     @Override
     protected VDS getEntity(int index) {
-        VDS entity = control.createMock(VDS.class);
-        return entity;
+        return mock(VDS.class);
     }
 
     @Override

@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ public class BackendExternalHostResourceTest
 
     @Test
     public void testBadId() throws Exception {
-        control.replay();
         try {
             new BackendExternalHostProviderResource("foo");
             fail("expected WebApplicationException");
@@ -57,7 +57,6 @@ public class BackendExternalHostResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -71,7 +70,6 @@ public class BackendExternalHostResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
-        control.replay();
         verifyModel(resource.get(), 1);
     }
 
@@ -85,9 +83,9 @@ public class BackendExternalHostResourceTest
 
     @Override
     protected VDS getEntity(int index) {
-        VDS provider = control.createMock(VDS.class);
-        expect(provider.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[index]).anyTimes();
+        VDS provider = mock(VDS.class);
+        when(provider.getId()).thenReturn(GUIDS[index]);
+        when(provider.getName()).thenReturn(NAMES[index]);
         return provider;
     }
 

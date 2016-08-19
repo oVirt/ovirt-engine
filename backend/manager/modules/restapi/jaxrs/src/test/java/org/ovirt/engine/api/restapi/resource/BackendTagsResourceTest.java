@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -59,7 +60,6 @@ public class BackendTagsResourceTest
                                      new Object[] { },
                                      setUpTags(),
                                      null);
-        control.replay();
         collection.setUriInfo(uriInfo);
         getCollection();
         fail("Expected WebFaultException");
@@ -151,7 +151,6 @@ public class BackendTagsResourceTest
     @Test
     public void testAddIncompleteParameters() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(new Tag());
             fail("expected WebApplicationException on incomplete parameters");
@@ -204,7 +203,6 @@ public class BackendTagsResourceTest
                                          setUpRootTag());
         }
 
-        control.replay();
     }
 
     @Override
@@ -279,21 +277,21 @@ public class BackendTagsResourceTest
 
     @SuppressWarnings("unchecked")
     protected UriInfo setUpUriExpectationsWithMax(boolean badFormat) {
-        UriInfo uriInfo = control.createMock(UriInfo.class);
-        expect(uriInfo.getBaseUri()).andReturn(URI.create(URI_BASE)).anyTimes();
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getBaseUri()).thenReturn(URI.create(URI_BASE));
         List<PathSegment> psl = new ArrayList<>();
 
-        PathSegment ps = control.createMock(PathSegment.class);
-        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
+        PathSegment ps = mock(PathSegment.class);
+        MultivaluedMap<String, String> matrixParams = mock(MultivaluedMap.class);
 
-        expect(matrixParams.isEmpty()).andReturn(false).anyTimes();
-        expect(matrixParams.containsKey("max")).andReturn(true).anyTimes();
-        expect(matrixParams.getFirst("max")).andReturn(badFormat ? "bla3" : "2").anyTimes();
-        expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
+        when(matrixParams.isEmpty()).thenReturn(false);
+        when(matrixParams.containsKey("max")).thenReturn(true);
+        when(matrixParams.getFirst("max")).thenReturn(badFormat ? "bla3" : "2");
+        when(ps.getMatrixParameters()).thenReturn(matrixParams);
 
         psl.add(ps);
 
-        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
+        when(uriInfo.getPathSegments()).thenReturn(psl);
         return uriInfo;
     }
 }

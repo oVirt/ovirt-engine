@@ -18,7 +18,6 @@ public abstract class AbstractBackendRoleResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendRoleResource("foo", null);
             fail("expected WebApplicationException");
@@ -31,7 +30,6 @@ public abstract class AbstractBackendRoleResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -44,7 +42,6 @@ public abstract class AbstractBackendRoleResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }

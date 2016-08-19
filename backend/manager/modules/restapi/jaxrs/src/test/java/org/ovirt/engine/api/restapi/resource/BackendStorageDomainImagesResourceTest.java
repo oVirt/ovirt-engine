@@ -46,7 +46,6 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
         collection.setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(null);
-        control.replay();
 
         verifyCollection(getCollection());
     }
@@ -58,7 +57,6 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
         setUpEntityQueryExpectations(FAILURE);
 
-        control.replay();
 
         try {
             getCollection();
@@ -76,7 +74,6 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
         setUpEntityQueryExpectations(FAILURE);
 
-        control.replay();
 
         try {
             getCollection();
@@ -94,7 +91,6 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
         setUpEntityQueryExpectations(FAILURE);
 
-        control.replay();
 
         try {
             getCollection();

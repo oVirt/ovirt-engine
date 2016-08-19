@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -26,7 +27,6 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             createReourceWithBadGuid();
             fail("expected WebApplicationException");
@@ -41,7 +41,6 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -54,7 +53,6 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -64,7 +62,6 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
 
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -101,7 +98,6 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
-        control.replay();
 
         org.ovirt.engine.api.model.NetworkAttachment model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -155,7 +151,6 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(1, 0, true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -174,7 +169,6 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
             new String[] { "Id" },
             new Object[] { new Guid(resource.id) },
             vdcQueryReturnValue);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -186,7 +180,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
 
     @Override
     protected NetworkAttachment getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(NetworkAttachment.class), index);
+        return setUpEntityExpectations(mock(NetworkAttachment.class), index);
     }
 
     @Override
@@ -211,8 +205,8 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     protected final NetworkAttachment setUpEntityExpectations(NetworkAttachment entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getNetworkId()).andReturn(GUIDS[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getNetworkId()).thenReturn(GUIDS[index]);
         setUpEntityExpectations(entity);
         return entity;
     }

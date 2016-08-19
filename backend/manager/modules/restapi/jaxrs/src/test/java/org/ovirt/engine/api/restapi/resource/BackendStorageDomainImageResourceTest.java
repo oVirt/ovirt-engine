@@ -36,7 +36,6 @@ public class BackendStorageDomainImageResourceTest extends AbstractBackendSubRes
         setUpEntityQueryExpectations(VdcQueryType.GetImageById, GetImageByIdParameters.class,
                 new String[]{"StorageDomainId", "RepoImageId"}, new Object[]{DOMAIN_ID, IMAGE_ID.toString()},
                 getEntity(1));
-        control.replay();
 
         Image image = resource.get();
         verifyModelSpecific(image, 1);

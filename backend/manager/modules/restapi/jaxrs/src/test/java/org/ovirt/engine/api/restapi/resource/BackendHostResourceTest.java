@@ -1,8 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpStatisticalEntityExpectations;
@@ -13,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -84,7 +88,6 @@ public class BackendHostResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendHostResource("foo", new BackendHostsResource());
             fail("expected WebApplicationException");
@@ -97,7 +100,6 @@ public class BackendHostResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -110,7 +112,6 @@ public class BackendHostResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -121,11 +122,10 @@ public class BackendHostResourceTest
         try {
             accepts.add("application/xml; detail=statistics");
             setUriInfo(setUpBasicUriExpectations());
-            VdsStatistics stats = control.createMock(VdsStatistics.class);
+            VdsStatistics stats = mock(VdsStatistics.class);
             VDS entity = getEntity(0);
             setUpStatisticalEntityExpectations(entity, stats);
             setUpGetEntityExpectations(1, false, entity);
-            control.replay();
 
             Host host = resource.get();
             assertTrue(host.isSetStatistics());
@@ -139,7 +139,6 @@ public class BackendHostResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -222,9 +221,9 @@ public class BackendHostResourceTest
     }
 
     private Cluster getCluster(String name, Guid id) {
-        Cluster cluster = control.createMock(Cluster.class);
-        expect(cluster.getId()).andReturn(id).anyTimes();
-        expect(cluster.getName()).andReturn(name).anyTimes();
+        Cluster cluster = mock(Cluster.class);
+        when(cluster.getId()).thenReturn(id);
+        when(cluster.getName()).thenReturn(name);
         return cluster;
     }
 
@@ -259,7 +258,6 @@ public class BackendHostResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityWithNoCertificateInfoExpectations();
-        control.replay();
 
         Host model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -340,8 +338,7 @@ public class BackendHostResourceTest
                                            new String[] { },
                                            new Object[] { },
                                            true,
-                                           true,
-                                           false));
+                                           true));
 
         setUriInfo(setUpActionExpectations(VdcActionType.ApproveVds,
                                            ApproveVdsParameters.class,
@@ -397,14 +394,17 @@ public class BackendHostResourceTest
         VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
         queryResult.setSucceeded(true);
 
-        expect(backend.runQuery(eq(VdcQueryType.DiscoverSendTargets),
+        when(backend.runQuery(eq(VdcQueryType.DiscoverSendTargets),
                                 eqQueryParams(DiscoverSendTargetsQueryParameters.class,
                                               addSession("VdsId", "Connection.Connection", "Connection.Port", "Connection.UserName", "Connection.Password"),
                                               addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)
-                                              ))).andReturn(queryResult);
-        control.replay();
+                                              ))).thenReturn(queryResult);
+        enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.DiscoverSendTargets),
+                eqQueryParams(DiscoverSendTargetsQueryParameters.class,
+                        addSession("VdsId", "Connection.Connection", "Connection.Port", "Connection.UserName", "Connection.Password"),
+                        addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)
+                )));
         resource.iscsiDiscover(action);
-        verify(backend);
     }
 
     @Test
@@ -512,7 +512,6 @@ public class BackendHostResourceTest
     @Test
     public void testIncompleteFence() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             resource.fence(new Action());
             fail("expected WebApplicationException on incomplete parameters");
@@ -543,7 +542,6 @@ public class BackendHostResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 retVal);
-        control.replay();
         Action action = new Action();
         action.setFenceType(FenceType.STATUS.value());
         verifyActionResponse(resource.fence(action));
@@ -565,7 +563,6 @@ public class BackendHostResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 retVal);
-        control.replay();
         Action action = new Action();
         action.setFenceType(FenceType.STATUS.value());
         Response response = resource.fence(action);
@@ -595,7 +592,6 @@ public class BackendHostResourceTest
     public void testRemoveNonExistant() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -620,7 +616,6 @@ public class BackendHostResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendHostResource.FORCE, Boolean.TRUE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -638,7 +633,6 @@ public class BackendHostResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendHostResource.FORCE, Boolean.FALSE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -685,11 +679,10 @@ public class BackendHostResourceTest
     }
 
     protected VDS setUpStatisticalExpectations() throws Exception {
-        VdsStatistics stats = control.createMock(VdsStatistics.class);
-        VDS entity = control.createMock(VDS.class);
+        VdsStatistics stats = mock(VdsStatistics.class);
+        VDS entity = mock(VDS.class);
         setUpStatisticalEntityExpectations(entity, stats);
         setUpGetEntityWithNoCertificateInfoExpectations(1, false, entity);
-        control.replay();
         return entity;
     }
 
@@ -764,7 +757,7 @@ public class BackendHostResourceTest
 
     @Override
     protected VDS getEntity(int index) {
-        VDS entity = setUpEntityExpectations(control.createMock(VDS.class), null, index);
+        VDS entity = setUpEntityExpectations(spy(new VDS()), null, index);
         return entity;
     }
 

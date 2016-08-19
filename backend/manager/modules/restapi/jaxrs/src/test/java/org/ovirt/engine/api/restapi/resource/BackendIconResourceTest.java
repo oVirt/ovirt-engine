@@ -30,7 +30,6 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
         setUpGetEntityExpectations(0, false);
         setUriInfo(setUpBasicUriExpectations());
 
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -40,7 +39,6 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
 
-        control.replay();
 
         try {
             resource.get();
@@ -52,7 +50,6 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
 
     @Test
      public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendIconResource("foo");
             fail("expected WebApplicationException");

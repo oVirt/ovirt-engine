@@ -16,10 +16,8 @@
 
 package org.ovirt.engine.api.common.util;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,19 +107,15 @@ public class DetailHelperTest extends Assert {
 
     private void doTestIncludes(String spec, String[] rels, boolean[] expected) throws Exception {
 
-        HttpHeaders httpheaders = createMock(HttpHeaders.class);
+        HttpHeaders httpheaders = mock(HttpHeaders.class);
         List<String> requestHeaders = new ArrayList<>();
-        expect(httpheaders.getRequestHeader("Accept")).andReturn(requestHeaders).anyTimes();
+        when(httpheaders.getRequestHeader("Accept")).thenReturn(requestHeaders);
         requestHeaders.add(ACCEPTABLE + spec);
-
-        replay(httpheaders);
 
         for (int i = 0; i < rels.length; i++) {
             Set<String> details = DetailHelper.getDetails(httpheaders, null);
             assertEquals(expected[i], details.contains(rels[i]));
         }
-
-        verify(httpheaders);
     }
 
 }

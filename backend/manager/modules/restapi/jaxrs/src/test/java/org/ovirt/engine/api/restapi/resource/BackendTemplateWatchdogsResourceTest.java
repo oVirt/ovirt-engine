@@ -82,7 +82,6 @@ public class BackendTemplateWatchdogsResourceTest
             getEntities(),
             failure
         );
-        control.replay();
     }
 
     private List<VmWatchdog> getEntities() {

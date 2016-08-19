@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
@@ -23,10 +23,9 @@ public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<
     }
 
     private BackendHostHooksResource getCollectionResourceMock() {
-        control = EasyMock.createNiceControl();
-        BackendHostHooksResource mock = control.createMock(BackendHostHooksResource.class);
-        expect(mock.list()).andReturn(getHooks());
-        return mock;
+        BackendHostHooksResource resource = mock(BackendHostHooksResource.class);
+        when(resource.list()).thenReturn(getHooks());
+        return resource;
     }
 
     /**
@@ -37,7 +36,6 @@ public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         resource.setParent(getCollectionResourceMock());
-        control.replay();
         Hook hook = resource.get();
         assertEquals(EVENT_2_NAME, hook.getEventName());
     }

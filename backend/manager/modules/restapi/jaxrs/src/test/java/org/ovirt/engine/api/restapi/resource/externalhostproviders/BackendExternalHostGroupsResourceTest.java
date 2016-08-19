@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,13 +65,12 @@ public class BackendExternalHostGroupsResourceTest
             getGroups(),
             failure
         );
-        control.replay();
     }
 
     private Provider getProvider() {
-        Provider provider = control.createMock(Provider.class);
-        expect(provider.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[0]).anyTimes();
+        Provider provider = mock(Provider.class);
+        when(provider.getId()).thenReturn(GUIDS[0]);
+        when(provider.getName()).thenReturn(NAMES[0]);
         return provider;
     }
 
@@ -85,8 +85,8 @@ public class BackendExternalHostGroupsResourceTest
     @Override
     protected org.ovirt.engine.core.common.businessentities.ExternalHostGroup getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.ExternalHostGroup group =
-                control.createMock(org.ovirt.engine.core.common.businessentities.ExternalHostGroup.class);
-        expect(group.getName()).andReturn(NAMES[index]).anyTimes();
+                mock(org.ovirt.engine.core.common.businessentities.ExternalHostGroup.class);
+        when(group.getName()).thenReturn(NAMES[index]);
         return group;
     }
 

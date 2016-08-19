@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,13 +63,12 @@ public class BackendOpenStackVolumeTypesResourceTest extends
             getCinderVolumeTypes(),
             failure
         );
-        control.replay();
     }
 
     private List<StorageDomain> getStorageDomains() {
-        StorageDomain storageDomain = control.createMock(StorageDomain.class);
-        expect(storageDomain.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(storageDomain.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        StorageDomain storageDomain = mock(StorageDomain.class);
+        when(storageDomain.getId()).thenReturn(GUIDS[0]);
+        when(storageDomain.getStorage()).thenReturn(GUIDS[0].toString());
         return Collections.singletonList(storageDomain);
     }
 
@@ -82,9 +82,9 @@ public class BackendOpenStackVolumeTypesResourceTest extends
 
     @Override
     protected CinderVolumeType getEntity(int index) {
-        CinderVolumeType cinderVolumeType = control.createMock(CinderVolumeType.class);
-        expect(cinderVolumeType.getId()).andReturn(GUIDS[index].toString()).anyTimes();
-        expect(cinderVolumeType.getName()).andReturn(NAMES[index]).anyTimes();
+        CinderVolumeType cinderVolumeType = mock(CinderVolumeType.class);
+        when(cinderVolumeType.getId()).thenReturn(GUIDS[index].toString());
+        when(cinderVolumeType.getName()).thenReturn(NAMES[index]);
         return cinderVolumeType;
     }
 

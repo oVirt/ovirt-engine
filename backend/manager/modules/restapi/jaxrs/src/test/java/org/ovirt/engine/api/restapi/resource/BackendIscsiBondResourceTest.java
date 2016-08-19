@@ -36,7 +36,6 @@ public class BackendIscsiBondResourceTest
     public void testRemoveNonExistant() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, null);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

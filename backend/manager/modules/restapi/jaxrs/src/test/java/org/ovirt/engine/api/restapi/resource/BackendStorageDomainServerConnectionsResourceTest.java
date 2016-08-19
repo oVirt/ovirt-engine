@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,6 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
                 setUpStorageConnections(),
                 failure);
 
-        control.replay();
     }
 
     protected List<StorageServerConnections> setUpStorageConnections() {
@@ -102,15 +102,15 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
 
     @Override
     protected StorageServerConnections getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(StorageServerConnections.class), index);
+        return setUpEntityExpectations(mock(StorageServerConnections.class), index);
     }
 
     static StorageServerConnections setUpEntityExpectations(StorageServerConnections entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index].toString()).anyTimes();
-        expect(entity.getStorageType()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
-        expect(entity.getConnection()).andReturn("1.1.1.255").anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index].toString());
+        when(entity.getStorageType()).thenReturn(STORAGE_TYPES_MAPPED[index]);
+        when(entity.getConnection()).thenReturn("1.1.1.255");
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.ISCSI)) {
-            expect(entity.getPort()).andReturn("3260").anyTimes();
+            when(entity.getPort()).thenReturn("3260");
         }
 
         return entity;

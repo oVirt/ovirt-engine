@@ -85,7 +85,6 @@ public class BackendIscsiBondsResourceTest
                 new Object[] { DATA_CENTER_ID },
                 setUpIscsiBonds(),
                 failure);
-        control.replay();
     }
 
     static List<org.ovirt.engine.core.common.businessentities.IscsiBond> setUpIscsiBonds() {

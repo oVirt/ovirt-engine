@@ -63,7 +63,6 @@ public class BackendStorageDomainVmResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
@@ -77,7 +76,6 @@ public class BackendStorageDomainVmResourceTest
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -95,7 +93,6 @@ public class BackendStorageDomainVmResourceTest
         setUpGetStorageDomainExpectations(domainType);
         setUpGetEntityExpectations(domainType, STORAGE_DOMAIN_ID);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
 
         verifyModel(resource.get(), 1);
     }
@@ -108,7 +105,6 @@ public class BackendStorageDomainVmResourceTest
         action.setCluster(new org.ovirt.engine.api.model.Cluster());
         action.getCluster().setId(GUIDS[1].toString());
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
-        control.replay();
         try {
             resource.doImport(action);
             fail("expected WebApplicationException");
@@ -205,7 +201,6 @@ public class BackendStorageDomainVmResourceTest
         vm.setDiskAttachments(diskAttachments);
         action.setVm(vm);
 
-        control.replay();
         try {
             resource.doImport(action);
             fail("expected WebApplicationException");
@@ -217,7 +212,7 @@ public class BackendStorageDomainVmResourceTest
     @Test
     public void testRemove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         String[] names = new String[] { "VmId", "StorageDomainId", "StoragePoolId" };
         Object[] values = new Object[] { GUIDS[1], GUIDS[3], DATA_CENTER_ID };
@@ -230,7 +225,7 @@ public class BackendStorageDomainVmResourceTest
         verifyRemove(resource.remove());
     }
 
-    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType, boolean replay) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) throws Exception {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
@@ -252,10 +247,6 @@ public class BackendStorageDomainVmResourceTest
             break;
         default:
             break;
-        }
-
-        if (replay) {
-            control.replay();
         }
     }
 
@@ -297,7 +288,6 @@ public class BackendStorageDomainVmResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainVmResource.COLLAPSE_SNAPSHOTS, Boolean.toString(collapseSnapshots));
         setUriInfo(uriInfo);
-        control.replay();
 
         Action action = new Action();
         action.setStorageDomain(storageDomain);
@@ -369,7 +359,6 @@ public class BackendStorageDomainVmResourceTest
     public void testIncompleteImport() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.doImport(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {

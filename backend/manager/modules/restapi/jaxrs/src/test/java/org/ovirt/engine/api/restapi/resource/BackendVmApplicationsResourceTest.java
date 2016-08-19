@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
@@ -49,7 +50,6 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
                     new String[]{"Id"},
                     new Object[]{VM_ID},
                     getVm());
-        control.replay();
         verifyApplications(resource.list());
     }
 
@@ -65,14 +65,13 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
     }
 
     protected VM getVm() {
-        return setUpEntityExpectations(control.createMock(VM.class),
-                control.createMock(VmDynamic.class));
+        return setUpEntityExpectations(mock(VM.class), mock(VmDynamic.class));
     }
 
     static VM setUpEntityExpectations(VM entity, VmDynamic dynamicVm) {
-        expect(entity.getQueryableId()).andReturn(VM_ID).anyTimes();
-        expect(entity.getDynamicData()).andReturn(dynamicVm).anyTimes();
-        expect(entity.getAppList()).andReturn(getAppList()).anyTimes();
+        when(entity.getQueryableId()).thenReturn(VM_ID);
+        when(entity.getDynamicData()).thenReturn(dynamicVm);
+        when(entity.getAppList()).thenReturn(getAppList());
         return entity;
     }
 
@@ -89,13 +88,11 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
 
     @Test
     public void testSubResourceLocator() throws Exception {
-        control.replay();
         assertTrue(resource.getApplicationResource(VM_ID.toString()) instanceof VmApplicationResource);
     }
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
-        control.replay();
         try {
             resource.getApplicationResource("foo");
             fail("expected WebApplicationException");

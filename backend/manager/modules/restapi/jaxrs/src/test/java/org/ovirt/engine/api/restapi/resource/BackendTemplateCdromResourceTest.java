@@ -40,7 +40,6 @@ public class BackendTemplateCdromResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -54,7 +53,6 @@ public class BackendTemplateCdromResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(getTemplate());
-        control.replay();
 
         Cdrom cdrom = resource.get();
         verifyModel(cdrom);

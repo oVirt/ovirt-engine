@@ -33,7 +33,6 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
         BackendPermitResource resource = new BackendPermitResource(id, new BackendPermitsResource(ROLE_ID));
         resource.getParent().setMappingLocator(mapperLocator);
         try {
-            control.replay();
             resource.get();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
@@ -44,7 +43,6 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     @Test
     public void testGet() {
         initResource(resource.parent);
-        control.replay();
         for (ActionGroup action : ActionGroup.values()) {
             resource.id = Integer.toString(action.getId());
             verifyPermit(resource.get(), action);
@@ -65,7 +63,6 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     private void doTestRemoveNotFound(String id) throws Exception {
         initResource(resource.parent);
         resource.id = id;
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

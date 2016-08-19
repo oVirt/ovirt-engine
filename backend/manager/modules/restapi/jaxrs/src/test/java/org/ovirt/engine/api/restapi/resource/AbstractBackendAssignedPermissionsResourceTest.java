@@ -135,8 +135,6 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                      new Object[] { GUIDS[1] },
                                      perms,
                                      failure);
-
-        control.replay();
     }
 
     protected void setUpQueryExpectations(String query, Object failure, Guid adElementId) throws Exception {
@@ -149,7 +147,6 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                      setUpPermissionsWithAdElementId(adElementId),
                                      failure);
 
-        control.replay();
     }
 
     @Override

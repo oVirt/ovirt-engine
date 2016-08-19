@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -24,7 +25,7 @@ public class BackendHostNicNetworkAttachmentResourceTest
 
     @Override
     protected NetworkAttachment getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(NetworkAttachment.class), index);
+        return setUpEntityExpectations(mock(NetworkAttachment.class), index);
     }
 
     @Override
@@ -42,6 +43,6 @@ public class BackendHostNicNetworkAttachmentResourceTest
 
     @Override
     protected void setUpEntityExpectations(NetworkAttachment entity) {
-        expect(entity.getNicId()).andReturn(HOST_NIC_ID).anyTimes();
+        when(entity.getNicId()).thenReturn(HOST_NIC_ID);
     }
 }

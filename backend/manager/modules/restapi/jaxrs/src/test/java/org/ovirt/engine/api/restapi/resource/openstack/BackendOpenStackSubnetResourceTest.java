@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
 import java.util.ArrayList;
@@ -41,7 +42,6 @@ public class BackendOpenStackSubnetResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -55,7 +55,6 @@ public class BackendOpenStackSubnetResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
-        control.replay();
         verifyModel(resource.get(), 2);
     }
 
@@ -79,9 +78,9 @@ public class BackendOpenStackSubnetResourceTest
 
     @Override
     protected ExternalSubnet getEntity(int index) {
-        ExternalSubnet subnet = control.createMock(ExternalSubnet.class);
-        expect(subnet.getId()).andReturn(string2hex(NAMES[index])).anyTimes();
-        expect(subnet.getName()).andReturn(NAMES[index]).anyTimes();
+        ExternalSubnet subnet = mock(ExternalSubnet.class);
+        when(subnet.getId()).thenReturn(string2hex(NAMES[index]));
+        when(subnet.getName()).thenReturn(NAMES[index]);
         return subnet;
     }
 

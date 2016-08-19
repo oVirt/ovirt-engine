@@ -1,8 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -15,7 +19,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -164,7 +167,6 @@ public class BackendHostsResourceTest
         Host model = new Host();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -208,8 +210,8 @@ public class BackendHostsResourceTest
 
     @Override
     protected VDS getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VDS.class),
-                                       control.createMock(VdsStatistics.class),
+        return setUpEntityExpectations(spy(new VDS()),
+                                       mock(VdsStatistics.class),
                                        index);
     }
 
@@ -218,14 +220,14 @@ public class BackendHostsResourceTest
     }
 
     static VDS setUpEntityExpectations(VDS entity, VdsStatistics statistics, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getHostName()).andReturn(ADDRESSES[index]).anyTimes();
-        expect(entity.getStatus()).andReturn(VDS_STATUS[index]).anyTimes();
-        expect(entity.getStoragePoolId()).andReturn(GUIDS[1]).anyTimes();
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setId(GUIDS[2]);
-        expect(entity.getStaticData()).andReturn(vdsStatic).anyTimes();
+        entity.setId(GUIDS[index]);
+        entity.getStaticData().setName(NAMES[index]);
+        entity.setHostName(ADDRESSES[index]);
+        entity.setStatus(VDS_STATUS[index]);
+        entity.setStoragePoolId(GUIDS[1]);
+
+        doReturn(null).when(entity).getCertificateSubject();
+
         if (statistics != null) {
             setUpStatisticalEntityExpectations(entity, statistics);
         }
@@ -233,18 +235,18 @@ public class BackendHostsResourceTest
     }
 
     static VDS setUpStatisticalEntityExpectations(VDS entity, VdsStatistics statistics) {
-        expect(entity.getPhysicalMemMb()).andReturn(5120).anyTimes();
-        expect(entity.getStatisticsData()).andReturn(statistics).anyTimes();
-        expect(statistics.getUsageMemPercent()).andReturn(20).anyTimes();
-        expect(statistics.getSwapFree()).andReturn(25L).anyTimes();
-        expect(statistics.getSwapTotal()).andReturn(30L).anyTimes();
-        expect(statistics.getMemAvailable()).andReturn(35L).anyTimes();
-        expect(statistics.getMemShared()).andReturn(38L).anyTimes();
-        expect(statistics.getKsmCpuPercent()).andReturn(40).anyTimes();
-        expect(statistics.getCpuUser()).andReturn(45.0).anyTimes();
-        expect(statistics.getCpuSys()).andReturn(50.0).anyTimes();
-        expect(statistics.getCpuIdle()).andReturn(55.0).anyTimes();
-        expect(statistics.getCpuLoad()).andReturn(0.60).anyTimes();
+        when(entity.getPhysicalMemMb()).thenReturn(5120);
+        when(entity.getStatisticsData()).thenReturn(statistics);
+        when(statistics.getUsageMemPercent()).thenReturn(20);
+        when(statistics.getSwapFree()).thenReturn(25L);
+        when(statistics.getSwapTotal()).thenReturn(30L);
+        when(statistics.getMemAvailable()).thenReturn(35L);
+        when(statistics.getMemShared()).thenReturn(38L);
+        when(statistics.getKsmCpuPercent()).thenReturn(40);
+        when(statistics.getCpuUser()).thenReturn(45.0);
+        when(statistics.getCpuSys()).thenReturn(50.0);
+        when(statistics.getCpuIdle()).thenReturn(55.0);
+        when(statistics.getCpuLoad()).thenReturn(0.60);
         return entity;
     }
 

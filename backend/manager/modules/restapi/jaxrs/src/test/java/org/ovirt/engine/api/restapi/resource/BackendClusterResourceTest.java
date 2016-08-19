@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
 
@@ -37,7 +38,6 @@ public class BackendClusterResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendClusterResource("foo", new BackendClustersResource());
             fail("expected WebApplicationException");
@@ -50,7 +50,6 @@ public class BackendClusterResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -64,7 +63,6 @@ public class BackendClusterResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setUpManagementNetworkExpectation();
-        control.replay();
 
         final org.ovirt.engine.api.model.Cluster cluster = resource.get();
         verifyModel(cluster, 0);
@@ -76,7 +74,6 @@ public class BackendClusterResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -145,7 +142,6 @@ public class BackendClusterResourceTest
     @Test
     public void testConflictedUpdate() throws Exception {
         setUpGetEntityExpectations(1);
-        control.replay();
 
         org.ovirt.engine.api.model.Cluster model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -176,7 +172,6 @@ public class BackendClusterResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -235,8 +230,8 @@ public class BackendClusterResourceTest
 
     private void setUpManagementNetworkExpectation() throws Exception {
         setUpPopulateExpectation();
-        final Network mockNetwork = control.createMock(Network.class);
-        expect(mockNetwork.getId()).andReturn(MANAGEMENT_NETWORK_ID);
+        final Network mockNetwork = mock(Network.class);
+        when(mockNetwork.getId()).thenReturn(MANAGEMENT_NETWORK_ID);
 
         setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
                 IdQueryParameters.class,
@@ -247,14 +242,13 @@ public class BackendClusterResourceTest
 
     private void setUpPopulateExpectation() {
         if (!isPopulateSet) {
-            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(Collections.singletonList("true"))
-                    .anyTimes();
+            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(Collections.singletonList("true"));
             isPopulateSet = true;
         }
     }
 
     @Override
     protected Cluster getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(Cluster.class), index);
+        return setUpEntityExpectations(mock(Cluster.class), index);
     }
 }

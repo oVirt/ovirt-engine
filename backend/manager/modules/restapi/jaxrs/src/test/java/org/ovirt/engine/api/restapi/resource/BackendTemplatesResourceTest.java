@@ -1,14 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Template;
@@ -193,15 +195,13 @@ public class BackendTemplatesResourceTest
 
     @Test
     public void testAddVersionNoBaseTemplateId() throws Exception {
-       setUriInfo(setUpBasicUriExpectations());
-       control.replay();
-       Template t = getModel(2);
-       t.getVersion().setBaseTemplate(null);
-       try {
-         collection.add(t);
-         fail("Should have failed with 400 error due to a missing base template");
-       }
-       catch (WebApplicationException e) {
+        setUriInfo(setUpBasicUriExpectations());
+        Template t = getModel(2);
+        t.getVersion().setBaseTemplate(null);
+        try {
+            collection.add(t);
+            fail("Should have failed with 400 error due to a missing base template");
+        } catch (WebApplicationException e) {
             assertNotNull(e.getResponse());
             assertEquals(400, e.getResponse().getStatus());
         }
@@ -456,8 +456,8 @@ public class BackendTemplatesResourceTest
     protected void setUpFilteredQueryExpectations() {
         List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
-        EasyMock.reset(httpHeaders);
-        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
+        reset(httpHeaders);
+        when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
     }
 
     protected void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
@@ -479,7 +479,6 @@ public class BackendTemplatesResourceTest
         Template model = new Template();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -568,7 +567,6 @@ public class BackendTemplatesResourceTest
 
     @Test
     public void testAddSetAndUploadIconFailure() throws Exception {
-        control.replay();
         final Template restModel = getRestModel(0);
         restModel.setLargeIcon(IconTestHelpler.createIconWithData());
         restModel.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
@@ -582,39 +580,39 @@ public class BackendTemplatesResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.VM setUpVm(Guid id) {
         org.ovirt.engine.core.common.businessentities.VM vm =
-            control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
-        expect(vm.getId()).andReturn(id).anyTimes();
+            mock(org.ovirt.engine.core.common.businessentities.VM.class);
+        when(vm.getId()).thenReturn(id);
         return vm;
     }
 
     @Override
     protected VmTemplate getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
+        return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
     static VmTemplate setUpEntityExpectations(VmTemplate entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
-        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
-        expect(entity.getThreadsPerCpu()).andReturn(1).anyTimes();
-        expect(entity.getCpuPerSocket()).andReturn(4).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getClusterId()).thenReturn(GUIDS[2]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getNumOfCpus()).thenReturn(8);
+        when(entity.getNumOfSockets()).thenReturn(2);
+        when(entity.getThreadsPerCpu()).thenReturn(1);
+        when(entity.getCpuPerSocket()).thenReturn(4);
         if(index == 2) {
-           expect(entity.getTemplateVersionName()).andReturn(VERSION_NAME).anyTimes();
-           expect(entity.getTemplateVersionNumber()).andReturn(2).anyTimes();
-           expect(entity.getBaseTemplateId()).andReturn(GUIDS[1]).anyTimes();
-           expect(entity.isBaseTemplate()).andReturn(false).anyTimes();
+           when(entity.getTemplateVersionName()).thenReturn(VERSION_NAME);
+           when(entity.getTemplateVersionNumber()).thenReturn(2);
+           when(entity.getBaseTemplateId()).thenReturn(GUIDS[1]);
+           when(entity.isBaseTemplate()).thenReturn(false);
         }
         else {
-            expect(entity.getTemplateVersionNumber()).andReturn(1).anyTimes();
+            when(entity.getTemplateVersionNumber()).thenReturn(1);
             // same base template id as the template itself
-            expect(entity.getBaseTemplateId()).andReturn(GUIDS[index]).anyTimes();
-            expect(entity.isBaseTemplate()).andReturn(true).anyTimes();
+            when(entity.getBaseTemplateId()).thenReturn(GUIDS[index]);
+            when(entity.isBaseTemplate()).thenReturn(true);
         }
-        expect(entity.getSmallIconId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getLargeIconId()).andReturn(GUIDS[3]).anyTimes();
+        when(entity.getSmallIconId()).thenReturn(GUIDS[2]);
+        when(entity.getLargeIconId()).thenReturn(GUIDS[3]);
         return entity;
     }
 
@@ -707,7 +705,7 @@ public class BackendTemplatesResourceTest
     private List<VmInit> setUpVmInit() {
         List<VmInit> vmInits = new ArrayList<>(NAMES.length);
         for (int i = 0; i < NAMES.length; i++) {
-            VmInit vmInit = control.createMock(VmInit.class);
+            VmInit vmInit = mock(VmInit.class);
             vmInits.add(vmInit);
         }
         return vmInits;

@@ -1,7 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResourceTest.setUpEntityExpectations;
 
 import javax.ws.rs.WebApplicationException;
@@ -43,7 +45,6 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         resource.setParent(volumesResourceMock);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -52,7 +53,6 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -115,7 +115,6 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         resource.setUriInfo(setUpBasicUriExpectations());
 
         try {
-            control.replay();
             Action action = new Action();
             action.setOption(new Option());
             resource.setOption(action);
@@ -147,7 +146,6 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         resource.setUriInfo(setUpBasicUriExpectations());
 
         try {
-            control.replay();
             Action action = new Action();
             action.setOption(new Option());
             resource.resetOption(action);
@@ -215,7 +213,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     @Override
     protected GlusterVolumeEntity getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(GlusterVolumeEntity.class), index);
+        return setUpEntityExpectations(mock(GlusterVolumeEntity.class), index);
     }
 
     /**
@@ -249,20 +247,17 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         cluster.setName(defaultClusterName);
         cluster.setId(clusterId.toString());
 
-        clusterResourceMock = control.createMock(ClusterResource.class);
-        expect(clusterResourceMock.get()).andReturn(cluster).anyTimes();
+        clusterResourceMock = mock(ClusterResource.class);
+        when(clusterResourceMock.get()).thenReturn(cluster);
 
-        volumesResourceMock = control.createMock(BackendGlusterVolumesResource.class);
-        expect(volumesResourceMock.getParent()).andReturn(clusterResourceMock).anyTimes();
-        expect(volumesResourceMock.addParents(isA(GlusterVolume.class))).andDelegateTo(
-                new BackendGlusterVolumesResource() {
-                    @Override
-                    protected GlusterVolume addParents(GlusterVolume model) {
-                        Cluster cluster = new Cluster();
-                        cluster.setId(clusterId.toString());
-                        model.setCluster(cluster);
-                        return model;
-                    }
-                }).anyTimes();
+        volumesResourceMock = mock(BackendGlusterVolumesResource.class);
+        when(volumesResourceMock.getParent()).thenReturn(clusterResourceMock);
+        doAnswer(invocation -> {
+            GlusterVolume model = (GlusterVolume) invocation.getArguments()[0];
+            Cluster clusterModel = new Cluster();
+            clusterModel.setId(clusterId.toString());
+            model.setCluster(clusterModel);
+            return model;
+        }).when(volumesResourceMock).addParents(isA(GlusterVolume.class));
     }
 }

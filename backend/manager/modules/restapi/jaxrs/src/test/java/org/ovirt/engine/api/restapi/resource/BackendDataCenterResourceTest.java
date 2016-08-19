@@ -1,12 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.verifyModelSpecific;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
@@ -35,7 +37,6 @@ public class BackendDataCenterResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendDataCenterResource("foo", null);
             fail("expected WebApplicationException");
@@ -48,7 +49,6 @@ public class BackendDataCenterResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -62,7 +62,6 @@ public class BackendDataCenterResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpVersionExpectations();
         setUpGetEntityExpectations(1);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -71,7 +70,6 @@ public class BackendDataCenterResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -127,7 +125,6 @@ public class BackendDataCenterResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
 
         DataCenter model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -171,7 +168,6 @@ public class BackendDataCenterResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendDataCenterResource.FORCE, Boolean.TRUE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -190,14 +186,12 @@ public class BackendDataCenterResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendDataCenterResource.FORCE, Boolean.FALSE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         resource.remove();
     }
 
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -264,13 +258,13 @@ public class BackendDataCenterResourceTest
 
     @Override
     protected StoragePool getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(StoragePool.class), index);
+        return setUpEntityExpectations(mock(StoragePool.class), index);
     }
 
     protected List<Version> getVersions() {
-        Version version = control.createMock(Version.class);
-        expect(version.getMajor()).andReturn(2);
-        expect(version.getMinor()).andReturn(3);
+        Version version = mock(Version.class);
+        when(version.getMajor()).thenReturn(2);
+        when(version.getMinor()).thenReturn(3);
         List<Version> versions = new ArrayList<>();
         versions.add(version);
         return versions;

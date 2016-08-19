@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -26,7 +27,6 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -35,7 +35,6 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, false);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -77,7 +76,6 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     public void testRemoveNonExistant() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, false);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -101,13 +99,13 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     @Override
     protected org.ovirt.engine.core.common.scheduling.AffinityGroup getEntity(int index) {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
-                control.createMock(org.ovirt.engine.core.common.scheduling.AffinityGroup.class);
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getClusterId()).andReturn(CLUSTER_ID).anyTimes();
-        expect(entity.isEnforcing()).andReturn((GUIDS[index].hashCode() & 1) == 0).anyTimes();
-        expect(entity.isPositive()).andReturn((GUIDS[index].hashCode() & 1) == 1).anyTimes();
+                mock(org.ovirt.engine.core.common.scheduling.AffinityGroup.class);
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getClusterId()).thenReturn(CLUSTER_ID);
+        when(entity.isEnforcing()).thenReturn((GUIDS[index].hashCode() & 1) == 0);
+        when(entity.isPositive()).thenReturn((GUIDS[index].hashCode() & 1) == 1);
         return entity;
     }
 

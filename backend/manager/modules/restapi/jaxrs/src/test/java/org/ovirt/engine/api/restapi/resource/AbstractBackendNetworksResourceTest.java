@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,15 +58,15 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
         networkCluster.setDisplay(isDisplay);
         networkCluster.setMigration(isMigration);
         networkCluster.setRequired(isRequired);
-        expect(entity.getCluster()).andReturn(networkCluster).anyTimes();
+        when(entity.getCluster()).thenReturn(networkCluster);
         return setUpEntityExpectations(entity, index);
      }
 
     static org.ovirt.engine.core.common.businessentities.network.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.Network entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getDataCenterId()).andReturn(GUIDS[1]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getDataCenterId()).thenReturn(GUIDS[1]);
         return entity;
     }
 

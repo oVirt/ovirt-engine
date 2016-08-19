@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.ROOT_PASSWORD;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
@@ -10,7 +12,6 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
@@ -41,7 +42,6 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     public void testQueryWithoutFilter() throws Exception {
         resource.setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
-        control.replay();
         resource.get();
     }
 
@@ -49,17 +49,16 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     public void testQueryWithFilter() throws Exception {
         List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
-        EasyMock.reset(httpHeaders);
-        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
+        reset(httpHeaders);
+        when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
         resource.setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         resource.get();
     }
 
     @Test
     public void testActionWithCorrelationId() throws Exception {
         setUpGetEntityExpectations(false);
-        expect(httpHeaders.getRequestHeader("Correlation-Id")).andReturn(asList("Some-Correlation-id")).anyTimes();
+        when(httpHeaders.getRequestHeader("Correlation-Id")).thenReturn(asList("Some-Correlation-id"));
         resource.setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword", "CorrelationId" },
@@ -77,7 +76,6 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         Host host = new Host();
         host.setCluster(new Cluster());
         host.getCluster().setId("!!!");
-        control.replay();
         resource.update(host);
     }
 
@@ -135,7 +133,6 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
 
 
     protected VDS getEntity(int index) {
-        VDS vds = setUpEntityExpectations(control.createMock(VDS.class), null, index);
-        return vds;
+        return setUpEntityExpectations(spy(new VDS()), null, index);
     }
 }

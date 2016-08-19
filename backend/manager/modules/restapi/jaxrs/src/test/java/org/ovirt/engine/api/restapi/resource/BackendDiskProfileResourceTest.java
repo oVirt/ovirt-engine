@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -20,7 +21,6 @@ public class BackendDiskProfileResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendDiskProfileResource("foo");
             fail("expected WebApplicationException");
@@ -33,7 +33,6 @@ public class BackendDiskProfileResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -46,7 +45,6 @@ public class BackendDiskProfileResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -56,7 +54,6 @@ public class BackendDiskProfileResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
 
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -111,7 +108,6 @@ public class BackendDiskProfileResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
-        control.replay();
 
         DiskProfile model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -126,7 +122,6 @@ public class BackendDiskProfileResourceTest
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(1, 0, true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -160,7 +155,6 @@ public class BackendDiskProfileResourceTest
             new Object[] { GUIDS[0] },
             null
         );
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -222,16 +216,16 @@ public class BackendDiskProfileResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.profiles.DiskProfile getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class),
+        return setUpEntityExpectations(mock(org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class),
                 index);
     }
 
     static org.ovirt.engine.core.common.businessentities.profiles.DiskProfile setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity,
             int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getStorageDomainId()).andReturn(GUIDS[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getStorageDomainId()).thenReturn(GUIDS[index]);
         return entity;
     }
 }

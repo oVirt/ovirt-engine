@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +12,6 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
@@ -123,7 +124,6 @@ public class BackendNetworksResourceTest
         Network model = new Network();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -136,12 +136,11 @@ public class BackendNetworksResourceTest
     public void testQueryWithFilter() throws Exception {
         List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
-        EasyMock.reset(httpHeaders);
-        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
+        reset(httpHeaders);
+        when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
         setUpEntityQueryExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
-        List<Network> networks = getCollection();
+                List<Network> networks = getCollection();
         Collections.sort(networks, new NetworkIdComparator());
         verifyCollection(networks);
     }
@@ -158,8 +157,8 @@ public class BackendNetworksResourceTest
     }
 
     protected StoragePool setUpStoragePool(Guid id) {
-        StoragePool pool = control.createMock(StoragePool.class);
-        expect(pool.getId()).andReturn(id).anyTimes();
+        StoragePool pool = mock(StoragePool.class);
+        when(pool.getId()).thenReturn(id);
         return pool;
     }
 

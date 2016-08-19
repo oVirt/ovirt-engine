@@ -27,7 +27,6 @@ public class BackendAffinityGroupVmsResourceTest
         assertEquals("", query);
 
         setUpGetEntityExpectations(true);
-        control.replay();
     }
 
     /**
@@ -95,7 +94,6 @@ public class BackendAffinityGroupVmsResourceTest
                 null,
                 failure);
 
-        control.replay();
     }
 
     @Override

@@ -46,7 +46,6 @@ public class BackendQuotasResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         setGetQuotasExpectations();
-        control.replay();
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }

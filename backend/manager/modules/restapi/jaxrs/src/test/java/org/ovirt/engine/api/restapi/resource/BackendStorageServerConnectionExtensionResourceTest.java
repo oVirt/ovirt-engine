@@ -47,7 +47,6 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
     public void testGet() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         StorageConnectionExtension extension = resource.get();
         assertNotNull(extension);
         assertEquals(extension.getId(), extensionID.toString());

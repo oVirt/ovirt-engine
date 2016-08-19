@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +49,6 @@ public class BackendOpenStackVolumeProviderResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendOpenStackVolumeProviderResource("foo", resource.getParent());
             fail("expected WebApplicationException");
@@ -62,7 +62,6 @@ public class BackendOpenStackVolumeProviderResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -75,7 +74,6 @@ public class BackendOpenStackVolumeProviderResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -83,7 +81,6 @@ public class BackendOpenStackVolumeProviderResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -144,7 +141,6 @@ public class BackendOpenStackVolumeProviderResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
 
         OpenStackVolumeProvider model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -179,17 +175,17 @@ public class BackendOpenStackVolumeProviderResourceTest
 
     @Override
     protected Provider getEntity(int index) {
-        Provider provider = control.createMock(Provider.class);
-        expect(provider.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(provider.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        Provider provider = mock(Provider.class);
+        when(provider.getId()).thenReturn(GUIDS[index]);
+        when(provider.getName()).thenReturn(NAMES[index]);
+        when(provider.getDescription()).thenReturn(DESCRIPTIONS[index]);
         return provider;
     }
 
     public StorageDomainStatic getStorageDomainStatic() {
-        StorageDomainStatic storageDomainStatic = control.createMock(StorageDomainStatic.class);
-        expect(storageDomainStatic.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(storageDomainStatic.getName()).andReturn(NAMES[0]).anyTimes();
+        StorageDomainStatic storageDomainStatic = mock(StorageDomainStatic.class);
+        when(storageDomainStatic.getId()).thenReturn(GUIDS[0]);
+        when(storageDomainStatic.getName()).thenReturn(NAMES[0]);
         return storageDomainStatic;
     }
 

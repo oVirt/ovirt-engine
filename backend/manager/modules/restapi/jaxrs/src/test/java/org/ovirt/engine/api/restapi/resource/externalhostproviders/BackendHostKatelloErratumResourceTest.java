@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.hex2string;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
@@ -22,7 +23,6 @@ public class BackendHostKatelloErratumResourceTest extends AbstractBackendSubRes
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -35,7 +35,6 @@ public class BackendHostKatelloErratumResourceTest extends AbstractBackendSubRes
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -48,9 +47,9 @@ public class BackendHostKatelloErratumResourceTest extends AbstractBackendSubRes
 
     @Override
     protected Erratum getEntity(int index) {
-        Erratum erratum = control.createMock(Erratum.class);
-        expect(erratum.getId()).andReturn(GUIDS[index].toString()).anyTimes();
-        expect(erratum.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        Erratum erratum = mock(Erratum.class);
+        when(erratum.getId()).thenReturn(GUIDS[index].toString());
+        when(erratum.getDescription()).thenReturn(DESCRIPTIONS[index]);
         return erratum;
     }
 

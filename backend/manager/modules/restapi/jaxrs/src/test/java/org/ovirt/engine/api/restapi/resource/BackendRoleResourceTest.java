@@ -54,7 +54,6 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

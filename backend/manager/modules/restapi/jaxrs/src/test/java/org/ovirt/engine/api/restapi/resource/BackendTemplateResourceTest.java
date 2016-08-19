@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
@@ -8,6 +9,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -43,7 +45,6 @@ public class BackendTemplateResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendTemplateResource("foo");
             fail("expected WebApplicationException");
@@ -57,7 +58,6 @@ public class BackendTemplateResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -73,7 +73,6 @@ public class BackendTemplateResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
         setUpGetBallooningExpectations();
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -110,14 +109,13 @@ public class BackendTemplateResourceTest
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
             setUpGetConsoleExpectations(0);
             setUpGetVirtioScsiExpectations(0);
             setUpGetSoundcardExpectations(0);
             setUpGetRngDeviceExpectations(0);
         }
         setUpGetGraphicsExpectations(1);
-        control.replay();
 
         Template response = resource.get();
         verifyModel(response, 0);
@@ -151,7 +149,6 @@ public class BackendTemplateResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getRestModel(0));
             fail("expected WebApplicationException");
@@ -191,7 +188,6 @@ public class BackendTemplateResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
 
         Template model = getRestModel(1);
         model.setId(GUIDS[1].toString());
@@ -267,7 +263,6 @@ public class BackendTemplateResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -353,7 +348,6 @@ public class BackendTemplateResourceTest
     public void testIncompleteExport() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.export(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
@@ -415,7 +409,6 @@ public class BackendTemplateResourceTest
 
     @Test
     public void testUpdateSetAndUploadIconFailure() throws Exception {
-        control.replay();
         final Template model = getRestModel(0);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIconWithData());
@@ -449,7 +442,7 @@ public class BackendTemplateResourceTest
 
     @Override
     protected VmTemplate getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
+        return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,

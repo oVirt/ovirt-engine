@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -109,7 +109,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
             setUpGetConsoleExpectations(0, 1, 2);
             setUpGetVirtioScsiExpectations(0, 1, 2);
             setUpGetSoundcardExpectations(0, 1, 2);

@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -41,7 +42,6 @@ public class BackendExternalHostProviderResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendExternalHostProviderResource("foo");
             fail("expected WebApplicationException");
@@ -55,7 +55,6 @@ public class BackendExternalHostProviderResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -68,7 +67,6 @@ public class BackendExternalHostProviderResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -76,7 +74,6 @@ public class BackendExternalHostProviderResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -136,7 +133,6 @@ public class BackendExternalHostProviderResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
 
         ExternalHostProvider model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -158,10 +154,10 @@ public class BackendExternalHostProviderResourceTest
 
     @Override
     protected Provider getEntity(int index) {
-        Provider provider = control.createMock(Provider.class);
-        expect(provider.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(provider.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        Provider provider = mock(Provider.class);
+        when(provider.getId()).thenReturn(GUIDS[index]);
+        when(provider.getName()).thenReturn(NAMES[index]);
+        when(provider.getDescription()).thenReturn(DESCRIPTIONS[index]);
         return provider;
     }
 

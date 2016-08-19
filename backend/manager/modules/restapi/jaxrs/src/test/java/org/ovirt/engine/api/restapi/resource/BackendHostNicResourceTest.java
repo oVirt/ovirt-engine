@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.PARENT_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.getEntitySpecific;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.setUpInterfaces;
@@ -8,9 +9,11 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
+import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
@@ -41,6 +44,7 @@ public class BackendHostNicResourceTest
         super(new BackendHostNicResource(NIC_ID.toString(),
                                          new BackendHostNicsResource(PARENT_GUID.toString())));
         hostNicsResource = new BackendHostNicsResourceTest();
+        MockitoAnnotations.initMocks(hostNicsResource);
         hostNicsResource.setUp();
     }
 
@@ -57,7 +61,6 @@ public class BackendHostNicResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendHostNicResource("foo", null);
             fail("expected WebApplicationException");
@@ -74,7 +77,6 @@ public class BackendHostNicResourceTest
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      new ArrayList<VdsNetworkInterface>());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -89,7 +91,6 @@ public class BackendHostNicResourceTest
         setGetVdsQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
         setUpEntityQueryExpectations();
-        control.replay();
 
         hostNicsResource.verifyModelSpecific(resource.get(), NIC_IDX);
     }
@@ -102,7 +103,6 @@ public class BackendHostNicResourceTest
             setGetVdsQueryExpectations(1);
             setGetNetworksQueryExpectations(1);
             setUpEntityQueryExpectations();
-            control.replay();
 
             HostNic nic = resource.get();
             assertTrue(nic.isSetStatistics());
@@ -125,17 +125,17 @@ public class BackendHostNicResourceTest
     }
 
     protected VdsNetworkInterface setUpStatisticalExpectations() throws Exception {
-        VdsNetworkStatistics stats = control.createMock(VdsNetworkStatistics.class);
-        VdsNetworkInterface entity = control.createMock(VdsNetworkInterface.class);
-        expect(entity.getSpeed()).andReturn(SPEED).anyTimes();
-        expect(entity.getStatistics()).andReturn(stats);
-        expect(entity.getId()).andReturn(NIC_ID).anyTimes();
-        expect(stats.getReceiveRate()).andReturn(RECEIVE_RATE);
-        expect(stats.getTransmitRate()).andReturn(TRANSMIT_RATE);
-        expect(stats.getReceiveDropRate()).andReturn(RECEIVE_DROP_RATE);
-        expect(stats.getTransmitDropRate()).andReturn(TRANSMIT_DROP_RATE);
-        expect(stats.getReceivedBytes()).andReturn(RECEIVED_BYTES);
-        expect(stats.getTransmittedBytes()).andReturn(TRANSMITTED_BYTES);
+        VdsNetworkStatistics stats = mock(VdsNetworkStatistics.class);
+        VdsNetworkInterface entity = mock(VdsNetworkInterface.class);
+        when(entity.getSpeed()).thenReturn(SPEED);
+        when(entity.getStatistics()).thenReturn(stats);
+        when(entity.getId()).thenReturn(NIC_ID);
+        when(stats.getReceiveRate()).thenReturn(RECEIVE_RATE);
+        when(stats.getTransmitRate()).thenReturn(TRANSMIT_RATE);
+        when(stats.getReceiveDropRate()).thenReturn(RECEIVE_DROP_RATE);
+        when(stats.getTransmitDropRate()).thenReturn(TRANSMIT_DROP_RATE);
+        when(stats.getReceivedBytes()).thenReturn(RECEIVED_BYTES);
+        when(stats.getTransmittedBytes()).thenReturn(TRANSMITTED_BYTES);
         List<VdsNetworkInterface> ifaces = new ArrayList<>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
@@ -143,7 +143,6 @@ public class BackendHostNicResourceTest
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      ifaces);
-        control.replay();
         return entity;
     }
 

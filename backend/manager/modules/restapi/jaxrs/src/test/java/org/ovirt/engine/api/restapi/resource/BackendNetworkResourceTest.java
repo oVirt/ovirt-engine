@@ -24,7 +24,6 @@ public class BackendNetworkResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendNetworkResource("foo", null);
             fail("expected WebApplicationException");
@@ -41,7 +40,6 @@ public class BackendNetworkResourceTest
                                      new String[] { "Id" },
                                      new Object[] { Guid.Empty },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -54,7 +52,6 @@ public class BackendNetworkResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -67,7 +64,6 @@ public class BackendNetworkResourceTest
                                      new String[] { "Id" },
                                      new Object[] { Guid.Empty },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -122,7 +118,6 @@ public class BackendNetworkResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        control.replay();
 
         Network model = getModel(1);
         model.setId(GUIDS[1].toString());
@@ -143,7 +138,6 @@ public class BackendNetworkResourceTest
             new Object[] { Guid.Empty },
             new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>()
         );
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -179,7 +173,6 @@ public class BackendNetworkResourceTest
             new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>(),
             null
         );
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +44,11 @@ public class BackendTemplateDisksResourceTest
     @Override
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
-        control.replay();
     }
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(1, failure);
-        control.replay();
     }
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
@@ -79,32 +78,32 @@ public class BackendTemplateDisksResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(DiskImage.class), index);
+        return setUpEntityExpectations(mock(DiskImage.class), index);
     }
 
     static org.ovirt.engine.core.common.businessentities.storage.Disk setUpEntityExpectations(DiskImage entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
-        expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
-        expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
-        expect(entity.isShareable()).andReturn(false).anyTimes();
-        expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
-        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
-        expect(entity.getImageId()).andReturn(GUIDS[1]).anyTimes();
-        expect(entity.getReadOnly()).andReturn(true).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getVmSnapshotId()).thenReturn(GUIDS[2]);
+        when(entity.getVolumeFormat()).thenReturn(VolumeFormat.RAW);
+        when(entity.getImageStatus()).thenReturn(ImageStatus.OK);
+        when(entity.getVolumeType()).thenReturn(VolumeType.Sparse);
+        when(entity.isShareable()).thenReturn(false);
+        when(entity.getPropagateErrors()).thenReturn(PropagateErrors.On);
+        when(entity.getDiskStorageType()).thenReturn(DiskStorageType.IMAGE);
+        when(entity.getImageId()).thenReturn(GUIDS[1]);
+        when(entity.getReadOnly()).thenReturn(true);
         ArrayList<Guid> sdIds = new ArrayList<>();
         sdIds.add(Guid.Empty);
-        expect(entity.getStorageIds()).andReturn(sdIds).anyTimes();
+        when(entity.getStorageIds()).thenReturn(sdIds);
         return setUpStatisticalEntityExpectations(entity);
     }
 
     static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        expect(entity.getReadRate()).andReturn(1).anyTimes();
-        expect(entity.getWriteRate()).andReturn(2).anyTimes();
-        expect(entity.getReadLatency()).andReturn(3.0).anyTimes();
-        expect(entity.getWriteLatency()).andReturn(4.0).anyTimes();
-        expect(entity.getFlushLatency()).andReturn(5.0).anyTimes();
+        when(entity.getReadRate()).thenReturn(1);
+        when(entity.getWriteRate()).thenReturn(2);
+        when(entity.getReadLatency()).thenReturn(3.0);
+        when(entity.getWriteLatency()).thenReturn(4.0);
+        when(entity.getFlushLatency()).thenReturn(5.0);
         return entity;
     }
 
@@ -127,7 +126,6 @@ public class BackendTemplateDisksResourceTest
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
-        control.replay();
         try {
             collection.getDiskResource("foo");
             fail("expected WebApplicationException");
@@ -141,7 +139,6 @@ public class BackendTemplateDisksResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpEntityQueryExpectations(1, null);
-        control.replay();
         collection.setUriInfo(uriInfo);
         List<Disk> disks = getCollection();
         for (Disk disk : disks) {
@@ -159,7 +156,6 @@ public class BackendTemplateDisksResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpEntityQueryExpectations(1, FAILURE);
-        control.replay();
         collection.setUriInfo(uriInfo);
         try {
             getCollection();
@@ -177,7 +173,6 @@ public class BackendTemplateDisksResourceTest
 
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(1, t);
-        control.replay();
         collection.setUriInfo(uriInfo);
         try {
             getCollection();
@@ -195,7 +190,6 @@ public class BackendTemplateDisksResourceTest
 
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(1, t);
-        control.replay();
         collection.setUriInfo(uriInfo);
         try {
             getCollection();

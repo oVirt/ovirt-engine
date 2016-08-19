@@ -76,7 +76,6 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
                 new Object[] { ISCSI_BOND_ID },
                 getEntityList(),
                 failure);
-        control.replay();
     }
 
 }

@@ -1,7 +1,8 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -35,7 +36,6 @@ public class BackendVmPoolResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendVmPoolResource("foo", new BackendVmPoolsResource());
             fail("expected WebApplicationException");
@@ -48,7 +48,6 @@ public class BackendVmPoolResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -61,7 +60,6 @@ public class BackendVmPoolResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -105,12 +103,12 @@ public class BackendVmPoolResourceTest
 
     protected VM getVmEntity(int index) {
         return setUpVmEntityExpectations(
-                control.createMock(VM.class),
+                mock(VM.class),
                 index);
     }
 
     private VM setUpVmEntityExpectations(VM entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
 
         return entity;
     }
@@ -165,17 +163,17 @@ public class BackendVmPoolResourceTest
     @Override
     protected org.ovirt.engine.core.common.businessentities.VmPool getEntity(int index) {
         return setUpEntityExpectations(
-                control.createMock(org.ovirt.engine.core.common.businessentities.VmPool.class),
+                mock(org.ovirt.engine.core.common.businessentities.VmPool.class),
                 index);
     }
 
     private org.ovirt.engine.core.common.businessentities.VmPool setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.VmPool entity,
             int index) {
-        expect(entity.getVmPoolId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getVmPoolType()).andReturn(VmPoolType.AUTOMATIC).anyTimes();
-        expect(entity.getVmPoolDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        when(entity.getVmPoolId()).thenReturn(GUIDS[index]);
+        when(entity.getClusterId()).thenReturn(GUIDS[2]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getVmPoolType()).thenReturn(VmPoolType.AUTOMATIC);
+        when(entity.getVmPoolDescription()).thenReturn(DESCRIPTIONS[index]);
 
         return entity;
     }

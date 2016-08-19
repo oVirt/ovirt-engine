@@ -53,7 +53,6 @@ public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Ho
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] }, getEntity(0));
-        control.replay();
         Hooks hooks = resource.list();
         assertNotNull(hooks.getHooks());
         assertEquals(4, hooks.getHooks().size());

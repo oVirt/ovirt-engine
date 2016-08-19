@@ -16,7 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ public class BackendExternalComputeResourceResourceTest
 
     @Test
     public void testBadId() throws Exception {
-        control.replay();
         try {
             new BackendExternalHostProviderResource("foo");
             fail("expected WebApplicationException");
@@ -58,7 +58,6 @@ public class BackendExternalComputeResourceResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -72,14 +71,13 @@ public class BackendExternalComputeResourceResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
-        control.replay();
         verifyModel(resource.get(), 1);
     }
 
     private Provider getProvider() {
-        Provider provider = control.createMock(Provider.class);
-        expect(provider.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(provider.getName()).andReturn(NAMES[0]).anyTimes();
+        Provider provider = mock(Provider.class);
+        when(provider.getId()).thenReturn(GUIDS[0]);
+        when(provider.getName()).thenReturn(NAMES[0]);
         return provider;
     }
 
@@ -94,8 +92,8 @@ public class BackendExternalComputeResourceResourceTest
     @Override
     protected org.ovirt.engine.core.common.businessentities.ExternalComputeResource getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.ExternalComputeResource resource =
-                control.createMock(org.ovirt.engine.core.common.businessentities.ExternalComputeResource.class);
-        expect(resource.getName()).andReturn(NAMES[index]).anyTimes();
+                mock(org.ovirt.engine.core.common.businessentities.ExternalComputeResource.class);
+        when(resource.getName()).thenReturn(NAMES[index]);
         return resource;
     }
 

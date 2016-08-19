@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -66,7 +68,6 @@ public class BackendStorageDomainTemplateResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendStorageDomainTemplateResource(null, "foo");
             fail("expected WebApplicationException");
@@ -80,7 +81,6 @@ public class BackendStorageDomainTemplateResourceTest
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -98,7 +98,6 @@ public class BackendStorageDomainTemplateResourceTest
         setUpGetStorageDomainExpectations(domainType);
         setUpGetEntityExpectations(domainType, STORAGE_DOMAIN_ID);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
 
         verifyModel(resource.get(), 1);
     }
@@ -112,7 +111,6 @@ public class BackendStorageDomainTemplateResourceTest
         action.getCluster().setId(GUIDS[1].toString());
         setUpGetEntityExpectations(StorageDomainType.ImportExport, GUIDS[2], true);
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
-        control.replay();
         try {
             resource.doImport(action);
             fail("expected WebApplicationException");
@@ -201,7 +199,7 @@ public class BackendStorageDomainTemplateResourceTest
 
     @Test
     public void testRemove() throws Exception {
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
                 VmTemplateImportExportParameters.class,
@@ -223,7 +221,7 @@ public class BackendStorageDomainTemplateResourceTest
     }
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
                 VmTemplateImportExportParameters.class,
@@ -315,7 +313,6 @@ public class BackendStorageDomainTemplateResourceTest
     public void testIncompleteImport() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.doImport(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
@@ -390,7 +387,7 @@ public class BackendStorageDomainTemplateResourceTest
 
     @Override
     protected VmTemplate getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
+        return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
@@ -423,7 +420,7 @@ public class BackendStorageDomainTemplateResourceTest
         return cluster;
     }
 
-    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType, boolean replay)
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType)
             throws Exception {
         assertEquals("", query);
 
@@ -452,10 +449,6 @@ public class BackendStorageDomainTemplateResourceTest
             break;
         default:
             break;
-        }
-
-        if (replay) {
-            control.replay();
         }
     }
 

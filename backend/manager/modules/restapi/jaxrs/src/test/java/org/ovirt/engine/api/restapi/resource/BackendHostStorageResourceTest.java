@@ -64,7 +64,6 @@ public class BackendHostStorageResourceTest
                                      new Object[] { HOST_GUID },
                                      setUpLuns(),
                                      failure);
-        control.replay();
     }
 
     private List<LUNs> setUpLuns() {

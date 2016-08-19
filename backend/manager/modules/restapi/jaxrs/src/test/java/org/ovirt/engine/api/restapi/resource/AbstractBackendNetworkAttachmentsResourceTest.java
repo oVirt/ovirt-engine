@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +79,6 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         org.ovirt.engine.api.model.NetworkAttachment model = createIncompleteNetworkAttachment();
         setUriInfo(setUpBasicUriExpectations());
         setUpVerifyHostExpectations();
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -98,7 +98,6 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpNetworkAttachmentsQueryExpectations(null);
-        control.replay();
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }
@@ -109,7 +108,6 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         setUpNetworkAttachmentsQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         try {
             getCollection();
@@ -128,7 +126,6 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         try {
             getCollection();
@@ -147,7 +144,6 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         Throwable t = new RuntimeException(FAILURE);
         setUpNetworkAttachmentsQueryExpectations(t);
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         try {
             getCollection();
@@ -174,7 +170,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     @Override
     protected NetworkAttachment getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(NetworkAttachment.class), index);
+        return setUpEntityExpectations(mock(NetworkAttachment.class), index);
     }
 
     protected void verifyCollection(List<org.ovirt.engine.api.model.NetworkAttachment> collection) throws Exception {
@@ -205,8 +201,8 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     }
 
     protected final NetworkAttachment setUpEntityExpectations(NetworkAttachment entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getNetworkId()).andReturn(GUIDS[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getNetworkId()).thenReturn(GUIDS[index]);
         setUpEntityExpectations(entity);
         return entity;
     }
@@ -233,27 +229,26 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     private void setUpNetworkAttachmentsQueryExpectations(Object failure) {
         setUpVerifyHostExpectations();
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        when(queryResult.getSucceeded()).thenReturn(failure == null);
         List<NetworkAttachment> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < GUIDS.length; i++) {
                 entities.add(getEntity(i));
             }
-            expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
+            when(queryResult.getReturnValue()).thenReturn(entities);
         } else {
             if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(backend.runQuery(eq(listQueryType),
-                        anyObject(IdQueryParameters.class))).andThrow((Exception) failure).anyTimes();
+                when(backend.runQuery(eq(listQueryType),
+                        any(IdQueryParameters.class))).thenThrow((Exception) failure);
                 return;
             }
         }
-        expect(backend.runQuery(eq(listQueryType), anyObject(IdQueryParameters.class))).andReturn(
-                queryResult);
+        when(backend.runQuery(eq(listQueryType), any(IdQueryParameters.class))).thenReturn(queryResult);
     }
 
     /**
@@ -261,27 +256,20 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
      * host object.
      */
     private void setUpVerifyHostExpectations() {
-        VdcQueryReturnValue result = control.createMock(VdcQueryReturnValue.class);
-        VDS host = control.createMock(VDS.class);
-        expect(result.getSucceeded())
-                .andReturn(true)
-                .anyTimes();
-        expect(result.getReturnValue())
-                .andReturn(host)
-                .anyTimes();
-        expect(backend.runQuery(eq(VdcQueryType.GetVdsByVdsId), anyObject(IdQueryParameters.class)))
-                .andReturn(result)
-                .anyTimes();
+        VdcQueryReturnValue result = mock(VdcQueryReturnValue.class);
+        VDS host = mock(VDS.class);
+        when(result.getSucceeded()).thenReturn(true);
+        when(result.getReturnValue()).thenReturn(host);
+        when(backend.runQuery(eq(VdcQueryType.GetVdsByVdsId), any(IdQueryParameters.class))).thenReturn(result);
 
-        VdcQueryReturnValue interfacesByVdsIdResult = control.createMock(VdcQueryReturnValue.class);
-        expect(interfacesByVdsIdResult.getSucceeded()).andReturn(true).anyTimes();
+        VdcQueryReturnValue interfacesByVdsIdResult = mock(VdcQueryReturnValue.class);
+        when(interfacesByVdsIdResult.getSucceeded()).thenReturn(true);
 
         VdsNetworkInterface hostNic = new VdsNetworkInterface();
         hostNic.setId(HOST_NIC_ID);
         List<VdsNetworkInterface> hostNics = Collections.singletonList(hostNic);
-        expect(interfacesByVdsIdResult.getReturnValue()).andReturn(hostNics).anyTimes();
-        expect(backend.runQuery(eq(VdcQueryType.GetVdsInterfacesByVdsId), anyObject(IdQueryParameters.class)))
-                .andReturn(interfacesByVdsIdResult)
-                .anyTimes();
+        when(interfacesByVdsIdResult.getReturnValue()).thenReturn(hostNics);
+        when(backend.runQuery(eq(VdcQueryType.GetVdsInterfacesByVdsId), any(IdQueryParameters.class)))
+                .thenReturn(interfacesByVdsIdResult);
     }
 }

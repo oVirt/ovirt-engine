@@ -1,9 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -76,7 +78,6 @@ public class BackendNetworkLabelsResourceTest
     public void testAddIncompleteParameters() throws Exception {
         NetworkLabel model = new NetworkLabel();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -109,7 +110,6 @@ public class BackendNetworkLabelsResourceTest
                 getEntityList(),
                 failure);
 
-        control.replay();
     }
 
     @Override
@@ -120,8 +120,8 @@ public class BackendNetworkLabelsResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel networkLabel = control.createMock(org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel.class);
-        expect(networkLabel.getId()).andReturn(LABELS[index]).anyTimes();
+        org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel networkLabel = mock(org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel.class);
+        when(networkLabel.getId()).thenReturn(LABELS[index]);
         return networkLabel;
     }
 

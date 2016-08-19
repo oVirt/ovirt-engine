@@ -1,9 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -127,7 +129,6 @@ public class BackendStorageDomainsResourceTest
         Host host = new Host();
         host.setId(GUIDS[0].toString());
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         StorageDomain model = new StorageDomain();
         model.setName(getSafeEntry(POSIX_IDX, NAMES));
         model.setDescription(getSafeEntry(POSIX_IDX, DESCRIPTIONS));
@@ -171,8 +172,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { ADDRESSES[idx] + ":" + PATHS[idx], STORAGE_TYPES_MAPPED[idx], GUIDS[0] },
                 true,
                 true,
-                GUIDS[idx].toString(),
-                false));
+                GUIDS[idx].toString()));
 
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
@@ -218,8 +218,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { PATHS[LOCAL_IDX], STORAGE_TYPES_MAPPED[LOCAL_IDX], GUIDS[0] },
                 true,
                 true,
-                GUIDS[LOCAL_IDX].toString(),
-                false));
+                GUIDS[LOCAL_IDX].toString()));
 
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
@@ -265,8 +264,7 @@ public class BackendStorageDomainsResourceTest
                         MOUNT_OPTIONS[POSIX_IDX], VFS_TYPES[POSIX_IDX], GUIDS[0] },
                 true,
                 true,
-                GUIDS[POSIX_IDX].toString(),
-                false));
+                GUIDS[POSIX_IDX].toString()));
 
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
@@ -316,8 +314,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { ADDRESSES[0], GUIDS[0] },
                 true,
                 true,
-                GUIDS[0].toString(),
-                false));
+                GUIDS[0].toString()));
 
         setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
@@ -397,7 +394,6 @@ public class BackendStorageDomainsResourceTest
     @Test
     public void testAddStorageDomainNoHost() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         StorageDomain model = getModel(0);
         try {
             collection.add(model);
@@ -425,15 +421,14 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
                 true,
                 true,
-                GUIDS[0].toString(),
-                false));
+                GUIDS[0].toString()));
 
         setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 true,
-                true, null, false);
+                true, null);
 
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
@@ -501,7 +496,6 @@ public class BackendStorageDomainsResourceTest
         model.getStorage().setAddress(ADDRESSES[0]);
         model.getStorage().setPath(PATHS[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -520,7 +514,6 @@ public class BackendStorageDomainsResourceTest
         model.getStorage().setType(StorageType.NFS);
         model.getStorage().setPath(PATHS[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -581,19 +574,19 @@ public class BackendStorageDomainsResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class),
+        return setUpEntityExpectations(mock(org.ovirt.engine.core.common.businessentities.StorageDomain.class),
                 index);
     }
 
     static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity,
             int index) {
-        expect(entity.getId()).andReturn(getSafeEntry(index, GUIDS)).anyTimes();
-        expect(entity.getStorageName()).andReturn(getSafeEntry(index, NAMES)).anyTimes();
+        when(entity.getId()).thenReturn(getSafeEntry(index, GUIDS));
+        when(entity.getStorageName()).thenReturn(getSafeEntry(index, NAMES));
         // REVIST No descriptions for storage domains
         // expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(getSafeEntry(index, TYPES_MAPPED)).anyTimes();
-        expect(entity.getStorageType()).andReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED)).anyTimes();
-        expect(entity.getStorage()).andReturn(getSafeEntry(index, GUIDS).toString()).anyTimes();
+        when(entity.getStorageDomainType()).thenReturn(getSafeEntry(index, TYPES_MAPPED));
+        when(entity.getStorageType()).thenReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED));
+        when(entity.getStorage()).thenReturn(getSafeEntry(index, GUIDS).toString());
         return entity;
     }
 
@@ -619,13 +612,12 @@ public class BackendStorageDomainsResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getIscsiEntity() {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity =
-                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
-        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(TYPES_MAPPED[0]).anyTimes();
-        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI)
-                .anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[GUIDS.length - 1].toString()).anyTimes();
+                mock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        when(entity.getId()).thenReturn(GUIDS[0]);
+        when(entity.getStorageName()).thenReturn(NAMES[0]);
+        when(entity.getStorageDomainType()).thenReturn(TYPES_MAPPED[0]);
+        when(entity.getStorageType()).thenReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
+        when(entity.getStorage()).thenReturn(GUIDS[GUIDS.length - 1].toString());
         return entity;
     }
 

@@ -43,7 +43,6 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
 
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         List<StorageConnectionExtension> retCollection = getCollection();
         assertNotNull(retCollection);

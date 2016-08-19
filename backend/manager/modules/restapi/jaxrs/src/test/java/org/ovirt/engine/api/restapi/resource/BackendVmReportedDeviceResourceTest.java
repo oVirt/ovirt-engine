@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,12 @@ public class BackendVmReportedDeviceResourceTest
 
     @Override
     protected VmGuestAgentInterface getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmGuestAgentInterface.class), index);
+        return setUpEntityExpectations(mock(VmGuestAgentInterface.class), index);
     }
 
     private VmGuestAgentInterface setUpEntityExpectations(VmGuestAgentInterface mock, int index) {
-        expect(mock.getInterfaceName()).andReturn(NAMES[index]).anyTimes();
-        expect(mock.getMacAddress()).andReturn(ADDRESS).anyTimes();
+        when(mock.getInterfaceName()).thenReturn(NAMES[index]);
+        when(mock.getMacAddress()).thenReturn(ADDRESS);
         return mock;
     }
 
@@ -66,7 +67,6 @@ public class BackendVmReportedDeviceResourceTest
     public void testGet() throws Exception {
         resource.getParent().setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        control.replay();
 
         ReportedDevice device = resource.get();
         assertEquals(DEVICE_ID.toString(), device.getId());

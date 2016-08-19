@@ -38,7 +38,6 @@ public class BackendTagResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendTagResource("foo", null);
             fail("expected WebApplicationException");
@@ -51,7 +50,6 @@ public class BackendTagResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -65,8 +63,6 @@ public class BackendTagResourceTest
         setUpGetEntityExpectations(0);
         setUriInfo(setUpBasicUriExpectations());
 
-        control.replay();
-
         verifyModel(resource.get(), 0);
     }
 
@@ -74,7 +70,6 @@ public class BackendTagResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
-        control.replay();
         try {
             resource.update(getModel(0, false));
             fail("expected WebApplicationException");
@@ -132,8 +127,6 @@ public class BackendTagResourceTest
                                 false);
 
         setUpGetEntityExpectations(index);
-        setUpGetEntityExpectations(index);
-        setUpGetEntityExpectations(index);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
                                            TagsOperationParameters.class,
@@ -142,7 +135,9 @@ public class BackendTagResourceTest
                                            true,
                                            true));
 
-        verifyModel(resource.update(model), index);
+        setUpGetEntityExcpectations();
+
+        verifyModel(resource.update(model), index, NEW_PARENT_ID.toString());
     }
 
     @Test
@@ -179,7 +174,6 @@ public class BackendTagResourceTest
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
 
         Tag model = getModel(1, false);
         model.setId(NEW_PARENT_ID.toString());
@@ -210,7 +204,6 @@ public class BackendTagResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -273,7 +266,11 @@ public class BackendTagResourceTest
 
     @Override
     protected void verifyModel(Tag model, int index) {
+        verifyModel(model, index, PARENT_GUID.toString());
+    }
+
+    protected void verifyModel(Tag model, int index, String parentId) {
         super.verifyModel(model, index);
-        verifyParent(model, PARENT_GUID.toString());
+        verifyParent(model, parentId);
     }
 }

@@ -16,7 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,9 +107,9 @@ public class BackendTemplateNicResourceTest
     }
 
     private VmNetworkInterface setUpNicExpectations() {
-        VmNetworkInterface nic = control.createMock(VmNetworkInterface.class);
-        expect(nic.getId()).andReturn(NIC_ID).anyTimes();
-        expect(nic.getType()).andReturn(0).anyTimes();
+        VmNetworkInterface nic = mock(VmNetworkInterface.class);
+        when(nic.getId()).thenReturn(NIC_ID);
+        when(nic.getType()).thenReturn(0);
         return nic;
     }
 }

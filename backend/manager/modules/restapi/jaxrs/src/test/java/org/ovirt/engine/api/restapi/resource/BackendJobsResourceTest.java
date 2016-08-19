@@ -45,7 +45,6 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
                                      setUpJobs(),
                                      failure);
 
-        control.replay();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,6 @@ public class BackendDataCenterClustersResourceTest extends
     public void testAddIncompleteParameters() throws Exception {
         org.ovirt.engine.api.model.Cluster model = new org.ovirt.engine.api.model.Cluster();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -133,8 +133,6 @@ public class BackendDataCenterClustersResourceTest extends
                                      new Object[] { GUIDS[1] },
                                      setUpClusters(),
                                      failure);
-
-        control.replay();
     }
 
     protected List<Cluster> setUpClusters() {
@@ -146,26 +144,26 @@ public class BackendDataCenterClustersResourceTest extends
     }
 
     protected StoragePool setUpStoragePool(int index) {
-        StoragePool pool = control.createMock(StoragePool.class);
+        StoragePool pool = mock(StoragePool.class);
         org.ovirt.engine.core.compat.Version version =
             new org.ovirt.engine.core.compat.Version(2, 2);
         if (index != -1) {
-            expect(pool.getId()).andReturn(GUIDS[index]).anyTimes();
+            when(pool.getId()).thenReturn(GUIDS[index]);
         }
-        expect(pool.getCompatibilityVersion()).andReturn(version).anyTimes();
+        when(pool.getCompatibilityVersion()).thenReturn(version);
         return pool;
     }
 
     @Override
     protected Cluster getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(Cluster.class), index);
+        return setUpEntityExpectations(mock(Cluster.class), index);
     }
 
     static Cluster setUpEntityExpectations(Cluster entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getMigrationBandwidthLimitType()).andReturn(MigrationBandwidthLimitType.AUTO).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getMigrationBandwidthLimitType()).thenReturn(MigrationBandwidthLimitType.AUTO);
         return entity;
     }
 

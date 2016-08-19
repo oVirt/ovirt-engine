@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -117,7 +118,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         Network model = new Network();
         model.setDescription(DESCRIPTIONS[0]);
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -139,8 +139,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     protected Cluster setUpClusterExpectations(Guid id) {
-        Cluster group = control.createMock(Cluster.class);
-        expect(group.getId()).andReturn(id).anyTimes();
+        Cluster group = mock(Cluster.class);
+        when(group.getId()).thenReturn(id);
 
         setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                                      IdQueryParameters.class,
@@ -177,12 +177,10 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     @Override
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
-        control.replay();
     }
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(1, failure);
-        control.replay();
     }
 }

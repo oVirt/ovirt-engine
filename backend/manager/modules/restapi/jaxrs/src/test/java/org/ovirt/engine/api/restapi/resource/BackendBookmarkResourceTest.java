@@ -23,7 +23,6 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendBookmarkResource("foo");
             fail("expected WebApplicationException");
@@ -37,7 +36,6 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUriInfo(setUpBasicUriExpectations());
         //Get will return 404
         setUpGetEntityExpectations(0, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -51,7 +49,6 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUpGetEntityExpectations(0);
         setUriInfo(setUpBasicUriExpectations());
 
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -61,7 +58,6 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUriInfo(setUpBasicUriExpectations());
         //Get will return 404
         setUpGetEntityExpectations(0, true);
-        control.replay();
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
@@ -126,7 +122,6 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(0, true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");

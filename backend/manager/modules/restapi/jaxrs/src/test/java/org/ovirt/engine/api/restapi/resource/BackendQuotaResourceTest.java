@@ -22,7 +22,6 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        control.replay();
         Quota model = resource.get();
         verifyModel(model, 0);
     }
@@ -33,7 +32,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateQuota,
                 QuotaCRUDParameters.class,
                 new String[] { "QuotaId", "Quota.Description", "Quota.GraceClusterPercentage" },
-                new Object[] { QUOTA_ID, DESCRIPTIONS[1], 30 },
+                new Object[] { QUOTA_ID, DESCRIPTIONS[0], 30 },
                 true,
                 true));
 
@@ -65,7 +64,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     private Quota getModel() {
         Quota quota = new Quota();
         quota.setId(GUIDS[0].toString());
-        quota.setDescription(DESCRIPTIONS[1]);
+        quota.setDescription(DESCRIPTIONS[0]);
         quota.setClusterHardLimitPct(30);
         return quota;
     }

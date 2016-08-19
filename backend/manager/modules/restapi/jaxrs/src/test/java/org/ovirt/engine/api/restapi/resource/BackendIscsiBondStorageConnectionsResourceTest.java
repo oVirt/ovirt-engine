@@ -73,7 +73,6 @@ public class BackendIscsiBondStorageConnectionsResourceTest
                 new Object[] { ISCSI_BOND_ID },
                 setUpStorageConnections(),
                 failure);
-        control.replay();
     }
 
     protected List<StorageServerConnections> setUpStorageConnections() {

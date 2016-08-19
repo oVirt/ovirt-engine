@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
@@ -29,11 +30,10 @@ public class BackendDomainUserResourceTest
 
     @Test
     public void testGet() throws Exception {
-      UriInfo uriInfo = setUpBasicUriExpectations();
-      setUriInfo(uriInfo);
-      setUpEntityQueryExpectations(1, false);
-      control.replay();
-      verifyModel(resource.get(), 1);
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        setUriInfo(uriInfo);
+        setUpEntityQueryExpectations(1, false);
+        verifyModel(resource.get(), 1);
     }
 
     @Override
@@ -46,7 +46,6 @@ public class BackendDomainUserResourceTest
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -57,10 +56,10 @@ public class BackendDomainUserResourceTest
     }
 
     private void setUpParentExpectations() {
-        BackendDomainUsersResource parent = control.createMock(BackendDomainUsersResource.class);
+        BackendDomainUsersResource parent = mock(BackendDomainUsersResource.class);
         Domain domain = new Domain();
         domain.setName(DOMAIN);
-        expect(parent.getDirectory()).andReturn(domain).anyTimes();
+        when(parent.getDirectory()).thenReturn(domain);
         resource.setParent(parent);
     }
 

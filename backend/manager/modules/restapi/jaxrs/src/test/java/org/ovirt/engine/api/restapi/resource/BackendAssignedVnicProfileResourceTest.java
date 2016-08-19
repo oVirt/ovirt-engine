@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -19,7 +20,6 @@ public class BackendAssignedVnicProfileResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendVnicProfileResource("foo");
             fail("expected WebApplicationException");
@@ -32,7 +32,6 @@ public class BackendAssignedVnicProfileResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -45,7 +44,6 @@ public class BackendAssignedVnicProfileResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -62,14 +60,14 @@ public class BackendAssignedVnicProfileResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.network.VnicProfileView getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VnicProfileView.class), index);
+        return setUpEntityExpectations(mock(VnicProfileView.class), index);
     }
 
     static VnicProfileView setUpEntityExpectations(VnicProfileView entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getNetworkId()).andReturn(GUIDS[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getNetworkId()).thenReturn(GUIDS[index]);
         return entity;
     }
 }

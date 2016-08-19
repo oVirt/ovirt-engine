@@ -32,7 +32,6 @@ public class BackendUserAssignedPermissionsResourceTest
         model.getRole().setId(GUIDS[3].toString());
 
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
         } catch (WebApplicationException wae) {
@@ -51,7 +50,8 @@ public class BackendUserAssignedPermissionsResourceTest
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {GUIDS[1]},
-                getUserByIdx(1));
+                getUserByIdx(1),
+                true);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -65,7 +65,8 @@ public class BackendUserAssignedPermissionsResourceTest
                                     IdQueryParameters.class,
                                     new String[] {"Id"},
                                     new Object[] {GUIDS[1]},
-                                    getUserByIdx(1));
+                                    getUserByIdx(1),
+                                    true);
         setUpQueryExpectations("", null, EVERYONE);
 
         collection.setUriInfo(uriInfo);

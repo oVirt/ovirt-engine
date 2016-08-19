@@ -1,9 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -33,13 +35,11 @@ public class BackendVmNicsResourceTest
     @Override
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
-        control.replay();
     }
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(1, failure);
-        control.replay();
     }
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
@@ -70,8 +70,8 @@ public class BackendVmNicsResourceTest
     @Override
     protected VmNetworkInterface getEntity(int index) {
         return setUpEntityExpectations(
-            control.createMock(VmNetworkInterface.class),
-            control.createMock(VmNetworkStatistics.class),
+            mock(VmNetworkInterface.class),
+            mock(VmNetworkStatistics.class),
             index
         );
     }
@@ -88,26 +88,26 @@ public class BackendVmNicsResourceTest
             VmNetworkStatistics statistics,
             int index,
             String networkName) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVmId()).andReturn(VM_ID).anyTimes();
-        expect(entity.getNetworkName()).andReturn(networkName).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getMacAddress()).andReturn(ADDRESSES[2]).anyTimes();
-        expect(entity.getType()).andReturn(0).anyTimes();
-        expect(entity.getSpeed()).andReturn(50).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getVmId()).thenReturn(VM_ID);
+        when(entity.getNetworkName()).thenReturn(networkName);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getMacAddress()).thenReturn(ADDRESSES[2]);
+        when(entity.getType()).thenReturn(0);
+        when(entity.getSpeed()).thenReturn(50);
         return setUpStatisticalEntityExpectations(entity, statistics);
     }
 
     static VmNetworkInterface setUpStatisticalEntityExpectations(
             VmNetworkInterface entity,
             VmNetworkStatistics statistics) {
-        expect(entity.getStatistics()).andReturn(statistics).anyTimes();
-        expect(statistics.getReceiveRate()).andReturn(1D).anyTimes();
-        expect(statistics.getReceiveDropRate()).andReturn(2D).anyTimes();
-        expect(statistics.getTransmitRate()).andReturn(3D).anyTimes();
-        expect(statistics.getTransmitDropRate()).andReturn(4D).anyTimes();
-        expect(statistics.getReceivedBytes()).andReturn(5L).anyTimes();
-        expect(statistics.getTransmittedBytes()).andReturn(6L).anyTimes();
+        when(entity.getStatistics()).thenReturn(statistics);
+        when(statistics.getReceiveRate()).thenReturn(1D);
+        when(statistics.getReceiveDropRate()).thenReturn(2D);
+        when(statistics.getTransmitRate()).thenReturn(3D);
+        when(statistics.getTransmitDropRate()).thenReturn(4D);
+        when(statistics.getReceivedBytes()).thenReturn(5L);
+        when(statistics.getTransmittedBytes()).thenReturn(6L);
         return entity;
     }
 
@@ -236,7 +236,6 @@ public class BackendVmNicsResourceTest
         model.setName(null);
 
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -247,7 +246,6 @@ public class BackendVmNicsResourceTest
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
-        control.replay();
         try {
             collection.getNicResource("foo");
             fail("expected WebApplicationException");

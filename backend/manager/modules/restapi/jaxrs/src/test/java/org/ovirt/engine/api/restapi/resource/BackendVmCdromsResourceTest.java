@@ -49,12 +49,10 @@ public class BackendVmCdromsResourceTest
 
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
-        control.replay();
     }
 
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(1, failure);
-        control.replay();
     }
 
     private void setUpEntityQueryExpectations(int times) throws Exception {
@@ -166,7 +164,6 @@ public class BackendVmCdromsResourceTest
         model.setName(NAMES[0]);
         model.setFile(new File());
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -179,7 +176,6 @@ public class BackendVmCdromsResourceTest
 
     @Test
     public void testSubResourceLocatorBadGuid() throws Exception {
-        control.replay();
         try {
             collection.getCdromResource("foo");
             fail("expected WebApplicationException");

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -47,7 +48,6 @@ public class BackendInstanceTypesResourceTest
     public void testAddIncompleteParameters() throws Exception {
         InstanceType model = new InstanceType();
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
@@ -58,18 +58,18 @@ public class BackendInstanceTypesResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.InstanceType getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
+        return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
     static org.ovirt.engine.core.common.businessentities.InstanceType setUpEntityExpectations(VmTemplate entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
-        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
-        expect(entity.getThreadsPerCpu()).andReturn(1).anyTimes();
-        expect(entity.getCpuPerSocket()).andReturn(4).anyTimes();
-        expect(entity.isBaseTemplate()).andReturn(true).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getName()).thenReturn(NAMES[index]);
+        when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
+        when(entity.getNumOfCpus()).thenReturn(8);
+        when(entity.getNumOfSockets()).thenReturn(2);
+        when(entity.getThreadsPerCpu()).thenReturn(1);
+        when(entity.getCpuPerSocket()).thenReturn(4);
+        when(entity.isBaseTemplate()).thenReturn(true);
         return entity;
     }
 

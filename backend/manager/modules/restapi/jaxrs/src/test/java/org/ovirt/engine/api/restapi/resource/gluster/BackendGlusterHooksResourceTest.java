@@ -1,8 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +42,10 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
     @Override
     protected void init() {
         super.init();
-        parentMock = control.createMock(BackendClusterResource.class);
+        parentMock = mock(BackendClusterResource.class);
         Cluster cluster = new Cluster();
         cluster.setId(clusterId.toString());
-        expect(parentMock.get()).andReturn(cluster).anyTimes();
+        when(parentMock.get()).thenReturn(cluster);
         collection.setParent(parentMock);
         setupListExpectations();
     }
@@ -54,7 +55,6 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
         setUpHooksQueryExpectations(null);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
-        control.replay();
 
         verifyCollection(getCollection());
     }
@@ -66,7 +66,6 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
 
         Throwable t = new RuntimeException(FAILURE);
         setUpHooksQueryExpectations(t);
-        control.replay();
 
         try {
             getCollection();
@@ -92,7 +91,6 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
 
         Throwable t = new RuntimeException(FAILURE);
         setUpHooksQueryExpectations(t);
-        control.replay();
 
         try {
             getCollection();
@@ -109,7 +107,6 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
         collection.setUriInfo(setUpUriExpectations(null));
 
         setUpHooksQueryExpectations(FAILURE);
-        control.replay();
 
         try {
             getCollection();
@@ -128,7 +125,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
     @Override
     protected GlusterHookEntity getEntity(int index) {
         return setUpEntityExpectations(
-                control.createMock(GlusterHookEntity.class),
+                mock(GlusterHookEntity.class),
                 index);
     }
 
@@ -149,11 +146,11 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
 
     static GlusterHookEntity setUpEntityExpectations(
             GlusterHookEntity entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
         //expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getHookKey()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getGlusterCommand()).andReturn("create").anyTimes();
+        when(entity.getHookKey()).thenReturn(NAMES[index]);
+        when(entity.getClusterId()).thenReturn(GUIDS[2]);
+        when(entity.getGlusterCommand()).thenReturn("create");
         return entity;
     }
 
@@ -162,31 +159,31 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
         cluster.setName(defaultClusterName);
         cluster.setId(clusterId.toString());
 
-        parentMock = control.createMock(ClusterResource.class);
-        expect(parentMock.get()).andReturn(cluster).anyTimes();
+        parentMock = mock(ClusterResource.class);
+        when(parentMock.get()).thenReturn(cluster);
     }
 
     private void setUpHooksQueryExpectations(Object failure) {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        when(queryResult.getSucceeded()).thenReturn(failure == null);
         List<GlusterHookEntity> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < NAMES.length; i++) {
                 entities.add(getEntity(i));
             }
-            expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
+            when(queryResult.getReturnValue()).thenReturn(entities);
         } else {
             if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String)failure);
             } else if (failure instanceof Exception) {
-                expect(backend.runQuery(eq(VdcQueryType.GetGlusterHooks), anyObject(GlusterParameters.class))).andThrow((Exception) failure).anyTimes();
+                when(backend.runQuery(eq(VdcQueryType.GetGlusterHooks), any(GlusterParameters.class))).thenThrow((Exception) failure);
                 return;
             }
         }
-        expect(backend.runQuery(eq(VdcQueryType.GetGlusterHooks), anyObject(GlusterParameters.class))).andReturn(
-                queryResult).anyTimes();
+        when(backend.runQuery(eq(VdcQueryType.GetGlusterHooks), any(GlusterParameters.class))).thenReturn(
+                queryResult);
 
     }
 }

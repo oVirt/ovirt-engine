@@ -22,7 +22,6 @@ public class BackendHostDeviceResourceTest
                 new Object[] { HOST_ID, DEVICE_NAME },
                 getEntity(0));
 
-        control.replay();
 
         HostDevice device = resource.get();
         verifyHostDevice(device);

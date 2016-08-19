@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +12,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
@@ -54,7 +55,6 @@ public class BackendTemplateDiskResourceTest
                                      new String[] { "Id" },
                                      new Object[] { TEMPLATE_ID },
                                      new ArrayList<DiskImage>());
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -67,7 +67,6 @@ public class BackendTemplateDiskResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        control.replay();
 
         Disk disk = resource.get();
         verifyModelSpecific(disk, 1);
@@ -76,7 +75,7 @@ public class BackendTemplateDiskResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(DiskImage.class), index);
+        return setUpEntityExpectations(mock(DiskImage.class), index);
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.storage.Disk> getEntityList() {
@@ -114,7 +113,6 @@ public class BackendTemplateDiskResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
@@ -127,7 +125,6 @@ public class BackendTemplateDiskResourceTest
     public void testIncompleteExport() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.export(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
@@ -188,7 +185,6 @@ public class BackendTemplateDiskResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendTemplateDiskResource.STORAGE_DOMAIN, GUIDS[0].toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -206,7 +202,6 @@ public class BackendTemplateDiskResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendTemplateDiskResource.FORCE, Boolean.TRUE.toString());
         setUriInfo(uriInfo);
-        control.replay();
         verifyRemove(resource.remove());
     }
 
@@ -278,33 +273,33 @@ public class BackendTemplateDiskResourceTest
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainEntity() {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = mock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         return setUpStorageDomainEntityExpectations(entity, StorageType.NFS);
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStaticEntity() {
         org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity =
-                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
+                mock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
         return setUpStorageDomainEntityExpectations(entity, StorageType.NFS);
     }
 
     static org.ovirt.engine.core.common.businessentities.StorageDomainStatic setUpStorageDomainEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity,
             StorageType storageType) {
-        expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();
-        expect(entity.getStorageName()).andReturn(NAMES[2]).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(entity.getStorageType()).andReturn(storageType).anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[3]);
+        when(entity.getStorageName()).thenReturn(NAMES[2]);
+        when(entity.getStorageDomainType()).thenReturn(StorageDomainType.Master);
+        when(entity.getStorageType()).thenReturn(storageType);
+        when(entity.getStorage()).thenReturn(GUIDS[0].toString());
         return entity;
     }
 
     static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomainEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageType storageType) {
-        expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();
-        expect(entity.getStorageName()).andReturn(NAMES[2]).anyTimes();
-        expect(entity.getStatus()).andReturn(StorageDomainStatus.Active).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(entity.getStorageType()).andReturn(storageType).anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[3]);
+        when(entity.getStorageName()).thenReturn(NAMES[2]);
+        when(entity.getStatus()).thenReturn(StorageDomainStatus.Active);
+        when(entity.getStorageDomainType()).thenReturn(StorageDomainType.Master);
+        when(entity.getStorageType()).thenReturn(storageType);
+        when(entity.getStorage()).thenReturn(GUIDS[0].toString());
         return entity;
     }
     private Action setUpCopyParams(boolean byName) {
@@ -327,7 +322,6 @@ public class BackendTemplateDiskResourceTest
     public void testIncompleteCopy() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         try {
-            control.replay();
             resource.copy(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
@@ -345,33 +339,33 @@ public class BackendTemplateDiskResourceTest
     protected void setUpFilteredQueryExpectations() {
         List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
-        EasyMock.reset(httpHeaders);
-        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
+        reset(httpHeaders);
+        when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
     }
 
     private org.ovirt.engine.core.common.businessentities.storage.Disk setUpEntityExpectations(DiskImage entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
-        expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
-        expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
-        expect(entity.isShareable()).andReturn(false).anyTimes();
-        expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
-        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
-        expect(entity.getImageId()).andReturn(GUIDS[1]).anyTimes();
-        expect(entity.getReadOnly()).andReturn(true).anyTimes();
+        when(entity.getId()).thenReturn(GUIDS[index]);
+        when(entity.getVmSnapshotId()).thenReturn(GUIDS[2]);
+        when(entity.getVolumeFormat()).thenReturn(VolumeFormat.RAW);
+        when(entity.getImageStatus()).thenReturn(ImageStatus.OK);
+        when(entity.getVolumeType()).thenReturn(VolumeType.Sparse);
+        when(entity.isShareable()).thenReturn(false);
+        when(entity.getPropagateErrors()).thenReturn(PropagateErrors.On);
+        when(entity.getDiskStorageType()).thenReturn(DiskStorageType.IMAGE);
+        when(entity.getImageId()).thenReturn(GUIDS[1]);
+        when(entity.getReadOnly()).thenReturn(true);
         ArrayList<Guid> sdIds = new ArrayList<>();
         sdIds.add(Guid.Empty);
-        expect(entity.getStorageIds()).andReturn(sdIds).anyTimes();
+        when(entity.getStorageIds()).thenReturn(sdIds);
         return setUpStatisticalEntityExpectations(entity);
     }
 
     private org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        expect(entity.getReadRate()).andReturn(1).anyTimes();
-        expect(entity.getWriteRate()).andReturn(2).anyTimes();
-        expect(entity.getReadLatency()).andReturn(3.0).anyTimes();
-        expect(entity.getWriteLatency()).andReturn(4.0).anyTimes();
-        expect(entity.getFlushLatency()).andReturn(5.0).anyTimes();
+        when(entity.getReadRate()).thenReturn(1);
+        when(entity.getWriteRate()).thenReturn(2);
+        when(entity.getReadLatency()).thenReturn(3.0);
+        when(entity.getWriteLatency()).thenReturn(4.0);
+        when(entity.getFlushLatency()).thenReturn(5.0);
         return entity;
     }
 

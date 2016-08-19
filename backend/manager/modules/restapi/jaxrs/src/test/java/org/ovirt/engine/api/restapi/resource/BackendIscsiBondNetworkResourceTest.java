@@ -34,7 +34,6 @@ public class BackendIscsiBondNetworkResourceTest
                 new String[] { "Id" },
                 new Object[] { NETWORK_ID },
                 getEntityList());
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -43,7 +42,6 @@ public class BackendIscsiBondNetworkResourceTest
     public void testGetWithInvalidNetworkId() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondWithNoMatchingNetworks());
-        control.replay();
 
         try {
             resource.get();
@@ -64,7 +62,6 @@ public class BackendIscsiBondNetworkResourceTest
                 new String[] { "Id" },
                 new Object[] { NETWORK_ID },
                 entities);
-        control.replay();
 
         try {
             resource.get();

@@ -1,7 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
@@ -15,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -22,13 +27,15 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.easymock.IMocksControl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.OngoingStubbing;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Link;
@@ -59,8 +66,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractBackendBaseTest extends Assert {
+
     protected static final Guid[] GUIDS = { new Guid("00000000-0000-0000-0000-000000000000"),
             new Guid("11111111-1111-1111-1111-111111111111"),
             new Guid("22222222-2222-2222-2222-222222222222"),
@@ -109,23 +117,25 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected static final String SESSION_ID = Guid.newGuid().toString();
 
+    @Mock
     protected BackendLocal backend;
     protected MappingLocator mapperLocator;
     protected Locale locale;
+    @Mock
     protected HttpHeaders httpHeaders;
     protected List<Locale> locales;
     protected List<String> accepts;
 
     protected MessageBundle messageBundle;
-    protected IMocksControl control;
+
+    private List<Runnable> interactions = new ArrayList<>();
 
     @Rule
     public final MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void setUp() {
-        control = EasyMock.createNiceControl();
-        backend = control.createMock(BackendLocal.class);
+        interactions.clear();
 
         DbUser currentUser = new DbUser();
         currentUser.setFirstName(USER);
@@ -145,14 +155,13 @@ public abstract class AbstractBackendBaseTest extends Assert {
         current.setBackend(backend);
         CurrentManager.put(current);
 
-        httpHeaders = control.createMock(HttpHeaders.class);
         locales = new ArrayList<>();
-        expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
+        when(httpHeaders.getAcceptableLanguages()).thenReturn(locales);
         accepts = new ArrayList<>();
-        expect(httpHeaders.getRequestHeader("Accept")).andReturn(accepts).anyTimes();
+        when(httpHeaders.getRequestHeader("Accept")).thenReturn(accepts);
         List<String> filterValue = new ArrayList<>();
         filterValue.add("false");
-        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
+        when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
         mapperLocator = new MappingLocator();
         mapperLocator.populate();
         locale = Locale.getDefault();
@@ -170,24 +179,40 @@ public abstract class AbstractBackendBaseTest extends Assert {
     @After
     public void tearDown() {
         Locale.setDefault(locale);
-        control.verify();
+        interactions.forEach(Runnable::run);
         CurrentManager.remove();
+    }
+
+    /**
+     * For backwards compatibility with EasyMock this method can be used to enqueue verifications for a given mock
+     * interaction. After tests these interactions will be checked in order of their enqueuing.
+     *
+     * Example: <code>
+     *     enqueueInteraction(() ->
+     *          verify(myMock, times(3)).sampleMethod());
+     * </code>
+     *
+     * @param interaction
+     *            Block of code containing a Mockito mock verification.
+     */
+    protected void enqueueInteraction(Runnable interaction) {
+        interactions.add(interaction);
     }
 
     protected abstract void init();
 
     protected UriInfo setUpBasicUriExpectations() {
-        UriInfo uriInfo = control.createMock(UriInfo.class);
-        expect(uriInfo.getBaseUri()).andReturn(URI.create(URI_BASE)).anyTimes();
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getBaseUri()).thenReturn(URI.create(URI_BASE));
         return uriInfo;
     }
 
     protected UriInfo setUpBasicUriExpectations(String path) {
-        UriInfo uriInfo = control.createMock(UriInfo.class);
+        UriInfo uriInfo = mock(UriInfo.class);
         URI baseUri = URI.create(URI_BASE + '/');
 
-        expect(uriInfo.getBaseUri()).andReturn(baseUri).anyTimes();
-        expect(uriInfo.getPath()).andReturn(path).anyTimes();
+        when(uriInfo.getBaseUri()).thenReturn(baseUri);
+        when(uriInfo.getPath()).thenReturn(path);
 
         Current current = CurrentManager.get();
         current.setPath(path);
@@ -204,9 +229,9 @@ public abstract class AbstractBackendBaseTest extends Assert {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             matrixParams.putSingle(entry.getKey(), entry.getValue());
         }
-        PathSegment segment = control.createMock(PathSegment.class);
-        expect(segment.getMatrixParameters()).andReturn(matrixParams).anyTimes();
-        expect(mockUriInfo.getPathSegments()).andReturn(Collections.singletonList(segment)).anyTimes();
+        PathSegment segment = mock(PathSegment.class);
+        when(segment.getMatrixParameters()).thenReturn(matrixParams);
+        when(mockUriInfo.getPathSegments()).thenReturn(Collections.singletonList(segment));
         return mockUriInfo;
     }
 
@@ -215,26 +240,46 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected <E> void setUpGetEntityExpectations(VdcQueryType query,
-            Class<? extends VdcQueryParametersBase> clz, String[] names, Object[] values, E entity)
+                                                  Class<? extends VdcQueryParametersBase> clz,
+                                                  String[] names,
+                                                  Object[] values,
+                                                  E entity)
             throws Exception {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(backend.runQuery(eq(query), eqQueryParams(clz, addSession(names), addSession(values)))).andReturn(
-                queryResult);
-        expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
-        expect(queryResult.getReturnValue()).andReturn(entity).anyTimes();
+        setUpGetEntityExpectations(query, clz, names, values, entity, false);
+    }
+
+    protected <E> void setUpGetEntityExpectations(VdcQueryType query,
+            Class<? extends VdcQueryParametersBase> clz,
+            String[] names,
+            Object[] values,
+            E entity,
+            boolean onceOnly)
+            throws Exception {
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        OngoingStubbing<VdcQueryReturnValue> stubbing =
+                when(backend.runQuery(eq(query), eqQueryParams(clz, addSession(names), addSession(values))))
+                        .thenReturn(queryResult);
+        if (onceOnly) {
+            stubbing.thenReturn(null);
+        }
+        enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(query),
+                eqQueryParams(clz, addSession(names), addSession(values))));
+        when(queryResult.getSucceeded()).thenReturn(true);
+        when(queryResult.getReturnValue()).thenReturn(entity);
     }
 
     protected <E> void setUpGetEntityExpectations(String query,
             SearchType type,
             E entity) throws Exception {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
         SearchParameters params = new SearchParameters(query, type);
-        expect(backend.runQuery(eq(VdcQueryType.Search),
-                eqSearchParams(params))).andReturn(queryResult);
-        expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
+        when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(queryResult);
+        enqueueInteraction(
+                () -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.Search), eqSearchParams(params)));
+        when(queryResult.getSucceeded()).thenReturn(true);
         List<E> entities = new ArrayList<>();
         entities.add(entity);
-        expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
+        when(queryResult.getReturnValue()).thenReturn(entities);
     }
 
     protected void setUpEntityQueryExpectations(VdcQueryType query,
@@ -251,32 +296,36 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Object[] queryValues,
             Object queryReturn,
             Object failure) {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
+        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        when(queryResult.getSucceeded()).thenReturn(failure == null);
         if (failure == null) {
-            expect(queryResult.getReturnValue()).andReturn(queryReturn).anyTimes();
+            when(queryResult.getReturnValue()).thenReturn(queryReturn);
         } else {
             if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
+                when(queryResult.getExceptionString()).thenThrow((Exception) failure);
             }
         }
-        if(queryClass == GetPermissionsForObjectParameters.class) {
-            expect(backend.runQuery(eq(query),
-                eqQueryParams(queryClass,
-                        addSession(queryNames),
-                        addSession(queryValues)))).andReturn(queryResult).anyTimes();
+        if (queryClass == GetPermissionsForObjectParameters.class) {
+            when(backend.runQuery(eq(query),
+                    eqQueryParams(queryClass,
+                            addSession(queryNames),
+                            addSession(queryValues)))).thenReturn(queryResult);
         } else {
-            expect(backend.runQuery(eq(query),
-                eqQueryParams(queryClass,
-                        addSession(queryNames),
-                        addSession(queryValues)))).andReturn(queryResult);
+            when(backend.runQuery(eq(query),
+                    eqQueryParams(queryClass,
+                            addSession(queryNames),
+                            addSession(queryValues)))).thenReturn(queryResult);
+            enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(query),
+                    eqQueryParams(queryClass,
+                            addSession(queryNames),
+                            addSession(queryValues))));
         }
     }
 
-    protected void setUpGetConsoleExpectations(int ... idxs) throws Exception {
+    protected void setUpGetConsoleExpectations(int... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetConsoleDevices,
                     IdQueryParameters.class,
@@ -287,44 +336,75 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
     }
 
-    protected void setUpGetRngDeviceExpectations(int ... idxs) throws Exception {
+    protected void setUpGetRngDeviceExpectations(int... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetRngDevice,
-                        IdQueryParameters.class,
-                        new String[] { "Id" },
-                        new Object[] { GUIDS[idxs[i]] },
-            new ArrayList<>());
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
         }
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean valid, boolean success) {
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            boolean valid,
+            boolean success) {
         return setUpActionExpectations(task, clz, names, values, valid, success, null, true, CANT_DO);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean valid, boolean success, String errorMessage) {
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            boolean valid,
+            boolean success,
+            String errorMessage) {
         return setUpActionExpectations(task, clz, names, values, valid, success, null, true, errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean valid, boolean success, boolean reply) {
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            boolean valid,
+            boolean success,
+            boolean reply) {
         return setUpActionExpectations(task, clz, names, values, valid, success, null, reply, CANT_DO);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean valid, boolean success, Object taskReturn, boolean replay) {
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            boolean valid,
+            boolean success,
+            Object taskReturn,
+            boolean replay) {
         return setUpActionExpectations(task, clz, names, values, valid, success, taskReturn, null, replay, CANT_DO);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean valid, boolean success, Object taskReturn, boolean replay, String errorMessage) {
-        return setUpActionExpectations(task, clz, names, values, valid, success, taskReturn, null, replay, errorMessage);
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            boolean valid,
+            boolean success,
+            Object taskReturn,
+            boolean replay,
+            String errorMessage) {
+        return setUpActionExpectations(task,
+                clz,
+                names,
+                values,
+                valid,
+                success,
+                taskReturn,
+                null,
+                replay,
+                errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
@@ -422,66 +502,65 @@ public abstract class AbstractBackendBaseTest extends Assert {
             String baseUri,
             boolean replay,
             String errorMessage) {
-        VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
-        expect(result.isValid()).andReturn(valid).anyTimes();
+        VdcReturnValueBase result = mock(VdcReturnValueBase.class);
+        when(result.isValid()).thenReturn(valid);
         if (valid) {
-            expect(result.getSucceeded()).andReturn(success).anyTimes();
+            when(result.getSucceeded()).thenReturn(success);
             if (success) {
                 if (taskReturn != null) {
-                    expect(result.getActionReturnValue()).andReturn(taskReturn).anyTimes();
+                    when(result.getActionReturnValue()).thenReturn(taskReturn);
                 }
             } else {
-                expect(result.getExecuteFailedMessages()).andReturn(asList(FAILURE)).anyTimes();
+                when(result.getExecuteFailedMessages()).thenReturn(asList(FAILURE));
                 setUpL10nExpectations(asList(FAILURE));
             }
         } else {
-            expect(result.getValidationMessages()).andReturn(asList(errorMessage)).anyTimes();
+            when(result.getValidationMessages()).thenReturn(asList(errorMessage));
             setUpL10nExpectations(asList(errorMessage));
         }
-        expect(backend.runAction(eq(task), eqActionParams(clz, addSession(names), addSession(values)))).andReturn(result);
+        when(backend.runAction(eq(task), eqActionParams(clz, addSession(names), addSession(values))))
+                .thenReturn(result);
+        enqueueInteraction(() -> verify(backend, atLeastOnce()).runAction(eq(task),
+                eqActionParams(clz, addSession(names), addSession(values))));
 
-        VdcQueryReturnValue monitorResult = control.createMock(VdcQueryReturnValue.class);
-        expect(monitorResult.getSucceeded()).andReturn(success).anyTimes();
+        VdcQueryReturnValue monitorResult = mock(VdcQueryReturnValue.class);
+        when(monitorResult.getSucceeded()).thenReturn(success);
 
-        expect(result.getHasAsyncTasks()).andReturn(asyncTasks != null || jobId!=null).anyTimes();
-        //simulate polling on async task's statuses, and/or job status.
+        when(result.getHasAsyncTasks()).thenReturn(asyncTasks != null || jobId != null);
+        // simulate polling on async task's statuses, and/or job status.
         setAsyncTaskStatusExpectations(asyncTasks, asyncStatuses, monitorResult, result);
         setJobStatusExpectations(jobId, jobStatus, monitorResult, result);
 
         UriInfo uriInfo = setUpBasicUriExpectations();
         if (baseUri != null) {
-            expect(uriInfo.getPath()).andReturn(baseUri).anyTimes();
+            when(uriInfo.getPath()).thenReturn(baseUri);
         }
 
-        if (replay) {
-            control.replay();
-        }
         return uriInfo;
     }
 
     protected void setUpL10nExpectations(String error) {
-        ErrorTranslator translator = control.createMock(ErrorTranslator.class);
-        IAnswer<String> answer = () ->
-                EasyMock.getCurrentArguments() != null && EasyMock.getCurrentArguments().length > 0
-                ? mockl10n((String) EasyMock.getCurrentArguments()[0])
+        ErrorTranslator translator = mock(ErrorTranslator.class);
+        Answer<String> answer = invocation -> invocation.getArguments() != null && invocation.getArguments().length > 0
+                ? mockl10n((String) invocation.getArguments()[0])
                 : null;
         if (!locales.isEmpty()) {
-            expect(translator.translateErrorTextSingle(eq(error), eq(locales.get(0)))).andAnswer(answer).anyTimes();
+            doAnswer(answer).when(translator).translateErrorTextSingle(eq(error), eq(locales.get(0)));
         } else {
-            expect(translator.translateErrorTextSingle(eq(error))).andAnswer(answer).anyTimes();
+            doAnswer(answer).when(translator).translateErrorTextSingle(eq(error));
         }
-        expect(backend.getErrorsTranslator()).andReturn(translator).anyTimes();
+        when(backend.getErrorsTranslator()).thenReturn(translator);
     }
 
     protected void setUpL10nExpectations(ArrayList<String> errors) {
-        ErrorTranslator errorTranslator = control.createMock(ErrorTranslator.class);
+        ErrorTranslator errorTranslator = mock(ErrorTranslator.class);
         if (!locales.isEmpty()) {
-            expect(errorTranslator.translateErrorText(eq(errors), eq(locales.get(0)))).andReturn(mockl10n(errors))
-                    .anyTimes();
+            when(errorTranslator.translateErrorText(eq(errors), eq(locales.get(0)))).thenReturn(mockl10n(errors));
         } else {
-            expect(errorTranslator.translateErrorText(eq(errors))).andReturn(mockl10n(errors)).anyTimes();
+            when(errorTranslator.translateErrorText(eq(errors))).thenReturn(mockl10n(errors));
         }
-        expect(backend.getErrorsTranslator()).andReturn(errorTranslator);
+        when(backend.getErrorsTranslator()).thenReturn(errorTranslator);
+        enqueueInteraction(() -> verify(backend, atLeastOnce()).getErrorsTranslator());
     }
 
     protected List<String> mockl10n(List<String> errors) {
@@ -534,7 +613,10 @@ public abstract class AbstractBackendBaseTest extends Assert {
         assertTrue("expected detail to include: " + t.getMessage(), fault.getDetail().contains(t.getMessage()));
     }
 
-    protected void verifyIncompleteException(WebApplicationException wae, String type, String method, String... fields) {
+    protected void verifyIncompleteException(WebApplicationException wae,
+            String type,
+            String method,
+            String... fields) {
         assertEquals(400, wae.getResponse().getStatus());
         Fault fault = (Fault) wae.getResponse().getEntity();
         assertNotNull(fault);
@@ -572,12 +654,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
             VdcQueryReturnValue monitorResult,
             VdcReturnValueBase result) {
         if (asyncTasks != null) {
-            expect(result.getVdsmTaskIdList()).andReturn(asyncTasks).anyTimes();
-            expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
-            expect(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+            when(result.getVdsmTaskIdList()).thenReturn(asyncTasks);
+            when(monitorResult.getReturnValue()).thenReturn(asyncStatuses);
+            when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                     eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
                             addSession(),
-                            addSession(new Object[]{})))).andReturn(monitorResult);
+                            addSession(new Object[] {})))).thenReturn(monitorResult);
         }
     }
 
@@ -585,43 +667,42 @@ public abstract class AbstractBackendBaseTest extends Assert {
             JobExecutionStatus jobStatus,
             VdcQueryReturnValue monitorResult,
             VdcReturnValueBase result) {
-        expect(result.getJobId()).andReturn(jobId).anyTimes();
-        if (jobId!=null) {
-            Job jobMock = control.createMock(org.ovirt.engine.core.common.job.Job.class);
-            expect(jobMock.getStatus()).andReturn(jobStatus);
-            expect(monitorResult.getReturnValue()).andReturn(jobMock).anyTimes();
-            expect(backend.runQuery(eq(VdcQueryType.GetJobByJobId),
+        when(result.getJobId()).thenReturn(jobId);
+        if (jobId != null) {
+            Job jobMock = mock(org.ovirt.engine.core.common.job.Job.class);
+            when(jobMock.getStatus()).thenReturn(jobStatus);
+            when(monitorResult.getReturnValue()).thenReturn(jobMock);
+            when(backend.runQuery(eq(VdcQueryType.GetJobByJobId),
                     eqQueryParams(IdQueryParameters.class,
                             addSession("Id"),
-                            addSession(jobId)))).andReturn(monitorResult);
+                            addSession(jobId)))).thenReturn(monitorResult);
+            enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.GetJobByJobId),
+                    eqQueryParams(IdQueryParameters.class,
+                            addSession("Id"),
+                            addSession(jobId))));
         }
     }
 
-
-
     protected UriInfo setUpGetMatrixConstraintsExpectations(String matrixConstraint,
             boolean matrixConstraintExist,
-            String matrixConstraintValue, UriInfo uriInfo, boolean replay) {
+            String matrixConstraintValue,
+            UriInfo uriInfo) {
         List<PathSegment> psl = new ArrayList<>();
 
-        PathSegment ps = control.createMock(PathSegment.class);
-        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
+        PathSegment ps = mock(PathSegment.class);
+        MultivaluedMap<String, String> matrixParams = mock(MultivaluedMap.class);
 
-        expect(matrixParams.isEmpty()).andReturn(!matrixConstraintExist);
-        expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
+        when(matrixParams.isEmpty()).thenReturn(!matrixConstraintExist);
+        when(ps.getMatrixParameters()).thenReturn(matrixParams);
 
         if (matrixConstraintExist) {
-            expect(matrixParams.containsKey(matrixConstraint)).andReturn(matrixConstraintExist).anyTimes();
-            expect(matrixParams.getFirst(matrixConstraint)).andReturn(matrixConstraintValue).anyTimes();
+            when(matrixParams.containsKey(matrixConstraint)).thenReturn(matrixConstraintExist);
+            when(matrixParams.getFirst(matrixConstraint)).thenReturn(matrixConstraintValue);
         }
 
         psl.add(ps);
 
-        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
-
-        if (replay) {
-            control.replay();
-        }
+        when(uriInfo.getPathSegments()).thenReturn(psl);
 
         return uriInfo;
     }

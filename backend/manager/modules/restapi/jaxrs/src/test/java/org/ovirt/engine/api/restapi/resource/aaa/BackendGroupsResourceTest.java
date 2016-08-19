@@ -229,7 +229,6 @@ public class BackendGroupsResourceTest
                 new String[] {},
                 new Object[] {},
                 setUpDomains());
-        control.replay();
 
         Group model = new Group();
         model.setName(GROUP_NAMES_WITH_NO_DOMAIN[0]);
@@ -306,7 +305,6 @@ public class BackendGroupsResourceTest
                 new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(NON_EXISTANT_EXTERNAL_ID) },
             null
         );
-        control.replay();
         Group model = new Group();
         model.setName(GROUP_NAMES[0]);
         model.setId(NON_EXISTANT_EXTERNAL_ID);

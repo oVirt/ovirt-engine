@@ -67,17 +67,17 @@ public class BackendStorageDomainVmsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 1);
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, true);
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpQueryExpectations(query, failure, StorageDomainType.Data, true);
+        setUpQueryExpectations(query, failure, StorageDomainType.Data);
     }
 
-    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType, boolean replay) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) throws Exception {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
@@ -99,10 +99,6 @@ public class BackendStorageDomainVmsResourceTest
             break;
         default:
             break;
-        }
-
-        if (replay) {
-            control.replay();
         }
     }
 

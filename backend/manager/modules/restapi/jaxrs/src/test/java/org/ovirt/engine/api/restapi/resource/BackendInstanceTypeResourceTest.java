@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResourceTest.verifyModelSpecific;
@@ -8,6 +9,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResource
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -32,7 +34,6 @@ public class BackendInstanceTypeResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendTemplateResource("foo");
             fail("expected WebApplicationException");
@@ -46,7 +47,6 @@ public class BackendInstanceTypeResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -61,7 +61,6 @@ public class BackendInstanceTypeResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
         setUpGetBallooningExpectations();
-        control.replay();
 
         verifyModel(resource.get(), 0);
     }
@@ -88,14 +87,13 @@ public class BackendInstanceTypeResourceTest
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
             setUpGetConsoleExpectations(0);
             setUpGetVirtioScsiExpectations(0);
             setUpGetSoundcardExpectations(0);
             setUpGetRngDeviceExpectations(0);
         }
         setUpGetGraphicsExpectations(1);
-        control.replay();
 
         InstanceType response = resource.get();
         verifyModel(response, 0);
@@ -129,7 +127,6 @@ public class BackendInstanceTypeResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.update(getRestModel(0));
             fail("expected WebApplicationException");
@@ -185,7 +182,6 @@ public class BackendInstanceTypeResourceTest
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        control.replay();
 
         InstanceType model = getRestModel(1);
         model.setId(GUIDS[1].toString());
@@ -241,7 +237,7 @@ public class BackendInstanceTypeResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.InstanceType getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
+        return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
     private InstanceType getRestModel(int index) {

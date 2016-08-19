@@ -44,7 +44,6 @@ public class BackendPermissionResourceTest
 
     @Test
     public void testBadGuid() throws Exception {
-        control.replay();
         try {
             new BackendPermissionResource("foo", null, null, null);
             fail("expected WebApplicationException");
@@ -57,7 +56,6 @@ public class BackendPermissionResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
@@ -78,7 +76,6 @@ public class BackendPermissionResourceTest
 
         setUpGetEntityExpectations(1);
 
-        control.replay();
         verifyModel(resource.get(), 0);
     }
 
@@ -132,7 +129,6 @@ public class BackendPermissionResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(1, true);
-        control.replay();
         try {
             resource.remove();
             fail("expected WebApplicationException");
@@ -204,7 +200,6 @@ public class BackendPermissionResourceTest
         for (int i=0; i < NAMES.length; i++) {
             DbUser user = new DbUser();
             user.setId(GUIDS[i]);
-            user.setFirstName(NAMES[i]);
             user.setLoginName(NAMES[i]);
             users.add(user);
         }
