@@ -1761,8 +1761,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 @Override
                 public void onSuccess(VdcQueryReturnValue returnValue) {
                     List<String> changedFields = returnValue.getReturnValue();
+                    final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotplugged(selectedItem, getcurrentVm());
+                    final boolean isMemoryHotUnplugSupported =
+                            AsyncDataProvider.getInstance().isMemoryHotUnplugSupported(getcurrentVm());
+                    final boolean memoryHotPluggable =
+                            VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm(), isMemoryHotUnplugSupported);
                     // provide warnings if isVmUnpinned()
-                    if (!changedFields.isEmpty() || isVmUnpinned()) {
+                    if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable) {
                         VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
                         if (isVmUnpinned()) {
                             confirmModel.setVmUnpinned();
@@ -1771,11 +1776,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                         confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
                         confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
                         confirmModel.setChangedFields(changedFields);
-                        confirmModel.setCpuPluggable(VmCommonUtils.isCpusToBeHotplugged(selectedItem, getcurrentVm()));
-                        boolean isMemoryHotUnplugSupported =
-                                AsyncDataProvider.getInstance().isMemoryHotUnplugSupported(getcurrentVm());
-                        confirmModel.setMemoryPluggable(VmCommonUtils.isMemoryToBeHotplugged(
-                                selectedItem, getcurrentVm(), isMemoryHotUnplugSupported));
+                        confirmModel.setCpuPluggable(cpuHotPluggable);
+                        confirmModel.setMemoryPluggable(memoryHotPluggable);
 
                         confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$
                         .setTitle(ConstantsManager.getInstance().getConstants().ok())
