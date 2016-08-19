@@ -57,8 +57,8 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     HTML changedFields;
 
     @UiField(provided = true)
-    @Path(value = "applyCpuLater.entity")
-    EntityModelCheckBoxEditor applyCpuLaterEditor;
+    @Path(value = "applyLater.entity")
+    EntityModelCheckBoxEditor applyLaterEditor;
 
     @UiField
     FlowPanel hotplugPanel;
@@ -108,7 +108,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     }
 
     void initEditors() {
-        applyCpuLaterEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        applyLaterEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vmUnpinnedLatchEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
@@ -117,7 +117,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         applyNowTitleMessage.setHTML(messages.nextRunConfigurationCanBeAppliedImmediately());
         applyNowCpuMessage.setHTML(bulletedItem(messages.nextRunConfigurationCpuValue()));
         applyNowMemoryMessage.setHTML(bulletedItem(messages.nextRunConfigurationMemoryValue()));
-        applyCpuLaterEditor.setLabel(constants.applyLater());
+        applyLaterEditor.setLabel(constants.applyLater());
 
         warningSectionTitle.setHTML(messages.warningSectionTitle());
         vmUnpinnedPanelTitle.setHTML(messages.unpinnedRunningVmWarningTitle());

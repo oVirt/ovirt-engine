@@ -7,14 +7,14 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public class VmNextRunConfigurationModel extends ConfirmationModel {
 
-    private EntityModel<Boolean> applyCpuLater;
+    private EntityModel<Boolean> applyLater;
     private boolean cpuPluggable;
     private boolean memoryPluggable;
     private List<String> changedFields;
     private boolean vmUnpinned;
 
     public VmNextRunConfigurationModel() {
-        setApplyCpuLater(new EntityModel<>(false));
+        setApplyLater(new EntityModel<>(false));
     }
 
     public boolean isVmUnpinned() {
@@ -28,12 +28,12 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
         vmUnpinned = true;
     }
 
-    public EntityModel<Boolean> getApplyCpuLater() {
-        return applyCpuLater;
+    public EntityModel<Boolean> getApplyLater() {
+        return applyLater;
     }
 
-    public void setApplyCpuLater(EntityModel<Boolean> applyCpuLater) {
-        this.applyCpuLater = applyCpuLater;
+    public void setApplyLater(EntityModel<Boolean> applyLater) {
+        this.applyLater = applyLater;
     }
 
     public boolean isCpuPluggable() {

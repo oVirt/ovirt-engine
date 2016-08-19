@@ -2222,7 +2222,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 return;
             }
 
-            updateExistingVm(model.getApplyCpuLater().getEntity());
+            updateExistingVm(model.getApplyLater().getEntity());
             cancelConfirmation();
         }
         else if ("ClearCpuPinning".equals(command.getName())) { // $NON-NLS-1$

@@ -451,7 +451,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
         else if ("updateExistingVm".equals(command.getName())) { // $NON-NLS-1$
             VmNextRunConfigurationModel model = (VmNextRunConfigurationModel) getConfirmWindow();
-            updateExistingVm(model.getApplyCpuLater().getEntity());
+            updateExistingVm(model.getApplyLater().getEntity());
             setConfirmWindow(null);
         }
         else if ("postVmNameUniqueCheck".equals(command.getName())) { // $NON-NLS-1$
