@@ -19,13 +19,13 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
-import org.ovirt.engine.core.bll.scheduling.OS;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.NumaUtils;
+import org.ovirt.engine.core.utils.OS;
 
 @Singleton
 public class InClusterUpgradeValidator {

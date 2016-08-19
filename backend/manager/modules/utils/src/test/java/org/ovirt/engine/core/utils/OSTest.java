@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.scheduling;
+package org.ovirt.engine.core.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
