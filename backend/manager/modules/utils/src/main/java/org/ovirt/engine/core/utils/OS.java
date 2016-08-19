@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.scheduling;
+package org.ovirt.engine.core.utils;
 
 import java.util.Arrays;
 import java.util.List;
