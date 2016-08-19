@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -19,6 +18,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 
 public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<VmNextRunConfigurationModel> {
 
@@ -38,11 +38,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     @UiField
     @Ignore
-    HTML changedFieldsPanelTitle;
-
-    @UiField
-    @Ignore
-    HTML applyNowTitleMessage;
+    Label changedFieldsPanelTitle;
 
     @UiField
     @Ignore
@@ -72,7 +68,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     @UiField
     @Ignore
-    HTML vmUnpinnedPanelTitle;
+    Label vmUnpinnedPanelTitle;
 
     @UiField
     @Ignore
@@ -82,10 +78,6 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     @Ignore
     HTML vmUnpinnedMessage2;
 
-    @UiField
-    @Ignore
-    HTML warningSectionTitle;
-
     private final Driver driver = GWT.create(Driver.class);
 
     @UiField(provided = true)
@@ -93,7 +85,6 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     EntityModelCheckBoxEditor vmUnpinnedLatchEditor;
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public VmNextRunConfigurationWidget() {
@@ -113,17 +104,10 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     }
 
     void localize() {
-        changedFieldsPanelTitle.setHTML(messages.nextRunConfigurationExists());
-        applyNowTitleMessage.setHTML(messages.nextRunConfigurationCanBeAppliedImmediately());
         applyNowCpuMessage.setHTML(bulletedItem(messages.nextRunConfigurationCpuValue()));
         applyNowMemoryMessage.setHTML(bulletedItem(messages.nextRunConfigurationMemoryValue()));
-        applyLaterEditor.setLabel(constants.applyLater());
-
-        warningSectionTitle.setHTML(messages.warningSectionTitle());
-        vmUnpinnedPanelTitle.setHTML(messages.unpinnedRunningVmWarningTitle());
         vmUnpinnedMessage1.setHTML(bulletedItem(messages.unpinnedRunningVmWarningIncompatability()));
         vmUnpinnedMessage2.setHTML(bulletedItem(messages.unpinnedRunningVmWarningSecurity()));
-        vmUnpinnedLatchEditor.setLabel(constants.latchApproveUnpinningLabel());
 }
 
     private SafeHtml bulletedItem(String msg) {

@@ -4,6 +4,9 @@
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
   xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
+    <ui:with field="messages" type="org.ovirt.engine.ui.common.CommonApplicationMessages" />
+    <ui:with field="constants" type="org.ovirt.engine.ui.common.CommonApplicationConstants" />
+
 	<ui:style>
         .verticalPanel>* {
             display: block;
@@ -40,22 +43,22 @@
 
 	<g:FlowPanel>
         <g:FlowPanel ui:field="vmUnpinnedPanel" addStyleNames="{style.warningSectionPanel}">
-            <g:HTML ui:field="warningSectionTitle" addStyleNames="{style.warningsLabel}"/>
+            <g:Label ui:field="warningSectionTitle" addStyleNames="{style.warningsLabel}" text="{messages.warningSectionTitle}"/>
             <g:FlowPanel addStyleNames="{style.sectionPanel}">
-                <g:HTML ui:field="vmUnpinnedPanelTitle" addStyleNames="{style.sectionTitle}"/>
+                <g:Label ui:field="vmUnpinnedPanelTitle" addStyleNames="{style.sectionTitle}" text="{messages.unpinnedRunningVmWarningTitle}"/>
                 <g:HTML ui:field="vmUnpinnedMessage1" />
                 <g:HTML ui:field="vmUnpinnedMessage2" />
-                <ge:EntityModelCheckBoxEditor ui:field="vmUnpinnedLatchEditor" addStyleNames="{style.confirmationLabel}"/>
+                <ge:EntityModelCheckBoxEditor ui:field="vmUnpinnedLatchEditor" addStyleNames="{style.confirmationLabel}" label="{constants.latchApproveUnpinningLabel}"/>
             </g:FlowPanel>
         </g:FlowPanel>
         <g:FlowPanel ui:field="hotplugPanel" addStyleNames="{style.sectionPanel}">
-            <g:HTML ui:field="applyNowTitleMessage" addStyleNames="{style.sectionTitle}"/>
+            <g:Label addStyleNames="{style.sectionTitle}" text="{messages.nextRunConfigurationCanBeAppliedImmediately}"/>
             <g:HTML ui:field="applyNowCpuMessage"/>
             <g:HTML ui:field="applyNowMemoryMessage"/>
-            <ge:EntityModelCheckBoxEditor ui:field="applyLaterEditor" addStyleNames="{style.contentWidgets}"/>
+            <ge:EntityModelCheckBoxEditor ui:field="applyLaterEditor" addStyleNames="{style.contentWidgets}" label="{constants.applyLater}" />
         </g:FlowPanel>
         <g:FlowPanel ui:field="changedFieldsPanel" addStyleNames="{style.sectionPanel}">
-            <g:HTML ui:field="changedFieldsPanelTitle" addStyleNames="{style.sectionTitle}"/>
+            <g:Label ui:field="changedFieldsPanelTitle" addStyleNames="{style.sectionTitle}" text="{messages.nextRunConfigurationExists}"/>
             <g:FlowPanel ui:field="changedFieldsContent" addStyleNames="{style.sectionPanel}">
                 <g:HTML ui:field="changedFields" />
             </g:FlowPanel>
