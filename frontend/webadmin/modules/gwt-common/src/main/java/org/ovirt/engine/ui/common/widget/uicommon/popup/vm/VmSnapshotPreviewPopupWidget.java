@@ -94,7 +94,7 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
         if (model.isShowMemorySnapshotWarning() && !model.isShowPartialSnapshotWarning()) {
             Style dialogStyle = getParent().getParent().getParent().getElement().getStyle();
             dialogStyle.setWidth(450, Style.Unit.PX);
-            dialogStyle.setHeight(200, Style.Unit.PX);
+            dialogStyle.setHeight(240, Style.Unit.PX);
         }
 
         partialSnapshotWarningPanel.setVisible(model.isShowPartialSnapshotWarning());
