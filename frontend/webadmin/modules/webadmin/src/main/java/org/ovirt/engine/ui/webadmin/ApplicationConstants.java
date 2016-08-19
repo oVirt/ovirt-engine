@@ -3177,5 +3177,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String GlusterSelfHealOk();
 
     String kvmBlockDomainWraning();
+
+    String hostedEngineVmTooltip();
 }
 
