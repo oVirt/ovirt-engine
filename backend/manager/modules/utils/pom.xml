@@ -75,6 +75,7 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
@@ -150,14 +151,6 @@
       <groupId>com.woorea</groupId>
       <artifactId>cinder-client</artifactId>
       <version>${openstack-client.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-       <scope>test</scope>
     </dependency>
 
   </dependencies>
