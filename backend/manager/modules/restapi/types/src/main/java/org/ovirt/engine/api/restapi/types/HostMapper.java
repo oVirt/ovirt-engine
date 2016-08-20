@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import static java.util.stream.Collectors.toCollection;
+import static org.ovirt.engine.core.compat.Version.VERSION_NOT_SET;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.AutoNumaStatus;
@@ -60,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.OS;
 
 public class HostMapper {
 
@@ -67,8 +70,6 @@ public class HostMapper {
     // REVISIT retrieve from configuration
     private static final int DEFAULT_VDSM_PORT = 54321;
     private static final String MD5_FILE_SIGNATURE = "md5";
-
-    private static final String HOST_OS_DELEIMITER = " - ";
 
     @Mapping(from = Host.class, to = VdsStatic.class)
     public static VdsStatic map(Host model, VdsStatic template) {
@@ -345,15 +346,25 @@ public class HostMapper {
 
     private static OperatingSystem mapOperatingSystem(VDS entity) {
         final OperatingSystem model = new OperatingSystem();
-        final String hostOs = entity.getHostOs();
-        if (hostOs != null && hostOs.trim().length() != 0) {
-            String[] hostOsInfo = hostOs.split(HOST_OS_DELEIMITER);
+        final String hostOsStr = entity.getHostOs();
+        if (StringUtils.isNotBlank(hostOsStr)) {
+            OS hostOs = OS.fromPackageVersionString(hostOsStr);
             Version version = new Version();
-            version.setMajor(getIntegerValue(hostOsInfo, 1));
-            version.setMinor(getIntegerValue(hostOsInfo, 2));
-            version.setFullVersion(getFullHostOsVersion(hostOsInfo));
-            model.setType(hostOsInfo[0]);
+
+            if (hostOs.getVersion().getMajor() != VERSION_NOT_SET) {
+                version.setMajor(hostOs.getVersion().getMajor());
+            }
+
+            if (hostOs.getVersion().getMinor() != VERSION_NOT_SET) {
+                version.setMinor(hostOs.getVersion().getMinor());
+            }
+
+            if (hostOs.getVersion().getBuild() != VERSION_NOT_SET) {
+                version.setBuild(hostOs.getVersion().getBuild());
+            }
+            version.setFullVersion(hostOs.getFullVersion());
             model.setVersion(version);
+            model.setType(hostOs.getName());
         }
         model.setCustomKernelCmdline(Objects.toString(entity.getCurrentKernelCmdline(), ""));
         model.setReportedKernelCmdline(entity.getKernelArgs());
@@ -363,28 +374,6 @@ public class HostMapper {
     @Mapping(from = String.class, to = OsType.class)
     public static OsType map(String osType, OsType template) {
         return OsType.fromValue(osType);
-    }
-
-    private static Integer getIntegerValue(String[] hostOsInfo, int indx) {
-        if (hostOsInfo.length <= indx) {
-            return null;
-        }
-        try {
-            return Integer.valueOf(hostOsInfo[indx]);
-        } catch (NumberFormatException ex) {
-            return null;
-        }
-    }
-
-    private static String getFullHostOsVersion(String[] hostOsInfo) {
-        StringBuilder buf = new StringBuilder("");
-        for(int i = 1; i < hostOsInfo.length; i++) {
-            if(i > 1) {
-                buf.append(HOST_OS_DELEIMITER);
-            }
-            buf.append(hostOsInfo[i]);
-        }
-        return buf.toString();
     }
 
     @Mapping(from = VDS.class, to = HardwareInformation.class)

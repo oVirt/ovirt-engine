@@ -84,54 +84,56 @@ public class OSTest {
 
     @Test
     public void shouldDetectSameMajorVersion() {
-        assertThat(new OS("test", new Version("6.3")).isSameMajorVersion(new OS("test", new Version("6.6")))).isTrue();
+        assertThat(new OS("test", new Version("6.3"), "").isSameMajorVersion(new OS("test", new Version("6.6"), "")))
+                .isTrue();
     }
 
     @Test
     public void shouldDetectDifferentMajorVersion() {
-        assertThat(new OS("test", new Version("6.3")).isSameMajorVersion(new OS("test", new Version("7.3")))).isFalse();
+        assertThat(new OS("test", new Version("6.3"), "").isSameMajorVersion(new OS("test", new Version("7.3"), "")))
+                .isFalse();
     }
 
     @Test
     public void shouldDetectDifferentOs() {
-        assertThat(new OS("os1", new Version("6.3")).isSameOsFamily(new OS("os2", new Version("6.3")))).isFalse();
+        assertThat(new OS("os1", new Version("6.3"), "").isSameOsFamily(new OS("os2", new Version("6.3"), ""))).isFalse();
     }
 
     @Test
     public void shouldDetectSameOs() {
-        assertThat(new OS("os1", new Version("6.3")).isSameOsFamily(new OS("os1", new Version("6.3")))).isTrue();
+        assertThat(new OS("os1", new Version("6.3"), "").isSameOsFamily(new OS("os1", new Version("6.3"), ""))).isTrue();
     }
 
     @Test
     public void shouldDetectEqualOs() {
-        assertThat(new OS("RHEL", new Version("6.3"))
-                .isSameOsFamily(new OS("oVirt Node", new Version("6.3")))).isTrue();
-        assertThat(new OS("RHEL", new Version("6.3"))
-                .isSameOsFamily(new OS("RHEV Hypervisor", new Version("6.3")))).isTrue();
-        assertThat(new OS("oVirt Node", new Version("6.3"))
-                .isSameOsFamily(new OS("RHEV Hypervisor", new Version("6.3")))).isTrue();
+        assertThat(new OS("RHEL", new Version("6.3"), "")
+                .isSameOsFamily(new OS("oVirt Node", new Version("6.3"), ""))).isTrue();
+        assertThat(new OS("RHEL", new Version("6.3"), "")
+                .isSameOsFamily(new OS("RHEV Hypervisor", new Version("6.3"), ""))).isTrue();
+        assertThat(new OS("oVirt Node", new Version("6.3"), "")
+                .isSameOsFamily(new OS("RHEV Hypervisor", new Version("6.3"), ""))).isTrue();
     }
 
     @Test
     public void shouldReturnCorrectOsFamiliy() {
-        assertThat(new OS("RHEV Hypervisor", new Version("6.3")).getOsFamily()).isEqualTo("RHEL");
-        assertThat(new OS("RHEL", new Version("6.3")).getOsFamily()).isEqualTo("RHEL");
-        assertThat(new OS("oVirt Node", new Version("6.3")).getOsFamily()).isEqualTo("RHEL");
+        assertThat(new OS("RHEV Hypervisor", new Version("6.3"), "").getOsFamily()).isEqualTo("RHEL");
+        assertThat(new OS("RHEL", new Version("6.3"), "").getOsFamily()).isEqualTo("RHEL");
+        assertThat(new OS("oVirt Node", new Version("6.3"), "").getOsFamily()).isEqualTo("RHEL");
     }
 
     @Test
     public void shouldDetectNewerOs() {
-        assertThat(new OS("os1", new Version("6.3")).isNewerThan(new OS("os1", new Version("6.2")))).isTrue();
-        assertThat(new OS("os1", new Version("7.1")).isNewerThan(new OS("os1", new Version("6.2")))).isTrue();
-        assertThat(new OS("os1", new Version("6.2")).isNewerThan(new OS("os1", new Version("6.3")))).isFalse();
-        assertThat(new OS("os1", new Version("5.4")).isNewerThan(new OS("os1", new Version("6.3")))).isFalse();
+        assertThat(new OS("os1", new Version("6.3"), "").isNewerThan(new OS("os1", new Version("6.2"), ""))).isTrue();
+        assertThat(new OS("os1", new Version("7.1"), "").isNewerThan(new OS("os1", new Version("6.2"), ""))).isTrue();
+        assertThat(new OS("os1", new Version("6.2"), "").isNewerThan(new OS("os1", new Version("6.3"), ""))).isFalse();
+        assertThat(new OS("os1", new Version("5.4"), "").isNewerThan(new OS("os1", new Version("6.3"), ""))).isFalse();
     }
 
     @Test
     public void shouldDetectOlderOs() {
-        assertThat(new OS("os1", new Version("6.2")).isOlderThan(new OS("os1", new Version("6.3")))).isTrue();
-        assertThat(new OS("os1", new Version("6.2")).isOlderThan(new OS("os1", new Version("7.1")))).isTrue();
-        assertThat(new OS("os1", new Version("6.2")).isOlderThan(new OS("os1", new Version("6.1")))).isFalse();
-        assertThat(new OS("os1", new Version("7.2")).isOlderThan(new OS("os1", new Version("6.3")))).isFalse();
+        assertThat(new OS("os1", new Version("6.2"), "").isOlderThan(new OS("os1", new Version("6.3"), ""))).isTrue();
+        assertThat(new OS("os1", new Version("6.2"), "").isOlderThan(new OS("os1", new Version("7.1"), ""))).isTrue();
+        assertThat(new OS("os1", new Version("6.2"), "").isOlderThan(new OS("os1", new Version("6.1"), ""))).isFalse();
+        assertThat(new OS("os1", new Version("7.2"), "").isOlderThan(new OS("os1", new Version("6.3"), ""))).isFalse();
     }
 }

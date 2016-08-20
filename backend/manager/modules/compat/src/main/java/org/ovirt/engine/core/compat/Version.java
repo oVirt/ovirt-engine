@@ -21,7 +21,7 @@ public class Version implements Comparable<Version>, Serializable {
     public static final Version v3_6 = new Version(3, 6);
     public static final Version v4_0 = new Version(4, 0);
     public static final List<Version> ALL = Collections.unmodifiableList(Arrays.asList(v3_6, v4_0));
-
+    public static final int VERSION_NOT_SET = -1;
 
     public Version(String value) {
         this();
@@ -29,20 +29,20 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     public Version() {
-        major = minor = build = revision = -1;
+        major = minor = build = revision = VERSION_NOT_SET;
     }
 
     public Version(int major, int minor) {
         this.major = major;
         this.minor = minor;
-        build = revision = -1;
+        build = revision = VERSION_NOT_SET;
     }
 
     public Version(int major2, int minor2, int build2) {
         this.major = major2;
         this.minor = minor2;
         this.build = build2;
-        this.revision = -1;
+        this.revision = VERSION_NOT_SET;
     }
 
     public Version(int major2, int minor2, int build2, Integer revision2) {
@@ -55,7 +55,7 @@ public class Version implements Comparable<Version>, Serializable {
     public String getValue() {
         final StringBuilder val = new StringBuilder();
 
-        if (this.major > -1) {
+        if (this.major > VERSION_NOT_SET) {
             val.append(this.major);
         }
         appendVersionComponent(val, this.minor);
@@ -65,7 +65,7 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     private static void appendVersionComponent(StringBuilder val, int versionNumber) {
-        if (versionNumber > -1) {
+        if (versionNumber > VERSION_NOT_SET) {
             if (val.length() != 0) {
                 val.append('.');
             }
@@ -75,7 +75,7 @@ public class Version implements Comparable<Version>, Serializable {
 
     public void setValue(String value) {
         if (value == null || value.isEmpty() || value.equals("*")) {
-            major = minor = build = revision = -1;
+            major = minor = build = revision = VERSION_NOT_SET;
         } else {
             String[] partialVersions = value.split("\\.");
             switch (partialVersions.length) {
@@ -203,7 +203,8 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     public boolean isNotValid() {
-        return major == -1 && minor == -1 && revision == -1 && build == -1;
+        return major == VERSION_NOT_SET && minor == VERSION_NOT_SET && revision == VERSION_NOT_SET
+                && build == VERSION_NOT_SET;
     }
 
     public static Version getLast() {
