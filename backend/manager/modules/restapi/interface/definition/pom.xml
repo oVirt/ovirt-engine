@@ -97,13 +97,30 @@
         </executions>
       </plugin>
 
-      <!-- Parse the model and generate the XML and JSON descriptions, the
-           XML schema and the Java code: -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
 
+          <!-- Generate the RSDL: -->
+          <execution>
+            <id>generate-rsdl</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.ovirt.engine.api.rsdl.RsdlManager</mainClass>
+              <arguments>
+                <argument>${application.baseuri}</argument>
+                <argument>${project.build.outputDirectory}/v4/rsdl.xml</argument>
+                <argument>${project.build.outputDirectory}/v4/rsdl_gluster.xml</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <!-- Parse the model and generate the XML and JSON descriptions, the
+               XML schema and the Java code: -->
           <execution>
             <id>generate-code</id>
             <phase>generate-sources</phase>
@@ -129,6 +146,7 @@
             </configuration>
           </execution>
 
+          <!-- Parse the model and generate replacements for the JAXB enums: -->
           <execution>
             <id>generate-enums-jaxb</id>
             <phase>process-sources</phase> <!-- TODO: REVISIT phase -->
@@ -207,29 +225,6 @@
             </configuration>
           </execution>
 
-        </executions>
-      </plugin>
-
-      <!-- Generate the RSDL: -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-rsdl</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>org.ovirt.engine.api.rsdl.RsdlManager</mainClass>
-              <arguments>
-                <argument>${application.baseuri}</argument>
-                <argument>${project.build.outputDirectory}/v4/rsdl.xml</argument>
-                <argument>${project.build.outputDirectory}/v4/rsdl_gluster.xml</argument>
-              </arguments>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
 
