@@ -134,7 +134,7 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        return Collections.<QuotaConsumptionParameter> singletonList(new QuotaSanityParameter(getQuotaId(), null));
+        return Collections.singletonList(new QuotaSanityParameter(getQuotaId(), null));
     }
 
     @Override
