@@ -377,7 +377,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     protected boolean checkImagesStatus() {
         List<DiskImage> disksToCheck = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
-        return validate(diskImagesValidator.diskImagesNotLocked());
+        return validate(diskImagesValidator.diskImagesNotLocked())
+                && validate(diskImagesValidator.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain());
     }
 
     private boolean isSameSourceAndDest(LiveMigrateDiskParameters parameters) {
