@@ -362,8 +362,7 @@ public class RunVmValidator {
         if (!hasSpaceValidation.isValid()) {
             return hasSpaceValidation;
         }
-
-        return ValidationResult.VALID;
+        return isImagesExceededVolumesInImageChain();
     }
 
     protected ValidationResult validateVmStatusUsingMatrix(VM vm) {
@@ -374,6 +373,19 @@ public class RunVmValidator {
 
         return ValidationResult.VALID;
     }
+
+
+    /**
+     * Validates the number of volumes have not exceeded the maximum limit of volumes in an image chain.
+     */
+    protected ValidationResult isImagesExceededVolumesInImageChain() {
+        List<DiskImage> allImageDisks =
+                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), false, true, false);
+
+        DiskImagesValidator diskImagesValidatorForChain = createDiskImageValidator(allImageDisks);
+        return diskImagesValidatorForChain.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
+    }
+
 
     /**
      * check that we can create snapshots for all disks
@@ -396,6 +408,10 @@ public class RunVmValidator {
     protected MultipleStorageDomainsValidator getStorageDomainsValidator(Collection<Guid> sdIds) {
         Guid spId = vm.getStoragePoolId();
         return new MultipleStorageDomainsValidator(spId, sdIds);
+    }
+
+    protected DiskImagesValidator createDiskImageValidator(List<DiskImage> disksList) {
+        return new DiskImagesValidator(disksList);
     }
 
     protected ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
