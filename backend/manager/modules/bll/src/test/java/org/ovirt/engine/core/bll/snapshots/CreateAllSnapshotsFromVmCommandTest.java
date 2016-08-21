@@ -12,6 +12,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -34,7 +36,9 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -73,6 +77,11 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @Mock
     private MemoryImageBuilder memoryImageBuilder;
 
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaxImagesInChain, "General", "")
+    );
+
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
@@ -91,6 +100,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateCinder();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(anyList());
         doReturn(getEmptyDiskList()).when(cmd).getDisksListForChecks();
+        doReturn(getEmptyDiskList()).when(cmd).getDiskImagesForVm();
     }
 
     @Test
@@ -167,6 +177,8 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
                 .when(vmValidator)
                 .vmNotHavingPciPassthroughDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(ValidationResult.VALID).when(diskImagesValidator)
+                .diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
         assertFalse(cmd.validate());
         assertThat(cmd.getReturnValue().getValidationMessages(),
                 hasItem(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES.name()));
@@ -241,6 +253,20 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().isEmpty());
+    }
+
+    @Test
+    public void testImagesExceededNumberOfVolumesInChain() {
+        setUpGeneralValidations();
+        setUpDiskValidations();
+        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN)).when(diskImagesValidator)
+                .diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
+        assertFalse(cmd.validate());
+        assertTrue(cmd.getReturnValue()
+                .getValidationMessages()
+                .contains(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN.name()));
     }
 
     @Test
@@ -365,6 +391,8 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     private void setUpDiskValidations() {
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotLocked();
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotIllegal();
+        doReturn(ValidationResult.VALID).when(diskImagesValidator)
+                .diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsWithinThresholds();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(anyList(), anyList());

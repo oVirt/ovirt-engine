@@ -115,7 +115,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return jobProperties;
     }
 
-    private List<DiskImage> getDiskImagesForVm() {
+    protected List<DiskImage> getDiskImagesForVm() {
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
         List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
         allDisks.addAll(ImagesHandler.getCinderLeafImages(disks, false));
@@ -631,7 +631,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         VmValidator vmValidator = createVmValidator();
         SnapshotsValidator snapshotValidator = createSnapshotValidator();
         StoragePoolValidator spValidator = createStoragePoolValidator();
-
+        DiskImagesValidator diskImagesValidatorForChain =
+                createDiskImageValidator(ImagesHandler.filterImageDisks(getDisksList(), true, true, true));
         if (!(validateVM(vmValidator) && validate(spValidator.isUp())
                 && validate(vmValidator.vmNotIlegal())
                 && validate(vmValidator.vmNotLocked())
@@ -639,6 +640,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(vmValidator.vmNotDuringMigration())
                 && validate(vmValidator.vmNotRunningStateless())
+                && validate(diskImagesValidatorForChain.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain())
                 && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingPciPassthroughDevices())))) {
             return false;
         }
