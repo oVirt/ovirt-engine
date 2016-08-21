@@ -17,6 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -37,6 +39,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 public class DiskImagesValidator {
 
     private Iterable<DiskImage> diskImages;
+    private static final Integer maxImagesInChain = Config.<Integer> getValue(ConfigValues.MaxImagesInChain);
 
     public DiskImagesValidator(Iterable<DiskImage> disks) {
         this.diskImages = disks;
@@ -192,6 +195,27 @@ public class DiskImagesValidator {
     }
 
     /**
+     * Validate that the given disks has not exceeded the maximum number of images in one chain.
+     */
+    public ValidationResult diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain() {
+        List<String> disksInfo = new LinkedList<>();
+        for (DiskImage diskImage : diskImages) {
+            Integer numberOfVolumesInChain = getDiskImageDao().getAllSnapshotsForImageGroup(diskImage.getId()).size();
+            if (numberOfVolumesInChain >= getMaxVolumeChain()) {
+                disksInfo.add(String.format("%s (%s/%s)",
+                        diskImage.getDiskAlias(),
+                        numberOfVolumesInChain,
+                        getMaxVolumeChain()));
+            }
+        }
+        if (!disksInfo.isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN,
+                    String.format("$disksInfo %s", String.format(StringUtils.join(disksInfo, "%n"))));
+        }
+        return ValidationResult.VALID;
+    }
+
+    /**
      * checks that the given disks do not exist on the target storage domains
      * @param imageToDestinationDomainMap map containing the destination domain for each of the disks
      * @param storagePoolId the storage pool ID to check whether the disks are residing on
@@ -303,5 +327,9 @@ public class DiskImagesValidator {
 
     protected StorageDomainStaticDao getStorageDomainStaticDao() {
         return getDbFacade().getStorageDomainStaticDao();
+    }
+
+    protected int getMaxVolumeChain() {
+        return maxImagesInChain;
     }
 }

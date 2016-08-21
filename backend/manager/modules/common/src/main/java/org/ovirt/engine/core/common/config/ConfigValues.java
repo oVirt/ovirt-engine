@@ -1591,6 +1591,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("2")
     StorageDomainOvfStoreCount,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("90")
+    MaxImagesInChain,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("en_US")
     DefaultSysprepLocale,

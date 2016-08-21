@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +40,9 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -52,6 +55,11 @@ import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 public class DiskImagesValidatorTest {
     @ClassRule
     public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaxImagesInChain, "General", "")
+            );
 
     private DiskImage disk1;
     private DiskImage disk2;
@@ -258,6 +266,29 @@ public class DiskImagesValidatorTest {
         disk2.setStorageIds(storageDomainIds);
         when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Collections.singletonList(disk2));
         assertThat(validator.diskImagesHaveNoDerivedDisks(Guid.Empty), isValid());
+    }
+
+    @Test
+    public void isVolumeChainLimitExceededInvalid() {
+        List<DiskImage> diskImages = new ArrayList<>();
+        diskImages.add(new DiskImage());
+        diskImages.add(new DiskImage());
+        diskImages.add(new DiskImage());
+        when(diskImageDao.getAllSnapshotsForImageGroup(disk1.getId())).thenReturn(diskImages);
+        doReturn(3).when(validator).getMaxVolumeChain();
+        assertThat(validator.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN));
+    }
+
+    @Test
+    public void isVolumeChainLimitExceeded() {
+        List<DiskImage> diskImages = new ArrayList<>();
+        diskImages.add(new DiskImage());
+        diskImages.add(new DiskImage());
+        diskImages.add(new DiskImage());
+        when(diskImageDao.getAllSnapshotsForImageGroup(disk1.getId())).thenReturn(diskImages);
+        doReturn(4).when(validator).getMaxVolumeChain();
+        assertThat(validator.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain(), isValid());
     }
 
     @Test
