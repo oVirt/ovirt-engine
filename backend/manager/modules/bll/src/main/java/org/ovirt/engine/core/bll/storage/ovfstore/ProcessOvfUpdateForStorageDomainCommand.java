@@ -423,8 +423,17 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getActionState() == CommandActionState.EXECUTE && !getSucceeded()) {
-            return AuditLogType.UPDATE_OVF_FOR_STORAGE_DOMAIN_FAILED;
+        AuditLogableBase auditLogableBase = new AuditLogableBase();
+        auditLogableBase.addCustomValue("StorageDomainName", getStorageDomain().getName());
+        auditLogableBase.setUserName(getUserName());
+        if (getActionState() == CommandActionState.EXECUTE) {
+            if (!getSucceeded()) {
+                return AuditLogType.UPDATE_OVF_FOR_STORAGE_DOMAIN_FAILED;
+            }
+
+            if (!SYSTEM_USER_NAME.equals(auditLogableBase.getUserName())) {
+                return AuditLogType.USER_UPDATE_OVF_STORE;
+            }
         }
 
         return super.getAuditLogTypeValue();
