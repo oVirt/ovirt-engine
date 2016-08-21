@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -227,7 +226,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         final int domainSizeGB = 20;
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB);
         cmd.postConstruct();
-        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyList());
+        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain(domainSizeGB))));
     }
@@ -308,11 +307,11 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void validateSpaceAndThreshold() {
         AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyList());
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyListOf(DiskImage.class));
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertTrue(command.validateSpaceRequirements());
-        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyList());
+        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(anyListOf(DiskImage.class));
+        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyListOf(DiskImage.class));
     }
 
     @Test
@@ -320,11 +319,11 @@ public class AddVmCommandTest extends BaseCommandTest {
         AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForNewDisks(anyList());
+                when(storageDomainValidator).hasSpaceForNewDisks(anyListOf(DiskImage.class));
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());
-        verify(storageDomainValidator).hasSpaceForNewDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyList());
+        verify(storageDomainValidator).hasSpaceForNewDisks(anyListOf(DiskImage.class));
+        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyListOf(DiskImage.class));
     }
 
     @Test
@@ -420,7 +419,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         AddVmFromTemplateCommand<AddVmParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
         doReturn(createVmTemplate()).when(result).getVmTemplate();
-        doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), anyList());
+        doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
         mockDaos(result);
         mockBackend(result);
         mockVmDeviceUtils(result);
