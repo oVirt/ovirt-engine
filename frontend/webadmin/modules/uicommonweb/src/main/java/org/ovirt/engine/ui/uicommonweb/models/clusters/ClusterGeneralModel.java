@@ -335,10 +335,14 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                     parametersList.add(parameters);
                 }
             }
+
+            // Todo: calling the runMultipleAction() with isRunOnlyIfAllValidationPass=false
+            // becuase this flag is now supported.
+            // should check what is the required behaviour and return to true if required.
             if (!parametersList.isEmpty()) {
                 Frontend.getInstance().runMultipleAction(VdcActionType.ManageGlusterService,
                         parametersList,
-                        true,
+                        false,
                         new IFrontendMultipleActionAsyncCallback() {
                             @Override
                             public void executed(FrontendMultipleActionAsyncResult result) {
@@ -483,9 +487,12 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
             parametersList.add(parameters);
         }
 
+        // Todo: calling the runMultipleAction() with isRunOnlyIfAllValidationPass=false
+        // becuase this flag is now supported.
+        // should check what is the required behaviour and return to true if required.
         Frontend.getInstance().runMultipleAction(VdcActionType.AddVds,
                 parametersList,
-                true,
+                false,
                 new IFrontendMultipleActionAsyncCallback() {
 
                     @Override

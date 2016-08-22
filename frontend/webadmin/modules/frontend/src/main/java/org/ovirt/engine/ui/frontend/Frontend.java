@@ -364,7 +364,7 @@ public class Frontend implements HasHandlers {
             parameters.setRefresh(false); // Why do we do this?
             initQueryParamsFilter(parameters);
             operationList.add(new VdcOperation<VdcQueryType, VdcQueryParametersBase>(queryTypeList.get(i),
-                    parameters, true, multiCallback));
+                    parameters, true, multiCallback, false));
         }
 
         fireAsyncOperationStartedEvent(state);
@@ -608,7 +608,7 @@ public class Frontend implements HasHandlers {
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         for (VdcActionParametersBase parameter: parameters) {
             VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<>(
-                actionType, parameter, !waitForResult, multiCallback);
+                actionType, parameter, !waitForResult, multiCallback, isRunOnlyIfAllValidationPass);
                 operationList.add(operation);
         }
         fireAsyncOperationStartedEvent(state);

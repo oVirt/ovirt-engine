@@ -328,7 +328,9 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             List<VdcActionParametersBase> parameters = new ArrayList<>();
             final List<VdcOperation<?, ?>> allActionOperations = actionEntry.getValue();
 
+            boolean runOnlyIfAllValidationPass = false;
             for (VdcOperation<?, ?> operation: allActionOperations) {
+                runOnlyIfAllValidationPass = operation.isRunOnlyIfAllValidationPass();
                 parameters.add((VdcActionParametersBase) operation.getParameter());
             }
 
@@ -337,13 +339,13 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 List<VdcOperation<?, ?>> waitForResultList = getWaitForResultList(actionEntry.getValue());
                 if (!waitForResultList.isEmpty()) {
                     runMultipleActions(actionEntry.getKey(), waitForResultList, parameters, allActionOperations,
-                            true);
+                            true, runOnlyIfAllValidationPass);
                 }
                 if (waitForResultList.size() != actionEntry.getValue().size()) {
                     List<VdcOperation<?, ?>> immediateReturnList = actionEntry.getValue();
                     immediateReturnList.removeAll(waitForResultList); //Don't care if it succeeds or not.
                     runMultipleActions(actionEntry.getKey(), immediateReturnList, parameters, allActionOperations,
-                            false);
+                            false, runOnlyIfAllValidationPass);
                 }
             } else if (actionEntry.getValue().size() == 1) {
                 transmitOperation(actionEntry.getValue().get(0));
@@ -363,12 +365,12 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
     private void runMultipleActions(final VdcActionType actionType, final List<VdcOperation<?, ?>> operations,
             final List<VdcActionParametersBase> parameters, final List<VdcOperation<?, ?>> allActionOperations,
-            final boolean waitForResults) {
+            final boolean waitForResults, final boolean runOnlyIfAllValidationPass) {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
-                        false, waitForResults, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
+                        runOnlyIfAllValidationPass, waitForResults, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
 
                     @Override
                     public void onFailure(final Throwable exception) {

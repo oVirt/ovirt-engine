@@ -102,6 +102,8 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
             } else {
                 invokeCommands();
             }
+        } else if (isRunOnlyIfAllValidationPass) {
+            freeLockForValidationPassedCommands();
         }
     }
 
@@ -121,6 +123,10 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
             }
         }
         return true;
+    }
+
+    private void freeLockForValidationPassedCommands() {
+        getCommands().stream().filter(command->command.getReturnValue().isValid()).forEach(command->command.freeLock());
     }
 
     /**
