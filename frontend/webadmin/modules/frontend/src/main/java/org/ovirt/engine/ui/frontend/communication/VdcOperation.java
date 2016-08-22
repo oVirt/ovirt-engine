@@ -47,6 +47,8 @@ public class VdcOperation<T, P> {
      */
     private final boolean isFromList;
 
+    private boolean isRunOnlyIfAllValidationPass;
+
     /**
      * Private constructor that initializes the final members.
      * @param operation The operation.
@@ -57,7 +59,8 @@ public class VdcOperation<T, P> {
      * @param fromList Shows if the operation came from a list of operations, before being split.
      */
     private VdcOperation(final T operation, final P param, final VdcOperationCallback<?, ?> callback,
-            final VdcOperation<T, P> sourceOperation, final boolean isPublicOperation, final boolean fromList) {
+            final VdcOperation<T, P> sourceOperation, final boolean isPublicOperation, final boolean fromList,
+            final boolean isRunOnlyIfAllValidationPass) {
         if (operation instanceof VdcActionType) {
             this.isAction = true;
         } else if (operation instanceof VdcQueryType) {
@@ -73,6 +76,7 @@ public class VdcOperation<T, P> {
         this.source = sourceOperation;
         this.isPublic = isPublicOperation;
         this.isFromList = fromList;
+        this.isRunOnlyIfAllValidationPass = isRunOnlyIfAllValidationPass;
     }
 
     /**
@@ -82,7 +86,7 @@ public class VdcOperation<T, P> {
      */
     public VdcOperation(final VdcOperation<T, P> sourceOperation, final VdcOperationCallback<?, ?> callback) {
         this(sourceOperation.getOperation(), sourceOperation.getParameter(), callback, sourceOperation,
-                sourceOperation.isPublic(), sourceOperation.isFromList);
+                sourceOperation.isPublic(), sourceOperation.isFromList, sourceOperation.isRunOnlyIfAllValidationPass());
     }
 
     /**
@@ -92,7 +96,7 @@ public class VdcOperation<T, P> {
      * @param callback The callback to call when the operation is finished.
      */
     public VdcOperation(final T operation, final P operationParameter, final VdcOperationCallback<?, ?> callback) {
-        this(operation, operationParameter, callback, null, false, false);
+        this(operation, operationParameter, callback, null, false, false, false);
     }
 
     /**
@@ -103,8 +107,8 @@ public class VdcOperation<T, P> {
      * @param callback The callback to call when the operation is finished.
      */
     public VdcOperation(final T operation, final P operationParameter, final boolean fromList,
-            final VdcOperationCallback<?, ?> callback) {
-        this(operation, operationParameter, callback, null, false, fromList);
+            final VdcOperationCallback<?, ?> callback, boolean isRunOnlyIfAllValidationPass) {
+        this(operation, operationParameter, callback, null, false, fromList, isRunOnlyIfAllValidationPass);
     }
 
     /**
@@ -115,8 +119,8 @@ public class VdcOperation<T, P> {
      * @param callback The callback to call when the operation is finished.
      */
     public VdcOperation(final T operation, final P operationParameter, final boolean isPublicOperation,
-            final boolean fromList, final VdcOperationCallback<?, ?> callback) {
-        this(operation, operationParameter, callback, null, isPublicOperation, fromList);
+            final boolean fromList, final VdcOperationCallback<?, ?> callback)  {
+        this(operation, operationParameter, callback, null, isPublicOperation, fromList, false);
     }
 
     /**
@@ -213,6 +217,10 @@ public class VdcOperation<T, P> {
 
     public boolean isFromList() {
         return isFromList;
+    }
+
+    public boolean isRunOnlyIfAllValidationPass() {
+        return isRunOnlyIfAllValidationPass;
     }
 
 }

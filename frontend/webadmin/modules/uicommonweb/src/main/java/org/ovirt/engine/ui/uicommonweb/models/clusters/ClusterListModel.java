@@ -946,10 +946,12 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             parametersList.add(parameters);
         }
 
-
+        // Todo: calling the runMultipleAction() with isRunOnlyIfAllValidationPass=false
+        // becuase this flag is now supported.
+        // should check what is the required behaviour and return to true if required.
         Frontend.getInstance().runMultipleAction(VdcActionType.AddVds,
                 parametersList,
-                true,
+                false,
                 new IFrontendMultipleActionAsyncCallback() {
 
                     @Override
