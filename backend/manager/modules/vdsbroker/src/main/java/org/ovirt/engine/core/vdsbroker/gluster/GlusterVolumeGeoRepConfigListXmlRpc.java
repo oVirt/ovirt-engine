@@ -38,8 +38,4 @@ public class GlusterVolumeGeoRepConfigListXmlRpc extends StatusReturnForXmlRpc {
     public List<GlusterGeoRepSessionConfiguration> getSessionConfig() {
         return geoRepConfigList;
     }
-
-    public void setSessionConfig(List<GlusterGeoRepSessionConfiguration> sessionConfig) {
-        this.geoRepConfigList = sessionConfig;
-    }
 }
