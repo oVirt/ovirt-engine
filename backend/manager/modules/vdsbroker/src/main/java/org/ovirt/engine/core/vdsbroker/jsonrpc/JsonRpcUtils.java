@@ -50,26 +50,6 @@ public class JsonRpcUtils {
         return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, ReactorType.STOMP, protocol, parallelism);
     }
 
-    public static JsonRpcClient createClient(String hostname,
-            int port,
-            int connectionTimeout,
-            int clientTimeout,
-            int connectionRetry,
-            int heartbeat,
-            boolean isSecure,
-            ReactorType type,
-            String protocol,
-            int parallelism) {
-        ClientPolicy connectionPolicy =
-                new ClientPolicy(connectionTimeout, connectionRetry, heartbeat, IOException.class);
-        ClientPolicy clientPolicy = new ClientPolicy(clientTimeout, connectionRetry, heartbeat, IOException.class);
-        if (Config.getValue(ConfigValues.UseHostNameIdentifier)){
-            log.debug(identifierLogMessage, hostname);
-            connectionPolicy.setIdentifier(hostname);
-        }
-        return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, type, protocol, parallelism);
-    }
-
     private static JsonRpcClient createClient(String hostname,
             int port,
             ClientPolicy connectionPolicy,
