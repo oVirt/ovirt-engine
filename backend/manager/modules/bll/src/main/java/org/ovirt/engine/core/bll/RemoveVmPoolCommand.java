@@ -48,7 +48,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
     public RemoveVmPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        // set group id for logging and job
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
         if (getVmPool() != null) {
             setClusterId(getVmPool().getClusterId());
         }
