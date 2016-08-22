@@ -107,7 +107,7 @@ public class ResourceManager implements BackendService {
     Instance<VdsCommandExecutor> commandExecutor;
 
     private ResourceManager() {
-        this.parallelism = Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize);
+        this.parallelism = Config.getValue(ConfigValues.EventProcessingPoolSize);
     }
 
     /**

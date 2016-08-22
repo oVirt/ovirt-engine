@@ -1709,7 +1709,7 @@ public class VdsServerWrapper implements IVdsServer {
                     XmlRpcUtils.getConnectionUrl(httpClient.getHostConfiguration().getHost(),
                             httpClient.getHostConfiguration().getPort(),
                             null,
-                            Config.<Boolean>getValue(ConfigValues.EncryptHostCommunication));
+                            Config.getValue(ConfigValues.EncryptHostCommunication));
             return CertificateChain.getSSLPeerCertificates(connectionUrl.getSecond());
         } catch (GeneralSecurityException | IOException e) {
             logger.error("Failed to get peer certification for host '{}': {}",

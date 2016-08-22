@@ -43,7 +43,7 @@ public class JsonRpcUtils {
         connectionPolicy.setEventQueue(eventQueue);
 
         ClientPolicy clientPolicy = new ClientPolicy(clientTimeout, connectionRetry, heartbeat, IOException.class);
-        if (Config.<Boolean> getValue(ConfigValues.UseHostNameIdentifier)){
+        if (Config.getValue(ConfigValues.UseHostNameIdentifier)){
             log.debug(identifierLogMessage, hostname);
             connectionPolicy.setIdentifier(hostname);
         }

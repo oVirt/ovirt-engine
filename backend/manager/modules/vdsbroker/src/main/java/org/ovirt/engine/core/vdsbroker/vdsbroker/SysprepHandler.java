@@ -44,7 +44,7 @@ public final class SysprepHandler {
         String hostName = (vm.getVmInit() != null && vm.getVmInit().getHostname() != null) ?
                 vm.getVmInit().getHostname() : vm.getName();
 
-        Integer nameLength = Config.<Integer> getValue(ConfigValues.MaxVmNameLengthSysprep);
+        Integer nameLength = Config.getValue(ConfigValues.MaxVmNameLengthSysprep);
         if (hostName != null && hostName.length() > nameLength) {
             hostName  = hostName.substring(0, nameLength);
         }
@@ -56,13 +56,13 @@ public final class SysprepHandler {
             String timeZone = getTimeZone(vm);
             sysPrepContent = replace(sysPrepContent, "$TimeZone$", timeZone);
 
-            String inputLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
-            String uiLanguage = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
-            String systemLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
-            String userLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
+            String inputLocale = Config.getValue(ConfigValues.DefaultSysprepLocale);
+            String uiLanguage = Config.getValue(ConfigValues.DefaultSysprepLocale);
+            String systemLocale = Config.getValue(ConfigValues.DefaultSysprepLocale);
+            String userLocale = Config.getValue(ConfigValues.DefaultSysprepLocale);
             String activeDirectoryOU = "";
             String adminPassword = "";
-            String orgName = Config.<String> getValue(ConfigValues.OrganizationName);
+            String orgName = Config.getValue(ConfigValues.OrganizationName);
 
             if (vm.getVmInit() != null) {
                 if (!StringUtils.isEmpty(vm.getVmInit().getInputLocale())) {
@@ -117,9 +117,9 @@ public final class SysprepHandler {
 
         if (sysPrepParams == null || sysPrepParams.getSysPrepUserName() == null
                 || sysPrepParams.getSysPrepPassword() == null) {
-            adminUserName = Config.<String> getValue(ConfigValues.SysPrepDefaultUser);
+            adminUserName = Config.getValue(ConfigValues.SysPrepDefaultUser);
 
-            adminPassword = Config.<String> getValue(ConfigValues.SysPrepDefaultPassword);
+            adminPassword = Config.getValue(ConfigValues.SysPrepDefaultPassword);
         } else {
             adminUserName = sysPrepParams.getSysPrepUserName();
             adminPassword = sysPrepParams.getSysPrepPassword();
@@ -152,7 +152,7 @@ public final class SysprepHandler {
         if (vm.getVmInit() != null && StringUtils.isNotEmpty(vm.getVmInit().getTimeZone())) {
             timeZone = vm.getVmInit().getTimeZone();
         } else {
-            timeZone = Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone);
+            timeZone = Config.getValue(ConfigValues.DefaultWindowsTimeZone);
         }
 
         if (osRepository.isTimezoneValueInteger(vm.getStaticData(). getOsId(), null)) {
@@ -164,7 +164,7 @@ public final class SysprepHandler {
     }
 
     private static String getSysprepDir() {
-        return Config.<String> getValue(ConfigValues.DataDir) + File.separator + "sysprep";
+        return Config.getValue(ConfigValues.DataDir) + File.separator + "sysprep";
     }
 
     private static String loadFile(String fileName) {

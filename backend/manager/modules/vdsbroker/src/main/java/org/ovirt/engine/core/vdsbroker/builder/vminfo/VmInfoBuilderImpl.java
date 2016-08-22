@@ -729,7 +729,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             createInfo.put(VdsProperties.numOfIoThreads, vm.getNumOfIoThreads());
         }
 
-        if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
+        if (Config.getValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.put(VdsProperties.cores_per_socket, Integer.toString(vm.getCpuPerSocket()));
             createInfo.put(VdsProperties.threads_per_core, Integer.toString(vm.getThreadsPerCpu()));
             if (FeatureSupported.supportedInConfig(
@@ -1132,10 +1132,9 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             params.put(VdsProperties.spiceCopyPasteEnable,
                     Boolean.toString(vm.isSpiceCopyPasteEnabled()));
 
-            if (Config.<Boolean> getValue(ConfigValues.SSLEnabled)) {
-                params.put(VdsProperties.spiceSslCipherSuite,
-                        Config.<String> getValue(ConfigValues.CipherSuite));
-                params.put(VdsProperties.SpiceSecureChannels, Config.<String> getValue(
+            if (Config.getValue(ConfigValues.SSLEnabled)) {
+                params.put(VdsProperties.spiceSslCipherSuite, Config.getValue(ConfigValues.CipherSuite));
+                params.put(VdsProperties.SpiceSecureChannels, Config.getValue(
                         ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString()));
             }
         }

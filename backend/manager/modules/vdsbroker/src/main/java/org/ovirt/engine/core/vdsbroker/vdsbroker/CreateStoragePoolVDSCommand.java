@@ -24,11 +24,11 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
         status = getBroker().createStoragePool(0,
                 getParameters().getStoragePoolId().toString(), getParameters().getStoragePoolName(),
                 getParameters().getMasterDomainId().toString(), ids, getParameters().getMasterVersion(),
-                Config.<String> getValue(ConfigValues.LockPolicy),
-                Config.<Integer> getValue(ConfigValues.LockRenewalIntervalSec),
-                Config.<Integer> getValue(ConfigValues.LeaseTimeSec),
-                Config.<Integer> getValue(ConfigValues.IoOpTimeoutSec),
-                Config.<Integer> getValue(ConfigValues.LeaseRetries));
+                Config.getValue(ConfigValues.LockPolicy),
+                Config.getValue(ConfigValues.LockRenewalIntervalSec),
+                Config.getValue(ConfigValues.LeaseTimeSec),
+                Config.getValue(ConfigValues.IoOpTimeoutSec),
+                Config.getValue(ConfigValues.LeaseRetries));
         proceedProxyReturnValue();
     }
 

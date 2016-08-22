@@ -59,12 +59,12 @@ public class XmlRpcUtils {
     private static final Logger log = LoggerFactory.getLogger(XmlRpcUtils.class);
     private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<>(Arrays.asList("create", "hotplugDisk"));
     static {
-        if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
+        if (Config.getValue(ConfigValues.EncryptHostCommunication)) {
             try {
                 // registering the https protocol with a socket factory that
                 // provides client authentication.
                 ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(EngineEncryptionUtils.getKeyManagers(),
-                    EngineEncryptionUtils.getTrustManagers(), Config.<String> getValue(ConfigValues.VdsmSSLProtocol));
+                    EngineEncryptionUtils.getTrustManagers(), Config.getValue(ConfigValues.VdsmSSLProtocol));
                 Protocol clientAuthHTTPS = new Protocol("https", factory, 54321);
                 Protocol.registerProtocol("https", clientAuthHTTPS);
             } catch (Exception e) {
@@ -163,7 +163,7 @@ public class XmlRpcUtils {
 
         // Configure the HTTP client so it will retry the execution of
         // methods when there are IO errors:
-        int retries = Config.<Integer> getValue(ConfigValues.vdsRetries);
+        int retries = Config.getValue(ConfigValues.vdsRetries);
         HttpMethodRetryHandler handler = new DefaultHttpMethodRetryHandler(retries, false);
         HttpClientParams parameters = client.getParams();
         parameters.setParameter(HttpMethodParams.RETRY_HANDLER, handler);

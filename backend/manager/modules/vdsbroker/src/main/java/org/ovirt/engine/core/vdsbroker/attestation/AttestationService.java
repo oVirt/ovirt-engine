@@ -39,22 +39,18 @@ public class AttestationService {
 
     public static HttpClient getClient() {
         HttpClient httpClient = new HttpClient();
-        if (Config
-                .<Boolean> getValue(ConfigValues.SecureConnectionWithOATServers)) {
+        if (Config.getValue(ConfigValues.SecureConnectionWithOATServers)) {
             URL trustStoreUrl;
             try {
-                int port = Config
-                        .<Integer> getValue(ConfigValues.AttestationPort);
+                int port = Config.getValue(ConfigValues.AttestationPort);
                 trustStoreUrl = new URL("file://"
                         + Config.resolveAttestationTrustStorePath());
-                String truststorePassword = Config
-                        .<String> getValue(ConfigValues.AttestationTruststorePass);
-                String attestationServer = Config
-                        .<String> getValue(ConfigValues.AttestationServer);
+                String truststorePassword = Config.getValue(ConfigValues.AttestationTruststorePass);
+                String attestationServer = Config.getValue(ConfigValues.AttestationServer);
                 // registering the https protocol with a socket factory that
                 // provides client authentication.
                 ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(getTrustStore(trustStoreUrl.getPath(),
-                        truststorePassword), Config.<String> getValue(ConfigValues.ExternalCommunicationProtocol));
+                        truststorePassword), Config.getValue(ConfigValues.ExternalCommunicationProtocol));
                 Protocol clientAuthHTTPS = new Protocol("https", factory, port);
                 httpClient.getHostConfiguration().setHost(attestationServer,
                         port, clientAuthHTTPS);
@@ -85,7 +81,7 @@ public class AttestationService {
     }
 
     public List<AttestationValue> attestHosts(List<String> hosts) {
-        String pollURI = Config.<String> getValue(ConfigValues.PollUri);
+        String pollURI = Config.getValue(ConfigValues.PollUri);
         List<AttestationValue> values = new ArrayList<>();
 
         PostMethod postMethod = new PostMethod("/" + pollURI);

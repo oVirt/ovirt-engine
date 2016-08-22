@@ -52,7 +52,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
     @Override
     public VDSReturnValue get() {
         try {
-            return get(Config.<Integer> getValue(ConfigValues.vdsTimeout), TimeUnit.SECONDS);
+            return get(Config.getValue(ConfigValues.vdsTimeout), TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             return getVDSReturnValue();
         }
