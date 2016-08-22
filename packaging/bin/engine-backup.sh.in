@@ -235,6 +235,7 @@ USAGE:
  MODE is one of the following:
     backup                          back up system into FILE
     restore                         restore system from FILE
+    verify                          verify FILE
  SCOPE is one of the following:
     all                             If MODE=backup: backup everything below.
                                     If MODE=restore: restore everything found in FILE.
@@ -531,7 +532,7 @@ parseArgs() {
 			--mode=*)
 				MODE="${v}"
 				case "${MODE}" in
-					backup|restore);;
+					backup|restore|verify);;
 					*) die "invalid mode" ;;
 				esac
 			;;
@@ -757,7 +758,7 @@ parseArgs() {
 }
 
 verifyArgs() {
-	[ -n "${MODE}" ] || die "--mode=<backup|restore> is missing"
+	[ -n "${MODE}" ] || die "--mode=<backup|restore|verify> is missing"
 	[ -n "${FILE}" ] || die "--file is missing"
 	[ -n "${LOG}" ] || die "--log is missing"
 	if [ "${MODE}" == "restore" ] ; then
@@ -1284,6 +1285,44 @@ __EOF
 	[ ${numerrors} -ne 0 ] && logdie "Errors while restoring database ${database}"
 }
 
+verifyEngineDb() {
+	local backupfile="$1"
+	local compressor="$2"
+	local format="$3"
+
+	log "verifyEngineDb: backupfile ${backupfile} compressor ${compressor} format ${format}"
+	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
+	local vdc_options_dump="${TEMP_FOLDER}/vdc_options_dump"
+
+	# TODO perhaps refactor out the format/compressor logic and reuse in restoreDB
+	if [ "${format}" = "plain" ]; then
+		if [ -z "${compressor}" ]; then
+			cat "${backupfile}"
+		else
+			# Requires the compressor to support '-d'. All our current ones do.
+			"${compressor}" -d < "${backupfile}"
+		fi
+	elif [ "${format}" = "custom" ]; then
+		local no_perms=
+		if [ -z "${compressor}" ]; then
+			pg_restore "${backupfile}" -t vdc_options 2> "${pgrestorelog}"
+		else
+			# Requires the compressor to support '-d'. All our current ones do.
+			"${compressor}" -d < "${backupfile}" | \
+				pg_restore -t vdc_options 2> "${pgrestorelog}"
+		fi
+	else
+		logdie "Unsupported format ${format}"
+	fi | \
+		awk '/^COPY vdc_options/,/^\\./' > "${vdc_options_dump}"
+
+	cat "${pgrestorelog}" >> "${LOG}"  2>&1 \
+		|| logdie "Failed to append pg log to restore log"
+
+	[ -z "$(awk '$2=="DomainName" {print $3}' < ${vdc_options_dump})" ] || \
+		logdie "legacy kerberos/ldap directory integration was in use. Please migrate to ovirt-engine-extension-aaa-ldap and backup/restore again"
+}
+
 cleanDbTempData() {
 	local user="$1"
 	local host="$2"
@@ -1676,6 +1715,35 @@ notify_engine() {
 	[ -n "${SCOPE_REPORTS_DB}" ] && do_notify 'reportsdb'
 
 	unset -f do_notify
+}
+
+doverify() {
+	output "Verifying:"
+
+	output "- Unpacking file '${FILE}'"
+	log "Opening tarball ${FILE} to ${TEMP_FOLDER}"
+	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" || logdie "cannot open ${TEMP_FOLDER}"
+	log "Verifying md5"
+	verifymd5 "${TEMP_FOLDER}" "md5sum"
+	log "Verifying version"
+	verifyVersion
+
+	log "Reading config"
+	. "${TEMP_FOLDER}/config"
+
+	# Refresh scope vars according to what actually found
+	[ -s "${TEMP_FOLDER}/files" ] || SCOPE_FILES=
+	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
+	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
+	[ -s "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" ] || SCOPE_REPORTS_DB=
+
+	if [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
+		output "- Engine database '"${ENGINE_DB_DATABASE}"'"
+		log "Verifying engine database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
+		verifyEngineDb "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${DB_DUMP_COMPRESSOR}" "${DB_DUMP_FORMAT}"
+	fi
+	# TODO verify dwh?
+	source_d doverify
 }
 
 ## Main
