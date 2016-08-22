@@ -2248,7 +2248,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                 new IFrontendMultipleActionAsyncCallback() {
                                     @Override
                                     public void executed(FrontendMultipleActionAsyncResult result) {
-                                        setWindow(null);
+                                        boolean isAllValidatePassed = true;
+                                        for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
+                                            if (!returnValueBase.isValid()) {
+                                                isAllValidatePassed = false;
+                                                break;
+                                            }
+                                        }
+                                        if (isAllValidatePassed) {
+                                            setWindow(null);
+                                        }
                                     }
                                 });
                     }

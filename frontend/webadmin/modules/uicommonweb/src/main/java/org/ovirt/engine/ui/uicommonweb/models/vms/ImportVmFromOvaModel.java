@@ -52,7 +52,9 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
         Frontend.getInstance().runMultipleAction(
                 VdcActionType.ImportVmFromOva,
                 buildImportVmFromOvaParameters(),
-                callback);
+                true,
+                callback,
+                null);
     }
 
     private List<VdcActionParametersBase> buildImportVmFromOvaParameters() {

@@ -59,7 +59,9 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
         Frontend.getInstance().runMultipleAction(
                 VdcActionType.ImportVmFromExternalProvider,
                 buildImportVmFromExternalProviderParameters(),
-                callback);
+                true,
+                callback,
+                null);
     }
 
     private List<VdcActionParametersBase> buildImportVmFromExternalProviderParameters() {
