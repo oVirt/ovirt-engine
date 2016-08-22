@@ -474,9 +474,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     @Override
     public void buildUnmanagedDevices() {
         @SuppressWarnings("unchecked")
-        Map<String, String> customMap = createInfo.containsKey(VdsProperties.Custom)
-                ? (Map<String, String>) createInfo.get(VdsProperties.Custom)
-                : new HashMap<>();
+        Map<String, String> customMap =
+                (Map<String, String>) createInfo.getOrDefault(VdsProperties.Custom, new HashMap<>());
         List<VmDevice> vmDevices = vmDeviceDao.getUnmanagedDevicesByVmId(vm.getId());
         if (!vmDevices.isEmpty()) {
             StringBuilder id = new StringBuilder();
