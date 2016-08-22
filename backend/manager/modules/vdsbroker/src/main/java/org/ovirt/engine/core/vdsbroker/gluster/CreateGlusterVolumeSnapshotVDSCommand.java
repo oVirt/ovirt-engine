@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeSnapshotVDSParameters;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
@@ -19,7 +21,7 @@ public class CreateGlusterVolumeSnapshotVDSCommand<P extends CreateGlusterVolume
     protected void executeVdsBrokerCommand() {
         String volumeName = getParameters().getVolumeName();
         String snapshotName = getParameters().getSnapshotName();
-        String description = getParameters().getDescription() == null ? "" : getParameters().getDescription();
+        String description = Objects.toString(getParameters().getDescription(), "");
         boolean force = getParameters().getForce();
         xmlRpcReturnValue = getBroker().glusterVolumeSnapshotCreate(volumeName, snapshotName, description, force);
         proceedProxyReturnValue();
