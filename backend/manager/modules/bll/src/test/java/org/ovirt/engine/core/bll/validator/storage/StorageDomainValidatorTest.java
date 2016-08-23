@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
@@ -61,6 +63,19 @@ public class StorageDomainValidatorTest {
     public void testDomainWithEnoughSpace() {
         validator = new StorageDomainValidator(mockStorageDomain(6, 756, StorageType.NFS));
         assertTrue("Domain should have more space then threshold", validator.isDomainWithinThresholds().isValid());
+    }
+
+    @Test
+    public void testIsDataDomainValid() {
+        domain.setStorageDomainType(StorageDomainType.Data);
+        assertThat(validator.isDataDomain(), isValid());
+    }
+
+    @Test
+    public void testIsDataDomainFails() {
+        domain.setStorageDomainType(StorageDomainType.ISO);
+        assertThat(validator.isDataDomain(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_DATA_DOMAINS));
     }
 
     private static StorageDomain mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {
