@@ -214,7 +214,8 @@ public class DiskValidator {
         Disk bootDisk = DbFacade.getInstance().getDiskDao().getVmBootActiveDisk(vm.getId());
         if (bootDisk != null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE,
-                    "VmName", vm.getName(), "DiskName", bootDisk.getDiskAlias());
+                    ReplacementUtils.createSetVariableString("VmName", vm.getName()),
+                    ReplacementUtils.createSetVariableString("DiskName", bootDisk.getDiskAlias()));
         }
         return ValidationResult.VALID;
     }
