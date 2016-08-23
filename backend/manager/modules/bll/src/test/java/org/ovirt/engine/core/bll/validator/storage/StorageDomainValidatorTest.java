@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
@@ -48,7 +47,7 @@ public class StorageDomainValidatorTest {
     @Test
     public void testIsDomainExistAndActiveDomainUp() {
         domain.setStatus(StorageDomainStatus.Active);
-        assertTrue("domain should be up", validator.isDomainExistAndActive().isValid());
+        assertThat("domain should be up", validator.isDomainExistAndActive(), isValid());
     }
 
     @Test
@@ -62,7 +61,7 @@ public class StorageDomainValidatorTest {
     @Test
     public void testDomainWithEnoughSpace() {
         validator = new StorageDomainValidator(mockStorageDomain(6, 756, StorageType.NFS));
-        assertTrue("Domain should have more space then threshold", validator.isDomainWithinThresholds().isValid());
+        assertThat("Domain should have more space then threshold", validator.isDomainWithinThresholds(), isValid());
     }
 
     @Test
