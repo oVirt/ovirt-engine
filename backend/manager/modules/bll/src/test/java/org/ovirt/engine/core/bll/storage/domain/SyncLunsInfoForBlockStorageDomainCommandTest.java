@@ -84,11 +84,32 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
 
     @Test
     public void testGetLunsToUpdateInDbDiffDeviceSize() {
-        setLunsSameLunAndPvIds();
         lunFromVg.setDeviceSize(20);
         lunFromDb.setDeviceSize(10);
-        List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb().get(command.updateExistingLuns);
+        assertLunShouldBeUpdatedDueToFieldChange();
+    }
 
+    @Test
+    public void testGetLunsToUpdateInDbDiffDiscardMaxSize() {
+        lunFromVg.setDiscardMaxSize(2048L);
+        lunFromDb.setDiscardMaxSize(1024L);
+        assertLunShouldBeUpdatedDueToFieldChange();
+    }
+
+    @Test
+    public void testGetLunsToUpdateInDbDiffDiscardZeroesData() {
+        lunFromVg.setDiscardZeroesData(true);
+        lunFromDb.setDiscardZeroesData(false);
+        assertLunShouldBeUpdatedDueToFieldChange();
+    }
+
+    /**
+     * Sets lunFromVg and lunFromDb the same Lun Ids and the same PV Ids and asserts the lun will
+     * be updated assuming that another field (which is not its Lun Id or PV Id) has changed.
+     */
+    private void assertLunShouldBeUpdatedDueToFieldChange() {
+        setLunsSameLunAndPvIds();
+        List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb().get(command.updateExistingLuns);
         assertLunIdInList(existingLunsToUpdateInDb, lunFromVg.getLUNId());
     }
 

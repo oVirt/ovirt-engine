@@ -131,7 +131,9 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                     lunFromVgInfo.getPhysicalVolumeId());
             if (lunFromDbHasSamePvId) {
                 // Existing lun, check if it should be updated.
-                if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
+                if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize() ||
+                        !Objects.equals(lunFromDb.getDiscardMaxSize(), lunFromVgInfo.getDiscardMaxSize()) ||
+                        !Objects.equals(lunFromDb.getDiscardZeroesData(), lunFromVgInfo.getDiscardZeroesData())) {
                     return updateExistingLuns;
                 }
                 // Existing lun is up to date.
