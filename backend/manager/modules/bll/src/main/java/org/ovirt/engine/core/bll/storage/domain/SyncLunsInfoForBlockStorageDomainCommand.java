@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,9 +45,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getStorage())).getReturnValue();
         final List<LUNs> lunsFromDb = getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage());
 
-        if (isLunsInfoMismatch(lunsFromVgInfo, lunsFromDb)) {
+        List<LUNs> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
+        if (lunsFromDb.size() != lunsFromVgInfo.size() || !lunsToUpdateInDb.isEmpty()) {
             TransactionSupport.executeInNewTransaction(() -> {
-                refreshLunsInfo(lunsFromVgInfo, lunsFromDb);
+                updateLunsInDb(lunsToUpdateInDb);
+                refreshLunsConnections(lunsFromVgInfo);
+                cleanupLunsFromDb(lunsFromVgInfo, lunsFromDb);
                 return null;
             });
         }
@@ -54,20 +58,8 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         setSucceeded(true);
     }
 
-    protected void refreshLunsInfo(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
+    protected void refreshLunsConnections(List<LUNs> lunsFromVgInfo) {
         for (LUNs lunFromVgInfo : lunsFromVgInfo) {
-            // Update LUN
-            LUNs lunFromDB = getLunDao().get(lunFromVgInfo.getLUNId());
-            if (lunFromDB == null) {
-                getLunDao().save(lunFromVgInfo);
-                log.info("New LUN discovered, ID '{}'", lunFromVgInfo.getLUNId());
-            }
-            else if (lunFromDB.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
-                getLunDao().update(lunFromVgInfo);
-                log.info("Updated LUN device size - ID '{}', previous size {}, new size {}.",
-                        lunFromVgInfo.getLUNId(), lunFromDB.getDeviceSize(), lunFromVgInfo.getDeviceSize());
-            }
-
             // Update lun connections map
             for (StorageServerConnections connection : lunFromVgInfo.getLunConnections()) {
                 StorageServerConnections connectionFromDb =
@@ -84,8 +76,9 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 }
             }
         }
+    }
 
-        // Cleanup LUNs from DB
+    private void cleanupLunsFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
         for (LUNs lunFromDb : lunsFromDb) {
             if (!isDummyLun(lunFromDb) && !containsLun(lunsFromVgInfo, lunFromDb)) {
                 getLunDao().remove(lunFromDb.getLUNId());
@@ -94,11 +87,8 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         }
     }
 
-    protected boolean isLunsInfoMismatch(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
-        if (lunsFromDb.size() != lunsFromVgInfo.size()) {
-            return true;
-        }
-
+    protected List<LUNs> getLunsToUpdateInDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
+        List<LUNs> lunsToUpdateInDb = new LinkedList<>();
         for (LUNs lunFromVgInfo : lunsFromVgInfo) {
             for (LUNs lunFromDb : lunsFromDb) {
                 if (lunFromDb.getPhysicalVolumeId() == null ||
@@ -106,17 +96,35 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                     continue;
                 }
 
-                if (!lunFromDb.getLUNId().equals(lunFromVgInfo.getLUNId())) {
-                    return true;
-                }
-                else if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
-                    // Size mismatch detected - refresh info is needed
-                    return true;
+                if (!lunFromDb.getLUNId().equals(lunFromVgInfo.getLUNId()) ||
+                        lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
+                    lunsToUpdateInDb.add(lunFromVgInfo);
                 }
             }
         }
 
-        return false;
+        return lunsToUpdateInDb;
+    }
+
+    /**
+     * Saves the new or updates the existing luns in the DB.
+     */
+    protected void updateLunsInDb(List<LUNs> lunsToUpdateInDb) {
+        for (LUNs lunToUpdateInDb : lunsToUpdateInDb) {
+            LUNs lunFromDB = getLunDao().get(lunToUpdateInDb.getLUNId());
+            if (lunFromDB == null) {
+                getLunDao().save(lunToUpdateInDb);
+                log.info("New LUN discovered, ID '{}'", lunToUpdateInDb.getLUNId());
+            } else {
+                if (lunFromDB.getDeviceSize() != lunToUpdateInDb.getDeviceSize()) {
+                    log.info("Updated LUN device size - ID '{}', previous size {}, new size {}.",
+                            lunToUpdateInDb.getLUNId(), lunFromDB.getDeviceSize(), lunToUpdateInDb.getDeviceSize());
+                } else {
+                    log.info("Updated LUN information, ID '{}'.", lunToUpdateInDb.getLUNId());
+                }
+                getLunDao().update(lunToUpdateInDb);
+            }
+        }
     }
 
     private boolean isDummyLun(LUNs lun) {
