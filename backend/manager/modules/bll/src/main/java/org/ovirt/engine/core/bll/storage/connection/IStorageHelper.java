@@ -37,6 +37,13 @@ public interface IStorageHelper {
 
     boolean storageDomainRemoved(StorageDomainStatic storageDomain);
 
+    /**
+     * This method is called when a lun is no longer a part of a Storage Domain. If the lun is used by a disk its volume
+     * group id field will be cleared, otherwise the lun will be deleted.
+     * If the lun connection isn't used by other luns, it'll be removed as well.
+     */
+    void removeLunFromStorageDomain(String lunId);
+
     void removeLun(LUNs lun);
 
     boolean isConnectSucceeded(Map<String, String> returnValue,

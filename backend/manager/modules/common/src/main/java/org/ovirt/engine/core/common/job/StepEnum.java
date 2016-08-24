@@ -31,6 +31,7 @@ public enum StepEnum {
     ALLOCATE_VOLUME,
     COPY_VOLUME,
     AMEND_VOLUME,
+    REDUCE_DOMAIN_DEVICE,
 
     /**
      * Maps VDSM tasks type to {@code StepEnum} so it can be resolvable as readable description

@@ -142,15 +142,28 @@ public abstract class StorageHelperBase implements IStorageHelper {
         final List<LUNs> lunsList = getLunDao().getAllForVolumeGroup(storageDomain.getStorage());
         int numOfRemovedLuns = 0;
         for (LUNs lun : lunsList) {
-            if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUNId()) == null) {
-                getLunDao().remove(lun.getLUNId());
+            if (removeLunFromStorageDomain(lun)) {
                 numOfRemovedLuns++;
-            } else {
-                lun.setVolumeGroupId("");
-                getLunDao().update(lun);
             }
         }
         return numOfRemovedLuns;
+    }
+
+    private boolean removeLunFromStorageDomain(LUNs lun) {
+        if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUNId()) == null) {
+            getLunDao().remove(lun.getLUNId());
+            return true;
+        }
+
+        lun.setVolumeGroupId("");
+        getLunDao().update(lun);
+        return false;
+    }
+
+
+    @Override
+    public void removeLunFromStorageDomain(String lunId) {
+        removeLunFromStorageDomain(getLunDao().get(lunId));
     }
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,
