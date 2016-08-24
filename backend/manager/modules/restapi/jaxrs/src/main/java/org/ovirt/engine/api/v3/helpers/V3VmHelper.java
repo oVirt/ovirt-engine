@@ -23,12 +23,15 @@ import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Ips;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDevices;
+import org.ovirt.engine.api.resource.DiskAttachmentResource;
+import org.ovirt.engine.api.resource.DiskAttachmentsResource;
 import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmResource;
@@ -141,6 +144,46 @@ public class V3VmHelper {
                 // If an application exception is generated while retrieving the details of the NICs is safe to ignore
                 // it, as it may be that the user just doesn't have permission to see the NICs, but she may still have
                 // permissions to see the other details of the virtual machine.
+            }
+        }
+    }
+
+    /**
+     * In version 4 of the API the interface, some attributes have been moved from the disk to the disk attachment, as
+     * they are specific of the relationship between a particular VM and the disk. But in version 3 of the API we need
+     * to continue supporting them. To do so we need to find the disk attachment and copy these attributes to the disk.
+     */
+    public static void addDiskAttachmentDetails(String vmId, List<V3Disk> disks) {
+        if (vmId != null) {
+            SystemResource systemResource = BackendApiResource.getInstance();
+            VmsResource vmsResource = systemResource.getVmsResource();
+            VmResource vmResource = vmsResource.getVmResource(vmId);
+            DiskAttachmentsResource attachmentsResource = vmResource.getDiskAttachmentsResource();
+            for (V3Disk disk : disks) {
+                String diskId = disk.getId();
+                if (diskId != null) {
+                    DiskAttachmentResource attachmentResource = attachmentsResource.getAttachmentResource(diskId);
+                    try {
+                        DiskAttachment attachment = attachmentResource.get();
+                        if (attachment.isSetBootable()) {
+                            disk.setBootable(attachment.isBootable());
+                        }
+                        if (attachment.isSetInterface()) {
+                            disk.setInterface(attachment.getInterface().toString().toLowerCase());
+                        }
+                        if (attachment.isSetLogicalName()) {
+                            disk.setLogicalName(attachment.getLogicalName());
+                        }
+                        if (attachment.isSetActive()) {
+                            disk.setActive(attachment.isActive());
+                        }
+                    }
+                    catch (WebApplicationException exception) {
+                        // If an application exception is generated while retrieving the details of the disk attachment
+                        // it is safe to ignore it, as it may be that the user just doesn't have permission to see
+                        // attachment, but she may still have permissions to see the other details of the disk.
+                    }
+                }
             }
         }
     }

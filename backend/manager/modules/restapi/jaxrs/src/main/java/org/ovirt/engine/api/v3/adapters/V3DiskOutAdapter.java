@@ -18,15 +18,7 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
-import javax.ws.rs.WebApplicationException;
-
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.DiskAttachment;
-import org.ovirt.engine.api.resource.DiskAttachmentResource;
-import org.ovirt.engine.api.resource.DiskAttachmentsResource;
-import org.ovirt.engine.api.resource.VmResource;
-import org.ovirt.engine.api.resource.VmsResource;
-import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Statistics;
@@ -144,42 +136,6 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
         }
         if (from.isSetWipeAfterDelete()) {
             to.setWipeAfterDelete(from.isWipeAfterDelete());
-        }
-
-        // In version 4 of the API the interface, bootable and active attributes have been moved from the disk to the
-        // disk attachment, as they are specific of the relationship between a particular VM and the disk. But in
-        // version 3 of the API we need to continue supporting them. To do so we need to find the disk attachment and
-        // copy these attributes to the disk.
-        if (to.isSetId() && to.isSetVm() && to.getVm().isSetId()) {
-            String diskId = to.getId();
-            String vmId = to.getVm().getId();
-            VmsResource vmsResource = BackendApiResource.getInstance().getVmsResource();
-            VmResource vmResource = vmsResource.getVmResource(vmId);
-            DiskAttachmentsResource attachmentsResource = vmResource.getDiskAttachmentsResource();
-            DiskAttachmentResource attachmentResource = attachmentsResource.getAttachmentResource(diskId);
-            DiskAttachment attachment = null;
-            try {
-                attachment = attachmentResource.get();
-            }
-            catch (WebApplicationException exception) {
-                // If an application exception is generated while retrieving the details of the disk attachment it is
-                // safe to ignore it, as it may be that the user just doesn't have permission to see attachment, but
-                // she may still have permissions to see the other details of the disk.
-            }
-            if (attachment != null) {
-                if (attachment.isSetInterface()) {
-                    to.setInterface(attachment.getInterface().value());
-                }
-                if (attachment.isSetBootable()) {
-                    to.setBootable(attachment.isBootable());
-                }
-                if (attachment.isSetLogicalName()) {
-                    to.setLogicalName(attachment.getLogicalName());
-                }
-                if (attachment.isSetActive()) {
-                    to.setActive(attachment.isActive());
-                }
-            }
         }
 
         return to;
