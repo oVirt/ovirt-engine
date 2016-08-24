@@ -18,6 +18,8 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.resource.DiskAttachmentResource;
@@ -155,18 +157,28 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
             VmResource vmResource = vmsResource.getVmResource(vmId);
             DiskAttachmentsResource attachmentsResource = vmResource.getDiskAttachmentsResource();
             DiskAttachmentResource attachmentResource = attachmentsResource.getAttachmentResource(diskId);
-            DiskAttachment attachment = attachmentResource.get();
-            if (attachment.isSetInterface()) {
-                to.setInterface(attachment.getInterface().value());
+            DiskAttachment attachment = null;
+            try {
+                attachment = attachmentResource.get();
             }
-            if (attachment.isSetBootable()) {
-                to.setBootable(attachment.isBootable());
+            catch (WebApplicationException exception) {
+                // If an application exception is generated while retrieving the details of the disk attachment it is
+                // safe to ignore it, as it may be that the user just doesn't have permission to see attachment, but
+                // she may still have permissions to see the other details of the disk.
             }
-            if (attachment.isSetLogicalName()) {
-                to.setLogicalName(attachment.getLogicalName());
-            }
-            if (attachment.isSetActive()) {
-                to.setActive(attachment.isActive());
+            if (attachment != null) {
+                if (attachment.isSetInterface()) {
+                    to.setInterface(attachment.getInterface().value());
+                }
+                if (attachment.isSetBootable()) {
+                    to.setBootable(attachment.isBootable());
+                }
+                if (attachment.isSetLogicalName()) {
+                    to.setLogicalName(attachment.getLogicalName());
+                }
+                if (attachment.isSetActive()) {
+                    to.setActive(attachment.isActive());
+                }
             }
         }
 

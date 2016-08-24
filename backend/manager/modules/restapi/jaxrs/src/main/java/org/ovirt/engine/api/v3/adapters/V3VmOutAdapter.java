@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.ws.rs.WebApplicationException;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
@@ -367,7 +368,16 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
             VmsResource vmsResource = systemResource.getVmsResource();
             VmResource vmResource = vmsResource.getVmResource(from.getId());
             VmNicsResource nicsResource = vmResource.getNicsResource();
-            Nics fromNics = nicsResource.list();
+            Nics fromNics;
+            try {
+                fromNics = nicsResource.list();
+            }
+            catch (WebApplicationException exception) {
+                // If an application exception is generated while retrieving the details of the NICs is safe to ignore
+                // it, as it may be that the user just doesn't have permission to see the NICs, but she may still have
+                // permissions to see the other details of the virtual machine.
+                fromNics = new Nics();
+            }
             List<Ip> fromIps = new ArrayList<>();
             for (Nic fromNic : fromNics.getNics()) {
                 ReportedDevices fromDevices = fromNic.getReportedDevices();
