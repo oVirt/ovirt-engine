@@ -73,8 +73,12 @@ public class ReplaceBrickModel extends Model {
                     List<StorageDevice> bricks = (List<StorageDevice>) returnValue;
                     List<String> lvNames = new ArrayList<>();
                     for (StorageDevice brick : bricks) {
-                        if (brick.getMountPoint() != null && !brick.getMountPoint().isEmpty()) {
-                            lvNames.add(brick.getMountPoint());
+                        String mountPoint = brick.getMountPoint();
+                        if (mountPoint != null && !mountPoint.isEmpty()) {
+                            // Gluster requires a directory under the mount point, not the mount point itself as
+                            // a brick directory. So adding a directory with name of the brick under the mount
+                            // point.
+                            lvNames.add(mountPoint + mountPoint.substring(mountPoint.lastIndexOf("/"))); //$NON-NLS-1$
                         }
                     }
                     getBricksFromServer().setItems(lvNames);
