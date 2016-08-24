@@ -15,13 +15,30 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.helpers;
 
+import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.Ips;
+import org.ovirt.engine.api.model.Nic;
+import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.ReportedDevice;
+import org.ovirt.engine.api.model.ReportedDevices;
+import org.ovirt.engine.api.resource.SystemResource;
+import org.ovirt.engine.api.resource.VmNicsResource;
+import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.servers.V3VmServer;
 import org.ovirt.engine.api.v3.types.V3Actions;
 import org.ovirt.engine.api.v3.types.V3Disk;
+import org.ovirt.engine.api.v3.types.V3GuestInfo;
+import org.ovirt.engine.api.v3.types.V3IPs;
 import org.ovirt.engine.api.v3.types.V3Link;
 import org.ovirt.engine.api.v3.types.V3VM;
 
@@ -79,6 +96,52 @@ public class V3VmHelper {
         }
         if (details.contains("tags")) {
             vm.setTags(server.getTagsResource().list());
+        }
+    }
+
+    /**
+     * If the V4 virtual machine has IP addresses reported, then add them to the V3 {@code guest_info} element.
+     */
+    public static void addGuestIp(V3VM vm) {
+        String vmId = vm.getId();
+        if (vmId != null) {
+            SystemResource systemResource = BackendApiResource.getInstance();
+            VmsResource vmsResource = systemResource.getVmsResource();
+            VmResource vmResource = vmsResource.getVmResource(vmId);
+            VmNicsResource nicsResource = vmResource.getNicsResource();
+            try {
+                Nics fromNics = nicsResource.list();
+                List<Ip> fromIps = new ArrayList<>();
+                for (Nic fromNic : fromNics.getNics()) {
+                    ReportedDevices fromDevices = fromNic.getReportedDevices();
+                    if (fromDevices != null) {
+                        for (ReportedDevice fromDevice : fromDevices.getReportedDevices()) {
+                            Ips deviceIps = fromDevice.getIps();
+                            if (deviceIps != null) {
+                                fromIps.addAll(deviceIps.getIps());
+                            }
+                        }
+                    }
+                }
+                if (!fromIps.isEmpty()) {
+                    V3GuestInfo guestInfo = vm.getGuestInfo();
+                    if (guestInfo == null) {
+                        guestInfo = new V3GuestInfo();
+                        vm.setGuestInfo(guestInfo);
+                    }
+                    V3IPs ips = guestInfo.getIps();
+                    if (ips == null) {
+                        ips = new V3IPs();
+                        guestInfo.setIps(ips);
+                    }
+                    ips.getIPs().addAll(adaptOut(fromIps));
+                }
+            }
+            catch (WebApplicationException exception) {
+                // If an application exception is generated while retrieving the details of the NICs is safe to ignore
+                // it, as it may be that the user just doesn't have permission to see the NICs, but she may still have
+                // permissions to see the other details of the virtual machine.
+            }
         }
     }
 }
