@@ -112,6 +112,10 @@ public class V3VmServer extends V3Server<VmResource> {
         if (details != null && !details.isEmpty()) {
             V3VmHelper.addInlineDetails(vm, this, details);
         }
+
+        // Add the guest IP:
+        V3VmHelper.addGuestIp(vm);
+
         return vm;
     }
 
@@ -152,6 +156,7 @@ public class V3VmServer extends V3Server<VmResource> {
     public V3VM update(V3VM vm) {
         vm = adaptUpdate(getDelegate()::update, vm);
         V3VmHelper.addDisksLink(vm);
+        V3VmHelper.addGuestIp(vm);
         return vm;
     }
 

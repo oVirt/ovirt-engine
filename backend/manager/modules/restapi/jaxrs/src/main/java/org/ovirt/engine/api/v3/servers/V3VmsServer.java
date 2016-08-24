@@ -90,6 +90,9 @@ public class V3VmsServer extends V3Server<VmsResource> {
             });
         }
 
+        // Add the guest IP address:
+        vms.getVMs().forEach(V3VmHelper::addGuestIp);
+
         return vms;
     }
 

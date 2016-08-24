@@ -19,28 +19,15 @@ package org.ovirt.engine.api.v3.adapters;
 import static java.util.stream.Collectors.toList;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.WebApplicationException;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
-import org.ovirt.engine.api.model.Ip;
-import org.ovirt.engine.api.model.Ips;
 import org.ovirt.engine.api.model.Link;
-import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.Nics;
-import org.ovirt.engine.api.model.ReportedDevice;
-import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.api.resource.SystemResource;
-import org.ovirt.engine.api.resource.VmNicsResource;
-import org.ovirt.engine.api.resource.VmResource;
-import org.ovirt.engine.api.resource.VmsResource;
-import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3CdRoms;
 import org.ovirt.engine.api.v3.types.V3CustomProperties;
@@ -48,7 +35,6 @@ import org.ovirt.engine.api.v3.types.V3Disk;
 import org.ovirt.engine.api.v3.types.V3Disks;
 import org.ovirt.engine.api.v3.types.V3Floppies;
 import org.ovirt.engine.api.v3.types.V3GuestInfo;
-import org.ovirt.engine.api.v3.types.V3IPs;
 import org.ovirt.engine.api.v3.types.V3KatelloErrata;
 import org.ovirt.engine.api.v3.types.V3Link;
 import org.ovirt.engine.api.v3.types.V3Nics;
@@ -360,49 +346,6 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
                 to.setGuestInfo(guestInfo);
             }
             guestInfo.setFqdn(from.getFqdn());
-        }
-
-        // If the V4 virtual machine has IP addresses reported, then add them to the V3 "guest_info" element:
-        if (from.isSetId()) {
-            SystemResource systemResource = BackendApiResource.getInstance();
-            VmsResource vmsResource = systemResource.getVmsResource();
-            VmResource vmResource = vmsResource.getVmResource(from.getId());
-            VmNicsResource nicsResource = vmResource.getNicsResource();
-            Nics fromNics;
-            try {
-                fromNics = nicsResource.list();
-            }
-            catch (WebApplicationException exception) {
-                // If an application exception is generated while retrieving the details of the NICs is safe to ignore
-                // it, as it may be that the user just doesn't have permission to see the NICs, but she may still have
-                // permissions to see the other details of the virtual machine.
-                fromNics = new Nics();
-            }
-            List<Ip> fromIps = new ArrayList<>();
-            for (Nic fromNic : fromNics.getNics()) {
-                ReportedDevices fromDevices = fromNic.getReportedDevices();
-                if (fromDevices != null) {
-                    for (ReportedDevice fromDevice : fromDevices.getReportedDevices()) {
-                        Ips deviceIps = fromDevice.getIps();
-                        if (deviceIps != null) {
-                            fromIps.addAll(deviceIps.getIps());
-                        }
-                    }
-                }
-            }
-            if (!fromIps.isEmpty()) {
-                V3GuestInfo guestInfo = to.getGuestInfo();
-                if (guestInfo == null) {
-                    guestInfo = new V3GuestInfo();
-                    to.setGuestInfo(guestInfo);
-                }
-                V3IPs toIps = guestInfo.getIps();
-                if (toIps == null) {
-                    toIps = new V3IPs();
-                    guestInfo.setIps(toIps);
-                }
-                toIps.getIPs().addAll(adaptOut(fromIps));
-            }
         }
 
         return to;
