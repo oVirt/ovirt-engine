@@ -313,6 +313,8 @@ public enum EngineError {
     VG_METADATA_CRITICALLY_FULL(613),
     SMALL_VG_METADATA(614),
     CouldNotResizePhysicalVolume(615),
+    ForbiddenPhysicalVolumeOperation(617),
+    NoSuchPhysicalVolume(619),
     SpmStartError(650),
     AcquireLockFailure(651),
     SpmParamsMismatch(652),
