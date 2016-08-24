@@ -22,10 +22,16 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.resource.DiskAttachmentResource;
+import org.ovirt.engine.api.resource.DiskAttachmentsResource;
+import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
+import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.helpers.V3VmHelper;
@@ -67,11 +73,28 @@ public class V3VmDisksServer extends V3Server<VmDisksResource> {
     }
 
     private void loadAttachmentDataToDisks(V3Disks disks) {
+        SystemResource systemResource = BackendApiResource.getInstance();
+        VmsResource vmsResource = systemResource.getVmsResource();
+        VmResource vmResource = vmsResource.getVmResource(vmId);
+        DiskAttachmentsResource attachmentsResource = vmResource.getDiskAttachmentsResource();
         for (V3Disk disk : disks.getDisks()) {
-            DiskAttachment diskAttachment = BackendApiResource.getInstance().getVmsResource().getVmResource(vmId).
-                    getDiskAttachmentsResource().getAttachmentResource(disk.getId()).get();
-            disk.setBootable(diskAttachment.isBootable());
-            disk.setInterface(diskAttachment.getInterface().toString().toLowerCase());
+            String diskId = disk.getId();
+            if (diskId != null) {
+                DiskAttachmentResource attachmentResource = attachmentsResource.getAttachmentResource(diskId);
+                DiskAttachment attachment = null;
+                try {
+                    attachment = attachmentResource.get();
+                }
+                catch (WebApplicationException exception) {
+                    // If an application exception is generated while retrieving the details of the disk attachment it
+                    // is safe to ignore it, as it may be that the user just doesn't have permission to see attachment,
+                    // but she may still have permissions to see the other details of the disk.
+                }
+                if (attachment != null) {
+                    disk.setBootable(attachment.isBootable());
+                    disk.setInterface(attachment.getInterface().toString().toLowerCase());
+                }
+            }
         }
     }
 }
