@@ -195,6 +195,22 @@ ENGINE_DB_DRIVER=org.postgresql.Driver
 ENGINE_DB_URL="jdbc:postgresql://${ENGINE_DB_HOST}:${ENGINE_DB_PORT}/${ENGINE_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
 
 #
+# DWH Database connection details
+#
+# Copied from ovirt-dwh:packaging/services/ovirt-engine-dwhd/ovirt-engine-dwhd.conf.in
+# Configured by dwh engine-setup plugin. Added here mainly to filter the password.
+SENSITIVE_KEYS="${SENSITIVE_KEYS},DWH_DB_PASSWORD"
+DWH_DB_HOST="localhost"
+DWH_DB_PORT="5432"
+DWH_DB_USER=engine_history
+DWH_DB_PASSWORD=
+DWH_DB_DATABASE=ovirt_engine_history
+DWH_DB_SECURED="False"
+DWH_DB_SECURED_VALIDATION="False"
+DWH_DB_DRIVER="org.postgresql.Driver"
+DWH_DB_URL="jdbc:postgresql://${DWH_DB_HOST}:${DWH_DB_PORT}/${DWH_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
+
+#
 # Size of the database connection pool:
 #
 ENGINE_DB_MIN_CONNECTIONS=1
