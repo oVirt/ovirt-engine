@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
+import java.util.Collections;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -75,6 +76,7 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
     public V3Disk get() {
         V3Disk disk = adaptGet(getDelegate()::get);
         V3VmHelper.fixDiskLinks(vmId, disk);
+        V3VmHelper.addDiskAttachmentDetails(vmId, Collections.singletonList(disk));
         return disk;
     }
 
@@ -91,6 +93,7 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
     public V3Disk update(V3Disk disk) {
         disk = adaptUpdate(getDelegate()::update, disk);
         V3VmHelper.fixDiskLinks(vmId, disk);
+        V3VmHelper.addDiskAttachmentDetails(vmId, Collections.singletonList(disk));
         return disk;
     }
 
