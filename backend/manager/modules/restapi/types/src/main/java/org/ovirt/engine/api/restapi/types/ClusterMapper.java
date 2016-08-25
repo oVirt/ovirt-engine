@@ -2,6 +2,9 @@ package org.ovirt.engine.api.restapi.types;
 
 import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Cluster.RequiredRngSourcesList;
 import org.ovirt.engine.api.model.Cpu;
@@ -15,6 +18,7 @@ import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.TransparentHugePages;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -130,6 +134,18 @@ public class ClusterMapper {
             entity.setMacPoolId(GuidUtils.asGuid(model.getMacPool().getId()));
         }
 
+        // properties will override thresholds
+        if (model.isSetCustomSchedulingPolicyProperties()) {
+            Map<String, String> properties = entity.getClusterPolicyProperties();
+            if (properties == null) {
+                properties = new HashMap<>();
+                entity.setClusterPolicyProperties(properties);
+            }
+            Map<String, String> customProperties =
+                    CustomPropertiesParser.toMap(model.getCustomSchedulingPolicyProperties());
+            properties.putAll(customProperties);
+        }
+
         return entity;
     }
 
@@ -212,6 +228,11 @@ public class ClusterMapper {
             }
 
             macPool.setId(entity.getMacPoolId().toString());
+        }
+
+        if (entity.getClusterPolicyProperties() != null && !entity.getClusterPolicyProperties().isEmpty()) {
+            model.setCustomSchedulingPolicyProperties(CustomPropertiesParser.fromMap(entity
+                    .getClusterPolicyProperties()));
         }
 
         return model;
