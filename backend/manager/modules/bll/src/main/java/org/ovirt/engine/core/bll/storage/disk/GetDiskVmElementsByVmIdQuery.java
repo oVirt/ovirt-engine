@@ -17,6 +17,8 @@ public class GetDiskVmElementsByVmIdQuery<P extends IdQueryParameters> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(diskVmElementDao.getAllForVm(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(diskVmElementDao.getAllForVm(getParameters().getId(),
+                getUserID(),
+                getParameters().isFiltered()));
     }
 }
