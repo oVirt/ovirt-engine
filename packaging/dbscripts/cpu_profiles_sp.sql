@@ -87,26 +87,25 @@ RETURNS SETOF cpu_profiles STABLE AS $PROCEDURE$
 DECLARE
     v_everyone_object_id  UUID;
 BEGIN
-    v_everyone_object_id := getGlobalIds('everyone');
-    RETURN QUERY
-
-    SELECT *
-    FROM cpu_profiles
-    WHERE cluster_id = v_cluster_id
-        AND (
-            NOT v_is_filtered
-            OR (
-                EXISTS (
+    IF v_is_filtered
+    THEN
+        RETURN QUERY
+        SELECT *
+        FROM cpu_profiles
+        WHERE cluster_id = v_cluster_id
+            AND EXISTS (
                 SELECT 1
-                FROM user_cpu_profile_permissions_view
-                NATURAL JOIN roles_groups
-                WHERE user_id IN (v_user_id, v_everyone_object_id)
-                    AND entity_id = cpu_profiles.id
-                    AND action_group_id = v_action_group_id
-                )
+                FROM get_entity_permissions(v_user_id, v_action_group_id, cpu_profiles.id, 30)
             )
-        )
-    ORDER BY _create_date;
+        ORDER BY _create_date;
+
+    ELSE
+        RETURN QUERY
+        SELECT *
+        FROM cpu_profiles
+        WHERE cluster_id = v_cluster_id
+        ORDER BY _create_date;
+    END IF;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

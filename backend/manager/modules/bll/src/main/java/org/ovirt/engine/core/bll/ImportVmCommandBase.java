@@ -198,7 +198,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         getVm().getStaticData().setVdsGroupId(getVdsGroupId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
-                getVdsGroup().getCompatibilityVersion()));
+                getVdsGroup().getCompatibilityVersion(), getUserId()));
     }
 
     protected boolean validateBallonDevice() {

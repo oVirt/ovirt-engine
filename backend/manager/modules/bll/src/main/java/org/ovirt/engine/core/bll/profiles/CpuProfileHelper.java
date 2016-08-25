@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 public class CpuProfileHelper {
@@ -22,38 +24,6 @@ public class CpuProfileHelper {
         cpuProfile.setClusterId(vdsGroupId);
 
         return cpuProfile;
-    }
-
-    public static ValidationResult setAndValidateCpuProfileForUser(VmBase vmBase, Version version, Guid userId) {
-        if (!FeatureSupported.cpuQoS(version)) {
-            return ValidationResult.VALID;
-        }
-
-        if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase, userId);
-        }
-
-        /* Getting the entire list inorder to get all the cpu profiles that the user has permissions for. */
-        List<CpuProfile> authorizedCpuProfiles = getCpuProfileDao().getAllForCluster(vmBase.getVdsGroupId(), userId, true, ActionGroup.ASSIGN_CPU_PROFILE);
-
-        for(CpuProfile cp : authorizedCpuProfiles) {
-            if(cp.getId().equals(vmBase.getCpuProfileId())) {
-                return ValidationResult.VALID;
-            }
-        }
-
-        CpuProfile chosenCpuProfile = getCpuProfileDao().get(vmBase.getCpuProfileId());
-
-        if(chosenCpuProfile == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_NO_CPU_PROFILE_WITH_THAT_ID,
-                    String.format("$cpuProfileId %s", vmBase.getCpuProfileId()));
-        }
-
-        return new ValidationResult(EngineMessage.ACTION_TYPE_NO_PERMISSION_TO_ASSIGN_CPU_PROFILE,
-                String.format("$cpuProfileId %s",
-                        vmBase.getCpuProfileId()),
-                String.format("$cpuProfileName %s",
-                        chosenCpuProfile.getName()));
     }
 
     public static ValidationResult assignFirstCpuProfile(VmBase vmBase, Guid userId) {
@@ -71,17 +41,46 @@ public class CpuProfileHelper {
         }
     }
 
-    public static ValidationResult setAndValidateCpuProfile(VmBase vmBase, Version version) {
-        if (!FeatureSupported.cpuQoS(version))
+    private static boolean checkPermissions(Guid cpuProfileId, Guid userId) {
+        return userId == null ||
+                getPermissionDao().getEntityPermissions(userId,
+                        ActionGroup.ASSIGN_CPU_PROFILE,
+                        cpuProfileId,
+                        VdcObjectType.CpuProfile) != null;
+    }
+
+    public static ValidationResult setAndValidateCpuProfile(VmBase vmBase, Version version,  Guid userId) {
+        if (!FeatureSupported.cpuQoS(version)) {
             return ValidationResult.VALID;
-        if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase, null);
-        } else {
-            return new CpuProfileValidator(vmBase.getCpuProfileId()).isParentEntityValid(vmBase.getVdsGroupId());
         }
+
+        if (vmBase.getCpuProfileId() == null) {
+            return assignFirstCpuProfile(vmBase, userId);
+        }
+
+        CpuProfileValidator validator = new CpuProfileValidator(vmBase.getCpuProfileId());
+        ValidationResult result = validator.isParentEntityValid(vmBase.getVdsGroupId());
+
+        if (!result.isValid()) {
+            return result;
+        }
+
+        if (!checkPermissions(vmBase.getCpuProfileId(), userId)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_NO_PERMISSION_TO_ASSIGN_CPU_PROFILE,
+                    String.format("$cpuProfileId %s",
+                            vmBase.getCpuProfileId()),
+                    String.format("$cpuProfileName %s",
+                            validator.getProfile().getName()));
+        }
+
+        return ValidationResult.VALID;
     }
 
     private static CpuProfileDao getCpuProfileDao() {
         return DbFacade.getInstance().getCpuProfileDao();
+    }
+
+    private static PermissionDao getPermissionDao() {
+        return DbFacade.getInstance().getPermissionDao();
     }
 }

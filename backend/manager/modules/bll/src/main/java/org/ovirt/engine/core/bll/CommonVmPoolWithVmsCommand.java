@@ -472,7 +472,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVmStaticData(),
-                getVdsGroup().getCompatibilityVersion()));
+                getVdsGroup().getCompatibilityVersion(), getUserId()));
     }
 
     @Override

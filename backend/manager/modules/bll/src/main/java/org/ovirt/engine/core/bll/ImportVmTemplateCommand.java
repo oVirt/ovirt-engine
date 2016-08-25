@@ -580,7 +580,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setVdsGroupId(getVdsGroupId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
-                getVdsGroup().getCompatibilityVersion()));
+                getVdsGroup().getCompatibilityVersion(), getUserId()));
     }
 
     @Override
