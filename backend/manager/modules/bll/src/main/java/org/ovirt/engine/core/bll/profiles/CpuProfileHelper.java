@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.bll.profiles;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 public class CpuProfileHelper {
@@ -21,35 +22,6 @@ public class CpuProfileHelper {
         cpuProfile.setClusterId(clusterId);
 
         return cpuProfile;
-    }
-
-    public static ValidationResult setAndValidateCpuProfileForUser(VmBase vmBase, Guid userId) {
-        if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase, userId);
-        }
-
-        Optional<CpuProfile> authorizedCpuProfile = getCpuProfileDao().getAllForCluster(
-                vmBase.getClusterId(), userId, true, ActionGroup.ASSIGN_CPU_PROFILE).stream()
-                    .filter(cp -> cp.getId().equals(vmBase.getCpuProfileId()))
-                    .findFirst();
-
-        if (authorizedCpuProfile.isPresent()) {
-            vmBase.setCpuProfileId(authorizedCpuProfile.get().getId());
-            return ValidationResult.VALID;
-        }
-
-        CpuProfile chosenCpuProfile = getCpuProfileDao().get(vmBase.getCpuProfileId());
-
-        if(chosenCpuProfile == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_NO_CPU_PROFILE_WITH_THAT_ID,
-                    String.format("$cpuProfileId %s", vmBase.getCpuProfileId()));
-        }
-
-        return new ValidationResult(EngineMessage.ACTION_TYPE_NO_PERMISSION_TO_ASSIGN_CPU_PROFILE,
-                String.format("$cpuProfileId %s",
-                        vmBase.getCpuProfileId()),
-                String.format("$cpuProfileName %s",
-                        chosenCpuProfile.getName()));
     }
 
     public static ValidationResult assignFirstCpuProfile(VmBase vmBase, Guid userId) {
@@ -67,15 +39,42 @@ public class CpuProfileHelper {
         return ValidationResult.VALID;
     }
 
-    public static ValidationResult setAndValidateCpuProfile(VmBase vmBase) {
+    public static ValidationResult setAndValidateCpuProfile(VmBase vmBase, Guid userId) {
         if (vmBase.getCpuProfileId() == null) {
-            return assignFirstCpuProfile(vmBase, null);
-        } else {
-            return new CpuProfileValidator(vmBase.getCpuProfileId()).isParentEntityValid(vmBase.getClusterId());
+            return assignFirstCpuProfile(vmBase, userId);
         }
+
+        CpuProfileValidator validator = new CpuProfileValidator(vmBase.getCpuProfileId());
+        ValidationResult result = validator.isParentEntityValid(vmBase.getClusterId());
+
+        if (!result.isValid()) {
+            return result;
+        }
+
+        if (!isProfilePermitted(vmBase.getCpuProfileId(), userId)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_NO_PERMISSION_TO_ASSIGN_CPU_PROFILE,
+                    String.format("$cpuProfileId %s",
+                            vmBase.getCpuProfileId()),
+                    String.format("$cpuProfileName %s",
+                            validator.getProfile().getName()));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private static boolean isProfilePermitted(Guid cpuProfileId, Guid userId) {
+        return userId == null ||
+                getPermissionDao().getEntityPermissions(userId,
+                        ActionGroup.ASSIGN_CPU_PROFILE,
+                        cpuProfileId,
+                        VdcObjectType.CpuProfile) != null;
     }
 
     private static CpuProfileDao getCpuProfileDao() {
         return DbFacade.getInstance().getCpuProfileDao();
+    }
+
+    private static PermissionDao getPermissionDao() {
+        return DbFacade.getInstance().getPermissionDao();
     }
 }
