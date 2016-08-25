@@ -3,6 +3,8 @@ package org.ovirt.engine.core.dao;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -22,9 +24,34 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
     private static final Guid UNPLUGGED_DISK_ID = FixturesTool.IMAGE_GROUP_ID_2;
 
     @Test
+    public void testGetFilteredWithPermissions() {
+        DiskVmElement result = dao.get(getExistingEntityId(), PRIVILEGED_USER_ID, true);
+        assertNotNull(result);
+        assertEquals(getExistingEntityId().toString(), result.getId().toString());
+    }
+
+    @Test
+    public void testGetFilteredWithoutPermissions() {
+        DiskVmElement result = dao.get(getExistingEntityId(), UNPRIVILEGED_USER_ID, true);
+        assertNull(result);
+    }
+
+    @Test
     public void testGetAllForVm() {
         List<DiskVmElement> dves = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57);
         assertThat(dves.size(), is(NUM_OF_DISKS_ATTACHED_TO_VM));
+    }
+
+    @Test
+    public void testGetAllForVmWithPermissions() {
+        List<DiskVmElement> dves = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
+        assertThat(dves.size(), is(NUM_OF_DISKS_ATTACHED_TO_VM));
+    }
+
+    @Test
+    public void testGetAllForVmWithoutPermissions() {
+        List<DiskVmElement> dves = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
+        assertThat(dves.size(), is(0));
     }
 
     @Test

@@ -67,27 +67,49 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskVmElementByDiskVmElementId(
     v_disk_id UUID,
-    v_vm_id UUID)
+    v_vm_id UUID,
+    v_user_id UUID,
+    v_is_filtered boolean)
 RETURNS SETOF disk_vm_element_extended STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM disk_vm_element_extended
     WHERE disk_id = v_disk_id
-        AND vm_id = v_vm_id;
+        AND vm_id = v_vm_id
+        AND (
+            NOT v_is_filtered
+            OR EXISTS (
+                SELECT 1
+                FROM user_vm_permissions_view
+                WHERE user_id = v_user_id
+                    AND entity_id = v_vm_id
+                )
+            );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
 
 CREATE OR REPLACE FUNCTION GetDiskVmElementsForVm(
-    v_vm_id UUID)
+    v_vm_id UUID,
+    v_user_id UUID,
+    v_is_filtered boolean)
 RETURNS SETOF disk_vm_element_extended STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM disk_vm_element_extended
-    WHERE vm_id = v_vm_id;
+    WHERE vm_id = v_vm_id
+        AND (
+            NOT v_is_filtered
+            OR EXISTS (
+                SELECT 1
+                FROM user_vm_permissions_view
+                WHERE user_id = v_user_id
+                    AND entity_id = v_vm_id
+                )
+            );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

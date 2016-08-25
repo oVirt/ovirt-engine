@@ -65,8 +65,29 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
         }
     }
 
+    @Override
+    public DiskVmElement get(VmDeviceId id) {
+        return get(id, null, false);
+    }
+
+    @Override
+    public DiskVmElement get(VmDeviceId id, Guid userID, boolean isFiltered) {
+        return getCallsHandler().executeRead("GetDiskVmElementByDiskVmElementId",
+                DiskVmElementRowMapper.INSTANCE,
+                createIdParameterMapper(id)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
+    }
+
     public List<DiskVmElement> getAllForVm(Guid vmId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmId);
+        return getAllForVm(vmId, null, false);
+    }
+
+    public List<DiskVmElement> getAllForVm(Guid vmId, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId)
+                .addValue("user_id", userID)
+                .addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetDiskVmElementsForVm",
                 DiskVmElementRowMapper.INSTANCE,
                 parameterSource);
