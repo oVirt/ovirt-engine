@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class StopVmParametersBase extends VmOperationParameterBase implements Serializable {
+    private String stopReason;
 
     public StopVmParametersBase() {
     }
@@ -13,13 +14,11 @@ public abstract class StopVmParametersBase extends VmOperationParameterBase impl
         super(vmId);
     }
 
-    private String stopReason;
-
     public String getStopReason() {
         return stopReason;
     }
 
-    public void setStopReason(String value) {
-        stopReason = value;
+    public void setStopReason(String stopReason) {
+        this.stopReason = stopReason;
     }
 }

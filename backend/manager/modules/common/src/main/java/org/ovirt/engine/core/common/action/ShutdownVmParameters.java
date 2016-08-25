@@ -12,13 +12,13 @@ public class ShutdownVmParameters extends StopVmParametersBase implements Serial
         waitBeforeShutdown = true;
     }
 
-    public ShutdownVmParameters(Guid vmID, boolean waitBeforeShutdown) {
-        this(vmID, waitBeforeShutdown, null);
+    public ShutdownVmParameters(Guid vmId, boolean waitBeforeShutdown) {
+        super(vmId);
+        this.waitBeforeShutdown = waitBeforeShutdown;
     }
 
-    public ShutdownVmParameters(Guid vmID, boolean waitBeforeShutdown, String reason) {
-        super(vmID);
-        this.waitBeforeShutdown = waitBeforeShutdown;
+    public ShutdownVmParameters(Guid vmId, boolean waitBeforeShutdown, String reason) {
+        this(vmId, waitBeforeShutdown);
         setStopReason(reason);
     }
 

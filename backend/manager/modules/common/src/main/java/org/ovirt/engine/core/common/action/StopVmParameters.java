@@ -12,13 +12,13 @@ public class StopVmParameters extends StopVmParametersBase implements Serializab
         stopVmType = StopVmTypeEnum.NORMAL;
     }
 
-    public StopVmParameters(Guid vmID, StopVmTypeEnum stopVmType) {
-        this(vmID, stopVmType, "");
+    public StopVmParameters(Guid vmId, StopVmTypeEnum stopVmType) {
+        super(vmId);
+        this.stopVmType = stopVmType;
     }
 
-    public StopVmParameters(Guid vmID, StopVmTypeEnum stopVmType, String reason) {
-        super(vmID);
-        this.stopVmType = stopVmType;
+    public StopVmParameters(Guid vmId, StopVmTypeEnum stopVmType, String reason) {
+        this(vmId, stopVmType);
         setStopReason(reason);
     }
 
