@@ -36,7 +36,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     protected StopVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        setReason(parameters.getStopReason());
     }
 
     protected boolean getSuspendedVm() {
@@ -164,5 +163,10 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         addCustomValue("Action", actionName);
         addCustomValue("VmStatus", getVm().getStatus().name());
         return AuditLogType.VM_ALREADY_IN_REQUESTED_STATUS;
+    }
+
+    public String getOptionalReason() {
+        String reason = getParameters().getStopReason();
+        return reason != null && !reason.isEmpty() ? String.format(" (Reason: %s)", reason) : null;
     }
 }
