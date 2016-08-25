@@ -21,6 +21,7 @@
 
 import gettext
 
+from otopi import constants as otopicons
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
@@ -44,6 +45,16 @@ class Plugin(plugin.PluginBase):
             plugin=self,
             dbenvkeys=oprovisioncons.Const.PROVISION_DB_ENV_KEYS,
             defaults=oprovisioncons.Const.DEFAULT_PROVISION_DB_ENV_KEYS,
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER_KEYS
+        ].append(
+            oprovisioncons.ProvDBEnv.PASSWORD
         )
 
     @plugin.event(
@@ -81,7 +92,16 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
     )
     def _misc(self):
-        self._provisioning.provision()
+        if self.environment[oprovisioncons.ProvDBEnv.DATABASE]:
+            self._provisioning.provision()
+        elif self.environment[oprovisioncons.ProvDBEnv.USER]:
+            self._provisioning.createUser()
+        else:
+            self.logger.info(
+                _(
+                    "Neither database nor user provided, doing nothing"
+                )
+            )
         if self._provisioning.databaseRenamed:
             osetuputil.addExitCode(
                 environment=self.environment,

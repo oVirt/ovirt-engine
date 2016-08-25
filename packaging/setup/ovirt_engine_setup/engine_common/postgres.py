@@ -150,6 +150,26 @@ class Provisioning(base.Base):
 
         return existing
 
+    def _userExists(self, environment):
+        dbstatement = database.Statement(
+            dbenvkeys=self._dbenvkeys,
+            environment=environment,
+        )
+        hasUser = dbstatement.execute(
+            statement="""
+                select count(*) as count
+                from pg_user
+                where usename = %(user)s
+            """,
+            args=dict(
+                user=_ind_env(self, DEK.USER),
+            ),
+            ownConnection=True,
+            transaction=False,
+        )[0]['count'] != 0
+
+        return hasUser
+
     def _performDatabase(
         self,
         environment,
@@ -157,34 +177,39 @@ class Provisioning(base.Base):
     ):
         statements = [
             (
-                """
-                    {op} role {user}
-                    with
-                        login
-                        encrypted password %(password)s
-                """
-            ).format(
-                op=op,
-                user=_ind_env(self, DEK.USER),
+                True,
+                (
+                    """
+                        {op} role {user}
+                        with
+                            login
+                            encrypted password %(password)s
+                    """
+                ).format(
+                    op=op,
+                    user=_ind_env(self, DEK.USER),
+                ),
             ),
-
             (
-                """
-                    {op} database {database}
-                    owner {to} {user}
-                    {encoding}
-                """
-            ).format(
-                op=op,
-                to='to' if op == 'alter' else '',
-                database=_ind_env(self, DEK.DATABASE),
-                user=_ind_env(self, DEK.USER),
-                encoding="""
-                    template template0
-                    encoding 'UTF8'
-                    lc_collate 'en_US.UTF-8'
-                    lc_ctype 'en_US.UTF-8'
-                """ if op != 'alter' else '',
+                _ind_env(self, DEK.DATABASE),
+                (
+                    """
+                        {op} database {database}
+                        owner {to} {user}
+                        {encoding}
+                    """
+                ).format(
+                    op=op,
+                    to='to' if op == 'alter' else '',
+                    database=_ind_env(self, DEK.DATABASE),
+                    user=_ind_env(self, DEK.USER),
+                    encoding="""
+                        template template0
+                        encoding 'UTF8'
+                        lc_collate 'en_US.UTF-8'
+                        lc_ctype 'en_US.UTF-8'
+                    """ if op != 'alter' else '',
+                ),
             ),
         ]
 
@@ -192,15 +217,16 @@ class Provisioning(base.Base):
             dbenvkeys=self._dbenvkeys,
             environment=environment,
         )
-        for statement in statements:
-            dbstatement.execute(
-                statement=statement,
-                args=dict(
-                    password=_ind_env(self, DEK.PASSWORD),
-                ),
-                ownConnection=True,
-                transaction=False,
-            )
+        for condition, statement in statements:
+            if condition:
+                dbstatement.execute(
+                    statement=statement,
+                    args=dict(
+                        password=_ind_env(self, DEK.PASSWORD),
+                    ),
+                    ownConnection=True,
+                    transaction=False,
+                )
 
     def _initDbIfRequired(self):
         if not os.path.exists(
@@ -523,6 +549,60 @@ class Provisioning(base.Base):
 
         self._restart()
         self._waitForDatabase()
+
+    def createUser(self):
+        if not self.supported():
+            raise RuntimeError(
+                _(
+                    'Unsupported distribution for '
+                    'postgresql proisioning'
+                )
+            )
+
+        self._initDbIfRequired()
+
+        localtransaction = transaction.Transaction()
+        try:
+            localtransaction.prepare()
+
+            self._setPgHbaLocalPeer(
+                transaction=localtransaction,
+            )
+
+            self._restart()
+
+            with AlternateUser(
+                user=self.environment[
+                    oengcommcons.SystemEnv.USER_POSTGRES
+                ],
+            ):
+                usockenv = {
+                    self._dbenvkeys[DEK.HOST]: '',  # usock
+                    self._dbenvkeys[DEK.PORT]: '',
+                    self._dbenvkeys[DEK.SECURED]: False,
+                    self._dbenvkeys[DEK.HOST_VALIDATION]: False,
+                    self._dbenvkeys[DEK.USER]: 'postgres',
+                    self._dbenvkeys[DEK.PASSWORD]: '',
+                    self._dbenvkeys[DEK.DATABASE]: 'template1',
+                }
+                self._waitForDatabase(
+                    environment=usockenv,
+                )
+                existing = self._userExists(
+                    environment=usockenv,
+                )
+                self._performDatabase(
+                    environment=usockenv,
+                    op=(
+                        'alter' if existing
+                        else 'create'
+                    ),
+                )
+        finally:
+            # restore everything
+            localtransaction.abort()
+
+        self._restart()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
