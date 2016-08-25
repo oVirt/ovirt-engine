@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> extends
@@ -68,10 +69,10 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
     private boolean checkLunsInStorageDomain(List<String> lunIds) {
         // Get LUNs from DB
-        List<LUNs> lunsFromDb = getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage());
+        getParameters().setLunsList(new ArrayList<>(getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage())));
         Set<String> lunsSet = new HashSet<>(lunIds);
 
-        for (LUNs lun : lunsFromDb) {
+        for (LUNs lun : getParameters().getLunsList()) {
             if (lunsSet.contains(lun.getLUNId())) {
                     // LUN is part of the storage domain
                     lunsSet.remove(lun.getLUNId());
@@ -87,7 +88,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
         // Call GetDeviceList on specific LUNs on all Hosts
         List<String> lunsToRefresh = getParameters().getLunIds();
-        Map<String, List<Pair<VDS, Integer>>> lunToVds = getDeviceListAllVds(lunsToRefresh);
+        Map<String, List<Pair<VDS, LUNs>>> lunToVds = getDeviceListAllVds(lunsToRefresh);
 
         //Check if all hosts are seeing the same LUNs size.
         Map<String, List<VDS>> lunToFailedVDS = getFailedLuns(lunToVds);
@@ -111,6 +112,10 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         // Call PVs resize on SPM
         resizePVs(lunsToRefresh);
 
+        List<LUNs> lunsToUpdateInDb = lunToVds.values().stream().
+                map(list -> list.get(0).getSecond()).collect(Collectors.toList());
+        updateLunsInDb(lunsToUpdateInDb);
+
         // Update storage domain size
         updateStorageDomainData();
 
@@ -123,11 +128,11 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     /**
         This  method calls GetDeviceList with the specified luns on all hosts.
         In VDSM , this call will resize the devices if needed.
-        It returns a map of LUN ID to a list of Pair(VDS,Size)
+        It returns a map of LUN ID to a list of Pair(VDS,LUNs)
         This map will help to check if all hosts are seeing the same size of the LUNs.
     **/
-    private Map<String, List<Pair<VDS, Integer>>> getDeviceListAllVds(List<String> lunsToResize) {
-        Map<String, List<Pair<VDS, Integer>>> lunToVds = new HashMap<>();
+    private Map<String, List<Pair<VDS, LUNs>>> getDeviceListAllVds(List<String> lunsToResize) {
+        Map<String, List<Pair<VDS, LUNs>>> lunToVds = new HashMap<>();
         for (VDS vds : getAllRunningVdssInPool()) {
             GetDeviceListVDSCommandParameters parameters =
                     new GetDeviceListVDSCommandParameters(vds.getId(),
@@ -137,22 +142,22 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
             List<LUNs> luns = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
             for (LUNs lun : luns) {
                 MultiValueMapUtils.addToMap(lun.getLUNId(),
-                        new Pair<>(vds, lun.getDeviceSize()), lunToVds);
+                        new Pair<>(vds, lun), lunToVds);
             }
         }
         return lunToVds;
     }
 
-    private Map<String, List<VDS>> getFailedLuns(Map<String, List<Pair<VDS, Integer>>> lunToVds) {
+    private Map<String, List<VDS>> getFailedLuns(Map<String, List<Pair<VDS, LUNs>>> lunToVds) {
         Map<String, List<VDS>> failedVds = new HashMap<>();
-        for (Map.Entry<String, List<Pair<VDS, Integer>>> entry : lunToVds.entrySet()) {
+        for (Map.Entry<String, List<Pair<VDS, LUNs>>> entry : lunToVds.entrySet()) {
             List<VDS> vdsList = new ArrayList<>();
             Integer size = -1;
             boolean failed = false;
-            for (Pair<VDS, Integer> vdsSizePair : entry.getValue()) {
+            for (Pair<VDS, LUNs> vdsSizePair : entry.getValue()) {
                 vdsList.add(vdsSizePair.getFirst());
                 if (size == -1) {
-                    size = vdsSizePair.getSecond();
+                    size = vdsSizePair.getSecond().getDeviceSize();
                 } else if (!size.equals(vdsSizePair.getSecond())) {
                         failed = true;
                 }
@@ -169,6 +174,19 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
             Long pvSizeInBytes = resizeStorageDomainPV(lun);
             log.debug("PV size after resize of LUN " + lun + " :" + pvSizeInBytes + " bytes");
         }
+    }
+
+    private void updateLunsInDb(List<LUNs> lunsToUpdateInDb) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            CompensationContext context = getCompensationContext();
+            context.snapshotEntities(getParameters().getLunsList());
+            getLunDao().updateAllInBatch(lunsToUpdateInDb);
+            context.stateChanged();
+            return null;
+        });
+        log.debug("LUNs with IDs: [" +
+                lunsToUpdateInDb.stream().map(LUNs::getLUNId).collect(Collectors.joining(", ")) +
+                "] were updated in the DB.");
     }
 
     private Long resizeStorageDomainPV(String lunId) {
