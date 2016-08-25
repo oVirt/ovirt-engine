@@ -1063,13 +1063,13 @@ __EOF__
 	if [ -n "${PROVISIONING}" ]; then
 		output "Provisioning PostgreSQL users/databases:"
 		if [ -n "${PROVISION_DB}" -a -n "${SCOPE_ENGINE_DB}" ]; then
-			provisionDB "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_DB_PASSWORD}" "${ENGINE_DB_SECURED}" "${ENGINE_DB_SECURED_VALIDATION}"
+			provisionDB "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_DB_PASSWORD}" "${ENGINE_DB_SECURED}" "${ENGINE_DB_SECURED_VALIDATION}" "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${DB_DUMP_COMPRESSOR}" "${DB_DUMP_FORMAT}"
 		fi
 		if [ -n "${PROVISION_DWH_DB}" -a -n "${SCOPE_DWH_DB}" ]; then
-			provisionDB "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${DWH_DB_PASSWORD}" "${DWH_DB_SECURED}" "${DWH_DB_SECURED_VALIDATION}"
+			provisionDB "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${DWH_DB_PASSWORD}" "${DWH_DB_SECURED}" "${DWH_DB_SECURED_VALIDATION}" "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_DUMP_COMPRESSOR}" "${DWH_DB_DUMP_FORMAT}"
 		fi
 		if [ -n "${PROVISION_REPORTS_DB}" -a -n "${SCOPE_REPORTS_DB}" ]; then
-			provisionDB "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${REPORTS_DB_PASSWORD}" "${REPORTS_DB_SECURED}" "${REPORTS_DB_SECURED_VALIDATION}"
+			provisionDB "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${REPORTS_DB_PASSWORD}" "${REPORTS_DB_SECURED}" "${REPORTS_DB_SECURED_VALIDATION}" "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}"
 		fi
 		output "Restoring:"
 	fi
@@ -1177,6 +1177,9 @@ provisionDB() {
 	local password="$5"
 	local secured="$6"
 	local secured_host_validation="$7"
+	local backupfile="$8"
+	local compressor="$9"
+	local format="${10}"
 
 	log "provisionDB: user ${user} host ${host} port ${port} database ${database} secured ${secured} secured_host_validation ${secured_host_validation}"
 	output "- user '${user}', database '${database}'"
@@ -1215,6 +1218,49 @@ __EOF__
 		13) logdie "Existing database '${database}' or user '${user}' found and temporary ones created - Please clean up everything and try again" ;;
 		*) logdie "Provisioning database '${database}' failed, please check the log for details" ;;
 	esac
+
+	# Provision users for extra grants
+
+	if [ "${RESTORE_PERMISSIONS}" == "1" ]; then
+		local extra_users="${TEMP_FOLDER}/extra_users"
+		local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
+		# TODO perhaps refactor out the format/compressor logic and reuse in restoreDB
+		if [ "${format}" = "plain" ]; then
+			if [ -z "${compressor}" ]; then
+				cat "${backupfile}"
+			else
+				# Requires the compressor to support '-d'. All our current ones do.
+				"${compressor}" -d < "${backupfile}"
+			fi
+		elif [ "${format}" = "custom" ]; then
+			local no_perms=
+			if [ -z "${compressor}" ]; then
+				pg_restore "${backupfile}" -s 2> "${pgrestorelog}"
+			else
+				# Requires the compressor to support '-d'. All our current ones do.
+				"${compressor}" -d < "${backupfile}" | \
+					pg_restore -s 2> "${pgrestorelog}"
+			fi
+		else
+			logdie "Unsupported format ${format}"
+		fi | \
+			sed -n 's/^GRANT .* TO \([^;]*\);/\1/p' | \
+				sort -u | \
+				grep -Ev "^${user}\$|^postgres\$|^PUBLIC\$" > "${extra_users}"
+
+		for extrau in $(cat "${extra_users}"); do
+			output "- extra user '${extrau}'"
+			/usr/share/ovirt-engine/setup/bin/ovirt-engine-provisiondb --otopi-environment="OVESETUP_PROVISION_DB/user=str:${extrau}" < /dev/null > "${pgprovisionlog}" 2>&1
+			provrc=$?
+			cat "${pgprovisionlog}" >> "${LOG}"  2>&1 \
+				|| logdie "Failed to append pg provisioning log to restore log"
+			case "${provrc}" in
+				0) : ;;
+				12) logdie "Provisioning is not supported" ;;
+				*) logdie "Creating user '${extrau}' failed, please check the log for details" ;;
+			esac
+		done
+	fi
 }
 
 restoreDB() {
