@@ -1091,6 +1091,12 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
+* Thu Aug 25 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.3-1
+- Bump version to 4.0.3
+
+* Thu Aug 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.2.7-1
+- Bump version to 4.0.2.7
+
 * Tue Aug  9 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.2.6-1
 - Bump version to 4.0.2.6
 
@@ -1111,6 +1117,12 @@ fi
 
 * Tue Jul 19 2016 Lev Veyde <lveyde@redhat.com> - 4.0.2-1
 - Bump version to 4.0.2
+
+* Mon Jul 11 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.0.1.1-1
+- Rebase on version 4.0.1.1
+
+* Thu Jun 30 2016 Lev Veyde <lveyde@redhat.com> - 4.0.1-1
+- Rebase on version 4.0.1
 
 * Wed Jun 15 2016 Rafael Martins <rmartins@redhat.com> - 4.0.0.5-1
 - Rebase on version 4.0.0.5
