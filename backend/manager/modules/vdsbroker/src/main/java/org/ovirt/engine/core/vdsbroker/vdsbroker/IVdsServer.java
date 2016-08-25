@@ -52,6 +52,8 @@ public interface IVdsServer {
 
     StatusOnlyReturn moveDomainDevice(String jobId, Map<String, Object> moveParams);
 
+    StatusOnlyReturn reduceDomain(String jobId, Map<String, Object> reduceParams);
+
     StatusOnlyReturn destroy(String vmId);
 
     StatusOnlyReturn shutdown(String vmId, String timeout, String message);
