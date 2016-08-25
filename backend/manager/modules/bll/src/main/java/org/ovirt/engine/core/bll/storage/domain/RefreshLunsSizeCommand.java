@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.ResizeStorageDomainPVVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -35,6 +36,10 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         StorageDomainCommandBase<T> {
 
     private boolean deviceSizeVisibilityError = false;
+
+    public RefreshLunsSizeCommand(Guid commandId) {
+        super(commandId);
+    }
 
     public RefreshLunsSizeCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -195,7 +200,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     protected void updateStorageDomain(final StorageDomain storageDomainToUpdate) {
         executeInNewTransaction(() -> {
             CompensationContext context = getCompensationContext();
-            context.snapshotEntity(storageDomainToUpdate.getStorageDynamicData());
+            context.snapshotEntity(getStorageDomain().getStorageDynamicData());
             getDbFacade().getStorageDomainDynamicDao().update(storageDomainToUpdate.getStorageDynamicData());
             getCompensationContext().stateChanged();
             return null;
