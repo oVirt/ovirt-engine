@@ -598,7 +598,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected boolean setAndValidateCpuProfile() {
         getVmTemplate().setClusterId(getClusterId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getUserId()));
     }
 
     @Override

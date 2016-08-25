@@ -120,7 +120,8 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected boolean setAndValidateCpuProfile() {
-        return validate(CpuProfileHelper.setAndValidateCpuProfileForUser(getParameters().getVm().getStaticData(),
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(
+                getParameters().getVm().getStaticData(),
                 getUserId()));
     }
 

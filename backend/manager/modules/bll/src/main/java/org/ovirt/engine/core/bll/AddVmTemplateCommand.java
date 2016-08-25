@@ -1098,7 +1098,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
             return true;
         }
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(), getUserId()));
     }
 
     private Guid getVmSnapshotId() {
