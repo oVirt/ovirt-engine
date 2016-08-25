@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
@@ -240,6 +241,7 @@ public class DbFacade {
             put(LibvirtSecret.class, LibvirtSecretDao.class);
             put(StorageServerConnections.class, StorageServerConnectionDao.class);
             put(ImageTransfer.class, ImageTransferDao.class);
+            put(LUNs.class, LunDao.class);
         }
     };
 
