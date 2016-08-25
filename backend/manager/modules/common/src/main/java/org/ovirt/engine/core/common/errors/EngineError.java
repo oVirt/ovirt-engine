@@ -433,6 +433,8 @@ public enum EngineError {
     GlusterHostStorageMountPointInUseException(4417),
     GlusterHostStorageDeviceVGCreateFailedException(4418),
     GlusterHostStorageDeviceVGScanFailedException(4419),
+    GlusterHostFailedToSetSelinuxContext(4420),
+    GlusterHostFailedToRunRestorecon(4421),
     GlusterHookFailed(4500),
     GlusterHookListException(4501),
     GlusterHookEnableFailed(4502),

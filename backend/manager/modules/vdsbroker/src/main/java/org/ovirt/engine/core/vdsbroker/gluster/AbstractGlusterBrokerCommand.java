@@ -108,6 +108,8 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterHostStorageMountPointInUseException:
         case GlusterHostStorageDeviceVGCreateFailedException:
         case GlusterHostStorageDeviceVGScanFailedException:
+        case GlusterHostFailedToSetSelinuxContext:
+        case GlusterHostFailedToRunRestorecon:
         case GlusterSnapshotScheduleFlagUpdateFailedException:
         case GlusterDisableSnapshotScheduleFailedException:
         case GlusterMetaVolumeMountFailedException:

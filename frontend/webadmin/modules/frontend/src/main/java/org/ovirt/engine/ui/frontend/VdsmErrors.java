@@ -869,6 +869,10 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String UnsupportedGlusterVolumeReplicaCountError();
 
+    String GlusterHostFailedToSetSelinuxContext();
+
+    String GlusterHostFailedToRunRestorecon();
+
     String CINDER_ERROR();
 
     String V2V_JOB_DOESNT_EXIST();
