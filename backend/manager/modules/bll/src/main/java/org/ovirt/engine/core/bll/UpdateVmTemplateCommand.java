@@ -457,7 +457,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return true;
         }
 
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getUserId()));
     }
 
     private boolean isInstanceType() {

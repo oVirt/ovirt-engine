@@ -213,7 +213,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean setAndValidateCpuProfile() {
         getVm().getStaticData().setClusterId(getClusterId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(), getUserId()));
     }
 
     protected boolean validateBallonDevice() {
