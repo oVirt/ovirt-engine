@@ -32,6 +32,7 @@ public class AuditLogDirector {
     static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
     static final String UNKNOWN_REASON_VALUE = " No reason was returned for this operation failure. See logs for further details.";
     static final String REASON_TOKEN = "reason";
+    static final String OPTIONAL_REASON_TOKEN = "optionalreason";
     private static final ResourceBundle resourceBundle = getResourceBundle();
 
     static ResourceBundle getResourceBundle() {
@@ -301,6 +302,9 @@ public class AuditLogDirector {
                 switch(token.toLowerCase()) {
                     case REASON_TOKEN:
                         value = UNKNOWN_REASON_VALUE;
+                        break;
+                    case OPTIONAL_REASON_TOKEN:
+                        value = "";
                         break;
                     default:
                         value = UNKNOWN_VARIABLE_VALUE;
