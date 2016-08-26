@@ -22,13 +22,14 @@ import shlex
 import subprocess
 import sys
 
+from jinja2 import Template
+
 import config
+
 
 from ovirt_engine import configfile
 from ovirt_engine import java
 from ovirt_engine import service
-
-from jinja2 import Template
 
 
 def _(m):

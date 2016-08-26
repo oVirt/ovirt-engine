@@ -20,8 +20,10 @@ import os
 import sys
 import urllib
 
-import config
 import websockify
+
+import config
+
 
 from ovirt_engine import configfile
 from ovirt_engine import service

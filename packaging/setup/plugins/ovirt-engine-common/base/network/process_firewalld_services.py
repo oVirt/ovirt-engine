@@ -23,14 +23,14 @@ Parse the result
 
 import os
 
+import libxml2
+
 from otopi import constants as otopicons
 from otopi import util
 
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
-
-import libxml2
 
 
 @util.export
