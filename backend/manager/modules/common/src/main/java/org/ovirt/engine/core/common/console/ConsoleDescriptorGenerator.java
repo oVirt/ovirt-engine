@@ -44,7 +44,31 @@ public class ConsoleDescriptorGenerator {
             configBuilder.append("\nnewer-version-url=").append(remoteViewerNewerVersionUrl);
         }
 
+        configBuilder.append(generateOvirtSection(options));
+
         return configBuilder.append("\n").toString();
+    }
+
+    private static String generateOvirtSection(ConsoleOptions options) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("\n")
+                .append("\n[ovirt]")
+                .append("\nhost=").append(options.getOvirtHost())
+                .append("\nvm-guid=").append(options.getVmId())
+                .append("\nsso-token=").append(options.getSsoToken())
+                .append("\nadmin=").append(boolToInt(options.isAdminConsole()));
+
+        /*
+         * If custom certificate is used for https then we suppose that the ca certificate is available in client system
+         * thrust store for remote-viewer to check against. Since remote-viewer prefers ca from vv file to system ca,
+         * 'ca' record is not included for custom https certificate.
+         */
+        if (options.getTrustStore() != null && !options.isCustomHttpsCertificateUsed()) {
+            builder.append("\nca=").append(toOnelineCertificate(options.getTrustStore()));
+        }
+
+        return builder.toString();
+
     }
 
     private static String generateSpicePart(ConsoleOptions options) {
@@ -59,14 +83,10 @@ public class ConsoleDescriptorGenerator {
             configBuilder.append("\ntls-ciphers=").append(options.getCipherSuite());
         }
 
-        if (!StringHelper.isNullOrEmpty(options.getHostSubject())) {
+        if (!StringHelper.isNullOrEmpty(options.getHostSubject())
+                && !StringHelper.isNullOrEmpty(options.getTrustStore())) {
             configBuilder.append("\nhost-subject=").append(options.getHostSubject());
-        }
-
-        if (options.getTrustStore() != null) {
-            //virt-viewer-file doesn't want newlines in ca
-            String trustStore= options.getTrustStore().replace("\n", "\\n");
-            configBuilder.append("\nca=").append(trustStore);
+            configBuilder.append("\nca=").append(toOnelineCertificate(options.getTrustStore()));
         }
 
         if (options.isWanOptionsEnabled()) {
@@ -83,6 +103,10 @@ public class ConsoleDescriptorGenerator {
         }
 
         return configBuilder.toString();
+    }
+
+    private static String toOnelineCertificate(String certificate) {
+        return certificate.replace("\n", "\\n");
     }
 
     private static int boolToInt(Boolean b) {

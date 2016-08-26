@@ -15,6 +15,9 @@ public class ConsoleOptions implements Serializable{
     private GraphicsType graphicsType;
 
     // general
+    /**
+     * vv file: [virt-viewer] host
+     */
     private String host;
     private Integer port;
     private String ticket;
@@ -53,6 +56,12 @@ public class ConsoleOptions implements Serializable{
     // even the spice proxy is globally configured, user can choose to disable it for specific VM
     private boolean spiceProxyEnabled;
     private List<WanDisableEffects> wanDisableEffects;
+    /**
+     * engine_host:engine_port
+     * vv file: [ovirt] host
+     */
+    private String ovirtHost;
+    private String ssoToken;
 
     public static final int TICKET_VALIDITY_SECONDS = 120;
     public static final int SPICE_USB_DEFAULT_PORT = 32023;
@@ -360,6 +369,22 @@ public class ConsoleOptions implements Serializable{
 
     public void setRemoteViewerSupportedVersions(String remoteViewerSupportedVersions) {
         this.remoteViewerSupportedVersions = remoteViewerSupportedVersions;
+    }
+
+    public String getOvirtHost() {
+        return ovirtHost;
+    }
+
+    public void setOvirtHost(String ovirtHost) {
+        this.ovirtHost = ovirtHost;
+    }
+
+    public String getSsoToken() {
+        return ssoToken;
+    }
+
+    public void setSsoToken(String ssoToken) {
+        this.ssoToken = ssoToken;
     }
 
     public enum WanColorDepth {

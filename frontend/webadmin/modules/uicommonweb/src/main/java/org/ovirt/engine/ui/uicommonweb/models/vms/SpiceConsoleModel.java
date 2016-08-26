@@ -313,9 +313,6 @@ public class SpiceConsoleModel extends ConsoleModel {
                         configuredOptions.setVmName(getEntity().getName());
                         configuredOptions.setFullScreen(options.isFullScreen());
                         configuredOptions.setSmartcardEnabledOverridden(options.isSmartcardEnabledOverridden());
-                        configuredOptions.setAdminConsole(getConfigurator().getSpiceAdminConsole()
-                                                          ? true
-                                                          : !getEntity().getHasSpiceDriver());
                         if (!configuredOptions.isSpiceProxyEnabled()) {
                             configuredOptions.setSpiceProxy(null); // override spice proxy from backend
                         }

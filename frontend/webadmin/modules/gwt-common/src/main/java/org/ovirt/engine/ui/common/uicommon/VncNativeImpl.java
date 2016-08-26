@@ -16,11 +16,9 @@ public class VncNativeImpl extends AbstractVnc implements IVncNative {
         AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
             @Override
             public void onSuccess(VdcQueryReturnValue returnValue) { // todo avoid code duplication with spice
-                StringBuilder configBuilder = new StringBuilder((String) returnValue.getReturnValue());
-                writeOVirtSection(configBuilder, getOptions());
                 ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
                         "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
-                        configBuilder.toString());
+                        returnValue.<String>getReturnValue());
             }
         });
         Frontend.getInstance().runQuery(

@@ -129,6 +129,29 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         options.setFullScreen(getConfigValue(ConfigValues.FullScreenWebadminDefault));
 
         fillRemoteViewerVersions(options);
+
+        final String engineHost = EngineLocalConfig.getInstance().getHost()
+                + ':'
+                + (EngineLocalConfig.getInstance().isProxyEnabled()
+                    ? EngineLocalConfig.getInstance().getProxyHttpsPort()
+                    : EngineLocalConfig.getInstance().getHttpsPort());
+        options.setOvirtHost(engineHost);
+        final String ssoToken = getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId());
+        options.setSsoToken(ssoToken);
+        options.setAdminConsole(!getParameters().isFiltered());
+
+        final VdcQueryReturnValue caCertificateReturnValue = getCACertificate();
+        if (!caCertificateReturnValue.getSucceeded()) {
+            getQueryReturnValue().setExceptionString("No CA found!");
+            getQueryReturnValue().setSucceeded(false);
+            return;
+        }
+        options.setTrustStore(caCertificateReturnValue.getReturnValue());
+
+        options.setCustomHttpsCertificateUsed(
+                !Objects.equals(
+                        EngineLocalConfig.getInstance().getPKITrustStorePath(),
+                        EngineLocalConfig.getInstance().getHttpsPKITrustStorePath()));
     }
 
     private void fillRemoteViewerVersions(ConsoleOptions options) {
@@ -250,28 +273,10 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             }
         }
 
-        String certificateSubject = "";
-        String caCertificate = "";
-
-        if (this.<Boolean>getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation)) {
-            VdcQueryReturnValue certificate = getCACertificate();
-            if (!certificate.getSucceeded()) {
-                getQueryReturnValue().setExceptionString("Spice Root Certificate Validation enforced, but no CA found!");
-                getQueryReturnValue().setSucceeded(false);
-                return;
-            }
-            certificateSubject = getVdsCertificateSubject();
-            caCertificate = certificate.getReturnValue();
-        }
-
-        options.setCustomHttpsCertificateUsed(
-                !Objects.equals(
-                    EngineLocalConfig.getInstance().getPKITrustStorePath(),
-                    EngineLocalConfig.getInstance().getHttpsPKITrustStorePath()));
-
-        options.setHostSubject(certificateSubject);
-        options.setTrustStore(caCertificate);
-
+        options.setHostSubject(
+                getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation)
+                ? getVdsCertificateSubject()
+                : null);
         options.setSpiceProxy(determineSpiceProxy());
 
         // Update 'UsbListenPort' value
