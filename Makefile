@@ -45,6 +45,7 @@ PYTHON=python
 PYTHON3=$(shell which python3 2> /dev/null)
 PYFLAKES=pyflakes
 PEP8=pep8
+ISORT=isort
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
 BIN_DIR=$(PREFIX)/bin
@@ -180,6 +181,7 @@ BUILD_TARGET=install
 	-e "s|@JBOSS_RUNTIME@|$(JBOSS_RUNTIME)|g" \
 	-e "s|@PEP8@|$(PEP8)|g" \
 	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
+	-e "s|@ISORT@|$(ISORT)|g" \
 	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
 	-e "s|@VMCONSOLE_SYSCONF_DIR@|$(VMCONSOLE_SYSCONF_DIR)|g" \
 	-e "s|@VMCONSOLE_PKI_DIR@|$(VMCONSOLE_PKI_DIR)|g" \

@@ -2,6 +2,7 @@
 
 PEP8="@PEP8@"
 PYFLAKES="@PYFLAKES@"
+ISORT="@ISORT@"
 SRCDIR="$(dirname "$0")/.."
 
 cd "${SRCDIR}"
@@ -20,4 +21,11 @@ for exe in "${PYFLAKES}" "${PEP8}"; do
 		"${exe}" ${FILES} || ret=1
 	fi
 done
+
+if ! which "${ISORT}" > /dev/null 2>&1; then
+    echo "WARNING: tool '${ISORT}' is missing" >&2
+else
+    "${ISORT}" --check ${FILES} || ret=1
+fi
+
 exit ${ret}
