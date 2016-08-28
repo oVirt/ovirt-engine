@@ -21,9 +21,8 @@
 
 from otopi import util
 
-
-from . import misc
 from . import advertise_dwh
+from . import misc
 
 
 @util.export

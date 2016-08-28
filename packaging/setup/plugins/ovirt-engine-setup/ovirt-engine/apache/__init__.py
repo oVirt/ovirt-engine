@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import engine
 from . import root
 

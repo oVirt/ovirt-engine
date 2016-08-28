@@ -21,13 +21,12 @@
 
 from otopi import util
 
-
-from . import offlinepackager
-from . import misc
 from . import answerfile
-from . import uninstall
+from . import misc
+from . import offlinepackager
 from . import postinstall
 from . import reconfigure
+from . import uninstall
 
 
 @util.export

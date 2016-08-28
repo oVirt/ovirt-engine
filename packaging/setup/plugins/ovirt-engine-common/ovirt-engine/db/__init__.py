@@ -21,9 +21,8 @@
 
 from otopi import util
 
-
-from . import connection
 from . import config
+from . import connection
 from . import pgpass
 
 

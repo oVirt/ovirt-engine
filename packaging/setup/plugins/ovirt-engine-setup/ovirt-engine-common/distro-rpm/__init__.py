@@ -24,7 +24,6 @@ Includes code relevant for rpm-based distributions
 
 from otopi import util
 
-
 from . import packages
 
 

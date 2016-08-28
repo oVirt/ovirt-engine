@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import config
 from . import packages
 from . import pki

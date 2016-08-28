@@ -19,6 +19,7 @@
 """ovirt-host-setup network plugin."""
 
 from otopi import util
+
 from . import firewall_manager
 from . import firewall_manager_firewalld
 from . import firewall_manager_human

@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import core
 from . import misc
 from . import selinux

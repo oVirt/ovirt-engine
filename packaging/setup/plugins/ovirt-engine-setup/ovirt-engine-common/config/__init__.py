@@ -21,9 +21,8 @@
 
 from otopi import util
 
-
-from . import jboss
 from . import firewall
+from . import jboss
 
 
 @util.export

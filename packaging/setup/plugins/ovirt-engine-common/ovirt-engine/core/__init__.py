@@ -21,10 +21,9 @@
 
 from otopi import util
 
-
-from . import misc
 from . import engine
 from . import fence_kdump_listener
+from . import misc
 
 
 @util.export

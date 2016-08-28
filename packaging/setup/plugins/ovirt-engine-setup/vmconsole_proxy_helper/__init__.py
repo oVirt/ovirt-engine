@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import config
 from . import pki
 from . import system

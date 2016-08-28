@@ -21,27 +21,26 @@
 
 from otopi import util
 
-
 from . import aaa
 from . import aaainternal
 from . import aaajdbc
 from . import aaakerbldap
-from . import jboss
-from . import java
-from . import database
-from . import dwh_database
-from . import protocols
 from . import appmode
-from . import domain_type
-from . import firewall
 from . import ca
-from . import options
-from . import tools
+from . import database
+from . import domain_type
+from . import dwh_database
+from . import firewall
 from . import iso_domain
-from . import public_glance_repository
-from . import storage
-from . import sso
+from . import java
+from . import jboss
 from . import notifier
+from . import options
+from . import protocols
+from . import public_glance_repository
+from . import sso
+from . import storage
+from . import tools
 
 
 @util.export

@@ -21,10 +21,9 @@
 
 from otopi import util
 
-
-from . import dbvalidations
-from . import asynctasks
 from . import answerfile_fixup
+from . import asynctasks
+from . import dbvalidations
 from . import dwh
 
 

@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import ca
 from . import misc
 

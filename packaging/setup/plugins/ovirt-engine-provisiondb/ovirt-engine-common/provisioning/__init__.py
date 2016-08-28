@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import database
 from . import postgres
 

@@ -21,9 +21,8 @@
 
 from otopi import util
 
-
-from . import environment
 from . import apache
+from . import environment
 
 
 @util.export

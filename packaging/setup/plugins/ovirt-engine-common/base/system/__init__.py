@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import hostile_services
 from . import mem
 from . import selinux

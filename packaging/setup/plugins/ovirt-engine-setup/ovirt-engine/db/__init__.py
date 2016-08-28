@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import connection
 from . import schema
 

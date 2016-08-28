@@ -21,7 +21,6 @@
 
 from otopi import util
 
-
 from . import remote_engine
 from . import remote_engine_manual_files
 from . import remote_engine_root_ssh
