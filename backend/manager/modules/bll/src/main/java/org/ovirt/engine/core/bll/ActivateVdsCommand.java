@@ -5,7 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -13,14 +16,12 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,6 +30,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     private boolean haMaintenanceFailed;
 
@@ -69,11 +73,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 });
 
                 if (vds.getHighlyAvailableIsConfigured()) {
-                    SetHaMaintenanceModeVDSCommandParameters param
-                            = new SetHaMaintenanceModeVDSCommandParameters(vds, HaMaintenanceMode.LOCAL, false);
-                    if (!runVdsCommand(VDSCommandType.SetHaMaintenanceMode, param).getSucceeded()) {
-                        haMaintenanceFailed = true;
-                    }
+                    haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
                 }
 
                 // Start glusterd service on the node, which would haven been stopped due to maintenance

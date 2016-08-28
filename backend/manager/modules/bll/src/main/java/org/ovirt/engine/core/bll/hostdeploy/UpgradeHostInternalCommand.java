@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.HostUpgradeManager;
 import org.ovirt.engine.core.bll.host.Updateable;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -33,6 +34,11 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
 
     @Inject
     private VdsDynamicDao hostDao;
+
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
+
+    private boolean haMaintenanceFailed;
 
     /**
      * C'tor for compensation purposes
@@ -111,6 +117,9 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
             if (getParameters().getInitialStatus() == VDSStatus.Maintenance) {
                 setVdsStatus(VDSStatus.Maintenance);
             } else {
+                if (getVds().getHighlyAvailableIsConfigured()) {
+                    haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
+                }
                 setVdsStatus(VDSStatus.Initializing);
             }
         }
@@ -130,6 +139,11 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.HOST_UPGRADE_FINISHED : AuditLogType.HOST_UPGRADE_FAILED;
+        if(getSucceeded()){
+            return haMaintenanceFailed
+                    ? AuditLogType.HOST_UPGRADE_FINISHED_MANUAL_HA
+                    : AuditLogType.HOST_UPGRADE_FINISHED;
+        }
+        return AuditLogType.HOST_UPGRADE_FAILED;
     }
 }

@@ -9,14 +9,19 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
@@ -47,6 +52,9 @@ public class HostedEngineHelper {
 
     @Inject
     private HostedEngineConfigFetcher hostedEngineConfigFetcher;
+
+    @Inject
+    private VDSBrokerFrontend vdsBroker;
 
     @PostConstruct
     private void init() {
@@ -157,5 +165,11 @@ public class HostedEngineHelper {
      */
     public Guid getRunningHostId() {
         return hostedEngineVm.getRunOnVds();
+    }
+
+    public boolean updateHaLocalMaintenanceMode(VDS vds, boolean localMaintenance){
+        SetHaMaintenanceModeVDSCommandParameters param
+                = new SetHaMaintenanceModeVDSCommandParameters(vds, HaMaintenanceMode.LOCAL, localMaintenance);
+        return vdsBroker.runVdsCommand(VDSCommandType.SetHaMaintenanceMode, param).getSucceeded();
     }
 }

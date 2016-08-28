@@ -716,6 +716,7 @@ public enum AuditLogType {
     HOST_UPGRADE_STARTED(840),
     HOST_UPGRADE_FAILED(841, AuditLogSeverity.ERROR),
     HOST_UPGRADE_FINISHED(842),
+    HOST_UPGRADE_FINISHED_MANUAL_HA(890, AuditLogSeverity.WARNING),
     HOST_UPDATES_ARE_AVAILABLE(843, AuditLogSeverity.NORMAL, AuditLogTimeInterval.DAY.getValue() * 1),
     OVIRT_NODE_UPDATES_ARE_AVAILABLE(844, AuditLogSeverity.NORMAL, AuditLogTimeInterval.DAY.getValue() * 1),
     CERTIFICATE_FILE_NOT_FOUND(817, AuditLogSeverity.ERROR),
