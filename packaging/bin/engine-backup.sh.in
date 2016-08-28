@@ -1249,7 +1249,7 @@ __EOF__
 				grep -Ev "^${user}\$|^postgres\$|^PUBLIC\$" > "${extra_users}"
 
 		for extrau in $(cat "${extra_users}"); do
-			output "- extra user '${extrau}'"
+			output "- extra user '${extrau}' having grants on database ${database}, created with a random password"
 			/usr/share/ovirt-engine/setup/bin/ovirt-engine-provisiondb --otopi-environment="OVESETUP_PROVISION_DB/user=str:${extrau}" < /dev/null > "${pgprovisionlog}" 2>&1
 			provrc=$?
 			cat "${pgprovisionlog}" >> "${LOG}"  2>&1 \
