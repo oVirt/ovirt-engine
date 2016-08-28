@@ -13,16 +13,20 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.host.util.ReportFailedChildHostOperationsUtil;
 import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -76,6 +80,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     @Inject
     private SyncNetworkParametersBuilder syncNetworkParametersBuilder;
 
+    @Inject
+    protected ReportFailedChildHostOperationsUtil reportFailedChildHostOperationsUtil;
+
     private Network oldNetwork;
 
     public UpdateNetworkCommand(T parameters) {
@@ -122,12 +129,30 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private void applyNetworkChangesToHosts() {
-        ArrayList<VdcActionParametersBase> parameters = syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork());
+        ArrayList<VdcActionParametersBase> parameters = prepareSetupNetworksParameters();
 
         if (!parameters.isEmpty()) {
-            HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
             runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, parameters);
         }
+    }
+
+    private ArrayList<VdcActionParametersBase> prepareSetupNetworksParameters() {
+        ArrayList<VdcActionParametersBase> parameters =
+                syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork());
+
+        setParentCommandInfo(parameters);
+        HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
+        return parameters;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return new ConcurrentChildCommandsExecutionCallback();
+    }
+
+    @Override
+    protected void endWithFailure() {
+        reportFailedChildHostOperationsUtil.setFailedHosts(this);
     }
 
     private boolean networkChangedToNonVmNetwork() {
@@ -202,7 +227,23 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.NETWORK_UPDATE_NETWORK : AuditLogType.NETWORK_UPDATE_NETWORK_FAILED;
+        switch (getActionState()) {
+        case EXECUTE:
+            return getSucceeded()
+                    ? AuditLogType.NETWORK_UPDATE_NETWORK_STARTED
+                    : AuditLogType.NETWORK_UPDATE_NETWORK_FAILED;
+        case END_FAILURE:
+            return hasChildCommands()
+                    ? AuditLogType.UPDATE_NETWORK_ON_HOSTS_FAILED
+                    : super.getAuditLogTypeValue();
+        case END_SUCCESS:
+            return AuditLogType.NETWORK_UPDATE_NETWORK_FINISHED;
+        }
+        return super.getAuditLogTypeValue();
+    }
+
+    private boolean hasChildCommands() {
+        return !CommandCoordinatorUtil.getChildCommandIds(getCommandId()).isEmpty();
     }
 
     @Override
