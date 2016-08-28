@@ -9,12 +9,17 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ThawVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
 
     public ThawVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    public ThawVmCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override

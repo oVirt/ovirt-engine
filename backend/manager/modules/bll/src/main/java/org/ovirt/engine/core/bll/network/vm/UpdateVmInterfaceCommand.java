@@ -47,6 +47,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         setVmId(parameters.getVmId());
     }
 
+    public UpdateVmInterfaceCommand(Guid commandId) {
+        super(commandId);
+    }
+
     private RequiredAction getRequiredAction() {
         if (requiredAction == null) {
             if (!oldVmDevice.getIsPlugged() && getInterface().isPlugged()) {

@@ -53,6 +53,10 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         super(params, commandContext);
     }
 
+    public CloneVmCommand(Guid commandId) {
+        super(commandId);
+    }
+
 
     @Override
     protected void init() {

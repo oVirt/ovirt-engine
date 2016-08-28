@@ -27,6 +27,10 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         setVdsId(parameters.getVdsId());
     }
 
+    public StorageServerConnectionCommandBase(Guid commandId) {
+        super(commandId);
+    }
+
     protected StorageServerConnections getConnection() {
         return getParameters().getStorageServerConnection();
     }

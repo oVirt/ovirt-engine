@@ -57,6 +57,10 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         super(parameters, cmdContext);
     }
 
+    public GetDiskAlignmentCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);

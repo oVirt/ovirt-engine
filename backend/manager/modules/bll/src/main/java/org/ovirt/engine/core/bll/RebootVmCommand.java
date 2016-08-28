@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -23,6 +24,10 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
 
     public RebootVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    public RebootVmCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override

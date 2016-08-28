@@ -28,7 +28,9 @@ public class CommandCtorsTest {
 
     private static Collection<Class<CommandBase<? extends VdcActionParametersBase>>> commandClasses;
 
-    private static Predicate<Constructor<?>> mandatoryConstructorSignature;
+    private static Predicate<Constructor<?>> parametersAndContextConstructorSignature;
+
+    private static Predicate<Constructor<?>> guidConstructorSignature;
 
     @BeforeClass
     public static void initCommandsCollection() {
@@ -42,9 +44,20 @@ public class CommandCtorsTest {
     }
 
     @BeforeClass
-    public static void createMandatoryConstructorSignaturePredicate() {
-        // Signature for a constructor that receives parameters and context objects.
-        mandatoryConstructorSignature =
+    public static void createConstructorsSignatures() {
+        /**
+         * Signature for a constructor that receives a Guid object.
+         * This is a mandatory constructor in case that the class is annotated with
+         * 'NonTransactiveCommandAttribute' and its 'forceCompensation' attribute
+         * is set to true.
+         */
+        guidConstructorSignature = createConstructorSignaturePredicate(Guid.class);
+
+        /**
+         * Signature for a constructor that receives parameters and context objects.
+         * This is a mandatory constructor.
+         */
+        parametersAndContextConstructorSignature =
                 createConstructorSignaturePredicate(VdcActionParametersBase.class, CommandContext.class);
     }
 
@@ -112,11 +125,7 @@ public class CommandCtorsTest {
      * it's one of the constructors that are required by {@link CommandsFactory}.
      */
     private Predicate<Constructor<?>> getConstructorRequiredByCommandsFactoryPredicate() {
-        // Signature for a constructor that gets a Guid object.
-        Predicate<Constructor<?>> guidConstructorSignature =
-                createConstructorSignaturePredicate(Guid.class);
-
-        return mandatoryConstructorSignature.or(guidConstructorSignature);
+        return parametersAndContextConstructorSignature.or(guidConstructorSignature);
     }
 
     /**
@@ -142,15 +151,32 @@ public class CommandCtorsTest {
 
     @Test
     public void testCommandMandatoryConstructorsExistence() {
+        Predicate<Constructor<?>> classForcesCompensation = constructor ->
+                constructor.getDeclaringClass().isAnnotationPresent(NonTransactiveCommandAttribute.class) &&
+                        constructor.getDeclaringClass().getAnnotation(NonTransactiveCommandAttribute.class)
+                                .forceCompensation();
+
+        Predicate<Class<CommandBase<? extends VdcActionParametersBase>>> classLacksParamsAndContextCtor =
+                getPredicateForNoCtorMatchesGivenPredicate(parametersAndContextConstructorSignature);
+
+        Predicate<Class<CommandBase<? extends VdcActionParametersBase>>> classLacksGuidCtor =
+                getPredicateForNoCtorMatchesGivenPredicate(classForcesCompensation.negate().or(guidConstructorSignature));
+
         List<String> commandsWithoutMandatoryConstructor =
                 commandClasses.stream()
-                        .filter(commandClass ->
-                                Arrays.stream(commandClass.getDeclaredConstructors())
-                                        .noneMatch(mandatoryConstructorSignature))
+                        .filter(classLacksParamsAndContextCtor.or(classLacksGuidCtor))
                         .map(Class::getSimpleName)
                         .sorted()
                         .collect(Collectors.toList());
-        assertThat("There are commands that don't contain the mandatory constructor (constructor that receives " +
-                "parameters and context objects):", commandsWithoutMandatoryConstructor, empty());
+        assertThat("There are commands that don't contain at least one of the mandatory constructors:" +
+                System.lineSeparator() + "1. A constructor that receives parameters and context objects." +
+                System.lineSeparator() + "2. A constructor that receives a Guid object, its class is annotated with '" +
+                NonTransactiveCommandAttribute.class.getSimpleName() + "' and the annotation's 'forceCompensation' " +
+                "attribute is set to true.", commandsWithoutMandatoryConstructor, empty());
+    }
+
+    private Predicate<Class<CommandBase<? extends VdcActionParametersBase>>> getPredicateForNoCtorMatchesGivenPredicate(
+            Predicate<Constructor<?>> constructorPredicate) {
+        return commandClass -> Arrays.stream(commandClass.getDeclaredConstructors()).noneMatch(constructorPredicate);
     }
 }

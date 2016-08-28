@@ -31,6 +31,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         super(parameters, cmdContext);
     }
 
+    public AddVmInterfaceCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected void executeVmCommand() {
         addCustomValue("InterfaceType",

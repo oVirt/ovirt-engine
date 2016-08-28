@@ -22,11 +22,16 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
     public AbstractVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    public AbstractVmInterfaceCommand(Guid commandId) {
+        super(commandId);
     }
 
     protected boolean activateOrDeactivateNewNic(VmNic nic, PlugAction plugAction) {

@@ -70,6 +70,10 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         super(parameters, cmdContext);
     }
 
+    public RemoveDiskSnapshotsCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);

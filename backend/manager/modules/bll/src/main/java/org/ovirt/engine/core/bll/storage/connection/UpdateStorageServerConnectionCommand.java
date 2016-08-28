@@ -45,6 +45,10 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         super(parameters, cmdContext);
     }
 
+    public UpdateStorageServerConnectionCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);
