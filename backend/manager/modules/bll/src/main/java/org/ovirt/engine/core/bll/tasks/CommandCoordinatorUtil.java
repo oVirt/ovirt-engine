@@ -24,6 +24,8 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
+import org.ovirt.engine.core.utils.linq.Function;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class CommandCoordinatorUtil {
 
@@ -209,4 +211,22 @@ public class CommandCoordinatorUtil {
         return AsyncTaskManager.getInstance(coco);
     }
 
+    /**
+     * Finds all children commands for the given commandId.
+     *
+     * @param commandId
+     *            the parent command id
+     * @return the list of the children command entities
+     */
+    public static List<CommandEntity> findChildCommands(Guid commandId) {
+        final List<Guid> childCommandIds = getChildCommandIds(commandId);
+        final List<CommandEntity> childCommands =
+                LinqUtils.transformToList(childCommandIds, new Function<Guid, CommandEntity>() {
+                    @Override
+                    public CommandEntity eval(Guid guid) {
+                        return CommandCoordinatorUtil.getCommandEntity(guid);
+                    }
+                });
+        return childCommands;
+    }
 }
