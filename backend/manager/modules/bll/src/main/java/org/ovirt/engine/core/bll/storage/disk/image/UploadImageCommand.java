@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
-import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdates;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -194,7 +193,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         log.info("Successfully added {} for image transfer command '{}'",
                 getUploadDescription(), getCommandId());
 
-        ImageTransferUpdates updates = new ImageTransferUpdates();
+        ImageTransfer updates = new ImageTransfer();
         updates.setDiskId(createdId);
         updateEntity(updates);
 
@@ -412,7 +411,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         log.info("Started transfer session with ticket id {}, timeout {} seconds",
                 imagedTicketId.toString(), timeout);
 
-        ImageTransferUpdates updates = new ImageTransferUpdates();
+        ImageTransfer updates = new ImageTransfer();
         updates.setVdsId(getVdsId());
         updates.setImagedTicketId(imagedTicketId);
         updates.setProxyUri(getProxyUri());
@@ -507,9 +506,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         }
         log.info("Successfully stopped image transfer session for ticket '{}'", resourceId.toString());
 
-        ImageTransferUpdates updates = new ImageTransferUpdates();
-        updates.setClearResourceId(true);
-        updateEntity(updates);
+        ImageTransfer updates = new ImageTransfer();
+        boolean clearResourceId = true;
+        updateEntity(updates, clearResourceId);
         return true;
     }
 
@@ -552,15 +551,18 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
 
     private ImageTransfer updateEntityPhase(ImageTransferPhase phase) {
-        ImageTransferUpdates updates = new ImageTransferUpdates(getCommandId());
+        ImageTransfer updates = new ImageTransfer(getCommandId());
         updates.setPhase(phase);
         return updateEntity(updates);
     }
 
-    private ImageTransfer updateEntity(ImageTransferUpdates updates) {
-        return imageTransferUpdater.updateEntity(updates, getCommandId());
+    protected ImageTransfer updateEntity(ImageTransfer updates) {
+        return updateEntity(updates, false);
     }
 
+    protected ImageTransfer updateEntity(ImageTransfer updates, boolean clearResourceId) {
+        return imageTransferUpdater.updateEntity(updates, getCommandId(), clearResourceId);
+    }
 
     private int getHostTicketRefreshAllowance() {
         return Config.<Integer>getValue(ConfigValues.ImageTransferHostTicketRefreshAllowanceInSeconds);

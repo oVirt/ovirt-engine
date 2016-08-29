@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
-import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdates;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -573,7 +572,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             }
 
             // Resumable uploads already have a command running on engine, so get its id and resume it.
-            ImageTransferUpdates updates = new ImageTransferUpdates();
+            ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.RESUMING);
 
             final UploadImageStatusParameters parameters = new UploadImageStatusParameters(rv.getId());
@@ -624,7 +623,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 UploadImageStatusParameters statusParameters = new UploadImageStatusParameters(getCommandId());
 
                 // TODO: temp updates from UI until updates from VDSM are implemented
-                ImageTransferUpdates updates = new ImageTransferUpdates();
+                ImageTransfer updates = new ImageTransfer();
                 updates.setBytesSent(getBytesSent());
                 updates.setMessage(getMessage() != null ? getMessage() : getProgressStr());
                 statusParameters.setUpdates(updates);
@@ -746,7 +745,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             return;
         }
 
-        ImageTransferUpdates updates = new ImageTransferUpdates();
+        ImageTransfer updates = new ImageTransfer();
         UploadImageStatusParameters statusParameters = new UploadImageStatusParameters(getCommandId(), updates);
 
         if (getUploadState() == UploadState.SUCCESS) {
@@ -1130,7 +1129,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (DiskImage image : images) {
-            ImageTransferUpdates updates = new ImageTransferUpdates();
+            ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.CANCELLED);
             UploadImageStatusParameters parameters = new UploadImageStatusParameters();
             parameters.setUpdates(updates);
@@ -1152,7 +1151,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public static void pauseUploads(List<DiskImage> images) {
                 ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (DiskImage image : images) {
-            ImageTransferUpdates updates = new ImageTransferUpdates();
+            ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.PAUSED_USER);
             UploadImageStatusParameters parameters = new UploadImageStatusParameters();
             parameters.setUpdates(updates);
