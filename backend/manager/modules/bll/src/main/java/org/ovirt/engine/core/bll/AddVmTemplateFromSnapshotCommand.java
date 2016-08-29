@@ -197,7 +197,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         VdcQueryReturnValue queryReturnValue = runInternalQuery(
                 VdcQueryType.GetVmConfigurationBySnapshot,
                 new IdQueryParameters(getParameters().getSourceSnapshotId()));
-        return queryReturnValue.getSucceeded() ? queryReturnValue.<VM>getReturnValue() : null;
+        return queryReturnValue.getSucceeded() ? queryReturnValue.getReturnValue() : null;
     }
 
     @Override
