@@ -90,7 +90,7 @@
 			font-weight: bold;
 		}
 
-		.infoBoxDetails, .infoBoxDetailsStorage {
+		.infoBoxDetails {
 			float: left;
 			width: 100%;
 			padding-left: 8px;
@@ -370,17 +370,17 @@
 									<g:Label text="{constants.freeQuota}" addStyleNames="{style.legendText}"/>
 								</g:FlowPanel>
 							</g:FlowPanel>
-							<g:Label text="{constants.quotaSummary}" addStyleNames="{style.quotaSummaryText}"/>
-							<w:QuotaProgressBar ui:field="storageProgressBar" addStyleNames="{style.progressBar}"/>
-
-
-							<g:FlowPanel>
-								<d:AdvancedParametersExpander ui:field="storageExpander"
-															  addStyleNames="{style.expander}"/>
-								<g:ScrollPanel ui:field="storageExpanderContent"
-											   addStyleNames="{style.expanderContent}">
-									<g:VerticalPanel ui:field="storageQuotasList" addStyleNames="{style.quotaList}"/>
-								</g:ScrollPanel>
+							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+								<g:Label text="{constants.quotaSummary}" addStyleNames="{style.quotaSummaryText}"/>
+								<w:QuotaProgressBar ui:field="storageProgressBar" addStyleNames="{style.progressBar}"/>
+								<g:FlowPanel>
+									<d:AdvancedParametersExpander ui:field="storageExpander"
+																  addStyleNames="{style.expander}"/>
+									<g:ScrollPanel ui:field="storageExpanderContent"
+												   addStyleNames="{style.expanderContent}">
+										<g:VerticalPanel ui:field="storageQuotasList" addStyleNames="{style.quotaList}"/>
+									</g:ScrollPanel>
+								</g:FlowPanel>
 							</g:FlowPanel>
 						</g:FlowPanel>
 
