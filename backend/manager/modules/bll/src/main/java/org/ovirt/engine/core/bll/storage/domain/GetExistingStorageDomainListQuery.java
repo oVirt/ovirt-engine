@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainsListVDSComma
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
@@ -38,7 +37,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
             ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
             HashSet<Guid> guidsFromDb = new HashSet<>();
             if (guidsFromIrs.size() > 0) {
-                List<StorageDomain> domainsInDb = DbFacade.getInstance().getStorageDomainDao().getAll();
+                List<StorageDomain> domainsInDb = getDbFacade().getStorageDomainDao().getAll();
                 for (StorageDomain domain : domainsInDb) {
                     guidsFromDb.add(domain.getId());
                 }
