@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
-import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdates;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -31,7 +30,7 @@ public class ImageTransferUpdater {
         this.imageTransferDao = requireNonNull(imageTransferDao);
     }
 
-    public ImageTransfer updateEntity(ImageTransferUpdates updates, Guid commandId) {
+    public ImageTransfer updateEntity(ImageTransfer updates, Guid commandId, boolean clearResourceId) {
         // TODO this lock might not be enough; analyze possible concurrent calls
         LockManager lockManager = LockManagerFactory.getLockManager();
         EngineLock lock = getEntityUpdateLock(commandId);
@@ -72,7 +71,7 @@ public class ImageTransferUpdater {
                 if (updates.getDiskId() != null) {
                     entity.setDiskId(updates.getDiskId());
                 }
-                if (updates.getImagedTicketId() != null || updates.isClearResourceId()) {
+                if (updates.getImagedTicketId() != null || clearResourceId) {
                     entity.setImagedTicketId(updates.getImagedTicketId());
                 }
                 if (updates.getProxyUri() != null) {

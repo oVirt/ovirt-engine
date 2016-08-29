@@ -51,7 +51,7 @@ public class UploadImageStatusCommand<T extends UploadImageStatusParameters> ext
 
         if (entity != null) {
             // Always update; this serves as a keepalive
-            entity = imageTransferUpdater.updateEntity(getParameters().getUpdates(), entity.getId());
+            entity = imageTransferUpdater.updateEntity(getParameters().getUpdates(), entity.getId(), false);
         } else {
             // Missing entity; this isn't unusual as the UI will poll until the entity is gone
             // due to upload completion or failure.  Instead of an error, we'll return an entity
