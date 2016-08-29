@@ -257,7 +257,6 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
         options.setSmartcardEnabled(getCachedVm().isSmartcardEnabled());
         options.setNumberOfMonitors(getCachedVm().getNumOfMonitors());
-        options.setGuestHostName(getCachedVm().getVmHost().split("[ ]", -1)[0]);
         if (graphicsInfo.getTlsPort() != null) {
             options.setSecurePort(graphicsInfo.getTlsPort());
         }

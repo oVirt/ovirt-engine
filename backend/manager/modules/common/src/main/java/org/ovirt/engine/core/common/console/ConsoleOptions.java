@@ -35,7 +35,6 @@ public class ConsoleOptions implements Serializable{
     private boolean usbAutoShare;
     protected String usbFilter;
     private boolean adminConsole;
-    private String guestHostName;
     private int securePort;
     private String sslChanels;
     private String cipherSuite;
@@ -206,14 +205,6 @@ public class ConsoleOptions implements Serializable{
 
     public void setAdminConsole(boolean adminConsole) {
         this.adminConsole = adminConsole;
-    }
-
-    public String getGuestHostName() {
-        return guestHostName;
-    }
-
-    public void setGuestHostName(String guestHostName) {
-        this.guestHostName = guestHostName;
     }
 
     public int getSecurePort() {
