@@ -79,7 +79,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxImagesInChain, "General", "")
+            mockConfig(ConfigValues.MaxImagesInChain, "general", 95)
     );
 
     @SuppressWarnings("unchecked")

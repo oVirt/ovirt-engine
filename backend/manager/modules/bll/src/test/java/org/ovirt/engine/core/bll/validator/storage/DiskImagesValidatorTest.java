@@ -58,7 +58,7 @@ public class DiskImagesValidatorTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxImagesInChain, "General", "")
+            mockConfig(ConfigValues.MaxImagesInChain, "general", 95)
             );
 
     private DiskImage disk1;
