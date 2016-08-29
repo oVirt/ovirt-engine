@@ -39,7 +39,6 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 public class DiskImagesValidator {
 
     private Iterable<DiskImage> diskImages;
-    private static final Integer maxImagesInChain = Config.<Integer> getValue(ConfigValues.MaxImagesInChain);
 
     public DiskImagesValidator(Iterable<DiskImage> disks) {
         this.diskImages = disks;
@@ -330,6 +329,6 @@ public class DiskImagesValidator {
     }
 
     protected int getMaxVolumeChain() {
-        return maxImagesInChain;
+        return Config.getValue(ConfigValues.MaxImagesInChain);
     }
 }
