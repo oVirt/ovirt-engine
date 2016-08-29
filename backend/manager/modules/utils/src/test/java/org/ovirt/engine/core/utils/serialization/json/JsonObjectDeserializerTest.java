@@ -87,7 +87,6 @@ public class JsonObjectDeserializerTest {
         buf.append("\"entityInfo\" : null,");
         buf.append("\"taskGroupSuccess\" : true,");
         buf.append("\"vdsmTaskIds\" : null,");
-        buf.append("\"executionIndex\" : 0,");
         buf.append("\"correlationId\" : null,");
         buf.append("\"jobId\" : null,");
         buf.append("\"stepId\" : null,");

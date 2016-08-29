@@ -148,10 +148,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
         dbAsyncTask.getActionParameters().setImagesParameters(imagesParameters);
 
         try {
-            log.info("CommandAsyncTask::endCommandAction [within thread] context: Attempting to endAction '{}',"
-                            + " executionIndex: '{}'",
-                    dbAsyncTask.getActionParameters().getCommandType(),
-                    dbAsyncTask.getActionParameters().getExecutionIndex());
+            log.info("CommandAsyncTask::endCommandAction [within thread] context: Attempting to endAction '{}',",
+                    dbAsyncTask.getActionParameters().getCommandType());
 
             try {
                 /**

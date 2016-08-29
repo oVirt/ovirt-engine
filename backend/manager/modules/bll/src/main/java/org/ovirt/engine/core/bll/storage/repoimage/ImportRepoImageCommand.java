@@ -323,7 +323,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
                             AuditLogType.USER_IMPORT_IMAGE_AS_TEMPLATE_FINISHED_FAILURE :
                             AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE;
                 }
-                if (getParameters().getExecutionIndex() == 0 && getSucceeded()) {
+                if (getSucceeded()) {
                     return getParameters().getImportAsTemplate() ? AuditLogType.USER_IMPORT_IMAGE_AS_TEMPLATE :
                             AuditLogType.USER_IMPORT_IMAGE;
                 }

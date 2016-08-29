@@ -53,8 +53,6 @@ public class VdcActionParametersBase implements Serializable {
 
     private Guid vdsRunningOn;
 
-    private int executionIndex;
-
     private EndProcedure endProcedure = EndProcedure.PARENT_MANAGED;
 
     private boolean useCinderCommandCallback;
@@ -240,14 +238,6 @@ public class VdcActionParametersBase implements Serializable {
         this.correlationId = correlationId;
     }
 
-    public int getExecutionIndex() {
-        return executionIndex;
-    }
-
-    public void setExecutionIndex(int executionIndex) {
-        this.executionIndex = executionIndex;
-    }
-
     public Guid getJobId() {
         return jobId;
     }
@@ -262,14 +252,6 @@ public class VdcActionParametersBase implements Serializable {
 
     public void setStepId(Guid stepId) {
         this.stepId = stepId;
-    }
-
-    public void incrementExecutionIndex() {
-        executionIndex++;
-    }
-
-    public void decrementExecutionIndex() {
-        executionIndex--;
     }
 
     public Guid getVdsRunningOn() {

@@ -349,12 +349,6 @@ public class CoCoAsyncTaskHelper {
      *
      */
     private AsyncTaskType internalGetTaskType(CommandBase<?> command) {
-        if (command.hasTaskHandlers()) {
-            if (command.getParameters().getExecutionReason() == VdcActionParametersBase.CommandExecutionReason.REGULAR_FLOW) {
-                return command.getCurrentTaskHandler().getTaskType();
-            }
-            return command.getCurrentTaskHandler().getRevertTaskType();
-        }
         return command.getAsyncTaskType();
     }
 

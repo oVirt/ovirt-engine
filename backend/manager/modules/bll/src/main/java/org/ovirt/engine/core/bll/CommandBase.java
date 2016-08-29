@@ -38,7 +38,6 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
@@ -164,9 +163,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     /** A map contains the properties for describing the job */
     protected Map<String, String> jobProperties;
 
-    /** Handlers for performing the logical parts of the command */
-    private List<SPMAsyncTaskHandler> taskHandlers;
-
     private CommandStatus commandStatus = CommandStatus.NOT_STARTED;
 
     protected CommandBase(T parameters, CommandContext cmdContext) {
@@ -198,7 +194,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      */
     @PostConstruct
     protected final void postConstruct() {
-        taskHandlers = initTaskHandlers();
         if (!isCompensationContext()) {
             initCommandBase();
             init();
@@ -246,10 +241,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * should be done here. It is ensured that all injected dependencies were injected at the time calling.
      */
     protected void init() {
-    }
-
-    protected List<SPMAsyncTaskHandler> initTaskHandlers() {
-        return null;
     }
 
     /**
@@ -453,18 +444,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * </ol>
      * <li>Remove all the snapshots for this command, since we handled them.</li> </ol>
      */
-    protected void compensate() {
-        if (hasTaskHandlers()) {
-            getParameters().setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
-            getCurrentTaskHandler().compensate();
-            revertPreviousHandlers();
-        } else {
-            internalCompensate();
-        }
-    }
-
     @SuppressWarnings({ "unchecked", "synthetic-access" })
-    private void internalCompensate() {
+    protected void compensate() {
         try {
             if (isQuotaDependant()) {
                 rollbackQuota();
@@ -554,7 +535,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                     isEndSuccessfully() ? JobExecutionStatus.FINISHED : JobExecutionStatus.FAILED);
         }
 
-        if (getCommandStep() == null && (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1)) {
+        if (getCommandStep() == null) {
             executionHandler.startFinalizingStep(getExecutionContext());
         }
     }
@@ -746,16 +727,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private void internalEndSuccessfully() {
         log.info("Ending command '{}' successfully.", getClass().getName());
-        if (hasTaskHandlers()) {
-            getCurrentTaskHandler().endSuccessfully();
-            getParameters().incrementExecutionIndex();
-            if (getExecutionIndex() < getTaskHandlers().size()) {
-                actionState = CommandActionState.EXECUTE;
-                execute();
-            }
-        } else {
-            endSuccessfully();
-        }
+        endSuccessfully();
     }
 
     protected void endSuccessfully() {
@@ -787,18 +759,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private void internalEndWithFailure() {
         log.error("Ending command '{}' with failure.", getClass().getName());
-        if (hasTaskHandlers()) {
-            if (hasStepsToRevert()) {
-                getCurrentTaskHandler().endWithFailure();
-                revertPreviousHandlers();
-            } else {
-                // since no handlers have been run we don't have to retry endAction
-                getReturnValue().setEndActionTryAgain(false);
-            }
-            startPollingAsyncTasks();
-        } else {
-            endWithFailure();
-        }
+        endWithFailure();
         rollbackQuota();
     }
 
@@ -845,32 +806,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private QuotaVdsDependent getThisQuotaVdsDependent() {
         return (QuotaVdsDependent) this;
-    }
-
-    private void revertPreviousHandlers() {
-        getParameters().decrementExecutionIndex();
-        if (hasStepsToRevert()) {
-            logRollbackedTask();
-            getParameters().setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
-            getCurrentTaskHandler().compensate();
-
-            if (!hasRevertTask()) {
-                // If there is no task to take us onwards, just run the previous handler's revert
-                revertPreviousHandlers();
-            }
-        }
-        else {
-            setSucceeded(true);
-        }
-    }
-
-    protected void logRollbackedTask() {
-        String type = getCurrentTaskHandler().getRevertTaskType() != null ? getCurrentTaskHandler().getRevertTaskType().name() : AsyncTaskType.unknown.name();
-        log.error("Reverting task '{}', handler '{}'", type, getCurrentTaskHandler().getClass().getName());
-    }
-
-    private boolean hasRevertTask() {
-        return getCurrentTaskHandler().getRevertTaskType() != null;
     }
 
     protected void endWithFailure() {
@@ -1312,11 +1247,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         boolean exceptionOccurred = true;
         try {
             logRunningCommand();
-            if (hasTaskHandlers()) {
-                getCurrentTaskHandler().execute();
-            } else {
-                executeCommand();
-            }
+            executeCommand();
             functionReturnValue = getSucceeded();
             exceptionOccurred = false;
         } catch (EngineException e) {
@@ -1406,10 +1337,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
         if (log.isDebugEnabled()) {
             logInfo.append(getParameters() != null ? "(" + getCommandParamatersString(getParameters()) + ")" : StringUtils.EMPTY);
-        }
-
-        if (hasTaskHandlers()) {
-            logInfo.append(" Task handler: ").append(getCurrentTaskHandler().getClass().getSimpleName());
         }
 
         logInfo.append(" internal: ").append(isInternalExecution()).append(".");
@@ -1511,9 +1438,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             CommandCoordinatorUtil.persistCommandAssociatedEntities(getCommandId(), getSubjectEntities());
         }
 
-        if (!hasTaskHandlers() || getExecutionIndex() == 0) {
-            executionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
-        }
+        executionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
 
         handleCommandStepAndEntities();
 
@@ -1651,11 +1576,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         Guid taskId = Guid.Empty;
         try {
             AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo();
-            if (!hasTaskHandlers()) {
-                creationInfo.setTaskType(getTaskType());
-            } else {
-                creationInfo.setTaskType(getCurrentTaskHandler().getTaskType());
-            }
+            creationInfo.setTaskType(getTaskType());
             final AsyncTask task = createAsyncTask(creationInfo, parentCommand);
             taskId = task.getTaskId();
             TransactionScopeOption scopeOption =
@@ -2325,26 +2246,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     public QuotaManager getQuotaManager() {
         return quotaManager;
-    }
-
-    protected List<SPMAsyncTaskHandler> getTaskHandlers() {
-        return taskHandlers;
-    }
-
-    public boolean hasTaskHandlers() {
-        return getTaskHandlers() != null;
-    }
-
-    public SPMAsyncTaskHandler getCurrentTaskHandler() {
-        return getTaskHandlers().get(getExecutionIndex());
-    }
-
-    private int getExecutionIndex() {
-        return getParameters().getExecutionIndex();
-    }
-
-    private boolean hasStepsToRevert() {
-        return getExecutionIndex() >= 0;
     }
 
     public boolean isQuotaChanged() {
