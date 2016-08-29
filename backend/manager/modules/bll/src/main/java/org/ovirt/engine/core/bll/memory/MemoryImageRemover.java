@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -27,14 +27,14 @@ public abstract class MemoryImageRemover {
     public static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
     public static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
 
-    protected final TaskHandlerCommand<?> enclosingCommand;
+    protected final CommandBase<?> enclosingCommand;
     private boolean startPollingTasks;
 
-    public MemoryImageRemover(TaskHandlerCommand<?> enclosingCommand) {
+    public MemoryImageRemover(CommandBase<?> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
     }
 
-    public MemoryImageRemover(TaskHandlerCommand<?> enclosingCommand, boolean startPollingTasks) {
+    public MemoryImageRemover(CommandBase<?> enclosingCommand, boolean startPollingTasks) {
         this(enclosingCommand);
         this.startPollingTasks = startPollingTasks;
     }
@@ -121,7 +121,7 @@ public abstract class MemoryImageRemover {
     }
 
     protected Guid removeImage(String taskKey, DeleteImageGroupVDSCommandParameters parameters) {
-        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(taskKey);
+        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(enclosingCommand.getActionType(), taskKey);
 
         VDSReturnValue vdsRetValue = removeImage(parameters);
         // if command succeeded, create a task

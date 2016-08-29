@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.memory;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,7 +15,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
     protected Boolean cachedPostZero;
     private VM vm;
 
-    public MemoryImageRemoverFromExportDomain(VM vm, TaskHandlerCommand<?> enclosingCommand,
+    public MemoryImageRemoverFromExportDomain(VM vm, CommandBase<?> enclosingCommand,
             Guid storagePoolId, Guid storageDomainId) {
         super(enclosingCommand);
         this.vm = vm;

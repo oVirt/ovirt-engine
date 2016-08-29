@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -62,7 +61,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<RemoveVmParameters> {
+public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
     @Inject
     private Event<Guid> vmDeleted;
@@ -421,10 +420,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return Collections.emptyList();
     }
 
-    ///////////////////////////////////////
-    // TaskHandlerCommand Implementation //
-    ///////////////////////////////////////
-
     @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -432,38 +427,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             VdcObjectType entityType,
             Guid... entityIds) {
         return super.createTaskInCurrentTransaction(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
-    }
-
-    @Override
-    public Guid createTask(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
-    }
-
-    @Override
-    public ArrayList<Guid> getTaskIdList() {
-        return super.getTaskIdList();
-    }
-
-    @Override
-    public void taskEndSuccessfully() {
-        // Not implemented
-    }
-
-    @Override
-    public void preventRollback() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder() {
-        return super.persistAsyncTaskPlaceHolder(getActionType());
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 
     @Override

@@ -1679,7 +1679,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @return Guid of the created task.
      */
-    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         return createTask(taskId,
                 asyncTaskCreationInfo,
                 parentCommand,
@@ -1836,7 +1836,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         startPollingAsyncTasks(getReturnValue().getVdsmTaskIdList());
     }
 
-    protected ArrayList<Guid> getTaskIdList() {
+    public ArrayList<Guid> getTaskIdList() {
         return (getParameters().getParentCommand() != VdcActionType.Unknown  && !parentHasCallback()) ?
                 getReturnValue().getInternalVdsmTaskIdList() : getReturnValue().getVdsmTaskIdList();
     }
