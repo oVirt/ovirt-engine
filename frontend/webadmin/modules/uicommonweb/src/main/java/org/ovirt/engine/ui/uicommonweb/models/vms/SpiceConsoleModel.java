@@ -1,30 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
-import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.ShutdownVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
-import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -54,11 +41,8 @@ public class SpiceConsoleModel extends ConsoleModel {
 
     public static EventDefinition spiceDisconnectedEventDefinition;
     public static EventDefinition spiceConnectedEventDefinition;
-    public static EventDefinition spiceMenuItemSelectedEventDefinition;
 
     private static final DynamicMessages dynamicMessages = (DynamicMessages) TypeResolver.getInstance().resolve(DynamicMessages.class);
-
-    private SpiceMenu menu;
 
     private ISpice privatespice;
     private ClientConsoleMode consoleMode;
@@ -74,7 +58,6 @@ public class SpiceConsoleModel extends ConsoleModel {
     static {
         spiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class); //$NON-NLS-1$
         spiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class); //$NON-NLS-1$
-        spiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class); //$NON-NLS-1$
     }
 
     public SpiceConsoleModel(VM myVm, Model parentModel) {
@@ -191,49 +174,10 @@ public class SpiceConsoleModel extends ConsoleModel {
         else if (ev.equals(getspice().getConnectedEvent())) {
             spice_Connected(sender);
         }
-        else if (ev.equals(getspice().getMenuItemSelectedEvent())) {
-            spice_MenuItemSelected(sender, (SpiceMenuItemEventArgs) args);
-        }
-    }
-
-    private void spice_MenuItemSelected(Object sender, SpiceMenuItemEventArgs e) {
-        if (getEntity() != null) {
-            SpiceMenuCommandItem item = null;
-            for (SpiceMenuItem a : menu.descendants()) {
-                if (a.getClass() == SpiceMenuCommandItem.class && a.getId() == e.getMenuItemId()) {
-                    item = (SpiceMenuCommandItem) a;
-                    break;
-                }
-            }
-            if (item != null) {
-                if (CommandPlay.equals(item.getCommandName())) {
-                    // use sysprep iff the vm is not initialized and vm has Win OS
-                    RunVmParams tempVar = new RunVmParams(getEntity().getId());
-                    tempVar.setRunAsStateless(getEntity().isStateless());
-                    Frontend.getInstance().runMultipleAction(VdcActionType.RunVm,
-                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{tempVar})));
-
-                } else if (CommandSuspend.equals(item.getCommandName())) {
-                    Frontend.getInstance().runMultipleAction(VdcActionType.HibernateVm,
-                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new VmOperationParameterBase(getEntity().getId())})));
-
-                } else if (CommandStop.equals(item.getCommandName())) {
-                    Frontend.getInstance().runMultipleAction(VdcActionType.ShutdownVm,
-                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new ShutdownVmParameters(getEntity().getId(),
-                                    true)})));
-
-                } else if (CommandChangeCD.equals(item.getCommandName())) {
-                    Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
-                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new ChangeDiskCommandParameters(getEntity().getId(),
-                                    getEjectLabel().equals(item.getText()) ? "" : item.getText())}))); //$NON-NLS-1$
-                }
-            }
-        }
     }
 
     private void spice_Disconnected(Object sender, ErrorCodeEventArgs e) {
         getspice().getDisconnectedEvent().removeListener(this);
-        getspice().getMenuItemSelectedEvent().removeListener(this);
 
         setIsConnected(false);
 
@@ -259,36 +203,7 @@ public class SpiceConsoleModel extends ConsoleModel {
         }
     }
 
-    private void executeQuery(final VM vm) {
-        final AsyncQuery<VdcQueryReturnValue> imagesListQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                List<RepoImage> repoImages = returnValue.getReturnValue();
-                invokeClient(repoImages);
-            }
-        });
-
-        AsyncQuery<StorageDomain> isoDomainQuery = new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
-            @Override
-            public void onSuccess(StorageDomain isoDomain) {
-                if (isoDomain != null) {
-                    GetImagesListByStoragePoolIdParameters getIsoParams =
-                            new GetImagesListByStoragePoolIdParameters(vm.getStoragePoolId(), ImageFileType.ISO);
-
-                    Frontend.getInstance().runQuery(
-                            VdcQueryType.GetImagesListByStoragePoolId,
-                            getIsoParams,
-                            imagesListQuery);
-                } else {
-                    invokeClient(null);
-                }
-            }
-        });
-
-        AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(isoDomainQuery, vm.getStoragePoolId());
-    }
-
-    public void invokeClient(final List<RepoImage> repoImages) {
+    public void invokeClient() {
         final GraphicsInfo spiceInfo = getEntity().getGraphicsInfos().get(GraphicsType.SPICE);
         if (spiceInfo == null) {
             throw new IllegalStateException("Trying to invoke SPICE console but VM GraphicsInfo is null.");//$NON-NLS-1$
@@ -316,11 +231,9 @@ public class SpiceConsoleModel extends ConsoleModel {
                         if (!configuredOptions.isSpiceProxyEnabled()) {
                             configuredOptions.setSpiceProxy(null); // override spice proxy from backend
                         }
-                        createAndSetMenu(configuredOptions, repoImages);
 
                         // Subscribe to events.
                         getspice().getDisconnectedEvent().addListener(SpiceConsoleModel.this);
-                        getspice().getMenuItemSelectedEvent().addListener(SpiceConsoleModel.this);
 
                         try {
                             getspice().setOptions(configuredOptions);
@@ -335,50 +248,6 @@ public class SpiceConsoleModel extends ConsoleModel {
                 }));
     }
 
-    private void createAndSetMenu(ConsoleOptions options, List<RepoImage> repoImages) {
-        int id = 1;
-        menu = new SpiceMenu();
-
-        SpiceMenuContainerItem changeCDItem =
-                new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().changeCd());
-        id++;
-
-        ArrayList<String> isos = new ArrayList<>();
-
-        if (repoImages != null) {
-            for (RepoImage repoImage : repoImages) {
-                isos.add(repoImage.getRepoImageId());
-            }
-        }
-
-        isos = isos.size() > 0
-                ? isos
-                : new ArrayList<>(Arrays.asList(new String[]{ConstantsManager.getInstance().getConstants().noCds()}));
-        Collections.sort(isos);
-        for (String fileName : isos) {
-            changeCDItem.getItems().add(new SpiceMenuCommandItem(id, fileName, CommandChangeCD));
-            id++;
-        }
-        changeCDItem.getItems().add(new SpiceMenuCommandItem(id, getEjectLabel(), CommandChangeCD));
-        id++;
-        menu.getItems().add(changeCDItem);
-        menu.getItems().add(new SpiceMenuSeparatorItem(id));
-        id++;
-        menu.getItems().add(new SpiceMenuCommandItem(id, ConstantsManager.getInstance()
-                .getConstants()
-                .playSpiceConsole(), CommandPlay));
-        id++;
-        menu.getItems().add(new SpiceMenuCommandItem(id, ConstantsManager.getInstance()
-                .getConstants()
-                .suspendSpiceConsole(), CommandSuspend));
-        id++;
-        menu.getItems().add(new SpiceMenuCommandItem(id, ConstantsManager.getInstance()
-                .getConstants()
-                .stopSpiceConsole(), CommandStop));
-
-        options.setMenu(menu.toString());
-    }
-
     public void invokeConsole() { // todo refactor this later
         // Only if the VM has agent and we connect through user-portal
         // we attempt to perform SSO (otherwise an error will be thrown)
@@ -391,12 +260,10 @@ public class SpiceConsoleModel extends ConsoleModel {
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
-
-                            final SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) result.getState();
                             final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();
                             boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();
                             if (isLogonSucceeded) {
-                                spiceConsoleModel.executeQuery(getEntity());
+                                invokeClient();
                             }
                             else {
                                 if (logonCommandReturnValue != null && logonCommandReturnValue.getFault().getError() == EngineError.nonresp) {
@@ -404,11 +271,11 @@ public class SpiceConsoleModel extends ConsoleModel {
                                             new UICommand("SpiceWithoutAgentOK", new BaseCommandTarget() { //$NON-NLS-1$
                                                         @Override
                                                         public void executeCommand(UICommand uiCommand) {
-                                                            logSsoOnDesktopFailedAgentNonResp(spiceConsoleModel.getLogger(),
+                                                            logSsoOnDesktopFailedAgentNonResp(getLogger(),
                                                                     logonCommandReturnValue != null ?
                                                                             logonCommandReturnValue.getDescription()
                                                                             : ""); //$NON-NLS-1$
-                                                            spiceConsoleModel.executeQuery(getEntity());
+                                                            invokeClient();
                                                             getParentModel().setWindow(null);
                                                         }
                                                     });
@@ -423,7 +290,7 @@ public class SpiceConsoleModel extends ConsoleModel {
                                     createConnectWithoutAgentConfirmationPopup(okCommand, cancelCommand);
                                 }
                                 else {
-                                    logSsoOnDesktopFailed(spiceConsoleModel.getLogger(),
+                                    logSsoOnDesktopFailed(getLogger(),
                                             logonCommandReturnValue != null ? logonCommandReturnValue.getDescription()
                                                     : ""); //$NON-NLS-1$
                                 }
@@ -432,7 +299,7 @@ public class SpiceConsoleModel extends ConsoleModel {
                     },
                     this);
         } else {
-            executeQuery(getEntity());
+            invokeClient();
         }
     }
 
@@ -468,10 +335,5 @@ public class SpiceConsoleModel extends ConsoleModel {
         logger.info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
                 + vmName + ", cancel open spice console request."); //$NON-NLS-1$
     }
-
-    private static final String CommandStop = "Stop"; //$NON-NLS-1$
-    private static final String CommandPlay = "Play"; //$NON-NLS-1$
-    private static final String CommandSuspend = "Suspend"; //$NON-NLS-1$
-    private static final String CommandChangeCD = "ChangeCD"; //$NON-NLS-1$
 
 }

@@ -14,7 +14,6 @@ public abstract class AbstractSpice extends AbstractConsoleWithForeignMenu {
     // long term todo - move these events to plugin impl
     protected Event<EventArgs> disconnectedEvent = new Event<>(SpiceConsoleModel.spiceDisconnectedEventDefinition);
     protected Event<EventArgs> connectedEvent = new Event<>(SpiceConsoleModel.spiceConnectedEventDefinition);
-    protected Event<EventArgs> menuItemSelectedEvent = new Event<>(SpiceConsoleModel.spiceMenuItemSelectedEventDefinition);
 
     public ConsoleOptions getOptions() {
         return consoleOptions;
@@ -38,14 +37,6 @@ public abstract class AbstractSpice extends AbstractConsoleWithForeignMenu {
 
     public void setConnectedEvent(Event<EventArgs> connectedEvent) {
         this.connectedEvent = connectedEvent;
-    }
-
-    public Event<EventArgs> getMenuItemSelectedEvent() {
-        return menuItemSelectedEvent;
-    }
-
-    public void setMenuItemSelectedEvent(Event<EventArgs> menuItemSelectedEvent) {
-        this.menuItemSelectedEvent = menuItemSelectedEvent;
     }
 
 }

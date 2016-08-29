@@ -7,6 +7,4 @@ public interface ISpice extends ConsoleClient {
 
     Event<EventArgs> getDisconnectedEvent();
     Event<EventArgs> getConnectedEvent();
-    Event<EventArgs> getMenuItemSelectedEvent();
-
 }

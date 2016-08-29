@@ -43,7 +43,6 @@ public class ConsoleOptions implements Serializable{
     // if true, user provided his custom certificate for HTTPS communication
     // if false, engine's CA has been used so we can pass it to remote-viewer
     private boolean customHttpsCertificateUsed;
-    private String menu;
     private boolean noTaskMgrExecution;
     private WanColorDepth wanColorDepth;
     private boolean wanOptionsEnabled;
@@ -257,14 +256,6 @@ public class ConsoleOptions implements Serializable{
 
     public void setCustomHttpsCertificateUsed(boolean customHttpsCertificateUsed) {
         this.customHttpsCertificateUsed = customHttpsCertificateUsed;
-    }
-
-    public String getMenu() {
-        return menu;
-    }
-
-    public void setMenu(String menu) {
-        this.menu = menu;
     }
 
     public boolean isNoTaskMgrExecution() {
