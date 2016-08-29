@@ -2,9 +2,8 @@ package org.ovirt.engine.ui.common.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
-import org.ovirt.engine.ui.common.uicommon.model.AbstractConsoleWithForeignMenu;
 
-public abstract class AbstractVnc extends AbstractConsoleWithForeignMenu {
+public abstract class AbstractVnc extends AbstractConsole {
 
     private ConsoleOptions consoleOptions = new ConsoleOptions(GraphicsType.VNC);
 

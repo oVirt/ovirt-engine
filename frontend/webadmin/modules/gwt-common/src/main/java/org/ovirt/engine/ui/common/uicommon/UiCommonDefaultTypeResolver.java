@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
@@ -16,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
-import org.ovirt.engine.ui.uicommonweb.restapi.HasForeignMenuData;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -29,7 +27,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
     private final ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister;
     private final ConsoleUtils consoleUtils;
     private final ErrorPopupManager errorPopupManager;
-    private final CurrentUser currentUser;
     private final CurrentUserRole currentUserRole;
 
     // we inject providers for the console impls since they
@@ -47,7 +44,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
     public UiCommonDefaultTypeResolver(Configurator configurator, ILogger logger,
             ConsoleUtils consoleUtils,  ErrorPopupManager errorPopupManager,
             ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister,
-            CurrentUser currentUser, CurrentUserRole currentUserRole,
+            CurrentUserRole currentUserRole,
             Provider<ISpiceNative> spiceNativeProvider,
             Provider<ISpiceHtml5> spiceHtml5Provider,
             Provider<IRdpPlugin> rdpPluginProvider,
@@ -60,7 +57,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
         this.consoleOptionsFrontendPersister = consoleOptionsFrontendPersister;
         this.consoleUtils = consoleUtils;
         this.errorPopupManager = errorPopupManager;
-        this.currentUser = currentUser;
         this.currentUserRole = currentUserRole;
 
         this.spiceNativeProvider = spiceNativeProvider;
@@ -82,7 +78,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
         } else if (type == ITimer.class) {
             return new TimerImpl();
         } else if (type == ISpiceNative.class) {
-            return withSsoToken(spiceNativeProvider.get());
+            return spiceNativeProvider.get();
         } else if (type == ISpiceHtml5.class) {
             return spiceHtml5Provider.get();
         } else if (type == IRdpPlugin.class) {
@@ -92,7 +88,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
         } else if (type == INoVnc.class) {
             return noVncProvider.get();
         } else if (type == IVncNative.class) {
-            return withSsoToken(vncNativeProvider.get());
+            return vncNativeProvider.get();
         } else if (type == ConsoleOptionsFrontendPersister.class) {
             return consoleOptionsFrontendPersister;
         } else if (type == ConsoleUtils.class) {
@@ -106,11 +102,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
         }
 
         throw new RuntimeException("UiCommon Resolver cannot resolve type: " + type); //$NON-NLS-1$
-    }
-
-    public <T extends HasForeignMenuData> T withSsoToken(T consoleImpl) {
-        consoleImpl.setSsoToken(currentUser.getSsoToken());
-        return consoleImpl;
     }
 
 }

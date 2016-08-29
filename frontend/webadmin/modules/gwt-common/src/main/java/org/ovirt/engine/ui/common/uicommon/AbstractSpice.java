@@ -2,12 +2,11 @@ package org.ovirt.engine.ui.common.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
-import org.ovirt.engine.ui.common.uicommon.model.AbstractConsoleWithForeignMenu;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
-public abstract class AbstractSpice extends AbstractConsoleWithForeignMenu {
+public abstract class AbstractSpice extends AbstractConsole {
 
     protected ConsoleOptions consoleOptions = new ConsoleOptions(GraphicsType.SPICE);
 

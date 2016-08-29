@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.restapi.HasForeignMenuData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
@@ -24,7 +23,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.dom.client.FormElement;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -262,11 +260,5 @@ public abstract class ConsoleModel extends EntityModel<VM> {
 
     protected String getClientTitle() {
         return getEntity().getName() + ":%d"; //$NON-NLS-1$
-    }
-
-    protected void setForeignMenuData(HasForeignMenuData nativeImpl) {
-        nativeImpl.setEngineHost(Window.Location.getHost());
-        nativeImpl.setVmId(getEntity().getId());
-        nativeImpl.setAdmin(Frontend.getInstance().getLoggedInUser().isAdmin());
     }
 }
