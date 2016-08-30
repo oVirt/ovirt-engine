@@ -198,10 +198,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 // fail update vm if some fields could not be copied
                 throw new EngineException(EngineError.FAILED_UPDATE_RUNNING_VM);
             }
+        }
 
-            if (isClusterLevelChange()) {
-                // For backward compatibility after cluster version change: keep version until VM reboot
-                // Set temporarily custom compatibility version till the NextRun is applied
+        if ((getVm().isRunningOrPaused() || getVm().isPreviewSnapshot() || getVm().isSuspended()) && !getVm().isHostedEngine()) {
+            if (getVm().getCustomCompatibilityVersion() == null && getParameters().getClusterLevelChangeFromVersion() != null) {
+                // For backward compatibility after cluster version change
+                // When running/paused: Set temporary custom compatibility version till the NextRun is applied (VM cold reboot)
+                // When snapshot in preview: keep the custom compatibility version even after commit or roll back by undo
                 newVmStatic.setCustomCompatibilityVersion(getParameters().getClusterLevelChangeFromVersion());
             }
         }
