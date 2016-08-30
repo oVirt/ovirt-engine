@@ -52,25 +52,6 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
     }
 
     @Override
-    public ValidationResult isParentEntityValid(Guid clusterId) {
-        if (clusterId == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_CLUSTER_NOT_PROVIDED);
-        }
-        Guid id = getProfile().getId();
-        if (id == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_EMPTY);
-        }
-        CpuProfile fetchedCpuProfile = getProfileDao().get(id);
-        if (fetchedCpuProfile == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CPU_PROFILE_NOT_FOUND);
-        }
-        if (!clusterId.equals(fetchedCpuProfile.getClusterId())) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_NOT_MATCH_CLUSTER);
-        }
-        return ValidationResult.VALID;
-    }
-
-    @Override
     public ValidationResult isLastProfileInParentEntity() {
         if (getProfileDao().getAllForCluster(getProfile().getClusterId()).size() == 1) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_REMOVE_LAST_CPU_PROFILE_IN_CLUSTER);

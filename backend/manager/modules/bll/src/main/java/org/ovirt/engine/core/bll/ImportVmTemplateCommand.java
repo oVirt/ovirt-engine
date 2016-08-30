@@ -71,6 +71,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     @Inject
     private DiskProfileHelper diskProfileHelper;
 
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
+
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
@@ -579,7 +582,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected boolean setAndValidateCpuProfile() {
         getVmTemplate().setVdsGroupId(getVdsGroupId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
                 getVdsGroup().getCompatibilityVersion(), getUserId()));
     }
 

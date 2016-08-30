@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -55,6 +57,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends VmCommand<T> {
+
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
@@ -197,7 +202,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean setAndValidateCpuProfile() {
         getVm().getStaticData().setVdsGroupId(getVdsGroupId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
                 getVdsGroup().getCompatibilityVersion(), getUserId()));
     }
 

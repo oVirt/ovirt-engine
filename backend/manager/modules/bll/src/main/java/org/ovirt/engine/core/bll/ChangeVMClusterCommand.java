@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -23,6 +25,9 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
 
     private boolean dedicatedHostWasCleared;
+
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
 
     public ChangeVMClusterCommand(T params) {
         super(params);
@@ -89,7 +94,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         vm.setVdsGroupId(getParameters().getClusterId());
 
         // Set cpu profile from the new cluster
-        CpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserId());
+        cpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserId());
 
         getVmStaticDao().update(vm.getStaticData());
 

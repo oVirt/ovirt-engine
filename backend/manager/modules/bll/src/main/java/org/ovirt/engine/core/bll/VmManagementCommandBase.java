@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -26,6 +28,9 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
      * the virsh man page.
      */
     public static final int MAXIMUM_CPU_SHARES = 262144;
+
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
 
     private InstanceType instanceType;
 
@@ -101,7 +106,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected boolean setAndValidateCpuProfile() {
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(
                 getParameters().getVm().getStaticData(),
                 getVdsGroup().getCompatibilityVersion(),
                 getUserId()));
