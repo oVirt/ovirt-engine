@@ -158,11 +158,8 @@ public class AutoRecoveryManager implements BackendService {
     private static boolean shouldPerformRecoveryOnType(String type) {
         Map<String, String> allowedRecoveryTypesFromConfig = Config.getValue(ConfigValues.AutoRecoveryAllowedTypes);
         String isAllowed = allowedRecoveryTypesFromConfig.get(type);
-        if (isAllowed != null) {
-            return Boolean.parseBoolean(isAllowed);
-        }
+        return isAllowed == null || Boolean.parseBoolean(isAllowed);
 
-        return true;
     }
 
 }
