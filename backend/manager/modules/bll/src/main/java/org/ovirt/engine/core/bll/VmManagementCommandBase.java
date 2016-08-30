@@ -37,6 +37,9 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     @Inject
     private NumaValidator numaValidator;
 
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
+
     private InstanceType instanceType;
     private Version effectiveCompatibilityVersion;
 
@@ -126,7 +129,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected boolean setAndValidateCpuProfile() {
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(
                 getParameters().getVm().getStaticData(),
                 getUserId()));
     }

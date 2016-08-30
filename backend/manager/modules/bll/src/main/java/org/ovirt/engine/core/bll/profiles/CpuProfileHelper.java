@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll.profiles;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -9,11 +12,17 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
+@Singleton
 public class CpuProfileHelper {
+
+    @Inject
+    CpuProfileDao cpuProfileDao;
+
+    @Inject
+    PermissionDao permissionDao;
 
     public static CpuProfile createCpuProfile(Guid clusterId, String name) {
         CpuProfile cpuProfile = new CpuProfile();
@@ -24,8 +33,8 @@ public class CpuProfileHelper {
         return cpuProfile;
     }
 
-    public static ValidationResult assignFirstCpuProfile(VmBase vmBase, Guid userId) {
-        List<CpuProfile> cpuProfileWithPermissions = getCpuProfileDao().getAllForCluster(
+    public ValidationResult assignFirstCpuProfile(VmBase vmBase, Guid userId) {
+        List<CpuProfile> cpuProfileWithPermissions = cpuProfileDao.getAllForCluster(
                 vmBase.getClusterId(), userId, userId != null, ActionGroup.ASSIGN_CPU_PROFILE);
 
             /* TODO use a properly selected default CPU profile for the cluster once the API becomes available
@@ -39,24 +48,31 @@ public class CpuProfileHelper {
         return ValidationResult.VALID;
     }
 
-    private static boolean checkPermissions(Guid cpuProfileId, Guid userId) {
+    private boolean checkPermissions(Guid cpuProfileId, Guid userId) {
         return userId == null ||
-                getPermissionDao().getEntityPermissions(userId,
+                permissionDao.getEntityPermissions(userId,
                     ActionGroup.ASSIGN_CPU_PROFILE,
                     cpuProfileId,
                     VdcObjectType.CpuProfile) != null;
     }
 
-    public static ValidationResult setAndValidateCpuProfile(VmBase vmBase, Guid userId) {
+    public ValidationResult setAndValidateCpuProfile(VmBase vmBase, Guid userId) {
         if (vmBase.getCpuProfileId() == null) {
             return assignFirstCpuProfile(vmBase, userId);
         }
 
-        CpuProfileValidator validator = new CpuProfileValidator(vmBase.getCpuProfileId());
-        ValidationResult result = validator.isParentEntityValid(vmBase.getClusterId());
+        Guid clusterId =  vmBase.getClusterId();
+        if (clusterId == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_CLUSTER_NOT_PROVIDED);
+        }
 
-        if (!result.isValid()) {
-            return result;
+        CpuProfile fetchedCpuProfile = cpuProfileDao.get(vmBase.getCpuProfileId());
+        if (fetchedCpuProfile == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CPU_PROFILE_NOT_FOUND);
+        }
+
+        if (!clusterId.equals(fetchedCpuProfile.getClusterId())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_NOT_MATCH_CLUSTER);
         }
 
         if (!checkPermissions(vmBase.getCpuProfileId(), userId)) {
@@ -64,17 +80,9 @@ public class CpuProfileHelper {
                     String.format("$cpuProfileId %s",
                             vmBase.getCpuProfileId()),
                     String.format("$cpuProfileName %s",
-                            validator.getProfile().getName()));
+                            fetchedCpuProfile.getName()));
         }
 
         return ValidationResult.VALID;
-    }
-
-    private static CpuProfileDao getCpuProfileDao() {
-        return DbFacade.getInstance().getCpuProfileDao();
-    }
-
-    private static PermissionDao getPermissionDao() {
-        return DbFacade.getInstance().getPermissionDao();
     }
 }

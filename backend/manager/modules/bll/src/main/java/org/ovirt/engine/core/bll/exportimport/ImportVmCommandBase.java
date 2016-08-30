@@ -74,6 +74,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     @Inject
     ExternalVmMacsFinder externalVmMacsFinder;
 
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
+
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private MacPool macPool;
@@ -213,7 +216,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean setAndValidateCpuProfile() {
         getVm().getStaticData().setClusterId(getClusterId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(), getUserId()));
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(), getUserId()));
     }
 
     protected boolean validateBallonDevice() {

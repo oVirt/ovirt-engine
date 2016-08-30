@@ -89,6 +89,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     @Inject
     DiskProfileDao diskProfileDao;
 
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
+
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -578,7 +581,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     }
 
     protected boolean setAndValidateCpuProfile() {
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(
                 getParameters().getVmStaticData(),
                 getUserId()));
     }
