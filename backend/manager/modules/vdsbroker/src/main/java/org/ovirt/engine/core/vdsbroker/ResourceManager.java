@@ -45,7 +45,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.di.Injector;
@@ -85,9 +84,6 @@ public class ResourceManager implements BackendService {
 
     @Inject
     private VdsDao hostDao;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private VmDynamicDao vmDynamicDao;
@@ -137,11 +133,9 @@ public class ResourceManager implements BackendService {
     }
 
     private void populateVdsAndVmsList() {
-
-        final List<VM> vms = vmDao.getAll();
-
-        for (VM vm : vms) {
-            if (!vm.isNotRunning() && vm.getRunOnVds() != null) {
+        final List<VmDynamic> vms = vmDynamicDao.getAll();
+        for (VmDynamic vm : vms) {
+            if (!vm.getStatus().isNotRunning() && vm.getRunOnVds() != null) {
                 MultiValueMapUtils.addToMap(vm.getRunOnVds(),
                         vm.getId(),
                         vdsAndVmsList,

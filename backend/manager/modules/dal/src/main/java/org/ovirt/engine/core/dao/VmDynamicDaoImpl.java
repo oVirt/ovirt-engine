@@ -91,7 +91,9 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
 
     @Override
     public List<VmDynamic> getAll() {
-        throw new UnsupportedOperationException();
+        return getCallsHandler().executeReadList("GetAllFromVmDynamic",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource());
     }
 
     @Override
