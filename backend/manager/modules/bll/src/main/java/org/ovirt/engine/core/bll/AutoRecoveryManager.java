@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Runs scheduled autorecovery jobs.
- * {@link http://www.ovirt.org/wiki/Features/Autorecovery}
+ * {@link http://www.ovirt.org/develop/release-management/features/sla/autorecovery/}
  */
 @Singleton
 public class AutoRecoveryManager implements BackendService {
