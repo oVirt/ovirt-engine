@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -50,6 +52,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
+
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
 
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
@@ -458,7 +463,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return true;
         }
 
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getUserId()));
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getUserId()));
     }
 
     private boolean isInstanceType() {

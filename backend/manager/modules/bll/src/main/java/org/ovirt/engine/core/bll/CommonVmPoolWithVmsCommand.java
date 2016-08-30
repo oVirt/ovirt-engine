@@ -73,6 +73,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     private MacPoolPerDc poolPerDc;
 
 
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
+
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -504,7 +507,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     protected boolean setAndValidateCpuProfile() {
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(
                 getParameters().getVmStaticData(),
                 getUserId()));
     }
