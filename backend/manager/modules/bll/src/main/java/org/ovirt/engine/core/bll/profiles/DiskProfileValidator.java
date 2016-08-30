@@ -58,7 +58,6 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
         return null;
     }
 
-    @Override
     public ValidationResult isParentEntityValid(Guid storageDomainId) {
         if (storageDomainId == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_PROFILE_STORAGE_DOMAIN_NOT_PROVIDED);

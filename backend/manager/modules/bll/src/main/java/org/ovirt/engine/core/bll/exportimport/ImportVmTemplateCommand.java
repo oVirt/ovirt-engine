@@ -83,6 +83,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     @Inject
     private VmTemplateDao vmTemplateDao;
 
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
+
     private Version effectiveCompatibilityVersion;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
@@ -598,7 +601,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected boolean setAndValidateCpuProfile() {
         getVmTemplate().setClusterId(getClusterId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getUserId()));
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getUserId()));
     }
 
     @Override

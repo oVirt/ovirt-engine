@@ -99,6 +99,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
+
+    @Inject
+    private CpuProfileHelper cpuProfileHelper;
+
     private final List<DiskImage> images = new ArrayList<>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
@@ -1098,7 +1102,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
             return true;
         }
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(), getUserId()));
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(), getUserId()));
     }
 
     private Guid getVmSnapshotId() {
