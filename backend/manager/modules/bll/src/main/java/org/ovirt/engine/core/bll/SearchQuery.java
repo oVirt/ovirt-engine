@@ -154,6 +154,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             VmHandler.updateVmGuestAgentVersion(vm);
             VmHandler.updateVmLock(vm);
             VmHandler.updateOperationProgress(vm);
+            VmHandler.updateVmStatistics(vm);
         }
         return vms;
     }

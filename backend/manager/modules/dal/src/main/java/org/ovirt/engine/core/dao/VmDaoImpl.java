@@ -332,7 +332,6 @@ public class VmDaoImpl extends BaseDao implements VmDao {
             VM entity = new VM();
             entity.setStaticData(VmStaticDaoImpl.getRowMapper().mapRow(rs, rowNum));
             entity.setDynamicData(VmDynamicDaoImpl.getRowMapper().mapRow(rs, rowNum));
-            entity.setStatisticsData(VmStatisticsDaoImpl.getRowMapper().mapRow(rs, rowNum));
 
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));

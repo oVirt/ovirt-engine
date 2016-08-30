@@ -491,6 +491,10 @@ public class VmHandler {
         vm.setBackgroundOperationProgress(ResourceManager.getInstance().getVmManager(vm.getId()).getConvertOperationProgress());
     }
 
+    public static void updateVmStatistics(final VM vm) {
+        vm.setStatisticsData(ResourceManager.getInstance().getVmManager(vm.getId()).getStatistics());
+    }
+
     protected static LockManager getLockManager() {
         return LockManagerFactory.getLockManager();
     }
