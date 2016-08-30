@@ -33,10 +33,12 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -46,6 +48,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -229,7 +232,37 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 }
             });
         }
+
+        if (restoreMemory && getVm().getCustomCompatibilityVersion() == null &&
+                (getVm().getClusterCompatibilityVersionOrigin() == null || // taken in pre-3.6
+                 getVm().getClusterCompatibilityVersionOrigin().less(getVm().getClusterCompatibilityVersion()))) {
+            // the snapshot was taken before cluster version change, call the UpdateVmCommand
+            // vm_static of the getVm() is just updated by the previewed OVF config, so reload before UpdateVmCommand
+            VM vmFromDb = getVmDao().get(getVmId());
+            if (!updateVm(vmFromDb, getVm().getClusterCompatibilityVersionOrigin())) {
+                return;
+            }
+        }
         setSucceeded(true);
+    }
+
+    private boolean updateVm(VM vm, Version oldClusterVersion) {
+        VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+
+        updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+        updateParams.setClusterLevelChangeFromVersion(oldClusterVersion);
+
+        VdcReturnValueBase result = runInternalAction(
+                VdcActionType.UpdateVm,
+                updateParams,
+                cloneContextAndDetachFromParent());
+
+        if (!result.getSucceeded()) {
+            getReturnValue().setFault(result.getFault());
+            return false;
+        }
+
+        return true;
     }
 
     protected boolean tryBackAllCinderDisks( List<CinderDisk> cinderDisks, Guid newSnapshotId) {
