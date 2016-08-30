@@ -15,12 +15,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmJobDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class VmJobsMonitoring {
     @Inject
     private VmJobDao vmJobDao;
     @Inject
-    private VmDao vmDao;
+    private VmDynamicDao vmDynamicDao;
 
     private final Map<Guid, VmJob> jobsRepository;
 
@@ -131,9 +131,9 @@ public class VmJobsMonitoring {
     }
 
     List<Guid> getIdsOfDownVms() {
-        return vmDao.getAll().stream()
+        return vmDynamicDao.getAll().stream()
                 .filter(vm -> vm.getStatus() == VMStatus.Down)
-                .map(VM::getId)
+                .map(VmDynamic::getId)
                 .collect(toList());
     }
 }
