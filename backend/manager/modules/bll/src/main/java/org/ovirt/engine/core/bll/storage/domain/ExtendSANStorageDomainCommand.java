@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
@@ -12,11 +13,14 @@ import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -42,6 +46,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         runVdsCommand(VDSCommandType.ExtendStorageDomain,
                 new ExtendStorageDomainVDSCommandParameters(getStoragePoolId(), getStorageDomain()
                         .getId(), getParameters().getLunIds(), getParameters().isForce()));
+        updateLunsList();
         executeInNewTransaction(() -> {
             for (LUNs lun : getParameters().getLunsList()) {
                 proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
@@ -52,6 +57,27 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             return null;
         });
         setSucceeded(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateLunsList() {
+        VDS spmVds = getAllRunningVdssInPool().stream()
+                .filter(vds -> vds.getSpmStatus() == VdsSpmStatus.SPM).findFirst().orElse(null);
+        if (spmVds == null) {
+            log.error("Could not update LUNs' information of storage domain with VG ID '{}' in the DB.",
+                    getStorageDomain().getStorage());
+            return;
+        }
+        try {
+            ArrayList<LUNs> upToDateLuns = (ArrayList<LUNs>) runVdsCommand(VDSCommandType.GetVGInfo,
+                    new GetVGInfoVDSCommandParameters(spmVds.getId(),
+                            getStorageDomain().getStorage())).getReturnValue();
+            getParameters().setLunsList(upToDateLuns);
+        } catch (RuntimeException e) {
+            log.error("Could not get the information for VG ID '{}'; the LUNs' information will not be updated.",
+                    getStorageDomain().getStorage());
+            log.debug("Exception", e);
+        }
     }
 
     @Override
