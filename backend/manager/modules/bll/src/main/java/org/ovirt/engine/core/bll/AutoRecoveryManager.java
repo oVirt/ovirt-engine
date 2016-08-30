@@ -70,7 +70,7 @@ public class AutoRecoveryManager implements BackendService {
     void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
         schedulerUtil.scheduleACronJob(this, "onTimer",
-                new Class<?>[] {}, new Object[] {}, Config.<String> getValue(ConfigValues.AutoRecoverySchedule));
+                new Class<?>[] {}, new Object[] {}, Config.getValue(ConfigValues.AutoRecoverySchedule));
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
@@ -156,8 +156,7 @@ public class AutoRecoveryManager implements BackendService {
     }
 
     private static boolean shouldPerformRecoveryOnType(String type) {
-        Map<String, String> allowedRecoveryTypesFromConfig =
-                Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes);
+        Map<String, String> allowedRecoveryTypesFromConfig = Config.getValue(ConfigValues.AutoRecoveryAllowedTypes);
         String isAllowed = allowedRecoveryTypesFromConfig.get(type);
         if (isAllowed != null) {
             return Boolean.parseBoolean(isAllowed);
