@@ -30,7 +30,7 @@ public class VersionStorageFormatUtil {
             Map.Entry<Version, StorageFormatType> entry = entries.get(i);
             earliestVersionSupported .put(entry.getValue(), entry.getKey());
         }
-    };
+    }
 
     public static StorageFormatType getForVersion(Version v) {
         return versionToFormat.get(v);
