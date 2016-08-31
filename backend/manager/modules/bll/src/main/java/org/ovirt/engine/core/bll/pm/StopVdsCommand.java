@@ -48,7 +48,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     @Override
     protected boolean validate() {
         boolean retValue = true;
-        if (getParameters().getParentCommand() == VdcActionType.Unknown) {
+        if (!isExecutedAsChildCommand()) {
             retValue = super.validate();
             if (getVds() != null && getVds().getStatus() != VDSStatus.Maintenance) {
                 addValidationMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_STOP);

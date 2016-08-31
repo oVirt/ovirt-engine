@@ -813,10 +813,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         rollbackQuota();
     }
 
-    protected boolean hasParentCommand() {
-        return getParameters().getParentCommand() != VdcActionType.Unknown;
-    }
-
     private boolean isValidateSupportsTransaction() {
         return getClass().isAnnotationPresent(ValidateSupportsTransaction.class);
     }
@@ -1404,7 +1400,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected boolean parentHasCallback() {
-        if (getParameters().getParentCommand() != VdcActionType.Unknown
+        if (isExecutedAsChildCommand()
                 && getParameters().getParentParameters() != null) {
             CommandEntity commandEntity =
                     CommandCoordinatorUtil.getCommandEntity(getParameters().getParentParameters().getCommandId());
@@ -1837,7 +1833,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     public ArrayList<Guid> getTaskIdList() {
-        return (getParameters().getParentCommand() != VdcActionType.Unknown  && !parentHasCallback()) ?
+        return (isExecutedAsChildCommand() && !parentHasCallback()) ?
                 getReturnValue().getInternalVdsmTaskIdList() : getReturnValue().getVdsmTaskIdList();
     }
 
@@ -2509,7 +2505,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected <P extends VdcActionParametersBase> P withRootCommandInfo(P params, VdcActionType actionType) {
-        VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ?
+        VdcActionType parentCommand = isExecutedAsChildCommand() ?
                 getParameters().getParentCommand() : actionType;
         params.setParentParameters(getParametersForTask(parentCommand, getParameters()));
         params.setParentCommand(parentCommand);

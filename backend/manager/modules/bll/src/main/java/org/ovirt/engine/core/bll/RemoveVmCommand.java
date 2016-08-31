@@ -297,7 +297,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     private RemoveAllVmImagesParameters buildRemoveAllVmImagesParameters(List<DiskImage> images) {
         RemoveAllVmImagesParameters params = new RemoveAllVmImagesParameters(getVmId(), images);
-        if (getParameters().getParentCommand() == VdcActionType.Unknown) {
+        if (!isExecutedAsChildCommand()) {
             params.setParentCommand(getActionType());
             params.setEntityInfo(getParameters().getEntityInfo());
             params.setParentParameters(getParameters());
