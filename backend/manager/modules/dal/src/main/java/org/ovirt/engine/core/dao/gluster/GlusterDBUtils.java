@@ -177,12 +177,6 @@ public class GlusterDBUtils {
         return getGlusterBrickDao().getBrickByServerIdAndDirectory(serverId, brickDir);
     }
 
-    public GlusterVolumeEntity getVolumeByNameAndHostId(String volumeName, Guid hostId) {
-        VdsStatic vds = getVdsStaticDao().get(hostId);
-        Guid clusterId = vds.getClusterId();
-        return getGlusterVolumeDao().getByName(clusterId, volumeName);
-    }
-
     public boolean isVolumeSnapshotSoftLimitReached(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
 
