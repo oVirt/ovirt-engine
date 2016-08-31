@@ -34,7 +34,7 @@ public final class AlertDirector {
      */
     public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector, AuditLogableBase alert) {
         alert.setVdsId(vdsId);
-        AlertDirector.alert(alert, type, auditLogDirector);
+        alert(alert, type, auditLogDirector);
     }
     /**
      * Removes the alert.
