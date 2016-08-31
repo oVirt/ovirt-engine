@@ -73,7 +73,7 @@ public class BackendPermissionResourceTest
         setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
                 VdcQueryParametersBase.class,
                 new String[] { "Refresh", "Filtered" },
-                new Object[] { true, false },
+                new Object[] { false, false },
                 getUsers());
 
         setUpGetEntityExpectations(1);
@@ -89,7 +89,7 @@ public class BackendPermissionResourceTest
             VdcQueryType.GetAllDbUsers,
             VdcQueryParametersBase.class,
             new String[] { "Refresh", "Filtered" },
-            new Object[] { true, false },
+            new Object[] { false, false },
             getUsers()
         );
         setUriInfo(

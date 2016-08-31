@@ -30,7 +30,6 @@ public class VdcOperationManagerTest {
     @Mock
     EventBus mockEventBus;
 
-    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         testManager = new VdcOperationManager(mockEventBus, mockOperationProcessor);
@@ -48,7 +47,7 @@ public class VdcOperationManagerTest {
 
     @Test
     public void testAddOperationMultipleQuery() {
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(VdcQueryType.Search, new VdcQueryParametersBase(), null);
+        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(VdcQueryType.Search, new VdcQueryParametersBase().withRefresh(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
         verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
@@ -63,7 +62,7 @@ public class VdcOperationManagerTest {
     public void testAddOperationList() {
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
                 new VdcOperation<>(VdcActionType.AddNetworkOnProvider, new VdcActionParametersBase(), null);
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
+        VdcQueryParametersBase testParameters = new VdcQueryParametersBase().withRefresh();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation3 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
