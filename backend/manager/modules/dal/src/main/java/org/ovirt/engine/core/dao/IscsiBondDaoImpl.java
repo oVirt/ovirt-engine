@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -59,7 +60,8 @@ public class IscsiBondDaoImpl extends DefaultGenericDao<IscsiBond, Guid> impleme
     @Override
     public List<String> getStorageConnectionIdsByIscsiBondId(Guid iscsiBondId) {
         return getCallsHandler().executeReadList("GetConnectionsByIscsiBondId",
-                getStringMapper(), getCustomMapSqlParameterSource().addValue("iscsi_bond_id", iscsiBondId));
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource().addValue("iscsi_bond_id", iscsiBondId));
     }
 
     @Override

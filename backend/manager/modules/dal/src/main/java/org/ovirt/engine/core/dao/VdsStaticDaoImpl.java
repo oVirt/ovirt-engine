@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
@@ -173,7 +174,8 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
 
     @Override
     public List<String> getAllHostNamesPinnedToVm(Guid vm) {
-        return getCallsHandler().executeReadList("GetNamesOfHostsDedicatedToVm", getStringMapper(),
+        return getCallsHandler().executeReadList("GetNamesOfHostsDedicatedToVm",
+                SingleColumnRowMapper.newInstance(String.class),
                 getCustomMapSqlParameterSource().addValue("vm_guid", vm));
     }
 

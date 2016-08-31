@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 /**
  * <code>StorageDomainDaoImpl</code> provides an implementation of {@link StorageDomainDao} based on code from
@@ -225,7 +226,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public long getNumberOfImagesInStorageDomain(Guid storageDomainId) {
         return getCallsHandler().executeRead("GetNumberOfImagesInStorageDomain",
-                getLongMapper(),
+                SingleColumnRowMapper.newInstance(Long.class),
                 getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainId));
     }
 

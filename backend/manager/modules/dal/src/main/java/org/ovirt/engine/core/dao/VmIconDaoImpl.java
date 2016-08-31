@@ -12,6 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -99,11 +100,7 @@ public class VmIconDaoImpl extends DefaultGenericDao<VmIcon, Guid> implements Vm
     @Override
     public boolean exists(Guid id) {
         return getCallsHandler().executeRead("IsVmIconExist",
-                new RowMapper<Boolean>() {
-                    @Override public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        return rs.getBoolean(1);
-                    }
-                },
+                SingleColumnRowMapper.newInstance(Boolean.class),
                 getCustomMapSqlParameterSource().addValue(ID_COLUMN, id));
     }
 }

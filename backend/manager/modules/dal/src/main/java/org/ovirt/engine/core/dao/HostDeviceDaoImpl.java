@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -78,7 +79,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
     @Override
     public boolean checkVmHostDeviceAvailability(Guid vmId, Guid hostId) {
         return getCallsHandler().executeRead("CheckVmHostDeviceAvailability",
-                createBooleanMapper(),
+                SingleColumnRowMapper.newInstance(Boolean.class),
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId).addValue("host_id", hostId));
     }
 

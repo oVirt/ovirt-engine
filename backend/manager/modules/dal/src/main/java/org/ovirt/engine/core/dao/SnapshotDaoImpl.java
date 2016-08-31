@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -145,7 +146,7 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("snapshot_type", EnumUtils.nameOrNull(type));
 
         return getCallsHandler().executeRead("CheckIfSnapshotExistsByVmIdAndType",
-                createBooleanMapper(),
+                SingleColumnRowMapper.newInstance(Boolean.class),
                 parameterSource);
     }
 
@@ -156,7 +157,7 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("status", EnumUtils.nameOrNull(status));
 
         return getCallsHandler().executeRead("CheckIfSnapshotExistsByVmIdAndStatus",
-                createBooleanMapper(),
+                SingleColumnRowMapper.newInstance(Boolean.class),
                 parameterSource);
     }
 
@@ -167,7 +168,7 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("snapshot_id", snapshotId);
 
         return getCallsHandler().executeRead("CheckIfSnapshotExistsByVmIdAndSnapshotId",
-                createBooleanMapper(),
+                SingleColumnRowMapper.newInstance(Boolean.class),
                 parameterSource);
     }
 
@@ -256,7 +257,7 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("memory_volume", getNullableRepresentation(memoryVolume));
 
         return getCallsHandler().executeRead("GetNumOfSnapshotsByMemoryVolume",
-                getIntegerMapper(),
+                SingleColumnRowMapper.newInstance(Integer.class),
                 parameterSource);
     }
 

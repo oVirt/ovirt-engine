@@ -27,6 +27,7 @@ import org.ovirt.engine.core.utils.SerializationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -63,7 +64,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     public Boolean getIsEmpty(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cluster_id", id);
-        return getCallsHandler().executeRead("GetIsClusterEmpty", BooleanRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead
+                ("GetIsClusterEmpty", SingleColumnRowMapper.newInstance(Boolean.class), parameterSource);
     }
 
     @Override
@@ -191,7 +193,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     public int getVmsCountByClusterId(Guid clusterId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("cluster_id", clusterId);
         return getCallsHandler().executeRead("GetNumberOfVmsInCluster",
-                getIntegerMapper(),
+                SingleColumnRowMapper.newInstance(Integer.class),
                 parameterSource);
     }
 
@@ -332,15 +334,6 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
             entity.setRequiredSwitchTypeForCluster(SwitchType.parse(rs.getString("switch_type")));
 
             return entity;
-        }
-    }
-
-    private static final class BooleanRowMapper implements RowMapper<Boolean> {
-        public static final RowMapper<Boolean> instance = new BooleanRowMapper();
-
-        @Override
-        public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return Boolean.valueOf(rs.getBoolean(1));
         }
     }
 

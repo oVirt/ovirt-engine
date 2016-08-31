@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -54,7 +55,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("vds_id", vdsId);
 
         return getCallsHandler().executeRead("IsAnyVmRunOnVds",
-                createBooleanMapper(),
+                SingleColumnRowMapper.newInstance(Boolean.class),
                 parameterSource);
     }
 

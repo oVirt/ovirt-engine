@@ -17,6 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
@@ -156,7 +157,7 @@ public class VmDeviceDaoImpl extends
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId).addValue("type", type.getValue());
         return getCallsHandler().executeRead("ExistsVmDeviceByVmIdAndType",
-                createBooleanMapper(), parameterSource);
+                SingleColumnRowMapper.newInstance(Boolean.class), parameterSource);
     }
 
     @Override

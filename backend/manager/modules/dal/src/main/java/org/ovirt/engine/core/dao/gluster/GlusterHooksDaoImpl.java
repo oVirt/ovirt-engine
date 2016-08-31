@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -31,8 +32,6 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
 
     private static final RowMapper<GlusterServerHook> glusterServerHookRowMapper =
             new GlusterServerHookRowMapper();
-
-    private static final RowMapper<String>  GlusterHookContentRowMapper = new GlusterHookContentRowMapper();
 
     public GlusterHooksDaoImpl() {
         super("GlusterHook");
@@ -105,7 +104,8 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
 
     @Override
     public String getGlusterHookContent(Guid hookId) {
-        return getCallsHandler().executeRead("GetGlusterHookContentById", GlusterHookContentRowMapper,
+        return getCallsHandler().executeRead("GetGlusterHookContentById",
+                SingleColumnRowMapper.newInstance(String.class),
                 createIdParameterMapper(hookId));
     }
 
@@ -259,14 +259,6 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
             entity.setChecksum(rs.getString("checksum"));
             entity.setServerName(rs.getString("server_name"));
             return entity;
-        }
-    }
-
-    private static final class GlusterHookContentRowMapper implements RowMapper<String> {
-        @Override
-        public String mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            return rs.getString(1);
         }
     }
 

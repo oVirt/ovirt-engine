@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -129,7 +130,8 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
     @Override
     public boolean checkIfJobHasTasks(Guid jobId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("job_id", jobId);
-        return getCallsHandler().executeRead("CheckIfJobHasTasks", createBooleanMapper(), parameterSource);
+        return getCallsHandler().executeRead
+                ("CheckIfJobHasTasks", SingleColumnRowMapper.newInstance(Boolean.class), parameterSource);
     }
 
     private static class JobRowMapper implements RowMapper<Job> {

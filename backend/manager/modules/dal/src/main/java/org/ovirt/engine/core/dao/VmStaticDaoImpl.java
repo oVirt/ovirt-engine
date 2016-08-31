@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -141,9 +142,8 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
 
     @Override
     public Long getDbGeneration(Guid id) {
-        return getCallsHandler().executeRead("GetDbGeneration", getLongMapper()
-                , getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id));
+        return getCallsHandler().executeRead("GetDbGeneration", SingleColumnRowMapper.newInstance(Long.class),
+                getCustomMapSqlParameterSource().addValue("vm_guid", id));
     }
 
     public List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids) {

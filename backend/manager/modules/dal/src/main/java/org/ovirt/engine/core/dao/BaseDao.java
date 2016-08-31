@@ -60,20 +60,6 @@ public abstract class BaseDao {
     }
 
     /**
-     * @return A generic boolean result mapper which always takes the boolean result, regardless of how it's column is
-     *         called.
-     */
-    protected RowMapper<Boolean> createBooleanMapper() {
-        return new RowMapper<Boolean>() {
-
-            @Override
-            public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getBoolean(1);
-            }
-        };
-    }
-
-    /**
      * @return A generic {@link Guid} result mapper which always takes the {@link Guid} result, regardless of how it's
      *         column is called.
      */
@@ -85,39 +71,6 @@ public abstract class BaseDao {
                 return new Guid((UUID) rs.getObject(1));
             }
         };
-    }
-
-    private static RowMapper<Long> longRowMapper = new RowMapper<Long>() {
-        @Override
-        public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rs.getLong(1);
-        };
-    };
-
-    protected RowMapper<Long> getLongMapper() {
-        return longRowMapper;
-    }
-
-    private static RowMapper<Integer> integerRowMapper = new RowMapper<Integer>() {
-        @Override
-        public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rs.getInt(1);
-        };
-    };
-
-    protected RowMapper<Integer> getIntegerMapper() {
-        return integerRowMapper;
-    }
-
-    private static RowMapper<String> stringRowMapper = new RowMapper<String>() {
-        @Override
-        public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rs.getString(1);
-        };
-    };
-
-    protected RowMapper<String> getStringMapper() {
-        return stringRowMapper;
     }
 
     protected SimpleJdbcCallsHandler getCallsHandler() {

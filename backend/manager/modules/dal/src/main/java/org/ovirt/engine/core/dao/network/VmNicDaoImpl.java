@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -52,13 +53,15 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
     @Override
     public List<String> getAllMacsByDataCenter(Guid dataCenterId) {
         return getCallsHandler().executeReadList("GetMacsByDataCenterId",
-                macMapper, getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
     }
 
     @Override
     public List<String> getAllMacsByClusterId(Guid clusterId) {
         return getCallsHandler().executeReadList("GetMacsByClusterId",
-                macMapper, getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
     }
 
     @Override
@@ -119,14 +122,4 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
         }
 
     }
-
-    protected final RowMapper<String> macMapper = new RowMapper<String>() {
-
-        private static final int MAC_COLUMN_POSITION = 1;
-
-        @Override
-        public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rs.getString(MAC_COLUMN_POSITION);
-        }
-    };
 }

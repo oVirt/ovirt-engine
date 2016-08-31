@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -216,7 +217,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
     @Override
     public int getCount() {
         return getCallsHandler().executeRead("GetTemplateCount",
-                getIntegerMapper(),
+                SingleColumnRowMapper.newInstance(Integer.class),
                 getCustomMapSqlParameterSource());
     }
 

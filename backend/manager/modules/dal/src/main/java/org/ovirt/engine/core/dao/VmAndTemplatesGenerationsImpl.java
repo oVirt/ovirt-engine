@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 @Named
 @Singleton
@@ -29,8 +30,7 @@ public class VmAndTemplatesGenerationsImpl extends BaseDao implements VmAndTempl
     @Override
     public Long getOvfGeneration(Guid id) {
         return getCallsHandler().executeRead("GetOvfGeneration",
-                getLongMapper(), getCustomMapSqlParameterSource()
-                        .addValue("vm_id", id));
+                SingleColumnRowMapper.newInstance(Long.class), getCustomMapSqlParameterSource().addValue("vm_id", id));
     }
 
     @Override

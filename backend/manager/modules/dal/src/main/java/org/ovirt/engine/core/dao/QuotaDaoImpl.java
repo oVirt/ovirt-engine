@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
@@ -195,17 +196,11 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         return quotaEntity;
     }
 
-    private static RowMapper<Long> longMapper = new RowMapper<Long>() {
-        @Override
-        public Long mapRow(ResultSet resultSet, int i) throws SQLException {
-            return (Long) resultSet.getObject(1);
-        }
-    };
-
     @Override
     public int getQuotaCount() {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        return getCallsHandler().executeRead("getQuotaCount", longMapper, parameterSource).intValue();
+        return getCallsHandler().executeRead
+                ("getQuotaCount", SingleColumnRowMapper.newInstance(Long.class), parameterSource).intValue();
     }
 
     /**
@@ -589,6 +584,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
 
     @Override
     public List<Integer> getNonCountableQutoaVmStatuses() {
-        return getCallsHandler().executeReadList("getNonCountableQutoaVmStatuses", getIntegerMapper(), null);
+        return getCallsHandler().executeReadList
+                ("getNonCountableQutoaVmStatuses", SingleColumnRowMapper.newInstance(Integer.class), null);
     }
 }

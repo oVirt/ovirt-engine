@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
@@ -61,7 +62,7 @@ public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements 
     @Override
     public List<String> getAllMacsForMacPool(Guid macPoolId) {
         return getCallsHandler().executeReadList("GetAllMacsByMacPoolId",
-                getStringMapper(),
+                SingleColumnRowMapper.newInstance(String.class),
                 createIdParameterMapper(macPoolId));
     }
 
