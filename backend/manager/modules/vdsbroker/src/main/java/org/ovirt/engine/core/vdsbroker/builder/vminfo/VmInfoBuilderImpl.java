@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
@@ -61,6 +63,7 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
+import org.ovirt.engine.core.utils.collections.ComparatorUtils;
 import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllers;
 import org.ovirt.engine.core.vdsbroker.architecture.GetBootableDiskIndex;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
@@ -887,12 +890,19 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
      *
      * @param graphicsInfos
      *            - vm graphics
+     *
+     * @see #buildVmGraphicsDevicesFromDb(Map)
      */
     private void buildVmGraphicsDevicesOverridden(
             Map<GraphicsType, GraphicsInfo> graphicsInfos,
             Map<String, Object> extraSpecParams) {
+        final Comparator<GraphicsType> spiceLastComparator =
+                ComparatorUtils.sortLast(GraphicsType.SPICE);
+        final List<Entry<GraphicsType, GraphicsInfo>> sortedGraphicsInfos = graphicsInfos.entrySet().stream()
+                .sorted(Comparator.comparing(Entry::getKey, spiceLastComparator))
+                .collect(Collectors.toList());
 
-        for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : graphicsInfos.entrySet()) {
+        for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : sortedGraphicsInfos) {
             Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, VmDeviceGeneralType.GRAPHICS.getValue());
             struct.put(VdsProperties.Device, graphicsInfo.getKey().name().toLowerCase());
@@ -914,9 +924,16 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     /**
      * Builds vm graphics from database.
+     *
+     * <p>SPICE device is put at the end of the graphics device list. Libvirt sets QEMU
+     * environment variable QEMU_AUDIO_DRV according to the last graphics device and we
+     * want to allow sound for SPICE if graphics protocol "SPICE+VNC" is selected.</p>
      */
     private void buildVmGraphicsDevicesFromDb(Map<String, Object> extraSpecParams) {
-        buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams);
+        Comparator<VmDevice> spiceLastDeviceComparator = Comparator.comparing(
+                VmDevice::getDevice,
+                ComparatorUtils.sortLast(VmDeviceType.SPICE.getName()));
+        buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams, spiceLastDeviceComparator);
 
         String legacyDisplay = deriveDisplayTypeLegacy();
         if (legacyDisplay != null) {
@@ -927,9 +944,24 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     private void buildVmDevicesFromDb(VmDeviceGeneralType generalType,
             boolean addAddress,
             Map<String, Object> extraSpecParams) {
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), generalType);
+        buildVmDevicesFromDb(generalType, addAddress, extraSpecParams, null);
+    }
 
-        for (VmDevice vmDevice : vmDevices) {
+    /**
+     * @param deviceComparator allows to sort devices in resulting {@link #devices} list and thus
+     *                         also in libvirt domain xml. {@code null} indicates no special
+     *                         ordering.
+     */
+    private void buildVmDevicesFromDb(VmDeviceGeneralType generalType,
+            boolean addAddress,
+            Map<String, Object> extraSpecParams,
+            Comparator<VmDevice> deviceComparator) {
+        final List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), generalType);
+        List<VmDevice> sortedDevices = deviceComparator == null
+                ? vmDevices
+                : vmDevices.stream().sorted(deviceComparator).collect(Collectors.toList());
+
+        for (VmDevice vmDevice : sortedDevices) {
             Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
