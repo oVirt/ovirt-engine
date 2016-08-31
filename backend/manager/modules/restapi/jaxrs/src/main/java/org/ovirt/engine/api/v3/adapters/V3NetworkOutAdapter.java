@@ -18,6 +18,7 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.api.model.Network;
@@ -96,8 +97,13 @@ public class V3NetworkOutAdapter implements V3Adapter<Network, V3Network> {
             to.setStp(from.isStp());
         }
         if (from.isSetUsages()) {
-            to.setUsages(new V3Usages());
-            to.getUsages().getUsages().addAll(from.getUsages().getUsages());
+            V3Usages toUsages = to.getUsages();
+            if (toUsages == null) {
+                toUsages = new V3Usages();
+                to.setUsages(toUsages);
+            }
+            List<String> toList = toUsages.getUsages();
+            from.getUsages().getUsages().forEach(usage -> toList.add(usage.value()));
         }
         if (from.isSetVlan()) {
             to.setVlan(adaptOut(from.getVlan()));

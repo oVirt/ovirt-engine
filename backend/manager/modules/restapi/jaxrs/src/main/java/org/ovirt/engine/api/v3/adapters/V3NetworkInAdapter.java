@@ -18,9 +18,12 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkLabels;
 import org.ovirt.engine.api.model.NetworkStatus;
+import org.ovirt.engine.api.model.NetworkUsage;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Network;
 
@@ -84,8 +87,13 @@ public class V3NetworkInAdapter implements V3Adapter<V3Network, Network> {
             to.setStp(from.isStp());
         }
         if (from.isSetUsages()) {
-            to.setUsages(new Network.UsagesList());
-            to.getUsages().getUsages().addAll(from.getUsages().getUsages());
+            Network.UsagesList toUsages = to.getUsages();
+            if (toUsages == null) {
+                toUsages = new Network.UsagesList();
+                to.setUsages(toUsages);
+            }
+            List<NetworkUsage> toList = toUsages.getUsages();
+            from.getUsages().getUsages().forEach(usage -> toList.add(NetworkUsage.fromValue(usage)));
         }
         if (from.isSetVlan()) {
             to.setVlan(adaptIn(from.getVlan()));
