@@ -17,7 +17,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
  * class can be used for creating audit logs from other places, e.g. GlusterManager
  */
 public class GlusterAuditLogUtil {
-    private static GlusterAuditLogUtil instance = new GlusterAuditLogUtil();
+    private static final GlusterAuditLogUtil instance = new GlusterAuditLogUtil();
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private GlusterAuditLogUtil() {
