@@ -51,12 +51,11 @@ public abstract class QosBaseDaoImpl<T extends QosBase> extends DefaultGenericDa
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(T obj) {
-        MapSqlParameterSource map = createIdParameterMapper(obj.getId())
+        return createIdParameterMapper(obj.getId())
                 .addValue("qos_type", getQosType())
                 .addValue("name", obj.getName())
                 .addValue("description", obj.getDescription())
                 .addValue("storage_pool_id", obj.getStoragePoolId());
-        return map;
     }
 
     @Override

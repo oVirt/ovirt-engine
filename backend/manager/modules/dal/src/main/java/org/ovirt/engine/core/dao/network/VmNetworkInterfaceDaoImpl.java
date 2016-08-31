@@ -48,11 +48,9 @@ public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId);
 
-        List<VmNetworkInterface> results =
-                getCallsHandler().executeReadList("GetVmNetworkInterfaceToMonitorByVmId",
-                        VmNetworkInterfaceMonitoringRowMapper.INSTANCE,
-                        parameterSource);
-        return results;
+        return getCallsHandler().executeReadList("GetVmNetworkInterfaceToMonitorByVmId",
+                VmNetworkInterfaceMonitoringRowMapper.INSTANCE,
+                parameterSource);
     }
 
     @Override

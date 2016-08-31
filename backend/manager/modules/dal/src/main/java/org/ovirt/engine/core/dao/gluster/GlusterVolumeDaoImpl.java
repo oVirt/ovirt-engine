@@ -361,11 +361,10 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
     }
 
     private GlusterVolumeAdvancedDetails fetchAdvancedDatails(Guid volumeId) {
-        GlusterVolumeAdvancedDetails glusterVolumeAdvancedDetails = getCallsHandler().executeRead(
+        return getCallsHandler().executeRead(
                 "GetGlusterVolumeDetailsByID",
                 glusterVolumesAdvancedDetailsRowMapper,
                 createVolumeIdParams(volumeId));
-        return glusterVolumeAdvancedDetails;
     }
 
     private static final class GlusterVolumeRowMapper implements RowMapper<GlusterVolumeEntity> {

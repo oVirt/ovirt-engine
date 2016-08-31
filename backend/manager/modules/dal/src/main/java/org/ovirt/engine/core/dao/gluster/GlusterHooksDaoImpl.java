@@ -71,7 +71,7 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
 
     @Override
     public GlusterHookEntity getGlusterHook(Guid clusterId, String glusterCommand, GlusterHookStage stage, String hookName) {
-        GlusterHookEntity glusterHook = getCallsHandler().executeRead(
+        return getCallsHandler().executeRead(
                 "GetGlusterHook", glusterHookRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clusterId)
@@ -79,48 +79,40 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
                         .addValue("stage", EnumUtils.nameOrNull(stage))
                         .addValue("name", hookName)
                         .addValue("includeContent", false));
-        return glusterHook;
     }
 
     @Override
     public List<GlusterServerHook> getGlusterServerHooks(Guid hookId) {
-        List<GlusterServerHook> serverHooks =
-                getCallsHandler().executeReadList("GetGlusterServerHooksById", glusterServerHookRowMapper,
-                        createIdParameterMapper(hookId));
-        return serverHooks;
+        return getCallsHandler().executeReadList("GetGlusterServerHooksById", glusterServerHookRowMapper,
+                createIdParameterMapper(hookId));
     }
 
     @Override
     public GlusterServerHook getGlusterServerHook(Guid hookId, Guid serverId) {
-        GlusterServerHook serverHook = getCallsHandler().executeRead("GetGlusterServerHook",
+        return getCallsHandler().executeRead("GetGlusterServerHook",
                                     glusterServerHookRowMapper,
                                     getCustomMapSqlParameterSource()
                                     .addValue("hook_id", hookId)
                                     .addValue("server_id", serverId));
-        return serverHook;
     }
 
     @Override
     public List<GlusterHookEntity> getByClusterId(Guid clusterId) {
-        List<GlusterHookEntity> glusterHooks =
-                getCallsHandler().executeReadList("GetGlusterHooksByClusterId",
-                        glusterHookRowMapper,
-                        getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
-        return glusterHooks;
+        return getCallsHandler().executeReadList("GetGlusterHooksByClusterId",
+                glusterHookRowMapper,
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
     }
 
     @Override
     public String getGlusterHookContent(Guid hookId) {
-        String content = getCallsHandler().executeRead("GetGlusterHookContentById", GlusterHookContentRowMapper,
+        return getCallsHandler().executeRead("GetGlusterHookContentById", GlusterHookContentRowMapper,
                 createIdParameterMapper(hookId));
-        return content;
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public List<GlusterHookEntity> getAllWithQuery(String query) {
-        List<GlusterHookEntity> glusterHooks = getJdbcTemplate().query(query, glusterHookRowMapper);
-        return glusterHooks;
+        return getJdbcTemplate().query(query, glusterHookRowMapper);
     }
 
     @Override
@@ -274,8 +266,7 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
         @Override
         public String mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            String content = rs.getString(1);
-            return content;
+            return rs.getString(1);
         }
     }
 

@@ -90,9 +90,7 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     }
 
     private MapSqlParameterSource createVfsConfigIdParameter(Guid vfsConfigId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vfs_config_id", vfsConfigId);
-        return parameterSource;
+        return getCustomMapSqlParameterSource().addValue("vfs_config_id", vfsConfigId);
     }
 
     @Override
@@ -144,10 +142,9 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     }
 
     private MapSqlParameterSource createNetworkParametersMapper(Guid vfsConfigId, Guid networkId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        return getCustomMapSqlParameterSource()
                 .addValue("vfs_config_id", vfsConfigId)
                 .addValue("network_id", networkId);
-        return parameterSource;
     }
 
     // VfsConfigLabels
@@ -183,9 +180,8 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     }
 
     private MapSqlParameterSource createLabelParametersMapper(Guid vfsConfigId, String label) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        return getCustomMapSqlParameterSource()
                 .addValue("vfs_config_id", vfsConfigId)
                 .addValue("label", label);
-        return parameterSource;
     }
 }

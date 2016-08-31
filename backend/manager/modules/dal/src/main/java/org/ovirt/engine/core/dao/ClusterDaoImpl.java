@@ -203,7 +203,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     }
 
     private MapSqlParameterSource getClusterParamSource(Cluster cluster) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        return getCustomMapSqlParameterSource()
                 .addValue("description", cluster.getDescription())
                 .addValue("name", cluster.getName())
                 .addValue("free_text_comment", cluster.getComment())
@@ -255,8 +255,6 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("switch_type", cluster.getRequiredSwitchTypeForCluster().getOptionValue())
                 .addValue("skip_fencing_if_gluster_bricks_up", cluster.getFencingPolicy().isSkipFencingIfGlusterBricksUp())
                 .addValue("skip_fencing_if_gluster_quorum_not_met", cluster.getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet());
-
-        return parameterSource;
     }
 
     private static final class ClusterHostsAndVMsRowMapper implements RowMapper<ClusterHostsAndVMs> {

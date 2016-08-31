@@ -18,12 +18,11 @@ public abstract class ProfileBaseDaoImpl<T extends ProfileBase> extends DefaultG
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(T obj) {
-        MapSqlParameterSource map = createIdParameterMapper(
+        return createIdParameterMapper(
                 obj.getId())
                 .addValue("name", obj.getName())
                 .addValue("qos_id", obj.getQosId())
                 .addValue("description", obj.getDescription());
-        return map;
     }
 
     @Override

@@ -44,41 +44,32 @@ public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDao<Glust
 
     @Override
     public GlusterVolumeSnapshotEntity getById(Guid id) {
-        GlusterVolumeSnapshotEntity snapshot =
-                getCallsHandler().executeRead("GetGlusterVolumeSnapshotById",
-                        snapshotRowMapper,
-                        createSnapshotIdParams(id));
-        return snapshot;
+        return getCallsHandler().executeRead("GetGlusterVolumeSnapshotById",
+                snapshotRowMapper,
+                createSnapshotIdParams(id));
     }
 
     @Override
     public GlusterVolumeSnapshotEntity getByName(Guid volumeId, String snapshotName) {
-        GlusterVolumeSnapshotEntity snapshot =
-                getCallsHandler().executeRead("GetGlusterVolumeSnapshotByName",
-                        snapshotRowMapper,
-                        getCustomMapSqlParameterSource()
-                                .addValue("volume_id", volumeId)
-                                .addValue("snapshot_name", snapshotName));
-
-        return snapshot;
+        return getCallsHandler().executeRead("GetGlusterVolumeSnapshotByName",
+                snapshotRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("volume_id", volumeId)
+                        .addValue("snapshot_name", snapshotName));
     }
 
     @Override
     public List<GlusterVolumeSnapshotEntity> getAllByVolumeId(Guid volumeId) {
-        List<GlusterVolumeSnapshotEntity> snapshots =
-                getCallsHandler().executeReadList("GetGlusterVolumeSnapshotsByVolumeId", snapshotRowMapper,
-                        getCustomMapSqlParameterSource()
-                                .addValue("volume_id", volumeId));
-        return snapshots;
+        return getCallsHandler().executeReadList("GetGlusterVolumeSnapshotsByVolumeId", snapshotRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("volume_id", volumeId));
     }
 
     @Override
     public List<GlusterVolumeSnapshotEntity> getAllByClusterId(Guid clusterId) {
-        List<GlusterVolumeSnapshotEntity> snapshots =
-                getCallsHandler().executeReadList("GetGlusterVolumeSnapshotsByClusterId",
-                        snapshotRowMapper,
-                        getCustomMapSqlParameterSource().addValue("cluster_Id", clusterId));
-        return snapshots;
+        return getCallsHandler().executeReadList("GetGlusterVolumeSnapshotsByClusterId",
+                snapshotRowMapper,
+                getCustomMapSqlParameterSource().addValue("cluster_Id", clusterId));
     }
 
     @Override
@@ -124,8 +115,7 @@ public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDao<Glust
 
     @Override
     public List<GlusterVolumeSnapshotEntity> getAllWithQuery(String query) {
-        List<GlusterVolumeSnapshotEntity> snapshots = getJdbcTemplate().query(query, snapshotRowMapper);
-        return snapshots;
+        return getJdbcTemplate().query(query, snapshotRowMapper);
     }
 
     @Override
@@ -179,15 +169,13 @@ public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDao<Glust
         return new MapSqlParameterMapper<GlusterVolumeSnapshotEntity>() {
             @Override
             public MapSqlParameterSource map(GlusterVolumeSnapshotEntity entity) {
-                MapSqlParameterSource paramValue =
-                        new MapSqlParameterSource()
-                                .addValue("snapshot_id", entity.getId())
-                                .addValue("snapshot_name", entity.getSnapshotName())
-                                .addValue("volume_id", entity.getVolumeId())
-                                .addValue("description", entity.getDescription())
-                                .addValue("status", EnumUtils.nameOrNull(entity.getStatus()))
-                                .addValue("_create_date", entity.getCreatedAt());
-                return paramValue;
+                return new MapSqlParameterSource()
+                        .addValue("snapshot_id", entity.getId())
+                        .addValue("snapshot_name", entity.getSnapshotName())
+                        .addValue("volume_id", entity.getVolumeId())
+                        .addValue("description", entity.getDescription())
+                        .addValue("status", EnumUtils.nameOrNull(entity.getStatus()))
+                        .addValue("_create_date", entity.getCreatedAt());
             }
         };
     }

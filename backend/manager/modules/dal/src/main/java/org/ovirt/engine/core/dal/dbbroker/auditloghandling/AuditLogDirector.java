@@ -144,10 +144,9 @@ public class AuditLogDirector {
     private AuditLog createAuditLog(AuditLogableBase auditLogable, AuditLogType logType, String loggerString, AuditLogSeverity severity) {
         // handle external log messages invoked by plugins via the API
         if (auditLogable.isExternal()) {
-            String resolvedMessage = loggerString; // message is sent as an argument, no need to resolve.
             return new AuditLog(logType,
                     severity,
-                    resolvedMessage,
+                    loggerString,
                     auditLogable.getUserId(),
                     auditLogable.getUserName(),
                     auditLogable.getVmIdRef(),

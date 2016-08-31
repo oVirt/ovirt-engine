@@ -82,7 +82,7 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
             public MapSqlParameterSource map(Pair<Guid, DiskImageDynamic> entity) {
                 Guid vmId = entity.getFirst();
                 DiskImageDynamic diskImageDynamic = entity.getSecond();
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
+                return new MapSqlParameterSource()
                         .addValue("vm_id", vmId)
                         .addValue("image_group_id", diskImageDynamic.getId())
                         .addValue("read_rate", diskImageDynamic.getReadRate())
@@ -91,8 +91,6 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
                         .addValue("read_latency_seconds", diskImageDynamic.getReadLatency())
                         .addValue("write_latency_seconds", diskImageDynamic.getWriteLatency())
                         .addValue("flush_latency_seconds", diskImageDynamic.getFlushLatency());
-
-                return paramValue;
             }
         };
     }

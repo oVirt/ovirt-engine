@@ -21,10 +21,9 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
 
     @Override
     public VmInit get(Guid id) {
-        VmInit vmInit = getCallsHandler().executeRead("GetVmInitByVmId",
+        return getCallsHandler().executeRead("GetVmInitByVmId",
                 VMInitRowMapper.instance,
                 getIdParamterSource(id));
-        return vmInit;
     }
 
     @Override

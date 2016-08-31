@@ -211,7 +211,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VdsDynamic vds) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        return getCustomMapSqlParameterSource()
                 .addValue("cpu_cores", vds.getCpuCores())
                 .addValue("cpu_threads", vds.getCpuThreads())
                 .addValue("cpu_model", vds.getCpuModel())
@@ -279,9 +279,6 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("kernel_args", vds.getKernelArgs())
                 .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled())
                 .addValue("pretty_name", vds.getPrettyName());
-
-
-        return parameterSource;
     }
 
     @Override

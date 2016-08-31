@@ -25,9 +25,8 @@ public class RoleGroupMapDaoImpl extends BaseDao implements RoleGroupMapDao {
 
         @Override
         public RoleGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-            RoleGroupMap entity = new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")),
+            return new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")),
                     getGuidDefaultEmpty(rs, "role_id"));
-            return entity;
         }
     }
 

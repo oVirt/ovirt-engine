@@ -164,11 +164,9 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
     }
 
     private VMTemplateWithPlugInfo getVMTemplatesWithPlugInfo(Guid imageId) {
-        VMTemplateWithPlugInfo plugInfo =
-                getCallsHandler().executeRead("GetVmTemplatesByImageId",
-                        VMTemplateWithPlugInfoRowMapper.instance,
-                        getCustomMapSqlParameterSource().addValue("image_guid", imageId));
-        return plugInfo;
+        return getCallsHandler().executeRead("GetVmTemplatesByImageId",
+                VMTemplateWithPlugInfoRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("image_guid", imageId));
     }
 
     @Override

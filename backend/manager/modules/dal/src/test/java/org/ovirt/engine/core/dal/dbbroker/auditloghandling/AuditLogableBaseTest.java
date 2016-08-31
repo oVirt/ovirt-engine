@@ -713,8 +713,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VM vm = new VM();
         vm.setRunOnVds(GUID2);
-        final Guid vdsId = GUID;
-        b.setVdsId(vdsId);
+        b.setVdsId(GUID);
         b.setVm(vm);
         final VDS v = b.getVds();
         assertEquals(GUID, v.getId());
@@ -740,9 +739,8 @@ public class AuditLogableBaseTest {
         final VDS vds = null;
         final VM vm = new VM();
         vm.setRunOnVds(GUID2);
-        final Guid vdsId = GUID3;
         b.setVds(vds);
-        b.setVdsId(vdsId);
+        b.setVdsId(GUID3);
         b.setVm(vm);
         final VDS v = b.getVds();
         assertNull(v);

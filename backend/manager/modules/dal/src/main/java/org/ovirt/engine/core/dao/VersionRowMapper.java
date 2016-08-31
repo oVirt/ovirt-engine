@@ -15,8 +15,7 @@ public class VersionRowMapper implements RowMapper<Version> {
 
     @Override
     public Version mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Version entity = new Version(rs.getString(versionColumnName));
-        return entity;
+        return new Version(rs.getString(versionColumnName));
     }
 
 }

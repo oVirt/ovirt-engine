@@ -257,10 +257,9 @@ public class VmDeviceDaoImpl extends
     }
 
     private MapSqlParameterSource createParameterSourceForUpdate(VmDevice vmDevice) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        return getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmDevice.getVmId())
                 .addValue("device_id", vmDevice.getDeviceId());
-        return parameterSource;
     }
 
     @Override
@@ -281,11 +280,10 @@ public class VmDeviceDaoImpl extends
         return new MapSqlParameterMapper<VmDevice>() {
             @Override
             public MapSqlParameterSource map(VmDevice entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
+                return new MapSqlParameterSource()
                         .addValue("device_id", entity.getDeviceId())
                         .addValue("vm_id", entity.getVmId())
                         .addValue("boot_order", entity.getBootOrder());
-                return paramValue;
             }
         };
     }

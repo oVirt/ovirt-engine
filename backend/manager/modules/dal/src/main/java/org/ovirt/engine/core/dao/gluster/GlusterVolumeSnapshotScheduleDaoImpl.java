@@ -30,11 +30,8 @@ public class GlusterVolumeSnapshotScheduleDaoImpl extends BaseDao implements Glu
 
     @Override
     public GlusterVolumeSnapshotSchedule getByVolumeId(Guid volumeId) {
-        GlusterVolumeSnapshotSchedule schedule =
-                getCallsHandler().executeRead("GetGlusterVolumeSnapshotScheduleByVolumeId", snapshotScheduleRowMapper,
-                        getCustomMapSqlParameterSource().addValue("volume_id", volumeId));
-
-        return schedule;
+        return getCallsHandler().executeRead("GetGlusterVolumeSnapshotScheduleByVolumeId", snapshotScheduleRowMapper,
+                getCustomMapSqlParameterSource().addValue("volume_id", volumeId));
     }
 
     @Override
@@ -45,8 +42,7 @@ public class GlusterVolumeSnapshotScheduleDaoImpl extends BaseDao implements Glu
 
     @Override
     public List<GlusterVolumeSnapshotSchedule> getAllWithQuery(String query) {
-        List<GlusterVolumeSnapshotSchedule> schedules = getJdbcTemplate().query(query, snapshotScheduleRowMapper);
-        return schedules;
+        return getJdbcTemplate().query(query, snapshotScheduleRowMapper);
     }
 
     @Override

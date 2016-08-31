@@ -25,45 +25,37 @@ public class GlusterVolumeSnapshotConfigDaoImpl extends BaseDao implements Glust
     }
 
     public List<GlusterVolumeSnapshotConfig> getConfigByClusterId(Guid clusterId) {
-        List<GlusterVolumeSnapshotConfig> configs =
-                getCallsHandler().executeReadList("GetGlusterVolumeSnapshotConfigByClusterId", snapshotConfigRowMapper,
-                        getCustomMapSqlParameterSource()
-                                .addValue("cluster_id", clusterId));
-        return configs;
+        return getCallsHandler().executeReadList("GetGlusterVolumeSnapshotConfigByClusterId", snapshotConfigRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId));
     }
 
     public List<GlusterVolumeSnapshotConfig> getConfigByVolumeId(Guid clusterId, Guid volumeId) {
-        List<GlusterVolumeSnapshotConfig> configs =
-                getCallsHandler().executeReadList("GetGlusterVolumeSnapshotConfigByVolumeId", snapshotConfigRowMapper,
-                        getCustomMapSqlParameterSource()
-                                .addValue("cluster_id", clusterId)
-                                .addValue("volume_id", volumeId));
-        return configs;
+        return getCallsHandler().executeReadList("GetGlusterVolumeSnapshotConfigByVolumeId", snapshotConfigRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("volume_id", volumeId));
     }
 
     public GlusterVolumeSnapshotConfig getConfigByClusterIdAndName(Guid clusterId,
             String paramName) {
-        GlusterVolumeSnapshotConfig config =
-                getCallsHandler().executeRead("GetGlusterVolumeSnapshotConfigByClusterIdAndName",
-                        snapshotConfigRowMapper,
-                        getCustomMapSqlParameterSource()
-                                .addValue("cluster_id", clusterId)
-                                .addValue("param_name", paramName));
-        return config;
+        return getCallsHandler().executeRead("GetGlusterVolumeSnapshotConfigByClusterIdAndName",
+                snapshotConfigRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("param_name", paramName));
     }
 
     public GlusterVolumeSnapshotConfig getConfigByVolumeIdAndName(Guid clusterId,
             Guid volumeId,
             String paramName) {
-        GlusterVolumeSnapshotConfig config =
-                getCallsHandler().executeRead("GetGlusterVolumeSnapshotConfigByVolumeIdAndName",
-                        snapshotConfigRowMapper,
-                        getCustomMapSqlParameterSource()
-                                .addValue("cluster_id", clusterId)
-                                .addValue("volume_id", volumeId)
-                                .addValue("param_name", paramName));
 
-        return config;
+        return getCallsHandler().executeRead("GetGlusterVolumeSnapshotConfigByVolumeIdAndName",
+                snapshotConfigRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("volume_id", volumeId)
+                        .addValue("param_name", paramName));
     }
 
     private static final class GlusterVolumeSnapshotConfigRowMapper implements RowMapper<GlusterVolumeSnapshotConfig> {
@@ -89,8 +81,7 @@ public class GlusterVolumeSnapshotConfigDaoImpl extends BaseDao implements Glust
 
     @Override
     public List<GlusterVolumeSnapshotConfig> getAllWithQuery(String query) {
-        List<GlusterVolumeSnapshotConfig> configs = getJdbcTemplate().query(query, snapshotConfigRowMapper);
-        return configs;
+        return getJdbcTemplate().query(query, snapshotConfigRowMapper);
     }
 
     @Override

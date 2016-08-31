@@ -23,8 +23,7 @@ class CdiIntegration implements BeanDefinitionRegistryPostProcessor {
     public Instance<Dao> daos() {
         // Since the Spring runner doesn't support the CDI @Any annotation - we need to hand it to him manually
         Map<String, Dao> daoMap = beanFactory.getBeansOfType(Dao.class);
-        Instance<Dao> daos = new InstanceImpl(daoMap.values());
-        return daos;
+        return new InstanceImpl(daoMap.values());
     }
 
     @Override

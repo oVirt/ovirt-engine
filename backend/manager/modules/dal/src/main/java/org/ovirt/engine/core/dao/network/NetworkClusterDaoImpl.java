@@ -86,7 +86,7 @@ public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao 
     }
 
     private MapSqlParameterSource createAllFieldsParameterSource(NetworkCluster cluster) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        return getCustomMapSqlParameterSource()
                 .addValue("cluster_id", cluster.getClusterId())
                 .addValue("network_id", cluster.getNetworkId())
                 .addValue("status", cluster.getStatus())
@@ -95,7 +95,6 @@ public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao 
                 .addValue("migration", cluster.isMigration())
                 .addValue("management", cluster.isManagement())
                 .addValue("is_gluster", cluster.isGluster());
-        return parameterSource;
 
     }
 

@@ -126,11 +126,10 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
     }
 
     private BrickProperties fetchBrickProperties(Guid brickId) {
-        BrickProperties brickProperties = getCallsHandler().executeRead(
+        return getCallsHandler().executeRead(
                 "GetBrickDetailsByID",
                 brickPropertiesRowMappeer,
                 createBrickIdParams(brickId));
-        return brickProperties;
      }
 
     private MapSqlParameterSource createBrickParams(GlusterBrickEntity brick) {
@@ -241,25 +240,22 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
         return new MapSqlParameterMapper<GlusterBrickEntity>() {
             @Override
             public MapSqlParameterSource map(GlusterBrickEntity entity) {
-                MapSqlParameterSource paramValue =
-                        new MapSqlParameterSource()
-                                .addValue("volume_id", entity.getVolumeId())
-                                .addValue("server_id", entity.getServerId())
-                                .addValue("brick_dir", entity.getBrickDirectory())
-                                .addValue("status", entity.getStatus().name())
-                                .addValue("id", entity.getId().toString())
-                                .addValue("brick_order", entity.getBrickOrder())
-                                .addValue("network_id", entity.getNetworkId())
-                                .addValue("task_id",
-                                        entity.getAsyncTask().getTaskId() != null ? entity.getAsyncTask()
-                                                .getTaskId()
-                                                .toString()
-                                                : "")
-                                .addValue("unsynced_entries", entity.getUnSyncedEntries())
-                                .addValue("unsynced_entries_history",
-                                        StringUtils.join(entity.getUnSyncedEntriesTrend(), ","));
-
-                return paramValue;
+                return new MapSqlParameterSource()
+                        .addValue("volume_id", entity.getVolumeId())
+                        .addValue("server_id", entity.getServerId())
+                        .addValue("brick_dir", entity.getBrickDirectory())
+                        .addValue("status", entity.getStatus().name())
+                        .addValue("id", entity.getId().toString())
+                        .addValue("brick_order", entity.getBrickOrder())
+                        .addValue("network_id", entity.getNetworkId())
+                        .addValue("task_id",
+                                entity.getAsyncTask().getTaskId() != null ? entity.getAsyncTask()
+                                        .getTaskId()
+                                        .toString()
+                                        : "")
+                        .addValue("unsynced_entries", entity.getUnSyncedEntries())
+                        .addValue("unsynced_entries_history",
+                                StringUtils.join(entity.getUnSyncedEntriesTrend(), ","));
             }
         };
     }

@@ -26,11 +26,8 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", vdsId);
 
-        List<VdsNumaNode> vdsNumaNodes =
-                getCallsHandler().executeReadList("GetNumaNodeByVdsId",
-                        vdsNumaNodeRowMapper, parameterSource);
-
-        return vdsNumaNodes;
+        return getCallsHandler().executeReadList("GetNumaNodeByVdsId",
+                vdsNumaNodeRowMapper, parameterSource);
     }
 
     private static final RowMapper<VdsNumaNode> vdsNumaNodeRowMapper =

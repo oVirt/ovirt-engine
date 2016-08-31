@@ -51,9 +51,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
         quotaParameterSource.addValue("quota_name", quotaName);
         quotaParameterSource.addValue("storage_pool_id", storagePoolId);
-        Quota quotaEntity =
-                getCallsHandler().executeRead("GetQuotaByQuotaName", getQuotaFromResultSet(), quotaParameterSource);
-        return quotaEntity;
+        return getCallsHandler().executeRead("GetQuotaByQuotaName", getQuotaFromResultSet(), quotaParameterSource);
     }
 
     /**
@@ -74,11 +72,9 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         quotaParameterSource.addValue("ad_element_id", adElementId);
         quotaParameterSource.addValue("storage_pool_id", storagePoolId);
         quotaParameterSource.addValue("recursive", recursive);
-        List<Quota> quotaEntityList =
-                getCallsHandler().executeReadList("GetQuotaByAdElementId",
-                        getQuotaMetaDataFromResultSet(),
-                        quotaParameterSource);
-        return quotaEntityList;
+        return getCallsHandler().executeReadList("GetQuotaByAdElementId",
+                getQuotaMetaDataFromResultSet(),
+                quotaParameterSource);
     }
 
     /**
@@ -112,10 +108,9 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 createQuotaIdParameterMapper(quotaId)
                         .addValue("cluster_id", clusterId)
                         .addValue("allow_empty", allowEmpty);
-        List<QuotaCluster> quotaClusterList = getCallsHandler().executeReadList("GetQuotaClusterByClusterGuid",
+        return getCallsHandler().executeReadList("GetQuotaClusterByClusterGuid",
                 getClusterQuotaResultSet(),
                 parameterSource);
-        return quotaClusterList;
     }
 
     /**
@@ -148,10 +143,9 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         MapSqlParameterSource parameterSource =
                 createQuotaIdParameterMapper(quotaId).addValue("storage_id", storageId).addValue("allow_empty",
                         allowEmpty);
-        List<QuotaStorage> quotaStorageList = getCallsHandler().executeReadList("GetQuotaStorageByStorageGuid",
+        return getCallsHandler().executeReadList("GetQuotaStorageByStorageGuid",
                 getQuotaStorageResultSet(),
                 parameterSource);
-        return quotaStorageList;
     }
 
     @Override
@@ -170,20 +164,18 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     public List<Quota> getQuotaByStoragePoolGuid(Guid storagePoolId) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId);
-        List<Quota> quotaList = getCallsHandler().executeReadList("GetQuotaByStoragePoolGuid",
+        return getCallsHandler().executeReadList("GetQuotaByStoragePoolGuid",
                 getQuotaFromResultSet(),
                 parameterSource);
-        return quotaList;
     }
 
     @Override
     public Quota getDefaultQuotaForStoragePool(Guid storagePoolId) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId);
-        Quota quota = getCallsHandler().executeRead("GetDefaultQuotaForStoragePool",
+        return getCallsHandler().executeRead("GetDefaultQuotaForStoragePool",
                 getQuotaFromResultSet(),
                 parameterSource);
-        return quota;
     }
 
     /**
@@ -328,11 +320,9 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         quotaParameterSource.addValue("storage_id", storageId)
                 .addValue("engine_session_seq_id", engineSessionSeqId)
                 .addValue("is_filtered", isFiltered);
-        List<Quota> quotas =
-                getCallsHandler().executeReadList("getAllThinQuotasByStorageId",
-                        getQuotaMetaDataFromResultSet(),
-                        quotaParameterSource);
-        return quotas;
+        return getCallsHandler().executeReadList("getAllThinQuotasByStorageId",
+                getQuotaMetaDataFromResultSet(),
+                quotaParameterSource);
     }
 
     @Override
@@ -341,11 +331,9 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         quotaParameterSource.addValue("cluster_id", clusterId)
                 .addValue("engine_session_seq_id", engineSessionSeqId)
                 .addValue("is_filtered", isFiltered);
-        List<Quota> quotas =
-                getCallsHandler().executeReadList("getAllThinQuotasByClusterId",
-                        getQuotaMetaDataFromResultSet(),
-                        quotaParameterSource);
-        return quotas;
+        return getCallsHandler().executeReadList("getAllThinQuotasByClusterId",
+                getQuotaMetaDataFromResultSet(),
+                quotaParameterSource);
     }
 
     /**
@@ -376,7 +364,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * Return initialized entity with quota Vds group result set.
      */
     private RowMapper<QuotaCluster> getClusterQuotaResultSet() {
-        RowMapper<QuotaCluster> mapperQuotaLimitation = new RowMapper<QuotaCluster>() {
+        return new RowMapper<QuotaCluster>() {
             @Override
             public QuotaCluster mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
@@ -393,14 +381,13 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 return entity;
             }
         };
-        return mapperQuotaLimitation;
     }
 
     /**
      * Returns initialized entity with quota Storage result set.
      */
     private RowMapper<QuotaStorage> getQuotaStorageResultSet() {
-        RowMapper<QuotaStorage> mapperQuotaLimitation = new RowMapper<QuotaStorage>() {
+        return new RowMapper<QuotaStorage>() {
             @Override
             public QuotaStorage mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
@@ -414,14 +401,13 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 return entity;
             }
         };
-        return mapperQuotaLimitation;
     }
 
     /**
      * Returns initialized entity with quota result set.
      */
     private RowMapper<Quota> getQuotaFromResultSet() {
-        RowMapper<Quota> mapper = new RowMapper<Quota>() {
+        return new RowMapper<Quota>() {
             @Override
             public Quota mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
@@ -453,21 +439,19 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 return entity;
             }
         };
-        return mapper;
     }
 
     /**
      * Returns initialized entity with quota meta data result set.
      */
     private RowMapper<Quota> getQuotaMetaDataFromResultSet() {
-        RowMapper<Quota> mapper = new RowMapper<Quota>() {
+        return new RowMapper<Quota>() {
             @Override
             public Quota mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 return getQuotaMetaDataFromResultSet(rs);
             }
         };
-        return mapper;
     }
 
     private Quota getQuotaMetaDataFromResultSet(ResultSet rs) throws SQLException {
@@ -487,9 +471,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     private MapSqlParameterSource createQuotaIdParameterMapper(Guid quotaId) {
-        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", quotaId);
-        return quotaParameterSource;
+        return getCustomMapSqlParameterSource().addValue("id", quotaId);
     }
 
     /**
@@ -502,15 +484,13 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * @return - Parameter Map
      */
     private MapSqlParameterSource getQuotaStorageParameterMap(Guid quotaId, QuotaStorage quotaStorage) {
-        MapSqlParameterSource storageQuotaParameterMap =
-                createQuotaIdParameterMapper(quotaStorage.getQuotaStorageId()).addValue("quota_id",
-                        quotaId)
-                        .addValue("storage_id", quotaStorage.getStorageId())
-                        .addValue("cluster_id", null)
-                        .addValue("storage_size_gb", quotaStorage.getStorageSizeGB())
-                        .addValue("virtual_cpu", null)
-                        .addValue("mem_size_mb", null);
-        return storageQuotaParameterMap;
+        return createQuotaIdParameterMapper(quotaStorage.getQuotaStorageId()).addValue("quota_id",
+                quotaId)
+                .addValue("storage_id", quotaStorage.getStorageId())
+                .addValue("cluster_id", null)
+                .addValue("storage_size_gb", quotaStorage.getStorageSizeGB())
+                .addValue("virtual_cpu", null)
+                .addValue("mem_size_mb", null);
     }
 
     /**
@@ -524,14 +504,12 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * @return - <code>Cluster</code> Parameter Map
      */
     private MapSqlParameterSource getQuotaClusterParameterMap(Guid quotaId, QuotaCluster quotaCluster) {
-        MapSqlParameterSource clusterQuotaParameterMap =
-                createQuotaIdParameterMapper(quotaCluster.getQuotaClusterId()).addValue("quota_id", quotaId)
-                        .addValue("cluster_id", quotaCluster.getClusterId())
-                        .addValue("storage_id", null)
-                        .addValue("storage_size_gb", null)
-                        .addValue("virtual_cpu", quotaCluster.getVirtualCpu())
-                        .addValue("mem_size_mb", quotaCluster.getMemSizeMB());
-        return clusterQuotaParameterMap;
+        return createQuotaIdParameterMapper(quotaCluster.getQuotaClusterId()).addValue("quota_id", quotaId)
+                .addValue("cluster_id", quotaCluster.getClusterId())
+                .addValue("storage_id", null)
+                .addValue("storage_size_gb", null)
+                .addValue("virtual_cpu", quotaCluster.getVirtualCpu())
+                .addValue("mem_size_mb", quotaCluster.getMemSizeMB());
     }
 
     /**
@@ -542,22 +520,20 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * @return - Global quota Parameter Map.
      */
     private MapSqlParameterSource getFullQuotaParameterMap(Quota quota) {
-        MapSqlParameterSource quotaParameterMap =
-                getCustomMapSqlParameterSource()
-                        .addValue("id", quota.getId())
-                        .addValue("quota_id", quota.getId())
-                        .addValue("cluster_id", null)
-                        .addValue("storage_id", null)
-                        .addValue("storage_size_gb",
-                                quota.getGlobalQuotaStorage() != null ? quota.getGlobalQuotaStorage()
-                                        .getStorageSizeGB() : null)
-                        .addValue("virtual_cpu",
-                                quota.getGlobalQuotaCluster() != null ? quota.getGlobalQuotaCluster().getVirtualCpu()
-                                        : null)
-                        .addValue("mem_size_mb",
-                                quota.getGlobalQuotaCluster() != null ? quota.getGlobalQuotaCluster().getMemSizeMB()
-                                        : null);
-        return quotaParameterMap;
+        return getCustomMapSqlParameterSource()
+                .addValue("id", quota.getId())
+                .addValue("quota_id", quota.getId())
+                .addValue("cluster_id", null)
+                .addValue("storage_id", null)
+                .addValue("storage_size_gb",
+                        quota.getGlobalQuotaStorage() != null ? quota.getGlobalQuotaStorage()
+                                .getStorageSizeGB() : null)
+                .addValue("virtual_cpu",
+                        quota.getGlobalQuotaCluster() != null ? quota.getGlobalQuotaCluster().getVirtualCpu()
+                                : null)
+                .addValue("mem_size_mb",
+                        quota.getGlobalQuotaCluster() != null ? quota.getGlobalQuotaCluster().getMemSizeMB()
+                                : null);
     }
 
     private MapSqlParameterSource createQuotaMetaDataParameterMapper(Quota quota) {

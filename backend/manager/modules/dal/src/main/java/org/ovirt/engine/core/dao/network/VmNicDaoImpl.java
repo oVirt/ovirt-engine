@@ -69,16 +69,14 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VmNic entity) {
-        MapSqlParameterSource parameterSource =
-                createIdParameterMapper(entity.getId()).addValue("mac_addr", entity.getMacAddress())
-                        .addValue("name", entity.getName())
-                        .addValue("speed", entity.getSpeed())
-                        .addValue("vm_guid", entity.getVmId())
-                        .addValue("vnic_profile_id", entity.getVnicProfileId())
-                        .addValue("vmt_guid", entity.getVmTemplateId())
-                        .addValue("type", entity.getType())
-                        .addValue("linked", entity.isLinked());
-        return parameterSource;
+        return createIdParameterMapper(entity.getId()).addValue("mac_addr", entity.getMacAddress())
+                .addValue("name", entity.getName())
+                .addValue("speed", entity.getSpeed())
+                .addValue("vm_guid", entity.getVmId())
+                .addValue("vnic_profile_id", entity.getVnicProfileId())
+                .addValue("vmt_guid", entity.getVmTemplateId())
+                .addValue("type", entity.getType())
+                .addValue("linked", entity.isLinked());
     }
 
     @Override
