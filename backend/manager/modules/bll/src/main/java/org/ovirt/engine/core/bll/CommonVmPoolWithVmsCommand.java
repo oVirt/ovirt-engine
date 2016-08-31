@@ -72,6 +72,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     @Inject
     private MacPoolPerDc poolPerDc;
 
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;
@@ -501,7 +503,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }

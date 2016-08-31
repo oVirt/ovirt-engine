@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -116,6 +118,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         implements QuotaStorageDependent, QuotaVdsDependent {
 
     private static final Base64 BASE_64 = new Base64(0, null);
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
+
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
@@ -736,7 +742,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             for (DiskImage diskImage : diskImages) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }

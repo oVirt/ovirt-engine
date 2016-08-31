@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -51,6 +53,9 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T>
         implements QuotaStorageDependent {
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     private List<PermissionSubject> cachedPermsList;
     private List<Pair<VM, VmDevice>> cachedVmsDeviceInfo;
@@ -515,7 +520,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected boolean setAndValidateDiskProfiles() {
         getImage().setDiskProfileId(getParameters().getDiskProfileId());
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getImage(),
+        return validate(diskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getImage(),
                 getParameters().getStorageDomainId()), getCurrentUser()));
     }
 

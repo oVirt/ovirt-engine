@@ -84,6 +84,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private VmTemplateDao vmTemplateDao;
 
     @Inject
+    private DiskProfileHelper diskProfileHelper;
+
+    @Inject
     private CpuProfileHelper cpuProfileHelper;
 
     private Version effectiveCompatibilityVersion;
@@ -593,7 +596,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
                 map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }

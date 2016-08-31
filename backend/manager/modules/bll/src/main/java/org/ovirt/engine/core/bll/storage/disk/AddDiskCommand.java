@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -80,6 +82,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         implements QuotaStorageDependent {
 
     private LUNs lunFromStorage;
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -727,7 +732,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean setAndValidateDiskProfiles() {
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getDiskImageInfo(),
+        return validate(diskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getDiskImageInfo(),
                 getStorageDomainId()), getCurrentUser()));
     }
 

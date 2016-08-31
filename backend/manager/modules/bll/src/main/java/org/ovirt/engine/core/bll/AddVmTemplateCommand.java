@@ -101,6 +101,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private SchedulerUtilQuartzImpl schedulerUtil;
 
     @Inject
+    private DiskProfileHelper diskProfileHelper;
+
+
+    @Inject
     private CpuProfileHelper cpuProfileHelper;
 
     private final List<DiskImage> images = new ArrayList<>();
@@ -560,7 +564,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     map.put(diskImage, diskImage.getStorageIds().get(0));
                 }
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }

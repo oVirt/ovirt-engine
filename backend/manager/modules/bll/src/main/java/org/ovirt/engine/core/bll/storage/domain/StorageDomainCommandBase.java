@@ -66,6 +66,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     @Inject
     protected EventQueue eventQueue;
 
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
+
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -499,7 +502,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected void createDefaultDiskProfile() {
         executeInNewTransaction(() -> {
             final DiskProfile diskProfile =
-                    DiskProfileHelper.createDiskProfile(getStorageDomain().getId(), getStorageDomainName());
+                    diskProfileHelper.createDiskProfile(getStorageDomain().getId(), getStorageDomainName());
             DiskProfileParameters diskProfileParameters = new DiskProfileParameters(diskProfile, true);
             runInternalAction(VdcActionType.AddDiskProfile, diskProfileParameters);
             getCompensationContext().snapshotNewEntity(diskProfile);
