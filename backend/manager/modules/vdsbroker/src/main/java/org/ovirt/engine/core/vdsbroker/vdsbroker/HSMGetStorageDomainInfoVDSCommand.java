@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -67,8 +68,18 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                     sdStatic.setStorage(connections.get(0).getId());
                     sdStatic.setConnection(connections.get(0));
                 }
-            } else if (sdStatic.getStorageType() != StorageType.NFS && struct.containsKey("vguuid")) {
-                sdStatic.setStorage(struct.get("vguuid").toString());
+            } else if (sdStatic.getStorageType() != StorageType.NFS) {
+                if (struct.containsKey("vguuid")) {
+                    sdStatic.setStorage(struct.get("vguuid").toString());
+                }
+
+                if (struct.containsKey("metadataDevice")) {
+                    sdStatic.setFirstMetadataDevice(Objects.toString(struct.get("metadataDevice")));
+                }
+
+                if (struct.containsKey("vgMetadataDevice")) {
+                    sdStatic.setVgMetadataDevice(Objects.toString(struct.get("vgMetadataDevice")));
+                }
             }
         }
         if (struct.containsKey("state")) {
