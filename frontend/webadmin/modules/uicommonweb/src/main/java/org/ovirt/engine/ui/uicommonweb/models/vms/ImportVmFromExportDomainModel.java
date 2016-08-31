@@ -282,8 +282,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
     protected void getTemplatesFromExportDomain() {
         GetAllFromExportDomainQueryParameters tempVar =
-                new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((StorageDomain) getEntity())
-                        .getId());
+                new GetAllFromExportDomainQueryParameters(storagePool.getId(), (Guid) getEntity());
         Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery<>(
                 new AsyncCallback<VdcQueryReturnValue>() {
 
