@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
@@ -15,6 +17,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters> extends AddStorageDomainCommand<T> {
+
+    @Inject
+    private BlockStorageDomainHelper blockStorageDomainHelper;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -42,9 +47,11 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         }
         getStorageDomain().setStorage(storage);
         if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && addStorageDomainInIrs()) {
-            storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
             updateStorageDomainDynamicFromIrs();
             proceedVGLunsInDb();
+            blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
+                    getVds().getId());
+            storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
             setSucceeded(true);
         }
     }
