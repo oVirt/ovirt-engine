@@ -53,7 +53,6 @@ public class BackendVmCdromsResource
         return collection;
     }
 
-    @Override
     public Response add(Cdrom cdrom) {
         validateParameters(cdrom, "file.id");
         VM vm = getVm();

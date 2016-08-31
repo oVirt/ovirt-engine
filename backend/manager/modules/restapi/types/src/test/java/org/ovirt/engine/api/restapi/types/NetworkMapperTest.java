@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
+import org.ovirt.engine.api.model.NetworkUsage;
 
 public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, org.ovirt.engine.core.common.businessentities.network.Network, org.ovirt.engine.core.common.businessentities.network.Network> {
 
@@ -30,22 +31,21 @@ public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, or
         assertNotNull(transform.getVlan());
         assertEquals(model.getVlan().getId(), transform.getVlan().getId());
         assertEquals(model.isStp(), transform.isStp());
-        final Set<String> usagesSet = new HashSet<>(model.getUsages().getUsages());
-        assertTrue(usagesSet.contains(NetworkUsage.DISPLAY.value()));
-        assertTrue(usagesSet.contains(NetworkUsage.MIGRATION.value()));
-        assertTrue(usagesSet.contains(NetworkUsage.MANAGEMENT.value()));
-        assertTrue(usagesSet.contains(NetworkUsage.VM.value()));
+        final Set<NetworkUsage> usagesSet = new HashSet<>(model.getUsages().getUsages());
+        assertTrue(usagesSet.contains(NetworkUsage.DISPLAY));
+        assertTrue(usagesSet.contains(NetworkUsage.MIGRATION));
+        assertTrue(usagesSet.contains(NetworkUsage.MANAGEMENT));
+        assertTrue(usagesSet.contains(NetworkUsage.VM));
     }
 
     @Override
     protected Network postPopulate(Network model) {
         model.setStatus(MappingTestHelper.shuffle(NetworkStatus.class));
         model.setUsages(new Network.UsagesList());
-        model.getUsages().getUsages().add("aaa");
-        model.getUsages().getUsages().add(NetworkUsage.DISPLAY.value());
-        model.getUsages().getUsages().add(NetworkUsage.MIGRATION.value());
-        model.getUsages().getUsages().add(NetworkUsage.MANAGEMENT.value());
-        model.getUsages().getUsages().add(NetworkUsage.VM.value());
+        model.getUsages().getUsages().add(NetworkUsage.DISPLAY);
+        model.getUsages().getUsages().add(NetworkUsage.MIGRATION);
+        model.getUsages().getUsages().add(NetworkUsage.MANAGEMENT);
+        model.getUsages().getUsages().add(NetworkUsage.VM);
         return super.postPopulate(model);
     }
 }

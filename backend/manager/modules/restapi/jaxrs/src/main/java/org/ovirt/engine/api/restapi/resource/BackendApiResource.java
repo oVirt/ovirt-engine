@@ -54,6 +54,7 @@ import org.ovirt.engine.api.resource.EventsResource;
 import org.ovirt.engine.api.resource.ExternalVmImportsResource;
 import org.ovirt.engine.api.resource.HostsResource;
 import org.ovirt.engine.api.resource.IconsResource;
+import org.ovirt.engine.api.resource.ImageTransfersResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
 import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.api.resource.MacPoolsResource;
@@ -644,6 +645,12 @@ public class BackendApiResource
 
     @Override
     public ExternalVmImportsResource getExternalVmImportsResource() {
+        // TODO: Implement this.
+        return null;
+    }
+
+    @Override
+    public ImageTransfersResource getImageTransfersResource() {
         // TODO: Implement this.
         return null;
     }
