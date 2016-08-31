@@ -186,6 +186,8 @@ public class InstanceImageLineModel extends EntityModel {
                     }
 
                     getDiskModel().setEntity(this);
+                    InstanceImageLineModel.this.setChanged(true);
+
                     parentModel.getParentListModel().setWindow(null);
                     parentModel.getParentListModel().setWindow(parentModel.getUnitVmModel());
                     // from now on only editing is possible
@@ -269,6 +271,8 @@ public class InstanceImageLineModel extends EntityModel {
                 if (validate()) {
                     flush();
                     getDiskModel().setEntity(this);
+                    InstanceImageLineModel.this.setChanged(true);
+
                     parentModel.getParentListModel().setWindow(null);
                     parentModel.getParentListModel().setWindow(parentModel.getUnitVmModel());
                     // the "new" turns into "edit" - no need for attach anymore
