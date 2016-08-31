@@ -28,7 +28,7 @@ public class VdcQueryParametersBase implements Serializable {
     private boolean isFiltered;
 
     public VdcQueryParametersBase() {
-        refresh = true;
+        refresh = false;
     }
 
     public VdcQueryParametersBase(String sessionId) {
@@ -63,6 +63,11 @@ public class VdcQueryParametersBase implements Serializable {
 
     public VdcQueryParametersBase withoutRefresh() {
         setRefresh(false);
+        return this;
+    }
+
+    public VdcQueryParametersBase withRefresh() {
+        setRefresh(true);
         return this;
     }
 

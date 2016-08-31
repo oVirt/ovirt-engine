@@ -37,8 +37,6 @@ public class VdcOperationManagerTest {
 
     @Captor
     ArgumentCaptor<VdcOperation<VdcActionType, LoginUserParameters>> loginOperationCaptor;
-
-    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         testManager = new VdcOperationManager(mockEventBus, mockOperationProcessor);
@@ -81,8 +79,7 @@ public class VdcOperationManagerTest {
 
     @Test
     public void testAddOperationMultipleQuery() {
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation = new VdcOperation<VdcQueryType,
-                VdcQueryParametersBase>(VdcQueryType.Search, new VdcQueryParametersBase(), null);
+        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(VdcQueryType.Search, new VdcQueryParametersBase().withRefresh(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
         verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
@@ -96,14 +93,11 @@ public class VdcOperationManagerTest {
     @Test
     public void testAddOperationList() {
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.AddNetworkOnProvider,
-                new VdcActionParametersBase(), null);
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 = new VdcOperation<VdcQueryType,
-                VdcQueryParametersBase>(VdcQueryType.Search, testParameters, null);
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation3 = new VdcOperation<VdcQueryType,
-                VdcQueryParametersBase>(VdcQueryType.Search, testParameters, null);
-        List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
+                new VdcOperation<>(VdcActionType.AddNetworkOnProvider, new VdcActionParametersBase(), null);
+        VdcQueryParametersBase testParameters = new VdcQueryParametersBase().withRefresh();
+        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);
+        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation3 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);
+        List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
         operationList.add(testOperation2);
         operationList.add(testOperation3);
