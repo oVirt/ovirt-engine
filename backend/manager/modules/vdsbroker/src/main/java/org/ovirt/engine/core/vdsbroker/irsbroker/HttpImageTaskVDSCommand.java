@@ -66,7 +66,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         try {
             FutureTask<Integer> futureTask = new FutureTask(() -> httpclient.executeMethod(method));
             Future<Integer> f = ThreadPoolUtil.execute(futureTask);
-            if (f.get(Config.getValue(getConfigValueTimeLimitForOperation()), TimeUnit.MINUTES) == null) {
+            if (f.get(Config.<Integer>getValue(getConfigValueTimeLimitForOperation()), TimeUnit.MINUTES) == null) {
                 responseCode = futureTask.get();
             }
         } catch (InterruptedException e) {
