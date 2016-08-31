@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -99,6 +101,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
     private MacPool macPool;
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     @Override
     protected void init() {
@@ -1097,7 +1102,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
                 }
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }
