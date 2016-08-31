@@ -439,6 +439,11 @@ public class FixturesTool {
      */
     protected static final String LUN_ID_FOR_DISK = "1IET_00180002";
 
+    /**
+     * Predefined LUN ID that contains domain's 72e3a666-89e1-4005-a7ca-f7548004a9ab first extant
+     * of the metadata lv
+     */
+    protected static final String LUN_ID_OF_DOMAIN_METADATA = "DOMAIN_METADATA_LUN-1";
 
     protected static final String LUN_ID1= "1IET_00180001";
 

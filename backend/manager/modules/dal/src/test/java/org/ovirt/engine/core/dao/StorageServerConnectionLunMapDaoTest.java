@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerCon
 
 public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
     private static final String FREE_LUN_ID = "1IET_00180002";
-    private static final int NUM_LUN_MAPS = 3;
+    private static final int NUM_LUN_MAPS = 5;
 
     private StorageServerConnectionLunMapDao dao;
     private LUNStorageServerConnectionMap existingLUNStorageMap;

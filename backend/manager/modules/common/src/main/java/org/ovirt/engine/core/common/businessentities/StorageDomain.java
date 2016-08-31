@@ -86,6 +86,19 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         getStorageStaticData().setStorage(storage);
     }
 
+    /**
+     * Returns the first device of the domain metadata LV for block domains.
+     * Currently its required that the metadata first extent will be 0, therefore
+     * modifications of that device should be inspected carefully.
+     */
+    public String getFirstMetadataDevice() {
+        return getStorageStaticData().getFirstMetadataDevice();
+    }
+
+    public void setFirstMetadataDevice(String firstMetadataDevice) {
+        getStorageStaticData().setFirstMetadataDevice(firstMetadataDevice);
+    }
+
     @JsonIgnore
     @Override
     public String getName() {

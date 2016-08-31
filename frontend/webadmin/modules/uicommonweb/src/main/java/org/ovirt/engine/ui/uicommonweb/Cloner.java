@@ -392,6 +392,7 @@ public final class Cloner {
         obj.setStorageDomainType(instance.getStorageDomainType());
         obj.setStorageType(instance.getStorageType());
         obj.setStorageName(instance.getStorageName());
+        obj.setFirstMetadataDevice(instance.getFirstMetadataDevice());
         obj.setDescription(instance.getDescription());
         obj.setComment(instance.getComment());
         obj.setStorageFormat(instance.getStorageFormat());

@@ -436,6 +436,24 @@
         <column>product_id</column>
         <row>
             <value></value>
+            <value>DOMAIN_METADATA_LUN-1</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDP23</value>
+            <value>DOMAIN_METADATA_LUN-1</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>DOMAIN_METADATA_LUN-1</value>
+        </row>
+        <row>
+            <value></value>
+            <value>DOMAIN_METADATA_LUN-2</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDP22</value>
+            <value>DOMAIN_METADATA_LUN-2</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>DOMAIN_METADATA_LUN-2</value>
+        </row>
+        <row>
+            <value></value>
             <value>1IET_00180001</value>
             <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
             <value>VIRTUAL-DISK-1</value>
@@ -477,6 +495,14 @@
         <column>storage_server_connection</column>
         <row>
             <value>1IET_00180001</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297e</value>
+        </row>
+        <row>
+            <value>DOMAIN_METADATA_LUN-1</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297e</value>
+        </row>
+        <row>
+            <value>DOMAIN_METADATA_LUN-2</value>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297e</value>
         </row>
         <row>
@@ -4759,7 +4785,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
         </row>
     </table>
-
     <table name="storage_domain_static">
         <column>id</column>
         <column>storage</column>
@@ -4773,6 +4798,7 @@
         <column>wipe_after_delete</column>
         <column>warning_low_space_indicator</column>
         <column>critical_space_action_blocker</column>
+        <column>first_metadata_device</column>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
             <value>0cc146e8-e5ed-482c-8814-270bc48c2982</value>
@@ -4786,6 +4812,7 @@
             <value>true</value>
             <value>5</value>
             <value>10</value>
+            <null/>
         </row>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
@@ -4800,6 +4827,7 @@
             <value>false</value>
             <value>5</value>
             <value>10</value>
+            <value>DOMAIN_METADATA_LUN-1</value>
         </row>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
@@ -4814,6 +4842,7 @@
             <value>true</value>
             <value>5</value>
             <value>10</value>
+            <value>DOMAIN_METADATA_LUN-2</value>
         </row>
         <row>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
@@ -4828,6 +4857,7 @@
             <value>false</value>
             <value>6</value>
             <value>9</value>
+            <null/>
         </row>
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
@@ -4842,6 +4872,7 @@
             <value>true</value>
             <value>6</value>
             <value>9</value>
+            <null/>
         </row>
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
@@ -4856,6 +4887,7 @@
             <value>false</value>
             <value>6</value>
             <value>9</value>
+            <null/>
         </row>
         <row>
             <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
@@ -4870,6 +4902,7 @@
             <value>true</value>
             <value>4</value>
             <value>8</value>
+            <null/>
         </row>
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
@@ -4884,6 +4917,7 @@
             <value>true</value>
             <value>4</value>
             <value>8</value>
+            <null/>
         </row>
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa32</value>
@@ -4898,6 +4932,7 @@
             <value>false</value>
             <value>4</value>
             <value>8</value>
+            <null/>
         </row>
         <row>
             <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
@@ -4912,6 +4947,7 @@
             <value>false</value>
             <value>4</value>
             <value>8</value>
+            <null/>
         </row>
         <row>
             <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
@@ -4926,6 +4962,7 @@
             <value>true</value>
             <value>4</value>
             <value>8</value>
+            <null/>
         </row>
         <row>
             <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
@@ -4940,6 +4977,7 @@
             <value>false</value>
             <null />
             <null />
+            <null/>
         </row>
     </table>
 

@@ -48,6 +48,11 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private SANState sanState;
 
+    /*
+    Represents the first device of the domain metadata LV for block domains.
+     */
+    private String firstMetadataDevice;
+
     private transient long lastTimeUsedAsMaster;
 
     private Boolean wipeAfterDelete;
@@ -190,6 +195,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         this.criticalSpaceActionBlocker = criticalSpaceActionBlocker;
     }
 
+    public String getFirstMetadataDevice() {
+        return firstMetadataDevice;
+    }
+
+    public void setFirstMetadataDevice(String firstMetadataDevice) {
+        this.firstMetadataDevice = firstMetadataDevice;
+    }
+
     @Override
     public String getName() {
         return getStorageName();
@@ -209,6 +222,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 description,
                 sanState,
                 wipeAfterDelete,
+                firstMetadataDevice,
                 warningLowSpaceIndicator,
                 criticalSpaceActionBlocker
         );
@@ -233,6 +247,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && storageType == other.storageType
                 && sanState == other.sanState
                 && Objects.equals(wipeAfterDelete, other.wipeAfterDelete)
+                && Objects.equals(firstMetadataDevice, other.firstMetadataDevice)
                 && Objects.equals(description, other.description)
                 && Objects.equals(warningLowSpaceIndicator, other.warningLowSpaceIndicator)
                 && Objects.equals(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker);
