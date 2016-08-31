@@ -90,7 +90,6 @@ public class BackendVmCdromResource
         return entity;
     }
 
-    @Override
     public Response remove() {
         VM vm = getVm();
         vm.setIsoPath(null);

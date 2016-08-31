@@ -26,6 +26,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.VmCdromResource;
+import org.ovirt.engine.api.restapi.resource.BackendVmCdromResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3CdRom;
 
@@ -48,7 +49,7 @@ public class V3VmCdromServer extends V3Server<VmCdromResource> {
 
     @DELETE
     public Response remove() {
-        return adaptRemove(getDelegate()::remove);
+        return adaptRemove(((BackendVmCdromResource) getDelegate())::remove);
     }
 
     @Path("creation_status/{oid}")

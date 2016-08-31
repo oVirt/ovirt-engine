@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.VmCdromsResource;
+import org.ovirt.engine.api.restapi.resource.BackendVmCdromsResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3CdRom;
 import org.ovirt.engine.api.v3.types.V3CdRoms;
@@ -38,7 +39,7 @@ public class V3VmCdromsServer extends V3Server<VmCdromsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3CdRom cdrom) {
-        return adaptAdd(getDelegate()::add, cdrom);
+        return adaptAdd(((BackendVmCdromsResource) getDelegate())::add, cdrom);
     }
 
     @GET

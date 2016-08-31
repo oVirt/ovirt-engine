@@ -4,12 +4,11 @@ import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.resource.BackendClusterNetworksResourceTest.CLUSTER_ID;
 
 import java.util.ArrayList;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.restapi.types.NetworkUsage;
+import org.ovirt.engine.api.model.NetworkUsage;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -168,8 +167,8 @@ public class BackendClusterNetworkResourceTest
         assertEquals(true, model.isDisplay());
         assertTrue(model.isSetUsages());
         assertNotNull(model.getUsages().getUsages());
-        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY.value()));
-        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.MIGRATION.value()));
+        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY));
+        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.MIGRATION));
         assertTrue(model.isSetRequired());
         assertEquals(true, model.isRequired());
    }
