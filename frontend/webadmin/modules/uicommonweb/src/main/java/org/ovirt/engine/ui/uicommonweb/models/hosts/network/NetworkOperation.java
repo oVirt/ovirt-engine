@@ -45,15 +45,15 @@ public enum NetworkOperation {
                     assert op2 == null;
                     BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel) op1;
 
-                    // break
-                    dataFromHostSetupNetworksModel
-                            .removeBondFromParameters(bondModel.getCreateOrUpdateBond());
+                    // detach labels
+                    detachAllLabels(bondModel, dataFromHostSetupNetworksModel);
 
                     // detach networks
                     detachAllNetworks(bondModel, dataFromHostSetupNetworksModel);
 
-                    // detach labels
-                    detachAllLabels(bondModel, dataFromHostSetupNetworksModel);
+                    // break bond
+                    dataFromHostSetupNetworksModel
+                            .removeBondFromParameters(bondModel.getCreateOrUpdateBond());
                 }
             };
         }
@@ -639,8 +639,13 @@ public enum NetworkOperation {
             DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {
         List<LogicalNetworkModel> attachedNetworks = nic.getItems();
         if (attachedNetworks.size() > 0) {
-            for (LogicalNetworkModel networkModel : new ArrayList<>(attachedNetworks)) {
-                DETACH_NETWORK.getCommand(networkModel, null, dataFromHostSetupNetworksModel).execute();
+            for (LogicalNetworkModel networkModel : attachedNetworks) {
+                boolean managedNetwork = networkModel.getNetworkAttachment() != null;
+                if (managedNetwork) {
+                    DETACH_NETWORK.getCommand(networkModel, null, dataFromHostSetupNetworksModel).execute();
+                } else {
+                    REMOVE_UNMANAGED_NETWORK.getCommand(networkModel, null, dataFromHostSetupNetworksModel).execute();
+                }
             }
         }
     }
