@@ -137,7 +137,7 @@ public class SimpleJdbcCallsHandler {
         };
     }
 
-    private <T> Map<String, Object> executeImpl(String procedureName,
+    private Map<String, Object> executeImpl(String procedureName,
                                                 MapSqlParameterSource paramsSource, CallCreator callCreatorr) {
         return executeImpl(procedureName, paramsSource, callCreatorr, null);
     }
@@ -158,7 +158,7 @@ public class SimpleJdbcCallsHandler {
      *            calls creator object
      * @return simple JDBC call object
      */
-    protected <T> SimpleJdbcCall getCall(String procedureName, CallCreator callCreator) {
+    protected SimpleJdbcCall getCall(String procedureName, CallCreator callCreator) {
         return getCall(procedureName, callCreator, null);
     }
 
