@@ -4,13 +4,13 @@
 # TODO: give ovirt user a well known gid and uid
 # TODO: fix redirect from http to https (port is missing)
 
-FROM fedora:22
+FROM centos:7
 
-MAINTAINER Roman Mohr <rmohr@redhat.com>
+MAINTAINER Lev Veyde <lev@redhat.com>
 
 # Build
 ENV OVIRT_HOME=/home/ovirt/ovirt-engine
-ENV VERSION=master
+ENV VERSION=ovirt-engine-4.0
 
 # Database
 ENV POSTGRES_USER engine
@@ -26,19 +26,19 @@ EXPOSE 8080 8443
 
 RUN useradd -ms /bin/bash ovirt
 
-RUN dnf -y install http://resources.ovirt.org/pub/yum-repo/ovirt-release36.rpm \
+RUN yum -y install http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm \
     && curl  https://copr.fedorainfracloud.org/coprs/patternfly/patternfly1/repo/fedora-23/patternfly-patternfly1-fedora-23.repo > /etc/yum.repos.d/patternfly.repo \
-    && dnf --best --allowerasing -y install git java-devel maven openssl nss \
+    && yum -y install git java-devel maven openssl nss \
        m2crypto python-psycopg2 python-cheetah python-daemon libxml2-python \
        unzip patternfly1 pyflakes python-pep8 python-docker-py mailcap python-jinja2 \
-    && dnf --best --allowerasing -y install ovirt-engine-wildfly ovirt-engine-wildfly-overlay \
+    && yum -y install ovirt-engine-wildfly ovirt-engine-wildfly-overlay java-1.8.0-openjdk java-1.8.0-openjdk-devel \
     && curl -LO https://github.com/kubevirt/ovirt-engine/archive/$VERSION.tar.gz#/ovirt-engine-$VERSION.tar.gz \
     && tar xf ovirt-engine-$VERSION.tar.gz && chown ovirt:ovirt ovirt-engine-$VERSION -R && cd ovirt-engine-$VERSION \
     && su -m -s /bin/bash ovirt -c "make install-dev PREFIX=\"$OVIRT_HOME\" BUILD_UT=0 DEV_EXTRA_BUILD_FLAGS=\"-Dgwt.compiler.localWorkers=1 -Dgwt.jjs.maxThreads=1\"" \
     && cd .. && rm -rf ovirt-engine-$VERSION* \
-    && dnf -y remove maven pyflakes python-pep8 git \
-    && dnf -y install ovirt-host-deploy ovirt-setup-lib patch postgresql bind-utils iproute procps-ng openssh java-1.8.0-openjdk-headless \
-    && dnf -y clean all \
+    && yum -y remove maven pyflakes python-pep8 git \
+    && yum -y install ovirt-host-deploy ovirt-setup-lib patch postgresql bind-utils iproute procps-ng openssh java-1.8.0-openjdk-headless \
+    && yum -y clean all \
     && rm -rf /home/ovirt/.m2
 
 USER ovirt

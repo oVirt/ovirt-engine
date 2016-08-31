@@ -1,6 +1,6 @@
---- /home/ovirt/ovirt-engine/share/ovirt-engine/setup/plugins/ovirt-engine-common/base/core/misc.py	2016-05-19 10:30:02.552540723 +0000
-+++ /home/ovirt/ovirt-engine/share/ovirt-engine/setup/plugins/ovirt-engine-common/base/core/misc.py	2016-05-19 10:30:20.310510051 +0000
-@@ -85,7 +85,7 @@
+--- /home/ovirt/ovirt-engine/share/ovirt-engine/setup/plugins/ovirt-engine-common/base/core/misc.py	2016-08-31 13:42:21.000000000 +0000
++++ /home/ovirt/ovirt-engine/share/ovirt-engine/setup/plugins/ovirt-engine-common/base/core/misc.py	2016-08-31 20:25:58.947439383 +0000
+@@ -82,7 +82,7 @@
  
          self.environment.setdefault(
              osetupcons.CoreEnv.DEVELOPER_MODE,
@@ -9,17 +9,17 @@
          )
          self.environment.setdefault(
              osetupcons.CoreEnv.UPGRADE_SUPPORTED_VERSIONS,
---- /home/ovirt/ovirt-engine/share/ovirt-engine/services/ovirt-engine/ovirt-engine.xml.in	2016-05-19 10:27:25.225812455 +0000
-+++ /home/ovirt/ovirt-engine/share/ovirt-engine/services/ovirt-engine/ovirt-engine.xml.in	2016-05-19 10:27:58.542754910 +0000
-@@ -184,18 +184,14 @@
+--- /home/ovirt/ovirt-engine/share/ovirt-engine/services/ovirt-engine/ovirt-engine.xml.in	2016-08-31 13:42:16.000000000 +0000
++++ /home/ovirt/ovirt-engine/share/ovirt-engine/services/ovirt-engine/ovirt-engine.xml.in	2016-08-31 20:31:12.106784608 +0000
+@@ -162,18 +162,14 @@
        <logger category="org.ovirt" use-parent-handlers="false">
          <level name="INFO"/>
          <handlers>
 -          <handler name="ENGINE"/>
 -          <handler name="ovirt-logger"/>
--          #if $getboolean('ENGINE_LOG_TO_CONSOLE')
+-          {% if config.getboolean('ENGINE_LOG_TO_CONSOLE') %}
            <handler name="CONSOLE"/>
--          #end if
+-          {% endif %}
          </handlers>
        </logger>
        <!-- Loggers for the UI -->
@@ -27,11 +27,11 @@
          <level name="INFO"/>
          <handlers>
 -          <handler name="UI"/>
-+          <handler name="CONSOLE"/>
++		  <handler name="CONSOLE"/>
          </handlers>
        </logger>
         <logger category="org.ovirt.engine.core.bll">
-@@ -211,8 +207,7 @@
+@@ -186,8 +182,7 @@
        <root-logger>
          <level name="INFO"/>
          <handlers>
