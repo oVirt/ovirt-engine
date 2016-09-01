@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -65,7 +66,7 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
 
     @Test
     public void getBaseDiskByAlias() {
-        assertTrue(dao.getDisksByAlias("No such disk alias").size() == 0);
+        assertEquals(0, dao.getDisksByAlias("No such disk alias").size());
         assertTrue(dao.getDisksByAlias("New Disk Alias Name").size() > 1);
     }
 }

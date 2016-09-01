@@ -35,7 +35,7 @@ public class HostNetworkQosDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForDc() {
-        assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size() == 3);
+        assertEquals(3, dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size());
         assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_NFS).isEmpty());
     }
 
@@ -55,7 +55,7 @@ public class HostNetworkQosDaoTest extends BaseDaoTestCase {
         referenceQos.setOutAverageRealtime(500);
 
         assertNotNull(persistedQos);
-        assertEquals(persistedQos, referenceQos);
+        assertEquals(referenceQos, persistedQos);
     }
 
     /**

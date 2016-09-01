@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao.gluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -51,7 +50,7 @@ public class GlusterClusterServiceDaoTest extends BaseDaoTestCase {
         GlusterClusterService service =
                 dao.getByClusterIdAndServiceType(CLUSTER_ID, ServiceType.GLUSTER);
         assertNotNull(service);
-        assertTrue(service.getStatus() == GlusterServiceStatus.RUNNING);
+        assertEquals(GlusterServiceStatus.RUNNING, service.getStatus());
     }
 
     @Test

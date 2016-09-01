@@ -475,7 +475,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
 
     private void assertGetHostsForStorageOperationCorrectStoragePool(List<VDS> result) {
         for (VDS vds : result) {
-            assertEquals(vds.getStoragePoolId(), FixturesTool.STORAGE_POOL_RHEL6_ISCSI);
+            assertEquals(FixturesTool.STORAGE_POOL_RHEL6_ISCSI, vds.getStoragePoolId());
         }
     }
 

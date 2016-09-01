@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,8 +43,7 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase {
 
     private void verifyFeaturesReturned(Set<AdditionalFeature> featuresFromDb, List<String> featuresExpdected) {
         assertNotNull("Failed to retrive additional features for the version and category", featuresFromDb);
-        assertTrue("Failed to retrive correct set of features for the given version and category",
-                featuresFromDb.size() == featuresExpdected.size());
+        assertEquals("Failed to retrive correct set of features for the given version and category", featuresFromDb.size(), featuresExpdected.size());
         for (AdditionalFeature feature : featuresFromDb) {
             assertThat("Wrong feature returned from DB", featuresExpdected, hasItem(feature.getName()));
         }

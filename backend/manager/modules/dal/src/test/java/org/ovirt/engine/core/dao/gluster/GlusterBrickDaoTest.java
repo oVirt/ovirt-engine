@@ -63,8 +63,8 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         GlusterBrickEntity brickAfter = dao.getById(brickId);
         assertNotNull(brickAfter);
         assertNotNull(brickAfter.getBrickProperties());
-        assertTrue(brickAfter.getBrickProperties().getTotalSize() == 250000);
-        assertTrue(brickAfter.getBrickProperties().getFreeSize() == 75000);
+        assertEquals(250000, brickAfter.getBrickProperties().getTotalSize(), 0.0);
+        assertEquals(75000, brickAfter.getBrickProperties().getFreeSize(), 0.0);
     }
 
     @Test
@@ -97,14 +97,14 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         brick1 = dao.getById(brickId1);
         assertNotNull(brick1);
         assertNotNull(brick1.getBrickProperties());
-        assertTrue(brick1.getBrickProperties().getTotalSize() == 250000);
-        assertTrue(brick1.getBrickProperties().getFreeSize() == 75000);
+        assertEquals(250000, brick1.getBrickProperties().getTotalSize(), 0.0);
+        assertEquals(75000, brick1.getBrickProperties().getFreeSize(), 0.0);
 
         brick2 = dao.getById(brickId2);
         assertNotNull(brick2);
         assertNotNull(brick2.getBrickProperties());
-        assertTrue(brick2.getBrickProperties().getTotalSize() == 275000);
-        assertTrue(brick2.getBrickProperties().getFreeSize() == 175000);
+        assertEquals(275000, brick2.getBrickProperties().getTotalSize(), 0.0);
+        assertEquals(175000, brick2.getBrickProperties().getFreeSize(), 0.0);
     }
 
     @Test
@@ -118,8 +118,8 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         GlusterBrickEntity brick =
                 dao.getBrickByServerIdAndDirectory(FixturesTool.GLUSTER_BRICK_SERVER1, FixturesTool.GLUSTER_BRICK_DIR1);
         assertNotNull(brick);
-        assertEquals(brick.getServerId(), FixturesTool.GLUSTER_BRICK_SERVER1);
-        assertEquals(brick.getBrickDirectory(), FixturesTool.GLUSTER_BRICK_DIR1);
+        assertEquals(FixturesTool.GLUSTER_BRICK_SERVER1, brick.getServerId());
+        assertEquals(FixturesTool.GLUSTER_BRICK_DIR1, brick.getBrickDirectory());
     }
 
     @Test
@@ -200,14 +200,14 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         GlusterBrickEntity brick = dao.getById(GLUSTER_BRICK_UUID1);
         assertNotNull(brick);
         assertNotNull(brick.getBrickProperties());
-        assertTrue(brick.getBrickProperties().getFreeSize() == 20000);
-        assertTrue(brick.getBrickProperties().getTotalSize() == 100000);
+        assertEquals(20000, brick.getBrickProperties().getFreeSize(), 0.0);
+        assertEquals(100000, brick.getBrickProperties().getTotalSize(), 0.0);
 
         brick = dao.getById(GLUSTER_BRICK_UUID2);
         assertNotNull(brick);
         assertNotNull(brick.getBrickProperties());
-        assertTrue(brick.getBrickProperties().getFreeSize() == 0);
-        assertTrue(brick.getBrickProperties().getTotalSize() == 0);
+        assertEquals(0, brick.getBrickProperties().getFreeSize(), 0.0);
+        assertEquals(0, brick.getBrickProperties().getTotalSize(), 0.0);
     }
 
     @Test
@@ -227,8 +227,8 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         existingBrick = dao.getById(GLUSTER_BRICK_UUID1);
         assertNotNull(existingBrick);
         assertNotNull(existingBrick.getBrickProperties());
-        assertTrue(existingBrick.getBrickProperties().getFreeSize() == 100000);
-        assertTrue(existingBrick.getBrickProperties().getTotalSize() == 200000);
+        assertEquals(100000, existingBrick.getBrickProperties().getFreeSize(), 0.0);
+        assertEquals(200000, existingBrick.getBrickProperties().getTotalSize(), 0.0);
     }
 
     @Test
@@ -263,14 +263,14 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         existingBrick1 = dao.getById(GLUSTER_BRICK_UUID1);
         assertNotNull(existingBrick1);
         assertNotNull(existingBrick1.getBrickProperties());
-        assertTrue(existingBrick1.getBrickProperties().getFreeSize() == 1000);
-        assertTrue(existingBrick1.getBrickProperties().getTotalSize() == 2000);
+        assertEquals(1000, existingBrick1.getBrickProperties().getFreeSize(), 0.0);
+        assertEquals(2000, existingBrick1.getBrickProperties().getTotalSize(), 0.0);
 
         existingBrick2 = dao.getById(GLUSTER_BRICK_UUID2);
         assertNotNull(existingBrick2);
         assertNotNull(existingBrick2.getBrickProperties());
-        assertTrue(existingBrick2.getBrickProperties().getFreeSize() == 1000);
-        assertTrue(existingBrick2.getBrickProperties().getTotalSize() == 3000);
+        assertEquals(1000, existingBrick2.getBrickProperties().getFreeSize(), 0.0);
+        assertEquals(3000, existingBrick2.getBrickProperties().getTotalSize(), 0.0);
     }
 
     @Test

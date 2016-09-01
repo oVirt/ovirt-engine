@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,10 +30,10 @@ public class BusinessEntitySnapshotDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetByCommandId() {
         List<BusinessEntitySnapshot> snapshots = dao.getAllForCommandId(commandWithTwoSnapshotsId);
-        assertTrue(snapshots != null);
+        assertNotNull(snapshots);
         assertEquals(2, snapshots.size());
         snapshots = dao.getAllForCommandId(commandWithOneSnapshotId);
-        assertTrue(snapshots != null);
+        assertNotNull(snapshots);
         assertEquals(1, snapshots.size());
     }
 
@@ -79,11 +78,11 @@ public class BusinessEntitySnapshotDaoTest extends BaseDaoTestCase {
 
     private void testDeleteByCommandId(int numberOfResultsBeforeDeletion, Guid commandId) {
         List<BusinessEntitySnapshot> snapshots = dao.getAllForCommandId(commandId);
-        assertTrue(snapshots != null);
+        assertNotNull(snapshots);
         assertEquals(numberOfResultsBeforeDeletion, snapshots.size());
         dao.removeAllForCommandId(commandId);
         snapshots = dao.getAllForCommandId(commandId);
-        assertTrue(snapshots != null);
+        assertNotNull(snapshots);
         assertEquals(0, snapshots.size());
     }
 }

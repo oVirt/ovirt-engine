@@ -116,12 +116,12 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void getZeroSnapshotsByMemory() {
-        assertEquals(dao.getNumOfSnapshotsByMemory(NON_EXISTING_MEMORY_VOLUME), 0);
+        assertEquals(0, dao.getNumOfSnapshotsByMemory(NON_EXISTING_MEMORY_VOLUME));
     }
 
     @Test
     public void getOneSnapshotsByMemory() {
-        assertEquals(dao.getNumOfSnapshotsByMemory(EXISTING_MEMORY_VOLUME), 1);
+        assertEquals(1, dao.getNumOfSnapshotsByMemory(EXISTING_MEMORY_VOLUME));
     }
 
     @Test
@@ -156,12 +156,12 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void getIdByTypeReturnsNullForNonExistingVm() throws Exception {
-        assertEquals(null, dao.getId(Guid.Empty, SnapshotType.REGULAR));
+        assertNull(dao.getId(Guid.Empty, SnapshotType.REGULAR));
     }
 
     @Test
     public void getIdByTypeReturnsNullForNonExistingType() throws Exception {
-        assertEquals(null, dao.getId(EXISTING_VM_ID, SnapshotType.PREVIEW));
+        assertNull(dao.getId(EXISTING_VM_ID, SnapshotType.PREVIEW));
     }
 
     @Test
@@ -171,17 +171,17 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void getIdByTypeAndStatusReturnsNullForNonExistingVm() throws Exception {
-        assertEquals(null, dao.getId(Guid.Empty, SnapshotType.REGULAR, SnapshotStatus.OK));
+        assertNull(dao.getId(Guid.Empty, SnapshotType.REGULAR, SnapshotStatus.OK));
     }
 
     @Test
     public void getIdByTypeAndStatusReturnsNullForNonExistingType() throws Exception {
-        assertEquals(null, dao.getId(EXISTING_VM_ID, SnapshotType.PREVIEW, SnapshotStatus.OK));
+        assertNull(dao.getId(EXISTING_VM_ID, SnapshotType.PREVIEW, SnapshotStatus.OK));
     }
 
     @Test
     public void getIdByTypeAndStatusReturnsNullForNonExistingStatus() throws Exception {
-        assertEquals(null, dao.getId(EXISTING_VM_ID, SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW));
+        assertNull(dao.getId(EXISTING_VM_ID, SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW));
     }
 
     @Test

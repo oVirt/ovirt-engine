@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -57,9 +59,9 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         Quota quotaEntity = dao.getById(quota.getId());
 
         assertNotNull(quotaEntity);
-        assertEquals(quotaEntity, quota);
-        assertEquals(quotaEntity.getStoragePoolName(), "rhel6.NFS");
-        assertEquals(quotaEntity.getQuotaEnforcementType(), QuotaEnforcementTypeEnum.DISABLED);
+        assertEquals(quota, quotaEntity);
+        assertEquals("rhel6.NFS", quotaEntity.getStoragePoolName());
+        assertEquals(QuotaEnforcementTypeEnum.DISABLED, quotaEntity.getQuotaEnforcementType());
     }
 
     @Test
@@ -81,7 +83,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
         Quota quotaEntity = dao.getById(quota.getId());
         assertNotNull(quotaEntity);
-        assertEquals(quotaEntity, quota);
+        assertEquals(quota, quotaEntity);
     }
 
     @Test
@@ -104,7 +106,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
         Quota quotaEntity = dao.getById(quota.getId());
         assertNotNull(quotaEntity);
-        assertEquals(quotaEntity, quota);
+        assertEquals(quota, quotaEntity);
     }
 
     /**
@@ -117,13 +119,13 @@ public class QuotaDaoTest extends BaseDaoTestCase {
                 dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
 
         // Should be two rows of specific vds group
-        assertEquals(true, quotaClusterList.size() == 1);
+        assertEquals(1, quotaClusterList.size());
 
         // Get first specific vds group.
         QuotaCluster quotaCluster = quotaClusterList.get(0);
         assertNotNull(quotaCluster);
-        assertEquals(quotaCluster.getMemSizeMB(), unlimited);
-        assertEquals(true, quotaCluster.getVirtualCpu().equals(10));
+        assertEquals(unlimited, quotaCluster.getMemSizeMB());
+        assertEquals(10, (int) quotaCluster.getVirtualCpu());
     }
 
     /**
@@ -137,9 +139,9 @@ public class QuotaDaoTest extends BaseDaoTestCase {
                 dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
         assertNotNull(quotaCluster);
-        assertEquals(true, quotaClusterList.size() == 1);
-        assertEquals(true, quotaCluster.getMemSizeMBUsage() > 0);
-        assertEquals(true, quotaCluster.getVirtualCpuUsage() > 0);
+        assertEquals(1, quotaClusterList.size());
+        assertTrue(quotaCluster.getMemSizeMBUsage() > 0);
+        assertTrue(quotaCluster.getVirtualCpuUsage() > 0);
 
         // Check if the global variable returns when null is initialization.
         assertEquals(Integer.valueOf(100), quotaCluster.getVirtualCpu());
@@ -154,9 +156,9 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     public void testFetchGlobalQuotaUsageForGlobalCluster() throws Exception {
         List<QuotaCluster> quotaClusterList = dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_GENERAL);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
-        assertEquals(true, quotaClusterList.size() == 1);
+        assertEquals(1, quotaClusterList.size());
         assertNotNull(quotaCluster);
-        assertEquals(true, quotaCluster.getMemSizeMBUsage() > 0);
+        assertTrue(quotaCluster.getMemSizeMBUsage() > 0);
 
         // Check if the global variable returns when null is initialization.
         assertEquals(Integer.valueOf(100), quotaCluster.getVirtualCpu());
@@ -175,7 +177,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
                 dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(true, quotaClusterGlobalList.equals(quotaClusterSpecificList));
+        assertEquals(quotaClusterGlobalList, quotaClusterSpecificList);
     }
 
     /**
@@ -189,10 +191,10 @@ public class QuotaDaoTest extends BaseDaoTestCase {
                 dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
         assertNotNull(quotaCluster);
-        assertEquals(true, quotaClusterList.size() == 1);
+        assertEquals(1, quotaClusterList.size());
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(quotaCluster.getVirtualCpu(), Integer.valueOf(10));
+        assertEquals(Integer.valueOf(10), quotaCluster.getVirtualCpu());
     }
 
     /**
@@ -204,7 +206,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     public void testFetchSpecificQuotaUsageForGlobalCluster() throws Exception {
         List<QuotaCluster> quotaClusterList = dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_SPECIFIC);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
-        assertEquals(true, quotaClusterList.size() == 2);
+        assertEquals(2, quotaClusterList.size());
         assertNotNull(quotaCluster);
     }
 
@@ -213,11 +215,11 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         List<QuotaStorage> quotaStorageList =
                 dao.getQuotaStorageByStorageGuid(null, FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
         QuotaStorage quotaStorage = quotaStorageList.get(0);
-        assertEquals(true, quotaStorageList.size() == 1);
+        assertEquals(1, quotaStorageList.size());
         assertNotNull(quotaStorage);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(true, quotaStorage.getStorageSizeGBUsage() > 0);
+        assertTrue(quotaStorage.getStorageSizeGBUsage() > 0);
     }
 
     @Test
@@ -225,17 +227,17 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_SPECIFIC);
         assertNotNull(quotaClusterList);
-        assertEquals(quotaClusterList.size(), 2);
+        assertEquals(2, quotaClusterList.size());
         for (QuotaCluster quotaCluster : quotaClusterList) {
             if (quotaCluster.getQuotaClusterId()
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2388"))) {
-                assertEquals(quotaCluster.getVirtualCpu(), Integer.valueOf(10));
-                assertEquals(quotaCluster.getMemSizeMB(), unlimited);
+                assertEquals(Integer.valueOf(10), quotaCluster.getVirtualCpu());
+                assertEquals(unlimited, quotaCluster.getMemSizeMB());
             }
             else if (quotaCluster.getQuotaClusterId()
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2389"))) {
-                assertEquals(quotaCluster.getVirtualCpu(), Integer.valueOf(1000));
-                assertEquals(quotaCluster.getMemSizeMB(), unlimited);
+                assertEquals(Integer.valueOf(1000), quotaCluster.getVirtualCpu());
+                assertEquals(unlimited, quotaCluster.getMemSizeMB());
             }
         }
     }
@@ -333,7 +335,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         Quota quota = dao.getById(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
         assertNotNull(quota);
         dao.remove(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
-        assertEquals(null, dao.getById(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL));
+        assertNull(dao.getById(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL));
         assertEquals(0, dao.getQuotaClusterByQuotaGuid(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL).size());
         assertEquals(0, dao.getQuotaStorageByQuotaGuid(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL).size());
     }
@@ -352,9 +354,9 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         Long newStorageLimit = 2345L;
 
         // Check before the update, that the fields are not equal.
-        assertEquals(quotaName.equals(quotaGeneralToSpecific.getQuotaName()), false);
-        assertEquals(quotaClusterList.size() == quotaGeneralToSpecific.getQuotaClusters().size(), false);
-        assertEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit), false);
+        assertFalse(quotaName.equals(quotaGeneralToSpecific.getQuotaName()));
+        assertNotEquals(quotaClusterList.size(), quotaGeneralToSpecific.getQuotaClusters().size());
+        assertFalse(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit));
 
         // Update
         quotaGeneralToSpecific.setQuotaName(quotaName);
@@ -365,9 +367,9 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         quotaGeneralToSpecific = dao.getById(FixturesTool.QUOTA_GENERAL);
 
         // Check after the update, that the fields are equal now.
-        assertEquals(quotaName.equals(quotaGeneralToSpecific.getQuotaName()), true);
-        assertEquals(quotaClusterList.size() == quotaGeneralToSpecific.getQuotaClusters().size(), true);
-        assertEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit), true);
+        assertEquals(quotaName, quotaGeneralToSpecific.getQuotaName());
+        assertEquals(quotaClusterList.size(), quotaGeneralToSpecific.getQuotaClusters().size());
+        assertEquals(newStorageLimit, quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB());
     }
 
     /**
@@ -377,10 +379,8 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     public void testGetQuotaByExistingName() throws Exception {
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General", FixturesTool.STORAGE_POOL_NFS);
         assertEquals(dao.getById(FixturesTool.QUOTA_GENERAL)
-                .getQuotaName()
-                .equals(quotaGeneralToSpecific.getQuotaName()),
-                true);
-        assertEquals(dao.getById(FixturesTool.QUOTA_GENERAL).getId().equals(quotaGeneralToSpecific.getId()), true);
+                .getQuotaName(), quotaGeneralToSpecific.getQuotaName());
+        assertEquals(dao.getById(FixturesTool.QUOTA_GENERAL).getId(), quotaGeneralToSpecific.getId());
     }
 
     /**
@@ -392,7 +392,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
                 dao.getQuotaByAdElementId(FixturesTool.USER_EXISTING_ID, FixturesTool.STORAGE_POOL_NFS, false);
 
         // Check if quota general has been fetched.
-        assertEquals(quotaByAdElementIdList.get(0).getQuotaName(), "Quota General");
+        assertEquals("Quota General", quotaByAdElementIdList.get(0).getQuotaName());
     }
 
     /**
@@ -419,7 +419,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     @Test
     public void testFetchStoragePoolWithNoQuota() throws Exception {
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(Guid.newGuid());
-        assertEquals(true, quotaList.size() == 0);
+        assertEquals(0, quotaList.size());
     }
 
     /**
@@ -430,14 +430,14 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General",
                 FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
 
-        assertEquals(null, quotaGeneralToSpecific);
+        assertNull(quotaGeneralToSpecific);
     }
 
     @Test
     public void testGetDefaultQuotaForStoragePool() {
         Quota quota = dao.getDefaultQuotaForStoragePool(FixturesTool.STORAGE_POOL_NFS);
         assertNotNull(quota);
-        assertEquals(quota.getStoragePoolId(), FixturesTool.STORAGE_POOL_NFS);
+        assertEquals(FixturesTool.STORAGE_POOL_NFS, quota.getStoragePoolId());
         assertTrue(quota.isDefault());
     }
 
@@ -447,7 +447,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetQuotaWithNoExistingName() throws Exception {
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Any name", FixturesTool.STORAGE_POOL_NFS);
-        assertEquals(null, quotaGeneralToSpecific);
+        assertNull(quotaGeneralToSpecific);
     }
 
     /**

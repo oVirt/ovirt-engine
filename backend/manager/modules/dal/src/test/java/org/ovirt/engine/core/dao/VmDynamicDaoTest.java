@@ -181,7 +181,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
         vmDynamic.setGuestAgentStatus(GuestAgentStatus.UpdateNeeded);
         dao.update(vmDynamic);
         vmDynamic = dao.get(vmId);
-        assertTrue(vmDynamic.getGuestAgentStatus().getValue() == GuestAgentStatus.UpdateNeeded.getValue());
+        assertEquals(vmDynamic.getGuestAgentStatus().getValue(), GuestAgentStatus.UpdateNeeded.getValue());
     }
 
     @Test

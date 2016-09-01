@@ -81,8 +81,8 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
     public void testGetByClusterId() {
         List<GlusterVolumeEntity> volumes = dao.getByClusterId(CLUSTER_ID);
 
-        assertTrue(volumes != null);
-        assertTrue(volumes.size() == 2);
+        assertNotNull(volumes);
+        assertEquals(2, volumes.size());
         assertTrue(volumes.contains(existingDistVol));
         assertTrue(volumes.contains(existingReplVol));
     }
@@ -91,12 +91,11 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
     public void testGetCapacityInfo() throws ParseException {
         GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
         assertNotNull("volume capacity info is not available", volume.getAdvancedDetails());
-        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getTotalSize() == 100000);
-        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getUsedSize() == 60000);
-        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getFreeSize() == 40000);
-        assertTrue(EXPECTED_DATE_FORMAT.parse(volume.getAdvancedDetails()
-                .getUpdatedAt().toString())
-                .equals(EXPECTED_DATE_FORMAT.parse("2014-01-21 18:12:33")));
+        assertEquals(100000L, volume.getAdvancedDetails().getCapacityInfo().getTotalSize().longValue());
+        assertEquals(60000L, volume.getAdvancedDetails().getCapacityInfo().getUsedSize().longValue());
+        assertEquals(40000L, volume.getAdvancedDetails().getCapacityInfo().getFreeSize().longValue());
+        assertEquals(EXPECTED_DATE_FORMAT.parse(volume.getAdvancedDetails()
+                .getUpdatedAt().toString()), EXPECTED_DATE_FORMAT.parse("2014-01-21 18:12:33"));
     }
 
     @Test
@@ -105,8 +104,8 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
                 dao.getAllWithQuery("select * from gluster_volumes_view where vol_type = '"
                         + GlusterVolumeType.DISTRIBUTED_REPLICATE.name() + "'");
 
-        assertTrue(volumes != null);
-        assertTrue(volumes.size() == 1);
+        assertNotNull(volumes);
+        assertEquals(1, volumes.size());
         assertEquals(existingReplVol, volumes.get(0));
     }
 
@@ -115,7 +114,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
         dao.remove(EXISTING_VOL_DIST_ID);
         List<GlusterVolumeEntity> volumes = dao.getByClusterId(CLUSTER_ID);
 
-        assertTrue(volumes.size() == 1);
+        assertEquals(1, volumes.size());
         assertFalse(volumes.contains(existingDistVol));
         assertTrue(volumes.contains(existingReplVol));
     }
@@ -137,7 +136,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
         dao.removeByName(CLUSTER_ID, EXISTING_VOL_REPL_NAME);
         List<GlusterVolumeEntity> volumes = dao.getByClusterId(CLUSTER_ID);
 
-        assertTrue(volumes.size() == 1);
+        assertEquals(1, volumes.size());
         assertTrue(volumes.contains(existingDistVol));
         assertFalse(volumes.contains(existingReplVol));
     }
@@ -212,9 +211,9 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
                         + existingDistVol.getId() + "'").get(0);
 
         assertNotNull("Volume : "+ existingDistVol.getId() +" doesn't exists", volume);
-        assertTrue("Task ID is not getting updated", volume.getAsyncTask().getTaskId().equals(REBALANCING_VOLUME_TASKID));
-        assertTrue("Invalid Task status", JobExecutionStatus.STARTED ==volume.getAsyncTask().getStatus());
-        assertTrue("Invalid Task type", GlusterTaskType.REBALANCE ==volume.getAsyncTask().getType());
+        assertEquals("Task ID is not getting updated", REBALANCING_VOLUME_TASKID, volume.getAsyncTask().getTaskId());
+        assertEquals("Invalid Task status", JobExecutionStatus.STARTED, volume.getAsyncTask().getStatus());
+        assertEquals("Invalid Task type", GlusterTaskType.REBALANCE, volume.getAsyncTask().getType());
     }
 
     @Test
@@ -385,7 +384,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
     public void testGetVolumesByOption() {
         List<GlusterVolumeEntity> volumes = dao.getVolumesByOption(CLUSTER_ID, GlusterStatus.UP, OPTION_KEY_NFS_DISABLE, OPTION_VALUE_OFF);
 
-        assertTrue(volumes != null);
+        assertNotNull(volumes);
         assertTrue(volumes.contains(existingReplVol));
         assertTrue(volumes.get(0).isNfsEnabled());
     }
@@ -399,7 +398,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
                         OPTION_KEY_NFS_DISABLE,
                         OPTION_VALUE_OFF);
 
-        assertTrue(volumes != null);
+        assertNotNull(volumes);
         assertTrue(volumes.contains(existingReplVol));
         for (GlusterVolumeEntity volume : volumes) {
             assertTrue(volume.isNfsEnabled() && volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE);
@@ -413,10 +412,10 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
                         GlusterStatus.UP,
                         Collections.singletonList(GlusterVolumeType.DISTRIBUTE));
 
-        assertTrue(volumes != null);
+        assertNotNull(volumes);
         assertTrue(volumes.contains(existingDistVol));
         for (GlusterVolumeEntity volume : volumes) {
-            assertTrue(volume.getVolumeType() == GlusterVolumeType.DISTRIBUTE);
+            assertEquals(GlusterVolumeType.DISTRIBUTE, volume.getVolumeType());
         }
     }
 

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
     @Test
     public void testGet() {
         PolicyUnit result = dao.get(FixturesTool.POLICY_UNIT_MIGRATION);
-        assertTrue(result.equals(existingPolicyUnit));
+        assertEquals(result, existingPolicyUnit);
     }
 
     @Test
@@ -48,7 +47,7 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
         List<PolicyUnit> result = dao.getAll();
 
         assertNotNull(result);
-        assertEquals(result.size(), NUMBER_OF_POLICY_UNITS);
+        assertEquals(NUMBER_OF_POLICY_UNITS, result.size());
     }
 
     private void createDummyPolicyUnit() {
@@ -64,7 +63,7 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
     public void testSave() {
         dao.save(dummyPolicyUnit);
         PolicyUnit result = dao.get(dummyPolicyUnit.getId());
-        assertTrue(result.equals(dummyPolicyUnit));
+        assertEquals(result, dummyPolicyUnit);
     }
 
     @Test
@@ -77,6 +76,6 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
         dao.update(policyUnitToUpdate);
 
         PolicyUnit result = dao.get(policyUnitToUpdate.getId());
-        assertTrue(result.equals(policyUnitToUpdate));
+        assertEquals(result, policyUnitToUpdate);
     }
 }

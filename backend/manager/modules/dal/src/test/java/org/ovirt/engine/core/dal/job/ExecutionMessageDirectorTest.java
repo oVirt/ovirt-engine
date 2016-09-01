@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dal.job;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.EXECUTION_MESSAGES_FILE_PATH;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.JOB_MESSAGE_PREFIX;
@@ -58,7 +57,7 @@ public class ExecutionMessageDirectorTest {
         messageDirector.initialize(TEST_BUNDLE_NAME);
 
         String updateClusterMessage = messageDirector.getJobMessage(VdcActionType.UpdateCluster);
-        assertTrue(UPDATE_CLUSTER_CLUSTERS_MESSAGE.equals(updateClusterMessage));
+        assertEquals(UPDATE_CLUSTER_CLUSTERS_MESSAGE, updateClusterMessage);
     }
 
     /**

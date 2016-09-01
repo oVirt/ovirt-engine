@@ -64,7 +64,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
         dao.save(entry);
         List<ImageStorageDomainMap> entries = dao.getAllByImageId(EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY);
         assertNotNull(entries);
-        assertTrue(entries.size() == 1);
+        assertEquals(1, entries.size());
         ImageStorageDomainMap entryFromDb = entries.get(0);
         assertEquals(entry, entryFromDb);
     }
@@ -103,7 +103,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
         imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         quotaId = imageStorageDomainMap.getQuotaId();
         // check that the new quota is the inserted one
-        assertEquals("quota wasn't changed", quotaId, FixturesTool.DEFAULT_QUOTA_GENERAL);
+        assertEquals("quota wasn't changed", FixturesTool.DEFAULT_QUOTA_GENERAL, quotaId);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
         imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         // check that the new disk profile is the inserted one
         assertEquals("disk profile wasn't changed",
-                imageStorageDomainMap.getDiskProfileId(),
-                FixturesTool.DISK_PROFILE_2);
+                FixturesTool.DISK_PROFILE_2,
+                imageStorageDomainMap.getDiskProfileId());
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.RETURNS_DEFAULTS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -8,7 +9,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class AuditLogDirectorTest {
@@ -21,7 +21,7 @@ public class AuditLogDirectorTest {
         final String expectedResolved = String.format("This is my %1s", AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
         Map<String, String> values = Collections.emptyMap();
         String resolvedMessage = auditLogDirector.resolveMessage(message, values);
-        Assert.assertEquals(expectedResolved, resolvedMessage);
+        assertEquals(expectedResolved, resolvedMessage);
     }
 
     @Test
@@ -30,7 +30,7 @@ public class AuditLogDirectorTest {
         final String expectedResolved = "This is my value";
         Map<String, String> values = Collections.singletonMap("variable", "value");
         String resolvedMessage = auditLogDirector.resolveMessage(message, values);
-        Assert.assertEquals(expectedResolved, resolvedMessage);
+        assertEquals(expectedResolved, resolvedMessage);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class AuditLogDirectorTest {
         values.put("second", "two");
         values.put("blank", " ");
         String resolvedMessage = auditLogDirector.resolveMessage(message, values);
-        Assert.assertEquals(expectedResolved, resolvedMessage);
+        assertEquals(expectedResolved, resolvedMessage);
     }
 
     @Test
@@ -65,6 +65,6 @@ public class AuditLogDirectorTest {
         when(logable.getVmName()).thenReturn("TestVM");
 
         String resolvedMessage = auditLogDirector.resolveMessage(message, logable);
-        Assert.assertEquals(expectedResolved, resolvedMessage);
+        assertEquals(expectedResolved, resolvedMessage);
     }
 }

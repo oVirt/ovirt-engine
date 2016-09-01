@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +45,7 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         List<UnregisteredDisk> unregisteredDisk =
                 dao.getByDiskIdAndStorageDomainId(FixturesTool.UNREGISTERED_DISK2, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertTrue("Disk should exists in the UnregisteredDisks table", !unregisteredDisk.isEmpty());
-        assertTrue("Disk should have one vm attached", unregisteredDisk.get(0).getVms().size() == 1);
+        assertEquals("Disk should have one vm attached", 1, unregisteredDisk.get(0).getVms().size());
     }
 
     @Test
@@ -52,7 +53,7 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         List<UnregisteredDisk> unregisteredDisk =
                 dao.getByDiskIdAndStorageDomainId(FixturesTool.UNREGISTERED_DISK3, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertTrue("Disk should exists in the UnregisteredDisks table", !unregisteredDisk.isEmpty());
-        assertTrue("Disk should be attached to VM", unregisteredDisk.get(0).getVms().size() == 1);
+        assertEquals("Disk should be attached to VM", 1, unregisteredDisk.get(0).getVms().size());
     }
 
     @Test
@@ -60,7 +61,7 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         List<UnregisteredDisk> unregisteredDisk =
                 dao.getByDiskIdAndStorageDomainId(FixturesTool.UNREGISTERED_DISK4, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertTrue("Disk should exists in the UnregisteredDisks table", !unregisteredDisk.isEmpty());
-        assertTrue("Disk should be attached to VM", unregisteredDisk.get(0).getVms().size() == 1);
+        assertEquals("Disk should be attached to VM", 1, unregisteredDisk.get(0).getVms().size());
         assertFalse("Disk should have disk alias", unregisteredDisk.get(0).getDiskImage().getDiskAlias().isEmpty());
         assertTrue("Disk should have an empty disk description",
                 StringUtils.isEmpty(unregisteredDisk.get(0).getDiskImage().getDiskDescription()));
@@ -71,7 +72,7 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         List<UnregisteredDisk> unregisteredDisk =
                 dao.getByDiskIdAndStorageDomainId(FixturesTool.UNREGISTERED_DISK5, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertTrue("Disk should exists in the UnregisteredDisks table", !unregisteredDisk.isEmpty());
-        assertTrue("Disk should be attached to VM", unregisteredDisk.get(0).getVms().size() == 1);
+        assertEquals("Disk should be attached to VM", 1, unregisteredDisk.get(0).getVms().size());
         assertTrue("Disk should have an empty disk alias", unregisteredDisk.get(0)
                 .getDiskAlias()
                 .isEmpty());
@@ -131,14 +132,11 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
 
         assertTrue("Disk should exists in the UnregisteredDisks table", !fetchedUnregisteredDisk.isEmpty());
         assertTrue("Disk should not have multiple vms attached", fetchedUnregisteredDisk.get(0).getVms().isEmpty());
-        assertTrue("Disk alias should be the same as initialized",
-                fetchedUnregisteredDisk.get(0).getDiskAlias().equals("Disk Alias"));
-        assertTrue("Disk description should be the same as initialized",
-                fetchedUnregisteredDisk.get(0).getDiskDescription().equals("Disk Description"));
-        assertTrue("Storage Domain id should be the same as initialized",
-                fetchedUnregisteredDisk.get(0)
-                        .getStorageDomainId()
-                        .compareTo(FixturesTool.STORAGE_DOAMIN_NFS2_1) == 0);
+        assertEquals("Disk alias should be the same as initialized", "Disk Alias", fetchedUnregisteredDisk.get(0).getDiskAlias());
+        assertEquals("Disk description should be the same as initialized", "Disk Description", fetchedUnregisteredDisk.get(0).getDiskDescription());
+        assertEquals("Storage Domain id should be the same as initialized", 0, fetchedUnregisteredDisk.get(0)
+                .getStorageDomainId()
+                .compareTo(FixturesTool.STORAGE_DOAMIN_NFS2_1));
     }
 
     private UnregisteredDisk initUnregisteredDisks(ArrayList<VmBase> vms) {
@@ -167,13 +165,13 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         List<UnregisteredDisk> fetchedUnregisteredDisk =
                 dao.getByDiskIdAndStorageDomainId(unregDisk.getId(), FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertTrue("Disk should exists in the UnregisteredDisks table", !fetchedUnregisteredDisk.isEmpty());
-        assertTrue("Disk should have vm attached", fetchedUnregisteredDisk.get(0).getVms().size() == 1);
+        assertEquals("Disk should have vm attached", 1, fetchedUnregisteredDisk.get(0).getVms().size());
         assertTrue("Disk alias should not be initialized",
                 fetchedUnregisteredDisk.get(0).getDiskAlias().isEmpty());
         assertTrue("Disk description should not be initialized",
                 StringUtils.isEmpty(fetchedUnregisteredDisk.get(0).getDiskDescription()));
-        assertTrue("Storage Domain id should be the same as initialized", fetchedUnregisteredDisk.get(0)
+        assertEquals("Storage Domain id should be the same as initialized", 0, fetchedUnregisteredDisk.get(0)
                 .getStorageDomainId()
-                .compareTo(FixturesTool.STORAGE_DOAMIN_NFS2_1) == 0);
+                .compareTo(FixturesTool.STORAGE_DOAMIN_NFS2_1));
     }
 }

@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 
 import java.util.List;
 
@@ -93,9 +94,9 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
     public void updateStatusOfImagesByImageGroupId() {
         Image image = dao.get(EXISTING_IMAGE_ID);
         List<DiskImage> snapshots = dbFacade.getDiskImageDao().getAllSnapshotsForImageGroup(image.getDiskId());
-        assertFalse(snapshots.size() == 1);
+        assertNotEquals(1, snapshots.size());
         for (DiskImage diskImage : snapshots) {
-            assertFalse(ImageStatus.LOCKED == diskImage.getImageStatus());
+            assertNotSame(ImageStatus.LOCKED, diskImage.getImageStatus());
         }
         dao.updateStatusOfImagesByImageGroupId(image.getDiskId(), ImageStatus.LOCKED);
         snapshots = dbFacade.getDiskImageDao().getAllSnapshotsForImageGroup(image.getDiskId());

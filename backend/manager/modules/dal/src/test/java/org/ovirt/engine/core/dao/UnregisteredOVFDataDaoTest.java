@@ -103,17 +103,16 @@ public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase {
 
         List<OvfEntityData> fetchedOvfEntityData =
                 dao.getByEntityIdAndStorageDomain(FixturesTool.VM_TEMPLATE_RHEL5, FixturesTool.STORAGE_DOAMIN_NFS2_1);
-        assertTrue(fetchedOvfEntityData.size() == 1);
+        assertEquals(1, fetchedOvfEntityData.size());
         assertTrue("The entity type should be template", fetchedOvfEntityData.get(0).getEntityType().isTemplateType());
-        assertTrue("The entity OVF extra data should be updated", fetchedOvfEntityData.get(0).getOvfExtraData()
-                .equals(ovfExtraData));
+        assertEquals("The entity OVF extra data should be updated", ovfExtraData, fetchedOvfEntityData.get(0).getOvfExtraData());
     }
 
     @Test
     public void testDeleteUnregisteredEntity() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOAMIN_NFS2_1);
-        assertTrue(ovfEntityDataList.size() == 1);
+        assertEquals(1, ovfEntityDataList.size());
         assertFalse(ovfEntityDataList.isEmpty());
         dao.removeEntity(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         List<OvfEntityData> ovfEntityDataList2 =
@@ -125,9 +124,9 @@ public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase {
     public void testGetUnregisteredEntitiesWithStorageDomainNull() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_TEMPLATE, null);
-        assertTrue(ovfEntityDataList.size() == 2);
-        assertEquals(ovfEntityDataList.get(0).getEntityId(), FixturesTool.UNREGISTERED_TEMPLATE);
-        assertEquals(ovfEntityDataList.get(1).getEntityId(), FixturesTool.UNREGISTERED_TEMPLATE);
+        assertEquals(2, ovfEntityDataList.size());
+        assertEquals(FixturesTool.UNREGISTERED_TEMPLATE, ovfEntityDataList.get(0).getEntityId());
+        assertEquals(FixturesTool.UNREGISTERED_TEMPLATE, ovfEntityDataList.get(1).getEntityId());
         assertFalse(ovfEntityDataList.get(0).getStorageDomainId().equals(ovfEntityDataList.get(1).getStorageDomainId()));
     }
 }

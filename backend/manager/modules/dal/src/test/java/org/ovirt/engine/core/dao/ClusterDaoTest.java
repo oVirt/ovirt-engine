@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -368,7 +369,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         String preUpdate = existingCluster.getEmulatedMachine();
         String updatedValue = "pc-version-1.2.3";
 
-        assertNotSame(preUpdate, updatedValue);
+        assertNotSame(updatedValue, preUpdate);
 
         existingCluster.setEmulatedMachine(updatedValue);
         dao.setEmulatedMachine(existingCluster.getId(), updatedValue, false);
@@ -384,7 +385,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         boolean preUpdate = existingCluster.isDetectEmulatedMachine();
         boolean updateValue = false;
 
-        assertNotSame(preUpdate, updateValue);
+        assertNotEquals(updateValue, preUpdate);
 
         dao.setEmulatedMachine(existingCluster.getId(), existingCluster.getEmulatedMachine(), updateValue);
 
@@ -400,7 +401,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
         existingCluster.setDetectEmulatedMachine(true);
         dao.update(existingCluster);
-        assertEquals(true, existingCluster.isDetectEmulatedMachine());
+        assertTrue(existingCluster.isDetectEmulatedMachine());
     }
 
 
@@ -413,7 +414,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
         assertNotNull(trustedClusters);
         assertFalse(trustedClusters.isEmpty());
-        assertEquals(trustedClusters.size(), NUMBER_OF_TRUSTED_GROUPS);
+        assertEquals(NUMBER_OF_TRUSTED_GROUPS, trustedClusters.size());
         assertTrue(trustedClusters.contains(dao.get(FixturesTool.CLUSTER_RHEL6_NFS)));
         assertTrue(trustedClusters.contains(dao.get(FixturesTool.CLUSTER_RHEL6_NFS_2)));
         assertTrue(trustedClusters.contains(dao.get(FixturesTool.CLUSTER_RHEL6_LOCALFS)));
@@ -440,7 +441,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     public void testGetClusterByClusterPolicyIdNegative() {
         List<Cluster> result = dao.getClustersByClusterPolicyId(Guid.newGuid());
 
-        assertTrue(result == null || result.size() == 0);
+        assertEquals(result.size(), 0);
     }
 
     /**
@@ -474,15 +475,15 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetVmsCountByClusterId() {
         // Cluster with no VMs
-        assertEquals("Incorrect number of VMs in cluster", dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_NFS),
-                FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_NFS_CLUSTER);
+        assertEquals("Incorrect number of VMs in cluster", FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_NFS_CLUSTER,
+                dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_NFS));
 
         // Cluster with VMs
-        assertEquals("Incorrect number of VMs in cluster", dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI),
-                FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_ISCSI);
+        assertEquals("Incorrect number of VMs in cluster", FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_ISCSI,
+                dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI));
 
         // Non existing cluster, should return 0
-        assertEquals("Incorrect number of VMs in cluster", dao.getVmsCountByClusterId(Guid.newGuid()), 0);
+        assertEquals("Incorrect number of VMs in cluster", 0, dao.getVmsCountByClusterId(Guid.newGuid()));
     }
 
     @Test
@@ -491,8 +492,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         List<Cluster> clusters = new ArrayList<>();
         clusters.add(dao.get(guid));
         List<Cluster> data = ((ClusterDaoImpl) dao).getHostsAndVmsForClusters(clusters);
-        assertEquals("Incorrect number of VMs in cluster", data.get(0).getClusterHostsAndVms().getVms(), 7);
-        assertEquals("Incorrect number of Hosts in cluster", data.get(0).getClusterHostsAndVms().getHosts(), 1);
+        assertEquals("Incorrect number of VMs in cluster", 7, data.get(0).getClusterHostsAndVms().getVms());
+        assertEquals("Incorrect number of Hosts in cluster", 1, data.get(0).getClusterHostsAndVms().getHosts());
     }
 
     @Test

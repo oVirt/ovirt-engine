@@ -84,14 +84,14 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
     public void testGetAsyncTaskIdsByEntity() {
         List<Guid> guids = dao.getAsyncTaskIdsByEntity(FixturesTool.ENTITY_WITH_TASKS_ID);
         assertNotNull(guids);
-        assertEquals(guids.size(), 1);
+        assertEquals(1, guids.size());
     }
 
     @Test
     public void testGetAsyncTaskEntitiesById() {
         List<AsyncTask> tasks = dao.getTasksByEntity(FixturesTool.ENTITY_WITH_TASKS_ID);
         assertNotNull(tasks);
-        assertEquals(tasks.size(), 1);
+        assertEquals(1, tasks.size());
     }
 
     @Test
@@ -107,14 +107,14 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
         // that has storage domain associated to which has one task on it
         List<Guid> guids = dao.getAsyncTaskIdsByStoragePoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertNotNull(guids);
-        assertEquals(guids.size(), 2);
+        assertEquals(2, guids.size());
     }
 
     @Test
     public void testGetAsyncTaskIdsByInvalidStoragePoolId() {
         List<Guid> guids = dao.getAsyncTaskIdsByStoragePoolId(Guid.newGuid());
         assertNotNull(guids);
-        assertEquals(guids.size(), 0);
+        assertEquals(0, guids.size());
     }
 
     /**
@@ -176,11 +176,11 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
         AsyncTask result = dao.get(existingAsyncTask.getTaskId());
         assertNotNull(result);
 
-        assertEquals(dao.remove(existingAsyncTask.getTaskId()), 1);
+        assertEquals(1, dao.remove(existingAsyncTask.getTaskId()));
         result = dao.get(existingAsyncTask.getTaskId());
 
         assertNull(result);
-        assertEquals(dao.remove(existingAsyncTask.getTaskId()), 0);
+        assertEquals(0, dao.remove(existingAsyncTask.getTaskId()));
 
         // The removed task is associated with an entity, try to fetch
         // tasks for the entity, and see no task is returned
@@ -202,11 +202,11 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
         AsyncTask result = dao.getByVdsmTaskId(FixturesTool.EXISTING_VDSM_TASK_ID);
         assertNotNull(result);
 
-        assertEquals(dao.removeByVdsmTaskId(existingAsyncTask.getVdsmTaskId()), 1);
+        assertEquals(1, dao.removeByVdsmTaskId(existingAsyncTask.getVdsmTaskId()));
         result = dao.getByVdsmTaskId(existingAsyncTask.getVdsmTaskId());
 
         assertNull(result);
-        assertEquals(dao.removeByVdsmTaskId(existingAsyncTask.getVdsmTaskId()), 0);
+        assertEquals(0, dao.removeByVdsmTaskId(existingAsyncTask.getVdsmTaskId()));
 
         // The removed task is associated with an entity, try to fetch
         // tasks for the entity, and see no task is returned

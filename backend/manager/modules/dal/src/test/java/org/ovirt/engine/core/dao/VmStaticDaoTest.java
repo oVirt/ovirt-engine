@@ -179,7 +179,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdate() {
-        assertEquals(existingVmStatic.getProviderId(), EXISTING_PROVIDER_ID);
+        assertEquals(EXISTING_PROVIDER_ID, existingVmStatic.getProviderId());
         existingVmStatic.setDescription("updated");
         existingVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         existingVmStatic.setProviderId(null);
@@ -527,7 +527,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testConsoleDisconnectActionDefault() {
-        assertEquals(newVmStatic.getConsoleDisconnectAction(), ConsoleDisconnectAction.LOCK_SCREEN);
+        assertEquals(ConsoleDisconnectAction.LOCK_SCREEN, newVmStatic.getConsoleDisconnectAction());
     }
 
     @Test
@@ -535,6 +535,6 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         newVmStatic.setConsoleDisconnectAction(ConsoleDisconnectAction.REBOOT);
         dao.save(newVmStatic);
         VmStatic loaded = dao.get(newVmStatic.getId());
-        assertEquals(loaded.getConsoleDisconnectAction(), ConsoleDisconnectAction.REBOOT);
+        assertEquals(ConsoleDisconnectAction.REBOOT, loaded.getConsoleDisconnectAction());
     }
 }

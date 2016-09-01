@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -60,17 +60,15 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
     public void updateOvfUpdatedInfoFewDomains() {
         StorageDomainOvfInfo ovfInfo = dao.get(getExistingEntityId());
         StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOAMIN_NFS2_2).get(0);
-        assertFalse("domain shouldn't be ovf updated prior to test",
-                ovfInfo1.getStatus() == StorageDomainOvfInfoStatus.UPDATED);
-        assertFalse("domain shouldn't be ovf updated prior to test",
-                ovfInfo.getStatus() == StorageDomainOvfInfoStatus.UPDATED);
+        assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
+        assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo.getStatus());
         dao.updateOvfUpdatedInfo(Arrays.asList(ovfInfo.getStorageDomainId(), ovfInfo1.getStorageDomainId()),
                 StorageDomainOvfInfoStatus.UPDATED,
                 StorageDomainOvfInfoStatus.DISABLED);
         ovfInfo = dao.get(ovfInfo.getOvfDiskId());
         ovfInfo1 = dao.get(ovfInfo1.getOvfDiskId());
-        assertTrue(ovfInfo.getStatus() == StorageDomainOvfInfoStatus.UPDATED);
-        assertTrue(ovfInfo1.getStatus() == StorageDomainOvfInfoStatus.UPDATED);
+        assertEquals(StorageDomainOvfInfoStatus.UPDATED, ovfInfo.getStatus());
+        assertEquals(StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
     }
 
     @Test
@@ -79,15 +77,14 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
         ovfInfo.setStatus(StorageDomainOvfInfoStatus.DISABLED);
         dao.update(ovfInfo);
         StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOAMIN_NFS2_2).get(0);
-        assertFalse("domain shouldn't be ovf updated prior to test",
-                ovfInfo1.getStatus() == StorageDomainOvfInfoStatus.UPDATED);
+        assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
         dao.updateOvfUpdatedInfo(Arrays.asList(ovfInfo.getStorageDomainId(), ovfInfo1.getStorageDomainId()),
                 StorageDomainOvfInfoStatus.UPDATED,
                 StorageDomainOvfInfoStatus.DISABLED);
         ovfInfo = dao.get(ovfInfo.getOvfDiskId());
         ovfInfo1 = dao.get(ovfInfo1.getOvfDiskId());
-        assertTrue(ovfInfo.getStatus() == StorageDomainOvfInfoStatus.DISABLED);
-        assertTrue(ovfInfo1.getStatus() == StorageDomainOvfInfoStatus.UPDATED);
+        assertEquals(StorageDomainOvfInfoStatus.DISABLED, ovfInfo.getStatus());
+        assertEquals(StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
     }
 
     @Test

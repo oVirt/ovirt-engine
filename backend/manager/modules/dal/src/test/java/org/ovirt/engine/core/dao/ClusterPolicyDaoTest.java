@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +35,7 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
     public void testGet() {
         ClusterPolicy result = dao.get(existingPolicy.getId(), Collections.emptyMap());
 
-        assertTrue(result.equals(existingPolicy));
+        assertEquals(result, existingPolicy);
     }
 
     @Test
@@ -51,14 +50,14 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
         List<ClusterPolicy> result = dao.getAll(Collections.emptyMap());
 
         assertNotNull(result);
-        assertEquals(result.size(), NUMBER_OF_CLUSTER_POLICIES);
+        assertEquals(NUMBER_OF_CLUSTER_POLICIES, result.size());
     }
 
     @Test
     public void testSave() {
         dao.save(dummyPolicy);
         ClusterPolicy result = dao.get(dummyPolicy.getId(), Collections.emptyMap());
-        assertTrue(result.equals(dummyPolicy));
+        assertEquals(result, dummyPolicy);
         dao.remove(dummyPolicy.getId());
     }
 
@@ -68,7 +67,7 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
         dummyPolicy.setName("Altered dummy policy");
         dao.update(dummyPolicy);
         ClusterPolicy result = dao.get(dummyPolicy.getId(), Collections.emptyMap());
-        assertTrue(result.equals(dummyPolicy));
+        assertEquals(result, dummyPolicy);
     }
 
     @Test

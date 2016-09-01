@@ -244,6 +244,6 @@ public class VmPoolDaoTest extends BaseDaoTestCase {
 
     private void assertCorrectGetVmDataResult(VM result) {
         assertNotNull(result);
-        assertEquals(result.getVmPoolId(), EXISTING_VM_POOL_ID);
+        assertEquals(EXISTING_VM_POOL_ID, result.getVmPoolId());
     }
 }

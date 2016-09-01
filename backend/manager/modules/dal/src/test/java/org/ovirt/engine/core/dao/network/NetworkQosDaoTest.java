@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.dao.network;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -54,7 +54,7 @@ public class NetworkQosDaoTest extends BaseDaoTestCase {
         trueA.setOutboundBurst(500);
 
         assertNotNull(result);
-        assertTrue(trueA.equals(result));
+        assertEquals(trueA, result);
     }
 
     /**
@@ -62,7 +62,7 @@ public class NetworkQosDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllNetworkQos() {
-        assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size() == 2);
+        assertEquals(2, dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size());
     }
 
     /**
@@ -84,7 +84,7 @@ public class NetworkQosDaoTest extends BaseDaoTestCase {
         dao.update(newB);
 
         NetworkQoS afterUpdate = dao.get(qosBId);
-        assertTrue(newB.equals(afterUpdate));
+        assertEquals(newB, afterUpdate);
     }
 
     /**
@@ -115,7 +115,7 @@ public class NetworkQosDaoTest extends BaseDaoTestCase {
 
         dao.save(qosD);
         NetworkQoS returnedD = dao.get(qosDId);
-        assertTrue(qosD.equals(returnedD));
+        assertEquals(qosD, returnedD);
     }
 
     /**
@@ -123,7 +123,7 @@ public class NetworkQosDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllNetworkQosForStoragePool() {
-        assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size() == 2);
+        assertEquals(2, dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size());
     }
 
     @Test

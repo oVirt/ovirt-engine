@@ -64,8 +64,8 @@ public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
     public void testGetGlusterVolumeSnapshotConfigByClusterId() {
         List<GlusterVolumeSnapshotConfig> configs = dao.getConfigByClusterId(CLUSTER_ID);
 
-        assertTrue(configs != null);
-        assertTrue(configs.size() == 3);
+        assertNotNull(configs);
+        assertEquals(3, configs.size());
         assertTrue(configs.contains(existingConfig1));
     }
 
@@ -74,8 +74,8 @@ public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
         List<GlusterVolumeSnapshotConfig> configs =
                 dao.getConfigByVolumeId(CLUSTER_ID, VOLUME_ID);
 
-        assertTrue(configs != null);
-        assertTrue(configs.size() == 2);
+        assertNotNull(configs);
+        assertEquals(2, configs.size());
         assertTrue(configs.contains(existingConfig1));
     }
 
@@ -102,8 +102,8 @@ public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
         List<GlusterVolumeSnapshotConfig> configs =
                 dao.getAllWithQuery("select * from gluster_volume_snapshot_config");
 
-        assertTrue(configs != null);
-        assertTrue(configs.size() == 3);
+        assertNotNull(configs);
+        assertEquals(3, configs.size());
     }
 
     @Test
@@ -111,13 +111,13 @@ public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
         GlusterVolumeSnapshotConfig config = dao.getConfigByClusterIdAndName(CLUSTER_ID, PARAM_NAME_3);
 
         assertNotNull(config);
-        assertEquals(config.getParamValue(), "value3");
+        assertEquals("value3", config.getParamValue());
 
         dao.updateConfigByClusterIdAndName(CLUSTER_ID, PARAM_NAME_3, "new_value");
 
         GlusterVolumeSnapshotConfig modifiedConfig = dao.getConfigByClusterIdAndName(CLUSTER_ID, PARAM_NAME_3);
         assertNotNull(modifiedConfig);
-        assertEquals(modifiedConfig.getParamValue(), "new_value");
+        assertEquals("new_value", modifiedConfig.getParamValue());
     }
 
     @Test
@@ -125,13 +125,13 @@ public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
         GlusterVolumeSnapshotConfig config = dao.getConfigByVolumeIdAndName(CLUSTER_ID, VOLUME_ID, PARAM_NAME_1);
 
         assertNotNull(config);
-        assertEquals(config.getParamValue(), "value1");
+        assertEquals("value1", config.getParamValue());
 
         dao.updateConfigByVolumeIdAndName(CLUSTER_ID, VOLUME_ID, PARAM_NAME_1, "new_value");
 
         GlusterVolumeSnapshotConfig modifiedConfig =
                 dao.getConfigByVolumeIdAndName(CLUSTER_ID, VOLUME_ID, PARAM_NAME_1);
         assertNotNull(modifiedConfig);
-        assertEquals(modifiedConfig.getParamValue(), "new_value");
+        assertEquals("new_value", modifiedConfig.getParamValue());
     }
 }

@@ -70,7 +70,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
         newHook.setId(FixturesTool.NEW_HOOK_ID);
         dao.save(newHook);
         GlusterHookEntity hook = dao.getById(newHook.getId());
-        assertTrue(newHook.equals(hook));
+        assertEquals(newHook, hook);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
     public void testGetByIdAll() {
         GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID, true);
         assertNotNull(hook);
-        assertTrue(hook.getServerHooks().size() == 2);
+        assertEquals(2, hook.getServerHooks().size());
         assertEquals(FixturesTool.HOOK_ID, hook.getId());
     }
 
@@ -240,7 +240,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
     public void getGlusterHookContent() {
         String content = dao.getGlusterHookContent(FixturesTool.HOOK_ID);
         assertNotNull(content);
-        assertEquals(content, CONTENT);
+        assertEquals(CONTENT, content);
     }
 
 }

@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.dal.dbbroker.generic;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.Config;
@@ -27,7 +28,7 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testDefaultValues() {
+    public void testDefaultValues() throws Exception {
         ConfigValues[] values = ConfigValues.values();
 
         for (ConfigValues curConfig : values) {
@@ -35,13 +36,7 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
                 continue;
             }
 
-            Field configField = null;
-            try {
-                configField = ConfigValues.class.getField(curConfig.name());
-            } catch (Exception e) {
-                Assert.fail("Failed to look up" + curConfig.name());
-                e.printStackTrace();
-            }
+            Field configField = ConfigValues.class.getField(curConfig.name());
 
             OptionBehaviourAttribute behaviourAttr = configField.getAnnotation(OptionBehaviourAttribute.class);
             if (behaviourAttr != null && behaviourAttr.behaviour() == OptionBehaviour.Password) {
@@ -55,8 +50,8 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
 
             Object obj = config.getValue(curConfig, ConfigCommon.defaultConfigurationVersion);
 
-            Assert.assertTrue("null return for " + curConfig.name(), obj != null);
-            Assert.assertTrue(
+            assertNotNull("null return for " + curConfig.name(), obj);
+            assertTrue(
                     curConfig.name() + " is a " + obj.getClass().getName() + " but should be a " + c.getName(),
                     c.isInstance(obj));
         }
@@ -67,7 +62,7 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
         // Verify that values for 3.6 are from DB (since the entries are present in fixtures.xml)
         // and for 4.0, it's the default value from annotation in ConfigValues.
         // 3.6 -> false, 4.0 -> true
-        Assert.assertFalse(Config.<Boolean> getValue(ConfigValues.SriovHotPlugSupported, "3.6"));
-        Assert.assertTrue(Config.<Boolean> getValue(ConfigValues.SriovHotPlugSupported, "4.0"));
+        assertFalse(Config.<Boolean> getValue(ConfigValues.SriovHotPlugSupported, "3.6"));
+        assertTrue(Config.<Boolean> getValue(ConfigValues.SriovHotPlugSupported, "4.0"));
     }
 }

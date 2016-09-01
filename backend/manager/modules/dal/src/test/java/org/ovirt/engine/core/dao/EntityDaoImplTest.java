@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
@@ -93,7 +92,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VmStatic vmStatic = vmStaticDao.get(VM_ID);
         assertNotNull(vmStatic);
         String name = vmStatic.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM));
     }
 
     @Test
@@ -101,7 +100,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VmTemplate vmTemplate = vmTemplateDao.get(VM_TEMPLATE_ID);
         assertNotNull(vmTemplate);
         String name = vmTemplate.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate));
     }
 
     @Test
@@ -109,7 +108,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VdsStatic vds = vdsStaticDao.get(VDS_ID);
         assertNotNull(vds);
         String name = vds.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS));
     }
 
     @Test
@@ -117,7 +116,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VmPool vmPool = vmPoolDao.get(VM_POOL_ID);
         assertNotNull(vmPool);
         String name = vmPool.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool));
     }
 
     @Test
@@ -125,7 +124,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Tags tag = tagDao.get(TAG_ID);
         assertNotNull(tag);
         String name = tag.getTagName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags));
     }
 
     @Test
@@ -133,7 +132,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Bookmark bookmark = bookmarkDao.get(BOOKMARK_ID);
         assertNotNull(bookmark);
         String name = bookmark.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks));
     }
 
     @Test
@@ -141,7 +140,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Cluster cluster = clusterDao.get(CLUSTER_ID);
         assertNotNull(cluster);
         String name = cluster.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.Cluster)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.Cluster));
     }
 
     @Test
@@ -149,7 +148,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         StorageDomain storageDomain = storageDomainDao.get(STORAGE_DOMAIN_ID);
         assertNotNull(storageDomain);
         String name = storageDomain.getStorageName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(STORAGE_DOMAIN_ID, VdcObjectType.Storage)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(STORAGE_DOMAIN_ID, VdcObjectType.Storage));
     }
 
     @Test
@@ -157,7 +156,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         StoragePool storagePool = storagePoolDao.get(STORAGE_POOL_ID);
         assertNotNull(storagePool);
         String name = storagePool.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool));
     }
 
     @Test
@@ -165,7 +164,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         DbUser dbUser = dbUserDao.get(USER_ID);
         assertNotNull(dbUser);
         String name = dbUser.getLoginName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(USER_ID, VdcObjectType.User)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(USER_ID, VdcObjectType.User));
     }
 
     @Test
@@ -173,7 +172,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Role role = roleDao.get(ROLE_ID);
         assertNotNull(role);
         String name = role.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role));
     }
 
     @Test
@@ -181,7 +180,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Quota quota = quotaDao.getById(QUOTA_ID);
         assertNotNull(quota);
         String name = quota.getQuotaName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(QUOTA_ID, VdcObjectType.Quota)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(QUOTA_ID, VdcObjectType.Quota));
     }
 
     @Test
@@ -189,7 +188,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         BaseDisk disk = baseDiskDao.get(DISK_ID);
         assertNotNull(disk);
         String name = disk.getDiskAlias();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk));
     }
 
     @Test
@@ -197,7 +196,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Network network = networkDao.get(NETWORK_ID);
         assertNotNull(network);
         String name = network.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network));
     }
 
     @Test
@@ -205,7 +204,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VnicProfile vnicProfile = vnicProfileDao.get(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
         assertNotNull(vnicProfile);
         String name = vnicProfile.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile));
     }
 
     @Test
@@ -213,7 +212,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         DiskProfile diskProfile = diskProfileDao.get(FixturesTool.DISK_PROFILE_1);
         assertNotNull(diskProfile);
         String name = diskProfile.getName();
-        assertTrue(name.equals(underTest.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile)));
+        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile));
     }
 
     @Test

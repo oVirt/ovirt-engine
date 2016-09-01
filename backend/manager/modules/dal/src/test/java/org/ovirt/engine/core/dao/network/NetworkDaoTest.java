@@ -296,8 +296,8 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     public void testGetAllForValidQos() {
         List<Network> result = dao.getAllForQos(FixturesTool.HOST_NETWORK_QOS_A);
         assertNotNull(result);
-        assertTrue(result.size() == 1);
-        assertEquals(result.get(0).getId(), FixturesTool.NETWORK_ENGINE);
+        assertEquals(1, result.size());
+        assertEquals(FixturesTool.NETWORK_ENGINE, result.get(0).getId());
     }
 
     /**

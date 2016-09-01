@@ -124,8 +124,8 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         List<Step> steps = dao.getStepsByExternalId(IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID);
         assertEquals("Verify Rebalancing Gluster Volume Job has steps", TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME, steps.size());
         Step step = steps.get(0);
-        assertTrue("Verify the Step Type status", StepEnum.REBALANCING_VOLUME == step.getStepType());
-        assertTrue("Verify the Step status", JobExecutionStatus.STARTED == step.getStatus());
+        assertEquals("Verify the Step Type status", StepEnum.REBALANCING_VOLUME, step.getStepType());
+        assertEquals("Verify the Step status", JobExecutionStatus.STARTED, step.getStatus());
         assertEquals("Invalid Step", REBALANCING_GLUSTER_VOLUME_STEP_ID, step.getId());
     }
 
@@ -140,10 +140,10 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     public void updateStepProgress(){
         Integer newProgress = 74;
         Step s = dao.get(FixturesTool.STEP_ID);
-        assertNotEquals("New progress should be different than the current", s.getProgress(), newProgress);
+        assertNotEquals("New progress should be different than the current", newProgress, s.getProgress());
         updateStepProgress(FixturesTool.STEP_ID, newProgress);
         s = dao.get(FixturesTool.STEP_ID);
-        assertEquals("New progress should be the same as the current", s.getProgress(), newProgress);
+        assertEquals("New progress should be the same as the current", newProgress, s.getProgress());
     }
 
     @Test

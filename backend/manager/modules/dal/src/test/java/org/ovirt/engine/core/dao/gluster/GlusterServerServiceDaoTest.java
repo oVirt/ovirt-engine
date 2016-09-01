@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -92,8 +91,8 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
                 dao.getAllWithQuery("select * from gluster_server_services_view where status = '"
                         + GlusterServiceStatus.STOPPED.name() + "'");
 
-        assertTrue(services != null);
-        assertTrue(services.size() == 1);
+        assertNotNull(services);
+        assertEquals(1, services.size());
         verifyServiceOnServer2(services.get(0));
     }
 

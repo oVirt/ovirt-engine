@@ -387,14 +387,14 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         dao.save(newServerConnection);
 
         StorageServerConnections result = dao.get(newServerConnection.getId());
-        assertEquals(result.getNfsVersion(), NfsVersion.V4);
-        assertTrue(result.getNfsRetrans() == 5);
+        assertEquals(NfsVersion.V4, result.getNfsVersion());
+        assertEquals(Short.valueOf((short) 5), result.getNfsRetrans());
         assertNull(result.getNfsTimeo());
 
         result = dao.get(existingNfsAutoConnection.getId());
-        assertEquals(result.getNfsVersion(), NfsVersion.AUTO);
-        assertTrue(result.getNfsRetrans() == 7);
-        assertTrue(result.getNfsTimeo() == 42);
+        assertEquals(NfsVersion.AUTO, result.getNfsVersion());
+        assertEquals(Short.valueOf((short) 7), result.getNfsRetrans());
+        assertEquals(Short.valueOf((short) 42), result.getNfsTimeo());
 
         result = dao.get(existingConnection.getId());
         assertNull(result.getNfsVersion());
@@ -405,14 +405,14 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllConnectionsOfNfsDomain() {
       List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("d9ede37f-e6c3-4bf9-a984-19174070aa31"));
-      assertEquals(connections.size(), 1);
-      assertEquals(connections.get(0).getId(), "0cc146e8-e5ed-482c-8814-270bc48c2981");
+      assertEquals(1, connections.size());
+      assertEquals("0cc146e8-e5ed-482c-8814-270bc48c2981", connections.get(0).getId());
     }
 
     @Test
     public void testGetAllConnectionsOfIscsiDomain() {
       List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
-      assertEquals(connections.size(), 2);
+      assertEquals(2, connections.size());
       assertTrue(connections.get(0).getId().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk") || connections.get(0).getId().equals("0cc146e8-e5ed-482c-8814-270bc48c297e"));
     }
 

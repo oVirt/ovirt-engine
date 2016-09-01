@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import javax.inject.Inject;
 
@@ -18,12 +18,12 @@ public class SystemStatisticsDaoImplTest extends BaseDaoTestCase {
     public void testGetSystemStatisticsValueWithSpecifiedStatus() {
         int numOfVmWithStatusMigratingFrom =
                 underTest.getSystemStatisticsValue("VM", Integer.toString(VMStatus.MigratingFrom.getValue()));
-        assertTrue(numOfVmWithStatusMigratingFrom == NUM_OF_VM_IN_FIXTURES_WITH_STATUS_MIGRATING_FROM);
+        assertEquals(NUM_OF_VM_IN_FIXTURES_WITH_STATUS_MIGRATING_FROM, numOfVmWithStatusMigratingFrom);
     }
 
     @Test
     public void testGetSystemStatisticsValueWithoutSpecifiedStatus() {
         int numOfUsers = underTest.getSystemStatisticsValue("User", "");
-        assertTrue(numOfUsers == NUM_OF_USERS_IN_FIXTURES);
+        assertEquals(NUM_OF_USERS_IN_FIXTURES, numOfUsers);
     }
 }

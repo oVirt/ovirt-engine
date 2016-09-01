@@ -82,7 +82,7 @@ public class VmGuestAgentInterfaceDaoTest extends BaseDaoTestCase {
     }
 
     private void assertVmGuestAgentInterfaceForVm(List<VmGuestAgentInterface> interfaces) {
-        assertEquals(interfaces.size(), VM_GUEST_AGENT_INTERFACES_SIZE);
+        assertEquals(VM_GUEST_AGENT_INTERFACES_SIZE, interfaces.size());
         for (VmGuestAgentInterface vmGuestAgentInterface : interfaces) {
             assertEquals(EXISTING_VM_ID, vmGuestAgentInterface.getVmId());
         }

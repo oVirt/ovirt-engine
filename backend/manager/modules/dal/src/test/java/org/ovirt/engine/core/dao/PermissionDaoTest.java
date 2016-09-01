@@ -136,7 +136,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllForQuotaId() {
         List<Permission> result = dao.getConsumedPermissionsForQuotaId(FixturesTool.QUOTA_GENERAL);
-        assertEquals(result.get(0).getAdElementId(), FixturesTool.USER_EXISTING_ID);
+        assertEquals(FixturesTool.USER_EXISTING_ID, result.get(0).getAdElementId());
     }
 
     /**

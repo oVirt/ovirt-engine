@@ -106,7 +106,7 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
     public void testUpdate() {
         CpuProfile profile = dao.get(FixturesTool.CPU_PROFILE_1);
         assertNotNull(profile);
-        assertTrue(FixturesTool.QOS_ID_4.equals(profile.getQosId()));
+        assertEquals(FixturesTool.QOS_ID_4, profile.getQosId());
         profile.setQosId(FixturesTool.QOS_ID_5);
         profile.setDescription("desc1");
         dao.update(profile);

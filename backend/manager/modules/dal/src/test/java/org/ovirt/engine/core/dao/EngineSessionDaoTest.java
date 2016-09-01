@@ -81,11 +81,11 @@ public class EngineSessionDaoTest extends BaseDaoTestCase {
         EngineSession result = dao.get(existingEngineSession.getId());
         assertNotNull(result);
 
-        assertEquals(dao.remove(existingEngineSession.getId()), 1);
+        assertEquals(1, dao.remove(existingEngineSession.getId()));
         result = dao.get(existingEngineSession.getId());
 
         assertNull(result);
-        assertEquals(dao.remove(existingEngineSession.getId()), 0);
+        assertEquals(0, dao.remove(existingEngineSession.getId()));
 
     }
 
@@ -97,11 +97,11 @@ public class EngineSessionDaoTest extends BaseDaoTestCase {
         EngineSession result = dao.get(existingEngineSession.getId());
         assertNotNull(result);
 
-        assertEquals(dao.removeAll(), 2);
+        assertEquals(2, dao.removeAll());
         result = dao.get(existingEngineSession.getId());
 
         assertNull(result);
-        assertEquals(dao.removeAll(), 0);
+        assertEquals(0, dao.removeAll());
 
     }
 

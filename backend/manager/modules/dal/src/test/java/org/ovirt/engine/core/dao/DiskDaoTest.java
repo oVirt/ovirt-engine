@@ -186,7 +186,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     public void testGetVmBootActiveDisk() {
         Disk bootDisk = dao.getVmBootActiveDisk(FixturesTool.VM_RHEL5_POOL_57);
         assertNotNull("VM should have a boot disk attached", bootDisk);
-        assertEquals("Wrong boot disk for VM", bootDisk.getId(), FixturesTool.BOOTABLE_DISK_ID);
+        assertEquals("Wrong boot disk for VM", FixturesTool.BOOTABLE_DISK_ID, bootDisk.getId());
     }
 
     @Test

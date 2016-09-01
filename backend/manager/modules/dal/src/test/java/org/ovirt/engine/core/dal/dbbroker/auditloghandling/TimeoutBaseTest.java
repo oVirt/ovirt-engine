@@ -50,7 +50,7 @@ public class TimeoutBaseTest {
         final TestTimeoutBase t = new TestTimeoutBase();
         final String s = null;
         t.setTimeoutObjectId(s);
-        assertEquals(t.getTimeoutObjectId(), s);
+        assertEquals(s, t.getTimeoutObjectId());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class TimeoutBaseTest {
         final TestTimeoutBase t = new TestTimeoutBase();
         final String s = "testtimeout";
         t.setTimeoutObjectId(s);
-        assertEquals(t.getTimeoutObjectId(), s);
+        assertEquals(s, t.getTimeoutObjectId());
     }
 
     @Test

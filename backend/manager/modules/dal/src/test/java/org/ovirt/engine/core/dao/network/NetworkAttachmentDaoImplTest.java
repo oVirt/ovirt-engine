@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
@@ -162,7 +161,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         assertEquals(expected.getNicId(), actual.getNicId());
         assertEquals(expected.getNicName(), actual.getNicName());
         assertEquals(expected.getIpConfiguration(), actual.getIpConfiguration());
-        assertTrue(expected.getProperties().entrySet().equals(actual.getProperties().entrySet()));
+        assertEquals(expected.getProperties().entrySet(), actual.getProperties().entrySet());
     }
 
     /**

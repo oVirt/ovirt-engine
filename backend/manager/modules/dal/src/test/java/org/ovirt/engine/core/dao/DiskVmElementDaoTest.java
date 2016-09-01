@@ -69,7 +69,7 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
     @Test
     public void testVmElementDiskLogicalName() {
         DiskVmElement dveWithLogicalName = dao.get(new VmDeviceId(PLUGGED_DISK_ID, FixturesTool.VM_RHEL5_POOL_57));
-        assertEquals(dveWithLogicalName.getLogicalName(), "logical_name");
+        assertEquals("logical_name", dveWithLogicalName.getLogicalName());
     }
 
     @Test

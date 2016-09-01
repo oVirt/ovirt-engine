@@ -64,8 +64,8 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
     public void testGetByVolumeId() {
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
 
-        assertTrue(snapshots != null);
-        assertTrue(snapshots.size() == 2);
+        assertNotNull(snapshots);
+        assertEquals(2, snapshots.size());
         assertTrue(snapshots.contains(existingSnapshot));
     }
 
@@ -74,7 +74,7 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByClusterId(CLUSTER_ID);
 
         assertNotNull(snapshots);
-        assertTrue(snapshots.size() == 2);
+        assertEquals(2, snapshots.size());
         assertTrue(snapshots.contains(existingSnapshot));
     }
 
@@ -83,23 +83,23 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
         List<GlusterVolumeSnapshotEntity> snapshots =
                 dao.getAllWithQuery("select * from gluster_volume_snapshots_view");
 
-        assertTrue(snapshots != null);
-        assertTrue(snapshots.size() == 2);
+        assertNotNull(snapshots);
+        assertEquals(2, snapshots.size());
     }
 
     @Test
     public void testRemove() {
         GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+        assertEquals(2, volume.getSnapshotsCount().intValue());
 
         dao.remove(EXISTING_SNAPSHOT_ID);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
 
-        assertTrue(snapshots.size() == 1);
+        assertEquals(1, snapshots.size());
         assertFalse(snapshots.contains(existingSnapshot));
 
         GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume1.getSnapshotsCount().intValue(), 1);
+        assertEquals(1, volume1.getSnapshotsCount().intValue());
     }
 
     @Test
@@ -109,43 +109,43 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
         idsToRemove.add(EXISTING_SNAPSHOT_ID_1);
 
         GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+        assertEquals(2, volume.getSnapshotsCount().intValue());
 
         dao.removeAll(idsToRemove);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
         assertTrue(snapshots.isEmpty());
 
         GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume1.getSnapshotsCount().intValue(), 0);
+        assertEquals(0, volume1.getSnapshotsCount().intValue());
     }
 
     @Test
     public void testRemoveByName() {
         GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+        assertEquals(2, volume.getSnapshotsCount().intValue());
 
         dao.removeByName(VOLUME_ID, EXISTING_SNAPSHOT_NAME_1);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
 
-        assertTrue(snapshots.size() == 1);
+        assertEquals(1, snapshots.size());
         assertTrue(snapshots.contains(existingSnapshot));
         assertFalse(snapshots.contains(existingSnapshot1));
 
         GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume1.getSnapshotsCount().intValue(), 1);
+        assertEquals(1, volume1.getSnapshotsCount().intValue());
     }
 
     @Test
     public void testRemoveAllByVolumeId() {
         GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+        assertEquals(2, volume.getSnapshotsCount().intValue());
 
         dao.removeAllByVolumeId(VOLUME_ID);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
         assertTrue(snapshots.isEmpty());
 
         GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
-        assertEquals(volume1.getSnapshotsCount().intValue(), 0);
+        assertEquals(0, volume1.getSnapshotsCount().intValue());
     }
 
     @Test
@@ -191,8 +191,8 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
         GlusterVolumeSnapshotEntity tmpSnapshot = dao.getById(EXISTING_SNAPSHOT_ID);
         GlusterVolumeSnapshotEntity tmpSnapshot1 = dao.getById(EXISTING_SNAPSHOT_ID_1);
 
-        assertEquals(tmpSnapshot.getStatus(), GlusterSnapshotStatus.DEACTIVATED);
-        assertEquals(tmpSnapshot1.getStatus(), GlusterSnapshotStatus.DEACTIVATED);
+        assertEquals(GlusterSnapshotStatus.DEACTIVATED, tmpSnapshot.getStatus());
+        assertEquals(GlusterSnapshotStatus.DEACTIVATED, tmpSnapshot1.getStatus());
     }
 
     private GlusterVolumeSnapshotEntity insertTestSnapshot() {
