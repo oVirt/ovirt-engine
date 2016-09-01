@@ -73,7 +73,6 @@ public final class AsyncTaskManager {
     private CountDownLatch irsBrokerLatch;
 
     private static volatile AsyncTaskManager taskManager;
-    private static final Object LOCK = new Object();
     private CommandCoordinator coco;
 
     public static AsyncTaskManager getInstance() {
@@ -82,7 +81,7 @@ public final class AsyncTaskManager {
 
     public static AsyncTaskManager getInstance(CommandCoordinator coco) {
         if (taskManager == null) {
-            synchronized(LOCK) {
+            synchronized(AsyncTaskManager.class) {
                 if (taskManager == null) {
                     taskManager = new AsyncTaskManager(coco);
                 }

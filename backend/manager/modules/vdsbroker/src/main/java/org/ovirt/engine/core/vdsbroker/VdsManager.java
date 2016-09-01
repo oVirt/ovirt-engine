@@ -122,7 +122,6 @@ public class VdsManager {
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
 
-    private final Object lockObj = new Object();
     private final AtomicInteger failedToRunVmAttempts;
     private final AtomicInteger unrespondedAttempts;
     private final Guid vdsId;
@@ -260,7 +259,7 @@ public class VdsManager {
                 setIsSetNonOperationalExecuted(false);
                 Guid storagePoolId = null;
                 ArrayList<VDSDomainsData> domainsList = null;
-                synchronized (getLockObj()) {
+                synchronized (this) {
                     refreshCachedVds();
                     if (cachedVds == null) {
                         log.error("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for '{}'",
@@ -360,7 +359,7 @@ public class VdsManager {
             return;
         }
 
-        synchronized (getLockObj()) {
+        synchronized (this) {
             if (updateAvailable != cachedVds.isUpdateAvailable()) {
                 cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
                 vdsDynamicDao.updateUpdateAvailable(cachedVds.getId(), updateAvailable);
@@ -494,7 +493,7 @@ public class VdsManager {
      * @param pendingCpuCount - scheduled number of CPUs
      */
     public void updatePendingData(int pendingMemory, int pendingCpuCount) {
-        synchronized (getLockObj()) {
+        synchronized (this) {
             cachedVds.setPendingVcpusCount(pendingCpuCount);
             cachedVds.setPendingVmemSize(pendingMemory);
             HostMonitoring.refreshCommitedMemory(cachedVds, getVmDynamicDao().getAllRunningForVds(getVdsId()), resourceManager);
@@ -569,7 +568,7 @@ public class VdsManager {
     }
 
     public void setStatus(VDSStatus status, VDS vds) {
-        synchronized (getLockObj()) {
+        synchronized (this) {
 
             // non-responsive event during moving host to maintenance should be ignored
             if (isNetworkExceptionDuringMaintenance(status)) {
@@ -1088,10 +1087,6 @@ public class VdsManager {
 
     public boolean isTimeToRefreshStatistics() {
         return refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
-    }
-
-    public Object getLockObj() {
-        return lockObj;
     }
 
     public boolean getbeforeFirstRefresh() {
