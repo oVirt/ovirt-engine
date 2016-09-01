@@ -63,8 +63,6 @@ public class BatchProcedureCallTest extends BaseDaoTestCase {
         List<Tags> tagsAfterInsert = dao.getAll();
         assertNotNull(tagsAfterInsert);
         assertEquals(data.size(), tagsAfterInsert.size());
-        for (Tags tag : tagsAfterInsert) {
-            assertTrue(data.contains(tag));
-        }
+        assertTrue(data.containsAll(tagsAfterInsert));
     }
 }
