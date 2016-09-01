@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +16,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class GlusterOptionDaoImpl extends MassOperationsGenericDao<GlusterVolumeOptionEntity, Guid> implements GlusterOptionDao {
-    private static final RowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
+    private static final RowMapper<GlusterVolumeOptionEntity> optionRowMapper = (rs, rowNum) -> {
+        GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
+        option.setId(getGuidDefaultEmpty(rs, "id"));
+        option.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
+        option.setKey(rs.getString("option_key"));
+        option.setValue(rs.getString("option_val"));
+        return option;
+    };
 
     public GlusterOptionDaoImpl() {
         super("GlusterOption");
@@ -68,19 +73,6 @@ public class GlusterOptionDaoImpl extends MassOperationsGenericDao<GlusterVolume
                 .addValue("volume_id", option.getVolumeId())
                 .addValue("option_key", option.getKey())
                 .addValue("option_val", option.getValue());
-    }
-
-    private static final class VolumeOptionRowMapper implements RowMapper<GlusterVolumeOptionEntity> {
-        @Override
-        public GlusterVolumeOptionEntity mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
-            option.setId(getGuidDefaultEmpty(rs, "id"));
-            option.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
-            option.setKey(rs.getString("option_key"));
-            option.setValue(rs.getString("option_val"));
-            return option;
-        }
     }
 
     @Override

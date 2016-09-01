@@ -64,13 +64,7 @@ public abstract class BaseDao {
      *         column is called.
      */
     protected RowMapper<Guid> createGuidMapper() {
-        return new RowMapper<Guid>() {
-
-            @Override
-            public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new Guid((UUID) rs.getObject(1));
-            }
-        };
+        return (rs, rowNum) -> new Guid((UUID) rs.getObject(1));
     }
 
     protected SimpleJdbcCallsHandler getCallsHandler() {

@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.dao;
 
 import java.io.Serializable;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,66 +30,44 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid> implements CommandEntityDao {
 
-    private static class IdRowMapper implements RowMapper<Guid> {
-        public static final IdRowMapper instance = new IdRowMapper();
+    private static final RowMapper<Guid> idRowMapper = (rs, rowNum) -> getGuidDefaultEmpty(rs, "id");
 
-        @Override
-        public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return getGuidDefaultEmpty(rs, "id");
-        }
-
-    }
-
-    private static class CoCoCmdEntityRowMapper implements RowMapper<CommandAssociatedEntity> {
-
-        public static final RowMapper<CommandAssociatedEntity> instance = new CoCoCmdEntityRowMapper();
-
-        @Override
-        public CommandAssociatedEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-            CommandAssociatedEntity entity = new CommandAssociatedEntity(getGuid(rs, "command_id"),
-                    VdcObjectType.valueOf(rs.getString("entity_type")),
-                    getGuid(rs, "entity_id"));
-            entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
-            return entity;
-        }
-    }
-
-    private static RowMapper<CommandEntity> mapper = new RowMapper<CommandEntity>() {
-
-        @Override
-        public CommandEntity mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-            CommandEntity result = new CommandEntity();
-            result.setEngineSessionSeqId(resultSet.getLong("engine_session_seq_id"));
-            result.setUserId(Guid.createGuidFromString(resultSet.getString("user_id")));
-            result.setId(Guid.createGuidFromString(resultSet.getString("command_id")));
-            result.setJobId(Guid.createGuidFromString(resultSet.getString("job_id")));
-            result.setStepId(Guid.createGuidFromString(resultSet.getString("step_id")));
-            result.setCreatedAt(DbFacadeUtils.fromDate(resultSet.getTimestamp("created_at")));
-            result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
-            result.setParentCommandId(Guid.createGuidFromString(resultSet.getString("parent_command_id")));
-            result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
-            result.setCommandParameters(deserializeParameters(resultSet.getString("command_parameters"), resultSet.getString("command_params_class")));
-            result.setReturnValue(deserializeReturnValue(resultSet.getString("return_value"), resultSet.getString("return_value_class")));
-            result.setCommandStatus(getCommandStatus(resultSet.getString("status")));
-            result.setExecuted(resultSet.getBoolean("executed"));
-            result.setCallbackEnabled(resultSet.getBoolean("callback_enabled"));
-            result.setCallbackNotified(resultSet.getBoolean("callback_notified"));
-            result.setData(SerializationFactory.getDeserializer().deserialize(resultSet.getString("data"), HashMap.class));
-            return result;
-        }
+    private static final RowMapper<CommandAssociatedEntity> coCoCmdEntityRowMapper = (rs, rowNum) -> {
+        CommandAssociatedEntity entity = new CommandAssociatedEntity(getGuid(rs, "command_id"),
+                VdcObjectType.valueOf(rs.getString("entity_type")),
+                getGuid(rs, "entity_id"));
+        entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
+        return entity;
     };
 
-    private MapSqlParameterMapper<CommandAssociatedEntity> cocoCmdEntityMapper = new MapSqlParameterMapper<CommandAssociatedEntity>() {
+    private static RowMapper<CommandEntity> mapper = (resultSet, rowNum) -> {
+        CommandEntity result = new CommandEntity();
+        result.setEngineSessionSeqId(resultSet.getLong("engine_session_seq_id"));
+        result.setUserId(Guid.createGuidFromString(resultSet.getString("user_id")));
+        result.setId(Guid.createGuidFromString(resultSet.getString("command_id")));
+        result.setJobId(Guid.createGuidFromString(resultSet.getString("job_id")));
+        result.setStepId(Guid.createGuidFromString(resultSet.getString("step_id")));
+        result.setCreatedAt(DbFacadeUtils.fromDate(resultSet.getTimestamp("created_at")));
+        result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
+        result.setParentCommandId(Guid.createGuidFromString(resultSet.getString("parent_command_id")));
+        result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
+        result.setCommandParameters(deserializeParameters(resultSet.getString("command_parameters"), resultSet.getString("command_params_class")));
+        result.setReturnValue(deserializeReturnValue(resultSet.getString("return_value"), resultSet.getString("return_value_class")));
+        result.setCommandStatus(getCommandStatus(resultSet.getString("status")));
+        result.setExecuted(resultSet.getBoolean("executed"));
+        result.setCallbackEnabled(resultSet.getBoolean("callback_enabled"));
+        result.setCallbackNotified(resultSet.getBoolean("callback_notified"));
+        result.setData(SerializationFactory.getDeserializer().deserialize(resultSet.getString("data"), HashMap.class));
+        return result;
+    };
 
-        @Override
-        public MapSqlParameterSource map(CommandAssociatedEntity entity) {
-            CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
-            paramSource.addValue("command_id", entity.getCommandId()).
-                    addValue("entity_id", entity.getEntityId()).
-                    addValue("entity_type", entity.getEntityType().toString());
-            return paramSource;
+    private MapSqlParameterMapper<CommandAssociatedEntity> cocoCmdEntityMapper = entity -> {
+        CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
+        paramSource.addValue("command_id", entity.getCommandId()).
+                addValue("entity_id", entity.getEntityId()).
+                addValue("entity_type", entity.getEntityType().toString());
+        return paramSource;
 
-        }
     };
 
     private static CommandStatus getCommandStatus(String statusStr) {
@@ -209,7 +185,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("entity_id", entityId);
         return getCallsHandler().executeReadList("GetCommandIdsByEntityId",
-                IdRowMapper.instance,
+                idRowMapper,
                 parameterSource);
     }
 
@@ -224,7 +200,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("command_id", cmdId);
         return getCallsHandler().executeReadList("GetCommandAssociatedEntities",
-                CoCoCmdEntityRowMapper.instance,
+                coCoCmdEntityRowMapper,
                 parameterSource);
     }
 

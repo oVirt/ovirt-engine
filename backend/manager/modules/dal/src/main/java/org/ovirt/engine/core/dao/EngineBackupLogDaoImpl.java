@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -15,25 +12,20 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class EngineBackupLogDaoImpl extends BaseDao implements EngineBackupLogDao {
 
-    private static class EngineBackupLogRowMapper implements RowMapper<EngineBackupLog> {
-        public static final EngineBackupLogRowMapper INSTANCE = new EngineBackupLogRowMapper();
-
-        @Override
-        public EngineBackupLog mapRow(ResultSet rs, int rowNum) throws SQLException {
-            EngineBackupLog entity = new EngineBackupLog();
-            entity.setScope(rs.getString("scope"));
-            entity.setDoneAt(DbFacadeUtils.fromDate(rs.getTimestamp("done_at")));
-            entity.setPassed(rs.getBoolean("is_passed"));
-            entity.setFqdn(rs.getString("fqdn"));
-            entity.setOutputMessage(rs.getString("output_message"));
-            entity.setLogPath(rs.getString("log_path"));
-            return entity;
-        }
-    }
+    private static final RowMapper<EngineBackupLog> engineBackupLogRowMapper = (rs, numRow) -> {
+        EngineBackupLog entity = new EngineBackupLog();
+        entity.setScope(rs.getString("scope"));
+        entity.setDoneAt(DbFacadeUtils.fromDate(rs.getTimestamp("done_at")));
+        entity.setPassed(rs.getBoolean("is_passed"));
+        entity.setFqdn(rs.getString("fqdn"));
+        entity.setOutputMessage(rs.getString("output_message"));
+        entity.setLogPath(rs.getString("log_path"));
+        return entity;
+    };
 
     @Override
     public EngineBackupLog getLastSuccessfulEngineBackup(String scope) {
-        return getCallsHandler().executeRead("GetLastSuccessfulEngineBackup", EngineBackupLogRowMapper.INSTANCE,
+        return getCallsHandler().executeRead("GetLastSuccessfulEngineBackup", engineBackupLogRowMapper,
                 getCustomMapSqlParameterSource().addValue("scope", scope));
     }
 

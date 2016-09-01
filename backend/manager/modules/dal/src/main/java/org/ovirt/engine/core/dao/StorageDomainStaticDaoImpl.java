@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -29,7 +27,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
     @Override
     public StorageDomainStatic getByName(String name) {
         return getCallsHandler().executeRead("Getstorage_domain_staticByName",
-                StorageDomainStaticRowMapper.instance,
+                storageDomainStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("name", name));
     }
@@ -37,7 +35,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
     @Override
     public StorageDomainStatic getByName(String name, Guid userId, boolean filtered) {
         return getCallsHandler().executeRead("Getstorage_domain_staticByNameFiltered",
-                StorageDomainStaticRowMapper.instance,
+                storageDomainStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("name", name)
                         .addValue("user_id", userId)
@@ -47,7 +45,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
     @Override
     public List<StorageDomainStatic> getAllForStoragePool(Guid id) {
         return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_pool_id",
-                StorageDomainStaticRowMapper.instance,
+                storageDomainStaticRowMapper,
                 getStoragePoolIdParameterSource(id));
     }
 
@@ -61,12 +59,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
         MapSqlParameterSource parameterSource = getStoragePoolIdParameterSource(pool)
                 .addValue("status", status.getValue());
 
-        RowMapper<Guid> mapper = new RowMapper<Guid>() {
-            @Override
-            public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return getGuidDefaultEmpty(rs, "storage_id");
-            }
-        };
+        RowMapper<Guid> mapper = (rs, rowNum) -> getGuidDefaultEmpty(rs, "storage_id");
 
         return getCallsHandler().executeReadList("GetStorageDomainIdsByStoragePoolIdAndStatus", mapper, parameterSource);
     }
@@ -97,33 +90,23 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
 
     @Override
     protected RowMapper<StorageDomainStatic> createEntityRowMapper() {
-        return StorageDomainStaticRowMapper.instance;
+        return storageDomainStaticRowMapper;
     }
 
-    private static final class StorageDomainStaticRowMapper implements RowMapper<StorageDomainStatic> {
-        public static final StorageDomainStaticRowMapper instance = new StorageDomainStaticRowMapper();
-
-        @Override
-        public StorageDomainStatic mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            StorageDomainStatic entity = new StorageDomainStatic();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setStorage(rs.getString("storage"));
-            entity.setStorageName(rs.getString("storage_name"));
-            entity.setDescription(rs.getString("storage_description"));
-            entity.setComment(rs.getString("storage_comment"));
-            entity.setStorageType(StorageType.forValue(rs
-                    .getInt("storage_type")));
-            entity.setStorageDomainType(StorageDomainType.forValue(rs
-                    .getInt("storage_domain_type")));
-            entity.setStorageFormat(StorageFormatType.forValue(rs
-                    .getString("storage_domain_format_type")));
-            entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
-            entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
-            entity.setWarningLowSpaceIndicator((Integer) rs.getObject("warning_low_space_indicator"));
-            entity.setCriticalSpaceActionBlocker((Integer) rs.getObject("critical_space_action_blocker"));
-            return entity;
-        }
-    }
-
+    private static final RowMapper<StorageDomainStatic> storageDomainStaticRowMapper = (rs, rowNum) -> {
+        StorageDomainStatic entity = new StorageDomainStatic();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setStorage(rs.getString("storage"));
+        entity.setStorageName(rs.getString("storage_name"));
+        entity.setDescription(rs.getString("storage_description"));
+        entity.setComment(rs.getString("storage_comment"));
+        entity.setStorageType(StorageType.forValue(rs.getInt("storage_type")));
+        entity.setStorageDomainType(StorageDomainType.forValue(rs.getInt("storage_domain_type")));
+        entity.setStorageFormat(StorageFormatType.forValue(rs.getString("storage_domain_format_type")));
+        entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
+        entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
+        entity.setWarningLowSpaceIndicator((Integer) rs.getObject("warning_low_space_indicator"));
+        entity.setCriticalSpaceActionBlocker((Integer) rs.getObject("critical_space_action_blocker"));
+        return entity;
+    };
 }

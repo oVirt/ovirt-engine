@@ -33,7 +33,34 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     @Inject
     private HostNetworkQosDao hostNetworkQosDao;
 
-    private NetworkAttachmentRowMapper networkAttachmentRowMapper = new NetworkAttachmentRowMapper();
+    private final RowMapper<NetworkAttachment> networkAttachmentRowMapper = (rs, rowNum) -> {
+        NetworkAttachment entity = new NetworkAttachment();
+        entity.setId(getGuid(rs, "id"));
+        entity.setNetworkId(getGuid(rs, "network_id"));
+        entity.setNicId(getGuid(rs, "nic_id"));
+        entity.setProperties(getCustomProperties(rs));
+
+        final IpConfiguration ipConfiguration = new IpConfiguration();
+
+        final String bootProtocol = rs.getString("boot_protocol");
+        if (bootProtocol != null) {
+            final IPv4Address iPv4Address = createIpv4Address(rs, bootProtocol);
+            ipConfiguration.getIPv4Addresses().add(iPv4Address);
+        }
+
+        final String v6BootProtocol = rs.getString("ipv6_boot_protocol");
+        if (v6BootProtocol != null) {
+            final IpV6Address ipV6Address = createIpV6Address(rs, v6BootProtocol);
+            ipConfiguration.getIpV6Addresses().add(ipV6Address);
+        }
+
+        if (bootProtocol != null || v6BootProtocol != null) {
+            entity.setIpConfiguration(ipConfiguration);
+        }
+        entity.setHostNetworkQos(asAnonymousHostNetworkQos(hostNetworkQosDao.get(entity.getId())));
+
+        return entity;
+    };
 
     public NetworkAttachmentDaoImpl() {
         super("NetworkAttachment");
@@ -179,62 +206,29 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
         }
     }
 
-    private class NetworkAttachmentRowMapper implements RowMapper<NetworkAttachment> {
+    private static IPv4Address createIpv4Address(ResultSet rs, String bootProtocol) throws SQLException {
+        final IPv4Address iPv4Address = new IPv4Address();
+        iPv4Address.setBootProtocol(Ipv4BootProtocol.valueOf(bootProtocol));
+        iPv4Address.setAddress(rs.getString("address"));
+        iPv4Address.setNetmask(rs.getString("netmask"));
+        iPv4Address.setGateway(rs.getString("gateway"));
+        return iPv4Address;
+    }
 
-        @Override
-        public NetworkAttachment mapRow(ResultSet rs, int rowNum) throws SQLException {
-            NetworkAttachment entity = new NetworkAttachment();
-            entity.setId(getGuid(rs, "id"));
-            entity.setNetworkId(getGuid(rs, "network_id"));
-            entity.setNicId(getGuid(rs, "nic_id"));
-            entity.setProperties(getCustomProperties(rs));
-
-            final IpConfiguration ipConfiguration = new IpConfiguration();
-
-            final String bootProtocol = rs.getString("boot_protocol");
-            if (bootProtocol != null) {
-                final IPv4Address iPv4Address = createIpv4Address(rs, bootProtocol);
-                ipConfiguration.getIPv4Addresses().add(iPv4Address);
-            }
-
-            final String v6BootProtocol = rs.getString("ipv6_boot_protocol");
-            if (v6BootProtocol != null) {
-                final IpV6Address ipV6Address = createIpV6Address(rs, v6BootProtocol);
-                ipConfiguration.getIpV6Addresses().add(ipV6Address);
-            }
-
-            if (bootProtocol != null || v6BootProtocol != null) {
-                entity.setIpConfiguration(ipConfiguration);
-            }
-            entity.setHostNetworkQos(asAnonymousHostNetworkQos(hostNetworkQosDao.get(entity.getId())));
-
-            return entity;
+    private static IpV6Address createIpV6Address(ResultSet rs, String v6BootProtocol) throws SQLException {
+        final IpV6Address ipV6Address = new IpV6Address();
+        ipV6Address.setBootProtocol(Ipv6BootProtocol.valueOf(v6BootProtocol));
+        ipV6Address.setAddress(rs.getString("ipv6_address"));
+        if (rs.getObject("ipv6_prefix") != null) {
+            ipV6Address.setPrefix(rs. getInt("ipv6_prefix"));
         }
+        ipV6Address.setGateway(rs.getString("ipv6_gateway"));
+        return ipV6Address;
+    }
 
-        private IPv4Address createIpv4Address(ResultSet rs, String bootProtocol) throws SQLException {
-            final IPv4Address iPv4Address = new IPv4Address();
-            iPv4Address.setBootProtocol(Ipv4BootProtocol.valueOf(bootProtocol));
-            iPv4Address.setAddress(rs.getString("address"));
-            iPv4Address.setNetmask(rs.getString("netmask"));
-            iPv4Address.setGateway(rs.getString("gateway"));
-            return iPv4Address;
-        }
-
-        private IpV6Address createIpV6Address(ResultSet rs, String v6BootProtocol) throws SQLException {
-            final IpV6Address ipV6Address = new IpV6Address();
-            ipV6Address.setBootProtocol(Ipv6BootProtocol.valueOf(v6BootProtocol));
-            ipV6Address.setAddress(rs.getString("ipv6_address"));
-            if (rs.getObject("ipv6_prefix") != null) {
-                ipV6Address.setPrefix(rs. getInt("ipv6_prefix"));
-            }
-            ipV6Address.setGateway(rs.getString("ipv6_gateway"));
-            return ipV6Address;
-        }
-
-        @SuppressWarnings("unchecked")
-        private Map<String, String> getCustomProperties(ResultSet rs) throws SQLException {
-            return SerializationFactory.getDeserializer()
-                    .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class);
-        }
+    @SuppressWarnings("unchecked")
+    private static Map<String, String> getCustomProperties(ResultSet rs) throws SQLException {
+        return SerializationFactory.getDeserializer()
+                .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class);
     }
 }

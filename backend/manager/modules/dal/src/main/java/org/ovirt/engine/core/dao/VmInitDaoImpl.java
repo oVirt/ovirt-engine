@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -22,7 +20,7 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
     @Override
     public VmInit get(Guid id) {
         return getCallsHandler().executeRead("GetVmInitByVmId",
-                VMInitRowMapper.instance,
+                vmInitRowMapper,
                 getIdParamterSource(id));
     }
 
@@ -49,7 +47,7 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
     @Override
     public List<VmInit> getVmInitByIds(List<Guid> ids) {
         return getCallsHandler().executeReadList("GetVmInitByids",
-                VMInitRowMapper.instance,
+                vmInitRowMapper,
                 getCustomMapSqlParameterSource().addValue("vm_init_ids", StringUtils.join(ids, ',')));
     }
 
@@ -81,34 +79,29 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
                 .addValue("org_name", vmInit.getOrgName());
     }
 
-    private static class VMInitRowMapper implements RowMapper<VmInit> {
-        public static final VMInitRowMapper instance = new VMInitRowMapper();
+    private static final RowMapper<VmInit> vmInitRowMapper = (rs, rowNum) -> {
+        final VmInit entity = new VmInit();
 
-        @Override
-        public VmInit mapRow(ResultSet rs, int rowNum) throws SQLException {
-            final VmInit entity = new VmInit();
+        entity.setId(getGuidDefaultEmpty(rs, "vm_id"));
+        entity.setHostname(rs.getString("host_name"));
+        entity.setDomain(rs.getString("domain"));
+        entity.setAuthorizedKeys(rs.getString("authorized_keys"));
+        entity.setRegenerateKeys(rs.getBoolean("regenerate_keys"));
+        entity.setTimeZone(rs.getString("time_zone"));
+        entity.setNetworks(VmInitUtils.jsonNetworksToList(rs.getString("networks")));
+        entity.setRootPassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
+        entity.setWinKey(rs.getString("winkey"));
+        entity.setDnsServers(rs.getString("dns_servers"));
+        entity.setDnsSearch(rs.getString("dns_search_domains"));
+        entity.setCustomScript(rs.getString("custom_script"));
+        entity.setInputLocale(rs.getString("input_locale"));
+        entity.setUiLanguage(rs.getString("ui_language"));
+        entity.setSystemLocale(rs.getString("system_locale"));
+        entity.setUserLocale(rs.getString("user_locale"));
+        entity.setUserName(rs.getString("user_name"));
+        entity.setActiveDirectoryOU(rs.getString("active_directory_ou"));
+        entity.setOrgName(rs.getString("org_name"));
 
-            entity.setId(getGuidDefaultEmpty(rs, "vm_id"));
-            entity.setHostname(rs.getString("host_name"));
-            entity.setDomain(rs.getString("domain"));
-            entity.setAuthorizedKeys(rs.getString("authorized_keys"));
-            entity.setRegenerateKeys(rs.getBoolean("regenerate_keys"));
-            entity.setTimeZone(rs.getString("time_zone"));
-            entity.setNetworks(VmInitUtils.jsonNetworksToList(rs.getString("networks")));
-            entity.setRootPassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
-            entity.setWinKey(rs.getString("winkey"));
-            entity.setDnsServers(rs.getString("dns_servers"));
-            entity.setDnsSearch(rs.getString("dns_search_domains"));
-            entity.setCustomScript(rs.getString("custom_script"));
-            entity.setInputLocale(rs.getString("input_locale"));
-            entity.setUiLanguage(rs.getString("ui_language"));
-            entity.setSystemLocale(rs.getString("system_locale"));
-            entity.setUserLocale(rs.getString("user_locale"));
-            entity.setUserName(rs.getString("user_name"));
-            entity.setActiveDirectoryOU(rs.getString("active_directory_ou"));
-            entity.setOrgName(rs.getString("org_name"));
-
-            return entity;
-        }
-    }
+        return entity;
+    };
 }

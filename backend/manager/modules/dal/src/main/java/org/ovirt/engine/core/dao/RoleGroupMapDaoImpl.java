@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -20,15 +18,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class RoleGroupMapDaoImpl extends BaseDao implements RoleGroupMapDao {
-    private static class RoleGroupMapRowMapper implements RowMapper<RoleGroupMap> {
-        public static final RoleGroupMapRowMapper instance = new RoleGroupMapRowMapper();
-
-        @Override
-        public RoleGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")),
-                    getGuidDefaultEmpty(rs, "role_id"));
-        }
-    }
+    private static final RowMapper<RoleGroupMap> roleGroupMapRowMapper =(rs, rowNum) ->
+        new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")), getGuidDefaultEmpty(rs, "role_id"));
 
     @Override
     public RoleGroupMap getByActionGroupAndRole(ActionGroup group, Guid id) {
@@ -36,7 +27,7 @@ public class RoleGroupMapDaoImpl extends BaseDao implements RoleGroupMapDao {
                 .addValue("action_group_id", group.getId()).addValue("role_id", id);
 
         return getCallsHandler().executeRead("Get_roles_groups_By_action_group_id_And_By_role_id",
-                RoleGroupMapRowMapper.instance,
+                roleGroupMapRowMapper,
                 parameterSource);
     }
 
@@ -46,7 +37,7 @@ public class RoleGroupMapDaoImpl extends BaseDao implements RoleGroupMapDao {
                 .addValue("role_id", id);
 
         return getCallsHandler().executeReadList("Get_role_groups_By_role_id",
-                RoleGroupMapRowMapper.instance,
+                roleGroupMapRowMapper,
                 parameterSource);
     }
 

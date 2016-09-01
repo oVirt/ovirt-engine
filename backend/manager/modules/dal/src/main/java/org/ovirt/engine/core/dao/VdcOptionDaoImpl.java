@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -19,27 +17,21 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
 
-    private static final class VdcOptionRowMapper implements RowMapper<VdcOption> {
-        public static final VdcOptionRowMapper instance = new VdcOptionRowMapper();
-
-        @Override
-        public VdcOption mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            VdcOption entity = new VdcOption();
-            entity.setOptionName(rs.getString("option_name"));
-            entity.setOptionValue(rs.getString("option_value"));
-            entity.setOptionId(rs.getInt("option_id"));
-            entity.setVersion(rs.getString("version"));
-            return entity;
-        }
-    }
+    private static final RowMapper<VdcOption> vdcOptionRowMapper = (rs, rowNum) -> {
+        VdcOption entity = new VdcOption();
+        entity.setOptionName(rs.getString("option_name"));
+        entity.setOptionValue(rs.getString("option_value"));
+        entity.setOptionId(rs.getInt("option_id"));
+        entity.setVersion(rs.getString("version"));
+        return entity;
+    };
 
     @Override
     public VdcOption get(int id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("option_id", id);
 
-        return getCallsHandler().executeRead("GetVdcOptionById", VdcOptionRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetVdcOptionById", vdcOptionRowMapper, parameterSource);
     }
 
     @Override
@@ -47,14 +39,14 @@ public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("option_name", name).addValue("version", version);
 
-        return getCallsHandler().executeRead("GetVdcOptionByName", VdcOptionRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetVdcOptionByName", vdcOptionRowMapper, parameterSource);
     }
 
     @Override
     public List<VdcOption> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        return getCallsHandler().executeReadList("GetAllFromVdcOption", VdcOptionRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVdcOption", vdcOptionRowMapper, parameterSource);
     }
 
     @Override

@@ -211,68 +211,63 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
 
     @Override
     protected RowMapper<VmDynamic> createEntityRowMapper() {
-        return VmDynamicRowMapper.instance;
+        return vmDynamicRowMapper;
     }
 
-    private static class VmDynamicRowMapper implements RowMapper<VmDynamic> {
-        public static final VmDynamicRowMapper instance = new VmDynamicRowMapper();
-
-        @Override
-        public VmDynamic mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VmDynamic entity = new VmDynamic();
-            entity.setAppList(rs.getString("app_list"));
-            entity.setGuestCurrentUserName(rs.getString("guest_cur_user_name"));
-            entity.setConsoleCurrentUserName(rs.getString("console_cur_user_name"));
-            entity.setConsoleUserId(getGuid(rs, "console_user_id"));
-            entity.setGuestOs(rs.getString("guest_os"));
-            entity.setMigratingToVds(getGuid(rs, "migrating_to_vds"));
-            entity.setRunOnVds(getGuid(rs, "run_on_vds"));
-            entity.setStatus(VMStatus.forValue(rs.getInt("status")));
-            entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
-            entity.setVmHost(rs.getString("vm_host"));
-            entity.setVmIp(rs.getString("vm_ip"));
-            entity.setVmFQDN(rs.getString("vm_fqdn"));
-            entity.setLastStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_start_time")));
-            entity.setLastStopTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_stop_time")));
-            entity.setVmPid((Integer) rs.getObject("vm_pid"));
-            entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
-            entity.setSession(SessionState.forValue(rs.getInt("session")));
-            entity.setKvmEnable((Boolean) rs.getObject("kvm_enable"));
-            entity.setBootSequence(BootSequence.forValue(rs.getInt("boot_sequence")));
-            entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
-            entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));
-            entity.setClientIp(rs.getString("client_ip"));
-            entity.setGuestRequestedMemory((Integer) rs.getObject("guest_requested_memory"));
-            VmExitStatus exitStatus = VmExitStatus.forValue(rs.getInt("exit_status"));
-            VmPauseStatus pauseStatus = VmPauseStatus.forValue(rs.getInt("pause_status"));
-            entity.setExitMessage(rs.getString("exit_message"));
-            entity.setExitStatus(exitStatus);
-            entity.setPauseStatus(pauseStatus);
-            entity.setGuestAgentNicsHash(rs.getInt("guest_agent_nics_hash"));
-            entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
-            entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));
-            entity.setRunOnce(rs.getBoolean("is_run_once"));
-            entity.setCpuName(rs.getString("cpu_name"));
-            entity.setGuestAgentStatus(GuestAgentStatus.forValue(rs.getInt("guest_agent_status")));
-            entity.setCurrentCd(rs.getString("current_cd"));
-            entity.setStopReason(rs.getString("reason"));
-            VmExitReason exitReason = VmExitReason.forValue(rs.getInt("exit_reason"));
-            entity.setExitReason(exitReason);
-            entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
-            entity.setEmulatedMachine(rs.getString("emulated_machine"));
-            setGraphicsToEntity(rs, entity);
-            entity.setGuestOsTimezoneOffset(rs.getInt("guest_timezone_offset"));
-            entity.setGuestOsTimezoneName(rs.getString("guest_timezone_name"));
-            entity.setGuestOsArch(rs.getInt("guestos_arch"));
-            entity.setGuestOsCodename(rs.getString("guestos_codename"));
-            entity.setGuestOsDistribution(rs.getString("guestos_distribution"));
-            entity.setGuestOsKernelVersion(rs.getString("guestos_kernel_version"));
-            entity.setGuestOsType(rs.getString("guestos_type"));
-            entity.setGuestOsVersion(rs.getString("guestos_version"));
-            entity.setGuestContainers(fromContainersString(rs.getString("guest_containers")));
-            return entity;
-        }
-    }
+    private static final RowMapper<VmDynamic> vmDynamicRowMapper = (rs, rowNum) -> {
+        VmDynamic entity = new VmDynamic();
+        entity.setAppList(rs.getString("app_list"));
+        entity.setGuestCurrentUserName(rs.getString("guest_cur_user_name"));
+        entity.setConsoleCurrentUserName(rs.getString("console_cur_user_name"));
+        entity.setConsoleUserId(getGuid(rs, "console_user_id"));
+        entity.setGuestOs(rs.getString("guest_os"));
+        entity.setMigratingToVds(getGuid(rs, "migrating_to_vds"));
+        entity.setRunOnVds(getGuid(rs, "run_on_vds"));
+        entity.setStatus(VMStatus.forValue(rs.getInt("status")));
+        entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
+        entity.setVmHost(rs.getString("vm_host"));
+        entity.setVmIp(rs.getString("vm_ip"));
+        entity.setVmFQDN(rs.getString("vm_fqdn"));
+        entity.setLastStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_start_time")));
+        entity.setLastStopTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_stop_time")));
+        entity.setVmPid((Integer) rs.getObject("vm_pid"));
+        entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
+        entity.setSession(SessionState.forValue(rs.getInt("session")));
+        entity.setKvmEnable((Boolean) rs.getObject("kvm_enable"));
+        entity.setBootSequence(BootSequence.forValue(rs.getInt("boot_sequence")));
+        entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
+        entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));
+        entity.setClientIp(rs.getString("client_ip"));
+        entity.setGuestRequestedMemory((Integer) rs.getObject("guest_requested_memory"));
+        VmExitStatus exitStatus = VmExitStatus.forValue(rs.getInt("exit_status"));
+        VmPauseStatus pauseStatus = VmPauseStatus.forValue(rs.getInt("pause_status"));
+        entity.setExitMessage(rs.getString("exit_message"));
+        entity.setExitStatus(exitStatus);
+        entity.setPauseStatus(pauseStatus);
+        entity.setGuestAgentNicsHash(rs.getInt("guest_agent_nics_hash"));
+        entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
+        entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));
+        entity.setRunOnce(rs.getBoolean("is_run_once"));
+        entity.setCpuName(rs.getString("cpu_name"));
+        entity.setGuestAgentStatus(GuestAgentStatus.forValue(rs.getInt("guest_agent_status")));
+        entity.setCurrentCd(rs.getString("current_cd"));
+        entity.setStopReason(rs.getString("reason"));
+        VmExitReason exitReason = VmExitReason.forValue(rs.getInt("exit_reason"));
+        entity.setExitReason(exitReason);
+        entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
+        entity.setEmulatedMachine(rs.getString("emulated_machine"));
+        setGraphicsToEntity(rs, entity);
+        entity.setGuestOsTimezoneOffset(rs.getInt("guest_timezone_offset"));
+        entity.setGuestOsTimezoneName(rs.getString("guest_timezone_name"));
+        entity.setGuestOsArch(rs.getInt("guestos_arch"));
+        entity.setGuestOsCodename(rs.getString("guestos_codename"));
+        entity.setGuestOsDistribution(rs.getString("guestos_distribution"));
+        entity.setGuestOsKernelVersion(rs.getString("guestos_kernel_version"));
+        entity.setGuestOsType(rs.getString("guestos_type"));
+        entity.setGuestOsVersion(rs.getString("guestos_version"));
+        entity.setGuestContainers(fromContainersString(rs.getString("guest_containers")));
+        return entity;
+    };
 
     private static void setGraphicsToEntity(ResultSet rs, VmDynamic entity) throws SQLException {
         GraphicsInfo graphicsInfo = new GraphicsInfo();
@@ -294,6 +289,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     protected static RowMapper<VmDynamic> getRowMapper() {
-        return VmDynamicRowMapper.instance;
+        return vmDynamicRowMapper;
     }
 }

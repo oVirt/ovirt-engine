@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,32 +22,27 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
 
-    private static class EngineSessionRowMapper implements RowMapper<EngineSession> {
-        public static final EngineSessionRowMapper instance = new EngineSessionRowMapper();
+    private static final RowMapper<EngineSession> engineSessionRowMapper = (rs, rowNum) -> {
+        EngineSession session = new EngineSession();
+        session.setId(rs.getLong("id"));
+        session.setEngineSessionId(rs.getString("engine_session_id"));
+        session.setUserId(getGuidDefaultEmpty(rs, "user_id"));
+        session.setUserName(rs.getString("user_name"));
+        session.setAuthzName(rs.getString("authz_name"));
+        session.setSourceIp(rs.getString("source_ip"));
+        session.setGroupIds(convertToGuidList(rs.getString("group_ids"), ','));
+        session.setRoleIds(convertToGuidList(rs.getString("role_ids"), ','));
+        return session;
+    };
 
-        @Override
-        public EngineSession mapRow(ResultSet rs, int rowNum) throws SQLException {
-            EngineSession session = new EngineSession();
-            session.setId(rs.getLong("id"));
-            session.setEngineSessionId(rs.getString("engine_session_id"));
-            session.setUserId(getGuidDefaultEmpty(rs, "user_id"));
-            session.setUserName(rs.getString("user_name"));
-            session.setAuthzName(rs.getString("authz_name"));
-            session.setSourceIp(rs.getString("source_ip"));
-            session.setGroupIds(convertToGuidList(rs.getString("group_ids"), ','));
-            session.setRoleIds(convertToGuidList(rs.getString("role_ids"), ','));
-            return session;
-        }
-
-        private LinkedList<Guid> convertToGuidList(String str, char delimiter) {
-            LinkedList<Guid> results = new LinkedList<>();
-            if (str != null) {
-                for (String id : str.split(String.format(" *%s *", delimiter))) {
-                    results.add(Guid.createGuidFromString(id));
-                }
+    private static LinkedList<Guid> convertToGuidList(String str, char delimiter) {
+        LinkedList<Guid> results = new LinkedList<>();
+        if (str != null) {
+            for (String id : str.split(String.format(" *%s *", delimiter))) {
+                results.add(Guid.createGuidFromString(id));
             }
-            return results;
         }
+        return results;
     }
 
     private static class EngineSessionParameterSource extends CustomMapSqlParameterSource {
@@ -72,7 +65,7 @@ public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        return getCallsHandler().executeRead("GetEngineSession", EngineSessionRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetEngineSession", engineSessionRowMapper, parameterSource);
     }
 
     @Override
@@ -80,7 +73,7 @@ public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("engine_session_id", id);
 
-        return getCallsHandler().executeRead("GetEngineSessionBySessionId", EngineSessionRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetEngineSessionBySessionId", engineSessionRowMapper, parameterSource);
     }
 
     private EngineSessionParameterSource getEngineSessionParameterSource(EngineSession session) {
@@ -110,6 +103,6 @@ public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
 
     @Override
     public List<EngineSession> getAllWithQuery(String query) {
-        return getJdbcTemplate().query(query, EngineSessionRowMapper.instance);
+        return getJdbcTemplate().query(query, engineSessionRowMapper);
     }
 }

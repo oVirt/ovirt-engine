@@ -166,7 +166,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
 
     private VMTemplateWithPlugInfo getVMTemplatesWithPlugInfo(Guid imageId) {
         return getCallsHandler().executeRead("GetVmTemplatesByImageId",
-                VMTemplateWithPlugInfoRowMapper.instance,
+                vmTemplateWithPlugInfoRowMapper,
                 getCustomMapSqlParameterSource().addValue("image_guid", imageId));
     }
 
@@ -331,17 +331,11 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
         private boolean isPlugged;
     }
 
-    private static final class VMTemplateWithPlugInfoRowMapper implements RowMapper<VMTemplateWithPlugInfo> {
-        public static final VMTemplateWithPlugInfoRowMapper instance = new VMTemplateWithPlugInfoRowMapper();
+    private static final RowMapper<VMTemplateWithPlugInfo> vmTemplateWithPlugInfoRowMapper = (rs, rowNum) -> {
+        VMTemplateWithPlugInfo entity = new VMTemplateWithPlugInfo();
 
-        @Override
-        public VMTemplateWithPlugInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
-            @SuppressWarnings("synthetic-access")
-            VMTemplateWithPlugInfo entity = new VMTemplateWithPlugInfo();
-
-            entity.setPlugged(rs.getBoolean("is_plugged"));
-            entity.setVmTemplate(VMTemplateRowMapper.instance.mapRow(rs, rowNum));
-            return entity;
-        }
-    }
+        entity.setPlugged(rs.getBoolean("is_plugged"));
+        entity.setVmTemplate(VMTemplateRowMapper.instance.mapRow(rs, rowNum));
+        return entity;
+    };
 }

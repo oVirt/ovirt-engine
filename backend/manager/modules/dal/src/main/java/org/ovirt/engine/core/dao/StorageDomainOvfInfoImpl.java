@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
@@ -42,26 +40,22 @@ public class StorageDomainOvfInfoImpl extends DefaultGenericDao<StorageDomainOvf
                 getCustomMapSqlParameterSource().addValue("ovfs_ids", StringUtils.join(ovfIds, ",")));
     }
 
-    private static final RowMapper<StorageDomainOvfInfo> storageDomainInfoRowMapper = new RowMapper<StorageDomainOvfInfo>() {
-
-        @Override
-        public StorageDomainOvfInfo mapRow(ResultSet resultSet, int i) throws SQLException {
-            StorageDomainOvfInfo toReturn = new StorageDomainOvfInfo();
-            toReturn.setStorageDomainId(getGuid(resultSet, "storage_domain_id"));
-            toReturn.setStatus(StorageDomainOvfInfoStatus.forValue(resultSet.getInt("status")));
-            toReturn.setOvfDiskId(getGuid(resultSet, "ovf_disk_id"));
-            Timestamp timestamp = resultSet.getTimestamp("last_updated");
-            if (timestamp != null) {
-                toReturn.setLastUpdated(new Date(timestamp.getTime()));
-            }
-            String storedOvfs = resultSet.getString("stored_ovfs_ids");
-            if (storedOvfs != null && !storedOvfs.isEmpty()) {
-                toReturn.setStoredOvfIds(GuidUtils.getGuidListFromString(resultSet.getString("stored_ovfs_ids")));
-            } else {
-                toReturn.setStoredOvfIds(new LinkedList<>());
-            }
-            return toReturn;
+    private static final RowMapper<StorageDomainOvfInfo> storageDomainInfoRowMapper = (resultSet, i) -> {
+        StorageDomainOvfInfo toReturn = new StorageDomainOvfInfo();
+        toReturn.setStorageDomainId(getGuid(resultSet, "storage_domain_id"));
+        toReturn.setStatus(StorageDomainOvfInfoStatus.forValue(resultSet.getInt("status")));
+        toReturn.setOvfDiskId(getGuid(resultSet, "ovf_disk_id"));
+        Timestamp timestamp = resultSet.getTimestamp("last_updated");
+        if (timestamp != null) {
+            toReturn.setLastUpdated(new Date(timestamp.getTime()));
         }
+        String storedOvfs = resultSet.getString("stored_ovfs_ids");
+        if (storedOvfs != null && !storedOvfs.isEmpty()) {
+            toReturn.setStoredOvfIds(GuidUtils.getGuidListFromString(resultSet.getString("stored_ovfs_ids")));
+        } else {
+            toReturn.setStoredOvfIds(new LinkedList<>());
+        }
+        return toReturn;
     };
 
     @Override

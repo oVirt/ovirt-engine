@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -60,12 +58,8 @@ public class VmAndTemplatesGenerationsImpl extends BaseDao implements VmAndTempl
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId));
     }
 
-    private static final RowMapper<Pair<Guid, String>> ovfDataRowMapper = new RowMapper<Pair<Guid, String>>() {
-        @Override
-        public Pair<Guid, String> mapRow(ResultSet resultSet, int i) throws SQLException {
-            return new Pair<>(getGuid(resultSet, "vm_guid"), resultSet.getString("ovf_data"));
-        }
-    };
+    private static final RowMapper<Pair<Guid, String>> ovfDataRowMapper =
+            (resultSet, i) -> new Pair<>(getGuid(resultSet, "vm_guid"), resultSet.getString("ovf_data"));
 
     @Override
     public List<Pair<Guid, String>> loadOvfDataForIds(List<Guid> ids) {

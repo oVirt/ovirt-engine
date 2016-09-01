@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.scheduling;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -91,14 +89,7 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
 
     @Override
     protected RowMapper<AffinityGroup> createEntityRowMapper() {
-        return AffinityGropupRowMapper.instance;
-    }
-
-    private static class AffinityGropupRowMapper implements RowMapper<AffinityGroup> {
-        public static AffinityGropupRowMapper instance = new AffinityGropupRowMapper();
-
-        @Override
-        public AffinityGroup mapRow(ResultSet rs, int arg1) throws SQLException {
+        return (rs, rowNum) -> {
             AffinityGroup affinityGroup = new AffinityGroup();
             affinityGroup.setId(getGuid(rs, "id"));
             affinityGroup.setName(rs.getString("name"));
@@ -110,7 +101,6 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
             affinityGroup.setEntityNames(split(rs.getString("vm_names")));
 
             return affinityGroup;
-        }
+        };
     }
-
 }

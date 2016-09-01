@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -21,7 +19,7 @@ public class UnregisteredOVFDataDaoImpl extends BaseDao implements UnregisteredO
     @Override
     public List<OvfEntityData> getAllForStorageDomainByEntityType(Guid storageDomainId, VmEntityType entityType) {
         return getCallsHandler().executeReadList("GetAllOVFEntitiesForStorageDomainByEntityType",
-                OvfEntityDataRowMapper.instance,
+                ovfEntityDataRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_domain_id", storageDomainId)
                         .addValue("entity_type", entityType != null ? entityType.name() : null));
@@ -30,7 +28,7 @@ public class UnregisteredOVFDataDaoImpl extends BaseDao implements UnregisteredO
     @Override
     public List<OvfEntityData> getByEntityIdAndStorageDomain(Guid entityId, Guid storageDomainId) {
         return getCallsHandler().executeReadList("GetOVFDataByEntityIdAndStorageDomain",
-                OvfEntityDataRowMapper.instance,
+                ovfEntityDataRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("entity_guid", entityId)
                         .addValue("storage_domain_id", storageDomainId));
@@ -62,21 +60,16 @@ public class UnregisteredOVFDataDaoImpl extends BaseDao implements UnregisteredO
                         .addValue("ovf_extra_data", ovfEntityData.getOvfExtraData()));
     }
 
-    private static class OvfEntityDataRowMapper implements RowMapper<OvfEntityData> {
-        public static final OvfEntityDataRowMapper instance = new OvfEntityDataRowMapper();
-
-        @Override
-        public OvfEntityData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            OvfEntityData entity = new OvfEntityData();
-            entity.setEntityId(getGuid(rs, "entity_guid"));
-            entity.setEntityName(rs.getString("entity_name"));
-            entity.setEntityType(VmEntityType.valueOf(rs.getString("entity_type")));
-            entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
-            entity.setLowestCompVersion(new Version(rs.getString("lowest_comp_version")));
-            entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
-            entity.setOvfData(rs.getString("ovf_data"));
-            entity.setOvfExtraData(rs.getString("ovf_extra_data"));
-            return entity;
-        }
-    }
+    private static final RowMapper<OvfEntityData> ovfEntityDataRowMapper = (rs, rowNum) -> {
+        OvfEntityData entity = new OvfEntityData();
+        entity.setEntityId(getGuid(rs, "entity_guid"));
+        entity.setEntityName(rs.getString("entity_name"));
+        entity.setEntityType(VmEntityType.valueOf(rs.getString("entity_type")));
+        entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
+        entity.setLowestCompVersion(new Version(rs.getString("lowest_comp_version")));
+        entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
+        entity.setOvfData(rs.getString("ovf_data"));
+        entity.setOvfExtraData(rs.getString("ovf_extra_data"));
+        return entity;
+    };
 }

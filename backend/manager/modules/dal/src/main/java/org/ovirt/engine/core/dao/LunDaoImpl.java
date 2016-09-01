@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -25,27 +23,24 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
         setProcedureNameForGetAll("GetAllFromLUNs");
     }
 
-    protected static final RowMapper<LUNs> MAPPER = new RowMapper<LUNs>() {
-        @Override
-        public LUNs mapRow(ResultSet rs, int rowNum) throws SQLException {
-            LUNs entity = new LUNs();
-            entity.setLUNId(rs.getString("lun_id"));
-            entity.setPhysicalVolumeId(rs.getString("physical_volume_id"));
-            entity.setVolumeGroupId(rs.getString("volume_group_id"));
-            entity.setSerial(rs.getString("serial"));
-            Integer lunMapping = (Integer) rs.getObject("lun_mapping");
-            if (lunMapping != null) {
-                entity.setLunMapping(lunMapping);
-            }
-            entity.setVendorId(rs.getString("vendor_id"));
-            entity.setProductId(rs.getString("product_id"));
-            entity.setDeviceSize(rs.getInt("device_size"));
-            entity.setDiskId(getGuid(rs, "disk_id"));
-            entity.setDiskAlias(rs.getString("disk_alias"));
-            entity.setStorageDomainId(getGuid(rs, "storage_id"));
-            entity.setStorageDomainName(rs.getString("storage_name"));
-            return entity;
+    protected static final RowMapper<LUNs> MAPPER = (rs, rowNum) -> {
+        LUNs entity = new LUNs();
+        entity.setLUNId(rs.getString("lun_id"));
+        entity.setPhysicalVolumeId(rs.getString("physical_volume_id"));
+        entity.setVolumeGroupId(rs.getString("volume_group_id"));
+        entity.setSerial(rs.getString("serial"));
+        Integer lunMapping = (Integer) rs.getObject("lun_mapping");
+        if (lunMapping != null) {
+            entity.setLunMapping(lunMapping);
         }
+        entity.setVendorId(rs.getString("vendor_id"));
+        entity.setProductId(rs.getString("product_id"));
+        entity.setDeviceSize(rs.getInt("device_size"));
+        entity.setDiskId(getGuid(rs, "disk_id"));
+        entity.setDiskAlias(rs.getString("disk_alias"));
+        entity.setStorageDomainId(getGuid(rs, "storage_id"));
+        entity.setStorageDomainName(rs.getString("storage_name"));
+        return entity;
     };
 
     @Override

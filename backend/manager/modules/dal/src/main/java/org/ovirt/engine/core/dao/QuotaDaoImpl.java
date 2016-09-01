@@ -359,22 +359,18 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * Return initialized entity with quota Vds group result set.
      */
     private RowMapper<QuotaCluster> getClusterQuotaResultSet() {
-        return new RowMapper<QuotaCluster>() {
-            @Override
-            public QuotaCluster mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                QuotaCluster entity = new QuotaCluster();
-                entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
-                entity.setQuotaClusterId(getGuidDefaultEmpty(rs, "quota_cluster_id"));
-                entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-                entity.setClusterName(rs.getString("cluster_name"));
-                entity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
-                entity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
-                entity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
-                entity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
+        return (rs, rowNum) -> {
+            QuotaCluster entity = new QuotaCluster();
+            entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
+            entity.setQuotaClusterId(getGuidDefaultEmpty(rs, "quota_cluster_id"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+            entity.setClusterName(rs.getString("cluster_name"));
+            entity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
+            entity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
+            entity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
+            entity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
 
-                return entity;
-            }
+            return entity;
         };
     }
 
@@ -382,19 +378,15 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * Returns initialized entity with quota Storage result set.
      */
     private RowMapper<QuotaStorage> getQuotaStorageResultSet() {
-        return new RowMapper<QuotaStorage>() {
-            @Override
-            public QuotaStorage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                QuotaStorage entity = new QuotaStorage();
-                entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
-                entity.setQuotaStorageId(getGuidDefaultEmpty(rs, "quota_storage_id"));
-                entity.setStorageId(getGuidDefaultEmpty(rs, "storage_id"));
-                entity.setStorageName(rs.getString("storage_name"));
-                entity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
-                entity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
-                return entity;
-            }
+        return (rs, rowNum) -> {
+            QuotaStorage entity = new QuotaStorage();
+            entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
+            entity.setQuotaStorageId(getGuidDefaultEmpty(rs, "quota_storage_id"));
+            entity.setStorageId(getGuidDefaultEmpty(rs, "storage_id"));
+            entity.setStorageName(rs.getString("storage_name"));
+            entity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
+            entity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
+            return entity;
         };
     }
 
@@ -402,37 +394,33 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * Returns initialized entity with quota result set.
      */
     private RowMapper<Quota> getQuotaFromResultSet() {
-        return new RowMapper<Quota>() {
-            @Override
-            public Quota mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                Quota entity = getQuotaMetaDataFromResultSet(rs);
+        return (rs, rowNum) -> {
+            Quota entity = getQuotaMetaDataFromResultSet(rs);
 
-                // Check if memory size is not null, this is an indication if global limitation for vds group exists or
-                // not, since global limitation must be for all the quota vds group parameters.
-                if (rs.getObject("mem_size_mb") != null) {
-                    // Set global vds group quota.
-                    QuotaCluster clusterEntity = new QuotaCluster();
-                    clusterEntity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
-                    clusterEntity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
-                    clusterEntity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
-                    clusterEntity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
-                    entity.setGlobalQuotaCluster(clusterEntity);
-                }
-
-                // Check if storage limit size is not null, this is an indication if global limitation for storage
-                // exists or
-                // not.
-                if (rs.getObject("storage_size_gb") != null) {
-                    // Set global storage quota.
-                    QuotaStorage storageEntity = new QuotaStorage();
-                    storageEntity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
-                    storageEntity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
-                    entity.setGlobalQuotaStorage(storageEntity);
-                }
-
-                return entity;
+            // Check if memory size is not null, this is an indication if global limitation for vds group exists or
+            // not, since global limitation must be for all the quota vds group parameters.
+            if (rs.getObject("mem_size_mb") != null) {
+                // Set global vds group quota.
+                QuotaCluster clusterEntity = new QuotaCluster();
+                clusterEntity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
+                clusterEntity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
+                clusterEntity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
+                clusterEntity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
+                entity.setGlobalQuotaCluster(clusterEntity);
             }
+
+            // Check if storage limit size is not null, this is an indication if global limitation for storage
+            // exists or
+            // not.
+            if (rs.getObject("storage_size_gb") != null) {
+                // Set global storage quota.
+                QuotaStorage storageEntity = new QuotaStorage();
+                storageEntity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
+                storageEntity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
+                entity.setGlobalQuotaStorage(storageEntity);
+            }
+
+            return entity;
         };
     }
 
@@ -440,13 +428,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * Returns initialized entity with quota meta data result set.
      */
     private RowMapper<Quota> getQuotaMetaDataFromResultSet() {
-        return new RowMapper<Quota>() {
-            @Override
-            public Quota mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                return getQuotaMetaDataFromResultSet(rs);
-            }
-        };
+        return (rs, rowNum) -> getQuotaMetaDataFromResultSet(rs);
     }
 
     private Quota getQuotaMetaDataFromResultSet(ResultSet rs) throws SQLException {

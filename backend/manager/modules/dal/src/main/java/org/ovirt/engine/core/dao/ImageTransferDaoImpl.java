@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -68,18 +66,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
 
     @Override
     protected RowMapper<ImageTransfer> createEntityRowMapper() {
-        return ImageUploadRowMapper.instance;
-    }
-
-    private static class ImageUploadRowMapper implements RowMapper<ImageTransfer> {
-
-        public static final ImageUploadRowMapper instance = new ImageUploadRowMapper();
-
-        private ImageUploadRowMapper() {
-        }
-
-        @Override
-        public ImageTransfer mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return (rs, rowNum) -> {
             ImageTransfer entity = new ImageTransfer();
             entity.setId(getGuidDefaultEmpty(rs, "command_id"));
             entity.setCommandType(VdcActionType.forValue(rs.getInt("command_type")));
@@ -94,6 +81,6 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setBytesSent(rs.getLong("bytes_sent"));
             entity.setBytesTotal(rs.getLong("bytes_total"));
             return entity;
-        }
+        };
     }
 }

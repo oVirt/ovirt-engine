@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -25,30 +23,21 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 @SuppressWarnings("synthetic-access")
 public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
-
-    private static final class StoragePoolRawMapper implements RowMapper<StoragePool> {
-        @Override
-        public StoragePool mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            StoragePool entity = new StoragePool();
-            entity.setdescription(rs.getString("description"));
-            entity.setComment(rs.getString("free_text_comment"));
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setName(rs.getString("name"));
-            entity.setIsLocal(rs.getBoolean("is_local"));
-            entity.setStatus(StoragePoolStatus.forValue(rs.getInt("status")));
-            entity.setMasterDomainVersion(rs
-                    .getInt("master_domain_version"));
-            entity.setSpmVdsId(getGuid(rs, "spm_vds_id"));
-            entity.setCompatibilityVersion(new Version(rs
-                    .getString("compatibility_version")));
-            entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-            entity.setStoragePoolFormatType(StorageFormatType.forValue(rs.getString("storage_pool_format_type")));
-            return entity;
-        }
-    }
-
-    private static final RowMapper<StoragePool> mapper = new StoragePoolRawMapper();
+    private static final RowMapper<StoragePool> mapper = (rs, rowNum) -> {
+        StoragePool entity = new StoragePool();
+        entity.setdescription(rs.getString("description"));
+        entity.setComment(rs.getString("free_text_comment"));
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setName(rs.getString("name"));
+        entity.setIsLocal(rs.getBoolean("is_local"));
+        entity.setStatus(StoragePoolStatus.forValue(rs.getInt("status")));
+        entity.setMasterDomainVersion(rs.getInt("master_domain_version"));
+        entity.setSpmVdsId(getGuid(rs, "spm_vds_id"));
+        entity.setCompatibilityVersion(new Version(rs.getString("compatibility_version")));
+        entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+        entity.setStoragePoolFormatType(StorageFormatType.forValue(rs.getString("storage_pool_format_type")));
+        return entity;
+    };
 
     @Override
     public StoragePool get(Guid id) {

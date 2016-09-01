@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,28 +28,23 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
                 vdsNumaNodeRowMapper, parameterSource);
     }
 
-    private static final RowMapper<VdsNumaNode> vdsNumaNodeRowMapper =
-            new RowMapper<VdsNumaNode>() {
-                @Override
-                public VdsNumaNode mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    VdsNumaNode entity = new VdsNumaNode();
-                    NumaNodeStatistics stat = new NumaNodeStatistics();
-                    entity.setId(getGuid(rs, "numa_node_id"));
-                    entity.setIndex(rs.getInt("numa_node_index"));
-                    entity.setMemTotal(rs.getLong("mem_total"));
-                    stat.setMemFree(rs.getLong("mem_free"));
-                    stat.setMemUsagePercent(rs.getInt("usage_mem_percent"));
-                    stat.setCpuSys(rs.getDouble("cpu_sys"));
-                    stat.setCpuUser(rs.getDouble("cpu_user"));
-                    stat.setCpuIdle(rs.getDouble("cpu_idle"));
-                    stat.setCpuUsagePercent(rs.getInt("usage_cpu_percent"));
-                    entity.setNumaNodeStatistics(stat);
-                    entity.setNumaNodeDistances(getDistanceMap(rs.getString("distance")));
-                    entity.setCpuIds(Arrays.asList((Integer[]) rs.getArray("cpu_core_ids").getArray()));
-                    return entity;
-                }
-            };
+    private static final RowMapper<VdsNumaNode> vdsNumaNodeRowMapper = (rs, rowNum) -> {
+        VdsNumaNode entity = new VdsNumaNode();
+        NumaNodeStatistics stat = new NumaNodeStatistics();
+        entity.setId(getGuid(rs, "numa_node_id"));
+        entity.setIndex(rs.getInt("numa_node_index"));
+        entity.setMemTotal(rs.getLong("mem_total"));
+        stat.setMemFree(rs.getLong("mem_free"));
+        stat.setMemUsagePercent(rs.getInt("usage_mem_percent"));
+        stat.setCpuSys(rs.getDouble("cpu_sys"));
+        stat.setCpuUser(rs.getDouble("cpu_user"));
+        stat.setCpuIdle(rs.getDouble("cpu_idle"));
+        stat.setCpuUsagePercent(rs.getInt("usage_cpu_percent"));
+        entity.setNumaNodeStatistics(stat);
+        entity.setNumaNodeDistances(getDistanceMap(rs.getString("distance")));
+        entity.setCpuIds(Arrays.asList((Integer[]) rs.getArray("cpu_core_ids").getArray()));
+        return entity;
+    };
 
     // format: (<index_id>, <distance>);*, for example: "0, 10; 2, 16"
     private static Map<Integer, Integer> getDistanceMap(String distance) {

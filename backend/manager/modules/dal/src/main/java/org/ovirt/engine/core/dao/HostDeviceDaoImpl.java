@@ -114,7 +114,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
     @Override
     public List<VmDevice> getVmDevicesAttachedToHost(Guid hostId) {
         return getCallsHandler().executeReadList("GetVmDevicesAttachedToHost",
-                VmDeviceDaoImpl.VmDeviceRowMapper.instance,
+                VmDeviceDaoImpl.vmDeviceRowMapper,
                 getCustomMapSqlParameterSource().addValue("host_id", hostId));
     }
 

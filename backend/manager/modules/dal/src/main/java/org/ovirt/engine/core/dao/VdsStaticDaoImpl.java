@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.dao;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -32,7 +30,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
     @Override
     public VdsStatic get(Guid id) {
         return getCallsHandler().executeRead("GetVdsStaticByVdsId",
-                VdsStaticRowMapper.instance,
+                vdsStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", id));
     }
@@ -40,7 +38,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
     @Override
     public VdsStatic getByHostName(String host) {
         return getCallsHandler().executeRead("GetVdsStaticByHostName",
-                VdsStaticRowMapper.instance,
+                vdsStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("host_name", host));
     }
@@ -48,7 +46,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
     @Override
     public List<VdsStatic> getAllWithIpAddress(String address) {
         return getCallsHandler().executeReadList("GetVdsStaticByIp",
-                VdsStaticRowMapper.instance,
+                vdsStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("ip", address));
     }
@@ -56,7 +54,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
     @Override
     public List<VdsStatic> getAllForCluster(Guid cluster) {
         return getCallsHandler().executeReadList("GetVdsStaticByClusterId",
-                VdsStaticRowMapper.instance,
+                vdsStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", cluster));
     }
@@ -123,51 +121,41 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         throw new UnsupportedOperationException();
     }
 
-    private static final class VdsStaticRowMapper implements RowMapper<VdsStatic> {
-        public static final VdsStaticRowMapper instance = new VdsStaticRowMapper();
-
-        @Override
-        public VdsStatic mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            VdsStatic entity = new VdsStatic();
-            entity.setHostName(rs.getString("host_name"));
-            entity.setComment(rs.getString("free_text_comment"));
-            entity.setUniqueID(rs.getString("vds_unique_id"));
-            entity.setPort(rs.getInt("port"));
-            entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setSshPort(rs.getInt("ssh_port"));
-            entity.setSshUsername(rs.getString("ssh_username"));
-            entity.setClusterId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("cluster_id")));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_id")));
-            entity.setName(rs.getString("vds_name"));
-            entity.setServerSslEnabled(rs
-                    .getBoolean("server_SSL_enabled"));
-            entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
-            entity.setVdsStrength(rs.getInt("vds_strength"));
-            entity.setPmEnabled(rs.getBoolean("pm_enabled"));
-            entity.setFenceProxySources(
-                    FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
-            entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
-            entity.setOtpValidity(rs.getLong("otp_validity"));
-            entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
-            entity.setConsoleAddress(rs.getString("console_address"));
-            entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
-            entity.setHostProviderId(getGuid(rs, "host_provider_id"));
-            entity.setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
-            KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVdsStatic(entity);
-            entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
-            return entity;
-        }
-    }
+    private static final RowMapper<VdsStatic> vdsStaticRowMapper = (rs, rowNum) -> {
+        VdsStatic entity = new VdsStatic();
+        entity.setHostName(rs.getString("host_name"));
+        entity.setComment(rs.getString("free_text_comment"));
+        entity.setUniqueID(rs.getString("vds_unique_id"));
+        entity.setPort(rs.getInt("port"));
+        entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
+        entity.setSshPort(rs.getInt("ssh_port"));
+        entity.setSshUsername(rs.getString("ssh_username"));
+        entity.setClusterId(Guid.createGuidFromStringDefaultEmpty(rs.getString("cluster_id")));
+        entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_id")));
+        entity.setName(rs.getString("vds_name"));
+        entity.setServerSslEnabled(rs.getBoolean("server_SSL_enabled"));
+        entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
+        entity.setVdsStrength(rs.getInt("vds_strength"));
+        entity.setPmEnabled(rs.getBoolean("pm_enabled"));
+        entity.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
+        entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
+        entity.setOtpValidity(rs.getLong("otp_validity"));
+        entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
+        entity.setConsoleAddress(rs.getString("console_address"));
+        entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
+        entity.setHostProviderId(getGuid(rs, "host_provider_id"));
+        entity.setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
+        KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVdsStatic(entity);
+        entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
+        return entity;
+    };
 
     @Override
     public VdsStatic getByVdsName(String vdsName) {
         return getCallsHandler().executeRead("GetVdsStaticByVdsName",
-                VdsStaticRowMapper.instance,
+                vdsStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("host_name", vdsName));
     }

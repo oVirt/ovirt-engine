@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -25,13 +23,13 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
     public List<UnregisteredDisk> getByDiskIdAndStorageDomainId(Guid diskId, Guid storageDomainId) {
         List<UnregisteredDisk> unregisteredDisks =
                 getCallsHandler().executeReadList("GetDiskByDiskIdAndStorageDomainId",
-                        UnregisteredDiskRowMapper.instance,
+                        unregisteredDiskRowMapper,
                         getCustomMapSqlParameterSource()
                                 .addValue("disk_id", diskId)
                                 .addValue("storage_domain_id", storageDomainId));
         for (UnregisteredDisk unregDisk : unregisteredDisks) {
             List<VmBase> vms = getCallsHandler().executeReadList("GetEntitiesByDiskId",
-                    VmsForUnregisteredDiskRowMapper.instance,
+                    vmsForUnregisteredDiskRowMapper,
                     getCustomMapSqlParameterSource().addValue("disk_id", unregDisk.getId()));
             unregDisk.getVms().addAll(vms);
         }
@@ -79,38 +77,28 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
         }
     }
 
-    private static class UnregisteredDiskRowMapper implements RowMapper<UnregisteredDisk> {
-        public static final UnregisteredDiskRowMapper instance = new UnregisteredDiskRowMapper();
+    private static final RowMapper<UnregisteredDisk> unregisteredDiskRowMapper = (rs, rowNum) -> {
+        UnregisteredDisk entity = new UnregisteredDisk();
+        DiskImage diskImage = new DiskImage();
+        diskImage.setId(getGuid(rs, "disk_id"));
+        diskImage.setImageId(getGuid(rs, "image_id"));
+        diskImage.setDiskAlias(rs.getString("disk_alias"));
+        diskImage.setDiskDescription(rs.getString("disk_description"));
+        diskImage.setActualSizeInBytes(rs.getLong("actual_size"));
+        diskImage.setSize(rs.getLong("size"));
+        diskImage.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
+        diskImage.setLastModified(DbFacadeUtils.fromDate(rs.getTimestamp("last_modified")));
+        diskImage.setStorageIds(GuidUtils.getGuidListFromString(rs.getString("storage_domain_id")));
+        diskImage.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
+        diskImage.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
+        entity.setDiskImage(diskImage);
+        return entity;
+    };
 
-        @Override
-        public UnregisteredDisk mapRow(ResultSet rs, int rowNum) throws SQLException {
-            UnregisteredDisk entity = new UnregisteredDisk();
-            DiskImage diskImage = new DiskImage();
-            diskImage.setId(getGuid(rs, "disk_id"));
-            diskImage.setImageId(getGuid(rs, "image_id"));
-            diskImage.setDiskAlias(rs.getString("disk_alias"));
-            diskImage.setDiskDescription(rs.getString("disk_description"));
-            diskImage.setActualSizeInBytes(rs.getLong("actual_size"));
-            diskImage.setSize(rs.getLong("size"));
-            diskImage.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
-            diskImage.setLastModified(DbFacadeUtils.fromDate(rs.getTimestamp("last_modified")));
-            diskImage.setStorageIds(GuidUtils.getGuidListFromString(rs.getString("storage_domain_id")));
-            diskImage.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
-            diskImage.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
-            entity.setDiskImage(diskImage);
-            return entity;
-        }
-    }
-
-    private static class VmsForUnregisteredDiskRowMapper implements RowMapper<VmBase> {
-        public static final VmsForUnregisteredDiskRowMapper instance = new VmsForUnregisteredDiskRowMapper();
-
-        @Override
-        public VmBase mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VmBase vmBase = new VmBase();
-            vmBase.setId(getGuidDefaultEmpty(rs, "entity_id"));
-            vmBase.setName(rs.getString("entity_name"));
-            return vmBase;
-        }
-    }
+    private static final RowMapper<VmBase> vmsForUnregisteredDiskRowMapper = (rs, rowNum) -> {
+        VmBase vmBase = new VmBase();
+        vmBase.setId(getGuidDefaultEmpty(rs, "entity_id"));
+        vmBase.setName(rs.getString("entity_name"));
+        return vmBase;
+    };
 }

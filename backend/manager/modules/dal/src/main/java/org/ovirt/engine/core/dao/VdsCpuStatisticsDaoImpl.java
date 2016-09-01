@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,19 +61,13 @@ public class VdsCpuStatisticsDaoImpl extends BaseDao implements VdsCpuStatistics
                 .addValue("usage_cpu_percent", stat.getCpuUsagePercent());
     }
 
-    private static final RowMapper<CpuStatistics> cpuStatisticsRowMapper =
-            new RowMapper<CpuStatistics>() {
-                @Override
-                public CpuStatistics mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    CpuStatistics entity = new CpuStatistics();
-                    entity.setCpuId(rs.getInt("cpu_core_id"));
-                    entity.setCpuSys(rs.getDouble("cpu_sys"));
-                    entity.setCpuUser(rs.getDouble("cpu_user"));
-                    entity.setCpuIdle(rs.getDouble("cpu_idle"));
-                    entity.setCpuUsagePercent(rs.getInt("usage_cpu_percent"));
-                    return entity;
-                }
-            };
-
+    private static final RowMapper<CpuStatistics> cpuStatisticsRowMapper = (rs, rowNum) -> {
+        CpuStatistics entity = new CpuStatistics();
+        entity.setCpuId(rs.getInt("cpu_core_id"));
+        entity.setCpuSys(rs.getDouble("cpu_sys"));
+        entity.setCpuUser(rs.getDouble("cpu_user"));
+        entity.setCpuIdle(rs.getDouble("cpu_idle"));
+        entity.setCpuUsagePercent(rs.getInt("usage_cpu_percent"));
+        return entity;
+    };
 }

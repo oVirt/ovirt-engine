@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -19,7 +17,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class GlusterServiceDaoImpl extends DefaultReadDao<GlusterService, Guid> implements GlusterServiceDao {
 
-    private static final RowMapper<GlusterService> serviceRowMapper = new GlusterServiceRowMapper();
+    private static final RowMapper<GlusterService> serviceRowMapper = (rs, rowNum) -> {
+        GlusterService entity = new GlusterService();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
+        entity.setServiceName(rs.getString("service_name"));
+        return entity;
+    };
 
     public GlusterServiceDaoImpl() {
         super("GlusterService");
@@ -48,17 +52,5 @@ public class GlusterServiceDaoImpl extends DefaultReadDao<GlusterService, Guid> 
                 getCustomMapSqlParameterSource()
                         .addValue("service_type", EnumUtils.nameOrNull(type))
                         .addValue("service_name", name));
-    }
-
-    public static class GlusterServiceRowMapper implements RowMapper<GlusterService> {
-
-        @Override
-        public GlusterService mapRow(ResultSet rs, int rowNum) throws SQLException {
-            GlusterService entity = new GlusterService();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
-            entity.setServiceName(rs.getString("service_name"));
-            return entity;
-        }
     }
 }

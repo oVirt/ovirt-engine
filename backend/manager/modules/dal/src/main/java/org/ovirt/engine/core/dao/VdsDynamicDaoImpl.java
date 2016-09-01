@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,93 +39,81 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         super("VdsDynamic");
     }
 
-    private static final class VdcDynamicRowMapper implements RowMapper<VdsDynamic> {
-        public static final VdcDynamicRowMapper instance = new VdcDynamicRowMapper();
-
-        @Override
-        public VdsDynamic mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VdsDynamic entity = new VdsDynamic();
-            entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
-            entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
-            entity.setCpuModel(rs.getString("cpu_model"));
-            entity.setOnlineCpus(rs.getString("online_cpus"));
-            entity.setCpuSpeedMh(rs.getDouble("cpu_speed_mh"));
-            entity.setIfTotalSpeed(rs.getString("if_total_speed"));
-            entity.setKvmEnabled((Boolean) rs.getObject("kvm_enabled"));
-            entity.setMemCommited((Integer) rs.getObject("mem_commited"));
-            entity.setPhysicalMemMb((Integer) rs
-                    .getObject("physical_mem_mb"));
-            entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
-            entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setVmActive((Integer) rs.getObject("vm_active"));
-            entity.setVmCount(rs.getInt("vm_count"));
-            entity.setVmsCoresCount(rs.getInt("vms_cores_count"));
-            entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
-            entity.setIncomingMigrations(rs.getInt("incoming_migrations"));
-            entity.setOutgoingMigrations(rs.getInt("outgoing_migrations"));
-            entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
-            entity.setGuestOverhead(rs.getInt("guest_overhead"));
-            entity.setSoftwareVersion(rs.getString("software_version"));
-            entity.setVersionName(rs.getString("version_name"));
-            entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
-            entity.setBuildName(rs.getString("build_name"));
-            entity.setPreviousStatus(VDSStatus.forValue(rs
-                    .getInt("previous_status")));
-            entity.setCpuFlags(rs.getString("cpu_flags"));
-            entity.setPendingVcpusCount((Integer) rs
-                    .getObject("pending_vcpus_count"));
-            entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
-            entity.setCpuSockets((Integer) rs.getObject("cpu_sockets"));
-            entity.setNetConfigDirty((Boolean) rs
-                    .getObject("net_config_dirty"));
-            entity.setSupportedClusterLevels(rs
-                    .getString("supported_cluster_levels"));
-            entity.setSupportedEngines(rs.getString("supported_engines"));
-            entity.setHostOs(rs.getString("host_os"));
-            entity.setKvmVersion(rs.getString("kvm_version"));
-            entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
-            entity.setSpiceVersion(rs.getString("spice_version"));
-            entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
-            entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
-            entity.setGlusterfsCliVersion(new RpmVersion(rs.getString("glusterfs_cli_version")));
-            entity.setKernelVersion(rs.getString("kernel_version"));
-            entity.setIScsiInitiatorName(rs
-                    .getString("iscsi_initiator_name"));
-            entity.setTransparentHugePagesState(VdsTransparentHugePagesState
-                    .forValue(rs.getInt("transparent_hugepages_state")));
-            entity.setHooksStr(rs.getString("hooks"));
-            entity.setNonOperationalReason(NonOperationalReason.forValue(rs
-                    .getInt("non_operational_reason")));
-            entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
-            entity.setHardwareProductName(rs.getString("hw_product_name"));
-            entity.setHardwareVersion(rs.getString("hw_version"));
-            entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
-            entity.setHardwareUUID(rs.getString("hw_uuid"));
-            entity.setHardwareFamily(rs.getString("hw_family"));
-            entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
-            entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
-            entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
-            entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
-            entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
-            entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
-            entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
-            entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
-            entity.setMaintenanceReason(rs.getString("maintenance_reason"));
-            entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
-            entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
-            entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
-            entity.setKernelArgs(rs.getString("kernel_args"));
-            entity.setPrettyName(rs.getString("pretty_name"));
-            return entity;
-        }
-    }
+    private static final RowMapper<VdsDynamic> vdsDynamicRowMapper = (rs, rowNum) -> {
+        VdsDynamic entity = new VdsDynamic();
+        entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
+        entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
+        entity.setCpuModel(rs.getString("cpu_model"));
+        entity.setOnlineCpus(rs.getString("online_cpus"));
+        entity.setCpuSpeedMh(rs.getDouble("cpu_speed_mh"));
+        entity.setIfTotalSpeed(rs.getString("if_total_speed"));
+        entity.setKvmEnabled((Boolean) rs.getObject("kvm_enabled"));
+        entity.setMemCommited((Integer) rs.getObject("mem_commited"));
+        entity.setPhysicalMemMb((Integer) rs.getObject("physical_mem_mb"));
+        entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
+        entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
+        entity.setVmActive((Integer) rs.getObject("vm_active"));
+        entity.setVmCount(rs.getInt("vm_count"));
+        entity.setVmsCoresCount(rs.getInt("vms_cores_count"));
+        entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
+        entity.setIncomingMigrations(rs.getInt("incoming_migrations"));
+        entity.setOutgoingMigrations(rs.getInt("outgoing_migrations"));
+        entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
+        entity.setGuestOverhead(rs.getInt("guest_overhead"));
+        entity.setSoftwareVersion(rs.getString("software_version"));
+        entity.setVersionName(rs.getString("version_name"));
+        entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
+        entity.setBuildName(rs.getString("build_name"));
+        entity.setPreviousStatus(VDSStatus.forValue(rs.getInt("previous_status")));
+        entity.setCpuFlags(rs.getString("cpu_flags"));
+        entity.setPendingVcpusCount((Integer) rs.getObject("pending_vcpus_count"));
+        entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
+        entity.setCpuSockets((Integer) rs.getObject("cpu_sockets"));
+        entity.setNetConfigDirty((Boolean) rs.getObject("net_config_dirty"));
+        entity.setSupportedClusterLevels(rs.getString("supported_cluster_levels"));
+        entity.setSupportedEngines(rs.getString("supported_engines"));
+        entity.setHostOs(rs.getString("host_os"));
+        entity.setKvmVersion(rs.getString("kvm_version"));
+        entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
+        entity.setSpiceVersion(rs.getString("spice_version"));
+        entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
+        entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
+        entity.setGlusterfsCliVersion(new RpmVersion(rs.getString("glusterfs_cli_version")));
+        entity.setKernelVersion(rs.getString("kernel_version"));
+        entity.setIScsiInitiatorName(rs.getString("iscsi_initiator_name"));
+        entity.setTransparentHugePagesState(VdsTransparentHugePagesState
+                .forValue(rs.getInt("transparent_hugepages_state")));
+        entity.setHooksStr(rs.getString("hooks"));
+        entity.setNonOperationalReason(NonOperationalReason.forValue(rs.getInt("non_operational_reason")));
+        entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
+        entity.setHardwareProductName(rs.getString("hw_product_name"));
+        entity.setHardwareVersion(rs.getString("hw_version"));
+        entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
+        entity.setHardwareUUID(rs.getString("hw_uuid"));
+        entity.setHardwareFamily(rs.getString("hw_family"));
+        entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
+        entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
+        entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
+        entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
+        entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
+        entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
+        entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
+        entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
+        entity.setMaintenanceReason(rs.getString("maintenance_reason"));
+        entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
+        entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
+        entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
+        entity.setKernelArgs(rs.getString("kernel_args"));
+        entity.setPrettyName(rs.getString("pretty_name"));
+        return entity;
+    };
 
     @Override
     public VdsDynamic get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", id);
 
-        return getCallsHandler().executeRead("GetVdsDynamicByVdsId", VdcDynamicRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetVdsDynamicByVdsId", vdsDynamicRowMapper, parameterSource);
     }
 
     @Override
@@ -288,7 +274,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
 
     @Override
     protected RowMapper<VdsDynamic> createEntityRowMapper() {
-        return VdcDynamicRowMapper.instance;
+        return vdsDynamicRowMapper;
     }
 
     @Override

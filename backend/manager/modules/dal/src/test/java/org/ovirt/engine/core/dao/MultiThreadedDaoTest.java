@@ -40,13 +40,9 @@ public class MultiThreadedDaoTest extends BaseDaoTestCase {
     public void testGetSameID() throws Exception {
         final Tags existing = dao.get(EXISTING_TAGS_IDS[0]);
 
-        createAndRunThreadsForRunner(new Runnable() {
-
-            @Override
-            public void run() {
-                Tags result = dao.get(existing.getTagId());
-                assertEquals(existing, result);
-            }
+        createAndRunThreadsForRunner(() -> {
+            Tags result = dao.get(existing.getTagId());
+            assertEquals(existing, result);
         }, 100);
     }
 
@@ -58,32 +54,26 @@ public class MultiThreadedDaoTest extends BaseDaoTestCase {
             existingTags[i] = dao.get(EXISTING_TAGS_IDS[i]);
         }
 
-        createAndRunThreadsForRunner(new Runnable() {
-            @Override
-            public void run() {
-                int val = counter.incrementAndGet();
-                int index = val % EXISTING_TAGS_IDS.length;
-                Tags result = dao.get(EXISTING_TAGS_IDS[index]);
-                assertEquals(existingTags[index], result);
-            }
+        createAndRunThreadsForRunner(() -> {
+            int val = counter.incrementAndGet();
+            int index = val % EXISTING_TAGS_IDS.length;
+            Tags result = dao.get(EXISTING_TAGS_IDS[index]);
+            assertEquals(existingTags[index], result);
         }, 100);
     }
 
     @Test
     public void testReadWriteDelete() throws Exception {
         final AtomicInteger counter = new AtomicInteger();
-        createAndRunThreadsForRunner(new Runnable() {
-            @Override
-            public void run() {
-                int val = counter.incrementAndGet();
-                Tags tag = createTag("tag" + val, "desc" + val);
-                dao.save(tag);
-                Tags fromDb = dao.get(tag.getTagId());
-                assertEquals(tag, fromDb);
-                dao.remove(tag.getTagId());
-                fromDb = dao.get(tag.getTagId());
-                assertNull(fromDb);
-            }
+        createAndRunThreadsForRunner(() -> {
+            int val = counter.incrementAndGet();
+            Tags tag = createTag("tag" + val, "desc" + val);
+            dao.save(tag);
+            Tags fromDb = dao.get(tag.getTagId());
+            assertEquals(tag, fromDb);
+            dao.remove(tag.getTagId());
+            fromDb = dao.get(tag.getTagId());
+            assertNull(fromDb);
         }, 100);
     }
 

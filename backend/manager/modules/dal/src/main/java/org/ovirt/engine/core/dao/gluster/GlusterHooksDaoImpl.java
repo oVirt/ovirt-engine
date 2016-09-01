@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,10 +26,31 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEntity, Guid> implements
         GlusterHooksDao {
 
-    private static final RowMapper<GlusterHookEntity> glusterHookRowMapper = new GlusterHookRowMapper();
+    private static final RowMapper<GlusterHookEntity> glusterHookRowMapper = (rs, rowNum) -> {
+        GlusterHookEntity entity = new GlusterHookEntity();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setGlusterCommand(rs.getString("gluster_command"));
+        entity.setStage(rs.getString("stage"));
+        entity.setName(rs.getString("name"));
+        entity.setStatus(rs.getString("hook_status"));
+        entity.setContentType(rs.getString("content_type"));
+        entity.setChecksum(rs.getString("checksum"));
+        entity.setContent(rs.getString("content"));
+        entity.setConflictStatus(rs.getInt("conflict_status"));
+        return entity;
+    };
 
-    private static final RowMapper<GlusterServerHook> glusterServerHookRowMapper =
-            new GlusterServerHookRowMapper();
+    private static final RowMapper<GlusterServerHook> glusterServerHookRowMapper = (rs, rowNum) -> {
+        GlusterServerHook entity = new GlusterServerHook();
+        entity.setHookId(getGuidDefaultEmpty(rs, "hook_id"));
+        entity.setServerId(getGuidDefaultEmpty(rs, "server_id"));
+        entity.setStatus(rs.getString("hook_status"));
+        entity.setContentType(rs.getString("content_type"));
+        entity.setChecksum(rs.getString("checksum"));
+        entity.setServerName(rs.getString("server_name"));
+        return entity;
+    };
 
     public GlusterHooksDaoImpl() {
         super("GlusterHook");
@@ -226,40 +245,6 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
                 getCustomMapSqlParameterSource()
                 .addValue("hook_id", id)
                 .addValue("server_id", serverId));
-    }
-
-    private static final class GlusterHookRowMapper implements RowMapper<GlusterHookEntity> {
-        @Override
-        public GlusterHookEntity mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterHookEntity entity = new GlusterHookEntity();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setGlusterCommand(rs.getString("gluster_command"));
-            entity.setStage(rs.getString("stage"));
-            entity.setName(rs.getString("name"));
-            entity.setStatus(rs.getString("hook_status"));
-            entity.setContentType(rs.getString("content_type"));
-            entity.setChecksum(rs.getString("checksum"));
-            entity.setContent(rs.getString("content"));
-            entity.setConflictStatus(rs.getInt("conflict_status"));
-            return entity;
-        }
-    }
-
-    private static final class GlusterServerHookRowMapper implements RowMapper<GlusterServerHook> {
-        @Override
-        public GlusterServerHook mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterServerHook entity = new GlusterServerHook();
-            entity.setHookId(getGuidDefaultEmpty(rs, "hook_id"));
-            entity.setServerId(getGuidDefaultEmpty(rs, "server_id"));
-            entity.setStatus(rs.getString("hook_status"));
-            entity.setContentType(rs.getString("content_type"));
-            entity.setChecksum(rs.getString("checksum"));
-            entity.setServerName(rs.getString("server_name"));
-            return entity;
-        }
     }
 
     @Override

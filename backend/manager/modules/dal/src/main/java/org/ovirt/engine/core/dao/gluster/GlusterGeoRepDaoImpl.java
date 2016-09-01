@@ -315,12 +315,7 @@ public class GlusterGeoRepDaoImpl extends MassOperationsGenericDao<GlusterGeoRep
     }
 
     public MapSqlParameterMapper<GlusterGeoRepSessionDetails> getDetailsBatchMapper() {
-        return new MapSqlParameterMapper<GlusterGeoRepSessionDetails>() {
-            @Override
-            public MapSqlParameterSource map(GlusterGeoRepSessionDetails entity) {
-                return createFullParametersMapper(entity);
-            }
-        };
+        return this::createFullParametersMapper;
     }
 
     @Override

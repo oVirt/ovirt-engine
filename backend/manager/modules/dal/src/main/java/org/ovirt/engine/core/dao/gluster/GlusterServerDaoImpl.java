@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,22 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class GlusterServerDaoImpl extends DefaultGenericDao<GlusterServer, Guid> implements GlusterServerDao {
 
-    private static final RowMapper<GlusterServer> glusterServerRowMapper = new GlusterServerRowMapper();
+    private static final RowMapper<GlusterServer> glusterServerRowMapper = (rs, rowNum) -> {
+        GlusterServer glusterServer = new GlusterServer();
+        glusterServer.setId(getGuidDefaultEmpty(rs, "server_id"));
+        glusterServer.setGlusterServerUuid(getGuidDefaultEmpty(rs, "gluster_server_uuid"));
+        glusterServer.setPeerStatus(PeerStatus.valueOf(rs.getString("peer_status")));
+        String knownAddresses = rs.getString("known_addresses");
+        if (StringUtils.isNotBlank(knownAddresses)) {
+            String[] knownAddressArray = knownAddresses.split(",");
+            ArrayList<String> knownAddressList = new ArrayList<>();
+            for (String addr : knownAddressArray) {
+                knownAddressList.add(addr);
+            }
+            glusterServer.setKnownAddresses(knownAddressList);
+        }
+        return glusterServer;
+    };
 
     public GlusterServerDaoImpl() {
         super("GlusterServer");
@@ -46,27 +59,6 @@ public class GlusterServerDaoImpl extends DefaultGenericDao<GlusterServer, Guid>
     public void removeByGlusterServerUuid(Guid glusterServerUuid) {
         getCallsHandler().executeModification("DeleteGlusterServerByGlusterServerUUID",
                 getCustomMapSqlParameterSource().addValue("gluster_server_uuid", glusterServerUuid));
-    }
-
-    private static final class GlusterServerRowMapper implements RowMapper<GlusterServer> {
-        @Override
-        public GlusterServer mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterServer glusterServer = new GlusterServer();
-            glusterServer.setId(getGuidDefaultEmpty(rs, "server_id"));
-            glusterServer.setGlusterServerUuid(getGuidDefaultEmpty(rs, "gluster_server_uuid"));
-            glusterServer.setPeerStatus(PeerStatus.valueOf(rs.getString("peer_status")));
-            String knownAddresses = rs.getString("known_addresses");
-            if (StringUtils.isNotBlank(knownAddresses)) {
-                String[] knownAddressArray = knownAddresses.split(",");
-                ArrayList<String> knownAddressList = new ArrayList<>();
-                for (String addr : knownAddressArray) {
-                    knownAddressList.add(addr);
-                }
-                glusterServer.setKnownAddresses(knownAddressList);
-            }
-            return glusterServer;
-        }
     }
 
     @Override

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -24,44 +22,34 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class VdsStatisticsDaoImpl extends BaseDao implements VdsStatisticsDao {
 
-    private static final class VdsStatisticsRowMapper implements RowMapper<VdsStatistics> {
-        public static final VdsStatisticsRowMapper instance = new VdsStatisticsRowMapper();
-
-        @Override
-        public VdsStatistics mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VdsStatistics entity = new VdsStatistics();
-            entity.setCpuIdle(rs.getDouble("cpu_idle"));
-            entity.setCpuLoad(rs.getDouble("cpu_load"));
-            entity.setCpuSys(rs.getDouble("cpu_sys"));
-            entity.setCpuUser(rs.getDouble("cpu_user"));
-            entity.setUsageCpuPercent((Integer) rs
-                    .getObject("usage_cpu_percent"));
-            entity.setUsageMemPercent((Integer) rs
-                    .getObject("usage_mem_percent"));
-            entity.setUsageNetworkPercent((Integer) rs
-                    .getObject("usage_network_percent"));
-            entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setMemAvailable(rs.getLong("mem_available"));
-            entity.setMemFree(rs.getLong("mem_free"));
-            entity.setMemShared(rs.getLong("mem_shared"));
-            entity.setSwapFree(rs.getLong("swap_free"));
-            entity.setSwapTotal(rs.getLong("swap_total"));
-            entity.setKsmCpuPercent((Integer) rs
-                    .getObject("ksm_cpu_percent"));
-            entity.setKsmPages(rs.getLong("ksm_pages"));
-            entity.setKsmState((Boolean) rs.getObject("ksm_state"));
-            entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
-            entity.setBootTime((Long) rs.getObject("boot_time"));
-            entity.setHighlyAvailableScore(rs.getInt("ha_score"));
-            entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
-            entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
-            entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
-            entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
-            entity.setCpuOverCommitTimeStamp(DbFacadeUtils.fromDate(rs
-                    .getTimestamp("cpu_over_commit_time_stamp")));
-            return entity;
-        }
-    }
+    private static final RowMapper<VdsStatistics> vdsStatisticsRowMapper = (rs, rowNum) -> {
+        VdsStatistics entity = new VdsStatistics();
+        entity.setCpuIdle(rs.getDouble("cpu_idle"));
+        entity.setCpuLoad(rs.getDouble("cpu_load"));
+        entity.setCpuSys(rs.getDouble("cpu_sys"));
+        entity.setCpuUser(rs.getDouble("cpu_user"));
+        entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
+        entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
+        entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
+        entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
+        entity.setMemAvailable(rs.getLong("mem_available"));
+        entity.setMemFree(rs.getLong("mem_free"));
+        entity.setMemShared(rs.getLong("mem_shared"));
+        entity.setSwapFree(rs.getLong("swap_free"));
+        entity.setSwapTotal(rs.getLong("swap_total"));
+        entity.setKsmCpuPercent((Integer) rs.getObject("ksm_cpu_percent"));
+        entity.setKsmPages(rs.getLong("ksm_pages"));
+        entity.setKsmState((Boolean) rs.getObject("ksm_state"));
+        entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
+        entity.setBootTime((Long) rs.getObject("boot_time"));
+        entity.setHighlyAvailableScore(rs.getInt("ha_score"));
+        entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
+        entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
+        entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
+        entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
+        entity.setCpuOverCommitTimeStamp(DbFacadeUtils.fromDate(rs.getTimestamp("cpu_over_commit_time_stamp")));
+        return entity;
+    };
 
     @Override
     public VdsStatistics get(Guid id) {
@@ -69,7 +57,7 @@ public class VdsStatisticsDaoImpl extends BaseDao implements VdsStatisticsDao {
                 .addValue("vds_id", id);
 
         return getCallsHandler().executeRead("GetVdsStatisticsByVdsId",
-                VdsStatisticsRowMapper.instance,
+                vdsStatisticsRowMapper,
                 parameterSource);
     }
 

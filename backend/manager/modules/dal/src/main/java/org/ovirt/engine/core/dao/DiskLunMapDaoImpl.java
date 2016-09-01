@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -15,20 +12,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class DiskLunMapDaoImpl extends DefaultGenericDao<DiskLunMap, DiskLunMapId>
         implements DiskLunMapDao {
-
-    private static final class DiskLunMapRowMapper implements RowMapper<DiskLunMap> {
-        public static final DiskLunMapRowMapper instance = new DiskLunMapRowMapper();
-
-        @Override
-        public DiskLunMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DiskLunMap diskLunMap = new DiskLunMap();
-
-            diskLunMap.setDiskId(getGuidDefaultEmpty(rs, "disk_id"));
-            diskLunMap.setLunId(rs.getString("lun_id"));
-
-            return diskLunMap;
-        }
-    }
 
     public DiskLunMapDaoImpl() {
         super("DiskLunMap");
@@ -51,7 +34,14 @@ public class DiskLunMapDaoImpl extends DefaultGenericDao<DiskLunMap, DiskLunMapI
 
     @Override
     protected RowMapper<DiskLunMap> createEntityRowMapper() {
-        return DiskLunMapRowMapper.instance;
+        return (rs, rowNum) -> {
+            DiskLunMap diskLunMap = new DiskLunMap();
+
+            diskLunMap.setDiskId(getGuidDefaultEmpty(rs, "disk_id"));
+            diskLunMap.setLunId(rs.getString("lun_id"));
+
+            return diskLunMap;
+        };
     }
 
     @Override

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -40,12 +38,61 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolumeEntity, Guid> implements
         GlusterVolumeDao {
 
-    private static final RowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
-    private static final RowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
-    private static final RowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
-    private static final RowMapper<GlusterAsyncTask> glusterAsyncTaskRowMapper = new GlusterAsyncTaskRowMapper();
-    private static final RowMapper<GlusterVolumeAdvancedDetails> glusterVolumesAdvancedDetailsRowMapper =
-            new GlusterVolumeAdvancedDetailsRowMapper();
+    private static final RowMapper<GlusterVolumeEntity> volumeRowMapper = (rs, rowNum) -> {
+        GlusterVolumeEntity entity = new GlusterVolumeEntity();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setClusterName(rs.getString("cluster_name"));
+        entity.setName(rs.getString("vol_name"));
+        entity.setVolumeType(GlusterVolumeType.valueOf(rs.getString("vol_type")));
+        entity.setStatus(GlusterStatus.valueOf(rs.getString("status")));
+        entity.setReplicaCount(rs.getInt("replica_count"));
+        entity.setStripeCount(rs.getInt("stripe_count"));
+        entity.setDisperseCount(rs.getInt("disperse_count"));
+        entity.setRedundancyCount(rs.getInt("redundancy_count"));
+        entity.setSnapshotsCount(rs.getInt("snapshot_count"));
+        entity.setSnapshotScheduled(rs.getBoolean("snapshot_scheduled"));
+        entity.setIsGeoRepMaster(rs.getBoolean("is_master"));
+        entity.setGeoRepMasterVolAndClusterName(rs.getString("master_vol_cluster"));
+        return entity;
+    };
+
+    private static final RowMapper<AccessProtocol> accessProtocolRowMapper =
+            (rs, rowNum) -> AccessProtocol.valueOf(rs.getString("access_protocol"));
+
+    private static final RowMapper<TransportType> transportTypeRowMapper =
+            (rs, rowNum) -> TransportType.valueOf(rs.getString("transport_type"));
+
+    private static final RowMapper<GlusterAsyncTask> glusterAsyncTaskRowMapper = (rs, rowNum) -> {
+        GlusterAsyncTask asyncTask = new GlusterAsyncTask();
+        asyncTask.setTaskId(getGuid(rs, "external_id"));
+        String jobStatus = rs.getString("job_status");
+        if (asyncTask.getTaskId() != null || JobExecutionStatus.STARTED.name().equalsIgnoreCase(jobStatus)) {
+            asyncTask.setJobId(getGuid(rs, "job_job_id"));
+            asyncTask.setJobStatus(JobExecutionStatus.valueOf(jobStatus));
+        }
+        String stepStatus = rs.getString("status");
+        String stepType = rs.getString("step_type");
+        if (stepType != null && !stepType.isEmpty()) {
+            asyncTask.setType(GlusterTaskType.forValue(StepEnum.valueOf(stepType)));
+        }
+        if (stepStatus != null && !stepStatus.isEmpty()) {
+            asyncTask.setStatus(JobExecutionStatus.valueOf(stepStatus));
+        }
+        return asyncTask;
+    };
+
+    private static final RowMapper<GlusterVolumeAdvancedDetails> glusterVolumesAdvancedDetailsRowMapper = (rs, rowNum) -> {
+        GlusterVolumeAdvancedDetails advancedDetails = new GlusterVolumeAdvancedDetails();
+        GlusterVolumeSizeInfo capacityInfo = new GlusterVolumeSizeInfo();
+        capacityInfo.setVolumeId(getGuid(rs, "volume_id"));
+        capacityInfo.setTotalSize(rs.getLong("total_space"));
+        capacityInfo.setUsedSize(rs.getLong("used_space"));
+        capacityInfo.setFreeSize(rs.getLong("free_space"));
+        advancedDetails.setUpdatedAt(rs.getTimestamp("_update_date"));
+        advancedDetails.setCapacityInfo(capacityInfo);
+        return advancedDetails;
+    };
 
     @Inject
     private GlusterOptionDao glusterOptionDao;
@@ -365,84 +412,6 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
                 "GetGlusterVolumeDetailsByID",
                 glusterVolumesAdvancedDetailsRowMapper,
                 createVolumeIdParams(volumeId));
-    }
-
-    private static final class GlusterVolumeRowMapper implements RowMapper<GlusterVolumeEntity> {
-        @Override
-        public GlusterVolumeEntity mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterVolumeEntity entity = new GlusterVolumeEntity();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setClusterName(rs.getString("cluster_name"));
-            entity.setName(rs.getString("vol_name"));
-            entity.setVolumeType(GlusterVolumeType.valueOf(rs.getString("vol_type")));
-            entity.setStatus(GlusterStatus.valueOf(rs.getString("status")));
-            entity.setReplicaCount(rs.getInt("replica_count"));
-            entity.setStripeCount(rs.getInt("stripe_count"));
-            entity.setDisperseCount(rs.getInt("disperse_count"));
-            entity.setRedundancyCount(rs.getInt("redundancy_count"));
-            entity.setSnapshotsCount(rs.getInt("snapshot_count"));
-            entity.setSnapshotScheduled(rs.getBoolean("snapshot_scheduled"));
-            entity.setIsGeoRepMaster(rs.getBoolean("is_master"));
-            entity.setGeoRepMasterVolAndClusterName(rs.getString("master_vol_cluster"));
-            return entity;
-        }
-    }
-
-    private static final class AccessProtocolRowMapper implements RowMapper<AccessProtocol> {
-        @Override
-        public AccessProtocol mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            return AccessProtocol.valueOf(rs.getString("access_protocol"));
-        }
-    }
-
-    private static final class TransportTypeRowMapper implements RowMapper<TransportType> {
-        @Override
-        public TransportType mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            return TransportType.valueOf(rs.getString("transport_type"));
-        }
-    }
-
-    private static final class GlusterAsyncTaskRowMapper implements RowMapper<GlusterAsyncTask> {
-        @Override
-        public GlusterAsyncTask mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterAsyncTask asyncTask = new GlusterAsyncTask();
-            asyncTask.setTaskId(getGuid(rs, "external_id"));
-            String jobStatus = rs.getString("job_status");
-            if (asyncTask.getTaskId() != null || JobExecutionStatus.STARTED.name().equalsIgnoreCase(jobStatus)) {
-                asyncTask.setJobId(getGuid(rs, "job_job_id"));
-                asyncTask.setJobStatus(JobExecutionStatus.valueOf(jobStatus));
-            }
-            String stepStatus = rs.getString("status");
-            String stepType = rs.getString("step_type");
-            if (stepType != null && !stepType.isEmpty()) {
-                asyncTask.setType(GlusterTaskType.forValue(StepEnum.valueOf(stepType)));
-            }
-            if (stepStatus != null && !stepStatus.isEmpty()) {
-                asyncTask.setStatus(JobExecutionStatus.valueOf(stepStatus));
-            }
-            return asyncTask;
-        }
-    }
-
-    private static final class GlusterVolumeAdvancedDetailsRowMapper implements RowMapper<GlusterVolumeAdvancedDetails> {
-        @Override
-        public GlusterVolumeAdvancedDetails mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterVolumeAdvancedDetails advancedDetails = new GlusterVolumeAdvancedDetails();
-            GlusterVolumeSizeInfo capacityInfo = new GlusterVolumeSizeInfo();
-            capacityInfo.setVolumeId(getGuid(rs, "volume_id"));
-            capacityInfo.setTotalSize(rs.getLong("total_space"));
-            capacityInfo.setUsedSize(rs.getLong("used_space"));
-            capacityInfo.setFreeSize(rs.getLong("free_space"));
-            advancedDetails.setUpdatedAt(rs.getTimestamp("_update_date"));
-            advancedDetails.setCapacityInfo(capacityInfo);
-            return advancedDetails;
-        }
     }
 
     private MapSqlParameterSource createReplicaCountParams(Guid volumeId, int replicaCount) {

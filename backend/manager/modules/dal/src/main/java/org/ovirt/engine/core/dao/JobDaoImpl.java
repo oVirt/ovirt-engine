@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +21,24 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
 
-    private static JobRowMapper jobRowMapper = new JobRowMapper();
+    private static final RowMapper<Job> jobRowMapper = (rs, rowNum) -> {
+        Job job = new Job();
+
+        job.setId(getGuidDefaultEmpty(rs, "job_id"));
+        job.setActionType(VdcActionType.valueOf(rs.getString("action_type")));
+        job.setDescription(rs.getString("description"));
+        job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
+        job.setOwnerId(getGuid(rs, "owner_id"));
+        job.setEngineSessionSeqId(rs.getLong("engine_session_seq_id"));
+        job.setVisible(rs.getBoolean("visible"));
+        job.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
+        job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
+        job.setLastUpdateTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_update_time")));
+        job.setCorrelationId(rs.getString("correlation_id"));
+        job.setExternal(rs.getBoolean("is_external"));
+        job.setAutoCleared(rs.getBoolean("is_auto_cleared"));
+        return job;
+    };
 
     public JobDaoImpl() {
         super("Job");
@@ -133,28 +148,4 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
         return getCallsHandler().executeRead
                 ("CheckIfJobHasTasks", SingleColumnRowMapper.newInstance(Boolean.class), parameterSource);
     }
-
-    private static class JobRowMapper implements RowMapper<Job> {
-
-        @Override
-        public Job mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Job job = new Job();
-
-            job.setId(getGuidDefaultEmpty(rs, "job_id"));
-            job.setActionType(VdcActionType.valueOf(rs.getString("action_type")));
-            job.setDescription(rs.getString("description"));
-            job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
-            job.setOwnerId(getGuid(rs, "owner_id"));
-            job.setEngineSessionSeqId(rs.getLong("engine_session_seq_id"));
-            job.setVisible(rs.getBoolean("visible"));
-            job.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
-            job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
-            job.setLastUpdateTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_update_time")));
-            job.setCorrelationId(rs.getString("correlation_id"));
-            job.setExternal(rs.getBoolean("is_external"));
-            job.setAutoCleared(rs.getBoolean("is_auto_cleared"));
-            return job;
-        }
-    }
-
 }

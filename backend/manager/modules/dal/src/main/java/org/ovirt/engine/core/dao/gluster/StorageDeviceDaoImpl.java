@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -21,29 +19,23 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class StorageDeviceDaoImpl extends MassOperationsGenericDao<StorageDevice, Guid> implements
         StorageDeviceDao {
 
-    private static final RowMapper<StorageDevice> storageDeviceRowMapper = new StorageDeviceRowMapper();
-
-    private static final class StorageDeviceRowMapper implements RowMapper<StorageDevice> {
-        @Override
-        public StorageDevice mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            StorageDevice entity = new StorageDevice();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setName(rs.getString("name"));
-            entity.setDevUuid(rs.getString("device_uuid"));
-            entity.setFsUuid(rs.getString("filesystem_uuid"));
-            entity.setVdsId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setDescription(rs.getString("description"));
-            entity.setDevType(rs.getString("device_type"));
-            entity.setDevPath(rs.getString("device_path"));
-            entity.setFsType(rs.getString("filesystem_type"));
-            entity.setMountPoint(rs.getString("mount_point"));
-            entity.setSize(rs.getLong("size"));
-            entity.setCanCreateBrick(rs.getBoolean("is_free"));
-            entity.setGlusterBrick(rs.getBoolean("is_gluster_brick"));
-            return entity;
-        }
-    }
+    private static final RowMapper<StorageDevice> storageDeviceRowMapper = (rs, rowNum) -> {
+        StorageDevice entity = new StorageDevice();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setName(rs.getString("name"));
+        entity.setDevUuid(rs.getString("device_uuid"));
+        entity.setFsUuid(rs.getString("filesystem_uuid"));
+        entity.setVdsId(getGuidDefaultEmpty(rs, "vds_id"));
+        entity.setDescription(rs.getString("description"));
+        entity.setDevType(rs.getString("device_type"));
+        entity.setDevPath(rs.getString("device_path"));
+        entity.setFsType(rs.getString("filesystem_type"));
+        entity.setMountPoint(rs.getString("mount_point"));
+        entity.setSize(rs.getLong("size"));
+        entity.setCanCreateBrick(rs.getBoolean("is_free"));
+        entity.setGlusterBrick(rs.getBoolean("is_gluster_brick"));
+        return entity;
+    };
 
     public StorageDeviceDaoImpl() {
         super("StorageDevice");

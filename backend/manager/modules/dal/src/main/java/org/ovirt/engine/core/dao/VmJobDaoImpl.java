@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -32,7 +30,7 @@ public class VmJobDaoImpl extends MassOperationsGenericDao<VmJob, Guid> implemen
     @Override
     public List<VmJob> getAll() {
         return getCallsHandler().executeReadList("GetAllVmJobs",
-                VmJobRowMapper.instance,
+                vmJobRowMapper,
                 getCustomMapSqlParameterSource());
     }
 
@@ -67,41 +65,32 @@ public class VmJobDaoImpl extends MassOperationsGenericDao<VmJob, Guid> implemen
 
     @Override
     protected RowMapper<VmJob> createEntityRowMapper() {
-        return VmJobRowMapper.instance;
+        return vmJobRowMapper;
     }
 
-    private static class VmJobRowMapper implements RowMapper<VmJob> {
+    private static final RowMapper<VmJob> vmJobRowMapper = (rs, rowNum) -> {
+        VmJob entity;
+        VmJobType jobType = VmJobType.forValue(rs.getInt("job_type"));
 
-        public static final VmJobRowMapper instance = new VmJobRowMapper();
-
-        private VmJobRowMapper() {
+        switch (jobType) {
+        case BLOCK:
+            VmBlockJob blockJob = new VmBlockJob();
+            blockJob.setBlockJobType(VmBlockJobType.forValue(rs.getInt("block_job_type")));
+            blockJob.setBandwidth(rs.getLong("bandwidth"));
+            blockJob.setCursorCur(rs.getLong("cursor_cur"));
+            blockJob.setCursorEnd(rs.getLong("cursor_end"));
+            blockJob.setImageGroupId(getGuidDefaultEmpty(rs, "image_group_id"));
+            entity = blockJob;
+            break;
+        default:
+            entity = new VmJob();
+            break;
         }
 
-        @Override
-        public VmJob mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VmJob entity;
-            VmJobType jobType = VmJobType.forValue(rs.getInt("job_type"));
-
-            switch (jobType) {
-            case BLOCK:
-                VmBlockJob blockJob = new VmBlockJob();
-                blockJob.setBlockJobType(VmBlockJobType.forValue(rs.getInt("block_job_type")));
-                blockJob.setBandwidth(rs.getLong("bandwidth"));
-                blockJob.setCursorCur(rs.getLong("cursor_cur"));
-                blockJob.setCursorEnd(rs.getLong("cursor_end"));
-                blockJob.setImageGroupId(getGuidDefaultEmpty(rs, "image_group_id"));
-                entity = blockJob;
-                break;
-            default:
-                entity = new VmJob();
-                break;
-            }
-
-            entity.setId(getGuidDefaultEmpty(rs, "vm_job_id"));
-            entity.setVmId(getGuidDefaultEmpty(rs, "vm_id"));
-            entity.setJobState(VmJobState.forValue(rs.getInt("job_state")));
-            entity.setJobType(jobType);
-            return entity;
-        }
-    }
+        entity.setId(getGuidDefaultEmpty(rs, "vm_job_id"));
+        entity.setVmId(getGuidDefaultEmpty(rs, "vm_id"));
+        entity.setJobState(VmJobState.forValue(rs.getInt("job_state")));
+        entity.setJobType(jobType);
+        return entity;
+    };
 }

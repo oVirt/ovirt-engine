@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 import javax.inject.Named;
@@ -74,18 +72,7 @@ public class ImageDaoImpl extends DefaultGenericDao<Image, Guid> implements Imag
 
     @Override
     protected RowMapper<Image> createEntityRowMapper() {
-        return ImageRowMapper.instance;
-    }
-
-    private static class ImageRowMapper implements RowMapper<Image> {
-
-        public static ImageRowMapper instance = new ImageRowMapper();
-
-        private ImageRowMapper() {
-        }
-
-        @Override
-        public Image mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return (rs, rowNum) -> {
             Image entity = new Image();
             entity.setId(getGuidDefaultEmpty(rs, "image_guid"));
             entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
@@ -101,7 +88,7 @@ public class ImageDaoImpl extends DefaultGenericDao<Image, Guid> implements Imag
             entity.setActive((Boolean) rs.getObject("active"));
             entity.setVolumeClassification(VolumeClassification.forValue(rs.getInt("volume_classification")));
             return entity;
-        }
+        };
     }
 
     @Override

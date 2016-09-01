@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -29,7 +27,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        return getCallsHandler().executeRead("GetPermissionsByid", PermissionRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetPermissionsByid", permissionRowMapper, parameterSource);
     }
 
     @Override
@@ -38,7 +36,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 .addValue("quota_id", quotaId);
 
         return getCallsHandler().executeReadList("GetConsumedPermissionsForQuotaId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -51,7 +49,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 .addValue("object_id", objectid);
 
         return getCallsHandler().executeRead("GetPermissionsByRoleIdAndAdElementIdAndObjectId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -64,7 +62,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 .addValue("object_id", objectid);
 
         return getCallsHandler().executeRead("GetForRoleAndAdElementAndObject_wGroupCheck",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -84,7 +82,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 addValue("app_mode", appMode);
 
         return getCallsHandler().executeReadList("GetPermissionsByAdElementId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -94,7 +92,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 .addValue("ad_element_id", id);
 
         return getCallsHandler().executeReadList("GetDirectPermissionsByAdElementId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -104,7 +102,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 .addValue("role_id", id);
 
         return getCallsHandler().executeReadList("GetPermissionsByRoleId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -116,7 +114,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                         elementid);
 
         return getCallsHandler().executeReadList("GetPermissionsByRoleIdAndAdElementId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -126,7 +124,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                 .addValue("role_id", roleid).addValue("object_id", objectid);
 
         return getCallsHandler().executeReadList("GetPermissionsByRoleIdAndObjectId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -158,7 +156,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
             functionName = "GetAllUsersWithPermissionsOnEntityByEntityId";
         }
         return getCallsHandler().executeReadList(functionName,
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -183,7 +181,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
                         .addValue("is_filtered", isFiltered)
                         .addValue("app_mode", appMode);
         return getCallsHandler().executeReadList("GetPermissionsTreeByEntityId",
-                PermissionRowMapper.instance,
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -257,28 +255,22 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
         throw new UnsupportedOperationException();
     }
 
-    private static class PermissionRowMapper implements RowMapper<Permission> {
-        public static final PermissionRowMapper instance = new PermissionRowMapper();
+    private static final RowMapper<Permission> permissionRowMapper = (rs, rowNum) -> {
+        Permission entity = new Permission();
+        entity.setAdElementId(getGuidDefaultEmpty(rs, "ad_element_id"));
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setRoleId(getGuidDefaultEmpty(rs, "role_id"));
+        entity.setObjectId(getGuidDefaultEmpty(rs, "object_id"));
+        entity.setObjectType(VdcObjectType.forValue(rs
+                .getInt("object_type_id")));
+        entity.setRoleName(rs.getString("role_name"));
+        entity.setObjectName(rs.getString("object_name"));
+        entity.setOwnerName(rs.getString("owner_name"));
+        entity.setNamespace(rs.getString("namespace"));
+        entity.setAuthz(rs.getString("authz"));
+        entity.setRoleType(RoleType.getById(rs.getInt("role_type")));
+        entity.setCreationDate(rs.getLong("creation_date"));
 
-        @Override
-        public Permission mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Permission entity = new Permission();
-            entity.setAdElementId(getGuidDefaultEmpty(rs, "ad_element_id"));
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setRoleId(getGuidDefaultEmpty(rs, "role_id"));
-            entity.setObjectId(getGuidDefaultEmpty(rs, "object_id"));
-            entity.setObjectType(VdcObjectType.forValue(rs
-                    .getInt("object_type_id")));
-            entity.setRoleName(rs.getString("role_name"));
-            entity.setObjectName(rs.getString("object_name"));
-            entity.setOwnerName(rs.getString("owner_name"));
-            entity.setNamespace(rs.getString("namespace"));
-            entity.setAuthz(rs.getString("authz"));
-            entity.setRoleType(RoleType.getById(rs.getInt("role_type")));
-            entity.setCreationDate(rs.getLong("creation_date"));
-
-            return entity;
-        }
-    }
-
+        return entity;
+    };
 }

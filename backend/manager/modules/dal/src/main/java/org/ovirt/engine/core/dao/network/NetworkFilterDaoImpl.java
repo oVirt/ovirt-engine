@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.network;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -23,7 +21,15 @@ public class NetworkFilterDaoImpl extends DefaultReadDao<NetworkFilter, Guid>imp
     private static final String FILTER_NAME = "filter_name";
     private static final String FILTER_VERSION = "version";
 
-    private NetworkFilterRowMapper networkFilterRowMapper = new NetworkFilterRowMapper();
+    private static final RowMapper<NetworkFilter> networkFilterRowMapper = (rs, rowNum) -> {
+        NetworkFilter entity = new NetworkFilter();
+        entity.setId(getGuid(rs, FILTER_ID));
+        entity.setName(rs.getString(FILTER_NAME));
+        final VersionRowMapper versionRowMapper = new VersionRowMapper(FILTER_VERSION);
+        Version version = versionRowMapper.mapRow(rs, rowNum);
+        entity.setVersion(version);
+        return entity;
+    };
 
     public NetworkFilterDaoImpl() {
         super("NetworkFilter");
@@ -66,20 +72,4 @@ public class NetworkFilterDaoImpl extends DefaultReadDao<NetworkFilter, Guid>imp
     protected RowMapper<NetworkFilter> createEntityRowMapper() {
         return networkFilterRowMapper;
     }
-
-    private static class NetworkFilterRowMapper implements RowMapper<NetworkFilter> {
-
-        @Override
-        public NetworkFilter mapRow(ResultSet rs, int rowNum) throws SQLException {
-            NetworkFilter entity = new NetworkFilter();
-            entity.setId(getGuid(rs, FILTER_ID));
-            entity.setName(rs.getString(FILTER_NAME));
-            final VersionRowMapper versionRowMapper = new VersionRowMapper(FILTER_VERSION);
-            Version version = versionRowMapper.mapRow(rs, rowNum);
-            entity.setVersion(version);
-            return entity;
-        }
-
-    }
-
 }

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,8 +19,17 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDao<GlusterVolumeSnapshotEntity, Guid> implements GlusterVolumeSnapshotDao {
-    private static final RowMapper<GlusterVolumeSnapshotEntity> snapshotRowMapper =
-            new GlusterVolumeSnapshotRowMapper();
+    private static final RowMapper<GlusterVolumeSnapshotEntity> snapshotRowMapper = (rs, rowNum) -> {
+        GlusterVolumeSnapshotEntity entity = new GlusterVolumeSnapshotEntity();
+        entity.setSnapshotId(getGuidDefaultEmpty(rs, "snapshot_id"));
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
+        entity.setSnapshotName(rs.getString("snapshot_name"));
+        entity.setCreatedAt(rs.getTimestamp("_create_date"));
+        entity.setDescription(rs.getString("description"));
+        entity.setStatus(GlusterSnapshotStatus.from(rs.getString("status")));
+        return entity;
+    };
 
     public GlusterVolumeSnapshotDaoImpl() {
         super("GlusterVolumeSnapshot");
@@ -148,35 +155,14 @@ public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDao<Glust
         updateAllInBatch("UpdateGlusterVolumeSnapshotStatus", snapshots, getBatchMapper());
     }
 
-    private static final class GlusterVolumeSnapshotRowMapper implements RowMapper<GlusterVolumeSnapshotEntity> {
-        @Override
-        public GlusterVolumeSnapshotEntity mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterVolumeSnapshotEntity entity = new GlusterVolumeSnapshotEntity();
-            entity.setSnapshotId(getGuidDefaultEmpty(rs, "snapshot_id"));
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
-            entity.setSnapshotName(rs.getString("snapshot_name"));
-            entity.setCreatedAt(rs.getTimestamp("_create_date"));
-            entity.setDescription(rs.getString("description"));
-            entity.setStatus(GlusterSnapshotStatus.from(rs.getString("status")));
-            return entity;
-        }
-    }
-
     @Override
     public MapSqlParameterMapper<GlusterVolumeSnapshotEntity> getBatchMapper() {
-        return new MapSqlParameterMapper<GlusterVolumeSnapshotEntity>() {
-            @Override
-            public MapSqlParameterSource map(GlusterVolumeSnapshotEntity entity) {
-                return new MapSqlParameterSource()
-                        .addValue("snapshot_id", entity.getId())
-                        .addValue("snapshot_name", entity.getSnapshotName())
-                        .addValue("volume_id", entity.getVolumeId())
-                        .addValue("description", entity.getDescription())
-                        .addValue("status", EnumUtils.nameOrNull(entity.getStatus()))
-                        .addValue("_create_date", entity.getCreatedAt());
-            }
-        };
+        return entity -> new MapSqlParameterSource()
+                .addValue("snapshot_id", entity.getId())
+                .addValue("snapshot_name", entity.getSnapshotName())
+                .addValue("volume_id", entity.getVolumeId())
+                .addValue("description", entity.getDescription())
+                .addValue("status", EnumUtils.nameOrNull(entity.getStatus()))
+                .addValue("_create_date", entity.getCreatedAt());
     }
 }

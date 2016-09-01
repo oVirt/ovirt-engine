@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -40,30 +38,22 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
 
     @Override
     protected RowMapper<DiskVmElement> createEntityRowMapper() {
-        return DiskVmElementRowMapper.INSTANCE;
+        return diskVmElementRowMapper;
     }
 
-    private static class DiskVmElementRowMapper implements RowMapper<DiskVmElement> {
-        public static DiskVmElementRowMapper INSTANCE = new DiskVmElementRowMapper();
+    private static final RowMapper<DiskVmElement> diskVmElementRowMapper = (rs, rowNum) -> {
+        DiskVmElement dve = new DiskVmElement();
 
-        private DiskVmElementRowMapper() {
+        dve.setId(new VmDeviceId(getGuidDefaultEmpty(rs, "disk_id"), getGuidDefaultEmpty(rs, "vm_id")));
+        dve.setBoot(rs.getBoolean("is_boot"));
+        String diskInterfaceName = rs.getString("disk_interface");
+        if (!StringUtils.isEmpty(diskInterfaceName)) {
+            dve.setDiskInterface(DiskInterface.valueOf(diskInterfaceName));
         }
-
-        @Override
-        public DiskVmElement mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DiskVmElement dve = new DiskVmElement();
-
-            dve.setId(new VmDeviceId(getGuidDefaultEmpty(rs, "disk_id"), getGuidDefaultEmpty(rs, "vm_id")));
-            dve.setBoot(rs.getBoolean("is_boot"));
-            String diskInterfaceName = rs.getString("disk_interface");
-            if (!StringUtils.isEmpty(diskInterfaceName)) {
-                dve.setDiskInterface(DiskInterface.valueOf(diskInterfaceName));
-            }
-            dve.setPlugged(rs.getBoolean("is_plugged"));
-            dve.setLogicalName(rs.getString("logical_name"));
-            return dve;
-        }
-    }
+        dve.setPlugged(rs.getBoolean("is_plugged"));
+        dve.setLogicalName(rs.getString("logical_name"));
+        return dve;
+    };
 
     @Override
     public DiskVmElement get(VmDeviceId id) {
@@ -73,7 +63,7 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
     @Override
     public DiskVmElement get(VmDeviceId id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetDiskVmElementByDiskVmElementId",
-                DiskVmElementRowMapper.INSTANCE,
+                diskVmElementRowMapper,
                 createIdParameterMapper(id)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered));
@@ -89,14 +79,14 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
                 .addValue("user_id", userID)
                 .addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetDiskVmElementsForVm",
-                DiskVmElementRowMapper.INSTANCE,
+                diskVmElementRowMapper,
                 parameterSource);
     }
 
     public List<DiskVmElement> getAllPluggedToVm(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmId);
         return getCallsHandler().executeReadList("GetDiskVmElementsPluggedToVm",
-                DiskVmElementRowMapper.INSTANCE,
+                diskVmElementRowMapper,
                 parameterSource);
     }
 }

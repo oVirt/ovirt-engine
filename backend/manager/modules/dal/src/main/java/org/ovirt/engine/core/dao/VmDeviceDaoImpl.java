@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +60,7 @@ public class VmDeviceDaoImpl extends
 
     @Override
     protected RowMapper<VmDevice> createEntityRowMapper() {
-        return VmDeviceRowMapper.instance;
+        return vmDeviceRowMapper;
     }
 
     @Override
@@ -175,41 +173,32 @@ public class VmDeviceDaoImpl extends
 
     }
 
-    static class VmDeviceRowMapper implements RowMapper<VmDevice> {
+    static final RowMapper<VmDevice> vmDeviceRowMapper = (rs, rowNum) -> {
+        VmDevice vmDevice = new VmDevice();
 
-        public static VmDeviceRowMapper instance = new VmDeviceRowMapper();
+        vmDevice.setId(new VmDeviceId(getGuidDefaultEmpty(rs, "device_id"), getGuidDefaultEmpty(rs, "vm_id")));
+        vmDevice.setDevice(rs.getString("device"));
+        vmDevice.setType(VmDeviceGeneralType.forValue(rs.getString("type")));
+        vmDevice.setAddress(rs.getString("address"));
+        vmDevice.setBootOrder(rs.getInt("boot_order"));
+        vmDevice.setSpecParams(SerializationFactory.getDeserializer()
+                .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class));
+        vmDevice.setIsManaged(rs.getBoolean("is_managed"));
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public VmDevice mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            VmDevice vmDevice = new VmDevice();
+        // note - those columns are being used also in DiskVmRowMapper, therefore any related
+        // change should be done there as well.
+        vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
+        vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
 
-            vmDevice.setId(new VmDeviceId(getGuidDefaultEmpty(rs, "device_id"),
-                    getGuidDefaultEmpty(rs, "vm_id")));
-            vmDevice.setDevice(rs.getString("device"));
-            vmDevice.setType(VmDeviceGeneralType.forValue(rs.getString("type")));
-            vmDevice.setAddress(rs.getString("address"));
-            vmDevice.setBootOrder(rs.getInt("boot_order"));
-            vmDevice.setSpecParams(SerializationFactory.getDeserializer()
-                    .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class));
-            vmDevice.setIsManaged(rs.getBoolean("is_managed"));
-
-            // note - those columns are being used also in DiskVmRowMapper, therefore any related
-            // change should be done there as well.
-            vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
-            vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
-
-            vmDevice.setAlias(rs.getString("alias"));
-            vmDevice.setCustomProperties(SerializationFactory.getDeserializer()
-                    .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
-            vmDevice.setSnapshotId(getGuid(rs, "snapshot_id"));
-            vmDevice.setLogicalName(rs.getString("logical_name"));
-            vmDevice.setUsingScsiReservation(rs.getBoolean("is_using_scsi_reservation"));
-            vmDevice.setHostDevice(rs.getString("host_device"));
-            return vmDevice;
-        }
-    }
+        vmDevice.setAlias(rs.getString("alias"));
+        vmDevice.setCustomProperties(SerializationFactory.getDeserializer()
+                .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
+        vmDevice.setSnapshotId(getGuid(rs, "snapshot_id"));
+        vmDevice.setLogicalName(rs.getString("logical_name"));
+        vmDevice.setUsingScsiReservation(rs.getBoolean("is_using_scsi_reservation"));
+        vmDevice.setHostDevice(rs.getString("host_device"));
+        return vmDevice;
+    };
 
     @Override
     public void removeAll(List<VmDeviceId> removedDeviceIds) {
@@ -278,15 +267,10 @@ public class VmDeviceDaoImpl extends
     }
 
     public MapSqlParameterMapper<VmDevice> getBootOrderBatchMapper() {
-        return new MapSqlParameterMapper<VmDevice>() {
-            @Override
-            public MapSqlParameterSource map(VmDevice entity) {
-                return new MapSqlParameterSource()
-                        .addValue("device_id", entity.getDeviceId())
-                        .addValue("vm_id", entity.getVmId())
-                        .addValue("boot_order", entity.getBootOrder());
-            }
-        };
+        return entity -> new MapSqlParameterSource()
+                .addValue("device_id", entity.getDeviceId())
+                .addValue("vm_id", entity.getVmId())
+                .addValue("boot_order", entity.getBootOrder());
     }
 
     @Override

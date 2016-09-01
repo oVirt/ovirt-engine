@@ -3,8 +3,6 @@
  */
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -15,7 +13,6 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -25,35 +22,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class BusinessEntitySnapshotDaoImpl extends BaseDao implements BusinessEntitySnapshotDao {
-
-    private static class BusinessEntitySnapshotMapper implements RowMapper<BusinessEntitySnapshot> {
-
-        @Override
-        public BusinessEntitySnapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
-            BusinessEntitySnapshot result = new BusinessEntitySnapshot();
-            result.setId(getGuidDefaultEmpty(rs, "id"));
-            result.setCommandId(getGuidDefaultEmpty(rs, "command_id"));
-            result.setCommandType(rs.getString("command_type"));
-            result.setEntityId(rs.getString("entity_id"));
-            result.setEntityType(rs.getString("entity_type"));
-            result.setEntitySnapshot(rs.getString("entity_snapshot"));
-            result.setSnapshotClass(rs.getString("snapshot_class"));
-            result.setSnapshotType(SnapshotType.values()[rs.getInt("snapshot_type")]);
-            result.setInsertionOrder(rs.getInt("insertion_order"));
-            return result;
-        }
-    }
-
-    private static class BusinessEntitySnapshotIdMapper implements RowMapper<KeyValue> {
-
-        @Override
-        public DefaultKeyValue mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DefaultKeyValue result = new DefaultKeyValue();
-            result.setKey(getGuidDefaultEmpty(rs, "command_id"));
-            result.setValue(rs.getString("command_type"));
-            return result;
-        }
-    }
 
     /**
      *
@@ -66,7 +34,19 @@ public class BusinessEntitySnapshotDaoImpl extends BaseDao implements BusinessEn
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("command_id", commandID);
 
         return getCallsHandler().executeReadList("get_entity_snapshot_by_command_id",
-                new BusinessEntitySnapshotMapper(),
+                (rs, rowNum) -> {
+                    BusinessEntitySnapshot result = new BusinessEntitySnapshot();
+                    result.setId(getGuidDefaultEmpty(rs, "id"));
+                    result.setCommandId(getGuidDefaultEmpty(rs, "command_id"));
+                    result.setCommandType(rs.getString("command_type"));
+                    result.setEntityId(rs.getString("entity_id"));
+                    result.setEntityType(rs.getString("entity_type"));
+                    result.setEntitySnapshot(rs.getString("entity_snapshot"));
+                    result.setSnapshotClass(rs.getString("snapshot_class"));
+                    result.setSnapshotType(SnapshotType.values()[rs.getInt("snapshot_type")]);
+                    result.setInsertionOrder(rs.getInt("insertion_order"));
+                    return result;
+                },
                 parameterSource);
     }
 
@@ -102,7 +82,12 @@ public class BusinessEntitySnapshotDaoImpl extends BaseDao implements BusinessEn
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("get_all_commands",
-                new BusinessEntitySnapshotIdMapper(),
+                (rs, rowNum) -> {
+                    DefaultKeyValue result = new DefaultKeyValue();
+                    result.setKey(getGuidDefaultEmpty(rs, "command_id"));
+                    result.setValue(rs.getString("command_type"));
+                    return result;
+                },
                 parameterSource);
     }
 }

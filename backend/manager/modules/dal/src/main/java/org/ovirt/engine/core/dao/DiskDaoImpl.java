@@ -33,7 +33,7 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
 
     @Override
     public Disk get(Guid id, Guid userID, boolean isFiltered) {
-        return getCallsHandler().executeRead("GetDiskByDiskId", DiskRowMapper.instance, getCustomMapSqlParameterSource()
+        return getCallsHandler().executeRead("GetDiskByDiskId", diskRowMapper, getCustomMapSqlParameterSource()
                 .addValue("disk_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
@@ -59,7 +59,7 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
                         .addValue("only_plugged", onlyPluggedDisks)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetDisksVmGuid", DiskForVmRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetDisksVmGuid", diskForVmRowMapper, parameterSource);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
                 .addValue("user_id", userID)
                 .addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetDisksVmGuidBasicView",
-                DiskBasicViewRowMapper.instance,
+                diskBasicViewRowMapper,
                 parameterSource);
     }
 
@@ -84,7 +84,7 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
 
         List<Pair<Guid, Disk>> pairs = getCallsHandler().executeReadList(
                 "GetDisksVmGuids",
-                DisksForVmsRowMapper.instance,
+                disksForVmsRowMapper,
                 parameterSource);
 
         Map<Guid, List<Disk>> resultMap = new HashMap<>();
@@ -105,7 +105,7 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
     public List<Disk> getAll(Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetAllFromDisks", DiskRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromDisks", diskRowMapper, parameterSource);
     }
 
     @Override
@@ -117,14 +117,14 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
                 .addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeReadList("GetAllAttachableDisksByPoolId",
-                DiskRowMapper.instance,
+                diskRowMapper,
                 parameterSource);
 
     }
 
     @Override
     public Disk getVmBootActiveDisk(Guid vmId) {
-        return getCallsHandler().executeRead("GetVmBootActiveDisk", DiskRowMapper.instance,
+        return getCallsHandler().executeRead("GetVmBootActiveDisk", diskRowMapper,
                 getCustomMapSqlParameterSource().addValue("vm_guid", vmId));
     }
 
@@ -136,24 +136,16 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetAllFromDisksByDiskStorageType",
-                DiskRowMapper.instance,
+                diskRowMapper,
                 parameterSource);
     }
 
     @Override
     public List<Disk> getAllWithQuery(String query) {
-        return getJdbcTemplate().query(query, DiskRowMapper.instance);
+        return getJdbcTemplate().query(query, diskRowMapper);
     }
 
-    private static class DiskRowMapper implements RowMapper<Disk> {
-
-        public static DiskRowMapper instance = new DiskRowMapper();
-
-        private DiskRowMapper() {
-        }
-
-        @Override
-        public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
+    private static final RowMapper<Disk> diskRowMapper = (rs, rowNum) -> {
             Disk disk = null;
             DiskStorageType diskStorageType = DiskStorageType.forValue(rs.getInt("disk_storage_type"));
 
@@ -172,61 +164,33 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
             }
 
             return disk;
+    };
+
+    private static final RowMapper<Disk> diskForVmRowMapper = (rs, rowNum) -> {
+        Disk disk = diskRowMapper.mapRow(rs, rowNum);
+        disk.setPlugged(rs.getBoolean("is_plugged"));
+        disk.setReadOnly(rs.getBoolean("is_readonly"));
+        disk.setLogicalName(rs.getString("logical_name"));
+        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+            ((LunDisk) disk).setUsingScsiReservation(rs.getBoolean("is_using_scsi_reservation"));
         }
-    }
+        return disk;
+    };
 
-    private static class DiskForVmRowMapper implements RowMapper<Disk> {
+    private static final RowMapper<Disk> diskBasicViewRowMapper = (rs, rowNum) -> {
+        DiskImage disk = new DiskImage();
+        disk.setDiskAlias(rs.getString("disk_alias"));
+        disk.setSize(rs.getLong("size"));
+        disk.setId(getGuid(rs, "disk_id"));
 
-        public static final DiskForVmRowMapper instance = new DiskForVmRowMapper();
+        return disk;
+    };
 
-        private DiskForVmRowMapper() {
-        }
-
-        @Override
-        public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Disk disk = DiskRowMapper.instance.mapRow(rs, rowNum);
-            disk.setPlugged(rs.getBoolean("is_plugged"));
-            disk.setReadOnly(rs.getBoolean("is_readonly"));
-            disk.setLogicalName(rs.getString("logical_name"));
-            if (disk.getDiskStorageType() == DiskStorageType.LUN) {
-                ((LunDisk) disk).setUsingScsiReservation(rs.getBoolean("is_using_scsi_reservation"));
-            }
-            return disk;
-        }
-    }
-
-    private static class DiskBasicViewRowMapper implements RowMapper<Disk> {
-
-        public static DiskBasicViewRowMapper instance = new DiskBasicViewRowMapper();
-
-        private DiskBasicViewRowMapper() {
-        }
-
-        @Override
-        public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DiskImage disk = new DiskImage();
-            disk.setDiskAlias(rs.getString("disk_alias"));
-            disk.setSize(rs.getLong("size"));
-            disk.setId(getGuid(rs, "disk_id"));
-
-            return disk;
-        }
-    }
-
-    private static class DisksForVmsRowMapper implements RowMapper<Pair<Guid, Disk>> {
-
-        static final DisksForVmsRowMapper instance = new DisksForVmsRowMapper();
-
-        private DisksForVmsRowMapper() {
-        }
-
-        @Override
-        public Pair<Guid, Disk> mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Disk disk = DiskForVmRowMapper.instance.mapRow(rs, rowNum);
-            Guid vmId = new Guid(rs.getString("vm_id"));
-            return new Pair<>(vmId, disk);
-        }
-    }
+    private static final RowMapper<Pair<Guid, Disk>> disksForVmsRowMapper = (rs, rowNum) -> {
+        Disk disk = diskForVmRowMapper.mapRow(rs, rowNum);
+        Guid vmId = new Guid(rs.getString("vm_id"));
+        return new Pair<>(vmId, disk);
+    };
 
     private static class LunDiskRowMapper extends AbstractDiskRowMapper<LunDisk> {
 

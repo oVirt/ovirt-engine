@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -25,8 +23,19 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 @SuppressWarnings("deprecation")
 public class GlusterServerServiceDaoImpl extends MassOperationsGenericDao<GlusterServerService, Guid> implements GlusterServerServiceDao {
 
-    private static final RowMapper<GlusterServerService> serviceRowMapper =
-            new GlusterServerServiceRowMapper();
+    private static final RowMapper<GlusterServerService> serviceRowMapper = (rs, rowNum) -> {
+        GlusterServerService entity = new GlusterServerService();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setServerId(getGuidDefaultEmpty(rs, "server_id"));
+        entity.setServiceId(getGuidDefaultEmpty(rs, "service_id"));
+        entity.setServiceName(rs.getString("service_name"));
+        entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
+        entity.setMessage(rs.getString("message"));
+        entity.setPid(rs.getInt("pid"));
+        entity.setStatus(GlusterServiceStatus.valueOf(rs.getString("status")));
+        entity.setHostName(rs.getString("vds_name"));
+        return entity;
+    };
 
     public GlusterServerServiceDaoImpl() {
         super("GlusterServerService");
@@ -99,23 +108,5 @@ public class GlusterServerServiceDaoImpl extends MassOperationsGenericDao<Gluste
 
         return getCallsHandler().executeReadList("GetGlusterServerServicesByServerIdAndServiceType",
                 serviceRowMapper, paramSource);
-    }
-
-    private static final class GlusterServerServiceRowMapper implements RowMapper<GlusterServerService> {
-        @Override
-        public GlusterServerService mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterServerService entity = new GlusterServerService();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setServerId(getGuidDefaultEmpty(rs, "server_id"));
-            entity.setServiceId(getGuidDefaultEmpty(rs, "service_id"));
-            entity.setServiceName(rs.getString("service_name"));
-            entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
-            entity.setMessage(rs.getString("message"));
-            entity.setPid(rs.getInt("pid"));
-            entity.setStatus(GlusterServiceStatus.valueOf(rs.getString("status")));
-            entity.setHostName(rs.getString("vds_name"));
-            return entity;
-        }
     }
 }

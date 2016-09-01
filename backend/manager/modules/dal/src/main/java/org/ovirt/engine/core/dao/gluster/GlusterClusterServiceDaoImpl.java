@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -19,8 +17,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class GlusterClusterServiceDaoImpl extends BaseDao implements GlusterClusterServiceDao {
-    private static final RowMapper<GlusterClusterService> serviceRowMapper =
-            new GlusterClusterServiceRowMapper();
+    private static final RowMapper<GlusterClusterService> serviceRowMapper = (rs, rowNum) -> {
+        GlusterClusterService entity = new GlusterClusterService();
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
+        entity.setStatus(GlusterServiceStatus.valueOf(rs.getString("status")));
+        return entity;
+    };
 
     @Override
     public List<GlusterClusterService> getByClusterId(Guid clusterId) {
@@ -45,17 +48,6 @@ public class GlusterClusterServiceDaoImpl extends BaseDao implements GlusterClus
     @Override
     public void update(GlusterClusterService service) {
         getCallsHandler().executeModification("UpdateGlusterClusterService", createFullParametersMapper(service));
-    }
-
-    public static class GlusterClusterServiceRowMapper implements RowMapper<GlusterClusterService> {
-        @Override
-        public GlusterClusterService mapRow(ResultSet rs, int rownum) throws SQLException {
-            GlusterClusterService entity = new GlusterClusterService();
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
-            entity.setStatus(GlusterServiceStatus.valueOf(rs.getString("status")));
-            return entity;
-        }
     }
 
     private MapSqlParameterSource createFullParametersMapper(GlusterClusterService service) {

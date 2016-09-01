@@ -36,7 +36,7 @@ public class StorageQosDaoImpl extends QosBaseDaoImpl<StorageQos> implements Sto
                 .addValue("disk_profile_ids", createArrayOfUUIDs(diskProfileIds));
 
         List<Pair<Guid, StorageQos>> pairs = getCallsHandler().executeReadList("GetQosByDiskProfiles",
-                StorageQosMultipleProfilesMapper.MAPPER,
+                storageQosMultipleProfilesMapper,
                 parameterSource);
 
         Map<Guid, StorageQos> resMap = new HashMap<>();
@@ -80,18 +80,9 @@ public class StorageQosDaoImpl extends QosBaseDaoImpl<StorageQos> implements Sto
         }
     }
 
-    private static class StorageQosMultipleProfilesMapper implements RowMapper<Pair<Guid, StorageQos>> {
-
-        public static final StorageQosMultipleProfilesMapper MAPPER = new StorageQosMultipleProfilesMapper();
-
-        private StorageQosMultipleProfilesMapper() {
-        }
-
-        @Override
-        public Pair<Guid, StorageQos> mapRow(ResultSet rs, int rowNum) throws SQLException {
-            StorageQos qos = StorageDaoDbFacadaeImplMapper.MAPPER.mapRow(rs, rowNum);
-            Guid guid = new Guid(rs.getString("disk_profile_id"));
-            return new Pair<>(guid, qos);
-        }
-    }
+    private static RowMapper<Pair<Guid, StorageQos>> storageQosMultipleProfilesMapper = (rs, rowNum) -> {
+        StorageQos qos = StorageDaoDbFacadaeImplMapper.MAPPER.mapRow(rs, rowNum);
+        Guid guid = new Guid(rs.getString("disk_profile_id"));
+        return new Pair<>(guid, qos);
+    };
 }

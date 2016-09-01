@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -71,8 +69,7 @@ public class RepoFileMetaDataDaoImpl extends BaseDao implements RepoFileMetaData
             parameterSource.addValue("file_type", fileType.getValue());
         }
 
-        return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain",
-                RepoImageMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain", repoImageMapper, parameterSource);
     }
 
     /**
@@ -90,37 +87,27 @@ public class RepoFileMetaDataDaoImpl extends BaseDao implements RepoFileMetaData
         parameterSource.addValue("storage_domain_status", storageDomainStatus.getValue());
 
         return getCallsHandler().executeReadList("GetRepo_files_in_all_storage_pools",
-                ThinRepoImageMapper.instance,
+                thinRepoImageMapper,
                 parameterSource);
     }
 
-    private static class ThinRepoImageMapper implements RowMapper<RepoImage> {
-        public static final ThinRepoImageMapper instance = new ThinRepoImageMapper();
+    private static final RowMapper<RepoImage> thinRepoImageMapper = (rs, rowNum) -> {
+        RepoImage entity = new RepoImage();
+        entity.setRepoDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
+        entity.setLastRefreshed(rs.getLong("last_refreshed"));
+        entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
+        return entity;
+    };
 
-        @Override
-        public RepoImage mapRow(ResultSet rs, int rowNum) throws SQLException {
-            RepoImage entity = new RepoImage();
-            entity.setRepoDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
-            entity.setLastRefreshed(rs.getLong("last_refreshed"));
-            entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
-            return entity;
-        }
-    }
-
-    private static class RepoImageMapper implements RowMapper<RepoImage> {
-        public static final RepoImageMapper instance = new RepoImageMapper();
-
-        @Override
-        public RepoImage mapRow(ResultSet rs, int rowNum) throws SQLException {
-            RepoImage entity = new RepoImage();
-            entity.setRepoDomainId(getGuidDefaultEmpty(rs, "repo_domain_id"));
-            entity.setRepoImageId(rs.getString("repo_image_id"));
-            entity.setRepoImageName(rs.getString("repo_image_name"));
-            entity.setSize((Long) rs.getObject("size"));
-            entity.setDateCreated((Date) rs.getObject("date_created"));
-            entity.setLastRefreshed(rs.getLong("last_refreshed"));
-            entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
-            return entity;
-        }
-    }
+    private static final RowMapper<RepoImage> repoImageMapper= (rs, rowNum) -> {
+        RepoImage entity = new RepoImage();
+        entity.setRepoDomainId(getGuidDefaultEmpty(rs, "repo_domain_id"));
+        entity.setRepoImageId(rs.getString("repo_image_id"));
+        entity.setRepoImageName(rs.getString("repo_image_name"));
+        entity.setSize((Long) rs.getObject("size"));
+        entity.setDateCreated((Date) rs.getObject("date_created"));
+        entity.setLastRefreshed(rs.getLong("last_refreshed"));
+        entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
+        return entity;
+    };
 }

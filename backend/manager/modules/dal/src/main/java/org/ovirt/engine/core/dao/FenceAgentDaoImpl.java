@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -20,7 +18,7 @@ public class FenceAgentDaoImpl extends BaseDao implements FenceAgentDao {
     @Override
     public List<FenceAgent> getFenceAgentsForHost(Guid hostId) {
         return getCallsHandler().executeReadList("getFenceAgentsByVdsId",
-                FenceAgentRowMapper.instance,
+                fenceAgentRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_guid", hostId));
     }
@@ -28,7 +26,7 @@ public class FenceAgentDaoImpl extends BaseDao implements FenceAgentDao {
     @Override
     public FenceAgent get(Guid id) {
         return getCallsHandler().executeRead("getFenceAgentById",
-                FenceAgentRowMapper.instance,
+                fenceAgentRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("guid", id));
     }
@@ -102,31 +100,24 @@ public class FenceAgentDaoImpl extends BaseDao implements FenceAgentDao {
         return parameterSource;
     }
 
-    static final class FenceAgentRowMapper implements RowMapper<FenceAgent> {
-
-        public static final FenceAgentRowMapper instance = new FenceAgentRowMapper();
-
-        @Override
-        public FenceAgent mapRow(ResultSet rs, int rowNum) throws SQLException {
-            FenceAgent entity = new FenceAgent();
-            entity.setId(getGuid(rs, "id"));
-            entity.setHostId(getGuid(rs, "vds_id"));
-            entity.setOrder(rs.getInt("agent_order"));
-            entity.setType(rs.getString("type"));
-            entity.setUser(rs.getString("agent_user"));
-            entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
-            int port = rs.getInt("port");
-            entity.setPort(port == 0 ? null : port);
-            entity.setEncryptOptions(rs.getBoolean("encrypt_options"));
-            final String options = rs.getString("options");
-            if (entity.getEncryptOptions() && !options.isEmpty()) {
-                entity.setOptions(DbFacadeUtils.decryptPassword(options));
-            } else {
-                entity.setOptions(options);
-            }
-            entity.setIp(rs.getString("ip"));
-            return entity;
+    private static final RowMapper<FenceAgent> fenceAgentRowMapper = (rs, rowNum) -> {
+        FenceAgent entity = new FenceAgent();
+        entity.setId(getGuid(rs, "id"));
+        entity.setHostId(getGuid(rs, "vds_id"));
+        entity.setOrder(rs.getInt("agent_order"));
+        entity.setType(rs.getString("type"));
+        entity.setUser(rs.getString("agent_user"));
+        entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
+        int port = rs.getInt("port");
+        entity.setPort(port == 0 ? null : port);
+        entity.setEncryptOptions(rs.getBoolean("encrypt_options"));
+        final String options = rs.getString("options");
+        if (entity.getEncryptOptions() && !options.isEmpty()) {
+            entity.setOptions(DbFacadeUtils.decryptPassword(options));
+        } else {
+            entity.setOptions(options);
         }
-    }
-
+        entity.setIp(rs.getString("ip"));
+        return entity;
+    };
 }

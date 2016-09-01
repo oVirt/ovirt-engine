@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.scheduling;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -164,16 +162,13 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
     }
 
     protected RowMapper<ClusterPolicyUnit> createClusterPolicyUnitRowMapper() {
-        return new RowMapper<ClusterPolicyUnit>() {
-            @Override
-            public ClusterPolicyUnit mapRow(ResultSet rs, int arg1) throws SQLException {
-                ClusterPolicyUnit unit = new ClusterPolicyUnit();
-                unit.setClusterPolicyId(getGuid(rs, "cluster_policy_id"));
-                unit.setPolicyUnitId(getGuid(rs, "policy_unit_id"));
-                unit.setFilterSequence(rs.getInt("filter_sequence"));
-                unit.setFactor(rs.getInt("factor"));
-                return unit;
-            }
+        return (rs, arg1) -> {
+            ClusterPolicyUnit unit = new ClusterPolicyUnit();
+            unit.setClusterPolicyId(getGuid(rs, "cluster_policy_id"));
+            unit.setPolicyUnitId(getGuid(rs, "policy_unit_id"));
+            unit.setFilterSequence(rs.getInt("filter_sequence"));
+            unit.setFactor(rs.getInt("factor"));
+            return unit;
         };
     }
 
@@ -206,20 +201,16 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
 
     @Override
     protected RowMapper<ClusterPolicy> createEntityRowMapper() {
-        return new RowMapper<ClusterPolicy>() {
-
-            @Override
-            public ClusterPolicy mapRow(ResultSet rs, int arg1) throws SQLException {
-                ClusterPolicy clusterPolicy = new ClusterPolicy();
-                clusterPolicy.setId(getGuid(rs, "id"));
-                clusterPolicy.setName(rs.getString("name"));
-                clusterPolicy.setDescription(rs.getString("description"));
-                clusterPolicy.setLocked(rs.getBoolean("is_locked"));
-                clusterPolicy.setDefaultPolicy(rs.getBoolean("is_default"));
-                clusterPolicy.setParameterMap(SerializationFactory.getDeserializer()
-                        .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
-                return clusterPolicy;
-            }
+        return (rs, arg1) -> {
+            ClusterPolicy clusterPolicy = new ClusterPolicy();
+            clusterPolicy.setId(getGuid(rs, "id"));
+            clusterPolicy.setName(rs.getString("name"));
+            clusterPolicy.setDescription(rs.getString("description"));
+            clusterPolicy.setLocked(rs.getBoolean("is_locked"));
+            clusterPolicy.setDefaultPolicy(rs.getBoolean("is_default"));
+            clusterPolicy.setParameterMap(SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
+            return clusterPolicy;
         };
     }
 

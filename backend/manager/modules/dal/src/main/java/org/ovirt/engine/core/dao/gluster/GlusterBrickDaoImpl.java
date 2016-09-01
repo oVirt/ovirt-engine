@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,10 +24,36 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEntity, Guid> implements GlusterBrickDao {
-    // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
-    // There will still be a single instance of it, as the Dao itself will be instantiated only once
-    private final RowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();
-    private final RowMapper<BrickProperties> brickPropertiesRowMappeer = new GlusterBrickPropertiesRowMapper();
+    private static final RowMapper<GlusterBrickEntity> brickRowMapper = (rs, rowNum) -> {
+        GlusterBrickEntity brick = new GlusterBrickEntity();
+        brick.setId(getGuidDefaultEmpty(rs, "id"));
+        brick.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
+        brick.setVolumeName(rs.getString("volume_name"));
+
+        Guid serverId = getGuidDefaultEmpty(rs, "server_id");
+        brick.setServerId(serverId);
+        brick.setServerName(rs.getString("vds_name"));
+
+        brick.setBrickDirectory(rs.getString("brick_dir"));
+        brick.setBrickOrder(rs.getInt("brick_order"));
+        brick.setStatus(GlusterStatus.valueOf(rs.getString("status")));
+        brick.getAsyncTask().setTaskId(getGuid(rs, "task_id"));
+
+        brick.setNetworkId(getGuid(rs, "network_id"));
+        brick.setNetworkAddress(rs.getString("interface_address"));
+        brick.setUnSyncedEntries(
+                (rs.getObject("unsynced_entries") != null) ? rs.getInt("unsynced_entries") : null);
+        brick.setUnSyncedEntriesTrend(asIntList((String) rs.getObject("unsynced_entries_history")));
+        return brick;
+    };
+
+    private static final RowMapper<BrickProperties> brickPropertiesRowMappeer = (rs, rowNum) -> {
+        BrickProperties brickProperties = new BrickProperties();
+        brickProperties.setTotalSize(rs.getDouble("total_space") / SizeConverter.BYTES_IN_MB);
+        brickProperties.setFreeSize(rs.getDouble("free_space") / SizeConverter.BYTES_IN_MB);
+        return brickProperties;
+    };
+
     public GlusterBrickDaoImpl() {
         super("GlusterBrick");
         setProcedureNameForGet("GetGlusterBrickById");
@@ -142,33 +166,6 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
                 .addValue("network_id", brick.getNetworkId());
     }
 
-    private static final class GlusterBrickRowMapper implements RowMapper<GlusterBrickEntity> {
-        @Override
-        public GlusterBrickEntity mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterBrickEntity brick = new GlusterBrickEntity();
-            brick.setId(getGuidDefaultEmpty(rs, "id"));
-            brick.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
-            brick.setVolumeName(rs.getString("volume_name"));
-
-            Guid serverId = getGuidDefaultEmpty(rs, "server_id");
-            brick.setServerId(serverId);
-            brick.setServerName(rs.getString("vds_name"));
-
-            brick.setBrickDirectory(rs.getString("brick_dir"));
-            brick.setBrickOrder(rs.getInt("brick_order"));
-            brick.setStatus(GlusterStatus.valueOf(rs.getString("status")));
-            brick.getAsyncTask().setTaskId(getGuid(rs, "task_id"));
-
-            brick.setNetworkId(getGuid(rs, "network_id"));
-            brick.setNetworkAddress(rs.getString("interface_address"));
-            brick.setUnSyncedEntries(
-                    (rs.getObject("unsynced_entries") != null) ? rs.getInt("unsynced_entries") : null);
-            brick.setUnSyncedEntriesTrend(asIntList((String) rs.getObject("unsynced_entries_history")));
-            return brick;
-        }
-    }
-
     private static List<Integer> asIntList(String str) {
         if (str == null || "".equals(str)) {
             return Collections.emptyList();
@@ -237,48 +234,28 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
 
     @Override
     public MapSqlParameterMapper<GlusterBrickEntity> getBatchMapper() {
-        return new MapSqlParameterMapper<GlusterBrickEntity>() {
-            @Override
-            public MapSqlParameterSource map(GlusterBrickEntity entity) {
-                return new MapSqlParameterSource()
-                        .addValue("volume_id", entity.getVolumeId())
-                        .addValue("server_id", entity.getServerId())
-                        .addValue("brick_dir", entity.getBrickDirectory())
-                        .addValue("status", entity.getStatus().name())
-                        .addValue("id", entity.getId().toString())
-                        .addValue("brick_order", entity.getBrickOrder())
-                        .addValue("network_id", entity.getNetworkId())
-                        .addValue("task_id",
-                                entity.getAsyncTask().getTaskId() != null ? entity.getAsyncTask()
-                                        .getTaskId()
-                                        .toString()
-                                        : "")
-                        .addValue("unsynced_entries", entity.getUnSyncedEntries())
-                        .addValue("unsynced_entries_history",
-                                StringUtils.join(entity.getUnSyncedEntriesTrend(), ","));
-            }
-        };
+        return entity -> new MapSqlParameterSource()
+                .addValue("volume_id", entity.getVolumeId())
+                .addValue("server_id", entity.getServerId())
+                .addValue("brick_dir", entity.getBrickDirectory())
+                .addValue("status", entity.getStatus().name())
+                .addValue("id", entity.getId().toString())
+                .addValue("brick_order", entity.getBrickOrder())
+                .addValue("network_id", entity.getNetworkId())
+                .addValue("task_id",
+                        entity.getAsyncTask().getTaskId() != null ? entity.getAsyncTask()
+                                .getTaskId()
+                                .toString()
+                                : "")
+                .addValue("unsynced_entries", entity.getUnSyncedEntries())
+                .addValue("unsynced_entries_history",
+                        StringUtils.join(entity.getUnSyncedEntriesTrend(), ","));
     }
 
     public MapSqlParameterMapper<GlusterBrickEntity> getBrickPropertiesMapper() {
-        return new MapSqlParameterMapper<GlusterBrickEntity>() {
-            @Override
-            public MapSqlParameterSource map(GlusterBrickEntity brick) {
-                return createBrickPropertiesParam(brick.getBrickProperties());
-            }
-        };
+        return brick -> createBrickPropertiesParam(brick.getBrickProperties());
     }
 
-    private static final class GlusterBrickPropertiesRowMapper implements RowMapper<BrickProperties> {
-        @Override
-        public BrickProperties mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            BrickProperties brickProperties = new BrickProperties();
-            brickProperties.setTotalSize(rs.getDouble("total_space") / SizeConverter.BYTES_IN_MB);
-            brickProperties.setFreeSize(rs.getDouble("free_space") / SizeConverter.BYTES_IN_MB);
-            return brickProperties;
-        }
-    }
     @Override
     public void updateBrickTask(Guid brickId, Guid taskId) {
         getCallsHandler().executeModification("UpdateGlusterVolumeBrickAsyncTask",

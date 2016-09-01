@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import static org.ovirt.engine.core.dao.VmDaoImpl.vmRowMapper;
+
 import java.util.List;
 
 import javax.inject.Named;
@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDaoImpl.VMRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -43,7 +42,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
     public VmPool get(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", VmPoolFullRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", vmPoolFullRowMapper, parameterSource);
     }
 
     @Override
@@ -51,14 +50,14 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_name", name);
         return getCallsHandler().executeRead("GetVm_poolsByvm_pool_name",
-                VmPoolNonFullRowMapper.instance,
+                vmPoolNonFullRowMapper,
                 parameterSource);
     }
 
     @Override
     public List<VmPool> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllFromVm_pools", VmPoolFullRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVm_pools", vmPoolFullRowMapper, parameterSource);
     }
 
     @Override
@@ -66,12 +65,12 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id);
         return getCallsHandler().executeReadList("GetAllVm_poolsByUser_id_with_groups_and_UserRoles",
-                VmPoolNonFullRowMapper.instance, parameterSource);
+                vmPoolNonFullRowMapper, parameterSource);
     }
 
     @Override
     public List<VmPool> getAllWithQuery(String query) {
-        return getJdbcTemplate().query(query, VmPoolFullRowMapper.instance);
+        return getJdbcTemplate().query(query, vmPoolFullRowMapper);
     }
 
     @Override
@@ -148,7 +147,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
     public List<VmPoolMap> getVmPoolsMapByVmPoolId(Guid vmPoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId);
 
-        return getCallsHandler().executeReadList("GetVm_pool_mapByvm_pool_id", VmPoolMapRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetVm_pool_mapByvm_pool_id", vmPoolMapRowMapper, parameterSource);
     }
 
     @Override
@@ -157,7 +156,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status",
                         vmStatus.getValue());
 
-        return getCallsHandler().executeReadList("getVmMapsInVmPoolByVmPoolIdAndStatus", VmPoolMapRowMapper.instance,
+        return getCallsHandler().executeReadList("getVmMapsInVmPoolByVmPoolIdAndStatus", vmPoolMapRowMapper,
                 parameterSource);
     }
 
@@ -168,76 +167,57 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         getCallsHandler().executeModification("BoundVmPoolPrestartedVms", parameterSource);
     }
 
-    private static final class VmPoolFullRowMapper implements RowMapper<VmPool> {
-        public static final VmPoolFullRowMapper instance = new VmPoolFullRowMapper();
+    private static final RowMapper<VmPool> vmPoolFullRowMapper = (rs, rowNum) -> {
+        final VmPool entity = new VmPool();
+        entity.setVmPoolDescription(rs.getString("vm_pool_description"));
+        entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
+        entity.setComment(rs.getString("vm_pool_comment"));
+        entity.setName(rs.getString("vm_pool_name"));
+        entity.setVmPoolType(VmPoolType.forValue(rs.getInt("vm_pool_type")));
+        entity.setStateful(rs.getBoolean("stateful"));
+        entity.setParameters(rs.getString("parameters"));
+        entity.setPrestartedVms(rs.getInt("prestarted_vms"));
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setClusterName(rs.getString("cluster_name"));
+        entity.setAssignedVmsCount(rs.getInt("assigned_vm_count"));
+        entity.setRunningVmsCount(rs.getInt("vm_running_count"));
+        entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
+        entity.setSpiceProxy(rs.getString("spice_proxy"));
+        entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
+        entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
+        return entity;
+    };
 
-        @Override
-        public VmPool mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-            final VmPool entity = new VmPool();
-            entity.setVmPoolDescription(rs
-                    .getString("vm_pool_description"));
-            entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
-            entity.setComment(rs.getString("vm_pool_comment"));
-            entity.setName(rs.getString("vm_pool_name"));
-            entity.setVmPoolType(VmPoolType.forValue(rs
-                    .getInt("vm_pool_type")));
-            entity.setStateful(rs.getBoolean("stateful"));
-            entity.setParameters(rs.getString("parameters"));
-            entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setClusterName(rs.getString("cluster_name"));
-            entity.setAssignedVmsCount(rs.getInt("assigned_vm_count"));
-            entity.setRunningVmsCount(rs.getInt("vm_running_count"));
-            entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
-            entity.setSpiceProxy(rs.getString("spice_proxy"));
-            entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
-            entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
-            return entity;
-        }
-    }
+    private static final RowMapper<VmPool> vmPoolNonFullRowMapper = (rs, rowNum) -> {
+        final VmPool entity = new VmPool();
+        entity.setVmPoolDescription(rs.getString("vm_pool_description"));
+        entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
+        entity.setComment(rs.getString("vm_pool_comment"));
+        entity.setName(rs.getString("vm_pool_name"));
+        entity.setVmPoolType(VmPoolType.forValue(rs.getInt("vm_pool_type")));
+        entity.setStateful(rs.getBoolean("stateful"));
+        entity.setParameters(rs.getString("parameters"));
+        entity.setPrestartedVms(rs.getInt("prestarted_vms"));
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setClusterName(rs.getString("cluster_name"));
+        entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
+        entity.setSpiceProxy(rs.getString("spice_proxy"));
+        entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
+        entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
+        return entity;
+    };
 
-    private static final class VmPoolNonFullRowMapper implements RowMapper<VmPool> {
-        public static final VmPoolNonFullRowMapper instance = new VmPoolNonFullRowMapper();
-
-        @Override
-        public VmPool mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-            final VmPool entity = new VmPool();
-            entity.setVmPoolDescription(rs
-                    .getString("vm_pool_description"));
-            entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
-            entity.setComment(rs.getString("vm_pool_comment"));
-            entity.setName(rs.getString("vm_pool_name"));
-            entity.setVmPoolType(VmPoolType.forValue(rs
-                    .getInt("vm_pool_type")));
-            entity.setStateful(rs.getBoolean("stateful"));
-            entity.setParameters(rs.getString("parameters"));
-            entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setClusterName(rs.getString("cluster_name"));
-            entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
-            entity.setSpiceProxy(rs.getString("spice_proxy"));
-            entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
-            entity.setAutoStorageSelect(rs.getBoolean("is_auto_storage_select"));
-            return entity;
-        }
-    }
-
-    private static final class VmPoolMapRowMapper implements RowMapper<VmPoolMap> {
-        public static final VmPoolMapRowMapper instance = new VmPoolMapRowMapper();
-
-        @Override
-        public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VmPoolMap entity = new VmPoolMap();
-            entity.setVmId(getGuidDefaultEmpty(rs, "vm_guid"));
-            entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
-            return entity;
-        }
-    }
+    private static final RowMapper<VmPoolMap> vmPoolMapRowMapper = (rs, nowNum) -> {
+        VmPoolMap entity = new VmPoolMap();
+        entity.setVmId(getGuidDefaultEmpty(rs, "vm_guid"));
+        entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
+        return entity;
+    };
 
     @Override
     public VM getVmDataFromPoolByPoolGuid(Guid vmPoolId, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("pool_id", vmPoolId).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeRead("GetVmDataFromPoolByPoolId", VMRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetVmDataFromPoolByPoolId", vmRowMapper, parameterSource);
     }
 }

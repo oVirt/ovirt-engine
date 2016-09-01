@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +29,43 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 @Singleton
 public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
 
-    @SuppressWarnings("synthetic-access")
-    private static final AuditLogRowMapper auditLogRowMapper = new AuditLogRowMapper();
+    private static final RowMapper<AuditLog> auditLogRowMapper = (rs, rowNum) -> {
+        AuditLog entity = new AuditLog();
+        entity.setAuditLogId(rs.getLong("audit_log_id"));
+        entity.setLogTime(DbFacadeUtils.fromDate(rs.getTimestamp("log_time")));
+        entity.setLogType(AuditLogType.forValue(rs.getInt("log_type")));
+        entity.setSeverity(AuditLogSeverity.forValue(rs.getInt("severity")));
+        entity.setMessage(rs.getString("message"));
+        entity.setUserId(getGuid(rs, "user_id"));
+        entity.setUserName(rs.getString("user_name"));
+        entity.setVdsId(getGuid(rs, "vds_id"));
+        entity.setVdsName(rs.getString("vds_name"));
+        entity.setVmId(getGuid(rs, "vm_id"));
+        entity.setVmName(rs.getString("vm_name"));
+        entity.setVmTemplateId(getGuid(rs, "vm_template_id"));
+        entity.setVmTemplateName(rs.getString("vm_template_name"));
+        entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
+        entity.setStoragePoolName(rs.getString("storage_pool_name"));
+        entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
+        entity.setStorageDomainName(rs.getString("storage_domain_name"));
+        entity.setClusterId(getGuid(rs, "cluster_id"));
+        entity.setClusterName(rs.getString("cluster_name"));
+        entity.setCorrelationId(rs.getString("correlation_id"));
+        entity.setJobId(getGuid(rs, "job_id"));
+        entity.setQuotaId(getGuid(rs, "quota_id"));
+        entity.setQuotaName(rs.getString("quota_name"));
+        entity.setGlusterVolumeId(getGuid(rs, "gluster_volume_id"));
+        entity.setGlusterVolumeName(rs.getString("gluster_volume_name"));
+        entity.setOrigin(rs.getString("origin"));
+        entity.setCustomEventId(rs.getInt("custom_event_id"));
+        entity.setEventFloodInSec(rs.getInt("event_flood_in_sec"));
+        entity.setCustomData(rs.getString("custom_data"));
+        entity.setDeleted(rs.getBoolean("deleted"));
+        entity.setCallStack(rs.getString("call_stack"));
+        entity.setBrickId(getGuid(rs, "brick_id"));
+        entity.setBrickPath(rs.getString("brick_path"));
+        return entity;
+    };
 
     private final DbEngineDialect dbEngineDialect;
 
@@ -271,52 +304,5 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
     @Override
     public void deleteBackupRelatedAlerts() {
         getCallsHandler().executeModification("DeleteBackupRelatedAlerts", getCustomMapSqlParameterSource());
-    }
-
-    private static class AuditLogRowMapper implements RowMapper<AuditLog> {
-
-        @Override
-        public AuditLog mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            AuditLog entity = new AuditLog();
-            entity.setAuditLogId(rs.getLong("audit_log_id"));
-            entity.setLogTime(DbFacadeUtils.fromDate(rs
-                    .getTimestamp("log_time")));
-            entity.setLogType(AuditLogType.forValue(rs.getInt("log_type")));
-            entity.setSeverity(AuditLogSeverity.forValue(rs
-                    .getInt("severity")));
-            entity.setMessage(rs.getString("message"));
-            entity.setUserId(getGuid(rs, "user_id"));
-            entity.setUserName(rs.getString("user_name"));
-            entity.setVdsId(getGuid(rs, "vds_id"));
-            entity.setVdsName(rs.getString("vds_name"));
-            entity.setVmId(getGuid(rs, "vm_id"));
-            entity.setVmName(rs.getString("vm_name"));
-            entity.setVmTemplateId(getGuid(rs, "vm_template_id"));
-            entity.setVmTemplateName(rs.getString("vm_template_name"));
-            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
-            entity.setStoragePoolName(rs.getString("storage_pool_name"));
-            entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
-            entity.setStorageDomainName(rs
-                    .getString("storage_domain_name"));
-            entity.setClusterId(getGuid(rs, "cluster_id"));
-            entity.setClusterName(rs
-                    .getString("cluster_name"));
-            entity.setCorrelationId(rs.getString("correlation_id"));
-            entity.setJobId(getGuid(rs, "job_id"));
-            entity.setQuotaId(getGuid(rs, "quota_id"));
-            entity.setQuotaName(rs.getString("quota_name"));
-            entity.setGlusterVolumeId(getGuid(rs, "gluster_volume_id"));
-            entity.setGlusterVolumeName(rs.getString("gluster_volume_name"));
-            entity.setOrigin(rs.getString("origin"));
-            entity.setCustomEventId(rs.getInt("custom_event_id"));
-            entity.setEventFloodInSec(rs.getInt("event_flood_in_sec"));
-            entity.setCustomData(rs.getString("custom_data"));
-            entity.setDeleted(rs.getBoolean("deleted"));
-            entity.setCallStack(rs.getString("call_stack"));
-            entity.setBrickId(getGuid(rs, "brick_id"));
-            entity.setBrickPath(rs.getString("brick_path"));
-            return entity;
-        }
     }
 }

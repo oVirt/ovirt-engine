@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -54,7 +52,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     public VDS get(Guid id, Guid userID, boolean isFiltered) {
         // several rows may be returned because of join with fence agents table.
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByVdsId",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", id)
                         .addValue("user_id", userID)
@@ -65,7 +63,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public VDS getByName(String name) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByName",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_name", name));
         return vdsList.size() == 0 ? null : uniteAgentsSingleVds(vdsList);
@@ -74,7 +72,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllForHostname(String hostname) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByHostName",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("host_name", hostname));
         return uniteAgents(vdsList);
@@ -83,7 +81,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllWithUniqueId(String id) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByUniqueID",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_unique_id", id));
         return uniteAgents(vdsList);
@@ -101,7 +99,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllOfType(VDSType type) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByType",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_type", type));
         return uniteAgents(vdsList);
@@ -110,7 +108,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllForClusterWithoutMigrating(Guid clusterId) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsWithoutMigratingVmsByClusterId",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clusterId));
         return uniteAgents(vdsList);
@@ -118,7 +116,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
 
     @Override
     public List<VDS> getAllWithQuery(String query) {
-        List<VDS> vdsList = getJdbcTemplate().query(query, VdsRowMapper.instance);
+        List<VDS> vdsList = getJdbcTemplate().query(query, vdsRowMapper);
         return uniteAgents(vdsList);
     }
 
@@ -130,7 +128,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAll(Guid userID, boolean isFiltered) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetAllFromVds",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
         return uniteAgents(vdsList);
     }
@@ -143,7 +141,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllForCluster(Guid cluster, Guid userID, boolean isFiltered) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByClusterId",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", cluster)
                         .addValue("user_id", userID)
@@ -158,7 +156,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             storagePoolId = null;
         }
         List<VDS> vdsList = getCallsHandler().executeReadList("getHostsForStorageOperation",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                     .addValue("storage_pool_id", storagePoolId)
                     .addValue("local_fs_only", localFsOnly));
@@ -168,7 +166,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public VDS getFirstUpRhelForCluster(Guid clsuterId) {
         List<VDS> vds = getCallsHandler().executeReadList("getFirstUpRhelForClusterId",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clsuterId));
 
@@ -183,7 +181,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllForStoragePool(Guid storagePool, Guid userID, boolean isFiltered) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByStoragePoolId",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePool)
                         .addValue("user_id", userID)
@@ -194,7 +192,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllForClusterWithStatus(Guid clusterId, VDSStatus status) {
         List<VDS> vdsList = getCallsHandler().executeReadList("getVdsForClusterWithStatus",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clusterId)
                         .addValue("status", status.getValue()));
@@ -204,7 +202,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllForClusterWithStatusAndPeerStatus(Guid clusterId, VDSStatus status, PeerStatus peerStatus) {
         List<VDS> vdsList = getCallsHandler().executeReadList("getVdsForClusterWithPeerStatus",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clusterId)
                         .addValue("status", status.getValue())
@@ -220,7 +218,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getAllForStoragePoolAndStatuses(Guid storagePool, Set<VDSStatus> statuses) {
         List<VDS> vdsList = getCallsHandler().executeReadList("getVdsByStoragePoolIdWithStatuses",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePool)
                         .addValue("statuses",
@@ -237,14 +235,14 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     @Override
     public List<VDS> getListForSpmSelection(Guid storagePoolId) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetUpAndPrioritizedVds",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId));
         return uniteAgentsPreserveSpmPrioritySorting(vdsList);
     }
 
     @Override
     public List<VDS> listFailedAutorecoverables() {
-        List<VDS> vdsList = getCallsHandler().executeReadList("GetFailingVdss", VdsRowMapper.instance, null);
+        List<VDS> vdsList = getCallsHandler().executeReadList("GetFailingVdss", vdsRowMapper, null);
         return uniteAgents(vdsList);
     }
 
@@ -254,7 +252,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
                 .addValue("network_id", networkId);
 
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByNetworkId",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 parameterSource);
         return uniteAgents(vdsList);
     }
@@ -265,189 +263,162 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
                 .addValue("network_id", networkId);
 
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsWithoutNetwork",
-                VdsRowMapper.instance,
+                vdsRowMapper,
                 parameterSource);
         return uniteAgents(vdsList);
     }
 
-    static final class VdsRowMapper implements RowMapper<VDS> {
-        // single instance
-        public static final VdsRowMapper instance = new VdsRowMapper();
-
-        @Override
-        public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-            final VDS entity = new VDS();
-            entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setClusterName(rs.getString("cluster_name"));
-            entity.setClusterDescription(rs
-                    .getString("cluster_description"));
-            entity.setVdsName(rs.getString("vds_name"));
-            entity.setComment(rs.getString("free_text_comment"));
-            entity.setUniqueId(rs.getString("vds_unique_id"));
-            entity.setServerSslEnabled(rs
-                    .getBoolean("server_SSL_enabled"));
-            entity.setHostName(rs.getString("host_name"));
-            entity.setPort(rs.getInt("port"));
-            entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
-            entity.setSshPort(rs.getInt("ssh_port"));
-            entity.setSshUsername(rs.getString("ssh_username"));
-            entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
-            entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
-            entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
-            entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
-            entity.setCpuModel(rs.getString("cpu_model"));
-            entity.setOnlineCpus(rs.getString("online_cpus"));
-            entity.setCpuUser(rs.getDouble("cpu_user"));
-            entity.setCpuSpeedMh(rs.getDouble("cpu_speed_mh"));
-            entity.setIfTotalSpeed(rs.getString("if_total_speed"));
-            entity.setKvmEnabled((Boolean) rs.getObject("kvm_enabled"));
-            entity.setPhysicalMemMb((Integer) rs
-                    .getObject("physical_mem_mb"));
-            entity.setCpuIdle(rs.getDouble("cpu_idle"));
-            entity.setCpuLoad(rs.getDouble("cpu_load"));
-            entity.setCpuSys(rs.getDouble("cpu_sys"));
-            entity.setMemCommited((Integer) rs.getObject("mem_commited"));
-            entity.setVmActive((Integer) rs.getObject("vm_active"));
-            entity.setVmCount((Integer) rs.getObject("vm_count"));
-            entity.setVmsCoresCount((Integer) rs
-                    .getObject("vms_cores_count"));
-            entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
-            entity.setIncomingMigrations(rs.getInt("incoming_migrations"));
-            entity.setOutgoingMigrations(rs.getInt("outgoing_migrations"));
-            entity.setUsageCpuPercent((Integer) rs
-                    .getObject("usage_cpu_percent"));
-            entity.setUsageMemPercent((Integer) rs
-                    .getObject("usage_mem_percent"));
-            entity.setUsageNetworkPercent((Integer) rs
-                    .getObject("usage_network_percent"));
-            entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
-            entity.setGuestOverhead((Integer) rs
-                    .getObject("guest_overhead"));
-            entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
-            entity.setSoftwareVersion(rs.getString("software_version"));
-            entity.setVersionName(rs.getString("version_name"));
-            entity.setPreviousStatus(VDSStatus.forValue(rs
-                    .getInt("previous_status")));
-            entity.setMemAvailable(rs.getLong("mem_available"));
-            entity.setMemShared(rs.getLong("mem_shared"));
-            entity.setMemFree(rs.getLong("mem_free"));
-            entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
-            entity.setCpuFlags(rs.getString("cpu_flags"));
-            entity.setClusterCpuName(rs.getString("cluster_cpu_name"));
-            entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
-            entity.setStoragePoolName(rs.getString("storage_pool_name"));
-            entity.setPendingVcpusCount((Integer) rs
-                    .getObject("pending_vcpus_count"));
-            entity.setCpuOverCommitTimestamp(DbFacadeUtils.fromDate(rs
-                    .getTimestamp("cpu_over_commit_time_stamp")));
-            entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
-            entity.setVdsStrength(rs.getInt("vds_strength"));
-            entity.setMaxVdsMemoryOverCommit(rs
-                    .getInt("max_vds_memory_over_commit"));
-            entity.setCpuSockets((Integer) rs.getObject("cpu_sockets"));
-            entity.setVdsSpmId((Integer) rs.getObject("vds_spm_id"));
-            entity.setNetConfigDirty((Boolean) rs
-                    .getObject("net_config_dirty"));
-            entity.setPmEnabled(rs.getBoolean("pm_enabled"));
-            entity.setFenceProxySources(
-                    FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
-            entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
-            entity.setSpmStatus(VdsSpmStatus.forValue(rs
-                    .getInt("spm_status")));
-            entity.setSwapFree(rs.getLong("swap_free"));
-            entity.setSwapTotal(rs.getLong("swap_total"));
-            entity.setKsmCpuPercent((Integer) rs
-                    .getObject("ksm_cpu_percent"));
-            entity.setKsmPages(rs.getLong("ksm_pages"));
-            entity.setKsmState((Boolean) rs.getObject("ksm_state"));
-            entity.setSupportedClusterLevels(rs
-                    .getString("supported_cluster_levels"));
-            entity.setSupportedEngines(rs.getString("supported_engines"));
-            entity.setClusterCompatibilityVersion(new Version(rs
-                    .getString("cluster_compatibility_version")));
-            entity.setClusterSupportsVirtService(rs.getBoolean("cluster_virt_service"));
-            entity.setClusterSupportsGlusterService(rs.getBoolean("cluster_gluster_service"));
-            entity.setHostOs(rs.getString("host_os"));
-            entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
-            entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
-            entity.setGlusterfsCliVersion(new RpmVersion(rs.getString("glusterfs_cli_version")));
-            entity.setKvmVersion(rs.getString("kvm_version"));
-            entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
-            entity.setSpiceVersion(rs.getString("spice_version"));
-            entity.setKernelVersion(rs.getString("kernel_version"));
-            entity.setIScsiInitiatorName(rs
-                    .getString("iscsi_initiator_name"));
-            entity.setTransparentHugePagesState(VdsTransparentHugePagesState
-                    .forValue(rs.getInt("transparent_hugepages_state")));
-            entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
-            entity.setHooksStr(rs.getString("hooks"));
-            entity.setNonOperationalReason(NonOperationalReason.forValue(rs
-                    .getInt("non_operational_reason")));
-            entity.setOtpValidity(rs.getLong("otp_validity"));
-            entity.setVdsSpmPriority(rs.getInt("vds_spm_priority"));
-            entity.setAutoRecoverable(rs.getBoolean("recoverable"));
-            entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
-            entity.setHostProviderId(getGuid(rs, "host_provider_id"));
-            entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
-            entity.setHardwareProductName(rs.getString("hw_product_name"));
-            entity.setHardwareVersion(rs.getString("hw_version"));
-            entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
-            entity.setHardwareUUID(rs.getString("hw_uuid"));
-            entity.setHardwareFamily(rs.getString("hw_family"));
-            entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
-            entity.setConsoleAddress(rs.getString("console_address"));
-            entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
-            entity.setHighlyAvailableScore(rs.getInt("ha_score"));
-            entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
-            entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
-            entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
-            entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
-            entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
-            entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
-            entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
-            entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
-            entity.setBootTime((Long) rs.getObject("boot_time"));
-            entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
-            entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
-            entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
-            entity.setBalloonEnabled(rs.getBoolean("enable_balloon"));
-            entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
-            entity.setMaintenanceReason(rs.getString("maintenance_reason"));
-            entity.getStaticData().setOpenstackNetworkProviderId(
-                    getGuid(rs, "openstack_network_provider_id"));
-            Guid agentGuid = getGuid(rs, "agent_id");
-            if (agentGuid != null) {
-                FenceAgent agent = new FenceAgent();
-                agent.setId(agentGuid);
-                agent.setHostId(getGuid(rs, "vds_id"));
-                agent.setOrder(rs.getInt("agent_order"));
-                agent.setType(rs.getString("agent_type"));
-                agent.setUser(rs.getString("agent_user"));
-                agent.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
-                int port = rs.getInt("agent_port");
-                agent.setPort(port == 0 ? null : port);
-                agent.setEncryptOptions(rs.getBoolean("agent_encrypt_options"));
-                if (agent.getEncryptOptions()) {
-                    agent.setOptions(DbFacadeUtils.decryptPassword(rs.getString("agent_options")));
-                } else {
-                    agent.setOptions(rs.getString("agent_options"));
-                }
-                agent.setIp(rs.getString("agent_ip"));
-                entity.getFenceAgents().add(agent);
+    private static final RowMapper<VDS> vdsRowMapper = (rs, rowNum) -> {
+        final VDS entity = new VDS();
+        entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setClusterName(rs.getString("cluster_name"));
+        entity.setClusterDescription(rs.getString("cluster_description"));
+        entity.setVdsName(rs.getString("vds_name"));
+        entity.setComment(rs.getString("free_text_comment"));
+        entity.setUniqueId(rs.getString("vds_unique_id"));
+        entity.setServerSslEnabled(rs.getBoolean("server_SSL_enabled"));
+        entity.setHostName(rs.getString("host_name"));
+        entity.setPort(rs.getInt("port"));
+        entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
+        entity.setSshPort(rs.getInt("ssh_port"));
+        entity.setSshUsername(rs.getString("ssh_username"));
+        entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
+        entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
+        entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
+        entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
+        entity.setCpuModel(rs.getString("cpu_model"));
+        entity.setOnlineCpus(rs.getString("online_cpus"));
+        entity.setCpuUser(rs.getDouble("cpu_user"));
+        entity.setCpuSpeedMh(rs.getDouble("cpu_speed_mh"));
+        entity.setIfTotalSpeed(rs.getString("if_total_speed"));
+        entity.setKvmEnabled((Boolean) rs.getObject("kvm_enabled"));
+        entity.setPhysicalMemMb((Integer) rs.getObject("physical_mem_mb"));
+        entity.setCpuIdle(rs.getDouble("cpu_idle"));
+        entity.setCpuLoad(rs.getDouble("cpu_load"));
+        entity.setCpuSys(rs.getDouble("cpu_sys"));
+        entity.setMemCommited((Integer) rs.getObject("mem_commited"));
+        entity.setVmActive((Integer) rs.getObject("vm_active"));
+        entity.setVmCount((Integer) rs.getObject("vm_count"));
+        entity.setVmsCoresCount((Integer) rs.getObject("vms_cores_count"));
+        entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
+        entity.setIncomingMigrations(rs.getInt("incoming_migrations"));
+        entity.setOutgoingMigrations(rs.getInt("outgoing_migrations"));
+        entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
+        entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
+        entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
+        entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
+        entity.setGuestOverhead((Integer) rs.getObject("guest_overhead"));
+        entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
+        entity.setSoftwareVersion(rs.getString("software_version"));
+        entity.setVersionName(rs.getString("version_name"));
+        entity.setPreviousStatus(VDSStatus.forValue(rs.getInt("previous_status")));
+        entity.setMemAvailable(rs.getLong("mem_available"));
+        entity.setMemShared(rs.getLong("mem_shared"));
+        entity.setMemFree(rs.getLong("mem_free"));
+        entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
+        entity.setCpuFlags(rs.getString("cpu_flags"));
+        entity.setClusterCpuName(rs.getString("cluster_cpu_name"));
+        entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
+        entity.setStoragePoolName(rs.getString("storage_pool_name"));
+        entity.setPendingVcpusCount((Integer) rs.getObject("pending_vcpus_count"));
+        entity.setCpuOverCommitTimestamp(DbFacadeUtils.fromDate(rs.getTimestamp("cpu_over_commit_time_stamp")));
+        entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
+        entity.setVdsStrength(rs.getInt("vds_strength"));
+        entity.setMaxVdsMemoryOverCommit(rs.getInt("max_vds_memory_over_commit"));
+        entity.setCpuSockets((Integer) rs.getObject("cpu_sockets"));
+        entity.setVdsSpmId((Integer) rs.getObject("vds_spm_id"));
+        entity.setNetConfigDirty((Boolean) rs.getObject("net_config_dirty"));
+        entity.setPmEnabled(rs.getBoolean("pm_enabled"));
+        entity.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
+        entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
+        entity.setSpmStatus(VdsSpmStatus.forValue(rs.getInt("spm_status")));
+        entity.setSwapFree(rs.getLong("swap_free"));
+        entity.setSwapTotal(rs.getLong("swap_total"));
+        entity.setKsmCpuPercent((Integer) rs.getObject("ksm_cpu_percent"));
+        entity.setKsmPages(rs.getLong("ksm_pages"));
+        entity.setKsmState((Boolean) rs.getObject("ksm_state"));
+        entity.setSupportedClusterLevels(rs.getString("supported_cluster_levels"));
+        entity.setSupportedEngines(rs.getString("supported_engines"));
+        entity.setClusterCompatibilityVersion(new Version(rs.getString("cluster_compatibility_version")));
+        entity.setClusterSupportsVirtService(rs.getBoolean("cluster_virt_service"));
+        entity.setClusterSupportsGlusterService(rs.getBoolean("cluster_gluster_service"));
+        entity.setHostOs(rs.getString("host_os"));
+        entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
+        entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
+        entity.setGlusterfsCliVersion(new RpmVersion(rs.getString("glusterfs_cli_version")));
+        entity.setKvmVersion(rs.getString("kvm_version"));
+        entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
+        entity.setSpiceVersion(rs.getString("spice_version"));
+        entity.setKernelVersion(rs.getString("kernel_version"));
+        entity.setIScsiInitiatorName(rs.getString("iscsi_initiator_name"));
+        entity.setTransparentHugePagesState(VdsTransparentHugePagesState
+                .forValue(rs.getInt("transparent_hugepages_state")));
+        entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
+        entity.setHooksStr(rs.getString("hooks"));
+        entity.setNonOperationalReason(NonOperationalReason.forValue(rs.getInt("non_operational_reason")));
+        entity.setOtpValidity(rs.getLong("otp_validity"));
+        entity.setVdsSpmPriority(rs.getInt("vds_spm_priority"));
+        entity.setAutoRecoverable(rs.getBoolean("recoverable"));
+        entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
+        entity.setHostProviderId(getGuid(rs, "host_provider_id"));
+        entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
+        entity.setHardwareProductName(rs.getString("hw_product_name"));
+        entity.setHardwareVersion(rs.getString("hw_version"));
+        entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
+        entity.setHardwareUUID(rs.getString("hw_uuid"));
+        entity.setHardwareFamily(rs.getString("hw_family"));
+        entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
+        entity.setConsoleAddress(rs.getString("console_address"));
+        entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
+        entity.setHighlyAvailableScore(rs.getInt("ha_score"));
+        entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
+        entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
+        entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
+        entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
+        entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
+        entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
+        entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
+        entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
+        entity.setBootTime((Long) rs.getObject("boot_time"));
+        entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
+        entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
+        entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
+        entity.setBalloonEnabled(rs.getBoolean("enable_balloon"));
+        entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
+        entity.setMaintenanceReason(rs.getString("maintenance_reason"));
+        entity.getStaticData().setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
+        Guid agentGuid = getGuid(rs, "agent_id");
+        if (agentGuid != null) {
+            FenceAgent agent = new FenceAgent();
+            agent.setId(agentGuid);
+            agent.setHostId(getGuid(rs, "vds_id"));
+            agent.setOrder(rs.getInt("agent_order"));
+            agent.setType(rs.getString("agent_type"));
+            agent.setUser(rs.getString("agent_user"));
+            agent.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
+            int port = rs.getInt("agent_port");
+            agent.setPort(port == 0 ? null : port);
+            agent.setEncryptOptions(rs.getBoolean("agent_encrypt_options"));
+            if (agent.getEncryptOptions()) {
+                agent.setOptions(DbFacadeUtils.decryptPassword(rs.getString("agent_options")));
+            } else {
+                agent.setOptions(rs.getString("agent_options"));
             }
-            entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
-            entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
-            entity.setHostedEngineHost(rs.getBoolean("is_hosted_engine_host"));
-            VdsStaticDaoImpl.KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVds(entity);
-            entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
-            entity.setKernelArgs(rs.getString("kernel_args"));
-            entity.setFencingEnabled(rs.getBoolean("fencing_enabled"));
-            entity.setGlusterPeerStatus(PeerStatus.fromValue(rs.getString("gluster_peer_status")));
-            entity.setPrettyName(rs.getString("pretty_name"));
-            return entity;
+            agent.setIp(rs.getString("agent_ip"));
+            entity.getFenceAgents().add(agent);
         }
-    }
+        entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
+        entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
+        entity.setHostedEngineHost(rs.getBoolean("is_hosted_engine_host"));
+        VdsStaticDaoImpl.KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVds(entity);
+        entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
+        entity.setKernelArgs(rs.getString("kernel_args"));
+        entity.setFencingEnabled(rs.getBoolean("fencing_enabled"));
+        entity.setGlusterPeerStatus(PeerStatus.fromValue(rs.getString("gluster_peer_status")));
+        entity.setPrettyName(rs.getString("pretty_name"));
+        return entity;
+    };
 
     /**
      * Unit the fence agents from potentially multiple VDS (they are the same VDS, they just have multiple rows

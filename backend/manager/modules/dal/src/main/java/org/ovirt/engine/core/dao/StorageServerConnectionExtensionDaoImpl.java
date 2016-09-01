@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -52,17 +50,7 @@ public class StorageServerConnectionExtensionDaoImpl extends DefaultGenericDao<S
 
     @Override
     protected RowMapper<StorageServerConnectionExtension> createEntityRowMapper() {
-        return StorageServerConnectionExtensionRowMapper.INSTANCE;
-    }
-
-    private static class StorageServerConnectionExtensionRowMapper implements RowMapper<StorageServerConnectionExtension> {
-        public static final StorageServerConnectionExtensionRowMapper INSTANCE = new StorageServerConnectionExtensionRowMapper();
-
-        private StorageServerConnectionExtensionRowMapper() {
-        }
-
-        @Override
-        public StorageServerConnectionExtension mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return (rs, rowNum) -> {
             StorageServerConnectionExtension ssce = new StorageServerConnectionExtension();
             ssce.setId(getGuidDefaultEmpty(rs, "id"));
             ssce.setHostId(getGuidDefaultEmpty(rs, "vds_id"));
@@ -70,6 +58,6 @@ public class StorageServerConnectionExtensionDaoImpl extends DefaultGenericDao<S
             ssce.setUserName(rs.getString("user_name"));
             ssce.setPassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
             return ssce;
-        }
+        };
     }
 }

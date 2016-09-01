@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -23,7 +21,7 @@ public class DbGroupDaoImpl extends BaseDao implements DbGroupDao {
     @Override
     public DbGroup get(Guid id) {
         return getCallsHandler().executeRead("GetGroupById",
-                DbGroupRowMapper.instance,
+                dbGroupRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("id", id));
     }
@@ -31,7 +29,7 @@ public class DbGroupDaoImpl extends BaseDao implements DbGroupDao {
     @Override
     public DbGroup getByExternalId(String domain, String externalId) {
         return getCallsHandler().executeRead("GetGroupByExternalId",
-                DbGroupRowMapper.instance,
+                dbGroupRowMapper,
                 getCustomMapSqlParameterSource()
                        .addValue("domain", domain)
                         .addValue("external_id", externalId));
@@ -71,7 +69,7 @@ public class DbGroupDaoImpl extends BaseDao implements DbGroupDao {
     @Override
     public DbGroup getByName(String name) {
         return getCallsHandler().executeRead("GetGroupByName",
-                DbGroupRowMapper.instance,
+                dbGroupRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("name", name));
     }
@@ -79,14 +77,14 @@ public class DbGroupDaoImpl extends BaseDao implements DbGroupDao {
     @Override
     public List<DbGroup> getAll() {
         return getCallsHandler().executeReadList("GetAllGroups",
-                DbGroupRowMapper.instance,
+                dbGroupRowMapper,
                 getCustomMapSqlParameterSource());
     }
 
 
     @Override
     public List<DbGroup> getAllWithQuery(String query) {
-        return getJdbcTemplate().query(query, DbGroupRowMapper.instance);
+        return getJdbcTemplate().query(query, dbGroupRowMapper);
     }
 
     @Override
@@ -120,20 +118,14 @@ public class DbGroupDaoImpl extends BaseDao implements DbGroupDao {
         getCallsHandler().executeModification("DeleteGroup", parameterSource);
     }
 
-    private static final class DbGroupRowMapper implements RowMapper<DbGroup> {
-        public static final DbGroupRowMapper instance = new DbGroupRowMapper();
-
-        @Override
-        public DbGroup mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-            DbGroup entity = new DbGroup();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setName(rs.getString("name"));
-            entity.setDomain(rs.getString("domain"));
-            entity.setDistinguishedName(rs.getString("distinguishedname"));
-            entity.setExternalId(rs.getString("external_id"));
-            entity.setNamespace(rs.getString("namespace"));
-            return entity;
-        }
-    }
-
+    private static final RowMapper<DbGroup> dbGroupRowMapper = (rs, rowNum) -> {
+        DbGroup entity = new DbGroup();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setName(rs.getString("name"));
+        entity.setDomain(rs.getString("domain"));
+        entity.setDistinguishedName(rs.getString("distinguishedname"));
+        entity.setExternalId(rs.getString("external_id"));
+        entity.setNamespace(rs.getString("namespace"));
+        return entity;
+    };
 }

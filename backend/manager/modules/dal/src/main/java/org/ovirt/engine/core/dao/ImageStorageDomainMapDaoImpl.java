@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -91,17 +89,12 @@ public class ImageStorageDomainMapDaoImpl extends BaseDao implements ImageStorag
         getCallsHandler().executeModification("UpdateDiskProfileByImageGroupId", parameterSource);
     }
 
-    private static final RowMapper<ImageStorageDomainMap> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
-            new RowMapper<ImageStorageDomainMap>() {
-
-                @Override
-                public ImageStorageDomainMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    ImageStorageDomainMap entity = new ImageStorageDomainMap();
-                    entity.setImageId(getGuidDefaultEmpty(rs, "image_id"));
-                    entity.setStorageDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
-                    entity.setQuotaId(getGuid(rs, "quota_id"));
-                    entity.setDiskProfileId(getGuid(rs, "disk_profile_id"));
-                    return entity;
-                }
-            };
+    private static final RowMapper<ImageStorageDomainMap> IMAGE_STORAGE_DOMAIN_MAP_MAPPER = (rs, rowNum) -> {
+        ImageStorageDomainMap entity = new ImageStorageDomainMap();
+        entity.setImageId(getGuidDefaultEmpty(rs, "image_id"));
+        entity.setStorageDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
+        entity.setQuotaId(getGuid(rs, "quota_id"));
+        entity.setDiskProfileId(getGuid(rs, "disk_profile_id"));
+        return entity;
+    };
 }

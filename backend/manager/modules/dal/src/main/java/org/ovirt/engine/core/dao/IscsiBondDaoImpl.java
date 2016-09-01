@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -24,7 +22,7 @@ public class IscsiBondDaoImpl extends DefaultGenericDao<IscsiBond, Guid> impleme
     @Override
     public List<IscsiBond> getAllByStoragePoolId(Guid storagePoolId) {
         return getCallsHandler().executeReadList("GetIscsiBondsByStoragePoolId",
-                IscsiBondRowMapper.instance,
+                iscsiBondRowMapper,
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId));
     }
 
@@ -37,7 +35,7 @@ public class IscsiBondDaoImpl extends DefaultGenericDao<IscsiBond, Guid> impleme
     @Override
     public List<IscsiBond> getIscsiBondsByNetworkId(Guid netowrkId) {
         return getCallsHandler().executeReadList("GetIscsiBondsByNetworkId",
-                IscsiBondRowMapper.instance,
+                iscsiBondRowMapper,
                 getCustomMapSqlParameterSource().addValue("network_id", netowrkId));
     }
 
@@ -95,21 +93,16 @@ public class IscsiBondDaoImpl extends DefaultGenericDao<IscsiBond, Guid> impleme
 
     @Override
     protected RowMapper<IscsiBond> createEntityRowMapper() {
-        return IscsiBondRowMapper.instance;
+        return iscsiBondRowMapper;
     }
 
-    private static class IscsiBondRowMapper implements RowMapper<IscsiBond> {
-        public static final IscsiBondRowMapper instance = new IscsiBondRowMapper();
+    private static final RowMapper<IscsiBond> iscsiBondRowMapper = (rs, rowNum) -> {
+        IscsiBond entity = new IscsiBond();
 
-        @Override
-        public IscsiBond mapRow(ResultSet rs, int rowNum) throws SQLException {
-            IscsiBond entity = new IscsiBond();
-
-            entity.setId(getGuid(rs, "id"));
-            entity.setDescription(rs.getString("description"));
-            entity.setName(rs.getString("name"));
-            entity.setStoragePoolId(getGuidDefaultNewGuid(rs, "storage_pool_id"));
-            return entity;
-        }
-    }
+        entity.setId(getGuid(rs, "id"));
+        entity.setDescription(rs.getString("description"));
+        entity.setName(rs.getString("name"));
+        entity.setStoragePoolId(getGuidDefaultNewGuid(rs, "storage_pool_id"));
+        return entity;
+    };
 }

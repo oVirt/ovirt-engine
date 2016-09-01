@@ -38,7 +38,7 @@ public class CpuQosDaoImpl extends QosBaseDaoImpl<CpuQos> implements CpuQosDao {
                 .addValue("vm_ids", createArrayOfUUIDs(vmIds));
 
         List<Pair<Guid, CpuQos>> pairs = getCallsHandler().executeReadList("GetQosByVmIds",
-                CpuQosMultipleMapper.MAPPER,
+                cpuQosMultipleMapper,
                 parameterSource);
 
         Map<Guid, CpuQos> qosMap = new HashMap<>();
@@ -65,17 +65,9 @@ public class CpuQosDaoImpl extends QosBaseDaoImpl<CpuQos> implements CpuQosDao {
         }
     }
 
-    private static class CpuQosMultipleMapper implements RowMapper<Pair<Guid, CpuQos>> {
-        public static final CpuQosMultipleMapper MAPPER = new CpuQosMultipleMapper();
-
-        private CpuQosMultipleMapper() {
-        }
-
-        @Override
-        public Pair<Guid, CpuQos> mapRow(ResultSet rs, int rowNum) throws SQLException {
-            CpuQos qos = CpuDaoDbFacadaeImplMapper.MAPPER.mapRow(rs, rowNum);
-            Guid guid = new Guid(rs.getString("vm_id"));
-            return new Pair<>(guid, qos);
-        }
-    }
+    private static final RowMapper<Pair<Guid, CpuQos>> cpuQosMultipleMapper = (rs, rowNum) -> {
+        CpuQos qos = CpuDaoDbFacadaeImplMapper.MAPPER.mapRow(rs, rowNum);
+        Guid guid = new Guid(rs.getString("vm_id"));
+        return new Pair<>(guid, qos);
+    };
 }

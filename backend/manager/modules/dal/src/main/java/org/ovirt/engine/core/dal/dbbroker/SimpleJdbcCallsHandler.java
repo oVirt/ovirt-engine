@@ -113,28 +113,20 @@ public class SimpleJdbcCallsHandler {
     private CallCreator createCallForRead(final String procedureName,
             final RowMapper<?> mapper,
             final MapSqlParameterSource parameterSource) {
-        return new CallCreator() {
-            @Override
-            public SimpleJdbcCall createCall() {
-                SimpleJdbcCall call =
-                        (SimpleJdbcCall) dialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName(procedureName);
-                call.returningResultSet(RETURN_VALUE_PARAMETER, mapper);
-                // Pass mapper information (only parameter names) in order to supply all the needed
-                // metadata information for compilation.
-                call.getInParameterNames().addAll(
-                        SqlParameterSourceUtils.extractCaseInsensitiveParameterNames(parameterSource).keySet());
-                return call;
-            }
+        return () -> {
+            SimpleJdbcCall call =
+                    (SimpleJdbcCall) dialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName(procedureName);
+            call.returningResultSet(RETURN_VALUE_PARAMETER, mapper);
+            // Pass mapper information (only parameter names) in order to supply all the needed
+            // metadata information for compilation.
+            call.getInParameterNames().addAll(
+                    SqlParameterSourceUtils.extractCaseInsensitiveParameterNames(parameterSource).keySet());
+            return call;
         };
     }
 
     CallCreator createCallForModification(final String procedureName) {
-        return new CallCreator() {
-            @Override
-            public SimpleJdbcCall createCall() {
-                return new SimpleJdbcCall(jdbcTemplate).withProcedureName(procedureName);
-            }
-        };
+        return () -> new SimpleJdbcCall(jdbcTemplate).withProcedureName(procedureName);
     }
 
     private Map<String, Object> executeImpl(String procedureName,

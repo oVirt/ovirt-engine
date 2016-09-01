@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -42,7 +40,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     public List<StorageDomain> getStorageDomains(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
         Integer statusNum = status == null ? null : status.getValue();
         return getCallsHandler().executeReadList("Getstorage_domain_by_type_storagePoolId_and_status",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", poolId)
                         .addValue("storage_domain_type", type.getValue())
@@ -62,7 +60,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public StorageDomain get(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("Getstorage_domains_By_id",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("id", id)
                         .addValue("user_id", userID)
@@ -72,14 +70,14 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public StorageDomain getForStoragePool(Guid id, Guid storagepool) {
         return getCallsHandler().executeRead("Getstorage_domains_By_id_and_by_storage_pool_id",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("id", id).addValue("storage_pool_id", storagepool));
     }
 
     @Override
     public List<StorageDomain> getAllForConnection(String connection) {
-        return getCallsHandler().executeReadList("Getstorage_domains_By_connection", StorageDomainRowMapper.instance,
+        return getCallsHandler().executeReadList("Getstorage_domains_By_connection", storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("connection", connection));
     }
@@ -87,7 +85,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public List<StorageDomain> getAllByConnectionId(Guid connectionId) {
         return getCallsHandler().executeReadList("GetAllFromStorageDomainsByConnectionId",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("connection_id", connectionId));
     }
@@ -100,7 +98,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public List<StorageDomain> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("Getstorage_domains_By_storagePoolId",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", pool)
                         .addValue("user_id", userID)
@@ -110,13 +108,12 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public List<StorageDomain> getAllForStorageDomain(Guid id) {
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_storageDomainId",
-                StorageDomainRowMapper.instance, getCustomMapSqlParameterSource()
-                        .addValue("storage_domain_id", id));
+                storageDomainRowMapper, getCustomMapSqlParameterSource().addValue("storage_domain_id", id));
     }
 
     @Override
     public List<StorageDomain> getAllWithQuery(String query) {
-        return getJdbcTemplate().query(query, StorageDomainRowMapper.instance);
+        return getJdbcTemplate().query(query, storageDomainRowMapper);
     }
 
     @Override
@@ -127,7 +124,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public List<StorageDomain> getAll(Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllFromstorage_domains",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
@@ -146,53 +143,46 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     @Override
     public List<StorageDomain> getAllStorageDomainsByImageId(Guid imageId) {
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_ImageId",
-                StorageDomainRowMapper.instance, getCustomMapSqlParameterSource()
+                storageDomainRowMapper, getCustomMapSqlParameterSource()
                 .addValue("image_id", imageId));
     }
 
     /**
      * Row mapper to map a returned row to a {@link StorageDomain} object.
      */
-    private static final class StorageDomainRowMapper implements RowMapper<StorageDomain> {
-        // single instance
-        public static final StorageDomainRowMapper instance = new StorageDomainRowMapper();
-
-        @Override
-        public StorageDomain mapRow(final ResultSet rs, final int rowNum)
-                throws SQLException {
-            final StorageDomain entity = new StorageDomain();
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setStorage(rs.getString("storage"));
-            entity.setStorageName(rs.getString("storage_name"));
-            entity.setDescription(rs.getString("storage_description"));
-            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
-            entity.setComment(rs.getString("storage_comment"));
-            entity.setStorageType(StorageType.forValue(rs.getInt("storage_type")));
-            entity.setStoragePoolName(rs.getString("storage_pool_name"));
-            entity.setStorageDomainType(StorageDomainType.forValue(rs.getInt("storage_domain_type")));
-            entity.setStorageFormat(StorageFormatType.forValue(rs.getString("storage_domain_format_type")));
-            entity.setAvailableDiskSize((Integer) rs.getObject("available_disk_size"));
-            entity.setUsedDiskSize((Integer) rs.getObject("used_disk_size"));
-            entity.setActualImagesSize(rs.getInt("actual_images_size"));
-            entity.setCommittedDiskSize(rs.getInt("commited_disk_size"));
-            entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
-            entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
-            entity.setStorageDomainSharedStatus(
-                    StorageDomainSharedStatus.forValue(rs.getInt("storage_domain_shared_status")));
-            entity.setAutoRecoverable(rs.getBoolean("recoverable"));
-            entity.setContainsUnregisteredEntities(rs.getBoolean("contains_unregistered_entities"));
-            entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
-            entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
-            entity.setWarningLowSpaceIndicator(rs.getInt("warning_low_space_indicator"));
-            entity.setCriticalSpaceActionBlocker(rs.getInt("critical_space_action_blocker"));
-            return entity;
-        }
-    }
+    private static final RowMapper<StorageDomain> storageDomainRowMapper = (rs, rowNum) -> {
+        final StorageDomain entity = new StorageDomain();
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setStorage(rs.getString("storage"));
+        entity.setStorageName(rs.getString("storage_name"));
+        entity.setDescription(rs.getString("storage_description"));
+        entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
+        entity.setComment(rs.getString("storage_comment"));
+        entity.setStorageType(StorageType.forValue(rs.getInt("storage_type")));
+        entity.setStoragePoolName(rs.getString("storage_pool_name"));
+        entity.setStorageDomainType(StorageDomainType.forValue(rs.getInt("storage_domain_type")));
+        entity.setStorageFormat(StorageFormatType.forValue(rs.getString("storage_domain_format_type")));
+        entity.setAvailableDiskSize((Integer) rs.getObject("available_disk_size"));
+        entity.setUsedDiskSize((Integer) rs.getObject("used_disk_size"));
+        entity.setActualImagesSize(rs.getInt("actual_images_size"));
+        entity.setCommittedDiskSize(rs.getInt("commited_disk_size"));
+        entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
+        entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
+        entity.setStorageDomainSharedStatus(
+                StorageDomainSharedStatus.forValue(rs.getInt("storage_domain_shared_status")));
+        entity.setAutoRecoverable(rs.getBoolean("recoverable"));
+        entity.setContainsUnregisteredEntities(rs.getBoolean("contains_unregistered_entities"));
+        entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
+        entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
+        entity.setWarningLowSpaceIndicator(rs.getInt("warning_low_space_indicator"));
+        entity.setCriticalSpaceActionBlocker(rs.getInt("critical_space_action_blocker"));
+        return entity;
+    };
 
     @Override
     public List<StorageDomain> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection) {
         return getCallsHandler().executeReadList("Getstorage_domains_By_storage_pool_id_and_connection",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePoolId)
                         .addValue("connection", connection));
@@ -200,13 +190,13 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
 
     @Override
     public List<StorageDomain> listFailedAutorecoverables() {
-        return getCallsHandler().executeReadList("GetFailingStorage_domains", StorageDomainRowMapper.instance, null);
+        return getCallsHandler().executeReadList("GetFailingStorage_domains", storageDomainRowMapper, null);
     }
 
     @Override
     public List<StorageDomain> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId) {
         return getCallsHandler().executeReadList("Getstorage_domains_by_storage_pool_id_with_permitted_action",
-                StorageDomainRowMapper.instance,
+                storageDomainRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("user_id", userId)
                         .addValue("action_group_id", actionGroup.getId())

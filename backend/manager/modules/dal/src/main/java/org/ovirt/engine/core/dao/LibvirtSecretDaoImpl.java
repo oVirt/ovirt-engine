@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -42,37 +40,32 @@ public class LibvirtSecretDaoImpl extends DefaultGenericDao<LibvirtSecret, Guid>
 
     @Override
     protected RowMapper<LibvirtSecret> createEntityRowMapper() {
-        return LibvirtSecretRowMapper.instance;
+        return libvirtSecretRowMapper;
     }
 
-    private static class LibvirtSecretRowMapper implements RowMapper<LibvirtSecret> {
-        public static final LibvirtSecretRowMapper instance = new LibvirtSecretRowMapper();
+    private static final RowMapper<LibvirtSecret> libvirtSecretRowMapper = (rs, rowNum) -> {
+        LibvirtSecret entity = new LibvirtSecret();
 
-        @Override
-        public LibvirtSecret mapRow(ResultSet rs, int rowNum) throws SQLException {
-            LibvirtSecret entity = new LibvirtSecret();
-
-            entity.setId(getGuid(rs, "secret_id"));
-            entity.setValue(DbFacadeUtils.decryptPassword(rs.getString("secret_value")));
-            entity.setUsageType(LibvirtSecretUsageType.forValue(rs.getInt("secret_usage_type")));
-            entity.setDescription(rs.getString("secret_description"));
-            entity.setProviderId(getGuid(rs, "provider_id"));
-            entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
-            return entity;
-        }
-    }
+        entity.setId(getGuid(rs, "secret_id"));
+        entity.setValue(DbFacadeUtils.decryptPassword(rs.getString("secret_value")));
+        entity.setUsageType(LibvirtSecretUsageType.forValue(rs.getInt("secret_usage_type")));
+        entity.setDescription(rs.getString("secret_description"));
+        entity.setProviderId(getGuid(rs, "provider_id"));
+        entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
+        return entity;
+    };
 
     @Override
     public List<LibvirtSecret> getAllByProviderId(Guid providerId) {
         return getCallsHandler().executeReadList("GetAllLibvirtSecretsByProviderId",
-                LibvirtSecretRowMapper.instance,
+                libvirtSecretRowMapper,
                 getCustomMapSqlParameterSource().addValue("provider_id", providerId));
     }
 
     @Override
     public List<LibvirtSecret> getAllByStoragePoolIdFilteredByActiveStorageDomains(Guid storagePoolId) {
         return getCallsHandler().executeReadList("GetLibvirtSecretsByPoolIdOnActiveDomains",
-                LibvirtSecretRowMapper.instance,
+                libvirtSecretRowMapper,
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId));
     }
 }

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -58,16 +56,13 @@ public class VmIconDefaultDaoImpl extends DefaultGenericDao<VmIconDefault, Guid>
 
     @Override
     protected RowMapper<VmIconDefault> createEntityRowMapper() {
-        return new RowMapper<VmIconDefault>() {
-            @Override
-            public VmIconDefault mapRow(ResultSet rs, int rowNum) throws SQLException {
-                VmIconDefault iconDefaults = new VmIconDefault();
-                iconDefaults.setId(getGuid(rs, ID_COLUMN));
-                iconDefaults.setOsId(rs.getInt(OS_ID_COLUMN));
-                iconDefaults.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
-                iconDefaults.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
-                return iconDefaults;
-            }
+        return (rs, rowNum) -> {
+            VmIconDefault iconDefaults = new VmIconDefault();
+            iconDefaults.setId(getGuid(rs, ID_COLUMN));
+            iconDefaults.setOsId(rs.getInt(OS_ID_COLUMN));
+            iconDefaults.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
+            iconDefaults.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
+            return iconDefaults;
         };
     }
 }

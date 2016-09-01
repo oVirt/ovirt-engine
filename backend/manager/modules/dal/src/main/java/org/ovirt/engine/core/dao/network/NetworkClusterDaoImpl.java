@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.network;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -19,23 +17,18 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao {
 
-    private static final RowMapper<NetworkCluster> mapper =
-            new RowMapper<NetworkCluster>() {
-                @Override
-                public NetworkCluster mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    NetworkCluster entity = new NetworkCluster();
-                    entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-                    entity.setNetworkId(getGuidDefaultEmpty(rs, "network_id"));
-                    entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
-                    entity.setDisplay(rs.getBoolean("is_display"));
-                    entity.setRequired(rs.getBoolean("required"));
-                    entity.setMigration(rs.getBoolean("migration"));
-                    entity.setManagement(rs.getBoolean("management"));
-                    entity.setGluster(rs.getBoolean("is_gluster"));
-                    return entity;
-                }
-            };
+    private static final RowMapper<NetworkCluster> mapper = (rs, rowNum) -> {
+        NetworkCluster entity = new NetworkCluster();
+        entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setNetworkId(getGuidDefaultEmpty(rs, "network_id"));
+        entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
+        entity.setDisplay(rs.getBoolean("is_display"));
+        entity.setRequired(rs.getBoolean("required"));
+        entity.setMigration(rs.getBoolean("migration"));
+        entity.setManagement(rs.getBoolean("management"));
+        entity.setGluster(rs.getBoolean("is_gluster"));
+        return entity;
+    };
 
     @Override
     public NetworkCluster get(NetworkClusterId id) {

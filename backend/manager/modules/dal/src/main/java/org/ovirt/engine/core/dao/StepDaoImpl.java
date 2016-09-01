@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +20,24 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class StepDaoImpl extends DefaultGenericDao<Step, Guid> implements StepDao {
 
-    private static StepRowMapper stepRowMapper = new StepRowMapper();
+    private static final RowMapper<Step> stepRowMapper = (rs, rowNum) -> {
+        Step step = new Step();
+        step.setId(getGuidDefaultEmpty(rs, "step_id"));
+        step.setParentStepId(getGuid(rs, "parent_step_id"));
+        step.setJobId(getGuidDefaultEmpty(rs, "job_id"));
+        step.setStepType(StepEnum.valueOf(rs.getString("step_type")));
+        step.setDescription(rs.getString("description"));
+        step.setStepNumber(rs.getInt("step_number"));
+        step.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
+        step.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
+        step.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
+        step.setCorrelationId(rs.getString("correlation_id"));
+        step.setProgress(getInteger(rs, "progress"));
+        step.getExternalSystem().setId(getGuid(rs, "external_id"));
+        step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
+        step.setExternal(rs.getBoolean("is_external"));
+        return step;
+    };
 
     public StepDaoImpl() {
         super("Step");
@@ -91,29 +106,6 @@ public class StepDaoImpl extends DefaultGenericDao<Step, Guid> implements StepDa
                 getCustomMapSqlParameterSource().addValue("step_id", stepId)
                         .addValue("progress", progress);
         getCallsHandler().executeModification("updateStepProgress", parameterSource);
-    }
-
-    private static class StepRowMapper implements RowMapper<Step> {
-
-        @Override
-        public Step mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Step step = new Step();
-            step.setId(getGuidDefaultEmpty(rs, "step_id"));
-            step.setParentStepId(getGuid(rs, "parent_step_id"));
-            step.setJobId(getGuidDefaultEmpty(rs, "job_id"));
-            step.setStepType(StepEnum.valueOf(rs.getString("step_type")));
-            step.setDescription(rs.getString("description"));
-            step.setStepNumber(rs.getInt("step_number"));
-            step.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
-            step.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
-            step.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
-            step.setCorrelationId(rs.getString("correlation_id"));
-            step.setProgress(getInteger(rs, "progress"));
-            step.getExternalSystem().setId(getGuid(rs, "external_id"));
-            step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
-            step.setExternal(rs.getBoolean("is_external"));
-            return step;
-        }
     }
 
     @Override

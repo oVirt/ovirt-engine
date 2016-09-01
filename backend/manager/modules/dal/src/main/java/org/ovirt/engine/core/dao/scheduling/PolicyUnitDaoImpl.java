@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.scheduling;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import javax.inject.Named;
@@ -45,21 +43,17 @@ public class PolicyUnitDaoImpl extends DefaultGenericDao<PolicyUnit, Guid> imple
 
     @Override
     protected RowMapper<PolicyUnit> createEntityRowMapper() {
-        return new RowMapper<PolicyUnit>() {
-
-            @Override
-            public PolicyUnit mapRow(ResultSet rs, int arg1) throws SQLException {
-                PolicyUnit policyUnit = new PolicyUnit();
-                policyUnit.setId(getGuid(rs, "id"));
-                policyUnit.setName(rs.getString("name"));
-                policyUnit.setInternal(rs.getBoolean("is_internal"));
-                policyUnit.setPolicyUnitType(PolicyUnitType.forValue(rs.getInt("type")));
-                policyUnit.setDescription(rs.getString("description"));
-                policyUnit.setParameterRegExMap(SerializationFactory.getDeserializer()
-                        .deserializeOrCreateNew(rs.getString("custom_properties_regex"), LinkedHashMap.class));
-                policyUnit.setEnabled(rs.getBoolean("enabled"));
-                return policyUnit;
-            }
+        return (rs, arg1) -> {
+            PolicyUnit policyUnit = new PolicyUnit();
+            policyUnit.setId(getGuid(rs, "id"));
+            policyUnit.setName(rs.getString("name"));
+            policyUnit.setInternal(rs.getBoolean("is_internal"));
+            policyUnit.setPolicyUnitType(PolicyUnitType.forValue(rs.getInt("type")));
+            policyUnit.setDescription(rs.getString("description"));
+            policyUnit.setParameterRegExMap(SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("custom_properties_regex"), LinkedHashMap.class));
+            policyUnit.setEnabled(rs.getBoolean("enabled"));
+            return policyUnit;
         };
     }
 

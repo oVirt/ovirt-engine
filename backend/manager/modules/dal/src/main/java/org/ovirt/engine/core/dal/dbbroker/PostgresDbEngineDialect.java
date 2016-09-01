@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
 import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +11,6 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -145,24 +143,21 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
         /**
          * Execute the call using a query instead of a procedure call.<br>
          * <br>
-         * The way to execute correctly is to use a {@link PreparedStatementSetter} which will set the parameters
-         * correctly, since using a PreparedStatementCreator doesn't seem to work well. The setter simply sets the
-         * parameter using the correct {@link Types} constant indicating the actual call type.
+         * The way to execute correctly is to use a {@link  org.springframework.jdbc.core.PreparedStatementSetter} which
+         * will set the parameters correctly, since using a PreparedStatementCreator doesn't seem to work well. The
+         * setter simply sets the parameter using the correct {@link Types} constant indicating the actual call type.
          */
         private Map<String, Object> executeCallInternal(final Map<String, Object> params) {
             Map<String, Object> result = new HashMap<>(1);
             result.put(returnedMapKey, getJdbcTemplate().query(
                     generateSql(),
-                            new PreparedStatementSetter() {
-                                @Override
-                                public void setValues(PreparedStatement ps) throws SQLException {
-                                    List<SqlParameter> callParameters = getCallParameters();
-                                    for (int i = 0; i < callParameters.size(); i++) {
-                                        SqlParameter parameter = callParameters.get(i);
-                                        ps.setObject(i + 1, params.get(parameter.getName()), parameter.getSqlType());
-                                    }
-                                }
-                            }, rowMapper));
+                    ps -> {
+                        List<SqlParameter> callParameters = getCallParameters();
+                        for (int i = 0; i < callParameters.size(); i++) {
+                            SqlParameter parameter = callParameters.get(i);
+                            ps.setObject(i + 1, params.get(parameter.getName()), parameter.getSqlType());
+                        }
+                    }, rowMapper));
             return result;
         }
 

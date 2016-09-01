@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -9,7 +7,6 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -40,14 +37,11 @@ public class VmIconDaoImpl extends DefaultGenericDao<VmIcon, Guid> implements Vm
 
     @Override
     protected RowMapper<VmIcon> createEntityRowMapper() {
-        return new RowMapper<VmIcon>() {
-            @Override
-            public VmIcon mapRow(ResultSet rs, int rowNum) throws SQLException {
-                VmIcon icon = new VmIcon();
-                icon.setId(getGuid(rs, ID_COLUMN));
-                icon.setDataUrl(rs.getString(DATA_URL_COLUMN));
-                return icon;
-            }
+        return (rs, rowNum) -> {
+            VmIcon icon = new VmIcon();
+            icon.setId(getGuid(rs, ID_COLUMN));
+            icon.setDataUrl(rs.getString(DATA_URL_COLUMN));
+            return icon;
         };
     }
 
@@ -77,17 +71,14 @@ public class VmIconDaoImpl extends DefaultGenericDao<VmIcon, Guid> implements Vm
         if (icon == null) {
             throw new IllegalArgumentException("Argument 'icon' should not be null");
         }
-        return TransactionSupport.executeInNewTransaction(new TransactionMethod<Guid>() {
-            @Override
-            public Guid runInTransaction() {
-                final List<VmIcon> existingIcons = getByDataUrl(icon);
-                if (!existingIcons.isEmpty()) {
-                    return existingIcons.get(0).getId();
-                }
-                final VmIcon newIcon = new VmIcon(Guid.newGuid(), icon);
-                save(newIcon);
-                return newIcon.getId();
+        return TransactionSupport.executeInNewTransaction(() -> {
+            final List<VmIcon> existingIcons = getByDataUrl(icon);
+            if (!existingIcons.isEmpty()) {
+                return existingIcons.get(0).getId();
             }
+            final VmIcon newIcon = new VmIcon(Guid.newGuid(), icon);
+            save(newIcon);
+            return newIcon.getId();
         });
     }
 

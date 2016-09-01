@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -23,19 +21,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
         StorageServerConnectionLunMapDao {
 
-    private static final class StorageServerConnectionLunMapRowMapper
-            implements RowMapper<LUNStorageServerConnectionMap> {
-        public static final StorageServerConnectionLunMapRowMapper instance =
-                new StorageServerConnectionLunMapRowMapper();
-
-        @Override
-        public LUNStorageServerConnectionMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-            LUNStorageServerConnectionMap entity = new LUNStorageServerConnectionMap();
-            entity.setLunId(rs.getString("lun_id"));
-            entity.setStorageServerConnection(rs.getString("storage_server_connection"));
-            return entity;
-        }
-    }
+    private static final RowMapper<LUNStorageServerConnectionMap> storageServerConnectionLunMapRowMapper = (rs, rowNum) -> {
+        LUNStorageServerConnectionMap entity = new LUNStorageServerConnectionMap();
+        entity.setLunId(rs.getString("lun_id"));
+        entity.setStorageServerConnection(rs.getString("storage_server_connection"));
+        return entity;
+    };
 
     @Override
     public LUNStorageServerConnectionMap get(LUNStorageServerConnectionMapId id) {
@@ -43,7 +34,7 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
                 "storage_server_connection", id.storageServerConnection);
 
         return getCallsHandler().executeRead("GetLUN_storage_server_connection_mapByLUNBystorage_server_conn",
-                StorageServerConnectionLunMapRowMapper.instance,
+                storageServerConnectionLunMapRowMapper,
                 parameterSource);
     }
 
@@ -60,7 +51,7 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", lunId);
 
         return getCallsHandler().executeReadList("GetLUN_storage_server_connection_mapByLUN",
-                StorageServerConnectionLunMapRowMapper.instance,
+                storageServerConnectionLunMapRowMapper,
                 parameterSource);
     }
 
@@ -69,7 +60,7 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetAllFromLUN_storage_server_connection_map",
-                StorageServerConnectionLunMapRowMapper.instance,
+                storageServerConnectionLunMapRowMapper,
                 parameterSource);
     }
 

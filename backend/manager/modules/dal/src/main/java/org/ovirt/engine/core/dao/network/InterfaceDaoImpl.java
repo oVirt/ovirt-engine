@@ -52,27 +52,18 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     @Override
     public void massUpdateInterfacesForVds(List<VdsNetworkInterface> dbIfacesToBatch) {
-        updateAllInBatch("Updatevds_interface", dbIfacesToBatch, new MapSqlParameterMapper<VdsNetworkInterface>() {
-            @Override
-            public MapSqlParameterSource map(VdsNetworkInterface nic) {
-                return createInterfaceParametersMapper(nic);
-            }
-        });
+        updateAllInBatch("Updatevds_interface", dbIfacesToBatch, this::createInterfaceParametersMapper);
     }
 
     @Override
     public void massClearNetworkFromNics(List<Guid> nicIds) {
         getCallsHandler().executeStoredProcAsBatch("Clear_network_from_nics",
                 nicIds,
-                new MapSqlParameterMapper<Guid>() {
+                id -> {
+                    CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
+                    paramSource.addValue("id", id);
+                    return paramSource;
 
-                    @Override
-                    public MapSqlParameterSource map(Guid id) {
-                        CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
-                        paramSource.addValue("id", id);
-                        return paramSource;
-
-                    }
                 });
     }
 
@@ -394,13 +385,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
             };
 
     private static final RowMapper<Pair<Guid, String>> hostNetworkNameMapper =
-            new RowMapper<Pair<Guid, String>>() {
-
-        @Override
-        public Pair<Guid, String> mapRow(ResultSet rs, int arg1) throws SQLException {
-            return new Pair<>(getGuid(rs, "vds_id"), rs.getString("network_name"));
-        }
-    };
+            (rs, rowNum) -> new Pair<>(getGuid(rs, "vds_id"), rs.getString("network_name"));
 
     private static class HostNetworkStatisticsRowMapper extends NetworkStatisticsRowMapper<VdsNetworkStatistics> {
 

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -55,7 +53,7 @@ public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements 
     @Override
     public MacPool getDefaultPool() {
         return getCallsHandler().executeRead("GetDefaultMacPool",
-                new MacPoolRowMapper(),
+                macPoolRowMapper,
                 getCustomMapSqlParameterSource());
     }
 
@@ -72,7 +70,7 @@ public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements 
                 .addValue("cluster_id", dataCenterId);
 
         return getCallsHandler().executeRead("GetMacPoolByClusterId",
-                new MacPoolRowMapper(),
+                macPoolRowMapper,
                 parameterSource);
     }
 
@@ -91,7 +89,7 @@ public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements 
 
     @Override
     protected RowMapper<MacPool> createEntityRowMapper() {
-        return new MacPoolRowMapper();
+        return macPoolRowMapper;
     }
 
     private void deleteAllRangesForMacPool(Guid macPoolId) {
@@ -111,36 +109,28 @@ public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements 
 
     private List<MacRange> getMacPoolRangesForPool(Guid id) {
         return getCallsHandler().executeReadList("GetAllMacPoolRangesByMacPoolId",
-                new MacPoolRangeRowMapper(),
+                macPoolRangeRowMapper,
                 createIdParameterMapper(id));
     }
 
-    private static final class MacPoolRangeRowMapper implements RowMapper<MacRange> {
+    private static final RowMapper<MacRange> macPoolRangeRowMapper = (rs, rowNum) -> {
+        MacRange macRange = new MacRange();
+        macRange.setMacPoolId(getGuid(rs, "mac_pool_id"));
+        macRange.setMacFrom(rs.getString("from_mac"));
+        macRange.setMacTo(rs.getString("to_mac"));
 
-        @Override
-        public MacRange mapRow(ResultSet rs, int rowNum) throws SQLException {
-            MacRange macRange = new MacRange();
-            macRange.setMacPoolId(getGuid(rs, "mac_pool_id"));
-            macRange.setMacFrom(rs.getString("from_mac"));
-            macRange.setMacTo(rs.getString("to_mac"));
+        return macRange;
+    };
 
-            return macRange;
-        }
-    }
+    private final RowMapper<MacPool> macPoolRowMapper = (rs, rowNum) -> {
+        MacPool macPool = new MacPool();
+        macPool.setId(getGuid(rs, "id"));
+        macPool.setName(rs.getString("name"));
+        macPool.setAllowDuplicateMacAddresses(rs.getBoolean("allow_duplicate_mac_addresses"));
+        macPool.setDescription(rs.getString("description"));
+        macPool.setDefaultPool(rs.getBoolean("default_pool"));
+        macPool.setRanges(getMacPoolRangesForPool(macPool.getId()));
 
-    private final class MacPoolRowMapper implements RowMapper<MacPool> {
-
-        @Override
-        public MacPool mapRow(ResultSet rs, int rowNum) throws SQLException {
-            MacPool macPool = new MacPool();
-            macPool.setId(getGuid(rs, "id"));
-            macPool.setName(rs.getString("name"));
-            macPool.setAllowDuplicateMacAddresses(rs.getBoolean("allow_duplicate_mac_addresses"));
-            macPool.setDescription(rs.getString("description"));
-            macPool.setDefaultPool(rs.getBoolean("default_pool"));
-            macPool.setRanges(getMacPoolRangesForPool(macPool.getId()));
-
-            return macPool;
-        }
-    }
+        return macPool;
+    };
 }

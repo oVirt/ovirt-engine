@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,80 +100,44 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
         return vmNumaNodesPinMap;
     }
 
-    private static final RowMapper<VmNumaNode> vmNumaNodeRowMapper =
-            new RowMapper<VmNumaNode>() {
-                @Override
-                public VmNumaNode mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    VmNumaNode entity = new VmNumaNode();
-                    entity.setId(getGuid(rs, "numa_node_id"));
-                    entity.setIndex(rs.getInt("numa_node_index"));
-                    entity.setMemTotal(rs.getLong("mem_total"));
-                    return entity;
-                }
-            };
+    private static final RowMapper<VmNumaNode> vmNumaNodeRowMapper = (rs, rowNum) -> {
+        VmNumaNode entity = new VmNumaNode();
+        entity.setId(getGuid(rs, "numa_node_id"));
+        entity.setIndex(rs.getInt("numa_node_index"));
+        entity.setMemTotal(rs.getLong("mem_total"));
+        return entity;
+    };
 
-    private static final RowMapper<VmNumaNode> vmNumaNodeCpuRowMapper =
-            new RowMapper<VmNumaNode>() {
-                @Override
-                public VmNumaNode mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    VmNumaNode entity = vmNumaNodeRowMapper.mapRow(rs, rowNum);
-                    // We need to copy the array to a normal ArrayList to be GWT compatible. GWT has deserialization
-                    // problems with the Arrays.asList implementation returned by getArray() (Java8 related?)
-                    entity.setCpuIds(
-                            new ArrayList<Integer>(Arrays.asList((Integer[]) rs.getArray("cpu_core_ids").getArray()))
-                    );
-                    return entity;
-                }
-            };
+    private static final RowMapper<VmNumaNode> vmNumaNodeCpuRowMapper =  (rs, rowNum) -> {
+        VmNumaNode entity = vmNumaNodeRowMapper.mapRow(rs, rowNum);
+        // We need to copy the array to a normal ArrayList to be GWT compatible. GWT has deserialization
+        // problems with the Arrays.asList implementation returned by getArray() (Java8 related?)
+        entity.setCpuIds(
+                new ArrayList<Integer>(Arrays.asList((Integer[]) rs.getArray("cpu_core_ids").getArray()))
+        );
+        return entity;
+    };
 
-    private static final RowMapper<Pair<Guid, VmNumaNode>> vmNumaNodeInfoWithClusterRowMapper =
-            new RowMapper<Pair<Guid, VmNumaNode>>() {
-                @Override
-                public Pair<Guid, VmNumaNode> mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    VmNumaNode entity = new VmNumaNode();
-                    entity.setId(getGuid(rs, "vm_numa_node_id"));
-                    entity.setIndex(rs.getInt("vm_numa_node_index"));
-                    entity.setMemTotal(rs.getLong("vm_numa_node_mem_total"));
-                    return new Pair<>(getGuid(rs, "vm_numa_node_vm_id"), entity);
-                }
-            };
+    private static final RowMapper<Pair<Guid, VmNumaNode>> vmNumaNodeInfoWithClusterRowMapper = (rs, rowNum) -> {
+        VmNumaNode entity = new VmNumaNode();
+        entity.setId(getGuid(rs, "vm_numa_node_id"));
+        entity.setIndex(rs.getInt("vm_numa_node_index"));
+        entity.setMemTotal(rs.getLong("vm_numa_node_mem_total"));
+        return new Pair<>(getGuid(rs, "vm_numa_node_vm_id"), entity);
+    };
 
     private static final RowMapper<Pair<Guid, Integer>> vmNumaNodeCpusRowMapper =
-            new RowMapper<Pair<Guid, Integer>>() {
-
-                @Override
-                public Pair<Guid, Integer> mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    return new Pair<>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
-                }
-            };
+            (rs, rowNum) -> new Pair<>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
 
     private static final RowMapper<Pair<Guid, Integer>> vNodePinToPnodeRowMapper =
-            new RowMapper<Pair<Guid, Integer>>() {
-
-                @Override
-                public Pair<Guid, Integer> mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    return new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"),
-                            rs.getInt("last_run_in_vds_numa_node_index"));
-                }
-            };
+            (rs, rowNum) ->
+                    new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"), rs.getInt("last_run_in_vds_numa_node_index"));
 
     private static final RowMapper<Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodeAssignmentRowMapper =
-            new RowMapper<Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>>>() {
-
-                @Override
-                public Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>> mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    return new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"),
-                            new Pair<>(getGuid(rs, "run_in_vds_numa_node_id"),
-                                    new Pair<>(rs.getBoolean("is_pinned"),
-                                    rs.getInt("run_in_vds_numa_node_index"))));
-                }
-            };
+            (rs, rowNum) -> new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"),
+                    new Pair<>(getGuid(rs, "run_in_vds_numa_node_id"),
+                            new Pair<>(rs.getBoolean("is_pinned"),
+                            rs.getInt("run_in_vds_numa_node_index"))));
 
     @Override
     public List<VmNumaNode> getAllVmNumaNodeByVdsNumaNodeId(Guid vdsNumaNodeId) {

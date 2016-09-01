@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,33 +62,28 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
 
     @Override
     protected RowMapper<VmStatistics> createEntityRowMapper() {
-        return VmStatisticsRowMapper.instance;
+        return vmStatisticsRowMapper;
     }
 
-    private static class VmStatisticsRowMapper implements RowMapper<VmStatistics> {
-        public static final VmStatisticsRowMapper instance = new VmStatisticsRowMapper();
-
-        @Override
-        public VmStatistics mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VmStatistics entity = new VmStatistics();
-            entity.setCpuSys(rs.getDouble("cpu_sys"));
-            entity.setCpuUser(rs.getDouble("cpu_user"));
-            entity.setElapsedTime(rs.getDouble("elapsed_time"));
-            entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
-            entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
-            entity.setMigrationProgressPercent(rs.getInt("migration_progress_percent"));
-            entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
-            entity.setDisksUsage((String) rs.getObject("disks_usage"));
-            entity.setMemoryUsageHistory(asIntList((String) rs.getObject("memory_usage_history")));
-            entity.setCpuUsageHistory(asIntList((String) rs.getObject("cpu_usage_history")));
-            entity.setNetworkUsageHistory(asIntList((String) rs.getObject("network_usage_history")));
-            entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
-            entity.setGuestMemoryBuffered(getLong(rs, "guest_mem_buffered"));
-            entity.setGuestMemoryCached(getLong(rs, "guest_mem_cached"));
-            entity.setGuestMemoryFree(getLong(rs, "guest_mem_free"));
-            return entity;
-        }
-    }
+    private static final RowMapper<VmStatistics> vmStatisticsRowMapper = (rs, rowNum) -> {
+        VmStatistics entity = new VmStatistics();
+        entity.setCpuSys(rs.getDouble("cpu_sys"));
+        entity.setCpuUser(rs.getDouble("cpu_user"));
+        entity.setElapsedTime(rs.getDouble("elapsed_time"));
+        entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
+        entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
+        entity.setMigrationProgressPercent(rs.getInt("migration_progress_percent"));
+        entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
+        entity.setDisksUsage((String) rs.getObject("disks_usage"));
+        entity.setMemoryUsageHistory(asIntList((String) rs.getObject("memory_usage_history")));
+        entity.setCpuUsageHistory(asIntList((String) rs.getObject("cpu_usage_history")));
+        entity.setNetworkUsageHistory(asIntList((String) rs.getObject("network_usage_history")));
+        entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
+        entity.setGuestMemoryBuffered(getLong(rs, "guest_mem_buffered"));
+        entity.setGuestMemoryCached(getLong(rs, "guest_mem_cached"));
+        entity.setGuestMemoryFree(getLong(rs, "guest_mem_free"));
+        return entity;
+    };
 
     private static List<Integer> asIntList(String str) {
         if (str == null || "".equals(str)) {
@@ -110,6 +103,6 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
     }
 
     protected static RowMapper<VmStatistics> getRowMapper() {
-        return VmStatisticsRowMapper.instance;
+        return vmStatisticsRowMapper;
     }
 }

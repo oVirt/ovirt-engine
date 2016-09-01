@@ -9,11 +9,10 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * Implementation for the {@link MassOperationsDao} which provides a default
- * {@link MassOperationsDao#updateAll(Collection)} method that uses the {@link DefaultGenericDao#update} method
+ * N{@link MassOperationsDao#updateAll(Collection)} method that uses the {@link DefaultGenericDao#update} method
  * in a more smart way, reusing the {@link org.springframework.jdbc.core.simple.SimpleJdbcCallOperations}.
  *
  * @param <T>
@@ -113,11 +112,6 @@ public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID 
     }
 
     public MapSqlParameterMapper<T> getBatchMapper() {
-        return new MapSqlParameterMapper<T>() {
-            @Override
-            public MapSqlParameterSource map(T entity) {
-                return createFullParametersMapper(entity);
-            }
-        };
+        return this::createFullParametersMapper;
     }
 }

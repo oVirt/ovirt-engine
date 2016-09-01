@@ -161,31 +161,24 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                 .addValue("nfs_retrans", connection.getNfsRetrans());
     }
 
-    private static final RowMapper<StorageServerConnections> mapper =
-            new RowMapper<StorageServerConnections>() {
-                @Override
-                public StorageServerConnections mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    StorageServerConnections entity = new StorageServerConnections();
-                    entity.setConnection(rs.getString("connection"));
-                    entity.setId(rs.getString("id"));
-                    entity.setIqn(rs.getString("iqn"));
-                    entity.setPort(rs.getString("port"));
-                    entity.setPortal(rs.getString("portal"));
-                    entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
-                    entity.setStorageType(StorageType.forValue(rs
-                            .getInt("storage_type")));
-                    entity.setUserName(rs.getString("user_name"));
-                    entity.setMountOptions(rs.getString("mount_options"));
-                    entity.setVfsType(rs.getString("vfs_type"));
-                    entity.setNfsVersion((rs.getString("nfs_version") != null) ?
-                            NfsVersion.forValue(rs.getString("nfs_version")) : null);
-                    entity.setNfsRetrans(getShort(rs, "nfs_retrans"));
-                    entity.setNfsTimeo(getShort(rs, "nfs_timeo"));
-                    return entity;
-                }
-
-            };
+    private static final RowMapper<StorageServerConnections> mapper = (rs, rowNum) -> {
+        StorageServerConnections entity = new StorageServerConnections();
+        entity.setConnection(rs.getString("connection"));
+        entity.setId(rs.getString("id"));
+        entity.setIqn(rs.getString("iqn"));
+        entity.setPort(rs.getString("port"));
+        entity.setPortal(rs.getString("portal"));
+        entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
+        entity.setStorageType(StorageType.forValue(rs.getInt("storage_type")));
+        entity.setUserName(rs.getString("user_name"));
+        entity.setMountOptions(rs.getString("mount_options"));
+        entity.setVfsType(rs.getString("vfs_type"));
+        entity.setNfsVersion((rs.getString("nfs_version") != null) ?
+                NfsVersion.forValue(rs.getString("nfs_version")) : null);
+        entity.setNfsRetrans(getShort(rs, "nfs_retrans"));
+        entity.setNfsTimeo(getShort(rs, "nfs_timeo"));
+        return entity;
+    };
 
     /**
      * Get a Short (therefore a number or a null) from a ResultSet.

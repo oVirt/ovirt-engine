@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -17,8 +15,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class GlusterVolumeSnapshotConfigDaoImpl extends BaseDao implements GlusterVolumeSnapshotConfigDao {
 
-    private static final RowMapper<GlusterVolumeSnapshotConfig> snapshotConfigRowMapper =
-            new GlusterVolumeSnapshotConfigRowMapper();
+    private static final RowMapper<GlusterVolumeSnapshotConfig> snapshotConfigRowMapper = (rs, rowNum) -> {
+        GlusterVolumeSnapshotConfig config = new GlusterVolumeSnapshotConfig();
+        config.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+        config.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
+        config.setParamName(rs.getString("param_name"));
+        config.setParamValue(rs.getString("param_value"));
+        return config;
+    };
 
     public void save(GlusterVolumeSnapshotConfig config) {
         getCallsHandler().executeModification("InsertGlusterVolumeSnapshotConfig", createFullParametersMapper(config));
@@ -56,19 +60,6 @@ public class GlusterVolumeSnapshotConfigDaoImpl extends BaseDao implements Glust
                         .addValue("cluster_id", clusterId)
                         .addValue("volume_id", volumeId)
                         .addValue("param_name", paramName));
-    }
-
-    private static final class GlusterVolumeSnapshotConfigRowMapper implements RowMapper<GlusterVolumeSnapshotConfig> {
-        @Override
-        public GlusterVolumeSnapshotConfig mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterVolumeSnapshotConfig config = new GlusterVolumeSnapshotConfig();
-            config.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            config.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
-            config.setParamName(rs.getString("param_name"));
-            config.setParamValue(rs.getString("param_value"));
-            return config;
-        }
     }
 
     protected MapSqlParameterSource createFullParametersMapper(GlusterVolumeSnapshotConfig config) {

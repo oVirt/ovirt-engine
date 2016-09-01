@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -26,30 +24,24 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class RoleDaoImpl extends BaseDao implements RoleDao {
 
-    private static class RolesRowMapper implements RowMapper<Role> {
-
-        public static final RolesRowMapper instance = new RolesRowMapper();
-
-        @Override
-        public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Role entity = new Role();
-            entity.setDescription(rs.getString("description"));
-            entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setName(rs.getString("name"));
-            entity.setReadonly(rs.getBoolean("is_readonly"));
-            entity.setType(RoleType.getById(rs.getInt("role_type")));
-            entity.setAllowsViewingChildren(rs.getBoolean("allows_viewing_children"));
-            entity.setAppMode(ApplicationMode.from(rs.getInt("app_mode")));
-            return entity;
-        }
-    }
+    private static final RowMapper<Role> rolesRowMapper = (rs, rowNum) -> {
+        Role entity = new Role();
+        entity.setDescription(rs.getString("description"));
+        entity.setId(getGuidDefaultEmpty(rs, "id"));
+        entity.setName(rs.getString("name"));
+        entity.setReadonly(rs.getBoolean("is_readonly"));
+        entity.setType(RoleType.getById(rs.getInt("role_type")));
+        entity.setAllowsViewingChildren(rs.getBoolean("allows_viewing_children"));
+        entity.setAppMode(ApplicationMode.from(rs.getInt("app_mode")));
+        return entity;
+    };
 
     @Override
     public Role get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        return getCallsHandler().executeRead("GetRolsByid", RolesRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetRolsByid", rolesRowMapper, parameterSource);
     }
 
     @Override
@@ -57,7 +49,7 @@ public class RoleDaoImpl extends BaseDao implements RoleDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("name", name);
 
-        return getCallsHandler().executeRead("GetRoleByName", RolesRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetRoleByName", rolesRowMapper, parameterSource);
     }
 
     @Override
@@ -66,7 +58,7 @@ public class RoleDaoImpl extends BaseDao implements RoleDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("app_mode", appMode);
 
-        return getCallsHandler().executeReadList("GetAllFromRole", RolesRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromRole", rolesRowMapper, parameterSource);
     }
 
     @Override
@@ -75,7 +67,7 @@ public class RoleDaoImpl extends BaseDao implements RoleDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("app_mode", appMode);
 
-        return getCallsHandler().executeReadList("GetAllNonAdminRoles", RolesRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllNonAdminRoles", rolesRowMapper, parameterSource);
     }
 
     @Override
@@ -91,7 +83,7 @@ public class RoleDaoImpl extends BaseDao implements RoleDao {
                 .addValue("group_ids", groupIds)
                 .addValue("app_mode", appMode);
         return getCallsHandler().executeReadList("GetAnyAdminRoleByUserIdAndGroupIds",
-                RolesRowMapper.instance,
+                rolesRowMapper,
                 parameterSource);
     }
 

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -18,18 +16,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class StoragePoolIsoMapDaoImpl extends BaseDao implements StoragePoolIsoMapDao {
 
-    private static final class StoragePoolIsoMapRowMapper implements RowMapper<StoragePoolIsoMap> {
-        public static final StoragePoolIsoMapRowMapper instance = new StoragePoolIsoMapRowMapper();
-
-        @Override
-        public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-            StoragePoolIsoMap entity = new StoragePoolIsoMap();
-            entity.setStorageId(getGuidDefaultEmpty(rs, "storage_id"));
-            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
-            entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
-            return entity;
-        }
-    }
+    private static final RowMapper<StoragePoolIsoMap> storagePoolIsoMapRowMapper = (rs, rowNum) -> {
+        StoragePoolIsoMap entity = new StoragePoolIsoMap();
+        entity.setStorageId(getGuidDefaultEmpty(rs, "storage_id"));
+        entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
+        entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
+        return entity;
+    };
 
     @Override
     public StoragePoolIsoMap get(StoragePoolIsoMapId id) {
@@ -37,7 +30,7 @@ public class StoragePoolIsoMapDaoImpl extends BaseDao implements StoragePoolIsoM
                 .addValue("storage_pool_id", id.getStoragePoolId());
 
         return getCallsHandler().executeRead("Getstorage_pool_iso_mapBystorage_idAndBystorage_pool_id",
-                StoragePoolIsoMapRowMapper.instance,
+                storagePoolIsoMapRowMapper,
                 parameterSource);
     }
 
@@ -68,7 +61,7 @@ public class StoragePoolIsoMapDaoImpl extends BaseDao implements StoragePoolIsoM
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id", Guid.Empty)
                 .addValue("storage_pool_id", storagePoolId);
         return getCallsHandler().executeReadList("Getstorage_pool_iso_mapsByBystorage_pool_id",
-                StoragePoolIsoMapRowMapper.instance,
+                storagePoolIsoMapRowMapper,
                 parameterSource);
     }
 
@@ -77,7 +70,7 @@ public class StoragePoolIsoMapDaoImpl extends BaseDao implements StoragePoolIsoM
     public List<StoragePoolIsoMap> getAllForStorage(Guid isoId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id", isoId);
         return getCallsHandler().executeReadList("Getstorage_pool_iso_mapsBystorage_id",
-                StoragePoolIsoMapRowMapper.instance,
+                storagePoolIsoMapRowMapper,
                 parameterSource);
     }
 

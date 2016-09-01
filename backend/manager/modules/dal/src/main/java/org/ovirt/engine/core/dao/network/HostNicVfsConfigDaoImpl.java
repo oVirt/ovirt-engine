@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao.network;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +20,16 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfsConfig, Guid>
         implements HostNicVfsConfigDao {
 
-    private final HostNicVfsConfigRowMapper nicVfsConfigRowMapper = new HostNicVfsConfigRowMapper();
+    private final RowMapper<HostNicVfsConfig> nicVfsConfigRowMapper = (rs, rowNum) -> {
+        HostNicVfsConfig entity = new HostNicVfsConfig();
+        entity.setId(getGuid(rs, "id"));
+        entity.setNicId(getGuid(rs, "nic_id"));
+        entity.setAllNetworksAllowed(rs.getBoolean("is_all_networks_allowed"));
+
+        fillNetworksAndLabelsDataOnConfig(entity);
+
+        return entity;
+    };
 
     public HostNicVfsConfigDaoImpl() {
         super("HostNicVfsConfig");
@@ -44,24 +51,6 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     @Override
     protected RowMapper<HostNicVfsConfig> createEntityRowMapper() {
         return nicVfsConfigRowMapper;
-    }
-
-    private class HostNicVfsConfigRowMapper implements RowMapper<HostNicVfsConfig> {
-
-        private HostNicVfsConfigRowMapper() {
-        }
-
-        @Override
-        public HostNicVfsConfig mapRow(ResultSet rs, int index) throws SQLException {
-            HostNicVfsConfig entity = new HostNicVfsConfig();
-            entity.setId(getGuid(rs, "id"));
-            entity.setNicId(getGuid(rs, "nic_id"));
-            entity.setAllNetworksAllowed(rs.getBoolean("is_all_networks_allowed"));
-
-            fillNetworksAndLabelsDataOnConfig(entity);
-
-            return entity;
-        }
     }
 
     private void fillNetworksAndLabelsDataOnConfig(HostNicVfsConfig vfsConfig) {

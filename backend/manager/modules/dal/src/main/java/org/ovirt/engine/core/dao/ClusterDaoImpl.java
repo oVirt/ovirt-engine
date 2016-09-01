@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,14 +48,14 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cluster_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        return getCallsHandler().executeRead("GetClusterByClusterId", ClusterRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetClusterByClusterId", clusterRowMapper, parameterSource);
     }
 
     @Override
     public Cluster getWithRunningVms(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cluster_id", id);
-        return getCallsHandler().executeRead("GetClusterWithRunningVms", ClusterRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetClusterWithRunningVms", clusterRowMapper, parameterSource);
     }
 
     @Override
@@ -80,7 +78,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("is_case_sensitive", isCaseSensitive);
 
         return getCallsHandler().executeReadList("GetClusterByClusterName",
-                        ClusterRowMapper.instance,
+                        clusterRowMapper,
                         parameterSource);
     }
 
@@ -91,7 +89,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
 
         return (Cluster) DbFacadeUtils.asSingleResult(
                 getCallsHandler().executeReadList("GetClusterForUserByClusterName",
-                        ClusterRowMapper.instance,
+                        clusterRowMapper,
                         parameterSource));
     }
 
@@ -106,13 +104,13 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("storage_pool_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeReadList("GetClustersByStoragePoolId",
-                ClusterRowMapper.instance,
+                clusterRowMapper,
                 parameterSource);
     }
 
     @Override
     public List<Cluster> getAllWithQuery(String query) {
-        List<Cluster> clusters = getJdbcTemplate().query(query, ClusterRowMapper.instance);
+        List<Cluster> clusters = getJdbcTemplate().query(query, clusterRowMapper);
         return getHostsAndVmsForClusters(clusters);
     }
 
@@ -125,7 +123,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     public List<Cluster> getAll(Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetAllFromCluster", ClusterRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromCluster", clusterRowMapper, parameterSource);
     }
 
     @Override
@@ -157,7 +155,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("user_id", userId).addValue("action_group_id", actionGroup.getId());
 
         return getCallsHandler().executeReadList("fn_perms_get_clusters_with_permitted_action",
-                ClusterRowMapper.instance,
+                clusterRowMapper,
                 parameterSource);
     }
 
@@ -166,7 +164,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetClustersHavingHosts",
-                ClusterRowMapper.instance,
+                clusterRowMapper,
                 parameterSource);
     }
 
@@ -175,7 +173,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetClustersWithoutMigratingVms",
-                ClusterRowMapper.instance,
+                clusterRowMapper,
                 parameterSource);
     }
 
@@ -201,7 +199,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     public List<Cluster> getTrustedClusters() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("trusted_service", true);
-        return getCallsHandler().executeReadList("GetTrustedClusters", ClusterRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetTrustedClusters", clusterRowMapper, parameterSource);
     }
 
     private MapSqlParameterSource getClusterParamSource(Cluster cluster) {
@@ -259,88 +257,73 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("skip_fencing_if_gluster_quorum_not_met", cluster.getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet());
     }
 
-    private static final class ClusterHostsAndVMsRowMapper implements RowMapper<ClusterHostsAndVMs> {
-        public static final RowMapper<ClusterHostsAndVMs> instance = new ClusterHostsAndVMsRowMapper();
+    private static final RowMapper<ClusterHostsAndVMs> clusterHostsAndVMsRowMapper = (rs, rowNum) -> {
+        ClusterHostsAndVMs entity = new ClusterHostsAndVMs();
+        entity.setHosts(rs.getInt("hosts"));
+        entity.setVms(rs.getInt("vms"));
+        entity.setClusterId(getGuid(rs, "cluster_id"));
+        return entity;
+    };
 
-        @Override
-        public ClusterHostsAndVMs mapRow(ResultSet rs, int rowNum) throws SQLException {
-            ClusterHostsAndVMs entity = new ClusterHostsAndVMs();
-            entity.setHosts(rs.getInt("hosts"));
-            entity.setVms(rs.getInt("vms"));
-            entity.setClusterId(getGuid(rs, "cluster_id"));
-            return entity;
-        }
+    private static final RowMapper<Cluster> clusterRowMapper = (rs, rowNum) -> {
+        Cluster entity = new Cluster();
+        entity.setDescription(rs.getString("description"));
+        entity.setName(rs.getString("name"));
+        entity.setId(getGuidDefaultEmpty(rs, "cluster_id"));
+        entity.setComment(rs.getString("free_text_comment"));
+        entity.setCpuName(rs.getString("cpu_name"));
+        entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
+        entity.setStoragePoolName(rs.getString("storage_pool_name"));
+        entity.setMaxVdsMemoryOverCommit(rs.getInt("max_vds_memory_over_commit"));
+        entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
+        entity.setTransparentHugepages(rs.getBoolean("transparent_hugepages"));
+        entity.setCompatibilityVersion(new Version(rs.getString("compatibility_version")));
+        entity.setMigrateOnError(MigrateOnErrorOptions.forValue(rs.getInt("migrate_on_error")));
+        entity.setVirtService(rs.getBoolean("virt_service"));
+        entity.setGlusterService(rs.getBoolean("gluster_service"));
+        entity.setGlusterCliBasedSchedulingOn(rs.getBoolean("gluster_cli_based_snapshot_scheduled"));
+        entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
+        entity.getRequiredRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("required_rng_sources")));
+        entity.setEmulatedMachine(rs.getString("emulated_machine"));
+        entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
+        entity.setTrustedService(rs.getBoolean("trusted_service"));
+        entity.setHaReservation(rs.getBoolean("ha_reservation"));
+        entity.setOptionalReasonRequired(rs.getBoolean("optional_reason"));
+        entity.setMaintenanceReasonRequired(rs.getBoolean("maintenance_reason_required"));
+        entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
+        entity.setClusterPolicyName(rs.getString("cluster_policy_name"));
+        entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
+                .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
+        entity.setEnableBallooning(rs.getBoolean("enable_balloon"));
+        entity.setEnableKsm(rs.getBoolean("enable_ksm"));
+        entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
+        entity.setOptimizationType(OptimizationType.from(rs.getInt("optimization_type")));
+        entity.setSpiceProxy(rs.getString("spice_proxy"));
+        entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
+        entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
+        entity.getFencingPolicy().setSkipFencingIfSDActive(rs.getBoolean("skip_fencing_if_sd_active"));
+        entity.getFencingPolicy().setSkipFencingIfConnectivityBroken(rs.getBoolean("skip_fencing_if_connectivity_broken"));
+        entity.getFencingPolicy().setSkipFencingIfGlusterBricksUp(rs.getBoolean("skip_fencing_if_gluster_bricks_up"));
+        entity.getFencingPolicy().setSkipFencingIfGlusterQuorumNotMet(rs.getBoolean("skip_fencing_if_gluster_quorum_not_met"));
+        entity.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(rs.getInt("hosts_with_broken_connectivity_threshold"));
+        entity.getFencingPolicy().setFencingEnabled(rs.getBoolean("fencing_enabled"));
+        entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
+        entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
+        entity.setGlusterTunedProfile(rs.getString("gluster_tuned_profile"));
+        entity.setKsmMergeAcrossNumaNodes(rs.getBoolean("ksm_merge_across_nodes"));
+        entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));
+        entity.setCustomMigrationNetworkBandwidth(getInteger(rs, "custom_migration_bandwidth_limit"));
+        entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
+        entity.setMacPoolId(getGuid(rs, "mac_pool_id"));
+        entity.setRequiredSwitchTypeForCluster(SwitchType.parse(rs.getString("switch_type")));
 
-    }
-    private static final class ClusterRowMapper implements RowMapper<Cluster> {
-        public static final RowMapper<Cluster> instance = new ClusterRowMapper();
-        @Override
-        public Cluster mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            Cluster entity = new Cluster();
-            entity.setDescription(rs.getString("description"));
-            entity.setName(rs.getString("name"));
-            entity.setId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setComment(rs.getString("free_text_comment"));
-            entity.setCpuName(rs.getString("cpu_name"));
-            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
-            entity.setStoragePoolName(rs
-                    .getString("storage_pool_name"));
-            entity.setMaxVdsMemoryOverCommit(rs
-                    .getInt("max_vds_memory_over_commit"));
-            entity.setCountThreadsAsCores(rs
-                    .getBoolean("count_threads_as_cores"));
-            entity.setTransparentHugepages(rs
-                    .getBoolean("transparent_hugepages"));
-            entity.setCompatibilityVersion(new Version(rs
-                    .getString("compatibility_version")));
-            entity.setMigrateOnError(MigrateOnErrorOptions.forValue(rs.getInt("migrate_on_error")));
-            entity.setVirtService(rs.getBoolean("virt_service"));
-            entity.setGlusterService(rs.getBoolean("gluster_service"));
-            entity.setGlusterCliBasedSchedulingOn(rs.getBoolean("gluster_cli_based_snapshot_scheduled"));
-            entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
-            entity.getRequiredRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("required_rng_sources")));
-            entity.setEmulatedMachine(rs.getString("emulated_machine"));
-            entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
-            entity.setTrustedService(rs.getBoolean("trusted_service"));
-            entity.setHaReservation(rs.getBoolean("ha_reservation"));
-            entity.setOptionalReasonRequired(rs.getBoolean("optional_reason"));
-            entity.setMaintenanceReasonRequired(rs.getBoolean("maintenance_reason_required"));
-            entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
-            entity.setClusterPolicyName(rs.getString("cluster_policy_name"));
-            entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
-                    .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
-            entity.setEnableBallooning(rs.getBoolean("enable_balloon"));
-            entity.setEnableKsm(rs.getBoolean("enable_ksm"));
-            entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
-            entity.setOptimizationType(OptimizationType.from(rs.getInt("optimization_type")));
-            entity.setSpiceProxy(rs.getString("spice_proxy"));
-            entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
-            entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
-            entity.getFencingPolicy().setSkipFencingIfSDActive(rs.getBoolean("skip_fencing_if_sd_active"));
-            entity.getFencingPolicy().setSkipFencingIfConnectivityBroken(rs.getBoolean("skip_fencing_if_connectivity_broken"));
-            entity.getFencingPolicy().setSkipFencingIfGlusterBricksUp(rs.getBoolean("skip_fencing_if_gluster_bricks_up"));
-            entity.getFencingPolicy().setSkipFencingIfGlusterQuorumNotMet(rs.getBoolean("skip_fencing_if_gluster_quorum_not_met"));
-            entity.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(rs.getInt("hosts_with_broken_connectivity_threshold"));
-            entity.getFencingPolicy().setFencingEnabled(rs.getBoolean("fencing_enabled"));
-            entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
-            entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
-            entity.setGlusterTunedProfile(rs.getString("gluster_tuned_profile"));
-            entity.setKsmMergeAcrossNumaNodes(rs.getBoolean("ksm_merge_across_nodes"));
-            entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));
-            entity.setCustomMigrationNetworkBandwidth(getInteger(rs, "custom_migration_bandwidth_limit"));
-            entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
-            entity.setMacPoolId(getGuid(rs, "mac_pool_id"));
-            entity.setRequiredSwitchTypeForCluster(SwitchType.parse(rs.getString("switch_type")));
-
-            return entity;
-        }
-    }
+        return entity;
+    };
 
     @Override
     public List<Cluster> getClustersByClusterPolicyId(Guid clusterPolicyId) {
         return getCallsHandler().executeReadList("GetClustersByClusterPolicyId",
-                ClusterRowMapper.instance,
+                clusterRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_policy_id", clusterPolicyId));
     }
@@ -351,7 +334,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
             clustersById.put(cluster.getId(), cluster);
         }
         List<ClusterHostsAndVMs> dataList = getCallsHandler().executeReadList("GetHostsAndVmsForClusters",
-                ClusterHostsAndVMsRowMapper.instance,
+                clusterHostsAndVMsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_ids", createArrayOf("uuid", clustersById.keySet().toArray())));
 
@@ -367,7 +350,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     @Override
     public List<Cluster> getClustersByServiceAndCompatibilityVersion(boolean glusterService, boolean virtService, String compatibilityVersion) {
         return getCallsHandler().executeReadList("GetClustersByServiceAndCompatibilityVersion",
-                ClusterRowMapper.instance,
+                clusterRowMapper,
                 getCustomMapSqlParameterSource().addValue("gluster_service", glusterService)
                         .addValue("virt_service", virtService)
                         .addValue("compatibility_version", compatibilityVersion));
@@ -376,7 +359,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     @Override
     public List<Cluster> getAllClustersByMacPoolId(Guid macPoolId) {
         return getCallsHandler().executeReadList("GetAllClustersByMacPoolId",
-                ClusterRowMapper.instance,
+                clusterRowMapper,
                 getCustomMapSqlParameterSource().addValue("id", macPoolId));
     }
 }

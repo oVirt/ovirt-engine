@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -15,20 +13,13 @@ import org.springframework.jdbc.core.RowMapper;
 @Named
 @Singleton
 public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao {
-    private static class VdsKdumpStatusMapper implements RowMapper<VdsKdumpStatus> {
-        private static final VdsKdumpStatusMapper instance = new VdsKdumpStatusMapper();
-
-        @Override
-        public VdsKdumpStatus mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VdsKdumpStatus entity = new VdsKdumpStatus();
-            entity.setVdsId(
-                    Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_id"))
-            );
-            entity.setStatus(KdumpFlowStatus.forString(rs.getString("status")));
-            entity.setAddress(rs.getString("address"));
-            return entity;
-        }
-    }
+    private static RowMapper<VdsKdumpStatus> vdsKdumpStatusMapper = (rs, rowNum) -> {
+        VdsKdumpStatus entity = new VdsKdumpStatus();
+        entity.setVdsId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_id")));
+        entity.setStatus(KdumpFlowStatus.forString(rs.getString("status")));
+        entity.setAddress(rs.getString("address"));
+        return entity;
+    };
 
     @Override
     public void update(VdsKdumpStatus vdsKdumpStatus){
@@ -73,7 +64,7 @@ public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao
     public VdsKdumpStatus get(Guid vdsId) {
         return getCallsHandler().executeRead(
                 "GetKdumpStatusForVds",
-                VdsKdumpStatusMapper.instance,
+                vdsKdumpStatusMapper,
                 getCustomMapSqlParameterSource().addValue("vds_id", vdsId)
         );
     }
@@ -82,7 +73,7 @@ public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao
     public List<VdsKdumpStatus> getAllUnfinishedVdsKdumpStatus(){
         return getCallsHandler().executeReadList(
                 "GetAllUnfinishedVdsKdumpStatus",
-                VdsKdumpStatusMapper.instance,
+                vdsKdumpStatusMapper,
                 getCustomMapSqlParameterSource()
         );
     }

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,43 +18,39 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class LabelDaoImpl extends BaseDao implements LabelDao {
-    private static class LabelRowMapper implements RowMapper<Label> {
-        public static final LabelRowMapper instance = new LabelRowMapper();
+    private static final RowMapper<Label> labelRowMapper = (rs, rowNum) -> {
+        String[] rawUuids = (String[])rs.getArray("vm_ids").getArray();
+        List<String> vms = Arrays.asList(rawUuids);
 
-        @Override
-        public Label mapRow(ResultSet rs, int rowNum) throws SQLException {
-            String[] rawUuids = (String[])rs.getArray("vm_ids").getArray();
-            List<String> vms = Arrays.asList(rawUuids);
+        rawUuids = (String[])rs.getArray("vds_ids").getArray();
+        List<String> hosts = Arrays.asList(rawUuids);
 
-            rawUuids = (String[])rs.getArray("vds_ids").getArray();
-            List<String> hosts = Arrays.asList(rawUuids);
+        return new LabelBuilder()
+                .id(getGuidDefaultNewGuid(rs, "label_id"))
+                .name(rs.getString("label_name"))
+                .readOnly(rs.getBoolean("read_only"))
+                .vmIds(vms.stream()
+                        // Labels with no assignments will have null in the column
+                        .filter(v -> v != null)
+                        // Convert to Guid
+                        .map(Guid::new)
+                        .collect(Collectors.toSet()))
+                .hostIds(hosts.stream()
+                        // Labels with no assignments will have null in the column
+                        .filter(v -> v != null)
+                        // Convert to Guid
+                        .map(Guid::new)
+                        .collect(Collectors.toSet()))
+                .build();
+    };
 
-            return new LabelBuilder()
-                    .id(getGuidDefaultNewGuid(rs, "label_id"))
-                    .name(rs.getString("label_name"))
-                    .readOnly(rs.getBoolean("read_only"))
-                    .vmIds(vms.stream()
-                            // Labels with no assignments will have null in the column
-                            .filter(v -> v != null)
-                            // Convert to Guid
-                            .map(Guid::new)
-                            .collect(Collectors.toSet()))
-                    .hostIds(hosts.stream()
-                            // Labels with no assignments will have null in the column
-                            .filter(v -> v != null)
-                            // Convert to Guid
-                            .map(Guid::new)
-                            .collect(Collectors.toSet()))
-                    .build();
-        }
-    }
     @Override
     public Label get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("label_id", id);
 
         return getCallsHandler()
-                .executeRead("GetLabelById", LabelRowMapper.instance, parameterSource);
+                .executeRead("GetLabelById", labelRowMapper, parameterSource);
     }
 
     @Override
@@ -65,7 +59,7 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
                 .addValue("label_name", name);
 
         return getCallsHandler()
-                .executeRead("GetLabelByName", LabelRowMapper.instance, parameterSource);
+                .executeRead("GetLabelByName", labelRowMapper, parameterSource);
     }
 
     @Override
@@ -73,7 +67,7 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler()
-                .executeReadList("GetAllLabels", LabelRowMapper.instance, parameterSource);
+                .executeReadList("GetAllLabels", labelRowMapper, parameterSource);
     }
 
     @Override
@@ -87,7 +81,7 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
                 .addValue("entity_ids", createArrayOf("uuid", uuids.toArray()));
 
         return getCallsHandler()
-                .executeReadList("GetLabelsByReferencedIds", LabelRowMapper.instance, parameterSource);
+                .executeReadList("GetLabelsByReferencedIds", labelRowMapper, parameterSource);
     }
 
     @Override
@@ -101,7 +95,7 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
                 .addValue("label_ids", createArrayOf("uuid", uuids.toArray()));
 
         return getCallsHandler()
-                .executeReadList("GetLabelByIds", LabelRowMapper.instance, parameterSource);
+                .executeReadList("GetLabelByIds", labelRowMapper, parameterSource);
     }
 
     @Override

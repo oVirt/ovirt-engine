@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -14,18 +11,13 @@ import org.springframework.jdbc.core.RowMapper;
 @Singleton
 public class ExternalVariableDaoImpl extends BaseDao implements ExternalVariableDao {
 
-    private static class ExternalVariableMapper implements RowMapper<ExternalVariable> {
-        private static final ExternalVariableMapper instance = new ExternalVariableMapper();
-
-        @Override
-        public ExternalVariable mapRow(ResultSet rs, int rowNum) throws SQLException {
-            ExternalVariable entity = new ExternalVariable();
-            entity.setName(rs.getString("var_name"));
-            entity.setValue(rs.getString("var_value"));
-            entity.setUpdateDate(DbFacadeUtils.fromDate(rs.getTimestamp("_update_date")));
-            return entity;
-        }
-    }
+    private static final RowMapper<ExternalVariable> externalVariableMapper = (rs, rowNum) -> {
+        ExternalVariable entity = new ExternalVariable();
+        entity.setName(rs.getString("var_name"));
+        entity.setValue(rs.getString("var_value"));
+        entity.setUpdateDate(DbFacadeUtils.fromDate(rs.getTimestamp("_update_date")));
+        return entity;
+    };
 
     @Override
     public void save(ExternalVariable var) {
@@ -70,7 +62,7 @@ public class ExternalVariableDaoImpl extends BaseDao implements ExternalVariable
     public ExternalVariable get(String name) {
         return getCallsHandler().executeRead(
                 "GetExternalVariableByName",
-                ExternalVariableMapper.instance,
+                externalVariableMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("var_name", name)
         );

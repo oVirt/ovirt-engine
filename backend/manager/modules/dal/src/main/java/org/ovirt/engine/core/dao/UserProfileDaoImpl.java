@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -16,29 +14,23 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
 
-    private static final class UserProfileRowMapper implements RowMapper<UserProfile> {
-        public static final UserProfileRowMapper instance = new UserProfileRowMapper();
-
-        @Override
-        public UserProfile mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            UserProfile entity = new UserProfile();
-            entity.setId(getGuidDefaultEmpty(rs, "profile_id"));
-            entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
-            entity.setSshPublicKeyId(getGuidDefaultEmpty(rs, "ssh_public_key_id"));
-            entity.setSshPublicKey(rs.getString("ssh_public_key"));
-            entity.setLoginName(rs.getString("login_name"));
-            entity.setUserPortalVmLoginAutomatically(rs.getBoolean("user_portal_vm_auto_login"));
-            return entity;
-        }
-    }
+    private static final RowMapper<UserProfile> userProfileRowMapper = (rs, rowNum) -> {
+        UserProfile entity = new UserProfile();
+        entity.setId(getGuidDefaultEmpty(rs, "profile_id"));
+        entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
+        entity.setSshPublicKeyId(getGuidDefaultEmpty(rs, "ssh_public_key_id"));
+        entity.setSshPublicKey(rs.getString("ssh_public_key"));
+        entity.setLoginName(rs.getString("login_name"));
+        entity.setUserPortalVmLoginAutomatically(rs.getBoolean("user_portal_vm_auto_login"));
+        return entity;
+    };
 
     @Override
     public UserProfile get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("profile_id", id);
 
-        return getCallsHandler().executeRead("GetUserProfileByProfileId", UserProfileRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetUserProfileByProfileId", userProfileRowMapper, parameterSource);
     }
 
     @Override
@@ -46,13 +38,13 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id);
 
-        return getCallsHandler().executeRead("GetUserProfileByUserId", UserProfileRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetUserProfileByUserId", userProfileRowMapper, parameterSource);
     }
 
     @Override
     public List<UserProfile> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllFromUserProfiles", UserProfileRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromUserProfiles", userProfileRowMapper, parameterSource);
     }
 
     private MapSqlParameterSource createIdParameterMapper(Guid id) {

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -20,18 +18,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class BookmarkDaoImpl extends BaseDao implements BookmarkDao {
-    private static class BookmarkRowMapper implements RowMapper<Bookmark> {
-        public static final BookmarkRowMapper instance = new BookmarkRowMapper();
-
-        @Override
-        public Bookmark mapRow(ResultSet rs, int rowNum) throws SQLException {
+    private static final RowMapper<Bookmark> bookmarkRowMapper = (rs, rowNum) -> {
             Bookmark entity = new Bookmark();
             entity.setId(getGuid(rs, "bookmark_id"));
             entity.setName(rs.getString("bookmark_name"));
             entity.setValue(rs.getString("bookmark_value"));
             return entity;
-        }
-    }
+    };
 
     private class BookmarkSqlParameterSource extends
             CustomMapSqlParameterSource {
@@ -61,21 +54,21 @@ public class BookmarkDaoImpl extends BaseDao implements BookmarkDao {
     public Bookmark get(Guid id) {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
                 id);
-        return getCallsHandler().executeRead("GetBookmarkBybookmark_id", BookmarkRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetBookmarkBybookmark_id", bookmarkRowMapper, parameterSource);
     }
 
     @Override
     public Bookmark getByName(String name) {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
                 name);
-        return getCallsHandler().executeRead("GetBookmarkBybookmark_name", BookmarkRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetBookmarkBybookmark_name", bookmarkRowMapper, parameterSource);
     }
 
     @Override
     public List<Bookmark> getAll() {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource();
 
-        return getCallsHandler().executeReadList("GetAllFromBookmarks", BookmarkRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromBookmarks", bookmarkRowMapper, parameterSource);
     }
 
     @Override

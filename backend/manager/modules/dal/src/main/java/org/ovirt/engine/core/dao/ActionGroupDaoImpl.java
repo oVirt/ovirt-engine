@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -9,7 +7,6 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -26,17 +23,7 @@ public class ActionGroupDaoImpl extends BaseDao implements ActionGroupDao {
                 .addValue("id", id);
 
         return getCallsHandler().executeReadList("GetRoleActionGroupsByRoleId",
-                ActionGroupMapper.instance,
+                (rs, rowNum) -> ActionGroup.forValue(rs.getInt("action_group_id")),
                 parameterSource);
-    }
-
-    private static class ActionGroupMapper implements RowMapper<ActionGroup> {
-        public static final ActionGroupMapper instance = new ActionGroupMapper();
-
-        @Override
-        public ActionGroup mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            return ActionGroup.forValue(rs.getInt("action_group_id"));
-        }
     }
 }

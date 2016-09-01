@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -21,28 +19,22 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class EventDaoImpl extends BaseDao implements EventDao {
 
-    private static final class EventSubscriberRowMapper implements RowMapper<EventSubscriber> {
-        public static final EventSubscriberRowMapper instance = new EventSubscriberRowMapper();
-
-        @Override
-        public EventSubscriber mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            EventSubscriber entity = new EventSubscriber();
-            entity.setEventUpName(rs.getString("event_up_name"));
-            entity.setEventNotificationMethod(EventNotificationMethod.valueOfString(rs.getString("notification_method")));
-            entity.setMethodAddress(rs.getString("method_address"));
-            entity.setSubscriberId(getGuidDefaultEmpty(rs, "subscriber_id"));
-            entity.setTagName(rs.getString("tag_name"));
-            return entity;
-        }
-    }
+    private static final RowMapper<EventSubscriber> eventSubscriberRowMapper = (rs, rowNum) -> {
+        EventSubscriber entity = new EventSubscriber();
+        entity.setEventUpName(rs.getString("event_up_name"));
+        entity.setEventNotificationMethod(EventNotificationMethod.valueOfString(rs.getString("notification_method")));
+        entity.setMethodAddress(rs.getString("method_address"));
+        entity.setSubscriberId(getGuidDefaultEmpty(rs, "subscriber_id"));
+        entity.setTagName(rs.getString("tag_name"));
+        return entity;
+    };
 
     @Override
     public List<EventSubscriber> getAllForSubscriber(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("subscriber_id", id);
         return getCallsHandler().executeReadList("Getevent_subscriberBysubscriber_id",
-                EventSubscriberRowMapper.instance,
+                eventSubscriberRowMapper,
                 parameterSource);
     }
 
