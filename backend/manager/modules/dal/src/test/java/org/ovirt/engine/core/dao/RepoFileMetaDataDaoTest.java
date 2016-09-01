@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -20,6 +22,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.dao.DuplicateKeyException;
 
 public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private RepoFileMetaDataDao repoFileMetaDataDao;
 
@@ -251,11 +256,12 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
     /**
      * Test primary key validity.
      */
-    @Test (expected = DuplicateKeyException.class)
+    @Test
     public void testPrimaryKeyValidation() {
         RepoImage newRepoFileMap = getNewIsoRepoFile();
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
-        assertTrue("Able to insert new file once", true);
+
+        expectedException.expect(DuplicateKeyException.class);
 
         // Should enter here since its a violation of primary key
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
