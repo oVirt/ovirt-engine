@@ -17,10 +17,10 @@ import org.ovirt.engine.core.common.job.StepEnum;
 public class ExecutionMessageDirectorTest {
 
     private static final String UPDATE_CLUSTER_CLUSTERS_MESSAGE = "Update Cluster ${Clusters}";
-    private static String TEST_BUNDLE_NAME = "TestExecutionMessages";
-    private static String INVALID_KEY_TEST_BUNDLE_NAME = "InvalidKeyExecutionMessages";
-    private static String INVALID_JOB_KEY_TEST_BUNDLE_NAME = "InvalidJobKeyExecutionMessages";
-    private static String INVALID_STEP_KEY_TEST_BUNDLE_NAME = "InvalidStepKeyExecutionMessages";
+    private static final String TEST_BUNDLE_NAME = "TestExecutionMessages";
+    private static final String INVALID_KEY_TEST_BUNDLE_NAME = "InvalidKeyExecutionMessages";
+    private static final String INVALID_JOB_KEY_TEST_BUNDLE_NAME = "InvalidJobKeyExecutionMessages";
+    private static final String INVALID_STEP_KEY_TEST_BUNDLE_NAME = "InvalidStepKeyExecutionMessages";
 
     /**
      * Verifies the engine-core execution messages are aligned with the enumerators {@code VdcActionType} and
