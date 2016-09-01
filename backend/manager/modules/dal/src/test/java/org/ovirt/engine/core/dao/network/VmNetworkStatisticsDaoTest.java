@@ -121,7 +121,7 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
         existingStats.setReceiveDropRate(10.0);
         existingStats2.setStatus(InterfaceStatus.DOWN);
 
-        dao.updateAll(Arrays.asList(new VmNetworkStatistics[] { existingStats, existingStats2 }));
+        dao.updateAll(Arrays.asList(existingStats, existingStats2));
 
         assertEquals(existingStats.getReceiveDropRate(), dao.get(existingStats.getId()).getReceiveDropRate());
         assertEquals(existingStats2.getStatus(), dao.get(existingStats2.getId()).getStatus());
