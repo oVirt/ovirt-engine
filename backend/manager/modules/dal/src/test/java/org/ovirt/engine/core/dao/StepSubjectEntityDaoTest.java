@@ -50,7 +50,7 @@ public class StepSubjectEntityDaoTest extends BaseDaoTestCase {
         boolean isPresent = entities.stream().anyMatch(p -> p.equals(stepSubjectEntity) &&
                 p.getStepEntityWeight().equals(stepSubjectEntity.getStepEntityWeight()));
 
-        assertEquals(String.format("StepSubjectEntity was " + (shouldBePresent ? "not " : "") +
-                "found in the entities list although wasn't expected to"), shouldBePresent, isPresent);
+        assertEquals("StepSubjectEntity was " + (shouldBePresent ? "not " : "") +
+                "found in the entities list although wasn't expected to", shouldBePresent, isPresent);
     }
 }
