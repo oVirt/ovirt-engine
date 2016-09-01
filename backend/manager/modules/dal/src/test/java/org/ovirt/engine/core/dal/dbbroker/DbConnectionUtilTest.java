@@ -8,7 +8,6 @@ import java.util.Properties;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
@@ -24,10 +23,6 @@ public class DbConnectionUtilTest extends BaseDaoTestCase{
     private JdbcTemplate jdbcTemplate;
 
     private DbConnectionUtil underTest;
-
-    @Before
-    public void setUp() {
-    }
 
     /**
      * Ensures that the checkDBConnection method returns true when the connection is up
