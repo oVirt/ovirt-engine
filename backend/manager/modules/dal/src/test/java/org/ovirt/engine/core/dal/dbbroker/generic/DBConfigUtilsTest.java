@@ -62,7 +62,7 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
         // Verify that values for 3.6 are from DB (since the entries are present in fixtures.xml)
         // and for 4.0, it's the default value from annotation in ConfigValues.
         // 3.6 -> false, 4.0 -> true
-        assertFalse(Config.<Boolean> getValue(ConfigValues.SriovHotPlugSupported, "3.6"));
-        assertTrue(Config.<Boolean> getValue(ConfigValues.SriovHotPlugSupported, "4.0"));
+        assertFalse(Config.getValue(ConfigValues.SriovHotPlugSupported, "3.6"));
+        assertTrue(Config.getValue(ConfigValues.SriovHotPlugSupported, "4.0"));
     }
 }
