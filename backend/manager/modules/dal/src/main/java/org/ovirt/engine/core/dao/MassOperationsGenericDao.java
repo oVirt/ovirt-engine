@@ -32,11 +32,11 @@ public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID 
         updateAll(getProcedureNameForUpdate(), entities);
     }
 
-    @Override
     /**
      * Enables to send update procedure name as a parameter that overrides the default
      * one. In case this parameter is null the default procedure is used.
      */
+    @Override
     public void updateAll(String procedureName, Collection<T> entities) {
         if (procedureName == null) {
             procedureName = getProcedureNameForUpdate();
