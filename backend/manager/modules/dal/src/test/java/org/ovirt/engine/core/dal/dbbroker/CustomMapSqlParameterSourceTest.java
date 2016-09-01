@@ -28,7 +28,7 @@ public class CustomMapSqlParameterSourceTest {
     public static enum TestEnum {
         ONE,
         TWO,
-        THREE;
+        THREE
     }
 
     public static enum TestEnumWithGetValue {

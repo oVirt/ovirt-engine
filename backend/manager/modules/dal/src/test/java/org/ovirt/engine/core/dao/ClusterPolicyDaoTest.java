@@ -29,7 +29,7 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getClusterPolicyDao();
         existingPolicy = dao.get(FixturesTool.CLUSTER_POLICY_EVEN_DISTRIBUTION, Collections.emptyMap());
         createDummyPolicy();
-    };
+    }
 
     @Test
     public void testGet() {

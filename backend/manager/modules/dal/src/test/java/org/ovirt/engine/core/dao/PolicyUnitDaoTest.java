@@ -28,7 +28,7 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getPolicyUnitDao();
         existingPolicyUnit = dao.get(FixturesTool.POLICY_UNIT_MIGRATION);
         createDummyPolicyUnit();
-    };
+    }
 
     @Test
     public void testGet() {
