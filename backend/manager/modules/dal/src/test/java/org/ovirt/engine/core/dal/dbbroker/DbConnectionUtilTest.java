@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dal.dbbroker;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -47,11 +46,8 @@ public class DbConnectionUtilTest extends BaseDaoTestCase{
     @DirtiesContext
     public void testDBConnectionWithoutConnection() {
 
-        InputStream is = null;
-        try {
-            // setup
-            Config.setConfigUtils(new DBConfigUtils(false));
-            is = super.getClass().getResourceAsStream("/test-database.properties");
+        Config.setConfigUtils(new DBConfigUtils(false));
+        try (InputStream is = super.getClass().getResourceAsStream("/test-database.properties")) {
             Properties properties = new Properties();
             properties.load(is);
             ClassLoader.getSystemClassLoader().loadClass(
@@ -79,14 +75,6 @@ public class DbConnectionUtilTest extends BaseDaoTestCase{
         } catch (Exception undesiredException) {
             undesiredException.printStackTrace();
             fail();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
         }
     }
 }
