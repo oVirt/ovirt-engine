@@ -2563,7 +2563,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return runInternalAction(
                 actionType,
                 parameters,
-                executionHandler.createDefaultContextForTasks(getContext(), lock));
+                ExecutionHandler.createDefaultContextForTasks(getContext(), lock));
     }
 
     protected VdcQueryReturnValue runInternalQuery(VdcQueryType type, VdcQueryParametersBase queryParams) {
