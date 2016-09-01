@@ -252,6 +252,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
         assertEquals(4, replicaCount);
     }
 
+    @Test
     public void testAddAccessProtocol() {
         Set<AccessProtocol> protocols = existingDistVol.getAccessProtocols();
         assertEquals(1, protocols.size());

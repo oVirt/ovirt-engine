@@ -381,6 +381,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
         assertFalse(map.get(VDS_ID).isEmpty());
     }
 
+    @Test
     public void testGetIscsiIfacesByHostIdAndStorageTargetId() {
         List<VdsNetworkInterface> interfaces =
                 dao.getIscsiIfacesByHostIdAndStorageTargetId(VDS_ID, TARGET_ID);

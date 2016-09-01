@@ -152,6 +152,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
         assertTrue(hooks.isEmpty());
     }
 
+    @Test
     public void testRemoveAllButOne() {
         GlusterHookEntity newHook = getGlusterHook();
         newHook.setId(FixturesTool.NEW_HOOK_ID);

@@ -487,11 +487,13 @@ public class VdsDaoTest extends BaseDaoTestCase {
         assertEquals(FixturesTool.CLUSTER_RHEL6_LOCALFS, result.get(0).getClusterId());
     }
 
+    @Test
     public void testGetFirstUpRhelForClusterFromClusterWithRhels() {
         VDS vds = dao.getFirstUpRhelForCluster(CLUSTER_WITH_RHELS);
         assertNotNull(vds);
     }
 
+    @Test
     public void testGetFirstUpRhelForClusterFromClusterWithFedoras() {
         VDS vds = dao.getFirstUpRhelForCluster(CLUSTER_WITH_FEDORA);
         assertNull(vds);
