@@ -22,8 +22,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -36,8 +34,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class ClusterDaoImpl extends BaseDao implements ClusterDao {
-    private static final Logger log = LoggerFactory.getLogger(ClusterDaoImpl.class);
-
     @Override
     public Cluster get(Guid id) {
         return get(id, null, false);
