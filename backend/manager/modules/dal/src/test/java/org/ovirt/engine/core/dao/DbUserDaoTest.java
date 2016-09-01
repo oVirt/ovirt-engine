@@ -131,7 +131,6 @@ public class DbUserDaoTest extends BaseDaoTestCase {
     public void testGetAllForVmWithInvalidVm() {
         List<DbUser> result = dao.getAllForVm(Guid.newGuid());
 
-        // TODO this should return an empty collection
         assertTrue(result.isEmpty());
     }
 
