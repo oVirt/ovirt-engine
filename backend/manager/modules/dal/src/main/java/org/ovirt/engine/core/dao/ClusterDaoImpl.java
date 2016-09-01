@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -273,7 +272,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setMaxVdsMemoryOverCommit(rs.getInt("max_vds_memory_over_commit"));
         entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
         entity.setTransparentHugepages(rs.getBoolean("transparent_hugepages"));
-        entity.setCompatibilityVersion(new Version(rs.getString("compatibility_version")));
+        entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));
         entity.setMigrateOnError(MigrateOnErrorOptions.forValue(rs.getInt("migrate_on_error")));
         entity.setVirtService(rs.getBoolean("virt_service"));
         entity.setGlusterService(rs.getBoolean("gluster_service"));

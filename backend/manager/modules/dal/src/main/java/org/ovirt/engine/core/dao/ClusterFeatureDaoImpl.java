@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -25,7 +24,7 @@ public class ClusterFeatureDaoImpl extends BaseDao implements ClusterFeatureDao 
         feature.setName(rs.getString("feature_name"));
         feature.setDescription(rs.getString("description"));
         feature.setCategory(ApplicationMode.from(rs.getInt("category")));
-        feature.setVersion(new Version(rs.getString("version")));
+        feature.setVersion(new VersionRowMapper("version").mapRow(rs, rowNum));
         return feature;
     };
 

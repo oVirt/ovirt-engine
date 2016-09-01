@@ -9,8 +9,8 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DefaultReadDao;
+import org.ovirt.engine.core.dao.VersionRowMapper;
 import org.ovirt.engine.core.dao.network.VnicProfileDaoImpl.VnicProfileRowMapperBase;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -95,7 +95,7 @@ public class VnicProfileViewDaoImpl extends DefaultReadDao<VnicProfileView, Guid
             entity.setNetworkName(rs.getString("network_name"));
             entity.setNetworkQosName(rs.getString("network_qos_name"));
             entity.setDataCenterName(rs.getString("data_center_name"));
-            entity.setCompatibilityVersion(new Version(rs.getString("compatibility_version")));
+            entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));
             entity.setNetworkFilterName(rs.getString("network_filter_name"));
             return entity;
         }

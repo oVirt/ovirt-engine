@@ -9,8 +9,8 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.BaseDao;
+import org.ovirt.engine.core.dao.VersionRowMapper;
 import org.ovirt.engine.core.dao.network.NetworkDaoImpl.NetworkRowMapperBase;
 
 @Named
@@ -36,7 +36,7 @@ public class NetworkViewDaoImpl extends BaseDao implements NetworkViewDao {
         public NetworkView mapRow(ResultSet rs, int rowNum) throws SQLException {
             NetworkView entity = super.mapRow(rs, rowNum);
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
-            entity.setCompatibilityVersion(new Version(rs.getString("compatibility_version")));
+            entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));
             entity.setProviderName(rs.getString("provider_name"));
             entity.setQosName(rs.getString("qos_name"));
             return entity;

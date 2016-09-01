@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
@@ -340,7 +339,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setKsmState((Boolean) rs.getObject("ksm_state"));
         entity.setSupportedClusterLevels(rs.getString("supported_cluster_levels"));
         entity.setSupportedEngines(rs.getString("supported_engines"));
-        entity.setClusterCompatibilityVersion(new Version(rs.getString("cluster_compatibility_version")));
+        entity.setClusterCompatibilityVersion(new VersionRowMapper("cluster_compatibility_version").mapRow(rs, rowNum));
         entity.setClusterSupportsVirtService(rs.getBoolean("cluster_virt_service"));
         entity.setClusterSupportsGlusterService(rs.getBoolean("cluster_gluster_service"));
         entity.setHostOs(rs.getString("host_os"));

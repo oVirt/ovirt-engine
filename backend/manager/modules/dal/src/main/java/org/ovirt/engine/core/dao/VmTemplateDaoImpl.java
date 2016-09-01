@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -288,7 +287,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
             entity.setClusterId(getGuid(rs, "cluster_id"));
             entity.setStatus(VmTemplateStatus.forValue(rs.getInt("status")));
             entity.setClusterName(rs.getString("cluster_name"));
-            entity.setClusterCompatibilityVersion(new Version(rs.getString("cluster_compatibility_version")));
+            entity.setClusterCompatibilityVersion(new VersionRowMapper("cluster_compatibility_version").mapRow(rs, rowNum));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setQuotaName(rs.getString("quota_name"));

@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
 
 @Named
@@ -66,7 +65,7 @@ public class UnregisteredOVFDataDaoImpl extends BaseDao implements UnregisteredO
         entity.setEntityName(rs.getString("entity_name"));
         entity.setEntityType(VmEntityType.valueOf(rs.getString("entity_type")));
         entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
-        entity.setLowestCompVersion(new Version(rs.getString("lowest_comp_version")));
+        entity.setLowestCompVersion(new VersionRowMapper("lowest_comp_version").mapRow(rs, rowNum));
         entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
         entity.setOvfData(rs.getString("ovf_data"));
         entity.setOvfExtraData(rs.getString("ovf_extra_data"));

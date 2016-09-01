@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -33,7 +32,7 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
         entity.setStatus(StoragePoolStatus.forValue(rs.getInt("status")));
         entity.setMasterDomainVersion(rs.getInt("master_domain_version"));
         entity.setSpmVdsId(getGuid(rs, "spm_vds_id"));
-        entity.setCompatibilityVersion(new Version(rs.getString("compatibility_version")));
+        entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));
         entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
         entity.setStoragePoolFormatType(StorageFormatType.forValue(rs.getString("storage_pool_format_type")));
         return entity;

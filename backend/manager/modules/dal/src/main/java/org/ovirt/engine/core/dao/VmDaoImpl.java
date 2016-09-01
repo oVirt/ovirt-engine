@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -342,7 +341,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setTransparentHugePages(rs.getBoolean("transparent_hugepages"));
-        entity.setClusterCompatibilityVersion(new Version(rs.getString("cluster_compatibility_version")));
+        entity.setClusterCompatibilityVersion(new VersionRowMapper("cluster_compatibility_version").mapRow(rs, rowNum));
         entity.setTrustedService(rs.getBoolean("trusted_service"));
         entity.setClusterArch(ArchitectureType.forValue(rs.getInt("architecture")));
         entity.setVmPoolSpiceProxy(rs.getString("vm_pool_spice_proxy"));
