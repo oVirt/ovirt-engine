@@ -1829,6 +1829,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM();
 
+    String ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS();
+
     String ACTION_TYPE_FAILED_DISK_VM_DATA_MISSING();
 
     String ACTION_TYPE_FAILED_DISKS_NOT_EXIST();

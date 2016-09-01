@@ -12,6 +12,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -267,6 +268,29 @@ public class DiskValidatorTest {
         VM vm = createVM();
         when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
         assertThat(validator.isDiskAttachedToVm(vm), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM));
+    }
+
+    @Test
+    public void testDiskAttachedToAnyVM() {
+        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
+        assertThat(validator.isDiskAttachedToAnyVm(), isValid());
+    }
+
+    @Test
+    public void testDiskAttachedToAnyVMFails() {
+        VM vm1 = createVM();
+        VM vm2 = createVM();
+        vm1.setName("Vm1");
+        vm2.setName("Vm2");
+        List<VM> vmList = Arrays.asList(vm1, vm2);
+
+        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(vmList);
+        String[] expectedReplacements = {
+                ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
+                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "Vm1,Vm2")};
+
+        assertThat(validator.isDiskAttachedToAnyVm(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, expectedReplacements));
     }
 
     @Test
