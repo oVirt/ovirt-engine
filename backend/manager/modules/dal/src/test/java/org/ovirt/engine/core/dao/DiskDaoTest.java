@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +133,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
     @Test
     public void testGetAllForVMs() {
-        Map<Guid, List<Disk>> vmDisksMap = dao.getAllForVms(Arrays.asList(FixturesTool.VM_RHEL5_POOL_57));
+        Map<Guid, List<Disk>> vmDisksMap = dao.getAllForVms(Collections.singletonList(FixturesTool.VM_RHEL5_POOL_57));
 
         // TODO - add other VM
         assertTrue(vmDisksMap.containsKey(FixturesTool.VM_RHEL5_POOL_57));

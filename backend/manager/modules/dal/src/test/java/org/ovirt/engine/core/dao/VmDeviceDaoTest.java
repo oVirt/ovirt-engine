@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -215,7 +214,7 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         int newBootOrderValue = vmDevice.getBootOrder() + 1;
         assertTrue(StringUtils.isNotBlank(vmDevice.getAddress()));
         vmDevice.setBootOrder(newBootOrderValue);
-        dao.updateBootOrderInBatch(Arrays.asList(vmDevice));
+        dao.updateBootOrderInBatch(Collections.singletonList(vmDevice));
         dao.get(getExistingEntityId());
         assertEquals(vmDevice.getBootOrder(), newBootOrderValue);
     }

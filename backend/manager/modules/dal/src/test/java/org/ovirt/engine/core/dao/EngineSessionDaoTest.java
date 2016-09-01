@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.Before;
@@ -31,8 +31,8 @@ public class EngineSessionDaoTest extends BaseDaoTestCase {
         newEngineSession = new EngineSession();
         newEngineSession.setEngineSessionId(Guid.newGuid().toString());
         newEngineSession.setUserId(Guid.newGuid());
-        newEngineSession.setRoleIds(new HashSet<>(Arrays.asList(FixturesTool.EXISTING_GROUP_ID)));
-        newEngineSession.setGroupIds(new HashSet<>(Arrays.asList(FixturesTool.EXISTING_GROUP_ID)));
+        newEngineSession.setRoleIds(new HashSet<>(Collections.singletonList(FixturesTool.EXISTING_GROUP_ID)));
+        newEngineSession.setGroupIds(new HashSet<>(Collections.singletonList(FixturesTool.EXISTING_GROUP_ID)));
         newEngineSession.setAuthzName("");
         newEngineSession.setUserName("");
 

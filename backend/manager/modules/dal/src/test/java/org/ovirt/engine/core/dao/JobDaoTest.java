@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -133,7 +133,8 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     public void deleteJobOlderThanDateWithStatus() throws ParseException {
         int sizeBeforeDelete = dao.getAll().size();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dao.deleteJobOlderThanDateWithStatus(df.parse("2012-10-02 10:00:00"), Arrays.asList(JobExecutionStatus.FAILED));
+        dao.deleteJobOlderThanDateWithStatus(
+                df.parse("2012-10-02 10:00:00"), Collections.singletonList(JobExecutionStatus.FAILED));
         int sizeAfterDelete = dao.getAll().size();
         assertTrue("Check an entry was deleted", sizeBeforeDelete > sizeAfterDelete);
     }

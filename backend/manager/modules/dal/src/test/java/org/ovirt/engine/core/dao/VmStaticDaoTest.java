@@ -251,9 +251,9 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     @Test
     public void getVmAndTemplatesIdsWithoutAttachedImageDisks() {
         List<Guid> disklessVms = Arrays.asList(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.VM_RHEL5_POOL_51);
-        List<Guid> disklessTemplates = Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5_2);
-        List<Guid> diskVms = Arrays.asList(FixturesTool.VM_RHEL5_POOL_57);
-        List<Guid> diskTemplates = Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5);
+        List<Guid> disklessTemplates = Collections.singletonList(FixturesTool.VM_TEMPLATE_RHEL5_2);
+        List<Guid> diskVms = Collections.singletonList(FixturesTool.VM_RHEL5_POOL_57);
+        List<Guid> diskTemplates = Collections.singletonList(FixturesTool.VM_TEMPLATE_RHEL5);
 
         Guid dataCenterId = FixturesTool.DATA_CENTER;
 

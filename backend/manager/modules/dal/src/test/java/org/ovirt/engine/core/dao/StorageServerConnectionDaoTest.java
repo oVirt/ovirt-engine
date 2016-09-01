@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -168,7 +169,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     @Test
     public void getStorageConnectionsByStorageTypeWithRecordsOneStatus() {
         getStorageConnectionsByStorageTypeWithRecords(EnumSet.of(StorageDomainStatus.Maintenance),
-                Arrays.asList(FixturesTool.STORAGE_DOAMIN_NFS2_3));
+                Collections.singletonList(FixturesTool.STORAGE_DOAMIN_NFS2_3));
     }
 
 
@@ -418,7 +419,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetConnectionsBySpecificIds() {
-        List<StorageServerConnections> connections = dao.getByIds(Arrays.asList("0cc146e8-e5ed-482c-8814-270bc48c297f"));
+        List<StorageServerConnections> connections = dao.getByIds(Collections.singletonList("0cc146e8-e5ed-482c-8814-270bc48c297f"));
         assertEquals(1, connections.size());
     }
 }

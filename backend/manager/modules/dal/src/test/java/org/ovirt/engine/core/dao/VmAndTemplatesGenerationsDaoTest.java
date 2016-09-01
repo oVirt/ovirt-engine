@@ -74,7 +74,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmTemplatesIdsForOvfUpdateOneTemplate() {
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_TEMPLATE_RHEL5), Collections.singletonList(Long.valueOf(0)), Arrays.asList("a"));
+        vmAndTemplatesGenerationsDao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_TEMPLATE_RHEL5), Collections.singletonList(0L), Collections.singletonList("a"));
 
         List<Guid> guids = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("one template should need ovf update", 1, guids.size());
@@ -147,7 +147,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmssIdsForOvfUpdateOneVm() {
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_RHEL5_POOL_50), Collections.singletonList(Long.valueOf(0)), Arrays.asList("a"));
+        vmAndTemplatesGenerationsDao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_RHEL5_POOL_50), Collections.singletonList(0L), Collections.singletonList("a"));
 
         List<Guid> guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("one vm should need ovf update", 1, guids.size());

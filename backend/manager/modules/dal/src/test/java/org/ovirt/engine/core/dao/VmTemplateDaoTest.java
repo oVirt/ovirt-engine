@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -284,9 +284,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     public void testUpdate() {
         existingTemplate.setDescription("This is an updated description");
 
-        List<Guid> hostGuidsList = Arrays.asList(HOST_GUIDS);
-        hostGuidsList = new LinkedList<>();
-        hostGuidsList.add(HOST_GUIDS[0]);
+        List<Guid> hostGuidsList = Collections.singletonList(HOST_GUIDS[0]);
         existingTemplate.setDedicatedVmForVdsList(hostGuidsList);
         dao.update(existingTemplate);
 

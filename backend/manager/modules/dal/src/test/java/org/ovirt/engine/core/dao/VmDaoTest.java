@@ -494,9 +494,7 @@ public class VmDaoTest extends BaseDaoTestCase {
                 "77296e00-0cad-4e5a-9299-008a7b6f4356"
         );
 
-        List<String> notRenamedTemplate = Arrays.asList(
-                "77296e00-0cad-4e5a-9299-008a7b6f4359"
-        );
+        List<String> notRenamedTemplate = Collections.singletonList("77296e00-0cad-4e5a-9299-008a7b6f4359");
 
         // all will be renamed
         assertOriginalTemplateNameIs(renamedTemplates, "renamed");
@@ -594,8 +592,8 @@ public class VmDaoTest extends BaseDaoTestCase {
     public void testGetVmsByOrigins() {
         Guid heVmId = Guid.newGuid();
         List<OriginType> list1 = Arrays.asList(OriginType.HOSTED_ENGINE, OriginType.MANAGED_HOSTED_ENGINE);
-        List<OriginType> list2 = Arrays.asList(OriginType.HOSTED_ENGINE);
-        List<OriginType> list3 = Arrays.asList(OriginType.MANAGED_HOSTED_ENGINE);
+        List<OriginType> list2 = Collections.singletonList(OriginType.HOSTED_ENGINE);
+        List<OriginType> list3 = Collections.singletonList(OriginType.MANAGED_HOSTED_ENGINE);
 
         int count1 = dao.getVmsByOrigins(list1).size();
         int count2 = dao.getVmsByOrigins(list2).size();

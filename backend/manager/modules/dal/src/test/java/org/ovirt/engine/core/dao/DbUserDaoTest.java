@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class DbUserDaoTest extends BaseDaoTestCase {
         newUser.setLoginName("newuser");
         newUser.setEmail("newuser@redhat.com");
         newUser.setDomain("domain");
-        newUser.setGroupNames(new LinkedList<>(Arrays.asList("groups")));
+        newUser.setGroupNames(new LinkedList<>(Collections.singletonList("groups")));
         newUser.setNamespace("*");
     }
 
