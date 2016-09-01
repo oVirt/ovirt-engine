@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -42,9 +41,9 @@ public class DbConnectionUtilTest extends BaseDaoTestCase{
     /**
      * Ensures that the checkDBConnection method throws an Exception when connection is not valid
      */
-    @Test
+    @Test(expected = DataAccessException.class)
     @DirtiesContext
-    public void testDBConnectionWithoutConnection() {
+    public void testDBConnectionWithoutConnection() throws Exception {
 
         Config.setConfigUtils(new DBConfigUtils(false));
         try (InputStream is = super.getClass().getResourceAsStream("/test-database.properties")) {
@@ -65,16 +64,6 @@ public class DbConnectionUtilTest extends BaseDaoTestCase{
             underTest = new DbConnectionUtil(jdbcTemplate, 666, 777);
 
             underTest.checkDBConnection();
-
-            fail("Connection should be down since the DataSource has an invalid username");
-            // If DataAccessException is thrown - the test has succeeded. Was unable to do
-            // with "expected" annotation, presumably since we are using DbUnit
-        } catch (DataAccessException desiredException) {
-            assertTrue(true);
-            // If this exception is thrown we fail the test
-        } catch (Exception undesiredException) {
-            undesiredException.printStackTrace();
-            fail();
         }
     }
 }
