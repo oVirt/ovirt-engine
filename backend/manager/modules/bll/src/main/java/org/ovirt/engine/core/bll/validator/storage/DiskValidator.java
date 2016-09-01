@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -29,6 +30,7 @@ public class DiskValidator {
     private final Disk disk;
 
     protected static final String DISK_NAME_VARIABLE = "DiskName";
+    protected static final String VM_LIST = "VmList";
     protected static final String VM_NAME_VARIABLE = "VmName";
 
     public DiskValidator(Disk disk) {
@@ -125,6 +127,18 @@ public class DiskValidator {
                 ReplacementUtils.createSetVariableString(VM_NAME_VARIABLE, vm.getName())};
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM, replacements).
                 when(vms.stream().noneMatch(vm1 -> vm1.getId().equals(vm.getId())));
+    }
+
+    public ValidationResult isDiskAttachedToAnyVm() {
+        List<VM> vms = getVmDao().getVmsListForDisk(disk.getId(), true);
+        if (!vms.isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS,
+                    ReplacementUtils.createSetVariableString(DISK_NAME_VARIABLE, disk.getDiskAlias()),
+                    ReplacementUtils.createSetVariableString(VM_LIST,
+                            vms.stream().map(VM::getName).collect(Collectors.joining(","))));
+
+        }
+        return ValidationResult.VALID;
     }
 
     public ValidationResult isVmNotContainsBootDisk(VM vm) {
