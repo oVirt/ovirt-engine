@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.MapUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -60,6 +62,8 @@ import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends VmPoolCommandBase<T>
         implements QuotaStorageDependent {
 
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -460,7 +464,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map,
                     getStoragePool().getCompatibilityVersion(), getCurrentUser()));
         }
         return true;

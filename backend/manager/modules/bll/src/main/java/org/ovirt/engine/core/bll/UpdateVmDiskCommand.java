@@ -77,6 +77,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Inject
     private VmSlaPolicyUtils vmSlaPolicyUtils;
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
     /**
      * vm device for the given vm and disk
      */
@@ -716,7 +719,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
             Map<DiskImage, Guid> map = new HashMap<>();
             map.put(diskImage, diskImage.getStorageIds().get(0));
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map,
                     getStoragePool().getCompatibilityVersion(), getCurrentUser()));
         }
         return true;

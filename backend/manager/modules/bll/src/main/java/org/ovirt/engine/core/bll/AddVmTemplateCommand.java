@@ -99,6 +99,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
     private final List<DiskImage> images = new ArrayList<>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
@@ -563,7 +565,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     map.put(diskImage, diskImage.getStorageIds().get(0));
                 }
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map,
                     getStoragePool().getCompatibilityVersion(), getCurrentUser()));
         }
         return true;

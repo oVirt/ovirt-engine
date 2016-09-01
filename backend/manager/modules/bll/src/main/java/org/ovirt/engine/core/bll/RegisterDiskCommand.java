@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -27,6 +29,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
 
     private static final String DEFAULT_REGISTRATION_FORMAT = "RegisteredDisk_%1$tY-%1$tm-%1$td_%1$tH-%1$tM-%1$tS";
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     public RegisterDiskCommand(T parameters) {
         this(parameters, null);
@@ -106,7 +111,8 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     }
 
     protected boolean setAndValidateDiskProfiles() {
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getParameters().getDiskImage(),
+        return validate(diskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getParameters()
+                .getDiskImage(),
                 getStorageDomainId()),
                 getStoragePool().getCompatibilityVersion(),
                 getCurrentUser()));

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -52,6 +54,9 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 @InternalCommandAttribute
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
         implements TaskHandlerCommand<LiveMigrateVmDisksParameters>, QuotaStorageDependent {
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
@@ -251,7 +256,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             DiskImage diskImage = getDiskImageByImageId(parameters.getImageId());
             map.put(diskImage, diskImage.getStorageIds().get(0));
         }
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+        return validate(diskProfileHelper.setAndValidateDiskProfiles(map,
                 getStoragePool().getCompatibilityVersion(), getCurrentUser()));
     }
 

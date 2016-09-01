@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -18,21 +23,23 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class DiskProfileHelper {
 
     private static final Logger log = LoggerFactory.getLogger(DiskProfileHelper.class);
 
-    private DiskProfileHelper() {
+    @Inject
+    private DiskProfileDao diskProfileDao;
 
-    }
+    @Inject
+    private PermissionDao permissionDao;
 
-    public static DiskProfile createDiskProfile(Guid storageDomainId, String name) {
+    public DiskProfile createDiskProfile(Guid storageDomainId, String name) {
         DiskProfile profile = new DiskProfile();
         profile.setId(Guid.newGuid());
         profile.setName(name);
@@ -40,7 +47,7 @@ public class DiskProfileHelper {
         return profile;
     }
 
-    public static ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map, Version version, DbUser user) {
+    public ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map, Version version, DbUser user) {
         if (map == null || !FeatureSupported.storageQoS(version)) {
             return ValidationResult.VALID;
         }
@@ -59,7 +66,7 @@ public class DiskProfileHelper {
             if (diskImage.getDiskProfileId() == null && storageDomainId != null) {
                 List<DiskProfile> diskProfilesList = storageDiskProfilesMap.get(storageDomainId);
                 if (diskProfilesList == null) {
-                    diskProfilesList = getDiskProfileDao().getAllForStorageDomain(storageDomainId);
+                    diskProfilesList = diskProfileDao.getAllForStorageDomain(storageDomainId);
                     storageDiskProfilesMap.put(storageDomainId, diskProfilesList);
                 }
                 // Set Disk Profile according to permissions
@@ -70,9 +77,12 @@ public class DiskProfileHelper {
                     return new ValidationResult(EngineMessage.USER_NOT_AUTHORIZED_TO_ATTACH_DISK_PROFILE);
                 }
             } else {
-                DiskProfile diskProfile = getDiskProfileDao().get(diskImage.getDiskProfileId());
-                ValidationResult result =
-                        new DiskProfileValidator(diskProfile).isParentEntityValid(storageDomainId);
+                DiskProfile diskProfile = updateDiskImageProfilesList(diskImage, storageDomainId);
+                if (diskProfile == null) {
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_PROFILE_NOT_FOUND_FOR_STORAGE_DOMAIN,
+                            String.format("$storageDomainId %s", storageDomainId));
+                }
+                ValidationResult result = isDiskProfileParentEntityValid(diskProfile, storageDomainId);
                 if (result != ValidationResult.VALID) {
                     return result;
                 }
@@ -85,7 +95,37 @@ public class DiskProfileHelper {
         return ValidationResult.VALID;
     }
 
-    private static boolean updateDiskProfileForBackwardCompatibility(DiskImage diskImage,
+    public ValidationResult isDiskProfileParentEntityValid(DiskProfile diskProfile, Guid storageDomainId) {
+        return new DiskProfileValidator(diskProfile).isParentEntityValid(storageDomainId);
+    }
+
+    /**
+     * Updates the disk profiles list of the given disk image according to the storageDomainID.
+     * The disk profiles list will be set with the first disk profile that matches the storage domain id.
+     *
+     * @param diskImage       disk image to be updated with the relevant disk profiles list
+     * @param storageDomainId storage domain id to match a disk profile with
+     * @return valid disk profile in case there is a match with the given storage domain ID. otherwise return an
+     * invalid disk profile.
+     */
+    private DiskProfile updateDiskImageProfilesList(DiskImage diskImage, Guid storageDomainId) {
+        DiskProfile currentDiskProfile = null;
+        if (storageDomainId != null) {
+            List<Guid> diskProfileIds = diskImage.getDiskProfileIds();
+            List<DiskProfile> diskProfilesListByStorageDomain =
+                    diskProfileDao.getAllForStorageDomain(storageDomainId);
+            for (DiskProfile diskProfile : diskProfilesListByStorageDomain) {
+                if (diskProfileIds.contains(diskProfile.getId())) {
+                    currentDiskProfile = diskProfile;
+                    diskImage.setDiskProfileIds(new ArrayList<Guid>(Arrays.asList(diskProfile.getId())));
+                    break;
+                }
+            }
+        }
+        return currentDiskProfile;
+    }
+
+    private boolean updateDiskProfileForBackwardCompatibility(DiskImage diskImage,
             List<DiskProfile> diskProfilesList,
             Set<Guid> permittedDiskProfilesIds,
             DbUser user) {
@@ -99,22 +139,14 @@ public class DiskProfileHelper {
         return false;
     }
 
-    private static boolean isDiskProfilePermitted(DiskProfile diskProfile,
+    private boolean isDiskProfilePermitted(DiskProfile diskProfile,
             Set<Guid> permittedDiskProfilesIds,
             DbUser user) {
         return user == null
                 || permittedDiskProfilesIds.contains(diskProfile.getId())
-                || getPermissionDao().getEntityPermissions(user.getId(),
+                || permissionDao.getEntityPermissions(user.getId(),
                         ActionGroup.ATTACH_DISK_PROFILE,
                         diskProfile.getId(),
                         VdcObjectType.DiskProfile) != null;
-    }
-
-    private static DiskProfileDao getDiskProfileDao() {
-        return DbFacade.getInstance().getDiskProfileDao();
-    }
-
-    private static PermissionDao getPermissionDao() {
-        return DbFacade.getInstance().getPermissionDao();
     }
 }

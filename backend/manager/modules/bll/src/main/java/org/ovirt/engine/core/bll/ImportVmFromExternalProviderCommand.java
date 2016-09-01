@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -49,6 +51,9 @@ public class ImportVmFromExternalProviderCommand<T extends ImportVmFromExternalP
 implements QuotaStorageDependent {
 
     private static final Pattern VMWARE_DISK_NAME_PATTERN = Pattern.compile("\\[.*?\\] .*/(.*).vmdk");
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
@@ -150,7 +155,7 @@ implements QuotaStorageDependent {
         for (DiskImage diskImage : getVm().getImages()) {
             map.put(diskImage, getStorageDomainId());
         }
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+        return validate(diskProfileHelper.setAndValidateDiskProfiles(map,
                 getStoragePool().getCompatibilityVersion(), getCurrentUser()));
     }
 

@@ -3437,6 +3437,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk Profile ${diskProfile} with id ${diskProfileId} is not assigned to Storage Domain ${storageDomain}.")
     String ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN();
 
+    String ACTION_TYPE_DISK_PROFILE_NOT_FOUND_FOR_STORAGE_DOMAIN();
+
     @DefaultStringValue("Cannot ${action} ${type}. CPU Profile doesn't match provided Cluster.")
     String ACTION_TYPE_CPU_PROFILE_NOT_MATCH_CLUSTER();
 

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -92,6 +94,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         implements QuotaStorageDependent, TaskHandlerCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     private List<DiskImage> imageList;
 
@@ -1083,7 +1088,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
                 }
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(map,
                     getStoragePool().getCompatibilityVersion(), getCurrentUser()));
         }
         return true;
