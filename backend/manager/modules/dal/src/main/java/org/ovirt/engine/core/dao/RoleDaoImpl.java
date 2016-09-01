@@ -73,7 +73,7 @@ public class RoleDaoImpl extends BaseDao implements RoleDao {
     @Override
     public List<Role> getAnyAdminRoleForUserAndGroups(Guid id, String groupIds) {
         Integer appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
-        return getAnyAdminRoleForUserAndGroups(id, groupIds, appMode.intValue());
+        return getAnyAdminRoleForUserAndGroups(id, groupIds, appMode);
     }
 
     @Override
