@@ -8,16 +8,14 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsCpuStatisticsDaoTest extends BaseDaoTestCase {
 
+    private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid ANOTHER_EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
     private VdsCpuStatisticsDao vdsCpuStatisticsDao;
-    private VdsStaticDao vdsStaticDao;
-    private VdsStatic existingVds;
     private CpuStatistics newVdsCpuStatistics;
 
     @Override
@@ -25,14 +23,12 @@ public class VdsCpuStatisticsDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         vdsCpuStatisticsDao = dbFacade.getVdsCpuStatisticsDao();
-        vdsStaticDao = dbFacade.getVdsStaticDao();
-        existingVds = vdsStaticDao.get(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"));
         newVdsCpuStatistics = new CpuStatistics();
     }
 
     @Test
     public void testGetAllCpuStatisticsByVdsId() {
-        List<CpuStatistics> result = vdsCpuStatisticsDao.getAllCpuStatisticsByVdsId(existingVds.getId());
+        List<CpuStatistics> result = vdsCpuStatisticsDao.getAllCpuStatisticsByVdsId(EXISTING_VDS_ID);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -59,7 +55,7 @@ public class VdsCpuStatisticsDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testMassUpdateCpuStatistics() {
-        List<CpuStatistics> result = vdsCpuStatisticsDao.getAllCpuStatisticsByVdsId(existingVds.getId());
+        List<CpuStatistics> result = vdsCpuStatisticsDao.getAllCpuStatisticsByVdsId(EXISTING_VDS_ID);
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(20, result.get(0).getCpuUsagePercent());
@@ -67,9 +63,9 @@ public class VdsCpuStatisticsDaoTest extends BaseDaoTestCase {
 
         result.get(0).setCpuUsagePercent(30);
         result.get(1).setCpuUsagePercent(30);
-        vdsCpuStatisticsDao.massUpdateCpuStatistics(result, existingVds.getId());
+        vdsCpuStatisticsDao.massUpdateCpuStatistics(result, EXISTING_VDS_ID);
 
-        result = vdsCpuStatisticsDao.getAllCpuStatisticsByVdsId(existingVds.getId());
+        result = vdsCpuStatisticsDao.getAllCpuStatisticsByVdsId(EXISTING_VDS_ID);
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(30, result.get(0).getCpuUsagePercent());

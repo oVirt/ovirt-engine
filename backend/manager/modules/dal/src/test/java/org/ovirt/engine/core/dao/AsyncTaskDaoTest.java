@@ -32,20 +32,17 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
     private AsyncTask newAsyncTask;
     private AsyncTask existingAsyncTask;
 
-    private VdcActionParametersBase params;
-    private VdcActionParametersBase taskParams;
-
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
 
         dao = dbFacade.getAsyncTaskDao();
-        params = new VdcActionParametersBase();
+        VdcActionParametersBase params = new VdcActionParametersBase();
         params.setSessionId("ASESSIONID");
         params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
 
-        taskParams = new VdcActionParametersBase();
+        VdcActionParametersBase taskParams = new VdcActionParametersBase();
         taskParams.setSessionId("ASESSIONID");
         taskParams.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         taskParams.setParentParameters(params);

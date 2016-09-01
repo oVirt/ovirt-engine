@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,17 +43,13 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        VdsDao vdsDao = dbFacade.getVdsDao();
-
-        VDS existingVds = vdsDao.get(FixturesTool.VDS_RHEL6_NFS_SPM);
-
         StoragePoolDao storagePoolDao = dbFacade.getStoragePoolDao();
 
         storagePool = storagePoolDao.get(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
 
         dao = dbFacade.getClusterDao();
 
-        existingCluster = dao.get(existingVds.getClusterId());
+        existingCluster = dao.get(FixturesTool.CLUSTER_RHEL6_ISCSI);
         groupWithNoRunningVms = dbFacade.getClusterDao().get(FixturesTool.CLUSTER_NO_RUNNING_VMS);
 
         newGroup = new Cluster();

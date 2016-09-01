@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -35,12 +34,10 @@ public class VdsDaoTest extends BaseDaoTestCase {
     private static final Guid CLUSTER_WITH_FEDORA = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid CLUSTER_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
 
-    private static final String IP_ADDRESS = "192.168.122.17";
-
     private VdsDao dao;
     private VDS existingVds;
     private VDS existingVds2;
-    private static Guid newVmId;
+    private Guid newVmId;
 
     @Override
     public void setUp() throws Exception {
@@ -48,10 +45,6 @@ public class VdsDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getVdsDao();
         existingVds = dao.get(EXISTING_VDS_ID);
         existingVds2 = dao.get(EXISTING_VDS_ID_2);
-    }
-
-    @BeforeClass
-    public static void createNewVmId() {
         newVmId = Guid.newGuid();
     }
 

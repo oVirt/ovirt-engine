@@ -29,9 +29,6 @@ public class VmDaoTest extends BaseDaoTestCase {
     private static final int VM_COUNT = 8;
     private VmDao dao;
     private VM existingVm;
-    private VmStatic newVmStatic;
-    private VM newVm;
-    private VmTemplate vmtemplate;
     private VmTemplate existingTemplate;
 
     @Override
@@ -41,15 +38,15 @@ public class VmDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getVmDao();
         existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         existingVm.setStatus(VMStatus.Up);
-        vmtemplate = dbFacade.getVmTemplateDao().get(FixturesTool.VM_TEMPLATE_RHEL5);
+        VmTemplate vmtemplate = dbFacade.getVmTemplateDao().get(FixturesTool.VM_TEMPLATE_RHEL5);
         existingTemplate = dbFacade.getVmTemplateDao().get(FixturesTool.VM_TEMPLATE_RHEL5);
 
-        newVm = new VM();
+        VM newVm = new VM();
         newVm.setId(Guid.newGuid());
         newVm.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         newVm.setVmtGuid(vmtemplate.getId());
 
-        newVmStatic = new VmStatic();
+        VmStatic newVmStatic = new VmStatic();
         newVmStatic.setName("New Virtual Machine");
         newVmStatic.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         newVmStatic.setVmtGuid(vmtemplate.getId());

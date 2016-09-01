@@ -14,17 +14,15 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmNumaNodeDaoTest extends BaseDaoTestCase {
 
+    private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid ANOTHER_EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
     private VmNumaNodeDao vmNumaNodeDao;
-    private VmStaticDao vmStaticDao;
-    private VmStatic existingVm;
     private NumaNodeStatistics newNodeStatistics;
 
     @Override
@@ -32,8 +30,6 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         vmNumaNodeDao = dbFacade.getVmNumaNodeDao();
-        vmStaticDao = dbFacade.getVmStaticDao();
-        existingVm = vmStaticDao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354"));
         newNodeStatistics = new NumaNodeStatistics();
         newNodeStatistics.setCpuUsagePercent(20);
         newNodeStatistics.setMemUsagePercent(50);
@@ -41,7 +37,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllVmNumaNodeByVmId() {
-        List<VmNumaNode> result = vmNumaNodeDao.getAllVmNumaNodeByVmId(existingVm.getId());
+        List<VmNumaNode> result = vmNumaNodeDao.getAllVmNumaNodeByVmId(EXISTING_VM_ID);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -139,7 +135,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetPinnedNumaNodeIndex() {
-        List<Pair<Guid, Integer>> result = vmNumaNodeDao.getPinnedNumaNodeIndex(existingVm.getId());
+        List<Pair<Guid, Integer>> result = vmNumaNodeDao.getPinnedNumaNodeIndex(EXISTING_VM_ID);
 
         assertNotNull(result);
         assertEquals(3, result.size());

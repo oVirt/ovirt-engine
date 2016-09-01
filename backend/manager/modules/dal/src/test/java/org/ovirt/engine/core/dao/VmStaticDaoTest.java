@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -42,11 +41,11 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3")};
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
+    private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     private VmStaticDao dao;
     private VmStatic existingVmStatic;
     private VmStatic newVmStatic;
-    private VmTemplate vmtemplate;
 
     @Override
     public void setUp() throws Exception {
@@ -54,13 +53,11 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getVmStaticDao();
         existingVmStatic = dao.get(EXISTING_VM_ID);
-        vmtemplate = dbFacade.getVmTemplateDao().get(
-                new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         newVmStatic = new VmStatic();
         newVmStatic.setId(Guid.newGuid());
         newVmStatic.setName("New Virtual Machine");
         newVmStatic.setClusterId(CLUSTER_ID);
-        newVmStatic.setVmtGuid(vmtemplate.getId());
+        newVmStatic.setVmtGuid(VM_TEMPLATE_ID);
         newVmStatic.setOrigin(OriginType.OVIRT);
         newVmStatic.setQuotaId(QUOTA_ID);
         newVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
