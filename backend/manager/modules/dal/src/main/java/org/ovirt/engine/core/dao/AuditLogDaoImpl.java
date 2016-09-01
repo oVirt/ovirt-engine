@@ -22,8 +22,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 /**
- * <code>AuditLogDaoImpl</code> provides a concrete implementation of {@link AuditLogDao}. It uses code
- * refactored from {@link DbFacade}.
+ * {@code AuditLogDaoImpl} provides a concrete implementation of {@link AuditLogDao}.
  */
 @Named
 @Singleton

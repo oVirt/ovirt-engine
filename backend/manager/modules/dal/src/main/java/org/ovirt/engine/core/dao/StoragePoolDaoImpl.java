@@ -15,8 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>StoragePoolDaoImpl</code> provides a concrete implementation of {@link StoragePoolDao} based on code
- * from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code StoragePoolDaoImpl} provides a concrete implementation of {@link StoragePoolDao}.
  */
 @Named
 @Singleton

@@ -15,10 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>RoleDaoImpl</code> provides a concrete implementation of {@link RoleDao} using code refactored from
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
- *
- *
+ * {@code RoleDaoImpl} provides a concrete implementation of {@link RoleDao}.
  */
 @Named
 @Singleton

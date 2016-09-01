@@ -15,10 +15,10 @@ public interface ClusterPolicyDao extends ModificationDao<ClusterPolicy, Guid> {
      * Retrieves the entity with the given id.
      *
      * @param id
-     *            The id to look by (can't be <code>null</code>).
+     *            The id to look by (can't be {@code null}).
      * @param internalUnitTypes
      *            Mapping between internal cluster policy IDs and their types
-     * @return The entity instance, or <code>null</code> if not found.
+     * @return The entity instance, or {@code null} if not found.
      */
     ClusterPolicy get(Guid id,
             @NotNull Map<Guid, PolicyUnitType> internalUnitTypes);

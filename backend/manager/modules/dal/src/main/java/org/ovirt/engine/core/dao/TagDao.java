@@ -11,9 +11,7 @@ import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>TagDao</code> defines a type for performing CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.Tags}.
- *
- *
+ * {@code TagDao} defines a type for performing CRUD operations on instances of {@link Tags}.
  */
 public interface TagDao extends Dao {
 

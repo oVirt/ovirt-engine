@@ -6,8 +6,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Defines a type that performs CRUD operations on instances of
- * {@link DbGroup}.
+ * Defines a type that performs CRUD operations on instances of {@link DbGroup}.
  */
 public interface DbGroupDao extends Dao, SearchDao<DbGroup> {
     /**
@@ -24,7 +23,7 @@ public interface DbGroupDao extends Dao, SearchDao<DbGroup> {
      *
      * @param domain the name of the domain
      * @param externalId the external identifier
-     * @return a reference to the group or <code>null</code> if no such group
+     * @return a reference to the group or {@code null} if no such group
      *   can be found in the database
      */
     DbGroup getByExternalId(String domain, String externalId);
@@ -35,7 +34,7 @@ public interface DbGroupDao extends Dao, SearchDao<DbGroup> {
      * @param id the internal identifier
      * @param domain the name of the domain
      * @param externalId the external identifier
-     * @return a reference to the group or <code>null</code> if no such group
+     * @return a reference to the group or {@code null} if no such group
      *   can be found in the database
      */
     DbGroup getByIdOrExternalId(Guid id, String domain, String externalId);

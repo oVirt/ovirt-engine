@@ -19,7 +19,7 @@ public interface ModificationDao<T extends BusinessEntity<ID>, ID extends Serial
      * Persist a new instance of the entity.
      *
      * @param entity
-     *            The entity to persist (can't be <code>null</code>).
+     *            The entity to persist (can't be {@code null}).
      */
     public void save(T entity);
 
@@ -27,7 +27,7 @@ public interface ModificationDao<T extends BusinessEntity<ID>, ID extends Serial
      * Update an existing entity with data from the given instance.
      *
      * @param entity
-     *            The entity instance, containing data to update (can't be <code>null</code>).
+     *            The entity instance, containing data to update (can't be {@code null}).
      */
     public void update(T entity);
 
@@ -35,7 +35,7 @@ public interface ModificationDao<T extends BusinessEntity<ID>, ID extends Serial
      * Removes the entity with the given id from the underlying store of data.
      *
      * @param id
-     *            The id of the entity to remove (can't be <code>null</code>).
+     *            The id of the entity to remove (can't be {@code null}).
      */
     public void remove(ID id);
 }

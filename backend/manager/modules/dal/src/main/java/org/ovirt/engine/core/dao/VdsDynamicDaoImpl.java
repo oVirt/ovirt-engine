@@ -24,10 +24,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>VdsDaoImpl</code> provides an implementation of {@link VdsDao} that uses previously written code from
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
- *
- *
+ * {@code VdsDaoImpl} provides an implementation of {@link VdsDao}.
  */
 @Named
 @Singleton

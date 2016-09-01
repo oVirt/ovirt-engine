@@ -197,7 +197,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
         HostDevice device = getNetworkDevice();
         HostDeviceId deviceId = device.getId();
 
-        // Setting an id of VM with <code>VMStatus.Down</code>
+        // Setting an id of VM with VMStatus.Down
         Guid vmId = FixturesTool.VM_WITH_NO_ATTACHED_DISKS;
         dao.setVmIdOnHostDevice(deviceId, vmId);
 

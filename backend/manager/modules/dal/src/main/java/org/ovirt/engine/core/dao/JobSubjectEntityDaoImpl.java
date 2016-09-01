@@ -14,8 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * Implements the CRUD operations for job_subject_entity, a satellite table of Job.
- *
+ * Implements the CRUD operations for {@code JobSubjectEntity}, a satellite table of {@code Job}.
  */
 @Named
 @Singleton

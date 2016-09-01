@@ -7,9 +7,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>AuditLogDao</code> defines a type for performing CRUD operations on instances of {@link AuditLog}.
- *
- *
+ * {@code AuditLogDao} defines a type for performing CRUD operations on instances of {@link AuditLog}.
  */
 public interface AuditLogDao extends Dao, SearchDao<AuditLog> {
     /**
@@ -146,7 +144,7 @@ public interface AuditLogDao extends Dao, SearchDao<AuditLog> {
      * @param id
      *            the vds id
      * @param configAlerts
-     *            if <code>true</code> then include config alerts
+     *            if {@code true} then include config alerts
      */
     void removeAllForVds(Guid id, boolean configAlerts);
 

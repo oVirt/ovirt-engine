@@ -6,9 +6,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>ActionGroupDao</code> defines a type for performing CRUD operations on instances of {@link ActionGroup}.
- *
- *
+ * {@code ActionGroupDao} defines a type for performing CRUD operations on instances of {@link ActionGroup}.
  */
 public interface ActionGroupDao extends Dao {
     /**

@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -15,9 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.dao.DataIntegrityViolationException;
 
-/**
- *
- */
 public class VmStatisticsDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid NEW_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");

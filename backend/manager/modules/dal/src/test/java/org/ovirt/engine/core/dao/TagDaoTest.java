@@ -19,9 +19,7 @@ import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>TagDaoTest</code> provides unit tests to validate the functionality for {@link TagDao}.
- *
- *
+ * {@code TagDaoTest} provides unit tests to validate the functionality for {@link TagDao}.
  */
 public class TagDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_TAG_ID = new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c");

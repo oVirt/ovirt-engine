@@ -17,11 +17,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>VmPoolDaoImpl</code> provides an implementation of {@link VmPoolDao} based on implementation code from
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
- *
+ * {@code VmPoolDaoImpl} provides an implementation of {@link VmPoolDao}.
  */
-
 @Named
 @Singleton
 public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {

@@ -7,14 +7,12 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Interface for having DB related operations on
- * {@link org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap} entities
- *
+ * Interface for having DB related operations on {@link ImageStorageDomainMap} entities.
  */
 public interface ImageStorageDomainMapDao extends GenericDao<ImageStorageDomainMap, ImageStorageDomainMapId> {
 
     /**
-     * Removes the {@link org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap} entries that
+     * Removes the {@link ImageStorageDomainMap} entries that
      * have the given image Id.
      *
      * @param imageId
@@ -24,7 +22,7 @@ public interface ImageStorageDomainMapDao extends GenericDao<ImageStorageDomainM
     void remove(Guid imageId);
 
     /**
-     * Gets a list of {@link org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap} entries that
+     * Gets a list of {@link ImageStorageDomainMap} entries that
      * have the given id of {@link org.ovirt.engine.core.common.businessentities.StorageDomain}.
      *
      * @param storageDomainId
@@ -35,7 +33,7 @@ public interface ImageStorageDomainMapDao extends GenericDao<ImageStorageDomainM
     List<ImageStorageDomainMap> getAllByStorageDomainId(Guid storageDomainId);
 
     /**
-     * Gets a list of {@link org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap} entries that
+     * Gets a list of {@link ImageStorageDomainMap} entries that
      * have the given id of {@link org.ovirt.engine.core.common.businessentities.storage.DiskImage} entity.
      *
      * @param imageId

@@ -137,7 +137,7 @@ public class FixturesTool {
 
     /**
      * Predefined quota with general limitations. Its GUID is 88296e00-0cad-4e5a-9291-008a7b7f4399.<BR/>
-     * The <code>Quota</code> has the following limitations:
+     * The {@code Quota} has the following limitations:
      * <ul>Global limitation:
      * <li>virtual_cpu = 100</li>
      * <li>mem_size_mb = 10000</li>

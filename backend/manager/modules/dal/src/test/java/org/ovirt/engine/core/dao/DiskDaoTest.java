@@ -204,7 +204,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     /**
-     * Asserts the result of {@link DiskImageDao#getAllForVm(Guid)} contains the correct disks.
+     * Asserts the result of {@link DiskDao#getAllForVm(Guid)} contains the correct disks.
      * @param disks
      *            The result to check
      */
@@ -213,7 +213,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     /**
-     * Asserts the result of {@link DiskImageDao#getAllForVm(Guid)} contains the correct plugged disks.
+     * Asserts the result of {@link DiskDao#getAllForVm(Guid)} contains the correct plugged disks.
      * @param disks
      *            The result to check
      */

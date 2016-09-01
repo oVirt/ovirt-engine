@@ -11,8 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>RepoFileMetaDataDao</code> defines a type for performing CRUD operations on instances of
- * {@link org.ovirt.engine.core.common.businessentities.storage.RepoImage}.
+ * {@code RepoFileMetaDataDao} defines a type for performing CRUD operations on instances of {@link RepoImage}.
  *
  */
 public interface RepoFileMetaDataDao extends Dao {

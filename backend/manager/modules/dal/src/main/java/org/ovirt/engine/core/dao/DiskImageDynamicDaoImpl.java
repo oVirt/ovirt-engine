@@ -16,8 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * JDBC template based implementation of DiskImageDynamicDao
- *
+ * JDBC template based implementation of {@link DiskImageDynamicDao}.
  */
 @Named
 @Singleton

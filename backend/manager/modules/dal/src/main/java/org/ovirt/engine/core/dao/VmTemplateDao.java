@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VmTemplateDao</code> defines a type for performing CRUD operations on instances of {@link VmTemplate}.
+ * {@code VmTemplateDao} defines a type for performing CRUD operations on instances of {@link VmTemplate}.
  */
 public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAwareDao<Guid, VmTemplateStatus>, SearchDao<VmTemplate> {
 
@@ -20,12 +20,12 @@ public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAware
     * Retrieves the template with the given id with optional filtering.
     *
     * @param id
-    *            The id to look by (can't be <code>null</code>).
+    *            The id to look by (can't be {@code null}).
     * @param userID
     *            the ID of the user requesting the information
     * @param isFiltered
     *            Whether the results should be filtered according to the user's permissions
-    * @return The entity instance, or <code>null</code> if not found.
+    * @return The entity instance, or {@code null} if not found.
     */
     public VmTemplate get(Guid id, Guid userID, boolean isFiltered);
 
@@ -33,14 +33,14 @@ public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAware
      * Retrieves the template with the given id with optional filtering.
      *
      * @param name
-     *            The name to look by (can't be <code>null</code>).
+     *            The name to look by (can't be {@code null}).
      * @param storagePoolId
      *            The ID of the datacenter
      * @param userID
      *            the ID of the user requesting the information
      * @param isFiltered
      *            Whether the results should be filtered according to the user's permissions
-     * @return The entity instance, or <code>null</code> if not found.
+     * @return The entity instance, or {@code null} if not found.
      */
     public VmTemplate getByName(String name, Guid storagePoolId, Guid userID, boolean isFiltered);
 

@@ -108,7 +108,7 @@ public abstract class BaseDao {
     }
 
     /**
-     * Returns a {@link Guid} representing the column's value or a default value if the column was <code>null</code>.
+     * Returns a {@link Guid} representing the column's value or a default value if the column was {@code null}.
      *
      * <b>Note:</b> Postgres' driver returns a {@link UUID} when {@link ResultSet#getObject(String)} is called on a
      * uuid column. This behavior is trusted to work with Postgres 8.x and above and is used to achieve the best
@@ -116,8 +116,8 @@ public abstract class BaseDao {
      *
      * @param resultSet the ResultSet to extract the result from.
      * @param columnName the name of the column.
-     * @param defaultValue The value to return if the column is <code>null</code>.
-     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @param defaultValue The value to return if the column is {@code null}.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was {@code null}.
      * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
      */
     private static Guid getGuid(ResultSet resultSet, String columnName, Guid defaultValue) throws SQLException {
@@ -129,12 +129,12 @@ public abstract class BaseDao {
     }
 
     /**
-     * Returns a {@link Guid} representing the column's value or a <code>null</code>
-     * if the column was <code>null</code>.
+     * Returns a {@link Guid} representing the column's value or a {@code null}
+     * if the column was {@code null}.
      *
      * @param resultSet the ResultSet to extract the result from.
      * @param columnName the name of the column.
-     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was {@code null}.
      * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
      */
     protected static Guid getGuid(ResultSet resultSet, String columnName) throws SQLException {
@@ -143,11 +143,11 @@ public abstract class BaseDao {
 
     /**
      * Returns a {@link Guid} representing the column's value or a {@link Guid#Empty}
-     * if the column was <code>null</code>.
+     * if the column was {@code null}.
      *
      * @param resultSet the ResultSet to extract the result from.
      * @param columnName the name of the column.
-     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was {@code null}.
      * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
      */
     protected static Guid getGuidDefaultEmpty(ResultSet resultSet, String columnName) throws SQLException {
@@ -156,11 +156,11 @@ public abstract class BaseDao {
 
     /**
      * Returns a {@link Guid} representing the column's value or a {@link Guid#newGuid()}
-     * if the column was <code>null</code>.
+     * if the column was {@code null}.
      *
      * @param resultSet  the ResultSet to extract the result from.
      * @param columnName the name of the column.
-     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was {@code null}.
      * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
      */
     protected static Guid getGuidDefaultNewGuid(ResultSet resultSet, String columnName) throws SQLException {

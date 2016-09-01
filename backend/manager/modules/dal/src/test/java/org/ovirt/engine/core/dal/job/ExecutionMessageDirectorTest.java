@@ -23,7 +23,8 @@ public class ExecutionMessageDirectorTest {
     private static String INVALID_STEP_KEY_TEST_BUNDLE_NAME = "InvalidStepKeyExecutionMessages";
 
     /**
-     * Verifies the engine-core execution messages are aligned with the enumerators {@code VdcActionType and StepEnum}
+     * Verifies the engine-core execution messages are aligned with the enumerators {@code VdcActionType} and
+     * {@code StepEnum}.
      */
     @Test
     public void verifyEngineMessagesSupported() throws FileNotFoundException, IOException {

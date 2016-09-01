@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.compat.Guid;
 
-/**
- * StoragePoolIsoMap Dao
- *
- */
 public interface StoragePoolIsoMapDao extends GenericDao<StoragePoolIsoMap, StoragePoolIsoMapId>,
         StatusAwareDao<StoragePoolIsoMapId, StorageDomainStatus> {
     /**

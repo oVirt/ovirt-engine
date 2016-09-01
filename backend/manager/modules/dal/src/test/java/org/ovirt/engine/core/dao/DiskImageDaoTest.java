@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 /**
- * <code>DiskImageDaoTest</code> provides unit tests to validate {@link DiskImageDao}.
+ * {@code DiskImageDaoTest} provides unit tests to validate {@link DiskImageDao}.
  */
 public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskImageDao> {
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");

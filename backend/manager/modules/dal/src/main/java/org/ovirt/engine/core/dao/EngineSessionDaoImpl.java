@@ -15,8 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>EngineSessionDaoImpl</code> provides an implementation of {@link org.ovirt.engine.core.dao.EngineSessionDao} using code refactored from
- * {@code DbFacade}.
+ * {@code EngineSessionDaoImpl} provides an implementation of {@link EngineSessionDao}.
  */
 @Named
 @Singleton

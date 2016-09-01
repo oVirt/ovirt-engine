@@ -6,9 +6,7 @@ import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VdsCpuStatisticsDao</code> defines a type for performing CRUD operations on instances of {@link CpuStatistics}.
- *
- *
+ * {@code VdsCpuStatisticsDao} defines a type for performing CRUD operations on instances of {@link CpuStatistics}.
  */
 public interface VdsCpuStatisticsDao extends Dao {
 

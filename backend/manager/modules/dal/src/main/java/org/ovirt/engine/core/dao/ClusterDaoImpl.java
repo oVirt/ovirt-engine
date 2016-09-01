@@ -26,8 +26,7 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>ClusterDaoImpl</code> provides an implementation of {@link ClusterDao} that uses code previously
- * found in {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code ClusterDaoImpl} provides an implementation of {@link ClusterDao}.
  *
  */
 @Named

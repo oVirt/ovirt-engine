@@ -6,9 +6,7 @@ import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>EventDao</code> defines a type for performing CRUD operations on instances of {@link EventSubscriber}.
- *
- *
+ * {@code EventDao} defines a type for performing CRUD operations on instances of {@link EventSubscriber}.
  */
 public interface EventDao extends Dao {
     /**

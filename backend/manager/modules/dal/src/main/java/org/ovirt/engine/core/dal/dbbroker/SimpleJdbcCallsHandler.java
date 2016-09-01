@@ -141,7 +141,7 @@ public class SimpleJdbcCallsHandler {
      * the scope of the method in order to avoid concurrency issues upon first time usage of the stored procedure.
      *
      * @param procedureName
-     *            stored proceudre name
+     *            stored procedure name
      * @param callCreator
      *            calls creator object
      * @return simple JDBC call object

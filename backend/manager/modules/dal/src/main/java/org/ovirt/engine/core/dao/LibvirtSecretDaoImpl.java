@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>LibvirtSecretDaoImpl</code> provides an implementation of {@link LibvirtSecretDao}.
+ * {@code LibvirtSecretDaoImpl} provides an implementation of {@link LibvirtSecretDao}.
  */
 @Named
 @Singleton

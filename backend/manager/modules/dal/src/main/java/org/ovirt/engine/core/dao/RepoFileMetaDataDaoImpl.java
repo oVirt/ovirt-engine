@@ -17,9 +17,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>StorageDomainDaoImpl</code> provides an implementation of {@link StorageDomainDao} based on code from
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}. Responsible for managing the repository files meta data via the
- * persistent layer.
+ * {@code RepoFileMetaDataDaoImpl} provides an implementation of {@link RepoFileMetaDataDao}.
+ * It is Responsible for managing the repository files meta data via the persistent layer.
  */
 @Named
 @Singleton

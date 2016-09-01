@@ -12,7 +12,7 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
      * Retrieves a list of all the vfsConfigs for the given host.
      * Notice: only nics which are SR-IOV enabled have vfsConfig.
      *
-     * @param vfsConfigId
+     * @param hostId
      *            host nic vfs config id
      * @return list of all the vfsConfigs for the given host.
      *
@@ -30,7 +30,7 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
     HostNicVfsConfig getByNicId(Guid nicId);
 
     /**
-     * Attaches the <code>network</code> to the allowed network list of the specified vfs config
+     * Attaches the {@code network} to the allowed network list of the specified vfs config
      *
      * @param vfsConfigId
      *            host nic vfs config id
@@ -40,7 +40,7 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
     void addNetwork(Guid vfsConfigId, Guid networkId);
 
     /**
-     * Removes the <code>network</code> from the allowed network list of the specified vfs config
+     * Removes the {@code network} from the allowed network list of the specified vfs config
      *
      * @param vfsConfigId
      *            host nic vfs config id
@@ -50,7 +50,7 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
     void removeNetwork(Guid vfsConfigId, Guid networkId);
 
     /**
-     * Adds the <code>label</code> to the allowed labels list of the specified vfs config
+     * Adds the {@code label} to the allowed labels list of the specified vfs config
      *
      * @param vfsConfigId
      *            host nic vfs config id
@@ -58,7 +58,7 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
     void addLabel(Guid vfsConfigId, String label);
 
     /**
-     * Removes the <code>label</code> from the allowed labels list of the specified vfs config
+     * Removes the {@code label} from the allowed labels list of the specified vfs config
      *
      * @param vfsConfigId
      *            host nic vfs config id

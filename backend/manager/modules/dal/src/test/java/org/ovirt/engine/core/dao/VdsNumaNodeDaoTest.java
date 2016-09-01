@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -19,9 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
-/**
- *
- */
 public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
 
     private static final Guid ANOTHER_EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");

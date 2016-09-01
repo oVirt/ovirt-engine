@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 
 /**
- * <code>LabelDao</code> defines a type for performing CRUD operations on instances of {@link Label}.
+ * {@code LabelDao} defines a type for performing CRUD operations on instances of {@link Label}.
  */
 public interface LabelDao extends Dao {
 

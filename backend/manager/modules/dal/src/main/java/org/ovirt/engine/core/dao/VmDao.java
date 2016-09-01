@@ -12,9 +12,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VmDao</code> defines a type for performing CRUD operations on instances of {@link VM}.
- *
- *
+ * {@code VmDao} defines a type for performing CRUD operations on instances of {@link VM}.
  */
 public interface VmDao extends Dao {
     /**
@@ -258,7 +256,7 @@ public interface VmDao extends Dao {
 
     /**
      * Retrieves all VMS that belong to the provided vm pool
-     * @param vm_pool_id
+     * @param vmPoolId
      *             the pool id
      */
     List<VM> getAllForVmPool(Guid vmPoolId);

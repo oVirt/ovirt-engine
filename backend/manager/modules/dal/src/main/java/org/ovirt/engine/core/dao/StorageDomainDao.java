@@ -9,9 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>StorageDomainDao</code> defines a type for performing CRUD operations on instances of {@link StorageDomain}.
- *
- *
+ * {@code StorageDomainDao} defines a type for performing CRUD operations on instances of {@link StorageDomain}.
  */
 public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRecoverDao<StorageDomain> {
     /**
@@ -208,7 +206,7 @@ public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRec
     /**
      * Retrieves the number of images in the specified storage domain.
      *
-     * @param storageId
+     * @param storageDomainId
      *            The storage domain ID
      * @return the number of images in the specified storage domain, 0 for a domain that does not exist
      */

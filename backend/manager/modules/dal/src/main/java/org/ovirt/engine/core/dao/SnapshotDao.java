@@ -43,7 +43,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *            The id of the VM to check for.
      * @param type
      *            The type of snapshot.
-     * @return The ID of the snapshot, or <code>null</code> if it doesn't exist.
+     * @return The ID of the snapshot, or {@code null} if it doesn't exist.
      */
     Guid getId(Guid vmId, SnapshotType type);
 
@@ -56,7 +56,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *            The id of the VM to check for.
      * @param type
      *            The type of snapshot.
-     * @return The snapshot, or <code>null</code> if it doesn't exist.
+     * @return The snapshot, or {@code null} if it doesn't exist.
      */
     Snapshot get(Guid vmId, SnapshotType type);
 
@@ -73,7 +73,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *            ID of the user that invoked the query
      * @param isFiltered
      *            whether the filtering will be performed
-     * @return The snapshot, or <code>null</code> if it doesn't exist.
+     * @return The snapshot, or {@code null} if it doesn't exist.
      */
     Snapshot get(Guid vmId, SnapshotType type, Guid userId, boolean isFiltered);
 
@@ -88,7 +88,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *            The type of snapshot.
      * @param status
      *            The status of the snapshot.
-     * @return The snapshot, or <code>null</code> if it doesn't exist.
+     * @return The snapshot, or {@code null} if it doesn't exist.
      */
     Snapshot get(Guid vmId, SnapshotType type, SnapshotStatus status);
 
@@ -101,7 +101,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *            The id of the VM to check for.
      * @param status
      *            The status of the snapshot.
-     * @return The snapshot, or <code>null</code> if it doesn't exist.
+     * @return The snapshot, or {@code null} if it doesn't exist.
      */
     Snapshot get(Guid vmId, SnapshotStatus status);
 
@@ -116,7 +116,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *            The type of snapshot.
      * @param status
      *            The status of the snapshot.
-     * @return The ID of the snapshot, or <code>null</code> if it doesn't exist.
+     * @return The ID of the snapshot, or {@code null} if it doesn't exist.
      */
     Guid getId(Guid vmId, SnapshotType type, SnapshotStatus status);
 

@@ -11,7 +11,7 @@ public interface UserProfileDao extends Dao {
      *
      * @param id
      *            the id
-     * @return the user profile, or <code>null</code> if the id was invalid
+     * @return the user profile, or {@code null} if the id was invalid
      */
     UserProfile get(Guid id);
 
@@ -20,7 +20,7 @@ public interface UserProfileDao extends Dao {
      *
      * @param userId
      *            the user id
-     * @return the user profile, or <code>null</code> if the id was invalid
+     * @return the user profile, or {@code null} if the id was invalid
      */
     UserProfile getByUserId(Guid userId);
 

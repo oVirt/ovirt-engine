@@ -16,7 +16,7 @@ public interface ImageTransferDao extends GenericDao<ImageTransfer, Guid> {
     /**
      * Retrieves a list of all Image Upload command ids
      *
-     * @returns A list of Guids
+     * @return A list of Guids
      */
     List<Guid> getAllIds();
 

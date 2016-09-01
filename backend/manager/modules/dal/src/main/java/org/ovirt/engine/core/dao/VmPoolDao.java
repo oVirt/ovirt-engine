@@ -9,8 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VmPoolDao</code> defines a type that performs CRUD operations on instances of {@link VmPool}.
- *
+ * {@code VmPoolDao} defines a type that performs CRUD operations on instances of {@link VmPool}.
  */
 public interface VmPoolDao extends Dao, SearchDao<VmPool> {
     /**

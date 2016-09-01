@@ -21,8 +21,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>StorageServerConnectionDaoImpl</code> provides an implementation of {@link StorageServerConnectionDao}
- * based on code from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code StorageServerConnectionDaoImpl} provides an implementation of {@link StorageServerConnectionDao}.
  */
 @Named
 @Singleton

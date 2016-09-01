@@ -6,9 +6,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>DbUserDao</code> defines a type for performing CRUD operations on instances of {@link DbUser}.
- *
- *
+ * {@code DbUserDao} defines a type for performing CRUD operations on instances of {@link DbUser}.
  */
 public interface DbUserDao extends Dao, SearchDao<DbUser> {
 
@@ -17,16 +15,16 @@ public interface DbUserDao extends Dao, SearchDao<DbUser> {
      *
      * @param id
      *            the id
-     * @return the user, or <code>null</code> if the id was invalid
+     * @return the user, or {@code null} if the id was invalid
      */
     DbUser get(Guid id);
 
     /**
-     * Retrieves the suser with the specified id.
+     * Retrieves the user with the specified id.
      *
      * @param id the id of user
      * @param isFiltered user level / admin level
-     * @return the user, or <code>null</code> if the id was invalid
+     * @return the user, or {@code null} if the id was invalid
      */
     DbUser get(Guid id, boolean isFiltered);
 
@@ -44,7 +42,7 @@ public interface DbUserDao extends Dao, SearchDao<DbUser> {
      *
      * @param domain the name of the domain
      * @param externalId the external identifier
-     * @return a reference to the user or <code>null</code> if no such user
+     * @return a reference to the user or {@code null} if no such user
      *   can be found in the database
      */
     DbUser getByExternalId(String domain, String externalId);
@@ -55,7 +53,7 @@ public interface DbUserDao extends Dao, SearchDao<DbUser> {
      * @param id the internal identifier
      * @param domain the name of the domain
      * @param externalId the external identifier
-     * @return a reference to the user or <code>null</code> if no such user
+     * @return a reference to the user or {@code null} if no such user
      *   can be found in the database
      */
     DbUser getByIdOrExternalId(Guid id, String domain, String externalId);

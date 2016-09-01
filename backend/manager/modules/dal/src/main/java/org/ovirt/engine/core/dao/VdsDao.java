@@ -10,9 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VdsDao</code> defines a type that performs CRUD operations on instances of {@link VDS}.
- *
- *
+ * {@code VdsDao} defines a type that performs CRUD operations on instances of {@link VDS}.
  */
 public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
     /**

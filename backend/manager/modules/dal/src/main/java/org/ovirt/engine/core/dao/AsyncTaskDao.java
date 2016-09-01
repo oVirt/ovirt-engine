@@ -8,9 +8,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>AsyncTaskDao</code> defines a type which performs CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.AsyncTask}.
- *
- *
+ * {@code AsyncTaskDao} defines a type which performs CRUD operations on instances of {@link AsyncTask}.
  */
 public interface AsyncTaskDao extends Dao {
     /**

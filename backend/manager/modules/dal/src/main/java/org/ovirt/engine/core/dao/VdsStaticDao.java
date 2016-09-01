@@ -6,9 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VdsStaticDao</code> defines a type that performs CRUD operations on instances of {@link VDS}.
- *
- *
+ * {@code VdsStaticDao} defines a type that performs CRUD operations on instances of {@link VdsStatic}.
  */
 public interface VdsStaticDao extends GenericDao<VdsStatic, Guid> {
     /**

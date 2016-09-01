@@ -451,7 +451,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with an existing storage domain
+     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid, long, boolean)} with an existing storage domain
      */
     @Test
     public void testGetRelevantQuotasExistingStorage() throws Exception {
@@ -460,7 +460,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with a storage domain with no specific quotas
+     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid, long, boolean)}} with a storage domain with no specific quotas
      */
     @Test
     public void testGetRelevantQuotasExistingStorageNoSpecificQuotas() throws Exception {
@@ -469,7 +469,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with a non existing storage domain
+     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid, long, boolean)}} with a non existing storage domain
      */
     @Test
     public void testGetRelevantQuotasNonExistingStorage() throws Exception {
@@ -478,7 +478,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Asserts that {@link #expectedQuotas} are relevant for the given {@link #storageId}
+     * Asserts that {@code expectedQuotas} are relevant for the given {@code storageId}
      */
     private void assertGetAllRelevantQuoatsForStorage(Guid storageId, int expectedQuotas) {
         assertNotNull(privilegedUserSession);
@@ -487,7 +487,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with an existing VDS Group
+     * Test getAllRelevantQuotasForStorage(Guid, long, boolean)} with an existing VDS Group
      */
     @Test
     public void testGetRelevantQuotasExistingCluster() throws Exception {
@@ -496,7 +496,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with a VDS Group domain with no specific quotas
+     * Test getAllRelevantQuotasForStorage(Guid, long, boolean)} with a VDS Group domain with no specific quotas
      */
     @Test
     public void testGetRelevantQuotasExistingClusterNoSpecificQuotas() throws Exception {
@@ -505,7 +505,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with a non existing VDS Group
+     * Test getAllRelevantQuotasForStorage(Guid, long, boolean)} with a non existing VDS Group
      */
     @Test
     public void testGetRelevantQuotasNonExistingCluster() throws Exception {
@@ -514,7 +514,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} fetching quota for user
+     * Test getAllRelevantQuotasForStorage(Guid, long, boolean)} fetching quota for user
      * without privileges for quota.
      */
     @Test
@@ -525,7 +525,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForCluster(Guid)} fetching quota for user
+     * Test {@link QuotaDao#getAllRelevantQuotasForCluster(Guid, long, boolean)} fetching quota for user
      * without privileges for quota.
      */
     @Test
@@ -538,7 +538,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Asserts that {@link #expectedQuotas} are relevant for the given {@link #clusterId}
+     * Asserts that {@code expectedQuotas} are relevant for the given {@code clusterId}
      */
     private void assertGetAllRelevantQuoatsForCluster(Guid clusterId, int expectedQuotas) {
         assertNotNull(privilegedUserSession);

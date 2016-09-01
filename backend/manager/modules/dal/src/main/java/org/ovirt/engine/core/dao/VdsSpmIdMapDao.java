@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VdsSpmIdMapDao</code> defines a type that performs CRUD operations on instances of {@link vds_spm_iso_map}.
+ * {@code VdsSpmIdMapDao} defines a type that performs CRUD operations on instances of {@link VdsSpmIdMap}.
  */
 public interface VdsSpmIdMapDao extends GenericDao<VdsSpmIdMap, Guid> {
     /**

@@ -8,9 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VdsDynamicDao</code> defines a type that performs CRUD operations on instances of {@link VdsDynamic}.
- *
- *
+ * {@code VdsDynamicDao} defines a type that performs CRUD operations on instances of {@link VdsDynamic}.
  */
 public interface VdsDynamicDao extends GenericDao<VdsDynamic, Guid>, StatusAwareDao<Guid, VDSStatus>, ExternalStatusAwareDao<Guid, ExternalStatus>, MassOperationsDao<VdsDynamic, Guid>, CheckedUpdate<VdsDynamic> {
 

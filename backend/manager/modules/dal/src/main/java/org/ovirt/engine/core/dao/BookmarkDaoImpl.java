@@ -12,8 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>BookmarkDaoImpl</code> provides a concrete implementation of <code>BookmarkDao</code> that uses
- * pre-existing code from <code>DbFacade</code>
+ * {@code BookmarkDaoImpl} provides a concrete implementation of {@link BookmarkDao}.
  */
 @Named
 @Singleton

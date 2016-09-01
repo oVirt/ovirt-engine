@@ -111,7 +111,8 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     }
 
     /**
-     * Asserts all the disk devices are present in a result of {@link VmDeviceDao#getVmDeviceByVmIdTypeAndDevice(Guid, String, String)}
+     * Asserts all the disk devices are present in a result of
+     * {@link VmDeviceDao#getVmDeviceByVmIdTypeAndDevice(Guid, VmDeviceGeneralType, String)}.
      * @param devices The result to check
      */
     private static void assertGetVMDeviceByIdTypeAndDeviceFullResult(List<VmDevice> devices) {
@@ -120,7 +121,8 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     }
 
     /**
-     * Asserts all the devices are present in a result of {@link VmDeviceDao#getVmDeviceByVmId(Guid, String, String)}
+     * Asserts all the devices are present in a result of
+     * {@link VmDeviceDao#getVmDeviceByVmIdTypeAndDevice(Guid, VmDeviceGeneralType, String)}.
      * @param devices The result to check
      */
     private static void assertGetVMDeviceByIdResult(List<VmDevice> devices) {

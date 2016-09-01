@@ -15,7 +15,7 @@ public interface ProviderDao extends GenericDao<Provider<?>, Guid>, SearchDao<Pr
      *
      * @param name
      *            The name of the provider.
-     * @return The provider, or <code>null</code> if not found.
+     * @return The provider, or {@code null} if not found.
      */
     Provider<?> getByName(String name);
 
@@ -24,7 +24,7 @@ public interface ProviderDao extends GenericDao<Provider<?>, Guid>, SearchDao<Pr
      *
      * @param providerTypes
      *            The types of the provider.
-     * @return All providers of that type, or <code>null</code> if none exist found.
+     * @return All providers of that type, or {@code null} if none exist found.
      */
     List<Provider<?>> getAllByTypes(ProviderType ... providerTypes);
 }

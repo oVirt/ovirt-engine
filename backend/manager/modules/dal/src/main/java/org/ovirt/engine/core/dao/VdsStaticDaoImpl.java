@@ -20,8 +20,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 /**
- * <code>VdsDaoImpl</code> provides an implementation of {@link VdsDao} that uses previously written code from
- * {@code DbFacade}.
+ * {@code VdsDaoImpl} provides an implementation of {@link VdsDao}.
  */
 @Named
 @Singleton

@@ -24,9 +24,8 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>VmTemplateDaoImpl</code> provides a concrete implementation of {@link VmTemplateDao}.
+ * {@code VmTemplateDaoImpl} provides a concrete implementation of {@link VmTemplateDao}.
  */
-
 @Named
 @Singleton
 public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTemplateDao {

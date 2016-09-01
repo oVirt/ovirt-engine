@@ -10,9 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>ActionGroupDaoImpl</code> provides a concrete implementation of {@link ActionGroupDao}.
- *
- * The initial implementation came from  {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code ActionGroupDaoImpl} provides a concrete implementation of {@link ActionGroupDao}.
  */
 @Named
 @Singleton

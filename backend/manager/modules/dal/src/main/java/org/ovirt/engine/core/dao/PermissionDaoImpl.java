@@ -16,8 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>PermissionsDaoImpl</code> provides a concrete implementation of {@link PermissionDao} using code from
- * DbFacade.
+ * {@code PermissionsDaoImpl} provides a concrete implementation of {@link PermissionDao}.
  */
 @Named
 @Singleton

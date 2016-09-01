@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 
 /**
- * <code>EngineSessionDao</code> defines a type which performs CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.EngineSession}.
+ * {@code EngineSessionDao} defines a type which performs CRUD operations on instances of {@link EngineSession}.
  */
 public interface EngineSessionDao extends Dao, SearchDao<EngineSession> {
     /**

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>LibvirtSecretDao</code> defines a type which performs CRUD operations on instances of {@link LibvirtSecret}.
+ * {@code LibvirtSecretDao} defines a type which performs CRUD operations on instances of {@link LibvirtSecret}.
  */
 public interface LibvirtSecretDao extends GenericDao<LibvirtSecret, Guid> {
 

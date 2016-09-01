@@ -6,10 +6,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerCon
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 
 /**
- * <code>StorageServerConnectionLunMapDao</code> defines a type that performs CRUD operations on instances of
- * {@link org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap}.
- *
- *
+ * {@code StorageServerConnectionLunMapDao} defines a type that performs CRUD operations on instances of
+ * {@link LUNStorageServerConnectionMap}.
  */
 public interface StorageServerConnectionLunMapDao extends GenericDao<LUNStorageServerConnectionMap, LUNStorageServerConnectionMapId> {
     /**

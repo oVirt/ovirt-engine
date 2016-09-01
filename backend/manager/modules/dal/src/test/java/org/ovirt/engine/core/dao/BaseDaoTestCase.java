@@ -38,9 +38,9 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * <code>BaseDaoTestCase</code> provides a foundation for creating unit tests for the persistence layer. The annotation
- * <code>@Transactional</code>, and the listener <code>TransactionalTestExecutionListener</code> ensure that all test
- * cases (<code>@Test</code> methods) are executed inside a transaction, and the transaction is automatically rolled
+ * {@code BaseDaoTestCase} provides a foundation for creating unit tests for the persistence layer. The annotation
+ * {@link Transactional}, and the listener {@link TransactionalTestExecutionListener} ensure that all test
+ * cases ({@link org.junit.Test} methods) are executed inside a transaction, and the transaction is automatically rolled
  * back on completion of the test.
  */
 @RunWith(SpringJUnit4ClassRunner.class)

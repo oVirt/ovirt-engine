@@ -7,8 +7,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Defines CRUD operations for job_subject_entity, the satellite table of Job.
- *
+ * Defines CRUD operations for {@code JobSubjectEntity}, the satellite table of {@code Job}.
  */
 public interface JobSubjectEntityDao extends Dao {
 

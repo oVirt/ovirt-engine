@@ -7,9 +7,7 @@ import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>RoleGroupMapDOA</code> defines a type for performing CRUD operations on instances of {@link RoleGroupMap}.
- *
- *
+ * {@code RoleGroupMapDao} defines a type for performing CRUD operations on instances of {@link RoleGroupMap}.
  */
 public interface RoleGroupMapDao extends Dao {
     /**

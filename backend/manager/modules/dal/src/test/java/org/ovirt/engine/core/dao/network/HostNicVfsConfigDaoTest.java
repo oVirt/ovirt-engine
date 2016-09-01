@@ -66,7 +66,7 @@ public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Ensures that retrieving a hostNicVfsConfig with <code>allNetworkAllowed=false</code> by id works as expected.
+     * Ensures that retrieving a hostNicVfsConfig with {@code allNetworkAllowed=false} by id works as expected.
      */
     @Test
     public void testGetByIdNotAllNetworksAllowed() {

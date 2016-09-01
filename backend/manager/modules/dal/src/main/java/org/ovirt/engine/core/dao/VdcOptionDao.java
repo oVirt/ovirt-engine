@@ -5,9 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 
 /**
- * <code>VdcOptionDao</code> defines a type for performing CRUD operations on instances of {@link VdcOption}.
- *
- *
+ * {@code VdcOptionDao} defines a type for performing CRUD operations on instances of {@link VdcOption}.
  */
 public interface VdcOptionDao extends Dao {
     /**

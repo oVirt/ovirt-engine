@@ -23,8 +23,7 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
- * <code>VmDaoImpl</code> provides a concrete implementation of {@link VmDao}. The functionality is code
- * refactored out of {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code VmDaoImpl} provides a concrete implementation of {@link VmDao}.
  */
 @Named
 @Singleton

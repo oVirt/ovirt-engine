@@ -5,9 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 /**
- * <code>LunDao</code> defines a type for performing CRUD operations on instances of {@link LUNs}.
- *
- *
+ * {@code LunDao} defines a type for performing CRUD operations on instances of {@link LUNs}.
  */
 public interface LunDao extends GenericDao<LUNs, String>, MassOperationsDao<LUNs, String> {
     /**

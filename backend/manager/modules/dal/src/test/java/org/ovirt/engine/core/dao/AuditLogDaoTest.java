@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>AuditLogDaoTest</code> performs tests against the {@link AuditLogDao} type.
+ * {@code AuditLogDaoTest} performs tests against the {@link AuditLogDao} type.
  */
 public class AuditLogDaoTest extends BaseDaoTestCase {
     private static final String VM_NAME = "rhel5-pool-50";

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>QuotaDao</code> is an interface for operations implements the calling to quota stored procedures. (@see
- * QuotaDaoImpl)
+ * {@code QuotaDao} is an interface for operations implements the calling to quota stored procedures
+ * ({@link QuotaDaoImpl}).
  */
 public interface QuotaDao extends Dao, SearchDao<Quota> {
 
@@ -60,12 +60,12 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public void update(Quota quota);
 
     /**
-     * Get specific limitation for <code>Cluster</code>.
+     * Get specific limitation for {@code Cluster}.
      *
      * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
-     *            - The <code>Quota</code> id
+     *            - The {@code Quota} id
      * @param allowEmpty
      *            - Whether to return empty quotas or not
      * @return List of QuotaStorage
@@ -73,12 +73,12 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public List<QuotaCluster> getQuotaClusterByClusterGuid(Guid clusterId, Guid quotaId, boolean allowEmpty);
 
     /**
-     * Get specific limitation for <code>Cluster</code>.
+     * Get specific limitation for {@code Cluster}.
      *
      * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
-     *            - The <code>Quota</code> id
+     *            - The {@code Quota} id
      * @return List of QuotaStorage
      */
     public List<QuotaCluster> getQuotaClusterByClusterGuid(Guid clusterId, Guid quotaId);
@@ -116,7 +116,7 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public List<QuotaStorage> getAllQuotaStorageIncludingConsumption();
 
     /**
-     * Get <code>Quota</code> by name.
+     * Get {@code Quota} by name.
      *
      * @param quotaName
      *            - The quota name to find.
@@ -127,7 +127,7 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public Quota getQuotaByQuotaName(String quotaName, Guid storagePoolId);
 
     /**
-     * Get list of <code>Quotas</code> which are consumed by ad element id in storage pool (if not storage pool id not
+     * Get list of {@code Quota}s which are consumed by ad element id in storage pool (if not storage pool id not
      * null).
      *
      * @param adElementId
@@ -146,7 +146,7 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     /**
      * Get all quota storages which belong to quota with quotaId.
      * In case no quota storages are returned, a fictitious {@link QuotaStorage} is returned,
-     * with an {@link Guid.Empty} Storage Id and a <code>null</code> name.
+     * with an {@link Guid#Empty} Storage Id and a {@code null} name.
      */
     public List<QuotaStorage> getQuotaStorageByQuotaGuidWithGeneralDefault(Guid quotaId);
 
@@ -166,7 +166,7 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     /**
      * Get all quota Vds groups, which belong to quota with quotaId.
      * In case no quota Vds Groups are returned, a fictitious QuotaCluster is returned,
-     * with an {@link Guid.Empty} Vds Id and a <code>null</code> name.
+     * with an {@link Guid#Empty} Vds Id and a {@code null} name.
      */
     public List<QuotaCluster> getQuotaClusterByQuotaGuidWithGeneralDefault(Guid quotaId);
 
@@ -182,7 +182,7 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public Quota getDefaultQuotaForStoragePool(Guid storagePoolId);
 
     /**
-     * Returns a list of all the quotas that are relevant to the given {@link #storageId} -
+     * Returns a list of all the quotas that are relevant to the given {@code storageId} -
      * be it specific quotas (i.e., defined directly on the storage) or
      * general (i.e., defined on the storage pool containing the storage).<br/>
      * <b>Note:</b> The quotas returned are <b>thin</b> objects, containing only the metadata of the quota,
@@ -191,7 +191,7 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public List<Quota> getAllRelevantQuotasForStorage(Guid storageId, long engineSessionSeqId, boolean isFiltered);
 
     /**
-     * Returns a list of all the quotas that are relevant to the given {@link #clusterId} -
+     * Returns a list of all the quotas that are relevant to the given {@code clusterId} -
      * be it specific quotas (i.e., defined directly on the VDS Group) or
      * general (i.e., defined on the storage pool containing the group).<br/>
      * <b>Note:</b> The quotas returned are <b>thin</b> objects, containing only the metadata of the quota,

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>BookmarkDaoTest</code> performs tests against the {@link BookmarkDao} type.
+ * {@code BookmarkDaoTest} performs tests against the {@link BookmarkDao} type.
  */
 public class BookmarkDaoTest extends BaseDaoTestCase {
     private static final int BOOKMARK_COUNT = 2;

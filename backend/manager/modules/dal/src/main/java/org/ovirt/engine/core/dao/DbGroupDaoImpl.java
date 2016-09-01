@@ -11,8 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * Provides a concrete implementation of {@link DbGroupDao} based on code from
- * {@link DbFacade}.
+ * Provides a concrete implementation of {@link DbGroupDao}.
  */
 @Named
 @Singleton

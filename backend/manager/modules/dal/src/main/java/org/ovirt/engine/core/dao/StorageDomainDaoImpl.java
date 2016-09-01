@@ -18,8 +18,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 /**
- * <code>StorageDomainDaoImpl</code> provides an implementation of {@link StorageDomainDao} based on code from
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code StorageDomainDaoImpl} provides an implementation of {@link StorageDomainDao}.
  */
 @Named
 @Singleton

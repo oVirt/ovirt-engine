@@ -16,7 +16,7 @@ public interface UnregisteredOVFDataDao extends Dao {
      *            The Entity Id.
      * @param storageDomainId
      *            The Storage Domain Id.
-     * @return The entity instance, or <code>null</code> if not found.
+     * @return The entity instance, or {@code null} if not found.
      */
     public List<OvfEntityData> getByEntityIdAndStorageDomain(Guid entityId, Guid storageDomainId);
 

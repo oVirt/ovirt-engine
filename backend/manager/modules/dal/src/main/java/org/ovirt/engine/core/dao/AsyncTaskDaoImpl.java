@@ -23,8 +23,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>AsyncTaskDaoImpl</code> provides an implementation of {@link AsyncTaskDao} using code refactored from
- * {@code DbFacade}.
+ * {@code AsyncTaskDaoImpl} provides an implementation of {@link AsyncTaskDao}.
  */
 @Named
 @Singleton

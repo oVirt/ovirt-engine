@@ -28,8 +28,7 @@ import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>DiskImageDaoImpl</code> provides an implementation of {@link DiskImageDao} that uses previously
- * developed code from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code DiskImageDaoImpl} provides an implementation of {@link DiskImageDao}.
  */
 @Named
 @Singleton

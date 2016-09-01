@@ -13,9 +13,7 @@ import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>EngineSessionDaoTest</code> performs tests against the {@link org.ovirt.engine.core.dao.EngineSessionDao} type.
- *
- *
+ * {@code EngineSessionDaoTest} performs tests against the {@link org.ovirt.engine.core.dao.EngineSessionDao} type.
  */
 public class EngineSessionDaoTest extends BaseDaoTestCase {
     private EngineSessionDao dao;

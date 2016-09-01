@@ -8,9 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>StoragePoolDao</code> defines a type for performing CRUD operations on instances of {@link StoragePool}.
- *
- *
+ * {@code StoragePoolDao} defines a type for performing CRUD operations on instances of {@link StoragePool}.
  */
 public interface StoragePoolDao extends GenericDao<StoragePool, Guid>, StatusAwareDao<Guid, StoragePoolStatus>, SearchDao<StoragePool> {
 

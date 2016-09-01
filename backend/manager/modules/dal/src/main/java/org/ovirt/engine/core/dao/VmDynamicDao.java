@@ -50,7 +50,7 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
     /**
      * Removes the specified dynamic vm.
      *
-     * @param vmDynamic
+     * @param vm
      *            the vm
      */
     @Override
@@ -71,8 +71,7 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * that allows reconnection to the console without rebooting the virtual machine.
      *
      * @param vm the dynamic data of the virtual machine
-     * @return <code>true</true> if at least one row was updated, <code>false</code>
-     *   otherwise
+     * @return {@code true} if at least one row was updated, {@code false} otherwise
      */
     boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm);
 

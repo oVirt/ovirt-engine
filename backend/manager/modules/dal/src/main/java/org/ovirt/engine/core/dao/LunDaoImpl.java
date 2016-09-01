@@ -10,8 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>LunDaoImpl</code> provides a concrete implementation of {@link LunDao}. The original code was
- * refactored from the {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
+ * {@code LunDaoImpl} provides a concrete implementation of {@link LunDao}.
  */
 @Named
 @Singleton

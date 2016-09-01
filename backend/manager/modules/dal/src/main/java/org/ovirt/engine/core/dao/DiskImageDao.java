@@ -7,9 +7,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>DiskImageDao</code> defines a type for performing CRUD operations on instances of {@link DiskImage}.
- *
- *
+ * {@code DiskImageDao} defines a type for performing CRUD operations on instances of {@link DiskImage}.
  */
 public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
 

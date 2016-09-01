@@ -9,10 +9,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>StorageServerConnectionDao</code> defines a type that performs CRUD operations on instances of
+ * {@code StorageServerConnectionDao} defines a type that performs CRUD operations on instances of
  * {@link StorageServerConnections}.
- *
- *
  */
 public interface StorageServerConnectionDao extends GenericDao<StorageServerConnections, String> {
 

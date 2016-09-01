@@ -8,9 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>PermissionsDao</code> defines a type for performing CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.Permission}.
- *
- *
+ * {@code PermissionsDao} defines a type for performing CRUD operations on instances of {@link Permission}.
  */
 public interface PermissionDao extends GenericDao<Permission, Guid> {
     /**

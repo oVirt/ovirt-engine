@@ -496,7 +496,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     /**
      * Tests {@link PermissionDao#getTreeForEntity(Guid, VdcObjectType)}
      * @param entityID The object to retrieve tree for
-     * @param objectType The type of {@link #entityID}
+     * @param objectType The type of {@code entityID}
      * @param alternativeObjectIds Additional object IDs that are allowed in the resulting permissions
      */
     private void baseTestGetTreeForEntity(Guid entityID, VdcObjectType objectType, Guid... alternativeObjectIds) {
@@ -508,8 +508,8 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     /**
      * Tests {@link PermissionDao#getTreeForEntity(Guid, VdcObjectType, long, boolean)}
      * @param entityID The object to retrieve tree for
-     * @param objectType The type of {@link #entityID}
-     * @param userID The user to use
+     * @param objectType The type of {@code entityID}
+     * @param sessionId The session to use
      * @param isFiltered are the results filtered or not
      * @param alternativeObjectIds Additional object IDs that are allowed in the resulting permissions
      */
@@ -526,7 +526,6 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     /**
      * asserts the result of a call to {@link PermissionDao#getTreeForEntity(Guid, VdcObjectType)}
      * @param entityID The object to retrieve tree for
-     * @param objectType The type of {@link #entityID}
      * @param alternativeObjectIds Additional object IDs that are allowed in the resulting permissions
      */
     protected void assertGetTreeForEntityResult(Guid entityID, List<Permission> result, Guid... alternativeObjectIds) {

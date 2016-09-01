@@ -11,10 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>StorageServerConnectionLunMapDaoImpl</code> provides an implementation of {@link org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap}
- * based on code from {@link DbFacade}.
- *
- *
+ * {@code StorageServerConnectionLunMapDaoImpl} provides an implementation of {@link StorageServerConnectionLunMapDao}.
  */
 @Named
 @Singleton

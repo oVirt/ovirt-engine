@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
@@ -17,15 +14,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * JDBC-Template Dao for business entity snapshots
- *
  */
 @Named
 @Singleton
 public class BusinessEntitySnapshotDaoImpl extends BaseDao implements BusinessEntitySnapshotDao {
-
-    /**
-     *
-     */
     public BusinessEntitySnapshotDaoImpl() {
     }
 

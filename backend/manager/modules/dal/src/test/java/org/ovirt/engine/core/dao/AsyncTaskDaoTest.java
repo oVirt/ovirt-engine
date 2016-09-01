@@ -24,9 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 /**
- * <code>AsyncTaskDaoTest</code> performs tests against the {@link AsyncTaskDao} type.
- *
- *
+ * {@code AsyncTaskDaoTest} performs tests against the {@link AsyncTaskDao} type.
  */
 public class AsyncTaskDaoTest extends BaseDaoTestCase {
     private static final int TASK_COUNT = 2;

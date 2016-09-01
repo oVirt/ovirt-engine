@@ -13,10 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 
 /**
- * <code>VdsDaoImpl</code> provides an implementation of {@link VdsDao} that uses previously written code from
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
- *
- *
+ * {@code VdsStatisticsDaoImpl} provides an implementation of {@link VdsStatisticsDao}.
  */
 @Named
 @Singleton

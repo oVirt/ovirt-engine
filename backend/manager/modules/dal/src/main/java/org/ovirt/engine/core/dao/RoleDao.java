@@ -6,9 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>RoleDao</code> defines a type for performing CRUD operations on instances of {@link Role}.
- *
- *
+ * {@code RoleDao} defines a type for performing CRUD operations on instances of {@link Role}.
  */
 public interface RoleDao extends GenericDao<Role, Guid> {
 

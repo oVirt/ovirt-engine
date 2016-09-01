@@ -12,8 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>EventSubscriberDaoImpl</code> provides an implementation of {@link EventSubscriberDao} that uses the
- * refactored {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} code.
+ * {@code EventDaoImpl} provides an implementation of {@link EventDao}.
  */
 @Named
 @Singleton

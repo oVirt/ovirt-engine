@@ -20,8 +20,8 @@ public interface ReadDao<T extends BusinessEntity<ID>, ID extends Serializable> 
      * Retrieves the entity with the given id.
      *
      * @param id
-     *            The id to look by (can't be <code>null</code>).
-     * @return The entity instance, or <code>null</code> if not found.
+     *            The id to look by (can't be {@code null}).
+     * @return The entity instance, or {@code null} if not found.
      */
     public T get(ID id);
 

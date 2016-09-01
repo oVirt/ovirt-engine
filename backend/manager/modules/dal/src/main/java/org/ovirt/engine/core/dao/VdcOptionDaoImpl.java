@@ -10,8 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>VdcOptionDaoImpl</code> provides a concrete implementation of {@link VdcOptionDao} using code
- * refactored from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
+ * {@code VdcOptionDaoImpl} provides a concrete implementation of {@link VdcOptionDao}.
  */
 @Named
 @Singleton

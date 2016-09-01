@@ -14,9 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 /**
- * <code>DBUserDaoImpl</code> provides an implementation of {@link DbUserDao} with the previously developed
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade.DbFacade} code.
- *
+ * {@code DBUserDaoImpl} provides an implementation of {@link DbUserDao}.
  */
 @Named
 @Singleton

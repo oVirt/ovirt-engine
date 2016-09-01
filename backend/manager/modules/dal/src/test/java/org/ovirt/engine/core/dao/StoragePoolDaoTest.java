@@ -106,7 +106,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Asserts the result of {@link StoragePoolDao#get(Guid)} is correct
+     * Asserts the result of {@link StoragePoolDao#get(Guid, Guid, boolean)} is correct
      * @param result The result to check
      */
     private void assertGetResult(StoragePool result) {

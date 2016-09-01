@@ -19,8 +19,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>TagDaoImpl</code> provides an implementation of {@link TagDao} that uses code refactored from the
- * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
+ * {@code TagDaoImpl} provides an implementation of {@link TagDao}.
  */
 @Named
 @Singleton

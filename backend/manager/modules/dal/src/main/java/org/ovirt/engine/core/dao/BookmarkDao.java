@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>BookmarkDao</code> defines a type for performing CRUD operations on instances of <code>bookmarks</code>.
+ * {@code BookmarkDao} defines a type for performing CRUD operations on instances of {@link Bookmark}.
  */
 public interface BookmarkDao extends Dao {
     /**
@@ -21,7 +21,7 @@ public interface BookmarkDao extends Dao {
      *
      * @param name
      *            the bookmark name
-     * @return the bookmark, or <code>null</code> if no such bookmark is present
+     * @return the bookmark, or {@code null} if no such bookmark is present
      */
     Bookmark getByName(String name);
 

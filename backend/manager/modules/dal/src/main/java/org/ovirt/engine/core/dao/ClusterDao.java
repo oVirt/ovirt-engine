@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>ClusterDao</code> defines a type that performs CRUD operations on instances of {@link Cluster}.
+ * {@code ClusterDao} defines a type that performs CRUD operations on instances of {@link Cluster}.
  */
 public interface ClusterDao extends Dao, SearchDao<Cluster> {
     /**

@@ -21,15 +21,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 /**
- * <code>QuotaDaoImpl</code> implements the calling to quota stored procedures (@see QuotaDao).
+ * {@code QuotaDaoImpl} implements the calling to quota stored procedures ({@link QuotaDao}).
  */
 @Named
 @Singleton
 public class QuotaDaoImpl extends BaseDao implements QuotaDao {
 
     /**
-     * Save <code>Quota</code> entity with specific <code>Quota</code> storage and <code>Quota</code> cluster
-     * limitation list.
+     * Save {@code Quota} entity with specific {@code Quota} storage and {@code Quota} cluster limitation list.
      */
     @Override
     public void save(Quota quota) {
@@ -39,7 +38,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Get <code>Quota</code> by name.
+     * Get {@code Quota} by name.
      *
      * @param quotaName
      *            - The quota name to find.
@@ -56,14 +55,14 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Get list of <code>Quotas</code> which are consumed by ad element id in storage pool (if not storage pool id not
+     * Get list of {@code Quota}s which are consumed by ad element id in storage pool (if not storage pool id not
      * null).
      *
      * @param adElementId
      *            - The user ID or group ID.
      * @param storagePoolId
      *            - The storage pool Id to search the quotas in (If null search all over the setup).
-     *            @param recursive
+     * @param recursive
      *            - Find by
      * @return All quotas for user.
      */
@@ -79,12 +78,12 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Get specific limitation for <code>Cluster</code>.
+     * Get specific limitation for {@code Cluster}.
      *
      * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
-     *            - The <code>Quota</code> id
+     *            - The {@code Quota} id
      * @return List of QuotaStorage
      */
     @Override
@@ -93,12 +92,12 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Get specific limitation for <code>Cluster</code>.
+     * Get specific limitation for {@code Cluster}.
      *
      * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
-     *            - The <code>Quota</code> id
+     *            - The {@code Quota} id
      * @param allowEmpty
      *            - Whether to return empty quotas or not
      * @return List of QuotaStorage
@@ -180,7 +179,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Get full <code>Quota</code> entity.
+     * Get full {@code Quota} entity.
      */
     @Override
     public Quota getById(Guid quotaId) {
@@ -302,7 +301,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     /**
      * Get all quota Vds groups, which belong to quota with quotaId.
      * In case no quota Vds Groups are returned, a fictitious QuotaCluster is returned,
-     * with an {@link Guid#Empty} Vds Id and a <code>null</code> name.
+     * with an {@link Guid#Empty} Vds Id and a {@code null} name.
      */
     @Override
     public List<QuotaCluster> getQuotaClusterByQuotaGuidWithGeneralDefault(Guid quotaId) {
@@ -341,7 +340,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Update <Code>quota</Code>, by updating the quota meta data and remove all its limitations and add the limitations
+     * Update {@code Quota}, by updating the quota meta data and remove all its limitations and add the limitations
      * from the quota parameter.
      */
     @Override
@@ -472,13 +471,13 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
 
     /**
      * Build quota vds group parameter map, for quota limitation table, to indicate specific limitation on specific
-     * <code>Cluster</code>.
+     * {@code Cluster}.
      *
      * @param quotaId
-     *            - The global quota id which the <code>Cluster</code> is referencing to
+     *            - The global quota id which the {@code Cluster} is referencing to
      * @param quotaCluster
      *            - The business entity which reflects the limitation on the specific cluster.
-     * @return - <code>Cluster</code> Parameter Map
+     * @return - {@code Cluster} Parameter Map
      */
     private MapSqlParameterSource getQuotaClusterParameterMap(Guid quotaId, QuotaCluster quotaCluster) {
         return createQuotaIdParameterMapper(quotaCluster.getQuotaClusterId()).addValue("quota_id", quotaId)
@@ -490,7 +489,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Build parameter map, for quota limitation table, to indicate global limitation on <code>StoragePool</code>.
+     * Build parameter map, for quota limitation table, to indicate global limitation on {@code StoragePool}.
      *
      * @param quota
      *            - The global quota.

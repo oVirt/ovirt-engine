@@ -134,7 +134,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
 
     /**
      * Make sure that saving a new console user id and console user name to a virtual machine
-     * without a previous console user succeeds and returns <code>true</code>.
+     * without a previous console user succeeds and returns {@code true}.
      */
     @Test
     public void testUpdateConsoleUserWithOptimisticLockingSuccess() throws Exception {
@@ -148,7 +148,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
 
     /**
      * Make sure that saving a new console user id and console user name to a virtual machine
-     * that already as a previous console user fails and returns <code>false</code>.
+     * that already as a previous console user fails and returns {@code false}.
      */
     @Test
     public void testUpdateConsoleUserWithOptimisticLockingFailure() throws Exception {
