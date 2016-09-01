@@ -107,7 +107,7 @@ public class ExecutionMessageDirector {
             Class<T> enumClass,
             int prefixLength) {
 
-        T enumKey = null;
+        T enumKey;
 
         try {
             enumKey = T.valueOf(enumClass, key.substring(prefixLength));
