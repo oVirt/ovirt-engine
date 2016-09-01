@@ -267,12 +267,6 @@ public class GlusterGeoRepDaoImpl extends MassOperationsGenericDao<GlusterGeoRep
         getCallsHandler().executeModification("DeleteGlusterGeoRepSession", getCustomMapSqlParameterSource().addValue("session_id", sessonId));
     }
 
-    public void updateSessionStatus(GlusterGeoRepSession geoRepSession) {
-        getCallsHandler().executeModification("UpdateGlusterGeoRepSessionStatus",
-                createIdParameterMapper(geoRepSession.getId())
-                .addValue("status", EnumUtils.nameOrNull(geoRepSession.getStatus())));
-    }
-
     @Override
     public void updateDetails(GlusterGeoRepSessionDetails geoRepSessionDetails) {
         getCallsHandler().executeModification("UpdateGlusterGeoRepSessionDetail",

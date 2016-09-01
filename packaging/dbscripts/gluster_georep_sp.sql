@@ -238,19 +238,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSessionStatus (
-    v_session_id UUID,
-    v_status VARCHAR(50)
-    )
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    UPDATE gluster_georep_session
-    SET status = v_status,
-        _update_date = LOCALTIMESTAMP
-    WHERE session_id = v_session_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSession (
     v_session_id UUID,
     v_status VARCHAR(50),
