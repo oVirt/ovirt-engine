@@ -76,7 +76,7 @@ public abstract class BaseDao {
      * @param resultSet the ResultSet to extract the result from
      * @return a Double or null
      */
-    public static final Double getDouble(ResultSet resultSet, String columnName) throws SQLException {
+    public static Double getDouble(ResultSet resultSet, String columnName) throws SQLException {
         if (resultSet.getDouble(columnName) == 0 && resultSet.wasNull()) {
             return null;
         } else {
@@ -89,7 +89,7 @@ public abstract class BaseDao {
      * @param resultSet the ResultSet to extract the result from
      * @return a Long or null
      */
-    public static final Long getLong(ResultSet resultSet, String columnName) throws SQLException {
+    public static Long getLong(ResultSet resultSet, String columnName) throws SQLException {
         if (resultSet.getLong(columnName) == 0 && resultSet.wasNull()) {
             return null;
         } else {
@@ -102,7 +102,7 @@ public abstract class BaseDao {
      * @param resultSet the ResultSet to extract the result from
      * @return a Integer or null
      */
-    protected static final Integer getInteger(ResultSet resultSet, String columnName) throws SQLException {
+    protected static Integer getInteger(ResultSet resultSet, String columnName) throws SQLException {
         Integer value = resultSet.getInt(columnName);
         return resultSet.wasNull() ? null : value;
     }
