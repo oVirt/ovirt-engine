@@ -172,24 +172,12 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
                         .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
                                 ImageFileType.Floppy);
 
-        long minLastRefreshed = 9999999999999L;
-        for (RepoImage fileMD : listOfFloppyFiles) {
-            long fileLastRefreshed = fileMD.getLastRefreshed();
-            if (fileLastRefreshed < minLastRefreshed) {
-                minLastRefreshed = fileLastRefreshed;
-            }
-        }
+        final long minLastRefreshed =
+                listOfFloppyFiles.stream().mapToLong(RepoImage::getLastRefreshed).min().orElse(9999999999999L);
 
         // Check if fetched the oldest file when fetching all repository files.
-        boolean isValid = true;
-        for (RepoImage fileMetaData : listOfIsoFiles) {
-            if (fileMetaData.getFileType() == ImageFileType.Floppy) {
-                if (fileMetaData.getLastRefreshed() > minLastRefreshed) {
-                    isValid = false;
-                }
-            }
-        }
-        assertTrue(isValid);
+        assertTrue(listOfIsoFiles.stream()
+                .noneMatch(f -> f.getFileType() == ImageFileType.Floppy && f.getLastRefreshed() > minLastRefreshed));
     }
 
     /**

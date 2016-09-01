@@ -27,33 +27,24 @@ public class DaoCdiIntegrationTest {
     @Test
     public void testSingletonDaoAnnotationPresent() {
 
-        for (Class daoClass : daoClasses) {
-            if (isConcreteClass(daoClass)) {
+        daoClasses.stream().filter(this::isConcreteClass).forEach(daoClass ->
                 assertTrue("A concrete DAO class has to be annotated with @Singleton: " + daoClass.getCanonicalName(),
-                        daoClass.isAnnotationPresent(Singleton.class));
-            }
-        }
+                    daoClass.isAnnotationPresent(Singleton.class)));
     }
 
     @Test
     public void testSingletonDaoAnnotationNotPresentOnAbstractClass() {
-        for (Class daoClass : daoClasses) {
-            if (isAbstractClass(daoClass)) {
-                assertFalse("An abstract DAO class cannot be annotated with @Singleton: " + daoClass.getCanonicalName(),
-                        daoClass.isAnnotationPresent(Singleton.class));
-            }
-        }
+        daoClasses.stream().filter(this::isAbstractClass).forEach(daoClass ->
+            assertFalse("An abstract DAO class cannot be annotated with @Singleton: " + daoClass.getCanonicalName(),
+                    daoClass.isAnnotationPresent(Singleton.class)));
     }
 
     @Test
     public void testSingletonDaoAnnotationNotPresentOnParametrizedClass() {
-        for (Class daoClass : daoClasses) {
-            if (isParametrizedClass(daoClass)) {
-                assertFalse(
-                        "A parametrized DAO class cannot be annotated with @Singleton: " + daoClass.getCanonicalName(),
-                        daoClass.isAnnotationPresent(Singleton.class));
-            }
-        }
+        daoClasses.stream().filter(this::isParametrizedClass).forEach(daoClass ->
+            assertFalse(
+                    "A parametrized DAO class cannot be annotated with @Singleton: " + daoClass.getCanonicalName(),
+                    daoClass.isAnnotationPresent(Singleton.class)));
     }
 
     private boolean isParametrizedClass(Class clazz) {

@@ -13,6 +13,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.BeforeClass;
@@ -346,10 +348,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
     public void testGetAllForStoragePoolAndStatusesForAllStatuses() {
         prepareHostWithDifferentStatus();
         List<VDS> result = dao.getAllForStoragePoolAndStatuses(existingVds.getStoragePoolId(), null);
-        EnumSet<VDSStatus> statuses = EnumSet.noneOf(VDSStatus.class);
-        for (VDS vds : result) {
-            statuses.add(vds.getStatus());
-        }
+        Set<VDSStatus> statuses = result.stream().map(VDS::getStatus).collect(Collectors.toSet());
         assertCorrectGetAllResult(result);
         assertTrue("more than one different status expected", statuses.size() > 1);
     }

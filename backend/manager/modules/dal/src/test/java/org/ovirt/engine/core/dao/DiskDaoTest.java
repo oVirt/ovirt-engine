@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
@@ -230,10 +232,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         Set<Guid> expectedFloatingDiskIds =
                 new HashSet<>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID,
                         FixturesTool.FLOATING_CINDER_DISK_ID));
-        Set<Guid> actualFloatingDiskIds = new HashSet<>();
-        for (Disk disk : disks) {
-            actualFloatingDiskIds.add(disk.getId());
-        }
+        Set<Guid> actualFloatingDiskIds = disks.stream().map(BaseDisk::getId).collect(Collectors.toSet());
         assertEquals("Wrong attachable disks", expectedFloatingDiskIds, actualFloatingDiskIds);
     }
 }

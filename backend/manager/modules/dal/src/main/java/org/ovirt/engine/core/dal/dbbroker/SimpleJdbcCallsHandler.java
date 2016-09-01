@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -67,11 +67,7 @@ public class SimpleJdbcCallsHandler {
     public <T> void executeStoredProcAsBatch(final String procedureName,
             Collection<T> paramValues,
             MapSqlParameterMapper<T> mapper) {
-        List<MapSqlParameterSource> sqlParams = new ArrayList<>();
-
-        for (T param : paramValues) {
-            sqlParams.add(mapper.map(param));
-        }
+        List<MapSqlParameterSource> sqlParams = paramValues.stream().map(mapper::map).collect(Collectors.toList());
 
         executeStoredProcAsBatch(procedureName, sqlParams);
     }

@@ -44,9 +44,7 @@ public class GlusterVolumeSnapshotDaoImpl extends MassOperationsGenericDao<Glust
 
     @Override
     public void saveAll(List<GlusterVolumeSnapshotEntity> snapshots) {
-        for (GlusterVolumeSnapshotEntity entity : snapshots) {
-            save(entity);
-        }
+        snapshots.forEach(this::save);
     }
 
     @Override

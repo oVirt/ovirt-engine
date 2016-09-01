@@ -2,11 +2,11 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -136,14 +136,8 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public List<Network> getAllByLabelForCluster(String label, Guid clusterId) {
         List<Network> networksInCluster = getAllForCluster(clusterId);
-        List<Network> labeledNetworks = new ArrayList<>();
-        for (Network network : networksInCluster) {
-            if (StringUtils.equals(network.getLabel(), label)) {
-                labeledNetworks.add(network);
-            }
-        }
-
-        return labeledNetworks;
+        return networksInCluster.stream()
+                .filter(network -> StringUtils.equals(network.getLabel(), label)).collect(Collectors.toList());
     }
 
     @Override

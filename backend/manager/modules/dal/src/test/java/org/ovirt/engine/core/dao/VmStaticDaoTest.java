@@ -6,12 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -490,28 +492,16 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      * Converts a list of vmStatics to a list if Guids
      */
     private static List<Guid> getListOfGuidFromListOfVmStatics(List<VmStatic> vmStatics) {
-        List<Guid> listOfGuidToReturn = new ArrayList<>();
-        for (VmStatic vmStatic : vmStatics) {
-            listOfGuidToReturn.add(vmStatic.getId());
-        }
-        return listOfGuidToReturn;
+        return vmStatics.stream().map(VmBase::getId).collect(Collectors.toList());
     }
 
     /**
      * Compares between the two given guid arrays, returns true if they are equal and false otherwise
      */
     private static boolean compareGuidArrays(Guid[] guidsArrayToBeChecked, VmStatic[] vmStaticArrayInDescOrder) {
-        boolean returnValue = true;
-        if (guidsArrayToBeChecked.length == vmStaticArrayInDescOrder.length) {
-            for (int i = 0; i < guidsArrayToBeChecked.length; i++) {
-                if (!guidsArrayToBeChecked[i].equals(vmStaticArrayInDescOrder[i].getId())) {
-                    returnValue = false;
-                    break;
-                }
-            }
-        }
-
-        return returnValue;
+        return guidsArrayToBeChecked.length == vmStaticArrayInDescOrder.length &&
+                IntStream.range(0, guidsArrayToBeChecked.length)
+                        .allMatch(i -> guidsArrayToBeChecked[i].equals(vmStaticArrayInDescOrder[i].getId()));
     }
 
     @Test

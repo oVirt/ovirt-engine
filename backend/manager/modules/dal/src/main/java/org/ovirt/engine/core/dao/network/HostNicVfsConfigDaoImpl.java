@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.dao.network;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -111,10 +111,8 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     }
 
     private void massNetworksUpdate(Guid vfsConfigId, Set<Guid> networks) {
-        List<MapSqlParameterSource> executions = new ArrayList<>(networks.size());
-        for (Guid networkId : networks) {
-            executions.add(createNetworkParametersMapper(vfsConfigId, networkId));
-        }
+        List<MapSqlParameterSource> executions = networks.stream()
+                .map(networkId -> createNetworkParametersMapper(vfsConfigId, networkId)).collect(Collectors.toList());
 
         getCallsHandler().executeStoredProcAsBatch("InsertVfsConfigNetwork", executions);
     }
@@ -150,10 +148,8 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     }
 
     private void massLabelsUpdate(Guid vfsConfigId, Set<String> labels) {
-        List<MapSqlParameterSource> executions = new ArrayList<>(labels.size());
-        for (String label : labels) {
-            executions.add(createLabelParametersMapper(vfsConfigId, label));
-        }
+        List<MapSqlParameterSource> executions =
+                labels.stream().map(l -> createLabelParametersMapper(vfsConfigId, l)).collect(Collectors.toList());
 
         getCallsHandler().executeStoredProcAsBatch("InsertVfsConfigLabel", executions);
     }

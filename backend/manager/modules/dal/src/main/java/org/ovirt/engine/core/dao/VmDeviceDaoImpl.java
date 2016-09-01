@@ -202,9 +202,7 @@ public class VmDeviceDaoImpl extends
 
     @Override
     public void removeAll(List<VmDeviceId> removedDeviceIds) {
-        for (VmDeviceId vmDeviceId : removedDeviceIds) {
-            remove(vmDeviceId);
-        }
+        removedDeviceIds.forEach(this::remove);
     }
 
     @Override
@@ -216,9 +214,7 @@ public class VmDeviceDaoImpl extends
 
     @Override
     public void saveAll(List<VmDevice> newVmDevices) {
-        for (VmDevice vmDevice : newVmDevices) {
-            save(vmDevice);
-        }
+        newVmDevices.forEach(this::save);
     }
 
     @Override

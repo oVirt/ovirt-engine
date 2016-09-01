@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.KeyValue;
 import org.junit.Before;
@@ -72,10 +73,7 @@ public class BusinessEntitySnapshotDaoTest extends BaseDaoTestCase {
         Set<Guid> expectedSet = new HashSet<>();
         expectedSet.add(commandWithOneSnapshotId);
         expectedSet.add(commandWithTwoSnapshotsId);
-        Set<Guid> resultSet = new HashSet<>();
-        for (KeyValue snapshot : snapshots) {
-            resultSet.add((Guid)snapshot.getKey());
-        }
+        Set<Guid> resultSet = snapshots.stream().map(snapshot -> (Guid) snapshot.getKey()).collect(Collectors.toSet());
         assertEquals(expectedSet, resultSet);
     }
 

@@ -3,11 +3,11 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -141,14 +141,9 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
     }
 
     public List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids) {
-        // Constructing an IN clause of SQL that contains a list of GUIDs
-        // The in clause looks like ('guid1','guid2','guid3')
-        StringBuilder guidsSb = new StringBuilder();
-        guidsSb.append("'").append(StringUtils.join(guids, "','")).append("'");
-
         return getCallsHandler().executeReadList("GetOrderedVmGuidsForRunMultipleActions", createGuidMapper()
-                , getCustomMapSqlParameterSource().addValue("vm_guids", guidsSb
-                .toString()));
+                , getCustomMapSqlParameterSource().addValue("vm_guids",
+                        guids.stream().map(s -> "'" + s + "'").collect(Collectors.joining(","))));
     }
 
     @Override

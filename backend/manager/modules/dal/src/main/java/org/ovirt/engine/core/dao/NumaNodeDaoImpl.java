@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -23,13 +24,15 @@ public abstract class NumaNodeDaoImpl<T extends VdsNumaNode> extends BaseDao imp
             numaNodeExecutions.add(createNumaNodeParametersMapper(node)
                     .addValue("vds_id", vdsId)
                     .addValue("vm_id", vmId));
-            for (Integer cpuId : node.getCpuIds()) {
-                numaNodeCpusExecutions.add(createNumaNodeCpusParametersMapper(node, cpuId));
-            }
+            numaNodeCpusExecutions.addAll(node.getCpuIds()
+                            .stream()
+                            .map(cpuId -> createNumaNodeCpusParametersMapper(node, cpuId))
+                            .collect(Collectors.toList()));
             if (node instanceof VmNumaNode) {
-                for (Pair<Guid, Pair<Boolean, Integer>> pair : ((VmNumaNode)node).getVdsNumaNodeList()) {
-                    vNodeToPnodeExecutions.add(createVnodeToPnodeParametersMapper(pair, node.getId()));
-                }
+                vNodeToPnodeExecutions.addAll(((VmNumaNode) node).getVdsNumaNodeList()
+                        .stream()
+                        .map(pair -> createVnodeToPnodeParametersMapper(pair, node.getId()))
+                        .collect(Collectors.toList()));
             }
         }
 
@@ -42,10 +45,8 @@ public abstract class NumaNodeDaoImpl<T extends VdsNumaNode> extends BaseDao imp
 
     @Override
     public void massUpdateNumaNodeStatistics(List<T> numaNodes) {
-        List<MapSqlParameterSource> executions = new ArrayList<>(numaNodes.size());
-        for (VdsNumaNode node : numaNodes) {
-            executions.add(createNumaNodeStatisticsParametersMapper(node));
-        }
+        List<MapSqlParameterSource> executions =
+                numaNodes.stream().map(this::createNumaNodeStatisticsParametersMapper).collect(Collectors.toList());
 
         getCallsHandler().executeStoredProcAsBatch("UpdateNumaNodeStatistics", executions);
     }
@@ -60,14 +61,16 @@ public abstract class NumaNodeDaoImpl<T extends VdsNumaNode> extends BaseDao imp
         for (VdsNumaNode node : numaNodes) {
             executions.add(createNumaNodeParametersMapper(node));
             vdsCpuDeletions.add(getCustomMapSqlParameterSource().addValue("numa_node_id", node.getId()));
-            for (Integer cpuId : node.getCpuIds()) {
-                vdsCpuInsertions.add(createNumaNodeCpusParametersMapper(node, cpuId));
-            }
+            vdsCpuInsertions.addAll(node.getCpuIds()
+                    .stream()
+                    .map(cpuId -> createNumaNodeCpusParametersMapper(node, cpuId))
+                    .collect(Collectors.toList()));
             if (node instanceof VmNumaNode) {
                 vNodeToPnodeDeletions.add(getCustomMapSqlParameterSource().addValue("vm_numa_node_id", node.getId()));
-                for (Pair<Guid, Pair<Boolean, Integer>> pair : ((VmNumaNode)node).getVdsNumaNodeList()) {
-                    vNodeToPnodeInsertions.add(createVnodeToPnodeParametersMapper(pair, node.getId()));
-                }
+                vNodeToPnodeInsertions.addAll(((VmNumaNode) node).getVdsNumaNodeList()
+                        .stream()
+                        .map(pair -> createVnodeToPnodeParametersMapper(pair, node.getId()))
+                        .collect(Collectors.toList()));
             }
         }
         getCallsHandler().executeStoredProcAsBatch("UpdateNumaNode", executions);
@@ -83,10 +86,10 @@ public abstract class NumaNodeDaoImpl<T extends VdsNumaNode> extends BaseDao imp
 
     @Override
     public void massRemoveNumaNodeByNumaNodeId(List<Guid> numaNodeIds) {
-        List<MapSqlParameterSource> executions = new ArrayList<>(numaNodeIds.size());
-        for (Guid id : numaNodeIds) {
-            executions.add(getCustomMapSqlParameterSource().addValue("numa_node_id", id));
-        }
+        List<MapSqlParameterSource> executions = numaNodeIds
+                .stream()
+                .map(id -> getCustomMapSqlParameterSource().addValue("numa_node_id", id))
+                .collect(Collectors.toList());
         getCallsHandler().executeStoredProcAsBatch("DeleteNumaNode", executions);
     }
 

@@ -329,19 +329,12 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     }
 
 
-    private int getAlertCount(AuditLog entry, List<AuditLog> results) {
-        int count = 0;
-        if (results != null) {
-            for (AuditLog al : results) {
-                if (al.getSeverity() == entry.getSeverity()
-                        && al.getVdsId() != null
-                        && al.getVdsId().equals(entry.getVdsId())
-                        && al.getLogType() == entry.getLogType()) {
-                    count++;
-                }
-            }
-        }
-        return count;
+    private long getAlertCount(AuditLog entry, List<AuditLog> results) {
+        return results.stream()
+                .filter(a -> a.getSeverity() == entry.getSeverity() &&
+                        entry.getVdsId().equals(a.getVdsId()) &&
+                        a.getLogType() == entry.getLogType())
+                .count();
     }
 
     /**
@@ -355,19 +348,19 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         entry.setMessage("Testing alert");
 
         // test if no alert of the same type for the same host exists
-        assertEquals(0, getAlertCount(entry, dao.getAll(null, false)));
+        assertEquals(0L, getAlertCount(entry, dao.getAll(null, false)));
 
         dao.save(entry);
 
         // test if 1st alert was stored in db
-        assertEquals(1, getAlertCount(entry, dao.getAll(null, false)));
+        assertEquals(1L, getAlertCount(entry, dao.getAll(null, false)));
 
         // try to store 2nd alert in db
         entry.setLogTime(new Date());
         dao.save(entry);
 
         // test if 2nd alert was ignored
-        assertEquals(1, getAlertCount(entry, dao.getAll(null, false)));
+        assertEquals(1L, getAlertCount(entry, dao.getAll(null, false)));
     }
 
     /**
@@ -382,19 +375,19 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         entry.setRepeatable(true);
 
         // test if no alert of the same type for the same host exists
-        assertEquals(0, getAlertCount(entry, dao.getAll(null, false)));
+        assertEquals(0L, getAlertCount(entry, dao.getAll(null, false)));
 
         dao.save(entry);
 
         // test if 1st alert was stored in db
-        assertEquals(1, getAlertCount(entry, dao.getAll(null, false)));
+        assertEquals(1L, getAlertCount(entry, dao.getAll(null, false)));
 
         // try to save 2nd alert
         entry.setLogTime(new Date());
         dao.save(entry);
 
         // test if 2nd alert was also stored in db
-        assertEquals(2, getAlertCount(entry, dao.getAll(null, false)));
+        assertEquals(2L, getAlertCount(entry, dao.getAll(null, false)));
     }
 
     @Test

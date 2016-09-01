@@ -3,9 +3,9 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -69,10 +69,8 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
     @Override
     public List<StorageServerConnections> getStorageConnectionsByStorageTypeAndStatus(Guid pool,
                                                                                       StorageType storageType, Set<StorageDomainStatus> statuses) {
-        List<String> statusesVals = new LinkedList<>();
-        for (StorageDomainStatus status : statuses) {
-            statusesVals.add(Integer.toString(status.getValue()));
-        }
+        List<String> statusesVals =
+                statuses.stream().map(status -> Integer.toString(status.getValue())).collect(Collectors.toList());
         return getCallsHandler().executeReadList("GetStorageConnectionsByStorageTypeAndStatus",
                 mapper,
                 getCustomMapSqlParameterSource()

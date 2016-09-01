@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -48,15 +49,11 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
 
     // format: (<index_id>, <distance>);*, for example: "0, 10; 2, 16"
     private static Map<Integer, Integer> getDistanceMap(String distance) {
-        Map<Integer, Integer> nodeDistance = new HashMap<>();
         if (StringUtils.isBlank(distance)) {
-            return nodeDistance;
+            return new HashMap<>();
         }
-        String[] distanceArray = distance.split(";");
-        for (int i = 0; i < distanceArray.length; i++) {
-            String[] nodeDistanceArray = distanceArray[i].split(",");
-            nodeDistance.put(Integer.valueOf(nodeDistanceArray[0]), Integer.valueOf(nodeDistanceArray[1]));
-        }
-        return nodeDistance;
+
+        return Arrays.stream(distance.split(";")).map(d -> d.split(",")).collect(
+                Collectors.toMap(k -> Integer.valueOf(k[0]), v -> Integer.valueOf(v[1])));
     }
 }

@@ -9,9 +9,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
@@ -89,18 +90,12 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
     }
 
     private void validateCorrectVdsNumaNode(Guid vdsNumaNodeId, List<Pair<Guid, Pair<Boolean, Integer>>> pairsList) {
-        List<Guid> hostIds = new LinkedList<>();
-        for (Pair<Guid, Pair<Boolean, Integer>> pair : pairsList){
-            hostIds.add(pair.getFirst());
-        }
+        Set<Guid> hostIds = pairsList.stream().map(Pair::getFirst).collect(Collectors.toSet());
         assertTrue("correct vdsNumaNode", hostIds.contains(vdsNumaNodeId));
     }
 
     private void validateCorrectIndexNumaNode(int expectedIndex, List<Pair<Guid, Pair<Boolean, Integer>>> pairsList) {
-        List<Integer> indexes = new LinkedList<>();
-        for (Pair<Guid, Pair<Boolean, Integer>> pair : pairsList){
-            indexes.add(pair.getSecond().getSecond());
-        }
+        Set<Integer> indexes = pairsList.stream().map(pair -> pair.getSecond().getSecond()).collect(Collectors.toSet());
         assertTrue("correct index", indexes.contains(expectedIndex));
     }
 

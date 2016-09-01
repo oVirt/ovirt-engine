@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
@@ -175,12 +176,10 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
             Collection<Guid> expectedDomains) {
         List<StoragePoolIsoMap> poolIsoMap =
                 dbFacade.getStoragePoolIsoMapDao().getAllForStoragePool(FixturesTool.STORAGE_POOL_MIXED_TYPES);
-        List<Guid> storageDomainIds = new LinkedList<>();
-        for (StoragePoolIsoMap isoMap : poolIsoMap) {
-            if (statuses.contains(isoMap.getStatus())) {
-                storageDomainIds.add(isoMap.getStorageId());
-            }
-        }
+        List<Guid> storageDomainIds = poolIsoMap.stream()
+                .filter(isoMap -> statuses.contains(isoMap.getStatus()))
+                .map(StoragePoolIsoMap::getStorageId)
+                .collect(Collectors.toList());
 
         assertTrue("the list of the pool domains expected to be in the given statuses doesn't match the queried data",
                 CollectionUtils.isEqualCollection(expectedDomains, storageDomainIds));
@@ -208,11 +207,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     }
 
     private Set<String> getLunConnections(List<LUNStorageServerConnectionMap> lunConns) {
-        Set<String> conns = new HashSet<>();
-        for (LUNStorageServerConnectionMap lun_storage_server_connection_map1 : lunConns) {
-            conns.add(lun_storage_server_connection_map1.getStorageServerConnection());
-        }
-        return conns;
+        return lunConns.stream().map(LUNStorageServerConnectionMap::getStorageServerConnection).collect(Collectors.toSet());
     }
     /**
      * Retrieves all connections for the given volume group.

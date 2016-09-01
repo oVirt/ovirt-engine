@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,11 +31,8 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
 
         Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
 
-        for (VmNumaNode node : vmNumaNodes) {
-            if (vmNumaNodesPinMap.containsKey(node.getId())) {
-                node.setVdsNumaNodeList(vmNumaNodesPinMap.get(node.getId()));
-            }
-        }
+        vmNumaNodes.stream().filter(node -> vmNumaNodesPinMap.containsKey(node.getId())).forEach(
+                node -> node.setVdsNumaNodeList(vmNumaNodesPinMap.get(node.getId())));
 
         return vmNumaNodes;
     }
@@ -216,11 +214,11 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
         List<MapSqlParameterSource> vNodeToPnodeInsertions = new ArrayList<>();
         for (VmNumaNode node : vmNumaNodes) {
             vNodeToPnodeDeletions.add(getCustomMapSqlParameterSource().addValue("vm_numa_node_id", node.getId()));
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : node.getVdsNumaNodeList()) {
-                if (!pair.getSecond().getFirst()) {
-                    vNodeToPnodeInsertions.add(createVnodeToPnodeParametersMapper(pair, node.getId()));
-                }
-            }
+            vNodeToPnodeInsertions.addAll(node.getVdsNumaNodeList()
+                    .stream()
+                    .filter(pair -> !pair.getSecond().getFirst())
+                    .map(pair -> createVnodeToPnodeParametersMapper(pair, node.getId()))
+                    .collect(Collectors.toList()));
         }
         if (!vNodeToPnodeDeletions.isEmpty()) {
             getCallsHandler().executeStoredProcAsBatch("DeleteUnpinnedNumaNodeMapByVmNumaNodeId", vNodeToPnodeDeletions);

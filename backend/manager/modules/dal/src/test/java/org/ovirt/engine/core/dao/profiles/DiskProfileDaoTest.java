@@ -137,14 +137,10 @@ public class DiskProfileDaoTest extends BaseDaoTestCase {
     }
 
     private void testAllQosValuesEqualToNull(boolean isAllNull) {
-        boolean allValues = true;
         List<DiskProfile> allForStorageDomain = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
         assertNotNull(allForStorageDomain);
         assertFalse(allForStorageDomain.isEmpty());
-        for (DiskProfile diskProfile : allForStorageDomain) {
-            allValues &= diskProfile.getQosId() == null;
-        }
-        assertEquals(isAllNull, allValues);
+        assertEquals(isAllNull, allForStorageDomain.stream().allMatch(d -> d.getQosId() == null));
     }
 
     @Test

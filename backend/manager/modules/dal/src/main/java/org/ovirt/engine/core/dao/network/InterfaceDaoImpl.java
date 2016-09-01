@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -90,10 +91,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     @Override
     public void massUpdateStatisticsForVds(Collection<VdsNetworkStatistics> statistics) {
-        List<MapSqlParameterSource> executions = new ArrayList<>(statistics.size());
-        for (VdsNetworkStatistics stats : statistics) {
-            executions.add(createStatisticsParametersMapper(stats));
-        }
+        List<MapSqlParameterSource> executions =
+                statistics.stream().map(this::createStatisticsParametersMapper).collect(Collectors.toList());
 
         getCallsHandler().executeStoredProcAsBatch("Updatevds_interface_statistics", executions);
     }
@@ -264,15 +263,9 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
     }
 
     protected List<VdsNetworkInterface> nicsContainingLabel(List<VdsNetworkInterface> interfaces, String label) {
-        List<VdsNetworkInterface> result = new ArrayList<>();
-
-        for (VdsNetworkInterface vdsNetworkInterface : interfaces) {
-            if (vdsNetworkInterface.getLabels() != null && vdsNetworkInterface.getLabels().contains(label)) {
-                result.add(vdsNetworkInterface);
-            }
-        }
-
-        return result;
+        return interfaces.stream()
+                .filter(i -> i.getLabels() != null && i.getLabels().contains(label))
+                .collect(Collectors.toList());
     }
 
     private List<VdsNetworkInterface> getAllInterfacesByDataCenterId(Guid dataCenterId) {
@@ -283,15 +276,10 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     @Override
     public Set<String> getAllNetworkLabelsForDataCenter(Guid dataCenterId) {
-        Set<String> labels = new HashSet<>();
-        for (VdsNetworkInterface nic : getAllInterfacesByDataCenterId(dataCenterId)) {
-            if (nic.getLabels() != null) {
-                labels.addAll(nic.getLabels());
-            }
-        }
-
-        return labels;
-
+        return getAllInterfacesByDataCenterId(dataCenterId).stream()
+                .filter(nic -> nic.getLabels() != null)
+                .flatMap(nic -> nic.getLabels().stream())
+                .collect(Collectors.toSet());
     }
 
     @Override

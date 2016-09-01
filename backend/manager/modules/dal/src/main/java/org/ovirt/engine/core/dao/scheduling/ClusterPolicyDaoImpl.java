@@ -38,9 +38,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
         super.save(clusterPolicy);
         List<ClusterPolicyUnit> clusterPolicyUnits = getclusterPolicyUnit(clusterPolicy);
         if (clusterPolicyUnits != null) {
-            for (ClusterPolicyUnit clusterPolicyUnit : clusterPolicyUnits) {
-                saveClusterPolicyUnit(clusterPolicyUnit);
-            }
+            clusterPolicyUnits.forEach(this::saveClusterPolicyUnit);
         }
     }
 
@@ -51,9 +49,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
                 getCustomMapSqlParameterSource().addValue("id", clusterPolicy.getId()));
         List<ClusterPolicyUnit> clusterPolicyUnits = getclusterPolicyUnit(clusterPolicy);
         if (clusterPolicyUnits != null) {
-            for (ClusterPolicyUnit clusterPolicyUnit : clusterPolicyUnits) {
-                saveClusterPolicyUnit(clusterPolicyUnit);
-            }
+            clusterPolicyUnits.forEach(this::saveClusterPolicyUnit);
         }
     }
 

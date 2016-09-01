@@ -189,15 +189,10 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
         dao.updateStatus(existingNetworkCluster);
 
         List<NetworkCluster> result = dao.getAll();
-        boolean itworked = false;
 
-        for (NetworkCluster thiscluster : result) {
-            itworked |= thiscluster.getClusterId().equals(existingNetworkCluster.getClusterId()) &&
-                    thiscluster.getNetworkId().equals(existingNetworkCluster.getNetworkId()) &&
-                    (thiscluster.getStatus() == existingNetworkCluster.getStatus());
-        }
-
-        assertTrue (itworked);
+        assertTrue(result.stream().anyMatch(t -> t.getClusterId().equals(existingNetworkCluster.getClusterId()) &&
+                t.getNetworkId().equals(existingNetworkCluster.getNetworkId()) &&
+                t.getStatus() == existingNetworkCluster.getStatus()));
     }
 
     /**

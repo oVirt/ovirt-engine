@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -39,11 +39,7 @@ public class StorageQosDaoImpl extends QosBaseDaoImpl<StorageQos> implements Sto
                 storageQosMultipleProfilesMapper,
                 parameterSource);
 
-        Map<Guid, StorageQos> resMap = new HashMap<>();
-        pairs.stream().forEach(
-                pair -> resMap.put(pair.getFirst(), pair.getSecond()));
-
-        return resMap;
+        return pairs.stream().collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
     }
 
     @Override

@@ -133,9 +133,7 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
     }
 
     private void populateBrickDetails(List<GlusterBrickEntity> bricks) {
-        for (GlusterBrickEntity brick : bricks) {
-            populateBrickDetails(brick);
-        }
+        bricks.forEach(this::populateBrickDetails);
     }
 
     private void populateBrickDetails(GlusterBrickEntity brick) {

@@ -363,9 +363,7 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
      * Fetches and populates related entities like bricks, options, access protocols for the given volumes
      */
     private void fetchRelatedEntities(List<GlusterVolumeEntity> volumes) {
-        for (GlusterVolumeEntity volume : volumes) {
-            fetchRelatedEntities(volume);
-        }
+        volumes.forEach(this::fetchRelatedEntities);
     }
 
     /**
@@ -386,12 +384,11 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
             }
             List<GlusterBrickEntity> bricks = glusterBrickDao.getBricksOfVolume(volume.getId());
             if (volume.getAsyncTask() != null && volume.getAsyncTask().getTaskId() != null) {
-                for (GlusterBrickEntity brick : bricks) {
-                    if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null &&
-                            brick.getAsyncTask().getTaskId().equals(volume.getAsyncTask().getTaskId())) {
-                        brick.setAsyncTask(volume.getAsyncTask());
-                    }
-                }
+                bricks.stream()
+                        .filter(brick -> brick.getAsyncTask() != null &&
+                                            brick.getAsyncTask().getTaskId() != null &&
+                                            brick.getAsyncTask().getTaskId().equals(volume.getAsyncTask().getTaskId()))
+                        .forEach(brick -> brick.setAsyncTask(volume.getAsyncTask()));
             }
             volume.setBricks(bricks);
             GlusterVolumeSnapshotConfig config = glusterVolumeSnapshotConfigDao

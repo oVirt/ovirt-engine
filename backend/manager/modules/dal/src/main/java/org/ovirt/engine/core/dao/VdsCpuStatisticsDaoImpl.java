@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -24,22 +24,20 @@ public class VdsCpuStatisticsDaoImpl extends BaseDao implements VdsCpuStatistics
 
     @Override
     public void massSaveCpuStatistics(List<CpuStatistics> vdsCpuStatistics, Guid vdsId) {
-        List<MapSqlParameterSource> executions = new ArrayList<>(vdsCpuStatistics.size());
-        for (CpuStatistics stats : vdsCpuStatistics) {
-            executions.add(createCpuStatisticsParametersMapper(stats)
+        List<MapSqlParameterSource> executions = vdsCpuStatistics.stream()
+                .map(stats -> createCpuStatisticsParametersMapper(stats)
                     .addValue("vds_id", vdsId)
-                    .addValue("vds_cpu_id", Guid.newGuid()));
-        }
+                    .addValue("vds_cpu_id", Guid.newGuid()))
+                .collect(Collectors.toList());
 
         getCallsHandler().executeStoredProcAsBatch("InsertVdsCpuStatistics", executions);
     }
 
     @Override
     public void massUpdateCpuStatistics(List<CpuStatistics> vdsCpuStatistics, Guid vdsId) {
-        List<MapSqlParameterSource> executions = new ArrayList<>(vdsCpuStatistics.size());
-        for (CpuStatistics stats : vdsCpuStatistics) {
-            executions.add(createCpuStatisticsParametersMapper(stats).addValue("vds_id", vdsId));
-        }
+        List<MapSqlParameterSource> executions = vdsCpuStatistics.stream()
+                .map(stats -> createCpuStatisticsParametersMapper(stats).addValue("vds_id", vdsId))
+                .collect(Collectors.toList());
 
         getCallsHandler().executeStoredProcAsBatch("UpdateVdsCpuStatistics", executions);
     }

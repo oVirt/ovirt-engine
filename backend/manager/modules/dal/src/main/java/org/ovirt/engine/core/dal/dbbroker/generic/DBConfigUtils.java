@@ -35,9 +35,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     protected static void refreshVdcOptionCache(DbFacade db) {
         _vdcOptionCache.clear();
         List<VdcOption> list = db.getVdcOptionDao().getAll();
-        for (VdcOption option : list) {
-            updateOption(option);
-        }
+        list.forEach(DBConfigUtils::updateOption);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

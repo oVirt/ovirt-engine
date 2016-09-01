@@ -63,9 +63,7 @@ public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID 
 
     @Override
     public void removeAll(Collection<ID> ids) {
-        for (ID id : ids) {
-            remove(id);
-        }
+        ids.forEach(this::remove);
     }
 
 
@@ -90,9 +88,7 @@ public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID 
 
     @Override
     public void saveAll(Collection<T> entities) {
-        for (T entity : entities) {
-            save(entity);
-        }
+        entities.forEach(this::save);
     }
 
     @Override

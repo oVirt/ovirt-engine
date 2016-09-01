@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -78,14 +77,11 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override
     public List<VM> getVmsListForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
-        List<VM> result = new ArrayList<>();
         List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);
-        for (Pair<VM, VmDevice> pair : vms) {
-            if (includeVmsSnapshotAttachedTo || pair.getSecond().getSnapshotId() == null) {
-                result.add(pair.getFirst());
-            }
-        }
-        return result;
+        return vms.stream()
+                .filter(pair -> includeVmsSnapshotAttachedTo || pair.getSecond().getSnapshotId() == null)
+                .map(Pair::getFirst)
+                .collect(Collectors.toList());
     }
 
     @Override

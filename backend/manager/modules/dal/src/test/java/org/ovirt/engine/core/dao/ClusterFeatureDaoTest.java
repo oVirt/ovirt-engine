@@ -101,12 +101,13 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase {
     public void testUpdateSupportedClusterFeature() {
         Set<SupportedAdditionalClusterFeature> features =
                 dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
-        for (SupportedAdditionalClusterFeature feature : features) {
+
+        // Lets stop after testing the first feature.
+        features.stream().findFirst().ifPresent(feature -> {
             feature.setEnabled(false);
             dao.updateSupportedClusterFeature(feature);
-            // Lets stop after testing the first feature.
-            break;
-        }
+        });
+
         Set<SupportedAdditionalClusterFeature> newFeatureSet =
                 dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         assertEquals("Failed to update the feature set", new HashSet<>(features), newFeatureSet);

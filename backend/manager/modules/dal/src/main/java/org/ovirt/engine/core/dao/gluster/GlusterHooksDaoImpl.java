@@ -61,9 +61,7 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
     public void save(GlusterHookEntity glusterHook) {
         getCallsHandler().executeModification("InsertGlusterHook", createFullParametersMapper(glusterHook));
         if (glusterHook.getServerHooks() != null) {
-            for (GlusterServerHook serverHook : glusterHook.getServerHooks()) {
-                saveGlusterServerHook(serverHook);
-            }
+            glusterHook.getServerHooks().forEach(this::saveGlusterServerHook);
         }
     }
 

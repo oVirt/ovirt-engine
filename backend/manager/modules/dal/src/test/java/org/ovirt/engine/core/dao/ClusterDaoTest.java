@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -425,10 +426,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetClusterByClusterPolicyId() {
         List<Cluster> result = dao.getClustersByClusterPolicyId(FixturesTool.CLUSTER_POLICY_EVEN_DISTRIBUTION);
-        List<Guid> clusterIdList = new ArrayList<>();
-        for (Cluster group : result) {
-            clusterIdList.add(group.getId());
-        }
+        List<Guid> clusterIdList = result.stream().map(Cluster::getId).collect(Collectors.toList());
 
         assertTrue(clusterIdList.contains(FixturesTool.CLUSTER_RHEL6_ISCSI));
         assertTrue(clusterIdList.contains(FixturesTool.CLUSTER_NO_RUNNING_VMS));

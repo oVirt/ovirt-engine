@@ -55,7 +55,7 @@ public abstract class BaseDao {
     }
 
     protected Array createArrayOfUUIDs(Collection<Guid> guids) {
-        UUID[] uuids = guids.stream().map(Guid::getUuid).toArray(size -> new UUID[size]);
+        UUID[] uuids = guids.stream().map(Guid::getUuid).toArray(UUID[]::new);
         return createArrayOf("uuid", uuids);
     }
 

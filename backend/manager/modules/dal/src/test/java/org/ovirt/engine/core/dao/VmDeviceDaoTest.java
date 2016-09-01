@@ -7,9 +7,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -229,10 +229,7 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     public void testGetVmDeviceByType() {
         List<VmDevice> devices = dao.getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
         assertEquals("Expected to retrieve " + TOTAL_HOST_DEVICES + " host devices.", TOTAL_HOST_DEVICES, devices.size());
-        Set<Guid> vmIds = new HashSet<>();
-        for (VmDevice device : devices) {
-            vmIds.add(device.getVmId());
-        }
+        Set<Guid> vmIds = devices.stream().map(VmDevice::getVmId).collect(Collectors.toSet());
         assertTrue(vmIds.contains(EXISTING_VM_ID));
         assertTrue(vmIds.contains(EXISTING_VM_ID_2));
         assertTrue(vmIds.contains(EXISTING_VM_ID_3));
