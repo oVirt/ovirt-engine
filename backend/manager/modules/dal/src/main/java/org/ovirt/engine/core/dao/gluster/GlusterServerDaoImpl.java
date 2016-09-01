@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao.gluster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Named;
@@ -27,11 +28,7 @@ public class GlusterServerDaoImpl extends DefaultGenericDao<GlusterServer, Guid>
         String knownAddresses = rs.getString("known_addresses");
         if (StringUtils.isNotBlank(knownAddresses)) {
             String[] knownAddressArray = knownAddresses.split(",");
-            ArrayList<String> knownAddressList = new ArrayList<>();
-            for (String addr : knownAddressArray) {
-                knownAddressList.add(addr);
-            }
-            glusterServer.setKnownAddresses(knownAddressList);
+            glusterServer.setKnownAddresses(new ArrayList<>(Arrays.asList(knownAddressArray)));
         }
         return glusterServer;
     };
