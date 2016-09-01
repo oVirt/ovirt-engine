@@ -47,15 +47,15 @@ public class DaoCdiIntegrationTest {
                     daoClass.isAnnotationPresent(Singleton.class)));
     }
 
-    private boolean isParametrizedClass(Class clazz) {
+    private boolean isParametrizedClass(Class<?> clazz) {
         return clazz.getTypeParameters().length > 0;
     }
 
-    private boolean isAbstractClass(Class clazz) {
+    private boolean isAbstractClass(Class<?> clazz) {
         return clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers());
     }
 
-    private boolean isConcreteClass(Class daoClass) {
+    private boolean isConcreteClass(Class<?> daoClass) {
         return !isAbstractClass(daoClass);
     }
 }
