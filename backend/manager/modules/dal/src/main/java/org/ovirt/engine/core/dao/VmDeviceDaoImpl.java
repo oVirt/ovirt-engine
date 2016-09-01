@@ -169,7 +169,7 @@ public class VmDeviceDaoImpl extends
                         parameterSource);
 
         String resultKey = getDialect().getFunctionReturnKey();
-        return dbResults.get(resultKey) != null ? ((Boolean) dbResults.get(resultKey)).booleanValue() : false;
+        return (Boolean) dbResults.getOrDefault(resultKey, false);
 
     }
 

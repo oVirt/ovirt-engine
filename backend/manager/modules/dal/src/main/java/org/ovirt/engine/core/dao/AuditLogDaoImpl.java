@@ -272,7 +272,7 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
                         parameterSource);
 
         String resultKey = dbEngineDialect.getFunctionReturnKey();
-        return dbResults.get(resultKey) != null ? ((Integer) dbResults.get(resultKey)).intValue() : 0;
+        return (Integer) dbResults.getOrDefault(resultKey, 0);
     }
 
     @Override
