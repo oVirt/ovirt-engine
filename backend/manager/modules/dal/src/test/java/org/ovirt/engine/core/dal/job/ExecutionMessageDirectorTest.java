@@ -1,13 +1,10 @@
 package org.ovirt.engine.core.dal.job;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.EXECUTION_MESSAGES_FILE_PATH;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.JOB_MESSAGE_PREFIX;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.STEP_MESSAGE_PREFIX;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.junit.Test;
@@ -27,25 +24,14 @@ public class ExecutionMessageDirectorTest {
      * {@code StepEnum}.
      */
     @Test
-    public void verifyEngineMessagesSupported() throws FileNotFoundException, IOException {
+    public void verifyEngineMessagesSupported() {
         ResourceBundle bundle = ResourceBundle.getBundle(EXECUTION_MESSAGES_FILE_PATH);
-        String testKey = null;
-        Class<?> testEnum = null;
-
-        try {
-            for (String key : bundle.keySet()) {
-                testKey = key;
-                if (key.startsWith(ExecutionMessageDirector.JOB_MESSAGE_PREFIX)) {
-                    testEnum = VdcActionType.class;
-                    VdcActionType.valueOf(key.substring(JOB_MESSAGE_PREFIX.length()));
-                } else if (key.startsWith(ExecutionMessageDirector.STEP_MESSAGE_PREFIX)) {
-                    testEnum = StepEnum.class;
-                    StepEnum.valueOf(key.substring(STEP_MESSAGE_PREFIX.length()));
-                }
+        for (String key : bundle.keySet()) {
+            if (key.startsWith(ExecutionMessageDirector.JOB_MESSAGE_PREFIX)) {
+                VdcActionType.valueOf(key.substring(JOB_MESSAGE_PREFIX.length()));
+            } else if (key.startsWith(ExecutionMessageDirector.STEP_MESSAGE_PREFIX)) {
+                StepEnum.valueOf(key.substring(STEP_MESSAGE_PREFIX.length()));
             }
-        } catch (RuntimeException e) {
-            String test = (testEnum != null) ? testEnum.getSimpleName() : "[null]";
-            fail("Missing entry in enum " + test + " for key " + testKey);
         }
     }
 
