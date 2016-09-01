@@ -162,7 +162,7 @@ public class VmDaoTest extends BaseDaoTestCase {
     public void testGetAll() {
         List<VM> result = dao.getAll();
 
-        VmDaoTest.assertCorrectGetAllResult(result);
+        assertCorrectGetAllResult(result);
     }
 
     /**
@@ -226,7 +226,7 @@ public class VmDaoTest extends BaseDaoTestCase {
     public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
         List<VM> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
 
-        VmDaoTest.assertCorrectGetAllResult(result);
+        assertCorrectGetAllResult(result);
     }
 
     /**

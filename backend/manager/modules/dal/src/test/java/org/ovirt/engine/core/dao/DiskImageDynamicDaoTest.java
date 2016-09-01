@@ -202,7 +202,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         diskImageDynamicForVm.add(new Pair<>(Guid.Empty, createDiskImageDynamic(secondGuid)));
         diskImageDynamicForVm.add(new Pair<>(Guid.Empty, createDiskImageDynamic(firstGuid)));
         List<Pair<Guid, DiskImageDynamic>> sortedList =
-                ((DiskImageDynamicDaoImpl)dao).sortDiskImageDynamicForUpdate(diskImageDynamicForVm);
+                DiskImageDynamicDaoImpl.sortDiskImageDynamicForUpdate(diskImageDynamicForVm);
         Collections.reverse(diskImageDynamicForVm);
         assertEquals(diskImageDynamicForVm, sortedList);
     }
