@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
@@ -84,6 +85,15 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Clus
         };
         descColumn.makeSortable(ClusterConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionCluster(), "300px"); //$NON-NLS-1$
+
+        AbstractTextColumn<Cluster> switchTypeColumn = new AbstractTextColumn<Cluster>() {
+            @Override
+            public String getValue(Cluster object) {
+                return object.getRequiredSwitchTypeForCluster().name();
+            }
+        };
+        switchTypeColumn.makeSortable(ClusterConditionFieldAutoCompleter.SWITCH_TYPE);
+        getTable().addColumn(switchTypeColumn, constants.switchTypeCluster(), "200px" ); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             AbstractTextColumn<Cluster> cpuTypeColumn = new AbstractTextColumn<Cluster>() {
