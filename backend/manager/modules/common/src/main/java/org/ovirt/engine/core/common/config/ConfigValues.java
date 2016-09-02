@@ -1528,7 +1528,15 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
+    DelayToRunAutoStartVmIntervalInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
     MaxNumOfTriesToRunFailedAutoStartVm,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    MaxNumOfSkipsBeforeAutoStartVm,
 
     /**
      * Value representing maximum number of milliseconds a VM can be down during live migration.

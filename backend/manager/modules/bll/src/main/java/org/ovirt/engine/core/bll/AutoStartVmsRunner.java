@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -39,6 +41,9 @@ public abstract class AutoStartVmsRunner implements BackendService {
     /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
     private static final int RETRY_TO_RUN_AUTO_START_VM_INTERVAL =
             Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmIntervalInSeconds);
+    /** How long to wait before next check whether the NextRun configuration is applied */
+    private static final int DELAY_TO_RUN_AUTO_START_VM_INTERVAL =
+            Config.<Integer> getValue(ConfigValues.DelayToRunAutoStartVmIntervalInSeconds);
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -59,6 +64,9 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private SnapshotDao snapshotDao;
 
     /** Records of VMs that need to be started */
     private CopyOnWriteArraySet<AutoStartVmToRestart> autoStartVmsToRestart;
@@ -100,6 +108,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
         LinkedList<AutoStartVmToRestart> vmsToRemove = new LinkedList<>();
         final DateTime iterationStartTime = DateTime.getNow();
         final Date nextTimeOfRetryToRun = iterationStartTime.addSeconds(RETRY_TO_RUN_AUTO_START_VM_INTERVAL);
+        final Date delayedTimeOfRetryToRun = iterationStartTime.addSeconds(DELAY_TO_RUN_AUTO_START_VM_INTERVAL);
 
         for (AutoStartVmToRestart autoStartVmToRestart : autoStartVmsToRestart) {
             // if it is not the time to try to run the VM yet, skip it for now
@@ -109,6 +118,19 @@ public abstract class AutoStartVmsRunner implements BackendService {
             }
 
             Guid vmId = autoStartVmToRestart.getVmId();
+
+            if (isNextRunConfiguration(vmId)) {
+                // if the NextRun config exists then give the ProcessDownVmCommand time to apply it
+                log.debug("NextRun config found for '{}' vm, the RunVm will be delayed", vmId);
+                if (autoStartVmToRestart.delayNextTimeToRun(delayedTimeOfRetryToRun)) {
+                    // Skip attempt to run the VM for now.
+                    // The priority is to run the VM even if the NextRun fails to be applied
+                    continue;
+                }
+                // Waiting for NextRun config is over, let's run the VM even with the non-applied Next-Run
+                log.warn("Failed to wait for the NextRun config to be applied on vm '{}', trying to run the VM anyway", vmId);
+            }
+
             EngineLock runVmLock = createEngineLockForRunVm(vmId);
 
             // try to acquire the required lock for running the VM, if the lock cannot be
@@ -144,6 +166,13 @@ public abstract class AutoStartVmsRunner implements BackendService {
         }
 
         autoStartVmsToRestart.removeAll(vmsToRemove);
+    }
+
+    /**
+     * @return True if the VM has a next-run configuration to be applied
+     */
+    private boolean isNextRunConfiguration(Guid vmId) {
+        return snapshotDao.exists(vmId, Snapshot.SnapshotType.NEXT_RUN);
     }
 
     private boolean acquireLock(EngineLock lock) {
@@ -203,11 +232,14 @@ public abstract class AutoStartVmsRunner implements BackendService {
         /** How many times to try to restart highly available VM that went down */
         private static final int MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM =
                 Config.<Integer> getValue(ConfigValues.MaxNumOfTriesToRunFailedAutoStartVm);
-
+        private static final int MAXIMUM_NUM_OF_SKIPS_BEFORE_AUTO_START_VM =
+                Config.<Integer> getValue(ConfigValues.MaxNumOfSkipsBeforeAutoStartVm);
         /** The next time we should try to run the VM */
         private Date timeToRunTheVm;
         /** Number of tries that were made so far to run the VM */
         private int numOfRuns;
+        /** Number of skips that were made so far before attempt to run the VM */
+        private int numOfSkips;
         /** The ID of the VM */
         private Guid vmId;
 
@@ -223,6 +255,18 @@ public abstract class AutoStartVmsRunner implements BackendService {
         boolean scheduleNextTimeToRun(Date timeToRunTheVm) {
             this.timeToRunTheVm = timeToRunTheVm;
             return ++numOfRuns < MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM;
+        }
+
+        /**
+         * Skip this attempt to run the VM.
+         * Return false if count of skips reached thresh-hold.
+         * Do not increase the attempt-counter 'numOfRuns'.
+         */
+        boolean delayNextTimeToRun(Date timeToRunTheVm) {
+            this.timeToRunTheVm = timeToRunTheVm;
+            numOfSkips++;
+            numOfSkips %= MAXIMUM_NUM_OF_SKIPS_BEFORE_AUTO_START_VM;
+            return numOfSkips != 0;
         }
 
         boolean isTimeToRun(Date time) {
