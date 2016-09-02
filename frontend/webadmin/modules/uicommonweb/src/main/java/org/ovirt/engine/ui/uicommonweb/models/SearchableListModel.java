@@ -155,6 +155,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         if (!Objects.equals(searchString, value)) {
             searchString = value;
             pagingSearchString = null;
+            currentPageNumber = 1;
             searchStringChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
@@ -181,7 +182,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
             return ""; //$NON-NLS-1$
         }
         int fromItemCount = getSearchPageSize() * (getSearchPageNumber() - 1) + 1;
-        int toItemCount = (fromItemCount - 1) + ((Collection<T>) getItems()).size();
+        int toItemCount = (fromItemCount - 1) + getItems().size();
 
         if (toItemCount == 0 || fromItemCount > toItemCount) {
             return ""; //$NON-NLS-1$
@@ -752,7 +753,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return Objects.equals(item1, item2);
     }
 
-    public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
+    protected void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
         vdcQueryParametersBase.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, new SetItemsAsyncQuery());
