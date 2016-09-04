@@ -554,7 +554,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                     isEndSuccessfully() ? JobExecutionStatus.FINISHED : JobExecutionStatus.FAILED);
         }
 
-        if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
+        if (getCommandStep() == null && (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1)) {
             executionHandler.startFinalizingStep(getExecutionContext());
         }
     }
