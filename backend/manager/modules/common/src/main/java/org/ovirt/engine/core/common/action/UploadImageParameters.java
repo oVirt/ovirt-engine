@@ -18,6 +18,10 @@ public class UploadImageParameters extends ImagesActionsParametersBase {
     }
 
     public UploadImageParameters(Guid storageDomainId, int keepaliveInterval) {
+        this(storageDomainId, keepaliveInterval, Guid.Empty);
+    }
+
+    public UploadImageParameters(Guid storageDomainId, int keepaliveInterval, Guid suppliedImageGuid) {
         setStorageDomainId(storageDomainId);
         setKeepaliveInterval(keepaliveInterval);
     }
