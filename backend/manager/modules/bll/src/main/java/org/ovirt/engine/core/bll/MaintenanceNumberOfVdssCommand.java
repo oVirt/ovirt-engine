@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -83,7 +84,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     private void cancelIncommingMigrations() {
         for (Guid hostId :vdssToMaintenance.keySet()) {
-            for (VM vm : getVmDao().getAllMigratingToHost(hostId)) {
+            for (VmDynamic vm : getVmDynamicDao().getAllMigratingToHost(hostId)) {
                 if (vm.getStatus() == VMStatus.MigratingFrom) {
                     log.info("Cancelling incoming migration of '{}' id '{}'", vm, vm.getId());
                     runVdsCommand(VDSCommandType.CancelMigrate, new CancelMigrationVDSParameters(vm.getRunOnVds(), vm.getId(), true));

@@ -104,4 +104,12 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * @param vmIds - IDs of VMs to update
      */
     void updateVmsToUnknown(List<Guid> vmIds);
+
+
+    /**
+     * Retrieves all that are migrating to a certain Host
+     * @param vdsId
+     *            The Host id
+     */
+    List<VmDynamic> getAllMigratingToHost(Guid vdsId);
 }

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -53,7 +52,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NumaUtils;
@@ -108,9 +106,6 @@ public class VdsManager {
 
     @Inject
     private VdsDynamicDao vdsDynamicDao;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private VmDynamicDao vmDynamicDao;
@@ -1032,8 +1027,7 @@ public class VdsManager {
 
     private List<VmDynamic> getVmsToMoveToUnknown() {
         List<VmDynamic> vmList = vmDynamicDao.getAllRunningForVds(getVdsId());
-        List<VmDynamic> migratingVms = vmDao.getAllMigratingToHost(getVdsId()).stream()
-                .map(VM::getDynamicData).collect(Collectors.toList());
+        List<VmDynamic> migratingVms = vmDynamicDao.getAllMigratingToHost(getVdsId());
         for (VmDynamic incomingVm : migratingVms) {
             if (incomingVm.getStatus() == VMStatus.MigratingTo) {
                 // this VM is finished the migration handover and is running on this host now

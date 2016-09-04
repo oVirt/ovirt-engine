@@ -262,14 +262,6 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VM> getAllMigratingToHost(Guid vdsId) {
-        return getCallsHandler().executeReadList("GetVmsMigratingToVds",
-                vmRowMapper,
-                getCustomMapSqlParameterSource()
-                        .addValue("vds_id", vdsId));
-    }
-
-    @Override
     public void updateOriginalTemplateName(Guid originalTemplateId, String originalTemplateName) {
         getCallsHandler().executeModification("UpdateOriginalTemplateName",
                 getCustomMapSqlParameterSource()

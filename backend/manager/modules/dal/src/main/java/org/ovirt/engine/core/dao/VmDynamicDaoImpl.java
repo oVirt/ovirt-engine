@@ -112,6 +112,14 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
+    public List<VmDynamic> getAllMigratingToHost(Guid vdsId) {
+        return getCallsHandler().executeReadList("GetVmsMigratingToVds",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", vdsId));
+    }
+
+    @Override
     public List<Pair<Guid, String>> getAllDevicesHashes() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         return getCallsHandler().executeReadList("GetAllHashesFromVmDynamic",

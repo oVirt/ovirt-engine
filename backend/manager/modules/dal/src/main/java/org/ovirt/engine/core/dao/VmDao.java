@@ -262,13 +262,6 @@ public interface VmDao extends Dao {
     List<VM> getAllForVmPool(Guid vmPoolId);
 
     /**
-     * Retrieves all VMS that are migrating to a certain Host
-     * @param vdsId
-     *            The Host id
-     */
-    List<VM> getAllMigratingToHost(Guid vdsId);
-
-    /**
      * Retrieves all VMS that have a Network Interface that the given Profile is attached to.
      *
      * @param vnicProfileId

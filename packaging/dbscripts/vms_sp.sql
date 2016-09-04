@@ -1524,13 +1524,13 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmsMigratingToVds(v_vds_id UUID) RETURNS SETOF vms STABLE
+CREATE OR REPLACE FUNCTION GetVmsMigratingToVds(v_vds_id UUID)
+RETURNS SETOF vm_dynamic STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT DISTINCT vms.*
-   FROM vms
+RETURN QUERY SELECT DISTINCT vm_dynamic.*
+   FROM vm_dynamic
    WHERE migrating_to_vds = v_vds_id;
-
 END; $procedure$
 LANGUAGE plpgsql;
 
