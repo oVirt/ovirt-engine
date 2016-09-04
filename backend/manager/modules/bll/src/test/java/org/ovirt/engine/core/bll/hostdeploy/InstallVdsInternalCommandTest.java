@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -13,6 +12,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -71,12 +71,6 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
     }
 
-    private static void assertFailsWithValidateMessage
-            (InstallVdsInternalCommand<InstallVdsParameters> command, EngineMessage message) {
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue().getValidationMessages().contains(message.name()));
-    }
-
     @Test
     public void validateSucceeds() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
@@ -90,7 +84,7 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         InstallVdsInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithValidateMessage(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 
 }
