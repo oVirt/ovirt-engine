@@ -11,6 +11,8 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -37,7 +39,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
     }
 
     @Override
-    protected boolean validate() {
+    protected boolean validateCreateImage() {
         VdcReturnValueBase returnValue = CommandHelper.validate(VdcActionType.AddDisk, getAddDiskParameters(),
                 getContext().clone());
         getReturnValue().setValidationMessages(returnValue.getValidationMessages());
@@ -56,6 +58,25 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                     getPrepareParameters(vdsId));
         return FILE_URL_SCHEME + ((PrepareImageReturnForXmlRpc) vdsRetVal.getReturnValue()).getImagePath();
+    }
+
+    @Override
+    protected boolean validateUploadToImage(Guid imageId) {
+        DiskImage diskImage = (DiskImage) diskDao.get(imageId);
+        DiskValidator diskValidator = getDiskValidator(diskImage);
+        DiskImagesValidator diskImagesValidator = getDiskImagesValidator(diskImage);
+        return validate(diskValidator.isDiskExists())
+                && validate(diskValidator.isDiskAttachedToAnyVm())
+                && validate(diskImagesValidator.diskImagesNotIllegal())
+                && validate(diskImagesValidator.diskImagesNotLocked());
+    }
+
+    protected DiskImagesValidator getDiskImagesValidator(DiskImage diskImage) {
+        return new DiskImagesValidator(diskImage);
+    }
+
+    protected DiskValidator getDiskValidator(DiskImage diskImage) {
+        return new DiskValidator(diskImage);
     }
 
     private PrepareImageVDSCommandParameters getPrepareParameters(Guid vdsId) {
@@ -101,7 +122,9 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
 
     @Override
     protected String getImageAlias() {
-        return getParameters().getAddDiskParameters().getDiskInfo().getDiskAlias();
+        return  getParameters().getAddDiskParameters() != null ?
+                getParameters().getAddDiskParameters().getDiskInfo().getDiskAlias() :
+                getDiskImage().getDiskAlias();
     }
 
     @Override
@@ -112,13 +135,15 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
-        AddDiskParameters parameters = getAddDiskParameters();
-        list.add(new QuotaStorageConsumptionParameter(
-                ((DiskImage) parameters.getDiskInfo()).getQuotaId(),
-                null,
-                QuotaConsumptionParameter.QuotaAction.CONSUME,
-                getStorageDomainId(),
-                (double) parameters.getDiskInfo().getSize() / SizeConverter.BYTES_IN_GB));
+        if (getParameters().getAddDiskParameters() != null) {
+            AddDiskParameters parameters = getAddDiskParameters();
+            list.add(new QuotaStorageConsumptionParameter(
+                    ((DiskImage) parameters.getDiskInfo()).getQuotaId(),
+                    null,
+                    QuotaConsumptionParameter.QuotaAction.CONSUME,
+                    getStorageDomainId(),
+                    (double) parameters.getDiskInfo().getSize() / SizeConverter.BYTES_IN_GB));
+        }
 
         return list;
     }

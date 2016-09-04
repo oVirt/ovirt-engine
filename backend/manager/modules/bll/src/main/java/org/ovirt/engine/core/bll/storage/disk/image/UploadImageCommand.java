@@ -84,17 +84,23 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         imageTransferDao.save(entity);
 
         log.info("Creating {} image", getUploadType());
-        createImage();
+
+        // If an image was not created yet, create it.
+        if (Guid.isNullOrEmpty(getParameters().getImageId())) {
+            createImage();
+        } else {
+            handleImageIsReadyForUpload(getParameters().getImageId());
+        }
+
         setActionReturnValue(getCommandId());
         setSucceeded(true);
-        // The callback will poll for createImage() completion and resume the initialization
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
         ImageTransfer entity = imageTransferDao.get(getCommandId());
         if (entity == null || entity.getPhase() == null) {
             log.error("Image Upload status entity corrupt or missing from database"
-                    + " for image transfer command '{}'", getCommandId());
+                         + " for image transfer command '{}'", getCommandId());
             setCommandStatus(CommandStatus.FAILED);
             return;
         }
@@ -186,25 +192,39 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         }
 
         Guid createdId = addDiskRetVal.getActionReturnValue();
-        DiskImage createdDiskImage = (DiskImage) diskDao.get(createdId);
-        getParameters().setImageId(createdId);
+        handleImageIsReadyForUpload(createdId);
+    }
+
+    protected void handleImageIsReadyForUpload(Guid imageGuid) {
+        DiskImage image = (DiskImage) diskDao.get(imageGuid);
+        Guid domainId = image.getStorageIds().get(0);
+
+        getParameters().setStorageDomainId(domainId);
+        getParameters().setImageId(imageGuid);
+
+        // ovirt-imageio-daemon must know the boundaries of the target image for writing permissions.
+        if (getParameters().getUploadSize() == 0) {
+            getParameters().setUploadSize(image.getSize());
+        }
+
         persistCommand(getParameters().getParentCommand(), true);
-        setImage(createdDiskImage);
+        setImage(image);
+        setStorageDomainId(domainId);
+
         log.info("Successfully added {} for image transfer command '{}'",
                 getUploadDescription(), getCommandId());
 
         ImageTransfer updates = new ImageTransfer();
-        updates.setDiskId(createdId);
+        updates.setDiskId(imageGuid);
         updateEntity(updates);
 
         // The image will remain locked until the upload command has completed.
         lockImage();
-
         boolean initSessionSuccess = startImageTransferSession();
         updateEntityPhase(initSessionSuccess ? ImageTransferPhase.TRANSFERRING
                 : ImageTransferPhase.PAUSED_SYSTEM);
         log.info("Returning from proceedCommandExecution after starting transfer session"
-                    + " for image transfer command '{}'", getCommandId());
+                + " for image transfer command '{}'", getCommandId());
 
         resetPeriodicPauseLogTime(0);
     }
@@ -342,7 +362,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         return false;
     }
 
-    private void resetPeriodicPauseLogTime(long ts) {
+    protected void resetPeriodicPauseLogTime(long ts) {
         if (getParameters().getLastPauseLogTime() != ts) {
             getParameters().setLastPauseLogTime(ts);
             persistCommand(getParameters().getParentCommand(), true);
@@ -362,7 +382,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
      * Start the ovirt-image-daemon session
      * @return true if session was started
      */
-    private boolean startImageTransferSession() {
+    protected boolean startImageTransferSession() {
         if (!initializeVds()) {
             log.error("Could not find a suitable host for image data transfer");
             return false;
@@ -440,6 +460,21 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     }
 
     protected abstract String prepareImage(Guid vdsId);
+
+
+    @Override
+    protected boolean validate() {
+        Guid imageId = getParameters().getImageId();
+        if (!Guid.isNullOrEmpty(imageId)) {
+            return validateUploadToImage(imageId);
+        } else {
+            return validateCreateImage();
+        }
+    }
+
+    protected abstract boolean validateUploadToImage(Guid imageId);
+
+    protected abstract boolean validateCreateImage();
 
     private boolean extendImageTransferSession(final ImageTransfer entity) {
         if (entity.getImagedTicketId() == null) {
@@ -549,8 +584,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         return ticket;
     }
 
-
-    private ImageTransfer updateEntityPhase(ImageTransferPhase phase) {
+    protected ImageTransfer updateEntityPhase(ImageTransferPhase phase) {
         ImageTransfer updates = new ImageTransfer(getCommandId());
         updates.setPhase(phase);
         return updateEntity(updates);
