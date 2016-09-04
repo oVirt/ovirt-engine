@@ -50,7 +50,6 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
     protected void createImage() {
         CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.AddDisk, getAddDiskParameters(), cloneContextAndDetachFromParent());
-        persistCommand(getParameters().getParentCommand(), true);
     }
 
     @Override
