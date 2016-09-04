@@ -23,6 +23,7 @@ public enum SearchType implements Serializable {
     Provider,
     InstanceType,
     ImageType,
+    ImageTransfer,
     Session;
 
     public int getValue() {

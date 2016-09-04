@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -135,6 +136,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             break;
         case Session:
             returnValue = searchSessions();
+            break;
+        case ImageTransfer:
+            returnValue = searchImageTransfer();
             break;
         default:
             log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
@@ -300,6 +304,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getEngineSessionDao(), false).stream().peek(this::injectSessionInfo)
                 .map(UserSession::new)
                 .collect(Collectors.toList());
+    }
+
+    private List<ImageTransfer> searchImageTransfer() {
+        return genericSearch(getDbFacade().getImageTransferDao(), false);
     }
 
     private void injectSessionInfo(EngineSession engineSession) {

@@ -96,4 +96,9 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             return entity;
         }
     }
+
+    @Override
+    public List<ImageTransfer> getAllWithQuery(String query) {
+        return getJdbcTemplate().query(query, createEntityRowMapper());
+    }
 }

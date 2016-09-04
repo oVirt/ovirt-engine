@@ -5,9 +5,10 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImageTransfer implements BusinessEntity<Guid> {
+public class ImageTransfer implements BusinessEntity<Guid>, IVdcQueryable {
 
     private static final long serialVersionUID = 3761304077670003457L;
     private Guid commandId;
@@ -167,5 +168,10 @@ public class ImageTransfer implements BusinessEntity<Guid> {
                 bytesSent,
                 bytesTotal
         );
+    }
+
+    @Override
+    public Guid getQueryableId() {
+        return getId();
     }
 }
