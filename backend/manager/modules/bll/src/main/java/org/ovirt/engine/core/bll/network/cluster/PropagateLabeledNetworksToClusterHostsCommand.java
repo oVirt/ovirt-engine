@@ -10,17 +10,13 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.host.util.ReportFailedChildHostOperationsUtil;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformer;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformerFactory;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -39,9 +35,6 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
     @Inject
     private NetworkClustersToSetupNetworksParametersTransformerFactory
             networkClustersToSetupNetworksParametersTransformerFactory;
-
-    @Inject
-    private ReportFailedChildHostOperationsUtil reportFailedChildHostOperationsUtil;
 
     public PropagateLabeledNetworksToClusterHostsCommand(ManageNetworkClustersParameters parameters) {
         super(parameters);
@@ -83,7 +76,6 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
                 param.getDetachments()));
 
         HostSetupNetworksParametersBuilder.updateParametersSequencing(setupNetworksParams);
-        setParentCommandInfo(setupNetworksParams);
         runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, setupNetworksParams);
     }
 
@@ -143,36 +135,4 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
         }
     }
 
-
-    @Override
-    public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
-    }
-
-    @Override
-    protected void endSuccessfully() {
-        super.endSuccessfully();
-        // The log should be done here as this command is internal so it wouldn't be logged otherwise.
-        log();
-    }
-
-    @Override
-    protected void endWithFailure() {
-        reportFailedChildHostOperationsUtil.setFailedHosts(this);
-        // The log should be done here as this command is internal so it wouldn't be logged otherwise.
-        log();
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return AuditLogType.PROPAGATE_NETWORK_CHANGES_STARTED;
-        case END_FAILURE:
-            return AuditLogType.PROPAGATE_NETWORK_CHANGE_FAILED;
-        case END_SUCCESS:
-            return AuditLogType.PROPAGATE_NETWORK_CHANGE_FINISHED;
-        }
-        return super.getAuditLogTypeValue();
-    }
 }

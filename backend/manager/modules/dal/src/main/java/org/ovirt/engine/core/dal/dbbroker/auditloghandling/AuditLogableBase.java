@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -525,15 +524,6 @@ public class AuditLogableBase extends TimeoutBase {
         allocateCustomValues();
         customValues.put(name.toLowerCase(), value);
         return this;
-    }
-
-    public void setCustomValues(
-            final String name,
-            final Collection<String> values,
-            final String separator) {
-        final String value = StringUtils.join(values, separator);
-        allocateCustomValues();
-        customValues.put(name.toLowerCase(), value);
     }
 
     public void appendCustomValue(final String name, final String value, final String separator) {
