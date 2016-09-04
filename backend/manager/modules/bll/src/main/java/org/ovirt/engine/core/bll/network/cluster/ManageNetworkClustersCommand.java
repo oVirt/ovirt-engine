@@ -122,11 +122,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     }
 
     private void propagateLabeledNetworksChanges() {
-        runInternalAction(VdcActionType.PropagateLabeledNetworksToClusterHosts, cloneParams());
-    }
-
-    private ManageNetworkClustersParameters cloneParams() {
-        return new ManageNetworkClustersParameters(getParameters());
+        runInternalAction(VdcActionType.PropagateLabeledNetworksToClusterHosts, getParameters());
     }
 
     private boolean runNetworkClusterCommands(
