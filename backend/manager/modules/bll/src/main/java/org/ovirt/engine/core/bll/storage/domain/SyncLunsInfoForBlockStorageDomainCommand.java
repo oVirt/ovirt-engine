@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -30,6 +33,18 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
+    protected final Consumer<List<LUNs>> updateExistingLuns = luns -> {
+        getLunDao().updateAll(luns);
+        log.info("Updated LUNs information, IDs '{}'.", getLunsIdsList(luns));
+    };
+
+    protected final Consumer<List<LUNs>> saveNewLuns = luns -> {
+        getLunDao().saveAll(luns);
+        log.info("New LUNs discovered, IDs '{}'", getLunsIdsList(luns));
+    };
+
+    protected final Consumer<List<LUNs>> noOp = luns -> {};
+
     public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());
@@ -45,8 +60,11 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getStorage())).getReturnValue();
         final List<LUNs> lunsFromDb = getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage());
 
-        List<LUNs> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
-        if (lunsFromDb.size() != lunsFromVgInfo.size() || !lunsToUpdateInDb.isEmpty()) {
+        Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
+        boolean dbShouldBeUpdated =
+                lunsToUpdateInDb.containsKey(updateExistingLuns) || // There are existing luns that should be updated.
+                        lunsToUpdateInDb.containsKey(saveNewLuns); // There are new luns that should be saved.
+        if (dbShouldBeUpdated) {
             TransactionSupport.executeInNewTransaction(() -> {
                 updateLunsInDb(lunsToUpdateInDb);
                 refreshLunsConnections(lunsFromVgInfo);
@@ -87,44 +105,53 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         }
     }
 
-    protected List<LUNs> getLunsToUpdateInDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
-        List<LUNs> lunsToUpdateInDb = new LinkedList<>();
-        for (LUNs lunFromVgInfo : lunsFromVgInfo) {
-            for (LUNs lunFromDb : lunsFromDb) {
-                if (lunFromDb.getPhysicalVolumeId() == null ||
-                        !lunFromDb.getPhysicalVolumeId().equals(lunFromVgInfo.getPhysicalVolumeId())) {
-                    continue;
-                }
+    /**
+     * Gets a list of up to date luns from vdsm and a list of the existing luns from the db,
+     * and returns the luns from vdsm separated into three groups:
+     * 1. Luns that should be saved (new luns) to the db.
+     * 2. Luns that should be updated in the db.
+     * 3. Up to date luns that we should not do anything with.
+     * The return value is a map from the consumer of the luns to the luns themselves.
+     * The consumer takes the list of luns and saves/updates/does nothing with them.
+     */
+    protected Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
+        Map<String, LUNs> lunsFromDbMap =
+                lunsFromDb.stream().collect(Collectors.toMap(LUNs::getLUNId, Function.identity()));
 
-                if (!lunFromDb.getLUNId().equals(lunFromVgInfo.getLUNId()) ||
-                        lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
-                    lunsToUpdateInDb.add(lunFromVgInfo);
-                }
+        return lunsFromVgInfo.stream().collect(Collectors.groupingBy(lunFromVgInfo -> {
+            LUNs lunFromDb = lunsFromDbMap.get(lunFromVgInfo.getLUNId());
+
+            if (lunFromDb == null) {
+                // One of the following:
+                // 1. There's no lun in the db with the same lun id and pv id -> new lun.
+                // 2. lunFromDb has the same pv id and a different lun id -> using storage from backup.
+                return saveNewLuns;
             }
-        }
+            boolean lunFromDbHasSamePvId = Objects.equals(
+                    lunFromDb.getPhysicalVolumeId(),
+                    lunFromVgInfo.getPhysicalVolumeId());
+            if (lunFromDbHasSamePvId) {
+                // Existing lun, check if it should be updated.
+                if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
+                    return updateExistingLuns;
+                }
+                // Existing lun is up to date.
+                return noOp;
+            }
+            // lunFromDb has the same lun id and a different pv id -> old pv id.
+            return updateExistingLuns;
+        }));
+    }
 
-        return lunsToUpdateInDb;
+    private static String getLunsIdsList(List<LUNs> luns) {
+        return luns.stream().map(LUNs::getLUNId).collect(Collectors.joining(", "));
     }
 
     /**
      * Saves the new or updates the existing luns in the DB.
      */
-    protected void updateLunsInDb(List<LUNs> lunsToUpdateInDb) {
-        for (LUNs lunToUpdateInDb : lunsToUpdateInDb) {
-            LUNs lunFromDB = getLunDao().get(lunToUpdateInDb.getLUNId());
-            if (lunFromDB == null) {
-                getLunDao().save(lunToUpdateInDb);
-                log.info("New LUN discovered, ID '{}'", lunToUpdateInDb.getLUNId());
-            } else {
-                if (lunFromDB.getDeviceSize() != lunToUpdateInDb.getDeviceSize()) {
-                    log.info("Updated LUN device size - ID '{}', previous size {}, new size {}.",
-                            lunToUpdateInDb.getLUNId(), lunFromDB.getDeviceSize(), lunToUpdateInDb.getDeviceSize());
-                } else {
-                    log.info("Updated LUN information, ID '{}'.", lunToUpdateInDb.getLUNId());
-                }
-                getLunDao().update(lunToUpdateInDb);
-            }
-        }
+    protected void updateLunsInDb(Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDb) {
+        lunsToUpdateInDb.entrySet().stream().forEach(entry -> entry.getKey().accept(entry.getValue()));
     }
 
     private boolean isDummyLun(LUNs lun) {

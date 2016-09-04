@@ -1,18 +1,12 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +14,6 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDao;
 
 public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTest {
 
@@ -36,39 +29,60 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     }
 
     @Test
-    public void lunsMismatchWrongId() {
-        Guid pvID = Guid.newGuid();
+    public void testGetLunsToUpdateInDbDiffLunIdDiffPvId() {
+        Guid lunFromVgLunId = Guid.newGuid();
+        List<LUNs> newLunsToSaveInDb =
+                getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), Guid.newGuid(), Guid.newGuid()).
+                        get(command.saveNewLuns);
 
+        assertLunIdInList(newLunsToSaveInDb, lunFromVgLunId);
+    }
+
+    @Test
+    public void testGetLunsToUpdateInDbSameLunIdDiffPvId() {
+        Guid lunId = Guid.newGuid();
+        List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb(lunId, lunId, Guid.newGuid(), Guid.newGuid()).
+                get(command.updateExistingLuns);
+
+        assertLunIdInList(existingLunsToUpdateInDb, lunId);
+    }
+
+    @Test
+    public void testGetLunsToUpdateInDbDiffLunIdSamePvId() {
+        Guid pvID = Guid.newGuid();
+        Guid lunFromVgLunId = Guid.newGuid();
+        List<LUNs> newLunsToSaveInDb = getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), pvID, pvID).
+                get(command.saveNewLuns);
+
+        assertLunIdInList(newLunsToSaveInDb, lunFromVgLunId);
+    }
+
+    private Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb(Guid lunFromVgLunId, Guid lunFromDbLunId,
+            Guid lunFromVgPvId, Guid lunFromDbPvId) {
         LUNs lunFromVG = new LUNs();
-        lunFromVG.setLUNId(Guid.newGuid().toString());
-        lunFromVG.setPhysicalVolumeId(pvID.toString());
+        lunFromVG.setLUNId(lunFromVgLunId.toString());
+        lunFromVG.setPhysicalVolumeId(lunFromVgPvId.toString());
 
         LUNs lunFromDB = new LUNs();
-        lunFromDB.setLUNId(Guid.newGuid().toString());
-        lunFromDB.setPhysicalVolumeId(pvID.toString());
+        lunFromDB.setLUNId(lunFromDbLunId.toString());
+        lunFromDB.setPhysicalVolumeId(lunFromDbPvId.toString());
 
-        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVG);
-        List<LUNs> lunsFromDb = Collections.singletonList(lunFromDB);
-
-        boolean isMatch = command.getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb).isEmpty();
-        assertFalse(isMatch);
+        return getLunsToUpdateInDb(lunFromVG, lunFromDB);
     }
 
     @Test
-    public void lunsMatch() {
+    public void testGetLunsToUpdateInDbForSameLun() {
         LUNs lun = new LUNs();
-        lun.setLUNId(Guid.newGuid().toString());
+        Guid lunId = Guid.newGuid();
+        lun.setLUNId(lunId.toString());
         lun.setPhysicalVolumeId(Guid.newGuid().toString());
+        List<LUNs> upToDateLuns = getLunsToUpdateInDb(lun, lun).get(command.noOp);
 
-        List<LUNs> lunsFromVgInfo = Arrays.asList(lun, lun);
-        List<LUNs> lunsFromDb = Arrays.asList(lun, lun);
-
-        boolean isMatch = command.getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb).isEmpty();
-        assertTrue(isMatch);
+        assertLunIdInList(upToDateLuns, lunId);
     }
 
     @Test
-    public void lunsMismatchDeviceSize() {
+    public void testGetLunsToUpdateInDbDiffDeviceSize() {
         Guid pvID = Guid.newGuid();
         Guid lunID = Guid.newGuid();
 
@@ -82,25 +96,19 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         lunFromDB.setPhysicalVolumeId(pvID.toString());
         lunFromDB.setDeviceSize(10);
 
-        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVG);
-        List<LUNs> lunsFromDb = Collections.singletonList(lunFromDB);
+        List<LUNs> existingLunsToUpdateInDb =
+                getLunsToUpdateInDb(lunFromVG, lunFromDB).get(command.updateExistingLuns);
 
-        assertFalse(command.getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb).isEmpty());
+        assertLunIdInList(existingLunsToUpdateInDb, lunID);
     }
 
-    /**
-     * This test insures that updateLunsInDb updates the luns in the
-     * DB when "lunFromVG" and "lunFromDB" have the same lun's ID.
-     */
-    @Test
-    public void lunsWithSameIdMismatch() {
-        LunDao lunDao = mock(LunDao.class);
-        doReturn(lunDao).when(command).getLunDao();
+    private void assertLunIdInList(List<LUNs> luns, Guid requestedLunId) {
+        assertEquals(luns.stream().map(LUNs::getLUNId).findAny().orElse(null), requestedLunId.toString());
+    }
 
-        LUNs luns = new LUNs();
-        doReturn(luns).when(lunDao).get(anyString());
-
-        command.updateLunsInDb(Collections.singletonList(luns));
-        verify(lunDao, times(1)).update(any(LUNs.class));
+    private Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb(LUNs lunFromVG, LUNs lunFromDB) {
+        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVG);
+        List<LUNs> lunsFromDb = Collections.singletonList(lunFromDB);
+        return command.getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
     }
 }
