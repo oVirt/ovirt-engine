@@ -130,6 +130,7 @@ public class BackendApiResourceTest {
         "katelloerrata",
         "affinitylabels",
         "clusterlevels",
+        "imagetransfers",
     };
 
     private static final String[] relationshipsGlusterOnly = {
@@ -200,6 +201,7 @@ public class BackendApiResourceTest {
         BASE_PATH + "/katelloerrata",
         BASE_PATH + "/affinitylabels",
         BASE_PATH + "/clusterlevels",
+        BASE_PATH + "/imagetransfers",
     };
 
     private static final String[] hrefsGlusterOnly = {

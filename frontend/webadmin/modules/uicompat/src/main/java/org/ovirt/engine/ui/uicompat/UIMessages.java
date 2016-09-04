@@ -383,6 +383,8 @@ public interface UIMessages extends Messages {
 
     String uploadImageFailedToResumeSizeMessage(long priorFileBytes, long newFileBytes);
 
+    String uploadImageFailedToResumeUploadOriginatedInAPI();
+
     String providerFailure();
 
     String providerImportFailure();

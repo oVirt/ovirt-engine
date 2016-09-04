@@ -625,6 +625,11 @@ public class BackendApiResource
     }
 
     @Override
+    public ImageTransfersResource getImageTransfersResource() {
+        return inject(new BackendImageTransfersResource());
+    }
+
+    @Override
     public AffinityLabelsResource getAffinityLabelsResource() {
         return inject(new BackendAffinityLabelsResource());
     }
@@ -632,11 +637,5 @@ public class BackendApiResource
     @Override
     public ClusterLevelsResource getClusterLevelsResource() {
         return inject(new BackendClusterLevelsResource());
-    }
-
-    @Override
-    public ImageTransfersResource getImageTransfersResource() {
-        // TODO: Implement this.
-        return null;
     }
 }

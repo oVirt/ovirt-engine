@@ -128,6 +128,10 @@ public class ImageTransfer implements BusinessEntity<Guid>, IVdcQueryable {
         this.bytesTotal = bytesTotal;
     }
 
+    public String getClientURLForTransfer() {
+        return getProxyUri() + "/" + getImagedTicketId();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

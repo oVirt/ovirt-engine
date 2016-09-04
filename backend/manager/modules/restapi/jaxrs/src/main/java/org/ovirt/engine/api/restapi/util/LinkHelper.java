@@ -67,6 +67,7 @@ import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Image;
+import org.ovirt.engine.api.model.ImageTransfer;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.api.model.Job;
@@ -175,6 +176,8 @@ import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.IconResource;
 import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.api.resource.ImageResource;
+import org.ovirt.engine.api.resource.ImageTransferResource;
+import org.ovirt.engine.api.resource.ImageTransfersResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.InstanceTypeNicResource;
 import org.ovirt.engine.api.resource.InstanceTypeNicsResource;
@@ -462,6 +465,10 @@ public class LinkHelper {
 
         map = new LocationByParentMap(StorageServerConnectionExtensionResource.class, StorageServerConnectionExtensionsResource.class, Host.class);
         TYPES.put(StorageConnectionExtension.class, map);
+
+        map = new LocationByParentMap();
+        map.add(ImageTransferResource.class, ImageTransfersResource.class, NO_PARENT);
+        TYPES.put(ImageTransfer.class, map);
 
         map = new LocationByParentMap(org.ovirt.engine.api.resource.HostResource.class, org.ovirt.engine.api.resource.HostsResource.class);
         map.add(AffinityLabelHostResource.class, AffinityLabelHostsResource.class, AffinityLabel.class);
