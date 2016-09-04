@@ -321,27 +321,20 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getFormat().setIsChangeable(false);
 
         boolean isStorageNameEditable = model.isStorageActive() || model.isNewStorage();
-        boolean isStoragePropertiesEditable = model.isNewStorage();
         boolean isStorageInMaintenance = !model.isNewStorage() &&
                 model.getStorage().getStatus() == StorageDomainStatus.Maintenance;
         model.getHost().setIsChangeable(false);
         model.getName().setIsChangeable(isStorageNameEditable);
-        model.getDescription().setIsChangeable(isStoragePropertiesEditable);
-        model.getComment().setIsChangeable(isStoragePropertiesEditable);
-        model.getWipeAfterDelete().setIsChangeable(isStoragePropertiesEditable);
         //set the field domain type to non editable
         model.getAvailableStorageTypeItems().setIsChangeable(false);
         model.getAvailableStorageDomainTypeItems().setIsChangeable(false);
-        model.setIsChangeable((isStorageNameEditable || isStoragePropertiesEditable) && !isStorageInMaintenance);
+        model.setIsChangeable(isStorageNameEditable && !isStorageInMaintenance);
 
         model.getWarningLowSpaceIndicator().setEntity(storage.getWarningLowSpaceIndicator());
         model.getWarningLowSpaceSize().setEntity(
                 ConstantsManager.getInstance().getMessages().bracketsWithGB(storage.getWarningLowSpaceSize()));
         model.getWarningLowSpaceSize().setIsAvailable(true);
         model.getCriticalSpaceActionBlocker().setEntity(storage.getCriticalSpaceActionBlocker());
-
-        boolean isPathEditable = isPathEditable(storage);
-        isStorageNameEditable = isStorageNameEditable || isPathEditable;
 
         IStorageModel item = prepareStorageForEdit(storage, model);
 
@@ -357,20 +350,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
 
         UICommand command;
-        if (isStorageNameEditable || isStoragePropertiesEditable) {
-            command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
-            model.getCommands().add(command);
+        command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
+        model.getCommands().add(command);
 
-            command = createCancelCommand("Cancel"); //$NON-NLS-1$
-            model.getCommands().add(command);
-        }
-        else {
-            // close is created the same as cancel, but with a different title
-            // thus most of creation code can be reused.
-            command = createCancelCommand("Cancel"); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().close());
-            model.getCommands().add(command);
-        }
+        command = createCancelCommand("Cancel"); //$NON-NLS-1$
+        model.getCommands().add(command);
+
     }
 
     private IStorageModel prepareStorageForEdit(StorageDomain storage, StorageModel model) {
