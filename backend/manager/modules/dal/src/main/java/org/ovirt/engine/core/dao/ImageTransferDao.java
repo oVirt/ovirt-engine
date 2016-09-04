@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface ImageTransferDao extends GenericDao<ImageTransfer, Guid> {
+public interface ImageTransferDao extends GenericDao<ImageTransfer, Guid>, SearchDao<ImageTransfer> {
     /**
      * Retrieves an ImageUpload entity based on its disk id
      *
