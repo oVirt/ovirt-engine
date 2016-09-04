@@ -163,6 +163,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
                 VolumeClassification.getVolumeClassificationByActiveFlag(oldTopIsActive);
         topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
 
+        topImage.setSize(baseImage.getSize());
         topImage.setActualSizeInBytes(imageFromVdsm.getActualSizeInBytes());
         topImage.setImageStatus(ImageStatus.OK);
         getBaseDiskDao().update(topImage);
