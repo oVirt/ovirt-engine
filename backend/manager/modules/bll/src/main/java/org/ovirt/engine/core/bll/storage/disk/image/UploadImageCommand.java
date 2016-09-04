@@ -128,37 +128,37 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         // State handler methods are responsible for calling setCommandStatus
         // as well as updating the entity to reflect transitions.
         switch (entity.getPhase()) {
-        case INITIALIZING:
-            handleInitializing(context);
-            break;
-        case RESUMING:
-            handleResuming();
-            break;
-        case TRANSFERRING:
-            handleTransferring(context);
-            break;
-        case PAUSED_SYSTEM:
-            handlePausedSystem(context);
-            break;
-        case PAUSED_USER:
-            handlePausedUser(context);
-            break;
-        case CANCELLED:
-            handleCancelled();
-            break;
-        case FINALIZING_SUCCESS:
-            handleFinalizingSuccess(context);
-            break;
-        case FINALIZING_FAILURE:
-            handleFinalizingFailure(context);
-            break;
-        case FINISHED_SUCCESS:
-            handleFinishedSuccess();
-            break;
-        case FINISHED_FAILURE:
-            handleFinishedFailure();
-            break;
-        }
+            case INITIALIZING:
+                handleInitializing(context);
+                break;
+            case RESUMING:
+                handleResuming();
+                break;
+            case TRANSFERRING:
+                handleTransferring(context);
+                break;
+            case PAUSED_SYSTEM:
+                handlePausedSystem(context);
+                break;
+            case PAUSED_USER:
+                handlePausedUser(context);
+                break;
+            case CANCELLED:
+                handleCancelled();
+                break;
+            case FINALIZING_SUCCESS:
+                handleFinalizingSuccess(context);
+                break;
+            case FINALIZING_FAILURE:
+                handleFinalizingFailure(context);
+                break;
+            case FINISHED_SUCCESS:
+                handleFinishedSuccess();
+                break;
+            case FINISHED_FAILURE:
+                handleFinishedFailure();
+                break;
+            }
     }
 
     private void handleInitializing(final StateContext context) {
@@ -168,18 +168,18 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         }
 
         switch (CommandCoordinatorUtil.getCommandStatus(context.childCmdId)) {
-        case NOT_STARTED:
-        case ACTIVE:
-            log.info("Waiting for {} to be added for image transfer command '{}'",
-                    getUploadType(), getCommandId());
-            return;
-        case SUCCEEDED:
-            break;
-        default:
-            log.error("Failed to add {} for image transfer command '{}'",
-                    getUploadType(), getCommandId());
-            setCommandStatus(CommandStatus.FAILED);
-            return;
+            case NOT_STARTED:
+            case ACTIVE:
+                log.info("Waiting for {} to be added for image transfer command '{}'",
+                        getUploadType(), getCommandId());
+                return;
+            case SUCCEEDED:
+                break;
+            default:
+                log.error("Failed to add {} for image transfer command '{}'",
+                        getUploadType(), getCommandId());
+                setCommandStatus(CommandStatus.FAILED);
+                return;
         }
 
         VdcReturnValueBase addDiskRetVal = CommandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
