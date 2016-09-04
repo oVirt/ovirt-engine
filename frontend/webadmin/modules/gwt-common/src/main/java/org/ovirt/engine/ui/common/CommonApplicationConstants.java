@@ -1001,6 +1001,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String imageUploadTransferring();
 
+    String imageUploadTransferringViaAPI();
+
     String imageUploadPausedSystem();
 
     String imageUploadPausedUser();

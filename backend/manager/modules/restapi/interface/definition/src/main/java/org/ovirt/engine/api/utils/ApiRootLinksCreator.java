@@ -67,6 +67,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("katelloerrata", baseUri));
         links.add(createLink("affinitylabels", baseUri));
         links.add(createLink("clusterlevels", baseUri));
+        links.add(createLink("imagetransfers", baseUri));
         return links;
     }
 

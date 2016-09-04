@@ -120,6 +120,8 @@ public interface CommonApplicationMessages extends Messages {
 
     String imageUploadProgressWithTotal(int mbSent, int mbTotal);
 
+    String imageUploadTransferringViaAPI();
+
     String vNumaName(String name, int index);
 
     String numaTotalCpus(int totalCpu);

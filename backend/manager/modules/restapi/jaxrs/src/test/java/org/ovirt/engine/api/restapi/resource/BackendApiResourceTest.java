@@ -129,6 +129,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
         "katelloerrata",
         "affinitylabels",
         "clusterlevels",
+        "imagetransfers",
     };
 
     private static final String[] relationshipsGlusterOnly = {
@@ -199,6 +200,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
         BASE_PATH + "/katelloerrata",
         BASE_PATH + "/affinitylabels",
         BASE_PATH + "/clusterlevels",
+        BASE_PATH + "/imagetransfers",
     };
 
     private static final String[] hrefsGlusterOnly = {
