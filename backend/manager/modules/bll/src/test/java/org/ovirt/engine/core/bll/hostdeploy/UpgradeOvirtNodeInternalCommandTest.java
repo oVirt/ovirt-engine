@@ -114,7 +114,7 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsIHostDoesNotExists() {
+    public void validateFailsIfHostDoesNotExists() {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);

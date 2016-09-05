@@ -86,7 +86,7 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsIHostDoesNotExists() {
+    public void validateFailsIfHostDoesNotExists() {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         InstallVdsInternalCommand<InstallVdsParameters> command = createCommand(param);
