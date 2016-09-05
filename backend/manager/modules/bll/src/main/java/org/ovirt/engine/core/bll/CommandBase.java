@@ -2650,11 +2650,4 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
 
     }
-
-    protected void setParentCommandInfo(Collection<? extends VdcActionParametersBase> parameters) {
-        parameters.forEach(param -> {
-            param.setParentCommand(getActionType());
-            param.setParentParameters(getParameters());
-        });
-    }
 }
