@@ -2,6 +2,7 @@
 --when the vm is plugged.
 --This is a fix to the state where hosted engine disk were initially set to UNASSIGNED as default
 --when hosted engine was deployed and imported.
+--this duplicated script was added to support upgrade from previous minor versions.
 UPDATE images
 SET imagestatus = 1   --OK
 WHERE imagestatus = 0 --UNASSIGNED
