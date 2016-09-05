@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParam
                 VdcActionType.PropagateLabeledNetworksToClusterHosts,
                 new ManageNetworkClustersParameters(
                         Collections.<NetworkCluster>emptyList(),
-                        Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster())));
+                        new ArrayList<>(Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster()))));
     }
 
     @Override
