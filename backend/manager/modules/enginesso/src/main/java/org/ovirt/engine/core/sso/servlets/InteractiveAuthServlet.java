@@ -104,7 +104,7 @@ public class InteractiveAuthServlet extends HttpServlet {
         } catch (Exception ex) {
             log.error("Internal Server Error: {}", ex.getMessage());
             log.debug("Exception", ex);
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
