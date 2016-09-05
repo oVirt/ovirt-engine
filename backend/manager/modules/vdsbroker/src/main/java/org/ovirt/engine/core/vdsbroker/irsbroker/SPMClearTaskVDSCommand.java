@@ -15,7 +15,7 @@ public class SPMClearTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParameter
     protected void executeIrsBrokerCommand() {
         VDSReturnValue returnValue = resourceManager.runVdsCommand(
                 VDSCommandType.HSMClearTask,
-                new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxyData().getCurrentVdsId(),
+                new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxy().getCurrentVdsId(),
                         getParameters().getTaskId()));
         if (returnValue != null && !returnValue.getSucceeded()) {
             getVDSReturnValue().setVdsError(returnValue.getVdsError());

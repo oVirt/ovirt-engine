@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             CommandCoordinatorUtil.initAsyncTaskManager();
             serviceLoader.load(CommandCallbacksPoller.class);
             serviceLoader.load(ResourceManager.class);
+            serviceLoader.load(IrsProxyManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
             StoragePoolStatusHandler.init();
 

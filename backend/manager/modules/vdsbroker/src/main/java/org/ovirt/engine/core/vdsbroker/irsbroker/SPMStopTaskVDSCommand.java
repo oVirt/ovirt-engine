@@ -13,7 +13,7 @@ public class SPMStopTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParameters
     protected void executeIrsBrokerCommand() {
         resourceManager.runVdsCommand(
                 VDSCommandType.HSMStopTask,
-                new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxyData().getCurrentVdsId(),
+                new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxy().getCurrentVdsId(),
                         getParameters().getTaskId()));
     }
 }

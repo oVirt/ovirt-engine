@@ -17,7 +17,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
 
     @Override
     protected void executeIrsBrokerCommand() {
-        GetVolumeInfoVDSCommandParameters p = new GetVolumeInfoVDSCommandParameters(getCurrentIrsProxyData()
+        GetVolumeInfoVDSCommandParameters p = new GetVolumeInfoVDSCommandParameters(getCurrentIrsProxy()
                 .getCurrentVdsId(), getParameters().getStoragePoolId(), getParameters().getStorageDomainId(),
                 getParameters().getImageGroupId(), getParameters().getImageId());
         DiskImage di = (DiskImage) resourceManager.runVdsCommand(VDSCommandType.GetVolumeInfo, p).getReturnValue();

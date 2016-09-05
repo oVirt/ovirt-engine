@@ -9,6 +9,6 @@ public class IsoDirectoryVDSCommand<P extends IrsBaseVDSCommandParameters> exten
 
     @Override
     protected void executeIrsBrokerCommand() {
-        getVDSReturnValue().setReturnValue(getCurrentIrsProxyData().getIsoDirectory());
+        getVDSReturnValue().setReturnValue(getCurrentIrsProxy().getIsoDirectory());
     }
 }

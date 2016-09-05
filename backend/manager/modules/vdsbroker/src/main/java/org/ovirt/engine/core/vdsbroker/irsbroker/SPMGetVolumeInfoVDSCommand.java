@@ -19,7 +19,7 @@ public class SPMGetVolumeInfoVDSCommand<P extends SPMGetVolumeInfoVDSCommandPara
         log.info("Executing GetVolumeInfo using the current SPM");
 
         GetVolumeInfoVDSCommandParameters params = new GetVolumeInfoVDSCommandParameters(
-                getCurrentIrsProxyData().getCurrentVdsId(),
+                getCurrentIrsProxy().getCurrentVdsId(),
                 getParameters().getStoragePoolId(),
                 getParameters().getStorageDomainId(),
                 getParameters().getImageGroupId(),

@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,7 +65,8 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxyManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategy;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
@@ -121,6 +123,9 @@ public class VdsManager {
 
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
+
+    @Inject
+    private Instance<IrsProxyManager> irsProxyManager;
 
     private final AtomicInteger failedToRunVmAttempts;
     private final AtomicInteger unrespondedAttempts;
@@ -319,13 +324,24 @@ public class VdsManager {
                 // Now update the status of domains, this code should not be in
                 // synchronized part of code
                 if (domainsList != null) {
-                    IrsBrokerCommand.updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
+                    updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
                 }
             } catch (Exception e) {
                 log.error("Timer update runtime info failed. Exception:", e);
             } finally {
                 lockManager.releaseLock(monitoringLock);
             }
+        }
+    }
+
+    /**
+     * process received domain monitoring information from a given vds if necessary (according to it's status
+     * and if it's a virtualization node).
+     */
+    private void updateVdsDomainsData(VDS vds, Guid storagePoolId, ArrayList<VDSDomainsData> vdsDomainData) {
+        IrsProxy proxy = irsProxyManager.get().getProxy(storagePoolId);
+        if (proxy != null) {
+            proxy.updateVdsDomainsData(vds, vdsDomainData);
         }
     }
 

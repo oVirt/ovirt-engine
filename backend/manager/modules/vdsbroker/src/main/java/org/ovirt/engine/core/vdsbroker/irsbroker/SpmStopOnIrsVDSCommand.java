@@ -14,7 +14,7 @@ public class SpmStopOnIrsVDSCommand<P extends SpmStopOnIrsVDSCommandParameters> 
                 .runVdsCommand(
                         VDSCommandType.ResetIrs,
                         new ResetIrsVDSCommandParameters(getParameters().getStoragePoolId(),
-                                getCurrentIrsProxyData().getCurrentVdsId(), getParameters().getPreferredSPMId()))
+                                getCurrentIrsProxy().getCurrentVdsId(), getParameters().getPreferredSPMId()))
                 .getSucceeded());
     }
 }

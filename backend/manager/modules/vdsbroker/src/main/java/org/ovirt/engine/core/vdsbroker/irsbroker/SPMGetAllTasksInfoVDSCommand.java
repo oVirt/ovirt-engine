@@ -21,7 +21,7 @@ public class SPMGetAllTasksInfoVDSCommand<P extends IrsBaseVDSCommandParameters>
 
         setReturnValue(resourceManager
                 .runVdsCommand(VDSCommandType.HSMGetAllTasksInfo,
-                        new VdsIdVDSCommandParametersBase(getCurrentIrsProxyData().getCurrentVdsId()))
+                        new VdsIdVDSCommandParametersBase(getCurrentIrsProxy().getCurrentVdsId()))
                 .getReturnValue());
     }
 }

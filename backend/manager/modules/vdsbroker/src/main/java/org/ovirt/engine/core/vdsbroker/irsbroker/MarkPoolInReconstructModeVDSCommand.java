@@ -16,9 +16,9 @@ public class MarkPoolInReconstructModeVDSCommand<P extends IrsBaseVDSCommandPara
     @Override
     protected void executeVDSCommand() {
         try {
-            IrsProxyData proxyData = getCurrentIrsProxyData();
-            proxyData.clearPoolTimers();
-            proxyData.clearCache();
+            IrsProxy proxy = getCurrentIrsProxy();
+            proxy.clearPoolTimers();
+            proxy.clearCache();
         } catch (Exception e) {
             log.error("Could not change timers for pool '{}': {}", getParameters().getStoragePoolId(), e.getMessage());
             log.debug("Exception", e);

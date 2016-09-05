@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
@@ -56,7 +58,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxyManager;
 
 /**
  * Initialize Vds on its loading. For storages: First connect all storage
@@ -78,6 +81,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private ResourceManager resourceManager;
     @Inject
     private InitGlusterCommandHelper glusterCommandHelper;
+    @Inject
+    private IrsProxyManager irsProxyManager;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -309,8 +314,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         try {
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
             if (shouldCheckReportedDomains) {
-                List<Guid> problematicDomainsIds =
-                        IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getDomains(), storagePool);
+                List<Guid> problematicDomainsIds = fetchDomainsReportedAsProblematic(getVds().getDomains(), storagePool);
                 for (Guid domainId : problematicDomainsIds) {
                     StorageDomainStatic domainInfo = storageDomainStaticDao.get(domainId);
                     log.error("Storage Domain '{}' of pool '{}' is in problem in host '{}'",
@@ -334,6 +338,14 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             returnValue.setFirst(false);
         }
         return returnValue;
+    }
+
+    public List<Guid> fetchDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData, StoragePool storagePool) {
+        IrsProxy proxy = irsProxyManager.getProxy(storagePool.getId());
+        if (proxy != null) {
+            return proxy.obtainDomainsReportedAsProblematic(vdsDomainsData);
+        }
+        return Collections.emptyList();
     }
 
     @Override

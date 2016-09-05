@@ -25,14 +25,14 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
                         new SpmStopVDSCommandParameters(vdsId, parameters.getStoragePoolId())).getSucceeded()
                 || parameters.getIgnoreStopFailed()) {
             if (getParameters().getPreferredSPMId() != null) {
-                getCurrentIrsProxyData().setPreferredHostId(getParameters().getPreferredSPMId());
+                getCurrentIrsProxy().setPreferredHostId(getParameters().getPreferredSPMId());
             }
 
             if (getParameters().isVdsAlreadyRebooted()) {
-                getCurrentIrsProxyData().setFencedIrs(vdsId);
+                getCurrentIrsProxy().setFencedIrs(vdsId);
             }
 
-            getCurrentIrsProxyData().resetIrs();
+            getCurrentIrsProxy().resetIrs();
 
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(parameters.getStoragePoolId());
             if (pool != null && (pool.getStatus() == StoragePoolStatus.NotOperational)) {

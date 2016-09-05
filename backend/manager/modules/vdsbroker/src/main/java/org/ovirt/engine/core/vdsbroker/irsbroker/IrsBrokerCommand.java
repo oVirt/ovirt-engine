@@ -2,11 +2,8 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
@@ -16,9 +13,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -45,7 +39,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     @Inject
     private EventQueue eventQueue;
-    private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<>();
+
+    @Inject
+    private IrsProxyManager irsProxyManager;
 
     private static final Logger log = LoggerFactory.getLogger(IrsBrokerCommand.class);
 
@@ -55,79 +51,16 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     @Inject
     private IVdsEventListener eventListener;
 
-    /**
-     * process received domain monitoring information from a given vds if necessary (according to it's status
-     * and if it's a virtualization node).
-     */
-    public static void updateVdsDomainsData(VDS vds, Guid storagePoolId,
-            ArrayList<VDSDomainsData> vdsDomainData) {
-        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
-        if (proxy != null) {
-            proxy.updateVdsDomainsData(vds, vdsDomainData);
-        }
-    }
-
-    public static List<Guid> fetchDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData, StoragePool storagePool) {
-        IrsProxyData proxy = _irsProxyData.get(storagePool.getId());
-        if (proxy != null) {
-            return proxy.obtainDomainsReportedAsProblematic(vdsDomainsData);
-        }
-        return Collections.emptyList();
-    }
-
     @Override
     protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
         return new IRSErrorException(errorMessage);
     }
-
-    public static void init() {
-        for (StoragePool sp : DbFacade.getInstance().getStoragePoolDao().getAll()) {
-            if (!_irsProxyData.containsKey(sp.getId())) {
-                _irsProxyData.put(sp.getId(), new IrsProxyData(sp.getId()));
-            }
-        }
+    protected IrsProxy getCurrentIrsProxy() {
+        return irsProxyManager.getCurrentProxy(getParameters().getStoragePoolId());
     }
 
-    public void removeIrsProxy() {
-        _irsProxyData.get(getParameters().getStoragePoolId()).dispose();
-        _irsProxyData.remove(getParameters().getStoragePoolId());
-    }
-
-    /**
-     * Remove a VDS entry from the pool's IRS Proxy cache, clearing the problematic domains for this VDS and their
-     * timers if they need to be cleaned. This is for a case when the VDS is switched to maintenance by the user, since
-     * we need to clear it's cache data and timers, or else the cache will contain stale data (since the VDS is not
-     * active anymore, it won't be connected to any of the domains).
-     *
-     * @param storagePoolId
-     *            The ID of the storage pool to clean the IRS Proxy's cache for.
-     * @param vdsId
-     *            The ID of the VDS to remove from the cache.
-     * @param vdsName
-     *            The name of the VDS (for logging).
-     */
-    public static void clearVdsFromCache(Guid storagePoolId, Guid vdsId, String vdsName) {
-        IrsProxyData irsProxyData = getIrsProxyData(storagePoolId);
-        if (irsProxyData != null) {
-            irsProxyData.clearVdsFromCache(vdsId, vdsName);
-        }
-    }
-
-    /**
-     * Return the IRS Proxy object for the given pool id. If there's no proxy data available, since there's no SPM
-     * for the pool, then returns <code>null</code>.
-     * @param storagePoolId The ID of the storage pool to get the IRS proxy for.
-     * @return The IRS Proxy object, on <code>null</code> if no proxy data is available.
-     */
-    protected static IrsProxyData getIrsProxyData(Guid storagePoolId) {
-        return _irsProxyData.get(storagePoolId);
-    }
-
-    protected IrsProxyData getCurrentIrsProxyData() {
-        if (!_irsProxyData.containsKey(getParameters().getStoragePoolId())) {
-            _irsProxyData.put(getParameters().getStoragePoolId(), new IrsProxyData(getParameters().getStoragePoolId()));
-        }
-        return _irsProxyData.get(getParameters().getStoragePoolId());
+    protected IrsProxyManager getIrsProxyManager() {
+        return irsProxyManager;
     }
 
     private int _failoverCounter;
@@ -135,7 +68,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     private void failover() {
         if ((getParameters().getIgnoreFailoverLimit() || _failoverCounter < Config
                 .<Integer> getValue(ConfigValues.SpmCommandFailOverRetries) - 1)
-                && getCurrentIrsProxyData().getHasVdssForSpmSelection() && getCurrentIrsProxyData().failover()) {
+                && getCurrentIrsProxy().getHasVdssForSpmSelection() && getCurrentIrsProxy().failover()) {
             _failoverCounter++;
             executeCommand();
         } else {
@@ -149,13 +82,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     protected IIrsServer getIrsProxy() {
-        return getCurrentIrsProxyData().getIrsProxy();
+        return getCurrentIrsProxy().getIrsProxy();
     }
 
     @Override
     protected void executeVDSCommand() {
         AtomicBoolean isStartReconstruct = new AtomicBoolean(false);
-        getCurrentIrsProxyData().runInControlledConcurrency(() -> {
+        getCurrentIrsProxy().runInControlledConcurrency(() -> {
             try {
                 if (getIrsProxy() != null) {
                     executeIrsBrokerCommand();
@@ -198,7 +131,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 log.debug("Exception", ex);
 
                 if ((ex.getVdsError() == null || ex.getVdsError().getCode() != EngineError.StoragePoolWrongMaster)
-                        && getCurrentIrsProxyData().getHasVdssForSpmSelection()) {
+                        && getCurrentIrsProxy().getHasVdssForSpmSelection()) {
                     failover();
                 } else {
                     isStartReconstruct.set(true);
@@ -213,7 +146,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 getVDSReturnValue().setVdsError(ex.getVdsError());
                 logException(ex);
                 if (ex.getVdsError() != null && EngineError.SpmStatusError == ex.getVdsError().getCode()) {
-                    getCurrentIrsProxyData().setCurrentVdsId(Guid.Empty);
+                    getCurrentIrsProxy().setCurrentVdsId(Guid.Empty);
                 }
                 failover();
             } catch (IRSErrorException ex) {
@@ -241,7 +174,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 // realize what to do in each case:
                 failover();
             } finally {
-                getCurrentIrsProxyData().getTriedVdssList().clear();
+                getCurrentIrsProxy().getTriedVdssList().clear();
             }
         });
         if (isStartReconstruct.get()) {

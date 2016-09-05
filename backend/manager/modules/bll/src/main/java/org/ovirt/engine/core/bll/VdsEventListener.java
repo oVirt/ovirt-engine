@@ -92,7 +92,8 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxyManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmJobsMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
@@ -137,6 +138,8 @@ public class VdsEventListener implements IVdsEventListener {
     private VmJobsMonitoring vmJobsMonitoring;
     @Inject
     private ExecutionHandler executionHandler;
+    @Inject
+    private IrsProxyManager irsProxyManager;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -187,9 +190,29 @@ public class VdsEventListener implements IVdsEventListener {
         eventQueue.submitEventSync(new Event(vds.getStoragePoolId(),
                 null, vds.getId(), EventType.VDSCLEARCACHE, ""),
                 () -> {
-                    IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getName());
+                    clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getName());
                     return new EventResult(true, EventType.VDSCLEARCACHE);
                 });
+    }
+
+    /**
+     * Remove a VDS entry from the pool's IRS Proxy cache, clearing the problematic domains for this VDS and their
+     * timers if they need to be cleaned. This is for a case when the VDS is switched to maintenance by the user, since
+     * we need to clear it's cache data and timers, or else the cache will contain stale data (since the VDS is not
+     * active anymore, it won't be connected to any of the domains).
+     *
+     * @param storagePoolId
+     *            The ID of the storage pool to clean the IRS Proxy's cache for.
+     * @param vdsId
+     *            The ID of the VDS to remove from the cache.
+     * @param vdsName
+     *            The name of the VDS (for logging).
+     */
+    private void clearVdsFromCache(Guid storagePoolId, Guid vdsId, String vdsName) {
+        IrsProxy irsProxyData = irsProxyManager.getProxy(storagePoolId);
+        if (irsProxyData != null) {
+            irsProxyData.clearVdsFromCache(vdsId, vdsName);
+        }
     }
 
     @Override

@@ -15,7 +15,7 @@ public class SPMRevertTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParamete
         VDSReturnValue returnValue =
                 resourceManager.runVdsCommand(
                         VDSCommandType.HSMRevertTask,
-                        new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxyData().getCurrentVdsId(),
+                        new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxy().getCurrentVdsId(),
                                 getParameters().getTaskId()));
         if (returnValue != null && !returnValue.getSucceeded()) {
             getVDSReturnValue().setVdsError(returnValue.getVdsError());

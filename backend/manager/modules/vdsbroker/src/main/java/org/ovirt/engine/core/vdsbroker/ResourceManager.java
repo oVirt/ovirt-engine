@@ -50,7 +50,6 @@ import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsCommandExecutor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
@@ -127,7 +126,6 @@ public class ResourceManager implements BackendService {
         for (VDS curVds : allVdsList) {
             addVds(curVds, true);
         }
-        IrsBrokerCommand.init();
 
         log.info("Finished initializing {}", getClass().getSimpleName());
     }

@@ -15,6 +15,6 @@ public class SPMGetAllTasksStatusesVDSCommand<P extends IrsBaseVDSCommandParamet
     @Override
     protected void executeIrsBrokerCommand() {
         setVDSReturnValue(resourceManager.runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                new VdsIdVDSCommandParametersBase(getCurrentIrsProxyData().getCurrentVdsId())));
+                new VdsIdVDSCommandParametersBase(getCurrentIrsProxy().getCurrentVdsId())));
     }
 }
