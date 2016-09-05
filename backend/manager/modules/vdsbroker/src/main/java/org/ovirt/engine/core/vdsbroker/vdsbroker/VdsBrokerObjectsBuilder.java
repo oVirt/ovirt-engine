@@ -457,13 +457,6 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        /**
-         * vm disks
-         */
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_disks)) {
-            initDisks(xmlRpcStruct, vm);
-        }
-
         // ------------- vm internal agent data
         if (xmlRpcStruct.containsKey(VdsProperties.vm_host)) {
             vm.setVmHost(assignStringValue(xmlRpcStruct, VdsProperties.vm_host));
@@ -1579,9 +1572,13 @@ public class VdsBrokerObjectsBuilder {
         return Boolean.FALSE;
     }
 
-    private static void initDisks(Map<String, Object> vmStruct, VmDynamic vm) {
+    public static List<DiskImageDynamic> buildVmDiskStatistics(Map<String, Object> vmStruct) {
         Map<String, Object> disks = (Map<String, Object>) vmStruct.get(VdsProperties.vm_disks);
-        ArrayList<DiskImageDynamic> disksData = new ArrayList<>();
+        if (disks == null) {
+            return Collections.emptyList();
+        }
+
+        List<DiskImageDynamic> disksData = new ArrayList<>();
         for (Object diskAsObj : disks.values()) {
             Map<String, Object> disk = (Map<String, Object>) diskAsObj;
             DiskImageDynamic diskData = new DiskImageDynamic();
@@ -1614,7 +1611,7 @@ public class VdsBrokerObjectsBuilder {
                 disksData.add(diskData);
             }
         }
-        vm.setDisks(disksData);
+        return disksData;
     }
 
     private static void initAppsList(Map<String, Object> vmStruct, VmDynamic vm) {

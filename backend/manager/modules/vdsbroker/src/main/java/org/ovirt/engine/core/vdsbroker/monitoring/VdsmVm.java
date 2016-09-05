@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,6 +33,7 @@ public class VdsmVm {
     private List<VmJob> vmJobs;
     private List<VmNetworkInterface> interfaceStatistics;
     private VmBalloonInfo vmBalloonInfo;
+    private List<DiskImageDynamic> diskStatistics;
 
     public VdsmVm(Double timestamp) {
         this.lunsMap = Collections.<String, LUNs>emptyMap();
@@ -105,6 +107,15 @@ public class VdsmVm {
         return this;
     }
 
+    public List<DiskImageDynamic> getDiskStatistics() {
+        return diskStatistics;
+    }
+
+    public VdsmVm setDiskStatistics(List<DiskImageDynamic> value) {
+        diskStatistics = value;
+        return this;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -112,7 +123,8 @@ public class VdsmVm {
                 vmGuestAgentInterfaces,
                 vmStatistics,
                 lunsMap,
-                interfaceStatistics
+                interfaceStatistics,
+                diskStatistics
         );
     }
 
@@ -129,6 +141,7 @@ public class VdsmVm {
                 && Objects.equals(vmGuestAgentInterfaces, other.vmGuestAgentInterfaces)
                 && Objects.equals(vmStatistics, other.vmStatistics)
                 && Objects.equals(lunsMap, other.lunsMap)
+                && Objects.equals(diskStatistics, other.diskStatistics)
                 && Objects.equals(interfaceStatistics, other.interfaceStatistics);
     }
 

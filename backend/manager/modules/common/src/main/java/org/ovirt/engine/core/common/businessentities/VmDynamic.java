@@ -9,7 +9,6 @@ import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -57,8 +56,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private int guestAgentNicsHash;
     @UnchangeableByVdsm
     private String exitMessage;
-    @UnchangeableByVdsm
-    private ArrayList<DiskImageDynamic> disks;
     private boolean win2kHackEnabled;
     private Long lastWatchdogEvent;
     private String lastWatchdogAction;
@@ -105,7 +102,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 guestRequestedMemory,
                 kvmEnable,
                 lastVdsRunOn,
-                disks,
                 exitMessage,
                 exitStatus,
                 win2kHackEnabled,
@@ -165,7 +161,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(guestRequestedMemory, other.guestRequestedMemory)
                 && Objects.equals(kvmEnable, other.kvmEnable)
                 && Objects.equals(lastVdsRunOn, other.lastVdsRunOn)
-                && Objects.equals(disks, other.disks)
                 && Objects.equals(exitMessage, other.exitMessage)
                 && exitStatus == other.exitStatus
                 && win2kHackEnabled == other.win2kHackEnabled
@@ -218,14 +213,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         exitStatus = value;
     }
 
-    public ArrayList<DiskImageDynamic> getDisks() {
-        return disks;
-    }
-
-    public void setDisks(ArrayList<DiskImageDynamic> value) {
-        disks = value;
-    }
-
     public int getGuestAgentNicsHash() {
         return guestAgentNicsHash;
     }
@@ -263,7 +250,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestOsKernelVersion = "";
         guestOsArch = ArchitectureType.undefined;
         guestOsType = OsType.Other;
-        disks = new ArrayList<>();
         guestContainers = new ArrayList<>();
     }
 
@@ -296,7 +282,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         pauseStatus = template.getPauseStatus();
         guestAgentNicsHash = template.getGuestAgentNicsHash();
         exitMessage = template.getExitMessage();
-        disks = new ArrayList<>(template.getDisks());
         win2kHackEnabled = template.getWin2kHackEnable();
         lastWatchdogEvent = template.getLastWatchdogEvent();
         lastWatchdogAction = template.getLastWatchdogAction();

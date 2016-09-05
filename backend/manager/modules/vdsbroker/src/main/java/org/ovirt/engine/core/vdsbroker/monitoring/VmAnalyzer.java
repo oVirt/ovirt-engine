@@ -791,7 +791,7 @@ public class VmAnalyzer {
     }
 
     private void updateDiskImageDynamics() {
-        vmDiskImageDynamicToSave =  vdsmVm.getVmDynamic().getDisks().stream()
+        vmDiskImageDynamicToSave =  vdsmVm.getDiskStatistics().stream()
                 .map(diskImageDynamic -> new Pair<>(dbVm.getId(), diskImageDynamic))
                 .collect(Collectors.toList());
     }

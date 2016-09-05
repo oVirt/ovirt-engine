@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildInterfaceStatisticsData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVMStatisticsData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmBalloonInfo;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmDiskStatistics;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmGuestAgentInterfacesData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmJobsData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmLunDisksData;
@@ -45,7 +46,8 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
                 .setInterfaceStatistics(buildInterfaceStatisticsData(xmlRpcStruct))
                 .setVmBalloonInfo(buildVmBalloonInfo(xmlRpcStruct))
                 .setVmGuestAgentInterfaces(buildVmGuestAgentInterfacesData(vmId, xmlRpcStruct))
-                .setLunsMap(buildVmLunDisksData(xmlRpcStruct));
+                .setLunsMap(buildVmLunDisksData(xmlRpcStruct))
+                .setDiskStatistics(buildVmDiskStatistics(xmlRpcStruct));
     }
 
     @Override
