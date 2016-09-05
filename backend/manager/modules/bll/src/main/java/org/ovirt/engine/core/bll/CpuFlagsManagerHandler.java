@@ -28,48 +28,36 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class CpuFlagsManagerHandler implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(CpuFlagsManagerHandler.class);
-    private static Map<Version, CpuFlagsManager> _managersDictionary = new HashMap<>();
+    private static Map<Version, CpuFlagsManager> managersDictionary = new HashMap<>();
 
     @PostConstruct
     public void initDictionaries() {
         log.info("Start initializing dictionaries");
-        _managersDictionary.clear();
+        managersDictionary.clear();
         for (Version ver : Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
-            _managersDictionary.put(ver, new CpuFlagsManager(ver));
+            managersDictionary.put(ver, new CpuFlagsManager(ver));
         }
        log.info("Finished initializing dictionaries");
     }
 
     public String getCpuId(String name, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.getVDSVerbDataByCpuName(name);
-        }
-        return null;
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.getVDSVerbDataByCpuName(name) : null;
     }
 
     public String getCpuNameByCpuId(String name, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.getCpuNameByCpuId(name);
-        }
-        return null;
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.getCpuNameByCpuId(name) : null;
     }
 
     public ArchitectureType getArchitectureByCpuName(String name, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.getArchitectureByCpuName(name);
-        }
-        return null;
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.getArchitectureByCpuName(name) : null;
     }
 
     public List<ServerCpu> allServerCpuList(Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.getAllServerCpuList();
-        }
-        return new ArrayList<>();
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.getAllServerCpuList() : new ArrayList<>();
     }
 
     /**
@@ -79,66 +67,49 @@ public class CpuFlagsManagerHandler implements BackendService {
      * @return list of missing CPU flags
      */
     public List<String> missingServerCpuFlags(String clusterCpuName, String serverFlags, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.missingServerCpuFlags(clusterCpuName, serverFlags);
-        }
-        return null;
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.missingServerCpuFlags(clusterCpuName, serverFlags) : null;
     }
 
     public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.checkIfCpusSameManufacture(cpuName1, cpuName2);
-        }
-        return false;
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.checkIfCpusSameManufacture(cpuName1, cpuName2) : false;
     }
 
     public boolean checkIfCpusExist(String cpuName, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.checkIfCpusExist(cpuName);
-        }
-        return false;
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.checkIfCpusExist(cpuName) : false;
     }
 
     /**
      * Finds max server cpu by server cpu flags only
      */
     public ServerCpu findMaxServerCpuByFlags(String flags, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.findMaxServerCpuByFlags(flags);
-        }
-        return null;
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.findMaxServerCpuByFlags(flags) : null;
     }
 
 
     public Version getLatestDictionaryVersion() {
-        return Collections.max(_managersDictionary.keySet());
-
+        return Collections.max(managersDictionary.keySet());
     }
 
     public List<ServerCpu> getSupportedServerCpuList(Version ver, String maxCpuName) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.getSupportedServerCpuList(maxCpuName);
-        }
-        return new ArrayList<>();
-
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.getSupportedServerCpuList(maxCpuName) : new ArrayList<>();
     }
 
     private static class CpuFlagsManager {
-        private List<ServerCpu> _intelCpuList;
-        private List<ServerCpu> _amdCpuList;
-        private List<ServerCpu> _ibmCpuList;
-        private List<ServerCpu> _allCpuList = new ArrayList<>();
-        private Map<String, ServerCpu> _intelCpuByNameDictionary = new HashMap<>();
-        private Map<String, ServerCpu> _amdCpuByNameDictionary = new HashMap<>();
-        private Map<String, ServerCpu> _ibmCpuByNameDictionary = new HashMap<>();
-        private Map<String, ServerCpu> _intelCpuByVdsNameDictionary = new HashMap<>();
-        private Map<String, ServerCpu> _amdCpuByVdsNameDictionary = new HashMap<>();
-        private Map<String, ServerCpu> _ibmCpuByVdsNameDictionary = new HashMap<>();
+        private List<ServerCpu> intelCpuList;
+        private List<ServerCpu> amdCpuList;
+        private List<ServerCpu> ibmCpuList;
+        private List<ServerCpu> allCpuList = new ArrayList<>();
+        private Map<String, ServerCpu> intelCpuByNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> amdCpuByNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> ibmCpuByNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> intelCpuByVdsNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> amdCpuByVdsNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> ibmCpuByVdsNameDictionary = new HashMap<>();
 
         public CpuFlagsManager(Version ver) {
             initDictionaries(ver);
@@ -146,27 +117,24 @@ public class CpuFlagsManagerHandler implements BackendService {
 
         public ArchitectureType getArchitectureByCpuName(String cpuName) {
             ServerCpu cpu = getServerCpuByName(cpuName);
-
-            ArchitectureType result = ArchitectureType.undefined;
-
             if (cpu != null) {
-                result = cpu.getArchitecture();
+                return cpu.getArchitecture();
             }
 
-            return result;
+            return ArchitectureType.undefined;
         }
 
         public ServerCpu getServerCpuByName(String cpuName) {
             ServerCpu result = null;
             if (cpuName != null) {
-                result = _intelCpuByNameDictionary.get(cpuName);
+                result = intelCpuByNameDictionary.get(cpuName);
 
                 if (result == null) {
-                    result = _amdCpuByNameDictionary.get(cpuName);
+                    result = amdCpuByNameDictionary.get(cpuName);
                 }
 
                 if (result == null) {
-                    result = _ibmCpuByNameDictionary.get(cpuName);
+                    result = ibmCpuByNameDictionary.get(cpuName);
                 }
             }
             return result;
@@ -175,10 +143,10 @@ public class CpuFlagsManagerHandler implements BackendService {
         @SuppressWarnings("synthetic-access")
         public void initDictionaries(Version ver) {
             // init dictionaries
-            _intelCpuByNameDictionary.clear();
-            _amdCpuByNameDictionary.clear();
-            _ibmCpuByNameDictionary.clear();
-            _allCpuList.clear();
+            intelCpuByNameDictionary.clear();
+            amdCpuByNameDictionary.clear();
+            ibmCpuByNameDictionary.clear();
+            allCpuList.clear();
 
             String[] cpus = Config.<String> getValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
             for (String cpu : cpus) {
@@ -205,42 +173,42 @@ public class CpuFlagsManagerHandler implements BackendService {
 
                         ServerCpu sc = new ServerCpu(info[1], level, flgs, info[3], archType);
                         if (sc.getFlags().contains(CpuVendor.INTEL.getFlag())) {
-                            _intelCpuByNameDictionary.put(sc.getCpuName(), sc);
-                            _intelCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
+                            intelCpuByNameDictionary.put(sc.getCpuName(), sc);
+                            intelCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
                         } else if (sc.getFlags().contains(CpuVendor.AMD.getFlag())) {
-                            _amdCpuByNameDictionary.put(sc.getCpuName(), sc);
-                            _amdCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
+                            amdCpuByNameDictionary.put(sc.getCpuName(), sc);
+                            amdCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
                         } else if (sc.getFlags().contains(CpuVendor.IBM.getFlag())) {
-                            _ibmCpuByNameDictionary.put(sc.getCpuName(), sc);
-                            _ibmCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
+                            ibmCpuByNameDictionary.put(sc.getCpuName(), sc);
+                            ibmCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
                         }
 
-                        _allCpuList.add(sc);
+                        allCpuList.add(sc);
                     } else {
                         log.error("Error getting info for CPU '{}', not in expected format.", cpu);
                     }
                 }
             }
-            _intelCpuList = new ArrayList<>(_intelCpuByNameDictionary.values());
-            _amdCpuList = new ArrayList<>(_amdCpuByNameDictionary.values());
-            _ibmCpuList = new ArrayList<>(_ibmCpuByNameDictionary.values());
+            intelCpuList = new ArrayList<>(intelCpuByNameDictionary.values());
+            amdCpuList = new ArrayList<>(amdCpuByNameDictionary.values());
+            ibmCpuList = new ArrayList<>(ibmCpuByNameDictionary.values());
 
             Comparator<ServerCpu> cpuComparator = Comparator.comparingInt(ServerCpu::getLevel);
 
             // Sort by the highest cpu level so the highest cpu match will be
             // selected first
-            Collections.sort(_intelCpuList, cpuComparator);
-            Collections.sort(_amdCpuList, cpuComparator);
-            Collections.sort(_ibmCpuList, cpuComparator);
+            Collections.sort(intelCpuList, cpuComparator);
+            Collections.sort(amdCpuList, cpuComparator);
+            Collections.sort(ibmCpuList, cpuComparator);
         }
 
         public String getVDSVerbDataByCpuName(String name) {
             String result = null;
             ServerCpu sc = null;
             if (name != null) {
-                if ((sc = _intelCpuByNameDictionary.get(name)) != null
-                        || (sc = _amdCpuByNameDictionary.get(name)) != null
-                        || (sc = _ibmCpuByNameDictionary.get(name)) != null) {
+                if ((sc = intelCpuByNameDictionary.get(name)) != null
+                        || (sc = amdCpuByNameDictionary.get(name)) != null
+                        || (sc = ibmCpuByNameDictionary.get(name)) != null) {
                     result = sc.getVdsVerbData();
                 }
             }
@@ -251,9 +219,9 @@ public class CpuFlagsManagerHandler implements BackendService {
             String result = null;
             ServerCpu sc = null;
             if (vdsName != null) {
-                if ((sc = _intelCpuByVdsNameDictionary.get(vdsName)) != null
-                        || (sc = _amdCpuByVdsNameDictionary.get(vdsName)) != null
-                        || (sc = _ibmCpuByVdsNameDictionary.get(vdsName)) != null) {
+                if ((sc = intelCpuByVdsNameDictionary.get(vdsName)) != null
+                        || (sc = amdCpuByVdsNameDictionary.get(vdsName)) != null
+                        || (sc = ibmCpuByVdsNameDictionary.get(vdsName)) != null) {
                     result = sc.getCpuName();
                 }
             }
@@ -261,7 +229,7 @@ public class CpuFlagsManagerHandler implements BackendService {
         }
 
         public List<ServerCpu> getAllServerCpuList() {
-            return _allCpuList;
+            return allCpuList;
         }
 
         /**
@@ -280,9 +248,9 @@ public class CpuFlagsManagerHandler implements BackendService {
 
             // first find cluster cpu
             if (clusterCpuName != null
-                    && ((clusterCpu = _intelCpuByNameDictionary.get(clusterCpuName)) != null
-                            || (clusterCpu = _amdCpuByNameDictionary.get(clusterCpuName)) != null
-                            || (clusterCpu = _ibmCpuByNameDictionary.get(clusterCpuName)) != null
+                    && ((clusterCpu = intelCpuByNameDictionary.get(clusterCpuName)) != null
+                            || (clusterCpu = amdCpuByNameDictionary.get(clusterCpuName)) != null
+                            || (clusterCpu = ibmCpuByNameDictionary.get(clusterCpuName)) != null
                     )) {
                 for (String flag : clusterCpu.getFlags()) {
                     if (!lstServerflags.contains(flag)) {
@@ -310,25 +278,30 @@ public class CpuFlagsManagerHandler implements BackendService {
          * manufacturer (intel or amd)
          */
         public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2) {
-            boolean result = false;
-            if (cpuName1 != null && cpuName2 != null) {
-                if (_intelCpuByNameDictionary.containsKey(cpuName1)) {
-                    result = _intelCpuByNameDictionary.containsKey(cpuName2);
-                } else if (_amdCpuByNameDictionary.containsKey(cpuName1)) {
-                    result = _amdCpuByNameDictionary.containsKey(cpuName2);
-                } else if (_ibmCpuByNameDictionary.containsKey(cpuName1)) {
-                    result = _ibmCpuByNameDictionary.containsKey(cpuName2);
-                }
+            if (cpuName1 == null || cpuName2 == null) {
+                return false;
             }
 
-            return result;
+            if (intelCpuByNameDictionary.containsKey(cpuName1)) {
+                return intelCpuByNameDictionary.containsKey(cpuName2);
+            }
+
+            if (amdCpuByNameDictionary.containsKey(cpuName1)) {
+                return amdCpuByNameDictionary.containsKey(cpuName2);
+            }
+
+            if (ibmCpuByNameDictionary.containsKey(cpuName1)) {
+                return  ibmCpuByNameDictionary.containsKey(cpuName2);
+            }
+
+            return false;
         }
 
         public boolean checkIfCpusExist(String cpuName) {
             return cpuName != null
-                    && (_intelCpuByNameDictionary.containsKey(cpuName)
-                            || _amdCpuByNameDictionary.containsKey(cpuName)
-                            || _ibmCpuByNameDictionary.containsKey(cpuName));
+                    && (intelCpuByNameDictionary.containsKey(cpuName)
+                            || amdCpuByNameDictionary.containsKey(cpuName)
+                            || ibmCpuByNameDictionary.containsKey(cpuName));
         }
 
         /**
@@ -340,23 +313,23 @@ public class CpuFlagsManagerHandler implements BackendService {
                     : new HashSet<>(Arrays.asList(flags.split("[,]", -1)));
 
             if (lstFlags.contains(CpuVendor.INTEL.getFlag())) {
-                for (int i = _intelCpuList.size() - 1; i >= 0; i--) {
-                    if (checkIfFlagsContainsCpuFlags(_intelCpuList.get(i), lstFlags)) {
-                        result = _intelCpuList.get(i);
+                for (int i = intelCpuList.size() - 1; i >= 0; i--) {
+                    if (checkIfFlagsContainsCpuFlags(intelCpuList.get(i), lstFlags)) {
+                        result = intelCpuList.get(i);
                         break;
                     }
                 }
             } else if (lstFlags.contains(CpuVendor.AMD.getFlag())) {
-                for (int i = _amdCpuList.size() - 1; i >= 0; i--) {
-                    if (checkIfFlagsContainsCpuFlags(_amdCpuList.get(i), lstFlags)) {
-                        result = _amdCpuList.get(i);
+                for (int i = amdCpuList.size() - 1; i >= 0; i--) {
+                    if (checkIfFlagsContainsCpuFlags(amdCpuList.get(i), lstFlags)) {
+                        result = amdCpuList.get(i);
                         break;
                     }
                 }
             } else if (lstFlags.contains(CpuVendor.IBM.getFlag())) {
-                for (int i = _ibmCpuList.size() - 1; i >= 0; i--) {
-                    if (checkIfFlagsContainsCpuFlags(_ibmCpuList.get(i), lstFlags)) {
-                        result = _ibmCpuList.get(i);
+                for (int i = ibmCpuList.size() - 1; i >= 0; i--) {
+                    if (checkIfFlagsContainsCpuFlags(ibmCpuList.get(i), lstFlags)) {
+                        result = ibmCpuList.get(i);
                         break;
                     }
                 }
@@ -375,23 +348,23 @@ public class CpuFlagsManagerHandler implements BackendService {
         public List<ServerCpu> getSupportedServerCpuList(String maxCpuName) {
 
             List<ServerCpu> supportedCpus = new ArrayList<>();
-            if (_intelCpuByNameDictionary.containsKey(maxCpuName)) {
-                ServerCpu selected = _intelCpuByNameDictionary.get(maxCpuName);
-                int selectedCpuIndex = _intelCpuList.indexOf(selected);
+            if (intelCpuByNameDictionary.containsKey(maxCpuName)) {
+                ServerCpu selected = intelCpuByNameDictionary.get(maxCpuName);
+                int selectedCpuIndex = intelCpuList.indexOf(selected);
                 for (int i = 0; i <= selectedCpuIndex; i++) { // list is sorted by level
-                    supportedCpus.add(_intelCpuList.get(i));
+                    supportedCpus.add(intelCpuList.get(i));
                 }
-            } else if (_ibmCpuByNameDictionary.containsKey(maxCpuName)) {
-                    ServerCpu selected = _ibmCpuByNameDictionary.get(maxCpuName);
-                    int selectedCpuIndex =_ibmCpuList.indexOf(selected);
+            } else if (ibmCpuByNameDictionary.containsKey(maxCpuName)) {
+                    ServerCpu selected = ibmCpuByNameDictionary.get(maxCpuName);
+                    int selectedCpuIndex =ibmCpuList.indexOf(selected);
                     for (int i = 0; i <= selectedCpuIndex; i++) {
-                        supportedCpus.add(_ibmCpuList.get(i));
+                        supportedCpus.add(ibmCpuList.get(i));
                     }
-            } else if (_amdCpuByNameDictionary.containsKey(maxCpuName)) {
-                ServerCpu selected = _amdCpuByNameDictionary.get(maxCpuName);
-                int selectedCpuIndex =_amdCpuList.indexOf(selected);
+            } else if (amdCpuByNameDictionary.containsKey(maxCpuName)) {
+                ServerCpu selected = amdCpuByNameDictionary.get(maxCpuName);
+                int selectedCpuIndex =amdCpuList.indexOf(selected);
                 for (int i = 0; i <= selectedCpuIndex; i++) {
-                    supportedCpus.add(_amdCpuList.get(i));
+                    supportedCpus.add(amdCpuList.get(i));
                 }
             }
             return supportedCpus;
@@ -400,7 +373,7 @@ public class CpuFlagsManagerHandler implements BackendService {
     }
 
     public int compareCpuLevels(String cpuName1, String cpuName2, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
         ServerCpu server1 = null;
         ServerCpu server2 = null;
         if (cpuFlagsManager != null) {
@@ -413,7 +386,7 @@ public class CpuFlagsManagerHandler implements BackendService {
     }
 
     public boolean isCpuUpdatable(String cpuName, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
         ServerCpu server = null;
 
         if (cpuFlagsManager != null) {
