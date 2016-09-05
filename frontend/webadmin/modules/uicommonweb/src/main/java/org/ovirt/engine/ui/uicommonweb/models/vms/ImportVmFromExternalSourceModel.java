@@ -48,8 +48,8 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 @SuppressWarnings("unchecked")
-                ListModel<StorageDomain> list = (ListModel<StorageDomain>)sender;
-                if (list.getSelectedItem().getStorageType().isBlockDomain() &&
+                ListModel<StorageDomain> list = (ListModel<StorageDomain>) sender;
+                if (list.getSelectedItem() != null && list.getSelectedItem().getStorageType().isBlockDomain() &&
                         containsKvmOrigin()) {
                     setMessage(constants.kvmBlockDomainWraning());
                 } else {
