@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class AttachNetworkToClusterCommand extends NetworkClusterCommandBase<Att
 
         runInternalAction(
                 VdcActionType.PropagateLabeledNetworksToClusterHosts,
-                new ManageNetworkClustersParameters(Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster())));
+                new ManageNetworkClustersParameters(new ArrayList<>(Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster()))));
     }
 
     @Override
