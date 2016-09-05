@@ -37,10 +37,6 @@ public class ManageNetworkClustersParameters extends VdcActionParametersBase {
         this.updates = updates;
     }
 
-    public ManageNetworkClustersParameters(ManageNetworkClustersParameters other) {
-        this(other.getAttachments(), other.getDetachments(), other.getUpdates());
-    }
-
     ManageNetworkClustersParameters() {
     }
 
