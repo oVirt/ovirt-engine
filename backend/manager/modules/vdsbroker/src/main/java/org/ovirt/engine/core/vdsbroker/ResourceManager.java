@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -53,7 +52,6 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsCommandExecutor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
@@ -96,12 +94,6 @@ public class ResourceManager implements BackendService {
 
     @Inject
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
-
-    @Inject
-    private DbFacade dbFacade;
-
-    @Inject
-    private MonitoringStrategyFactory monitoringStrategyFactory;
 
     @Inject
     Instance<VdsCommandExecutor> commandExecutor;
