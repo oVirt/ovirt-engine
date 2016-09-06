@@ -4,23 +4,21 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class CommandCallback {
+public interface CommandCallback {
 
-    public CommandCallback() {}
-
-    public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
+    default void doPolling(Guid cmdId, List<Guid> childCmdIds) {
     }
 
-    public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
+    default void onFailed(Guid cmdId, List<Guid> childCmdIds) {
     }
 
-    public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
+    default void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
     }
 
-    public void onEvent(Guid cmdId, List<Guid> childCmdIds, Object eventData) {
+    default void onEvent(Guid cmdId, List<Guid> childCmdIds, Object eventData) {
     }
 
-    public boolean isTriggeredByEvent() {
+    default boolean isTriggeredByEvent() {
         return false;
     }
 
@@ -31,11 +29,11 @@ public abstract class CommandCallback {
      * have unified status handling.
      */
     //TODO: remove when callbacks parent classes and status handling is unified
-    public boolean pollOnExecutionFailed() {
+    default boolean pollOnExecutionFailed() {
         return false;
     }
 
-    public boolean shouldRepeatEndMethodsOnFail(Guid cmdId) {
+    default boolean shouldRepeatEndMethodsOnFail(Guid cmdId) {
         return false;
     }
 }

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-public class MergeStatusCommandCallback extends CommandCallback {
+public class MergeStatusCommandCallback implements CommandCallback {
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).attemptResolution();

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * maintenance mode, the callback will stop Gluster services on the host so that maintenance activities can be done on
  * the host.
  */
-public class HostMaintenanceCallback extends CommandCallback {
+public class HostMaintenanceCallback implements CommandCallback {
     private String hostName;
 
     private static final Logger log = LoggerFactory.getLogger(HostMaintenanceCallback.class);

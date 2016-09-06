@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConvertVmCallback extends CommandCallback {
+public class ConvertVmCallback implements CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(ConvertVmCallback.class);
     private static final String JOB_DOES_NOT_EXIST_MSG = "Lost contact with the conversion process";
 

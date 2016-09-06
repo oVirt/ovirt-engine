@@ -26,7 +26,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StorageJobCallback extends CommandCallback {
+public class StorageJobCallback implements CommandCallback {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override

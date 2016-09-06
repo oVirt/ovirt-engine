@@ -14,7 +14,7 @@ import org.ovirt.engine.core.vdsbroker.monitoring.VmJobsMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MergeCommandCallback extends CommandCallback {
+public class MergeCommandCallback implements CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(MergeCommandCallback.class);
 
     @Inject

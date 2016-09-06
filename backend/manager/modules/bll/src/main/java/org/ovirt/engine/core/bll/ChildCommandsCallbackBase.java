@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ChildCommandsCallbackBase extends CommandCallback {
+public abstract class ChildCommandsCallbackBase implements CommandCallback {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 

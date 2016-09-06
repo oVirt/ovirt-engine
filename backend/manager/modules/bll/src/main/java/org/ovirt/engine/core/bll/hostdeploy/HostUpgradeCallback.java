@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * maintenance mode, the callback invokes the {@code UpgradeHostInternalCommand} for upgrading the host in async way.
  * The {@code UpgradeHostInternalCommand} is being monitored by this callback to its completion.
  */
-public class HostUpgradeCallback extends CommandCallback {
+public class HostUpgradeCallback implements CommandCallback {
 
     private static final Logger log = LoggerFactory.getLogger(HostUpgradeCallback.class);
     private String hostName;
