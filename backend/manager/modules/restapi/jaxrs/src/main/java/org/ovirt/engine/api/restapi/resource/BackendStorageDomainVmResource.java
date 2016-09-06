@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
+import org.ovirt.engine.api.resource.StorageDomainVmDiskAttachmentsResource;
 import org.ovirt.engine.api.resource.StorageDomainVmResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
@@ -142,6 +143,12 @@ public class BackendStorageDomainVmResource
     @Override
     public StorageDomainContentDisksResource getDisksResource() {
         return inject(new BackendExportDomainDisksResource(this));
+    }
+
+    @Override
+    public StorageDomainVmDiskAttachmentsResource getDiskAttachmentsResource() {
+        // TODO: Implement this.
+        return null;
     }
 
     @Override
