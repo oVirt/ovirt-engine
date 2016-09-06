@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -58,11 +57,11 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
         try {
             // This must be done before starting to sample the hosts status from VDSM since the sampling will turn such host from Reboot to NonResponsive
-            loadService(PmHealthCheckManager.class);
-            loadService(EngineBackupAwarenessManager.class);
+            serviceLoader.load(PmHealthCheckManager.class);
+            serviceLoader.load(EngineBackupAwarenessManager.class);
             CommandCoordinatorUtil.initAsyncTaskManager();
-            loadService(CommandCallbacksPoller.class);
-            loadService(ResourceManager.class);
+            serviceLoader.load(CommandCallbacksPoller.class);
+            serviceLoader.load(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
             StoragePoolStatusHandler.init();
 
@@ -82,25 +81,22 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
                 log.error("Initialization of device custom properties failed.", e);
             }
 
-            loadService(SchedulingManager.class);
+            serviceLoader.load(SchedulingManager.class);
 
             sessionDataContainer.cleanupEngineSessionsOnStartup();
 
-            loadService(HostDeviceManager.class);
-            loadService(DwhHeartBeat.class);
+            serviceLoader.load(HostDeviceManager.class);
+            serviceLoader.load(DwhHeartBeat.class);
 
             if(Config.<Boolean> getValue(ConfigValues.AffinityRulesEnforcementManagerEnabled)) {
-                loadService(AffinityRulesEnforcementManager.class);
+                serviceLoader.load(AffinityRulesEnforcementManager.class);
             }
 
-            loadService(CertificationValidityChecker.class);
+            serviceLoader.load(CertificationValidityChecker.class);
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;
         }
     }
 
-    private void loadService(Class<? extends BackendService> service) {
-        serviceLoader.loadService(service);
-    }
 }

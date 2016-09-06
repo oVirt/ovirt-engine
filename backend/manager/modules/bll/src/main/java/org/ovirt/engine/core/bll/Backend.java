@@ -43,7 +43,6 @@ import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
-import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -245,14 +244,14 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         log.info("Start initializing {}", getClass().getSimpleName());
 
         // save host that HE VM was running on prior to engine startup
-        loadService(PreviousHostedEngineHost.class);
+        serviceLoader.load(PreviousHostedEngineHost.class);
 
         // start task schedulers
         for (SchedulerUtil taskScheduler : taskSchedulers) {
             log.info("Started task scheduler {}", taskScheduler);
         }
         // initialize CDI services
-        loadService(CacheManager.class);
+        serviceLoader.load(CacheManager.class);
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
@@ -270,9 +269,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         log.info("Running ovirt-engine {}", Config.<String>getValue(ConfigValues.ProductRPMVersion));
 
-        loadService(CpuFlagsManagerHandler.class);
-        loadService(AuditLogCleanupManager.class);
-        loadService(CommandEntityCleanupManager.class);
+        serviceLoader.load(CpuFlagsManagerHandler.class);
+        serviceLoader.load(AuditLogCleanupManager.class);
+        serviceLoader.load(CommandEntityCleanupManager.class);
 
         TagsDirector.getInstance().init();
 
@@ -292,9 +291,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         log.info("Mark incomplete jobs as {}", JobExecutionStatus.UNKNOWN.name());
         initJobRepository();
 
-        loadService(JobRepositoryCleanupManager.class);
+        serviceLoader.load(JobRepositoryCleanupManager.class);
 
-        loadService(AutoRecoveryManager.class);
+        serviceLoader.load(AutoRecoveryManager.class);
 
         initExecutionMessageDirector();
 
@@ -307,12 +306,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Set start-up time
         _startedAt = DateTime.getNow();
 
-        loadService(VmsMonitoring.class);
-        loadService(VmDevicesMonitoring.class);
-        loadService(VmPoolHandler.class);
-        loadService(VmPoolMonitor.class);
-        loadService(HaAutoStartVmsRunner.class);
-        loadService(QuotaManager.class);
+        serviceLoader.load(VmsMonitoring.class);
+        serviceLoader.load(VmDevicesMonitoring.class);
+        serviceLoader.load(VmPoolHandler.class);
+        serviceLoader.load(VmPoolMonitor.class);
+        serviceLoader.load(HaAutoStartVmsRunner.class);
+        serviceLoader.load(QuotaManager.class);
 
         //initializes attestation
         initAttestation();
@@ -322,10 +321,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         EngineExtensionsManager.getInstance().engineInitialize();
         AuthenticationProfileRepository.getInstance();
         AcctUtils.reportReason(Acct.ReportReason.STARTUP, "Starting up engine");
-    }
-
-    private void loadService(Class<? extends BackendService> service) {
-        serviceLoader.loadService(service);
     }
 
     /**

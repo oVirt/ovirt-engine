@@ -30,7 +30,7 @@ public class ServiceLoader {
      *
      * @param service a provider of {@code BackendService} instances. see {@linkplain Instance}
      */
-    public void loadService(Class<? extends BackendService> service) {
+    public void load(Class<? extends BackendService> service) {
         BackendService backendService = services.select(service).get();
         log.info("Start {} ", backendService);
     }
