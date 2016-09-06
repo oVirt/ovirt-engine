@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
@@ -16,7 +18,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
@@ -32,6 +35,18 @@ public class HostMaintenanceCallback extends CommandCallback {
     private String hostName;
 
     private static final Logger log = LoggerFactory.getLogger(HostMaintenanceCallback.class);
+
+    @Inject
+    private ResourceManager resourceManager;
+
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
@@ -59,8 +74,8 @@ public class HostMaintenanceCallback extends CommandCallback {
      */
     private void evaluateMaintenanceHostCommandProgress(
             MaintenanceVdsCommand<MaintenanceVdsParameters> maintenanceCommand) {
-        MaintenanceVdsParameters parameters = (MaintenanceVdsParameters) maintenanceCommand.getParameters();
-        VdsDynamic host = DbFacade.getInstance().getVdsDynamicDao().get(parameters.getVdsId());
+        MaintenanceVdsParameters parameters = maintenanceCommand.getParameters();
+        VdsDynamic host = vdsDynamicDao.get(parameters.getVdsId());
 
         switch (host.getStatus()) {
 
@@ -94,8 +109,6 @@ public class HostMaintenanceCallback extends CommandCallback {
     }
 
     private void stopGlusterServices(Guid vdsId) {
-        ResourceManager resourceManager = ResourceManager.getInstance();
-        GlusterBrickDao glusterBrickDao = DbFacade.getInstance().getGlusterBrickDao();
         // Stop glusterd service first
         boolean succeeded = resourceManager.runVdsCommand(VDSCommandType.ManageGlusterService,
                 new GlusterServiceVDSParameters(vdsId, Arrays.asList("glusterd"), "stop")).getSucceeded();
@@ -117,7 +130,7 @@ public class HostMaintenanceCallback extends CommandCallback {
 
     private String getHostName(Guid hostId) {
         if (hostName == null) {
-            VdsStatic host = DbFacade.getInstance().getVdsStaticDao().get(hostId);
+            VdsStatic host = vdsStaticDao.get(hostId);
             hostName = host == null ? null : host.getName();
         }
         return hostName;

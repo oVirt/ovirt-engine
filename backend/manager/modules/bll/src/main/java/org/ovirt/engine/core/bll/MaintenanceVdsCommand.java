@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.di.Injector;
 
 @NonTransactiveCommandAttribute
 public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends VdsCommand<T> {
@@ -245,7 +246,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     @Override
     public CommandCallback getCallback() {
         if (getVds().getClusterSupportsGlusterService() && getParameters().isStopGlusterService()) {
-            return new HostMaintenanceCallback();
+            return Injector.injectMembers(new HostMaintenanceCallback());
         } else {
             return super.getCallback();
         }
