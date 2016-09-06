@@ -466,6 +466,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateSysprepVisibility(object);
+                if (Boolean.TRUE.equals(object.getIsSysprepEnabled().getEntity())) {
+                    runOnceModel.autoSetVmHostname();
+                }
             }
         });
 
@@ -481,6 +484,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateCloudInitVisibility(object);
+                if (Boolean.TRUE.equals(object.getIsCloudInitEnabled().getEntity())) {
+                    runOnceModel.autoSetVmHostname();
+                }
             }
         });
 

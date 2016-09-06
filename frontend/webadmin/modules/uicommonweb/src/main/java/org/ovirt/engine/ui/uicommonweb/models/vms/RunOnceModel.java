@@ -652,6 +652,7 @@ public abstract class RunOnceModel extends Model {
 
         initVmInitEnabled(vm.getVmInit(), vm.isInitialized());
         getVmInitModel().init(vm.getStaticData());
+        toggleAutoSetVmHostname();
 
         updateDomainList();
         updateSystemTabLists();
@@ -1231,6 +1232,17 @@ public abstract class RunOnceModel extends Model {
         getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);
 
         getVncKeyboardLayout().setIsChangeable(false);
+    }
+
+    public void autoSetVmHostname() {
+        getVmInitModel().autoSetHostname(vm.getName());
+    }
+
+    private void toggleAutoSetVmHostname() {
+        if (vm.getVmInit() != null && vm.getName() != null
+                && !vm.getName().equals(vm.getVmInit().getHostname())) {
+            getVmInitModel().disableAutoSetHostname();
+        }
     }
 
 }
