@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.EnumSet;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -15,6 +17,9 @@ import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameters> extends
         StorageHandlingCommandBase<T> {
 
+    @Inject
+    private StoragePoolDomainHelper storagePoolDomainHelper;
+
     public SetStoragePoolStatusCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -26,7 +31,7 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
         storagePoolDao.updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
         if (getParameters().getStatus() == StoragePoolStatus.NonResponsive
                 || getParameters().getStatus() == StoragePoolStatus.NotOperational) {
-            StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(getStoragePool().getId(),
+            storagePoolDomainHelper.updateApplicablePoolDomainsStatuses(getStoragePool().getId(),
                     EnumSet.of(StorageDomainStatus.Active),
                     StorageDomainStatus.Unknown,
                     null);

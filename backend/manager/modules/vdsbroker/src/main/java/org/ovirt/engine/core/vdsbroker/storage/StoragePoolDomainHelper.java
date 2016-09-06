@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -19,12 +22,19 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandPara
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class StoragePoolDomainHelper {
+
+    @Inject
+    private ResourceManager resourceManager;
+
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     private static final Logger log = LoggerFactory.getLogger(StoragePoolDomainHelper.class);
 
@@ -54,9 +64,9 @@ public class StoragePoolDomainHelper {
      * @return boolean indicating whether the host pool metadata was "refreshed" succesfully (either by refresh or
      *         connect)
      */
-    public static boolean refreshHostPoolMetadata(VDS vds, StoragePool storagePool, Guid masterDomainId, List<StoragePoolIsoMap> storagePoolIsoMaps) {
+    public boolean refreshHostPoolMetadata(VDS vds, StoragePool storagePool, Guid masterDomainId, List<StoragePoolIsoMap> storagePoolIsoMaps) {
         try {
-            ResourceManager.getInstance().runVdsCommand(
+            resourceManager.runVdsCommand(
                     VDSCommandType.ConnectStoragePool,
                     new ConnectStoragePoolVDSCommandParameters(vds,
                             storagePool,
@@ -74,7 +84,7 @@ public class StoragePoolDomainHelper {
             error = null;
 
             try {
-                VDSReturnValue vdsReturnValue = ResourceManager.getInstance().runVdsCommand(
+                VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(
                         VDSCommandType.ConnectStoragePool,
                         new ConnectStoragePoolVDSCommandParameters(vds,
                                 storagePool,
@@ -97,11 +107,10 @@ public class StoragePoolDomainHelper {
         return true;
     }
 
-    public static void updateApplicablePoolDomainsStatuses(Guid storagePoolId,
+    public void updateApplicablePoolDomainsStatuses(Guid storagePoolId,
             Set<StorageDomainStatus> applicableStatusesForUpdate,
             StorageDomainStatus newStatus, String reason) {
-        List<StoragePoolIsoMap> storagesStatusInPool = DbFacade.getInstance()
-                .getStoragePoolIsoMapDao().getAllForStoragePool(storagePoolId);
+        List<StoragePoolIsoMap> storagesStatusInPool = storagePoolIsoMapDao.getAllForStoragePool(storagePoolId);
         for (StoragePoolIsoMap storageStatusInPool : storagesStatusInPool) {
             if (storageStatusInPool.getStatus() != null
                     && storageStatusInPool.getStatus() != newStatus
@@ -113,9 +122,7 @@ public class StoragePoolDomainHelper {
                         newStatus.name(),
                         reason);
                 storageStatusInPool.setStatus(newStatus);
-                DbFacade.getInstance()
-                        .getStoragePoolIsoMapDao()
-                        .updateStatus(storageStatusInPool.getId(), storageStatusInPool.getStatus());
+                storagePoolIsoMapDao.updateStatus(storageStatusInPool.getId(), storageStatusInPool.getStatus());
             }
         }
     }

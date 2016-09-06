@@ -129,6 +129,9 @@ public class IrsProxy {
     private ResourceManager resourceManager;
 
     @Inject
+    private StoragePoolDomainHelper storagePoolDomainHelper;
+
+    @Inject
     private StoragePoolDao storagePoolDao;
 
     @Inject
@@ -240,7 +243,7 @@ public class IrsProxy {
                         if (vdsDao
                                 .getAllForStoragePoolAndStatuses(_storagePoolId, StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus)
                                 .isEmpty()) {
-                            StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
+                            storagePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
                                     StoragePoolDomainHelper.storageDomainMonitoredStatus,
                                     StorageDomainStatus.Unknown, "no reporting hosts");
                         }
@@ -1596,7 +1599,7 @@ public class IrsProxy {
                 });
 
                 refreshStoragePoolTasks.add(() -> {
-                    StoragePoolDomainHelper.refreshHostPoolMetadata(vds, storagePool, masterDomainId, storagePoolIsoMap);
+                    storagePoolDomainHelper.refreshHostPoolMetadata(vds, storagePool, masterDomainId, storagePoolIsoMap);
                     return null;
                 });
             }
