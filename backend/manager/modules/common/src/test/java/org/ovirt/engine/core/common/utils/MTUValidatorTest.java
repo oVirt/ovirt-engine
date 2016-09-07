@@ -32,7 +32,7 @@ public class MTUValidatorTest {
         Assert.assertTrue(validate.isEmpty());
     }
 
-    private <T extends Object> Set<ConstraintViolation<T>> validate(T object) {
+    private <T> Set<ConstraintViolation<T>> validate(T object) {
         return validator.validate(object);
     }
 
