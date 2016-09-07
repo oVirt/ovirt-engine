@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This class represents the internal data of a VM, including {@link VmDynamic}, {@link VmStatistics} and
@@ -34,6 +35,10 @@ public class VdsmVm {
     public VdsmVm(Double timestamp) {
         this.lunsMap = Collections.<String, LUNs>emptyMap();
         this.timestamp = timestamp;
+    }
+
+    public Guid getId() {
+        return vmDynamic.getId();
     }
 
     public VmDynamic getVmDynamic() {

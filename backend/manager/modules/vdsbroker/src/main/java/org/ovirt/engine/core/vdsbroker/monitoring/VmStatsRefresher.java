@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
@@ -35,14 +34,14 @@ public abstract class VmStatsRefresher {
      */
     public abstract void stopMonitoring();
 
-    protected void processDevices(Stream<VmDynamic> vms, long fetchTime) {
+    protected void processDevices(Stream<VdsmVm> vms, long fetchTime) {
         // VmDevicesMonitoring may be injected if this class is converted to a managed bean. Currently the injection
         // here is not performed by container and creates circular dependency during ResourceManager initialization.
         VmDevicesMonitoring.Change deviceChange =
                 VmDevicesMonitoring.getInstance().createChange(vdsManager.getVdsId(), fetchTime);
-        vms.filter(vmDynamic -> vmDynamic != null && vmDynamic.getStatus() != VMStatus.MigratingTo)
-                .sorted(Comparator.comparing(VmDynamic::getId)) // Important to avoid deadlock
-                .forEach(vmDynamic -> deviceChange.updateVm(vmDynamic.getId(), vmDynamic.getHash()));
+        vms.filter(vm -> vm.getVmDynamic() != null && vm.getVmDynamic().getStatus() != VMStatus.MigratingTo)
+                .sorted(Comparator.comparing(VdsmVm::getId)) // Important to avoid deadlock
+                .forEach(vm -> deviceChange.updateVm(vm.getId(), vm.getVmDynamic().getHash()));
         deviceChange.flush();
     }
 

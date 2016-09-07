@@ -57,8 +57,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                     List<Pair<VmDynamic, VdsmVm>> vms = convertEvent(map);
                     if (!vms.isEmpty()) {
                         getVmsMonitoring().perform(vms, fetchTime, vdsManager, false);
-                        processDevices(vms.stream().map(pair -> pair.getSecond().getVmDynamic()),
-                                fetchTime);
+                        processDevices(vms.stream().map(Pair::getSecond), fetchTime);
                     }
                 } finally {
                     subscription.request(1);

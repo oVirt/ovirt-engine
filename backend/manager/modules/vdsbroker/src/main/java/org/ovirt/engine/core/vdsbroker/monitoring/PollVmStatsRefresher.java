@@ -36,7 +36,7 @@ public abstract class PollVmStatsRefresher extends VmStatsRefresher {
             long fetchTime = System.nanoTime();
             if (fetcher.fetch()) {
                 getVmsMonitoring().perform(fetcher.getChangedVms(), fetchTime, vdsManager, isTimeToRefreshStatistics());
-                processDevices(fetcher.getVdsmVms().stream().map(VdsmVm::getVmDynamic), fetchTime);
+                processDevices(fetcher.getVdsmVms().stream(), fetchTime);
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
             }
