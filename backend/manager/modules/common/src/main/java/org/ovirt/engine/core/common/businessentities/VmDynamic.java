@@ -733,10 +733,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
             setCurrentCd(vm.getCurrentCd());
         }
 
-        // if (!string.IsNullOrEmpty(vm.app_list))
-        // {
         setAppList(vm.getAppList());
-        // }
         setGuestOs(vm.getGuestOs());
         setVncKeyboardLayout(vm.getVncKeyboardLayout());
         setKvmEnable(vm.getKvmEnable());
@@ -761,9 +758,5 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setGuestOsTimezoneName(vm.getGuestOsTimezoneName());
         setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
         setGuestContainers(vm.getGuestContainers());
-        // TODO: check what to do with update disk data
-        // updateDisksData(vm);
-
-        // updateSession(vm);
     }
 }
