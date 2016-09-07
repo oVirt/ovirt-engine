@@ -353,6 +353,13 @@ public class VdsBrokerObjectsBuilder {
         return -1d;
     }
 
+    public static String getVmDevicesHash(Map<String, Object> xmlRpcStruct) {
+        if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
+            return (String) xmlRpcStruct.get(VdsProperties.hash);
+        }
+        return null;
+    }
+
     public static VmDynamic buildVMDynamicData(Map<String, Object> xmlRpcStruct, VDS host) {
         VmDynamic vmdynamic = new VmDynamic();
         updateVMDynamicData(vmdynamic, xmlRpcStruct, host);
@@ -447,15 +454,6 @@ public class VdsBrokerObjectsBuilder {
                 vm.setUtcDiff(Integer.parseInt(utc_diff));
             } catch (NumberFormatException e) {
                 log.error("Illegal vm offset (utc_diff) '{}'.", utc_diff);
-            }
-        }
-
-        if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
-            String hash = (String) xmlRpcStruct.get(VdsProperties.hash);
-            try {
-                vm.setHash(hash);
-            } catch (Exception e) {
-                log.error("Illegal vm hash '{}'.", hash);
             }
         }
 

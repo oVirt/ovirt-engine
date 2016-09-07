@@ -25,6 +25,7 @@ public class VdsmVm {
     private List<VmGuestAgentInterface> vmGuestAgentInterfaces;
     /** Timestamp on the dynamic data we get from VDSM */
     private Double timestamp;
+    private String devicesHash;
 
     // A map represents VM's LUN disks (LUN ID -> LUNs object)
     private Map<String, LUNs> lunsMap;
@@ -137,5 +138,14 @@ public class VdsmVm {
 
     public void setTimestamp(Double timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getDevicesHash() {
+        return devicesHash;
+    }
+
+    public VdsmVm setDevicesHash(String devicesHash) {
+        this.devicesHash = devicesHash;
+        return this;
     }
 }

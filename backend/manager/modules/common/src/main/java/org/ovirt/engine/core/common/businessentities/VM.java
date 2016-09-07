@@ -736,14 +736,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmDynamic.setGuestRequestedMemory(value);
     }
 
-    public String getHash() {
-        return vmDynamic.getHash();
-    }
-
-    public void setHash(String hash) {
-        vmDynamic.setHash(hash);
-    }
-
     public int getGuestAgentNicsHash() {
         return vmDynamic.getGuestAgentNicsHash();
     }

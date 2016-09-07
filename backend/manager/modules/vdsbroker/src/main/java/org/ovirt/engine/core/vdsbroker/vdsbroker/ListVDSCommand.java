@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVMDynamicDataFromList;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.getVdsmCallTimestamp;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.getVmDevicesHash;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,8 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
             Map<String, Object> vm = vmListReturn.vmList[idx];
             VmDynamic dynamicData = buildVMDynamicDataFromList(vm);
             VdsmVm vdsmVm = new VdsmVm(getVdsmCallTimestamp(vm))
-                    .setVmDynamic(dynamicData);
+                    .setVmDynamic(dynamicData)
+                    .setDevicesHash(getVmDevicesHash(vm));
             returnVMs.put(dynamicData.getId(), vdsmVm);
         }
         setReturnValue(returnVMs);

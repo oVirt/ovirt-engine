@@ -99,12 +99,13 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 return createVdsmVm(fakeVm, xmlRpcStruct, notifyTime);
             }
 
-            private VdsmVm createVdsmVm(VmDynamic dbVmDyanmic, Map<String, Object> xmlRpcStruct, Double notifyTime) {
+            private VdsmVm createVdsmVm(VmDynamic dbVmDynamic, Map<String, Object> xmlRpcStruct, Double notifyTime) {
                 // send a clone of vm dynamic to be overridden with new data
-                VmDynamic clonedVmDynamic = new VmDynamic(dbVmDyanmic);
+                VmDynamic clonedVmDynamic = new VmDynamic(dbVmDynamic);
                 VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, xmlRpcStruct, vdsManager.getCopyVds());
                 return new VdsmVm(notifyTime)
-                        .setVmDynamic(clonedVmDynamic);
+                        .setVmDynamic(clonedVmDynamic)
+                        .setDevicesHash(VdsBrokerObjectsBuilder.getVmDevicesHash(xmlRpcStruct));
             }
 
             @Override

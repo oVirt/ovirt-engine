@@ -7,6 +7,7 @@ import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmJobsData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmLunDisksData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.getVdsmCallTimestamp;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.getVmDevicesHash;
 
 import java.util.Map;
 
@@ -38,6 +39,7 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
         Guid vmId = vmDynamic.getId();
         return new VdsmVm(getVdsmCallTimestamp(xmlRpcStruct))
                 .setVmDynamic(vmDynamic)
+                .setDevicesHash(getVmDevicesHash(xmlRpcStruct))
                 .setVmStatistics(buildVMStatisticsData(xmlRpcStruct))
                 .setVmJobs(buildVmJobsData(xmlRpcStruct))
                 .setInterfaceStatistics(buildInterfaceStatisticsData(xmlRpcStruct))

@@ -41,7 +41,7 @@ public abstract class VmStatsRefresher {
                 VmDevicesMonitoring.getInstance().createChange(vdsManager.getVdsId(), fetchTime);
         vms.filter(vm -> vm.getVmDynamic() != null && vm.getVmDynamic().getStatus() != VMStatus.MigratingTo)
                 .sorted(Comparator.comparing(VdsmVm::getId)) // Important to avoid deadlock
-                .forEach(vm -> deviceChange.updateVm(vm.getId(), vm.getVmDynamic().getHash()));
+                .forEach(vm -> deviceChange.updateVm(vm.getId(), vm.getDevicesHash()));
         deviceChange.flush();
     }
 

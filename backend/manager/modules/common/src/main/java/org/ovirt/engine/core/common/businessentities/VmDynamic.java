@@ -53,9 +53,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private BootSequence bootSequence;
     private VmExitStatus exitStatus;
     private VmPauseStatus pauseStatus;
-    /* hash is reported by VDSM but we process it separately in the devices-monitoring (need to move this field elsewhere) */
-    @UnchangeableByVdsm
-    private String hash;
     @UnchangeableByVdsm
     private int guestAgentNicsHash;
     @UnchangeableByVdsm
@@ -229,14 +226,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         disks = value;
     }
 
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
     public int getGuestAgentNicsHash() {
         return guestAgentNicsHash;
     }
@@ -305,7 +294,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         bootSequence = template.getBootSequence();
         exitStatus = template.getExitStatus();
         pauseStatus = template.getPauseStatus();
-        hash = template.getHash();
         guestAgentNicsHash = template.getGuestAgentNicsHash();
         exitMessage = template.getExitMessage();
         disks = new ArrayList<>(template.getDisks());
