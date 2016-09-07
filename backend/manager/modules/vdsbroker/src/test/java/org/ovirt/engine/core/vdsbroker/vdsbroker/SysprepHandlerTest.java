@@ -4,20 +4,9 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 
 public class SysprepHandlerTest {
-
-    @Before
-    public void setup() {
-        IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
-        Config.setConfigUtils(configUtils);
-    }
-
     @Test
     public void replaceEmptyBuilder() {
         runAndCheck("", "a", "b", "");
