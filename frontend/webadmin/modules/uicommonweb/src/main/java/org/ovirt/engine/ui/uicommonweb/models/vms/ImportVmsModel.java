@@ -60,6 +60,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
+import com.google.gwt.http.client.URL;
 import com.google.inject.Inject;
 
 public class ImportVmsModel extends ListWithSimpleDetailsModel {
@@ -581,7 +582,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 (StringUtils.isEmpty(username) ? "" : username + "@") + //$NON-NLS-1$ //$NON-NLS-2$
                 vcenter +
                 "/" + //$NON-NLS-1$
-                mergeDcAndCluster(dataCenter, cluster) +
+                mergeDcAndCluster(dataCenter, cluster, true) +
                 "/" + //$NON-NLS-1$
                 esx +
                 (verify ? "" : "?no_verify=1"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -603,12 +604,16 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         return new Pair<>(dataCenterPart, clusterPart);
     }
 
-    public static String mergeDcAndCluster(String dataCenter, String cluster) {
+    public static String mergeDcAndCluster(String dataCenter, String cluster, boolean toEncode) {
         if (StringUtils.isEmpty(cluster)) {
-            return dataCenter;
+            return toEncode ? URL.encodePathSegment(dataCenter) : dataCenter;
         }
 
-        return dataCenter + "/" + cluster; //$NON-NLS-1$
+        return toEncode ?
+                URL.encodePathSegment(dataCenter) + "/" //$NON-NLS-1$
+                        + URL.encodePathSegment(cluster) :
+                dataCenter + "/" //$NON-NLS-1$
+                        + cluster;
     }
 
     private void updateVms(List<VM> vms) {
