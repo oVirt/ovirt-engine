@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -218,8 +219,8 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
             initMocksForNetworkImplementationDetailsUtils(network, null, testIface)
                 .calculateNetworkImplementationDetails(iface, network);
 
-        Assert.assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
-        Assert.assertEquals("Network implementation details should be " + (expectManaged ? "" : "un") + "managed.",
+        assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
+        assertEquals("Network implementation details should be " + (expectManaged ? "" : "un") + "managed.",
             expectManaged,
             networkImplementationDetails.isManaged());
     }
@@ -233,8 +234,8 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
             initMocksForNetworkImplementationDetailsUtils(network, qos, testIface)
                 .calculateNetworkImplementationDetails(iface, network);
 
-        Assert.assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
-        Assert.assertEquals("Network implementation details should be " + (expectSync ? "in" : "out of") + " sync.",
+        assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
+        assertEquals("Network implementation details should be " + (expectSync ? "in" : "out of") + " sync.",
             expectSync,
             networkImplementationDetails.isInSync());
     }

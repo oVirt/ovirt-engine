@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 
@@ -21,7 +22,7 @@ public class RngDeviceSpecParamsTest {
         expectedParams.put("period", "34");
         expectedParams.put("source", "random");
 
-        Assert.assertEquals(expectedParams, dev.getSpecParams());
+        assertEquals(expectedParams, dev.getSpecParams());
     }
 
     @Test
@@ -32,7 +33,7 @@ public class RngDeviceSpecParamsTest {
         Map<String, Object> expectedParams = new HashMap<>();
         expectedParams.put("source", "hwrng");
 
-        Assert.assertEquals(expectedParams, dev.getSpecParams());
+        assertEquals(expectedParams, dev.getSpecParams());
     }
 
 }

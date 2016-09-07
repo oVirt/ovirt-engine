@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
@@ -18,9 +20,9 @@ public class WatchdogMapperTest {
         entity.setModel(VmWatchdogType.i6300esb);
         entity.setId(Guid.Empty);
         Watchdog model = WatchdogMapper.map(entity, null);
-        Assert.assertNotNull(model);
-        Assert.assertEquals(model.getAction(), WatchdogAction.RESET);
-        Assert.assertEquals(model.getModel(), WatchdogModel.I6300ESB);
+        assertNotNull(model);
+        assertEquals(model.getAction(), WatchdogAction.RESET);
+        assertEquals(model.getModel(), WatchdogModel.I6300ESB);
     }
 
     @Test
@@ -30,17 +32,17 @@ public class WatchdogMapperTest {
         model.setModel(WatchdogModel.I6300ESB);
         model.setId(Guid.Empty.toString());
         VmWatchdog entity = WatchdogMapper.map(model, null);
-        Assert.assertNotNull(entity);
-        Assert.assertEquals(entity.getAction(), VmWatchdogAction.RESET);
-        Assert.assertEquals(entity.getModel(), VmWatchdogType.i6300esb);
+        assertNotNull(entity);
+        assertEquals(entity.getAction(), VmWatchdogAction.RESET);
+        assertEquals(entity.getModel(), VmWatchdogType.i6300esb);
     }
 
     @Test
     public void mapModel() {
         for (WatchdogModel model : WatchdogModel.values()) {
             VmWatchdogType backendModel = WatchdogMapper.map(model);
-            Assert.assertNotNull(backendModel);
-            Assert.assertEquals(backendModel.name().toLowerCase(), model.name().toLowerCase());
+            assertNotNull(backendModel);
+            assertEquals(backendModel.name().toLowerCase(), model.name().toLowerCase());
         }
     }
 
@@ -48,8 +50,8 @@ public class WatchdogMapperTest {
     public void mapBackendModel() {
         for (VmWatchdogType type : VmWatchdogType.values()) {
             WatchdogModel model = WatchdogMapper.map(type);
-            Assert.assertNotNull(model);
-            Assert.assertEquals(model.name().toLowerCase(), type.name().toLowerCase());
+            assertNotNull(model);
+            assertEquals(model.name().toLowerCase(), type.name().toLowerCase());
         }
     }
 
@@ -57,8 +59,8 @@ public class WatchdogMapperTest {
     public void mapAction() {
         for (WatchdogAction action : WatchdogAction.values()) {
             VmWatchdogAction backendAction = WatchdogMapper.map(action);
-            Assert.assertNotNull(backendAction);
-            Assert.assertEquals(backendAction.name().toLowerCase(), action.name().toLowerCase());
+            assertNotNull(backendAction);
+            assertEquals(backendAction.name().toLowerCase(), action.name().toLowerCase());
         }
     }
 
@@ -66,8 +68,8 @@ public class WatchdogMapperTest {
     public void mapBackendAction() {
         for (VmWatchdogAction action : VmWatchdogAction.values()) {
             WatchdogAction apiAction = WatchdogMapper.map(action);
-            Assert.assertNotNull(apiAction);
-            Assert.assertEquals(apiAction.name().toLowerCase(), action.name().toLowerCase());
+            assertNotNull(apiAction);
+            assertEquals(apiAction.name().toLowerCase(), action.name().toLowerCase());
         }
     }
 }

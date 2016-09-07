@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -9,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,18 +93,18 @@ public class AddCpuProfileCommandTest extends BaseCommandTest{
         addCpuProfileCommand.executeCommand();
 
         verify(addCpuProfileCommand).addPermissions();
-        Assert.assertTrue(addCpuProfileCommand.getReturnValue().getSucceeded());
+        assertTrue(addCpuProfileCommand.getReturnValue().getSucceeded());
     }
 
     @Test
     public void getPermissionCheckSubjectsTest() {
         List<PermissionSubject> permissions = addCpuProfileCommand.getPermissionCheckSubjects();
 
-        Assert.assertEquals(permissions.size(), 1);
+        assertEquals(permissions.size(), 1);
         PermissionSubject permissionSubject = permissions.get(0);
 
-        Assert.assertEquals(CLUSTER_ID, permissionSubject.getObjectId());
-        Assert.assertEquals(VdcObjectType.Cluster, permissionSubject.getObjectType());
+        assertEquals(CLUSTER_ID, permissionSubject.getObjectId());
+        assertEquals(VdcObjectType.Cluster, permissionSubject.getObjectType());
     }
 
     @Test
@@ -112,10 +113,10 @@ public class AddCpuProfileCommandTest extends BaseCommandTest{
 
         returnValueBase.setSucceeded(true);
         addCpuProfileCommand.setReturnValue(returnValueBase);
-        Assert.assertEquals(AuditLogType.USER_ADDED_CPU_PROFILE, addCpuProfileCommand.getAuditLogTypeValue());
+        assertEquals(AuditLogType.USER_ADDED_CPU_PROFILE, addCpuProfileCommand.getAuditLogTypeValue());
 
         returnValueBase.setSucceeded(false);
         addCpuProfileCommand.setReturnValue(returnValueBase);
-        Assert.assertEquals(AuditLogType.USER_FAILED_TO_ADD_CPU_PROFILE, addCpuProfileCommand.getAuditLogTypeValue());
+        assertEquals(AuditLogType.USER_FAILED_TO_ADD_CPU_PROFILE, addCpuProfileCommand.getAuditLogTypeValue());
     }
 }

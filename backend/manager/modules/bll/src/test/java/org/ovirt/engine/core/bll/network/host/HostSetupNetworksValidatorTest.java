@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -32,7 +33,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -560,7 +560,7 @@ public class HostSetupNetworksValidatorTest {
         EngineMessage engineMessage = null;
         initMockNetworkAttachmentIpConfigurationValidator(engineMessage, replacements);
         ValidationResult actual = validator.validNewOrModifiedNetworkAttachments();
-        Assert.assertEquals(ValidationResult.VALID, actual);
+        assertEquals(ValidationResult.VALID, actual);
 
     }
 

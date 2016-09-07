@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -23,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -437,7 +437,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
         doReturn(deviceDao).when(command).getVmDeviceDao();
 
-        Assert.assertThat(command.validate(), is(clusterReqSources.contains(vmRngSource)));
+        assertThat(command.validate(), is(clusterReqSources.contains(vmRngSource)));
     }
 
     @Test

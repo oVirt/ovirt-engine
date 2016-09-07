@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster.helper;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -9,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -121,7 +121,7 @@ public class DisplayNetworkClusterHelperTest {
         verify(mockNetworkCluster).isDisplay();
         verify(mockNetworkClusterBeforeUpdate).isDisplay();
 
-        Assert.assertEquals(expectedResult, actual);
+        assertEquals(expectedResult, actual);
     }
 
     /**
@@ -137,8 +137,8 @@ public class DisplayNetworkClusterHelperTest {
                 same(AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM));
 
         final AuditLogableBase actualLoggable = auditLogableBaseCaptor.getValue();
-        Assert.assertEquals(TEST_CLUSTER_ID, actualLoggable.getClusterId());
-        Assert.assertEquals(TEST_NETWORK_NAME, actualLoggable.getCustomValue("networkname"));
+        assertEquals(TEST_CLUSTER_ID, actualLoggable.getClusterId());
+        assertEquals(TEST_NETWORK_NAME, actualLoggable.getCustomValue("networkname"));
     }
 
     @Test

@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.common.utils;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class PairTest {
@@ -16,8 +19,8 @@ public class PairTest {
         Pair<Boolean, String> p2 = new Pair<>(true, "abc");
         m.put("test", p1);
 
-        Assert.assertTrue(m.containsValue(p1));
-        Assert.assertTrue(m.containsValue(p2));
+        assertTrue(m.containsValue(p1));
+        assertTrue(m.containsValue(p2));
     }
 
     @Test
@@ -26,7 +29,7 @@ public class PairTest {
         Pair<Boolean, String> p2 = new Pair<>(true, "abc");
         Pair<Boolean, String> p3 = new Pair<>(false, "abc");
 
-        Assert.assertTrue(p1.equals(p2));
-        Assert.assertFalse(p1.equals(p3));
+        assertTrue(p1.equals(p2));
+        assertFalse(p1.equals(p3));
     }
 }

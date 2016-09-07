@@ -2,13 +2,13 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -69,9 +69,9 @@ public class JsonObjectDeserializerTest {
     @Test(expected = SerializationException.class)
     public void testDeserializeVdcActionParameters() {
         VdcActionParametersBase params = new JsonObjectDeserializer().deserialize(getVdcActionParamsJson(), VdcActionParametersBase.class);
-        Assert.assertNotNull(params.getLockProperties());
-        Assert.assertTrue(params.getLockProperties().isWait());
-        Assert.assertEquals(params.getLockProperties().getScope(), Scope.None);
+        assertNotNull(params.getLockProperties());
+        assertTrue(params.getLockProperties().isWait());
+        assertEquals(params.getLockProperties().getScope(), Scope.None);
     }
 
     private String getVdcActionParamsJson() {
@@ -104,7 +104,7 @@ public class JsonObjectDeserializerTest {
         @SuppressWarnings("unchecked")
         final HashMap<String, Boolean> map =
                 new JsonObjectDeserializer().deserialize(json, HashMap.class);
-        Assert.assertTrue(map.get("success"));
+        assertTrue(map.get("success"));
     }
 
     @Test

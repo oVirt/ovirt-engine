@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.predicates;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +35,7 @@ public class DisplayInterfaceEqualityPredicateTest {
         when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
         when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
-        Assert.assertTrue(underTest.test(mockOtherIface));
+        assertTrue(underTest.test(mockOtherIface));
     }
 
     @Test
@@ -42,7 +43,7 @@ public class DisplayInterfaceEqualityPredicateTest {
         when(mockOtherIface.getName()).thenReturn("not" + TEST_INTERFACE_NAME);
         when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
-        Assert.assertFalse(underTest.test(mockOtherIface));
+        assertFalse(underTest.test(mockOtherIface));
     }
 
     @Test
@@ -50,7 +51,7 @@ public class DisplayInterfaceEqualityPredicateTest {
         when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
         when(mockOtherIface.getIpv4Address()).thenReturn("not" + TEST_INTERFACE_ADDRESS);
 
-        Assert.assertFalse(underTest.test(mockOtherIface));
+        assertFalse(underTest.test(mockOtherIface));
     }
 
 }

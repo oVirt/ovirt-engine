@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -11,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,9 +44,9 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         params.setModel(vmWatchdogType);
         UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null);
         HashMap<String, Object> specParams = command.getSpecParams();
-        Assert.assertNotNull(specParams);
-        Assert.assertEquals("i6300esb", specParams.get("model"));
-        Assert.assertEquals("reset", specParams.get("action"));
+        assertNotNull(specParams);
+        assertEquals("i6300esb", specParams.get("model"));
+        assertEquals("reset", specParams.get("action"));
     }
 
     @Test
@@ -61,7 +64,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
             }
         };
 
-        Assert.assertFalse(command.validate());
+        assertFalse(command.validate());
     }
 
     @Test
@@ -93,7 +96,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         VmWatchdog vmWatchdog = spy(new VmWatchdog());
         when(vmWatchdog.getModel()).thenReturn(vmWatchdogType);
 
-        Assert.assertTrue(command.validate());
+        assertTrue(command.validate());
     }
 
 }

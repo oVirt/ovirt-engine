@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -7,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,7 +42,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
     @Test
     public void executeQueryCommandWithNull() {
         getQuery().executeQueryCommand();
-        Assert.assertTrue(((List<?>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
+        assertTrue(((List<?>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
     }
 
     @Test
@@ -56,11 +59,11 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         getQuery().executeQueryCommand();
 
         List<VmWatchdog> result = getQuery().getQueryReturnValue().getReturnValue();
-        Assert.assertNotNull(result);
-        Assert.assertFalse(result.isEmpty());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
         VmWatchdog watchdog = result.get(0);
-        Assert.assertEquals("reset", watchdog.getAction().name().toLowerCase());
-        Assert.assertEquals("i6300esb", watchdog.getModel().name().toLowerCase());
+        assertEquals("reset", watchdog.getAction().name().toLowerCase());
+        assertEquals("i6300esb", watchdog.getModel().name().toLowerCase());
     }
 
 }

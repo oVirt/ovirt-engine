@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.compat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -40,16 +40,16 @@ public class GuidTest {
     @Test
     public void testToByteArray() {
         final byte[] byteArray = Guid.newGuid().toByteArray();
-        Assert.assertNotNull(byteArray);
-        Assert.assertEquals(16, byteArray.length);
+        assertNotNull(byteArray);
+        assertEquals(16, byteArray.length);
     }
 
     @Test
     public void testToByteArrayAllNull() {
         final byte[] allNullArray = Guid.Empty.toByteArray();
-        Assert.assertNotNull(allNullArray);
+        assertNotNull(allNullArray);
         for (int i = 0; i < 16; i++) {
-            Assert.assertEquals(0, allNullArray[i]);
+            assertEquals(0, allNullArray[i]);
         }
     }
 }

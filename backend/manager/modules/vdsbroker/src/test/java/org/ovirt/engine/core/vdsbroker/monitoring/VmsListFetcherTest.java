@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -9,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -69,13 +71,13 @@ public class VmsListFetcherTest {
         //given
         stubCalls(data);
         //when
-        Assert.assertTrue(vmsListFetcher.fetch());
+        assertTrue(vmsListFetcher.fetch());
         assumeTrue(data.dbVm() != null);
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm().getStatus() != data.vdsmVm().getVmDynamic().getStatus());
         //then
-        Assert.assertTrue(vmsListFetcher.getChangedVms().size() == 1);
-        Assert.assertTrue(vmsListFetcher.getChangedVms().get(0).getFirst() == data.dbVm().getDynamicData());
+        assertTrue(vmsListFetcher.getChangedVms().size() == 1);
+        assertTrue(vmsListFetcher.getChangedVms().get(0).getFirst() == data.dbVm().getDynamicData());
     }
 
     @Theory
@@ -86,8 +88,8 @@ public class VmsListFetcherTest {
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm() != null && data.dbVm().getStatus() == data.vdsmVm().getVmDynamic().getStatus());
         //then
-        Assert.assertTrue(vmsListFetcher.fetch());
-        Assert.assertTrue(vmsListFetcher.getChangedVms().isEmpty());
+        assertTrue(vmsListFetcher.fetch());
+        assertTrue(vmsListFetcher.getChangedVms().isEmpty());
     }
 
     @Theory
@@ -95,16 +97,13 @@ public class VmsListFetcherTest {
         //given
         stubCalls(data);
         //when
-        Assert.assertTrue(vmsListFetcher.fetch());
+        assertTrue(vmsListFetcher.fetch());
         /* assume non external VM */
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm() != null);
         //then
         verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
-        Assert.assertEquals(
-                data.vdsmVm().getVmDynamic(),
-                vdsManagerArgumentCaptor.getValue().get(0)
-        );
+        assertEquals(data.vdsmVm().getVmDynamic(), vdsManagerArgumentCaptor.getValue().get(0));
     }
 
     @Theory
@@ -112,20 +111,20 @@ public class VmsListFetcherTest {
      //given
         stubCalls(data);
         //when
-        Assert.assertTrue(vmsListFetcher.fetch());
+        assertTrue(vmsListFetcher.fetch());
         /* assume external VM */
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm() == null);
         //then
         verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
-        Assert.assertTrue(vdsManagerArgumentCaptor.getValue().size() == 0);
+        assertTrue(vdsManagerArgumentCaptor.getValue().size() == 0);
     }
 
     @Theory
     public void callToVDSMFailed(VmTestPairs data) {
         // given
         stubFailedCalls();
-        Assert.assertFalse(vmsListFetcher.fetch());
+        assertFalse(vmsListFetcher.fetch());
     }
 
     private void stubCalls(VmTestPairs data) {

@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
@@ -30,7 +32,7 @@ public class EngineConfigLogicTest {
         log.info("getValue: Testing fetch of {}", key);
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
         log.info("getValue: got: {}", configKey);
-        Assert.assertNotNull(configKey.getValue());
+        assertNotNull(configKey.getValue());
     }
 
     @Test
@@ -53,7 +55,7 @@ public class EngineConfigLogicTest {
         String updatedValue = engineConfigLogic.fetchConfigKey(key, null).getValue();
 
         log.info("{} new value: {}", key, updatedValue);
-        Assert.assertEquals(Integer.parseInt(updatedValue), Integer.parseInt(newValue));
+        assertEquals(Integer.parseInt(updatedValue), Integer.parseInt(newValue));
 
         // Restoring original value
         engineConfigLogic.persist(key, oldValue, "");
@@ -72,7 +74,7 @@ public class EngineConfigLogicTest {
         String updatedValue = engineConfigLogic.fetchConfigKey(key, null).getValue();
 
         log.info("{} new value: {}", key, updatedValue);
-        Assert.assertEquals(updatedValue, newValue);
+        assertEquals(updatedValue, newValue);
 
         // Restoring original value
         engineConfigLogic.persist(key, oldValue, "");
@@ -82,7 +84,7 @@ public class EngineConfigLogicTest {
     public void testGetNonExitingKey() throws Exception {
         final String key = "NonExistignKeyDB";
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
-        Assert.assertTrue(configKey == null || configKey.getKey() == null);
+        assertTrue(configKey == null || configKey.getKey() == null);
     }
 
     @Test(expected = IllegalAccessException.class)

@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -134,8 +133,8 @@ public class TagsDirectorTest {
         tagsDirector.addTag(level1obj2);
 
         // now none of these should have any children
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
+        assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
 
         // now let's add a child tag o the first top level tag
         Tags level2obj1 = createTag("level2obj1", "");
@@ -144,16 +143,16 @@ public class TagsDirectorTest {
         tagsDirector.addTag(level2obj1);
 
         // now check the number of children
-        Assert.assertEquals(1, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
+        assertEquals(1, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
 
         // should be all right so far.
         // now let's do the trick: move the second level tag to under the other first level tag
         tagsDirector.moveTag(level2obj1.getTagId(), level1obj2.getTagId());
 
         // and now let's recheck, the first top level should have 0 children, the second should have 1
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
+        assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        assertEquals(1, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
 
     }
 
@@ -170,17 +169,17 @@ public class TagsDirectorTest {
         tagsDirector.addTag(level1obj2);
 
         // now none of these should have any children
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
-        Assert.assertEquals(2, tagsDirector.getRootTag().getChildren().size());
+        assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
+        assertEquals(2, tagsDirector.getRootTag().getChildren().size());
 
         // should be all right so far.
         // now let's do the trick: move the second level tag to under the other first level tag
         tagsDirector.moveTag(level1obj1.getTagId(), level1obj2.getTagId());
 
         // and now let's recheck, the first top level should have 0 children, the second should have 1
-        Assert.assertEquals(1, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
+        assertEquals(1, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
+        assertEquals(1, tagsDirector.getRootTag().getChildren().size());
 
     }
 
@@ -200,8 +199,8 @@ public class TagsDirectorTest {
         tagsDirector.addTag(sub);
 
         // so now the root tag must have 1 child
-        Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
+        assertEquals(1, tagsDirector.getRootTag().getChildren().size());
+        assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
 
         // get the parent, and rename it
         tag.setTagName("subtag1_up");
@@ -209,16 +208,16 @@ public class TagsDirectorTest {
 
         // now let's see the number of children in the tag objects
         // this is the assertion that fails without fix for #732640
-        Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
+        assertEquals(1, tagsDirector.getRootTag().getChildren().size());
+        assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
 
         // let's check the same thing on overwriting description
         tag.setDescription("TEST TEST TEST TEST");
         tagsDirector.updateTag(tag);
 
         // and all the checks once again just to make sure
-        Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
+        assertEquals(1, tagsDirector.getRootTag().getChildren().size());
+        assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
 
     }
 

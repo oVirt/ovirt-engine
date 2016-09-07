@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -11,7 +12,6 @@ import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
@@ -80,7 +80,7 @@ public class OsRepositoryImplTest {
     public void testDumpRepoToString() {
         String actual = OsRepositoryImpl.INSTANCE.toString();
         String expected = OsRepositoryImpl.INSTANCE.name();
-        Assert.assertNotSame(expected, actual);
+        assertNotSame(expected, actual);
     }
 
     @Test

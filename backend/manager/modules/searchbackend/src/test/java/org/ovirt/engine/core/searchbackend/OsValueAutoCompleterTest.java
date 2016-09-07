@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.searchbackend;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -40,12 +41,12 @@ public class OsValueAutoCompleterTest {
 
     @Test
     public void testCompleteSingleValue() {
-        Assert.assertEquals(1, completer.getCompletion("ot").length);
+        assertEquals(1, completer.getCompletion("ot").length);
     }
 
     @Test
     public void testCompletionMutliReturnValue() {
-        Assert.assertTrue(completer.getCompletion("r").length > 1);
+        assertTrue(completer.getCompletion("r").length > 1);
     }
 
     /**

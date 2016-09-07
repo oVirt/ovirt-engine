@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
@@ -26,7 +29,7 @@ public class EngineConfigTest {
     public void testConfigDirWithFlagSet() throws Exception {
         // get the real path of the config file
         final String path = URLDecoder.decode(ClassLoader.getSystemResource("engine-config.conf").getPath(), "UTF-8");
-        Assert.assertNotNull(path);
+        assertNotNull(path);
         EngineConfigExecutor.main("-a", "--config=" + path);
     }
 
@@ -38,7 +41,7 @@ public class EngineConfigTest {
         for (ConfigKey configKey : keys) {
             log.info("{} version: {}", configKey.getDisplayValue(), configKey.getVersion());
         }
-        Assert.assertTrue(keys.size() > 0);
+        assertTrue(keys.size() > 0);
     }
 
     @Test(expected = IllegalAccessException.class)
@@ -66,13 +69,13 @@ public class EngineConfigTest {
             throws IllegalAccessException {
         config.getEngineConfigLogic().persist(keyName, value, version);
         ConfigKey currentConfigKey = config.getEngineConfigLogic().fetchConfigKey(keyName, "general");
-        Assert.assertEquals(value, currentConfigKey.getValue());
+        assertEquals(value, currentConfigKey.getValue());
     }
 
     private void restoreOriginalValue(final String keyName, ConfigKey originialValue)
             throws IllegalAccessException {
         config.getEngineConfigLogic().persist(keyName, originialValue.getValue(), originialValue.getVersion());
         ConfigKey currentConfigKey = config.getEngineConfigLogic().fetchConfigKey(keyName, "general");
-        Assert.assertEquals(originialValue.getValue(), currentConfigKey.getValue());
+        assertEquals(originialValue.getValue(), currentConfigKey.getValue());
     }
 }

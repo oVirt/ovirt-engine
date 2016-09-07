@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.notifier.filter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogSeverity;
@@ -120,7 +122,7 @@ public class FirstMatchSimpleFilterTest {
         filter.clearFilterEntries();
         filter.processEvent(new E("message0"));
         filter.processEvent(new E("message1"));
-        Assert.assertTrue(snmp.getEvents().isEmpty());
+        assertTrue(snmp.getEvents().isEmpty());
     }
 
     @Test
@@ -132,7 +134,7 @@ public class FirstMatchSimpleFilterTest {
                 );
         filter.processEvent(new E("message0"));
         filter.processEvent(new E("message1"));
-        Assert.assertTrue(smtp.getEvents().contains("message0-->dbtest1@redhat.com"));
+        assertTrue(smtp.getEvents().contains("message0-->dbtest1@redhat.com"));
     }
 
     @Test
@@ -143,7 +145,7 @@ public class FirstMatchSimpleFilterTest {
                         "exclude:*")
                 );
         filter.processEvent(new E("VDC_STOP"));
-        Assert.assertTrue(snmp.getEvents().contains("VDC_STOP-->"));
+        assertTrue(snmp.getEvents().contains("VDC_STOP-->"));
     }
 
     @Test
@@ -162,9 +164,9 @@ public class FirstMatchSimpleFilterTest {
         filter.processEvent(new E("message1"));
         filter.processEvent(new E("message2"));
         filter.processEvent(new E("message3"));
-        Assert.assertTrue(smtp.getEvents().contains("message1-->" + expected));
-        Assert.assertTrue(smtp.getEvents().contains("message2-->" + expected));
-        Assert.assertEquals(2, smtp.getEvents().size());
+        assertTrue(smtp.getEvents().contains("message1-->" + expected));
+        assertTrue(smtp.getEvents().contains("message2-->" + expected));
+        assertEquals(2, smtp.getEvents().size());
     }
 
     @Test
@@ -183,12 +185,12 @@ public class FirstMatchSimpleFilterTest {
         filter.processEvent(new E("message2", AuditLogSeverity.WARNING));
         filter.processEvent(new E("message3", AuditLogSeverity.ERROR));
         filter.processEvent(new E("message4", AuditLogSeverity.ALERT));
-        Assert.assertTrue(smtp.getEvents().contains("message2-->" + expected1));
-        Assert.assertTrue(smtp.getEvents().contains("message3-->" + expected1));
-        Assert.assertTrue(smtp.getEvents().contains("message3-->" + expected2));
-        Assert.assertTrue(smtp.getEvents().contains("message4-->" + expected1));
-        Assert.assertTrue(smtp.getEvents().contains("message4-->" + expected2));
-        Assert.assertEquals(5, smtp.getEvents().size());
+        assertTrue(smtp.getEvents().contains("message2-->" + expected1));
+        assertTrue(smtp.getEvents().contains("message3-->" + expected1));
+        assertTrue(smtp.getEvents().contains("message3-->" + expected2));
+        assertTrue(smtp.getEvents().contains("message4-->" + expected1));
+        assertTrue(smtp.getEvents().contains("message4-->" + expected2));
+        assertEquals(5, smtp.getEvents().size());
     }
 
     @Test
@@ -204,8 +206,8 @@ public class FirstMatchSimpleFilterTest {
                 ));
         filter.processEvent(new E("normal_message", AuditLogSeverity.NORMAL));
         filter.processEvent(new E("error_message", AuditLogSeverity.ERROR));
-        Assert.assertTrue(smtp.getEvents().contains("error_message-->" + expected));
-        Assert.assertEquals(1, smtp.getEvents().size());
+        assertTrue(smtp.getEvents().contains("error_message-->" + expected));
+        assertEquals(1, smtp.getEvents().size());
     }
 
     @Test
@@ -223,8 +225,8 @@ public class FirstMatchSimpleFilterTest {
                                 "include:*"
                         ));
         filter.processEvent(new E("message1"));
-        Assert.assertTrue(snmp.getEvents().contains("message1-->pupu"));
-        Assert.assertTrue(smtp.getEvents().contains("message1-->pupu"));
+        assertTrue(snmp.getEvents().contains("message1-->pupu"));
+        assertTrue(smtp.getEvents().contains("message1-->pupu"));
     }
 
     @Test
@@ -253,17 +255,17 @@ public class FirstMatchSimpleFilterTest {
         filter.processEvent(new E("message1"));
         filter.processEvent(new E("message2"));
 
-        Assert.assertTrue(snmp.getEvents().contains("message0-->profile1"));
-        Assert.assertTrue(snmp.getEvents().contains("message0-->profile2"));
-        Assert.assertTrue(snmp.getEvents().contains("message1-->profile2"));
-        Assert.assertTrue(snmp.getEvents().contains("message2-->profile2"));
-        Assert.assertEquals(4, snmp.getEvents().size());
+        assertTrue(snmp.getEvents().contains("message0-->profile1"));
+        assertTrue(snmp.getEvents().contains("message0-->profile2"));
+        assertTrue(snmp.getEvents().contains("message1-->profile2"));
+        assertTrue(snmp.getEvents().contains("message2-->profile2"));
+        assertEquals(4, snmp.getEvents().size());
 
-        Assert.assertTrue(smtp.getEvents().contains("message1-->alonbl@gentoo.org"));
-        Assert.assertTrue(smtp.getEvents().contains("message1-->alonbl@redhat.com"));
-        Assert.assertTrue(smtp.getEvents().contains("message2-->alon.barlev@gmail.com"));
-        Assert.assertTrue(smtp.getEvents().contains("message2-->alonbl@redhat.com"));
-        Assert.assertEquals(4, smtp.getEvents().size());
+        assertTrue(smtp.getEvents().contains("message1-->alonbl@gentoo.org"));
+        assertTrue(smtp.getEvents().contains("message1-->alonbl@redhat.com"));
+        assertTrue(smtp.getEvents().contains("message2-->alon.barlev@gmail.com"));
+        assertTrue(smtp.getEvents().contains("message2-->alonbl@redhat.com"));
+        assertEquals(4, smtp.getEvents().size());
     }
 
     @Test()

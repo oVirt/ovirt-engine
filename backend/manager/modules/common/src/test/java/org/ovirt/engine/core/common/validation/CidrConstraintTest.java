@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.validation;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -10,7 +12,6 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +60,7 @@ public class CidrConstraintTest {
     @Test
     public void checkValidCidr() {
         runSetup(TEST_CIDR, true, true, "");
-        Assert.assertTrue(underTest.isValid(TEST_CIDR, contextMock));
+        assertTrue(underTest.isValid(TEST_CIDR, contextMock));
         verifyZeroInteractions(contextMock);
     }
 
@@ -71,7 +72,7 @@ public class CidrConstraintTest {
     }
 
     private void runVerify(String testCidr, String errorMessage) {
-        Assert.assertFalse(underTest.isValid(testCidr, contextMock));
+        assertFalse(underTest.isValid(testCidr, contextMock));
         verify(contextMock).disableDefaultConstraintViolation();
         verify(contextMock).buildConstraintViolationWithTemplate(errorMessage);
         verify(mockConstraintViolationBuilder).addNode("cidr");

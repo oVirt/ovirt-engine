@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.VdsHandler;
@@ -65,7 +65,7 @@ public class UpdateVdsCommandTest {
         when(commandMock.getDbFacade()).thenReturn(mock(DbFacade.class));
         VdsHandler.init();
 
-        Assert.assertFalse(commandMock.validate());
+        assertFalse(commandMock.validate());
     }
 
 }

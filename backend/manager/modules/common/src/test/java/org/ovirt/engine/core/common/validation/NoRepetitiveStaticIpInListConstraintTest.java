@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.validation;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -7,7 +9,6 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
@@ -62,7 +63,7 @@ public class NoRepetitiveStaticIpInListConstraintTest {
     private void validateAndAssertResult(List<VdsNetworkInterface> listOfInterfaces, boolean isValid) {
         NoRepetitiveStaticIpInListContainer container = new NoRepetitiveStaticIpInListContainer(listOfInterfaces);
         Set<ConstraintViolation<NoRepetitiveStaticIpInListContainer>> validate = validator.validate(container);
-        Assert.assertEquals(isValid, validate.isEmpty());
+        assertEquals(isValid, validate.isEmpty());
     }
 
     private static VdsNetworkInterface createVdsNetworkInterfaceWithStaticIp(String ip) {

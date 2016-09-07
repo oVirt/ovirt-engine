@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -23,7 +23,7 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
     @Test
     public void testValidate() {
         UpdateRngDeviceCommand command = mockCommand();
-        Assert.assertEquals(true, command.validate());
+        assertEquals(true, command.validate());
     }
 
     private UpdateRngDeviceCommand mockCommand() {

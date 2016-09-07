@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -15,24 +17,24 @@ public class SyntaxCheckerFactoryTest {
     @Test
     public void createUISyntaxChecker() {
         ISyntaxChecker checker = SyntaxCheckerFactory.createUISyntaxChecker("foo");
-        Assert.assertNotNull(checker);
-        Assert.assertEquals(checker, SyntaxCheckerFactory.createUISyntaxChecker("foo"));
-        Assert.assertEquals("foo", SyntaxCheckerFactory.getConfigAuthenticationMethod());
+        assertNotNull(checker);
+        assertEquals(checker, SyntaxCheckerFactory.createUISyntaxChecker("foo"));
+        assertEquals("foo", SyntaxCheckerFactory.getConfigAuthenticationMethod());
     }
 
     @Test
     public void createBackendSyntaxChecker() {
         ISyntaxChecker checker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
-        Assert.assertNotNull(checker);
-        Assert.assertEquals(checker, SyntaxCheckerFactory.createBackendSyntaxChecker("foo"));
-        Assert.assertEquals("foo", SyntaxCheckerFactory.getConfigAuthenticationMethod());
+        assertNotNull(checker);
+        assertEquals(checker, SyntaxCheckerFactory.createBackendSyntaxChecker("foo"));
+        assertEquals("foo", SyntaxCheckerFactory.getConfigAuthenticationMethod());
     }
 
     @Test
     public void createADSyntaxChecker() {
         ISyntaxChecker checker = SyntaxCheckerFactory.createADSyntaxChecker("foo");
-        Assert.assertNotNull(checker);
-        Assert.assertEquals(checker, SyntaxCheckerFactory.createADSyntaxChecker("foo"));
-        Assert.assertEquals("foo", SyntaxCheckerFactory.getConfigAuthenticationMethod());
+        assertNotNull(checker);
+        assertEquals(checker, SyntaxCheckerFactory.createADSyntaxChecker("foo"));
+        assertEquals("foo", SyntaxCheckerFactory.getConfigAuthenticationMethod());
     }
 }

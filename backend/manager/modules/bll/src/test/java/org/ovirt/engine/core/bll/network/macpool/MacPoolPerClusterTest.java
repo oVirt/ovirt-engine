@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.macpool;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
@@ -11,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -155,7 +155,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         assertThat(allocatedMac, is(macAddress1));
         try {
             allocateMac(cluster);
-            Assert.fail("this allocation should not succeed.");
+            fail("this allocation should not succeed.");
         } catch (EngineException e) {
             //ok, this exception should occur.
         }
@@ -206,7 +206,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
 
         try {
             macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null);
-            Assert.fail("pool for given data center should not exist");
+            fail("pool for given data center should not exist");
         } catch (IllegalStateException e) {
             //ignore this exception.
         }

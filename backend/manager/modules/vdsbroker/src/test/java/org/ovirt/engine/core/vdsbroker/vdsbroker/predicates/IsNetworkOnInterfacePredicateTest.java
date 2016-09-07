@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.predicates;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,7 +23,7 @@ public class IsNetworkOnInterfacePredicateTest {
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);
 
-        Assert.assertTrue(underTest.test(mockVdsNetworkInterface));
+        assertTrue(underTest.test(mockVdsNetworkInterface));
     }
 
     @Test
@@ -31,6 +32,6 @@ public class IsNetworkOnInterfacePredicateTest {
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);
 
-        Assert.assertFalse(underTest.test(mockVdsNetworkInterface));
+        assertFalse(underTest.test(mockVdsNetworkInterface));
     }
 }

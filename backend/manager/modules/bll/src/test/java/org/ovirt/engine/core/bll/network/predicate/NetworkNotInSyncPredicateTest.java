@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.network.predicate;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -29,13 +30,13 @@ public class NetworkNotInSyncPredicateTest {
     @Test
     public void checkNotSync() {
         initSyncStatus(mockNetworkAttachment, false);
-        Assert.assertTrue(underTest.test(mockNetworkAttachment));
+        assertTrue(underTest.test(mockNetworkAttachment));
     }
 
     @Test
     public void checkSync() {
         initSyncStatus(mockNetworkAttachment, true);
-        Assert.assertFalse(underTest.test(mockNetworkAttachment));
+        assertFalse(underTest.test(mockNetworkAttachment));
     }
 
 }

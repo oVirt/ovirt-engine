@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -14,7 +15,6 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import org.junit.Assert;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
@@ -96,7 +96,7 @@ public class MockEJBStrategyRule extends TestWatcher {
                 when(mockStrategy.findResource(eq(mockResourceEntry.getKey()))).thenReturn(mockResourceEntry.getValue());
             }
         } catch (SystemException e) {
-            Assert.fail("Unable to mock tranaction management");
+            fail("Unable to mock tranaction management");
         }
     }
 

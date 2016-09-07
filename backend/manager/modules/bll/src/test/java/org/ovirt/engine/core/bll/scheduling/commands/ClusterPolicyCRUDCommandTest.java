@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -37,7 +38,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
                     }
                 };
         command.schedulingManager = mockScheduler();
-        Assert.assertTrue(command.checkAddEditValidations());
+        assertTrue(command.checkAddEditValidations());
     }
 
     @Test
@@ -57,7 +58,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
                     }
                 };
         command.schedulingManager = mockScheduler();
-        Assert.assertFalse(command.checkAddEditValidations());
+        assertFalse(command.checkAddEditValidations());
     }
 
     private SchedulingManager mockScheduler() {

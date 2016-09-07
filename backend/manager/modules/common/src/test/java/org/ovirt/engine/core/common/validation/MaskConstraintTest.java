@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.validation;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -10,7 +12,6 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +60,7 @@ public class MaskConstraintTest {
     @Test
     public void checkValidMask() {
         runSetup(TEST_MASK, true, true, "");
-        Assert.assertTrue(underTest.isValid(TEST_MASK, contextMock));
+        assertTrue(underTest.isValid(TEST_MASK, contextMock));
         verifyZeroInteractions(contextMock);
     }
 
@@ -71,7 +72,7 @@ public class MaskConstraintTest {
     }
 
     private void runVerify(String testMask, String errorMessage) {
-        Assert.assertFalse(underTest.isValid(testMask, contextMock));
+        assertFalse(underTest.isValid(testMask, contextMock));
         verify(contextMock).disableDefaultConstraintViolation();
         verify(contextMock).buildConstraintViolationWithTemplate(errorMessage);
         verify(mockConstraintViolationBuilder).addNode("mask");

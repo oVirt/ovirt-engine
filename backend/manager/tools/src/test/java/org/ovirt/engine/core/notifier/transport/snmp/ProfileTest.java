@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.notifier.transport.snmp;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.snmp4j.mp.SnmpConstants;
@@ -48,8 +49,8 @@ public class ProfileTest {
         for (int i = 0; i < expectedManagers.size(); i++) {
             Snmp.Host parsed = profile.hosts.get(i);
             Snmp.Host expected = expectedManagers.get(i);
-            Assert.assertEquals(parsed.name, expected.name);
-            Assert.assertEquals(parsed.port, expected.port);
+            assertEquals(parsed.name, expected.name);
+            assertEquals(parsed.port, expected.port);
         }
     }
 

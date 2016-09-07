@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.api.model.BootDevice;
@@ -458,7 +457,7 @@ public class VmMapperTest extends
     @Test
     public void cpuTuneToString() {
         for (String sample : new String[] { "0#0", "0#0_1#1", "0#0_1#1,2,3,6" }) {
-            Assert.assertEquals(sample, VmMapper.cpuTuneToString(VmMapper.stringToCpuTune(sample)));
+            assertEquals(sample, VmMapper.cpuTuneToString(VmMapper.stringToCpuTune(sample)));
         }
     }
 

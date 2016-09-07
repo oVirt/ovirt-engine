@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,7 +10,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -85,7 +85,7 @@ public class ConfiguredRangeValidatorTest {
 
     private <T> void validateAndAssertResult(T container, boolean isValid) {
         Set<ConstraintViolation<T>> validate = validator.validate(container);
-        Assert.assertEquals(isValid, validate.isEmpty());
+        assertEquals(isValid, validate.isEmpty());
     }
 
     public void initConfiguredRange() {
