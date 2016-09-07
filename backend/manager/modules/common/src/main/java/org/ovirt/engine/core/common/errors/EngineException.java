@@ -61,7 +61,8 @@ public class EngineException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return String.format(super.getMessage() + " (Failed with error %1$s and code %2$s)",
+
+        return super.getMessage() + String.format(" (Failed with error %1$s and code %2$s)",
                 privateVdsError.getCode(),
                 privateVdsError.getCode().getValue());
     }

@@ -106,7 +106,7 @@ public class VmwarePropertiesModel extends Model {
         return new VmwareVmProviderProperties(
                 getvCenter().getEntity(),
                 getEsx().getEntity(),
-                ImportVmsModel.mergeDcAndCluster(getVmwareDatacenter().getEntity(), getVmwareCluster().getEntity()),
+                ImportVmsModel.mergeDcAndCluster(getVmwareDatacenter().getEntity(), getVmwareCluster().getEntity(), false),
                 getVerifySSL().getEntity(),
                 dataCenterId,
                 getProxyHost().getSelectedItem() != null ? getProxyHost().getSelectedItem().getId() : null);
