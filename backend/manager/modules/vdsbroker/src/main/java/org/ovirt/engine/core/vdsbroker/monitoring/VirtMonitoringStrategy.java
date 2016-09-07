@@ -7,8 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -16,22 +21,25 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
  */
+@Singleton
 public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private final ClusterDao clusterDao;
     private final VdsDao vdsDao;
     private final VmDynamicDao vmDynamicDao;
 
-    protected VirtMonitoringStrategy(ClusterDao clusterDao, VdsDao vdsDao, VmDynamicDao vmDynamicDao) {
+    @Inject
+    private Instance<IVdsEventListener> eventListener;
+
+    @Inject
+    public VirtMonitoringStrategy(ClusterDao clusterDao, VdsDao vdsDao, VmDynamicDao vmDynamicDao) {
         this.clusterDao = clusterDao;
         this.vdsDao = vdsDao;
         this.vmDynamicDao = vmDynamicDao;
@@ -41,6 +49,10 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     public boolean canMoveToMaintenance(VDS vds) {
         // We can only move to maintenance in case no VMs are running on the host
         return vds.getVmCount() == 0 && !isAnyVmRunOnVdsInDb(vds.getId());
+    }
+
+    protected IVdsEventListener getEventListener() {
+        return eventListener.get();
     }
 
     protected boolean isAnyVmRunOnVdsInDb(Guid vdsId) {
@@ -150,13 +162,11 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     @Override
     public void processHardwareCapabilities(VDS vds) {
-        ResourceManager.getInstance().getEventListener().processOnCpuFlagsChange(vds.getId());
+        getEventListener().processOnCpuFlagsChange(vds.getId());
     }
 
     protected void vdsNonOperational(VDS vds, NonOperationalReason reason, Map<String, String> customLogValues) {
-        ResourceManager.getInstance()
-                .getEventListener()
-                .vdsNonOperational(vds.getId(), reason, true, Guid.Empty, customLogValues);
+        getEventListener().vdsNonOperational(vds.getId(), reason, true, Guid.Empty, customLogValues);
     }
 
     @Override
@@ -201,6 +211,6 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private void setClusterEmulatedMachine(VDS vds, String matchedEmulatedMachine) {
         // host matches and its value will set the cluster emulated machine
-        DbFacade.getInstance().getClusterDao().setEmulatedMachine(vds.getClusterId(), matchedEmulatedMachine, false);
+        clusterDao.setEmulatedMachine(vds.getClusterId(), matchedEmulatedMachine, false);
     }
 }

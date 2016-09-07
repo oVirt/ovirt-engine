@@ -7,31 +7,26 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 
 /**
  * This class is responsible for returning the correct service strategy, according to the service the cluster supports
  */
 @Singleton
 public class MonitoringStrategyFactory {
-    private MonitoringStrategy virtMonitoringStrategy;
-    private MonitoringStrategy glusterMonitoringStrategy;
+
+    @Inject
+    private VirtMonitoringStrategy virtMonitoringStrategy;
+
+    @Inject
+    private GlusterMonitoringStrategy glusterMonitoringStrategy;
+
     private MultipleServicesMonitoringStrategy multipleMonitoringStrategy;
 
     @Inject
     private ClusterDao clusterDao;
 
-    @Inject
-    private VdsDao vdsDao;
-
-    @Inject
-    private VmDynamicDao vmDynamicDao;
-
     @PostConstruct
     private void init() {
-        virtMonitoringStrategy = new VirtMonitoringStrategy(clusterDao, vdsDao, vmDynamicDao);
-        glusterMonitoringStrategy = new GlusterMonitoringStrategy();
         multipleMonitoringStrategy = new MultipleServicesMonitoringStrategy();
         multipleMonitoringStrategy.addMonitoringStrategy(virtMonitoringStrategy);
         multipleMonitoringStrategy.addMonitoringStrategy(glusterMonitoringStrategy);
