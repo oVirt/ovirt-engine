@@ -151,7 +151,7 @@ public class VirtMonitoringStrategyTest {
         cluster = new Cluster();
         cluster.setEmulatedMachine("pc-1.0");
         cluster.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
-        org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(cluster);
+        when(mock.get(any(Guid.class))).thenReturn(cluster);
         return mock;
     }
 

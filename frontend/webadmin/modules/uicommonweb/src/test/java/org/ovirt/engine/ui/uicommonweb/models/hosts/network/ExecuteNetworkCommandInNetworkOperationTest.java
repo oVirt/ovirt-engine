@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -18,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
@@ -101,12 +101,12 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         when(setupModel.getHostSetupNetworksParametersData()).thenReturn(dataFromHostSetupNetworksModel);
 
         // mock manager/resolver so it's possible to delegate from one NetworkOperation to another.
-        ConstantsManager constantsManagerMock = Mockito.mock(ConstantsManager.class);
-        UIMessages uiMessagesMock = Mockito.mock(UIMessages.class);
+        ConstantsManager constantsManagerMock = mock(ConstantsManager.class);
+        UIMessages uiMessagesMock = mock(UIMessages.class);
         when(constantsManagerMock.getMessages()).thenReturn(uiMessagesMock);
         when(uiMessagesMock.detachNetwork(anyString())).thenReturn("doh"); //$NON-NLS-1$
         ConstantsManager.setInstance(constantsManagerMock);
-        TypeResolver typeResolverMock = Mockito.mock(TypeResolver.class);
+        TypeResolver typeResolverMock = mock(TypeResolver.class);
         TypeResolver.setInstance(typeResolverMock);
     }
 

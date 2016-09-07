@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -20,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -264,14 +264,14 @@ public class DiskValidatorTest {
     @Test
     public void testDiskAttachedToVMValid() {
         VM vm = createVM();
-        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.singletonList(vm));
         assertThat(validator.isDiskAttachedToVm(vm), isValid());
     }
 
     @Test
     public void testDiskAttachedToVMFail() {
         VM vm = createVM();
-        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
+        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
         assertThat(validator.isDiskAttachedToVm(vm), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM));
     }
 
@@ -280,7 +280,7 @@ public class DiskValidatorTest {
         VM vm = createVM();
         vm.setName("MyVm");
         disk.setDiskAlias("MyDisk");
-        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
+        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
                 ReplacementUtils.createSetVariableString(DiskValidator.VM_NAME_VARIABLE, vm.getName())};

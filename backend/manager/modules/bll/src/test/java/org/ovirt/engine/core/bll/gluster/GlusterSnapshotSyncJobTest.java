@@ -6,7 +6,9 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -22,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -97,7 +98,7 @@ public class GlusterSnapshotSyncJobTest {
 
     @Before
     public void init() {
-        syncJob = Mockito.spy(GlusterSnapshotSyncJob.getInstance());
+        syncJob = spy(GlusterSnapshotSyncJob.getInstance());
         MockitoAnnotations.initMocks(this);
         syncJob.setLogUtil(logUtil);
 
@@ -126,9 +127,9 @@ public class GlusterSnapshotSyncJobTest {
                         argThat(snapshotInfoParam()));
         when(volumeDao.getById(any(Guid.class))).thenReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
         syncJob.refreshSnapshotList();
-        Mockito.verify(snapshotDao, times(1)).saveAll(anyListOf(GlusterVolumeSnapshotEntity.class));
-        Mockito.verify(snapshotDao, times(1)).removeAll(anyListOf(Guid.class));
-        Mockito.verify(snapshotDao, times(1)).updateAllInBatch(anyListOf(GlusterVolumeSnapshotEntity.class));
+        verify(snapshotDao, times(1)).saveAll(anyListOf(GlusterVolumeSnapshotEntity.class));
+        verify(snapshotDao, times(1)).removeAll(anyListOf(Guid.class));
+        verify(snapshotDao, times(1)).updateAllInBatch(anyListOf(GlusterVolumeSnapshotEntity.class));
     }
 
     @Test
@@ -152,11 +153,11 @@ public class GlusterSnapshotSyncJobTest {
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotConfigInfo),
                         argThat(snapshotInfoParam()));
         syncJob.refreshSnapshotConfig();
-        Mockito.verify(snapshotConfigDao, times(3)).save(any(GlusterVolumeSnapshotConfig.class));
-        Mockito.verify(snapshotConfigDao, times(1)).updateConfigByClusterIdAndName(any(Guid.class),
+        verify(snapshotConfigDao, times(3)).save(any(GlusterVolumeSnapshotConfig.class));
+        verify(snapshotConfigDao, times(1)).updateConfigByClusterIdAndName(any(Guid.class),
                 any(String.class),
                 any(String.class));
-        Mockito.verify(snapshotConfigDao, times(1)).updateConfigByVolumeIdAndName(any(Guid.class),
+        verify(snapshotConfigDao, times(1)).updateConfigByVolumeIdAndName(any(Guid.class),
                 any(Guid.class),
                 any(String.class),
                 any(String.class));

@@ -22,7 +22,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -194,8 +193,8 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     private void mockGetImagesList() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(new ArrayList<Guid>());
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GetImagesList),
-                Matchers.<VDSParametersBase> any(VDSParametersBase.class))).thenReturn(returnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GetImagesList), any(VDSParametersBase.class)))
+                .thenReturn(returnValue);
     }
 
     protected void mockGetStorageDomainList
@@ -233,7 +232,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private void mockDiskImageDao() {
-        when(diskImageDao.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(getDiskImageList().get(0));
+        when(diskImageDao.getSnapshotById(any(Guid.class))).thenReturn(getDiskImageList().get(0));
     }
 
     private void mockStorageDomainDao(List<StorageDomain> storageDomains) {

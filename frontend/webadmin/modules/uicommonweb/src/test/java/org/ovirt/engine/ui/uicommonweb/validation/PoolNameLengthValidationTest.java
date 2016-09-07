@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class PoolNameLengthValidationTest {
 
@@ -38,8 +38,7 @@ public class PoolNameLengthValidationTest {
 
         // enough to test for windows, the logic is the same
         PoolNameLengthValidation object = new PoolNameLengthValidation(nameOfLength(nameLength), numOfVms, 3);
-        PoolNameLengthValidation spy =
-                Mockito.spy(object);
+        PoolNameLengthValidation spy = spy(object);
 
         assertThat(spy.validate(null).getSuccess(), is(equalTo(expected)));
     }

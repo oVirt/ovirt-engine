@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -46,6 +45,6 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQueryTest extends AbstractQuer
         Permission permissions = new Permission();
         returnedPermissions.add(permissions);
         when(getQueryParameters().getId()).thenReturn(quotaId);
-        Mockito.when(permissionDao.getConsumedPermissionsForQuotaId(quotaId)).thenReturn(returnedPermissions);
+        when(permissionDao.getConsumedPermissionsForQuotaId(quotaId)).thenReturn(returnedPermissions);
     }
 }

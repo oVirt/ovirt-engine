@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -9,7 +10,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
@@ -97,7 +97,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getCluster(true)).when(clusterDao).get(Mockito.any(Guid.class));
+        doReturn(getCluster(true)).when(clusterDao).get(any(Guid.class));
     }
 
     private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks) {
@@ -140,7 +140,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     public void validateFailsWithClusterDoesNotSupportGluster() {
         cmd = spy(createTestCommand(getVolume(2, false)));
         prepareMocks(cmd);
-        doReturn(getCluster(false)).when(clusterDao).get(Mockito.any(Guid.class));
+        doReturn(getCluster(false)).when(clusterDao).get(any(Guid.class));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);

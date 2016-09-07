@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.common.validation;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext;
@@ -9,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -36,7 +41,7 @@ public class CidrConstraintTest {
 
     @Before
     public void setup() {
-        Mockito.doReturn(mockCidrValidator).when(underTest).getCidrValidator();
+        doReturn(mockCidrValidator).when(underTest).getCidrValidator();
     }
 
     @Test
@@ -55,24 +60,22 @@ public class CidrConstraintTest {
     public void checkValidCidr() {
         runSetup(TEST_CIDR, true, true, "");
         Assert.assertTrue(underTest.isValid(TEST_CIDR, contextMock));
-        Mockito.verifyZeroInteractions(contextMock);
+        verifyZeroInteractions(contextMock);
     }
 
     private void runSetup(String testCidr, boolean isValidFormat, boolean isCidrNetworkAddressValid, String errorMessage) {
-        Mockito.when(mockCidrValidator.isCidrFormatValid(testCidr)).thenReturn(isValidFormat);
-        Mockito.when(mockCidrValidator.isCidrNetworkAddressValid(testCidr)).thenReturn(isCidrNetworkAddressValid);
-        Mockito.when(contextMock.buildConstraintViolationWithTemplate(errorMessage))
-                .thenReturn(mockConstraintViolationBuilder);
-        Mockito.when(mockConstraintViolationBuilder.addNode(Mockito.anyString()))
-                .thenReturn(mockNodeBuilderDefinedContext);
+        when(mockCidrValidator.isCidrFormatValid(testCidr)).thenReturn(isValidFormat);
+        when(mockCidrValidator.isCidrNetworkAddressValid(testCidr)).thenReturn(isCidrNetworkAddressValid);
+        when(contextMock.buildConstraintViolationWithTemplate(errorMessage)).thenReturn(mockConstraintViolationBuilder);
+        when(mockConstraintViolationBuilder.addNode(anyString())).thenReturn(mockNodeBuilderDefinedContext);
     }
 
     private void runVerify(String testCidr, String errorMessage) {
         Assert.assertFalse(underTest.isValid(testCidr, contextMock));
-        Mockito.verify(contextMock).disableDefaultConstraintViolation();
-        Mockito.verify(contextMock).buildConstraintViolationWithTemplate(errorMessage);
-        Mockito.verify(mockConstraintViolationBuilder).addNode("cidr");
-        Mockito.verify(mockNodeBuilderDefinedContext).addConstraintViolation();
+        verify(contextMock).disableDefaultConstraintViolation();
+        verify(contextMock).buildConstraintViolationWithTemplate(errorMessage);
+        verify(mockConstraintViolationBuilder).addNode("cidr");
+        verify(mockNodeBuilderDefinedContext).addConstraintViolation();
     }
 
 }

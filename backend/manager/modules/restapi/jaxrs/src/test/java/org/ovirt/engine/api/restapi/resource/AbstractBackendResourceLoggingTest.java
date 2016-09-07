@@ -1,10 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import org.junit.Assert;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 
 public abstract class AbstractBackendResourceLoggingTest extends Assert {
@@ -21,8 +23,8 @@ public abstract class AbstractBackendResourceLoggingTest extends Assert {
     protected void setUpLogExpectations(boolean debug) {
         try {
             Field field = BaseBackendResource.class.getDeclaredField("log");
-            Logger logger = Mockito.mock(Logger.class);
-            Mockito.when(logger.isDebugEnabled()).thenReturn(debug);
+            Logger logger = mock(Logger.class);
+            when(logger.isDebugEnabled()).thenReturn(debug);
             setFinalStatic(field, logger);
         } catch (Exception e) {
             e.printStackTrace();

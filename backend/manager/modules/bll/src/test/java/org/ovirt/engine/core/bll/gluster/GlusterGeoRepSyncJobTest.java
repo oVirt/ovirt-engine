@@ -3,7 +3,9 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -14,7 +16,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -74,7 +75,7 @@ public class GlusterGeoRepSyncJobTest {
 
     @Before
     public void init() {
-        syncJob = Mockito.spy(GlusterGeoRepSyncJob.getInstance());
+        syncJob = spy(GlusterGeoRepSyncJob.getInstance());
         MockitoAnnotations.initMocks(this);
         syncJob.setLogUtil(logUtil);
         doReturn(clusterDao).when(syncJob).getClusterDao();
@@ -97,7 +98,7 @@ public class GlusterGeoRepSyncJobTest {
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
-        Mockito.verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
+        verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
     }
 
     @Test
@@ -110,8 +111,8 @@ public class GlusterGeoRepSyncJobTest {
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepConfigList),
                 any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
-        Mockito.verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
-        Mockito.verify(geoRepDao, times(2)).saveConfig(any(GlusterGeoRepSessionConfiguration.class));
+        verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
+        verify(geoRepDao, times(2)).saveConfig(any(GlusterGeoRepSessionConfiguration.class));
     }
 
     @Test
@@ -121,7 +122,7 @@ public class GlusterGeoRepSyncJobTest {
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
-        Mockito.verify(geoRepDao, times(0)).save(any(GlusterGeoRepSession.class));
+        verify(geoRepDao, times(0)).save(any(GlusterGeoRepSession.class));
     }
 
     @Test
@@ -130,7 +131,7 @@ public class GlusterGeoRepSyncJobTest {
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus),
                 any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.refreshGeoRepSessionStatus();
-        Mockito.verify(geoRepDao, times(2)).saveOrUpdateDetailsInBatch(any(List.class));
+        verify(geoRepDao, times(2)).saveOrUpdateDetailsInBatch(any(List.class));
     }
 
     @Test
@@ -139,7 +140,7 @@ public class GlusterGeoRepSyncJobTest {
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.refreshGeoRepSessionStatus();
-        Mockito.verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(any(List.class));
+        verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(any(List.class));
     }
 
     private EngineLock getMockLock() {

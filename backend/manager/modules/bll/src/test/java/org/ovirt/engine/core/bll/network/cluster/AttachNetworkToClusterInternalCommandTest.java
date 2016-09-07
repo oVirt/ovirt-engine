@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -130,7 +129,7 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
 
     private void dbFacadeThrowOnNetworkClusterSave() {
         doThrow(new DataIntegrityViolationException("test violations")).when(mockNetworkClusterDao)
-                .save(Matchers.any(NetworkCluster.class));
+                .save(any(NetworkCluster.class));
     }
 
     private Network getNetwork() {

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -117,7 +117,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         doReturn(clusterDao).when(command).getClusterDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(hooksDao).when(command).getGlusterHooksDao();
-        doReturn(cluster).when(clusterDao).get(Mockito.any(Guid.class));
+        doReturn(cluster).when(clusterDao).get(any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
         doReturn(glusterUtils).when(command).getGlusterUtils();
         doReturn(backend).when(command).getBackend();
@@ -232,10 +232,10 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockForExecute();
         command.executeCommand();
         assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_REMOVE_VDS);
-        Mockito.verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
-        Mockito.verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
-        Mockito.verify(volumeDao, never()).removeByClusterId(any(Guid.class));
-        Mockito.verify(hooksDao, never()).removeAllInCluster(any(Guid.class));
+        verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
+        verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
+        verify(volumeDao, never()).removeByClusterId(any(Guid.class));
+        verify(hooksDao, never()).removeAllInCluster(any(Guid.class));
     }
 
     @Test
@@ -250,10 +250,10 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockForExecute();
         command.executeCommand();
         assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_REMOVE_VDS);
-        Mockito.verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
-        Mockito.verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
-        Mockito.verify(volumeDao, times(1)).removeByClusterId(any(Guid.class));
-        Mockito.verify(hooksDao, times(1)).removeAllInCluster(any(Guid.class));
+        verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
+        verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
+        verify(volumeDao, times(1)).removeByClusterId(any(Guid.class));
+        verify(hooksDao, times(1)).removeAllInCluster(any(Guid.class));
     }
 
     private void mockForExecute() {

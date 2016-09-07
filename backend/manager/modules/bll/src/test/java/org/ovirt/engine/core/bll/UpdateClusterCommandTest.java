@@ -10,6 +10,7 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,7 +31,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
@@ -249,7 +249,7 @@ public class UpdateClusterCommandTest {
     public void versionDecreaseNoHostsOrNetwork() {
         createCommandWithOlderVersion(true, false);
         setupCpu();
-        StoragePoolDao storagePoolDao2 = Mockito.mock(StoragePoolDao.class);
+        StoragePoolDao storagePoolDao2 = mock(StoragePoolDao.class);
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
         doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
         initAndAssertValidation(true);
@@ -258,7 +258,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void versionDecreaseLowerVersionThanDC() {
         createCommandWithOlderVersion(true, false);
-        StoragePoolDao storagePoolDao2 = Mockito.mock(StoragePoolDao.class);
+        StoragePoolDao storagePoolDao2 = mock(StoragePoolDao.class);
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
         doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
         doReturn(storagePoolDao2).when(dbFacadeMock).getStoragePoolDao();

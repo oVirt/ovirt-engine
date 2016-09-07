@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.predicates;
 
+import static org.mockito.Mockito.when;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -17,7 +18,7 @@ public class IsNetworkOnInterfacePredicateTest {
 
     @Test
     public void testEvalPositive() throws Exception {
-        Mockito.when(mockVdsNetworkInterface.getNetworkName()).thenReturn(TEST_NETWORK_NAME);
+        when(mockVdsNetworkInterface.getNetworkName()).thenReturn(TEST_NETWORK_NAME);
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);
 
@@ -26,7 +27,7 @@ public class IsNetworkOnInterfacePredicateTest {
 
     @Test
     public void testEvalNegaitive() throws Exception {
-        Mockito.when(mockVdsNetworkInterface.getNetworkName()).thenReturn("not" + TEST_NETWORK_NAME);
+        when(mockVdsNetworkInterface.getNetworkName()).thenReturn("not" + TEST_NETWORK_NAME);
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);
 

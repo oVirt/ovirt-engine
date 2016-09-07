@@ -4,7 +4,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -61,13 +63,13 @@ public class ExternalNetworkTokenProviderTest {
         provider.setAuthUrl(AUTH_URL);
         provider.setUsername(USERNAME);
         provider.setPassword(PASSWORD);
-        tokenProvider = Mockito.spy(new ExternalNetworkTokenProvider(provider));
+        tokenProvider = spy(new ExternalNetworkTokenProvider(provider));
 
         doReturn(mockKeystone).when(tokenProvider).createKeystone(AUTH_URL);
-        doReturn(TOKEN_ID).when(tokenProvider).getTokenId(Mockito.same(token));
+        doReturn(TOKEN_ID).when(tokenProvider).getTokenId(same(token));
 
         when(mockKeystone.tokens()).thenReturn(mockTokensResource);
-        when(mockTokensResource.authenticate(Mockito.any(UsernamePassword.class))).thenReturn(mockAuthenticate);
+        when(mockTokensResource.authenticate(any(UsernamePassword.class))).thenReturn(mockAuthenticate);
         when(mockAuthenticate.execute()).thenReturn(mockAccess);
         when(mockAccess.getToken()).thenReturn(token);
     }
@@ -77,7 +79,7 @@ public class ExternalNetworkTokenProviderTest {
 
         assertEquals(tokenProvider.getToken(), TOKEN_ID);
 
-        Mockito.verify(mockTokensResource).authenticate(usernamePasswordCaptor.capture());
+        verify(mockTokensResource).authenticate(usernamePasswordCaptor.capture());
         verifyUsernamePassword();
     }
 

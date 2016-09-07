@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -26,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.Backend;
@@ -172,7 +172,7 @@ public class GlusterSyncJobTest {
     public void before() {
         injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
         injectorRule.bind(AuditLogDirector.class, mock(AuditLogDirector.class));
-        glusterManager = Mockito.spy(GlusterSyncJob.getInstance());
+        glusterManager = spy(GlusterSyncJob.getInstance());
     }
 
     private void createObjects() {
@@ -259,7 +259,7 @@ public class GlusterSyncJobTest {
 
     @SuppressWarnings("unchecked")
     private void setupMocks() throws Exception {
-        logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
+        logUtil = spy(GlusterAuditLogUtil.getInstance());
         glusterManager.setLogUtil(logUtil);
         mockDaos();
 

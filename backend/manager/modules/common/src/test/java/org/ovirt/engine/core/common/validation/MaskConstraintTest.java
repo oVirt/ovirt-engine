@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.common.validation;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext;
@@ -9,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -36,7 +41,7 @@ public class MaskConstraintTest {
 
     @Before
     public void setup() {
-        Mockito.doReturn(mockMaskValidator).when(underTest).getMaskValidator();
+        doReturn(mockMaskValidator).when(underTest).getMaskValidator();
     }
 
     @Test
@@ -55,24 +60,22 @@ public class MaskConstraintTest {
     public void checkValidMask() {
         runSetup(TEST_MASK, true, true, "");
         Assert.assertTrue(underTest.isValid(TEST_MASK, contextMock));
-        Mockito.verifyZeroInteractions(contextMock);
+        verifyZeroInteractions(contextMock);
     }
 
     private void runSetup(String testMask, boolean isValidFormat, boolean isMaskValidValue, String errorMessage) {
-        Mockito.when(mockMaskValidator.isValidNetmaskFormat(testMask)).thenReturn(isValidFormat);
-        Mockito.when(mockMaskValidator.isPrefixValid(testMask)).thenReturn(isMaskValidValue);
-        Mockito.when(contextMock.buildConstraintViolationWithTemplate(errorMessage))
-                .thenReturn(mockConstraintViolationBuilder);
-        Mockito.when(mockConstraintViolationBuilder.addNode(Mockito.anyString()))
-                .thenReturn(mockNodeBuilderDefinedContext);
+        when(mockMaskValidator.isValidNetmaskFormat(testMask)).thenReturn(isValidFormat);
+        when(mockMaskValidator.isPrefixValid(testMask)).thenReturn(isMaskValidValue);
+        when(contextMock.buildConstraintViolationWithTemplate(errorMessage)).thenReturn(mockConstraintViolationBuilder);
+        when(mockConstraintViolationBuilder.addNode(anyString())).thenReturn(mockNodeBuilderDefinedContext);
     }
 
     private void runVerify(String testMask, String errorMessage) {
         Assert.assertFalse(underTest.isValid(testMask, contextMock));
-        Mockito.verify(contextMock).disableDefaultConstraintViolation();
-        Mockito.verify(contextMock).buildConstraintViolationWithTemplate(errorMessage);
-        Mockito.verify(mockConstraintViolationBuilder).addNode("mask");
-        Mockito.verify(mockNodeBuilderDefinedContext).addConstraintViolation();
+        verify(contextMock).disableDefaultConstraintViolation();
+        verify(contextMock).buildConstraintViolationWithTemplate(errorMessage);
+        verify(mockConstraintViolationBuilder).addNode("mask");
+        verify(mockNodeBuilderDefinedContext).addConstraintViolation();
     }
 
 }

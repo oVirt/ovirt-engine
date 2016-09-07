@@ -4,6 +4,8 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -30,9 +32,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -350,9 +350,8 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     public void createCommand() {
         mockCpuFlagsManagerHandler();
-        when(osRepository.isWindows(Mockito.anyInt())).thenReturn(false);
-        when(osRepository.isCpuSupported(Mockito.anyInt(), Mockito.any(Version.class), Mockito.anyString()))
-                .thenReturn(true);
+        when(osRepository.isWindows(anyInt())).thenReturn(false);
+        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         updateVmHandler();
 
@@ -547,11 +546,11 @@ public class RunVmCommandTest extends BaseCommandTest {
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
         when(runVmValidator.canRunVm(
-                Matchers.anyListOf(String.class),
+                anyListOf(String.class),
                 any(StoragePool.class),
-                Matchers.anyListOf(Guid.class),
-                Matchers.anyListOf(Guid.class),
-                Matchers.anyListOf(Guid.class),
+                anyListOf(Guid.class),
+                anyListOf(Guid.class),
+                anyListOf(Guid.class),
                 any(Cluster.class))).thenReturn(true);
         when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();

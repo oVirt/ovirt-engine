@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -30,16 +32,16 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         final Guid deviceId = new Guid("b24ae590-f42b-49b6-b8f4-cbbc720b230d");
         final VmRngDevice dev = getDevice(deviceId, vmId);
 
-        final VmStatic vmMock = Mockito.mock(VmStatic.class);
-        Mockito.when(vmMock.getClusterId()).thenReturn(clusterId);
-        final VmStaticDao vmDaoMock = Mockito.mock(VmStaticDao.class);
-        Mockito.when(vmDaoMock.get(vmId)).thenReturn(vmMock);
-        final VmDeviceDao vmDeviceDaoMock = Mockito.mock(VmDeviceDao.class);
-        Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG)).thenReturn(Collections.singletonList(new VmDevice()));
-        final Cluster cluster = Mockito.mock(Cluster.class);
-        Mockito.when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
-        final ClusterDao clusterMock = Mockito.mock(ClusterDao.class);
-        Mockito.when(clusterMock.get(clusterId)).thenReturn(cluster);
+        final VmStatic vmMock = mock(VmStatic.class);
+        when(vmMock.getClusterId()).thenReturn(clusterId);
+        final VmStaticDao vmDaoMock = mock(VmStaticDao.class);
+        when(vmDaoMock.get(vmId)).thenReturn(vmMock);
+        final VmDeviceDao vmDeviceDaoMock = mock(VmDeviceDao.class);
+        when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG)).thenReturn(Collections.singletonList(new VmDevice()));
+        final Cluster cluster = mock(Cluster.class);
+        when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
+        final ClusterDao clusterMock = mock(ClusterDao.class);
+        when(clusterMock.get(clusterId)).thenReturn(cluster);
 
         RngDeviceParameters params = new RngDeviceParameters(dev, true);
         UpdateRngDeviceCommand cmd = new UpdateRngDeviceCommand(params, null) {

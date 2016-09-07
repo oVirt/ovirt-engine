@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.GetQuotasByAdElementIdQueryParameters;
@@ -47,6 +46,6 @@ public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotas
         returnedQuotas = new ArrayList<>();
         when(getQueryParameters().getAdElementId()).thenReturn(adElementId);
         when(getQueryParameters().getStoragePoolId()).thenReturn(storagePoolId);
-        Mockito.when(quotaDao.getQuotaByAdElementId(adElementId, storagePoolId, false)).thenReturn(returnedQuotas);
+        when(quotaDao.getQuotaByAdElementId(adElementId, storagePoolId, false)).thenReturn(returnedQuotas);
     }
 }

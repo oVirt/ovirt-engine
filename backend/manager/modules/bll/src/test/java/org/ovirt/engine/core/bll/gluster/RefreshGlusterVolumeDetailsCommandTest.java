@@ -17,7 +17,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -60,7 +59,7 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     public void init() {
         injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
         injectorRule.bind(AuditLogDirector.class, mock(AuditLogDirector.class));
-        syncJob = Mockito.spy(GlusterSyncJob.getInstance());
+        syncJob = spy(GlusterSyncJob.getInstance());
     }
 
     private void prepareMocks(RefreshGlusterVolumeDetailsCommand command) {

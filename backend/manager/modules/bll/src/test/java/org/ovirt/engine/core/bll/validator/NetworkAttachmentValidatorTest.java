@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -16,7 +17,6 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -169,7 +169,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @Test
     public void testNotRemovingManagementNetwork() {
-        NetworkAttachmentValidator networkAttachmentValidatorSpy = Mockito.spy(
+        NetworkAttachmentValidator networkAttachmentValidatorSpy = spy(
             createNetworkAttachmentValidator(new NetworkAttachment()));
 
         doReturn(networkValidatorMock).when(networkAttachmentValidatorSpy).getNetworkValidator();

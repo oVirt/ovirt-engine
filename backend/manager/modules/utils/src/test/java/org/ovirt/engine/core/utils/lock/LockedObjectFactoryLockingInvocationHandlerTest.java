@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.lock;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
@@ -11,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.utils.lock.LockedObjectFactory.LockingInvocationHandler;
 
@@ -38,8 +38,8 @@ public class LockedObjectFactoryLockingInvocationHandlerTest {
     public void setUp() throws Exception {
         handler = new LockingInvocationHandler<>(testInterface, lock);
 
-        Mockito.when(lock.readLock()).thenReturn(readLock);
-        Mockito.when(lock.writeLock()).thenReturn(writeLock);
+        when(lock.readLock()).thenReturn(readLock);
+        when(lock.writeLock()).thenReturn(writeLock);
     }
 
     @Test

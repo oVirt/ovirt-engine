@@ -13,7 +13,6 @@ import java.util.Random;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Matchers;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 
 @RunWith(Parameterized.class)
@@ -65,13 +64,13 @@ public class SubnetMaskValidationTest {
 
         MaskValidator validator = mock(MaskValidator.class);
         doReturn(isPrefixValid).when(validator).isPrefixValid(anyString());
-        doReturn(isNetmaskValidFormat).when(validator).isValidNetmaskFormat(Matchers.anyString());
-        doReturn(isNetmaskValidValue).when(validator).isNetmaskValid(Matchers.anyString());
+        doReturn(isNetmaskValidFormat).when(validator).isValidNetmaskFormat(anyString());
+        doReturn(isNetmaskValidValue).when(validator).isNetmaskValid(anyString());
 
         SubnetMaskValidation subnetMaskValidationSpy = createUnderTest(isPrefixAllowed);
         doReturn(validator).when(subnetMaskValidationSpy).getMaskValidator();
 
-        ValidationResult actualResult = subnetMaskValidationSpy.validate(Matchers.anyString());
+        ValidationResult actualResult = subnetMaskValidationSpy.validate(anyString());
 
         final String exceptionMessage =
                 String.format("Failed to validate subnet result message: expected: %s\tresult: %s\t for: isPrefixAllowed: %b\tisNetmaskValidFormat: %b\t isMaskValid: %b\t isPrefixValid: %b", //$NON-NLS-1$

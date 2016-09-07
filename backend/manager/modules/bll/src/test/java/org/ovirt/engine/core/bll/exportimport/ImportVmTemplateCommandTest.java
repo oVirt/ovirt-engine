@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -146,8 +145,8 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
             StorageType storageType) {
         ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(createParameters());
 
-        command.vmNicMacsUtils = Mockito.mock(VmNicMacsUtils.class);
-        Mockito.when(command.vmNicMacsUtils.validateMacAddress(any())).thenReturn(ValidationResult.VALID);
+        command.vmNicMacsUtils = mock(VmNicMacsUtils.class);
+        when(command.vmNicMacsUtils.validateMacAddress(any())).thenReturn(ValidationResult.VALID);
 
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();

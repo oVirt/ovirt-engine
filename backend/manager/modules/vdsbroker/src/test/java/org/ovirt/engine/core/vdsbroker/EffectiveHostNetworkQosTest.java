@@ -3,12 +3,15 @@ package org.ovirt.engine.core.vdsbroker;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -35,7 +38,7 @@ public class EffectiveHostNetworkQosTest {
     public void testGetQosWithNullNetworkAttachmentAndNetworkWithQos() throws Exception {
         HostNetworkQos hostNetworkQos = createHostNetworkQos();
         Network network = createNetworkWithQos(hostNetworkQos);
-        Mockito.when(hostNetworkQosDao.get(network.getQosId())).thenReturn(hostNetworkQos);
+        when(hostNetworkQosDao.get(network.getQosId())).thenReturn(hostNetworkQos);
 
         assertThat(effectiveHostNetworkQos.getQos(null, network), is(hostNetworkQos));
     }
@@ -51,11 +54,11 @@ public class EffectiveHostNetworkQosTest {
         Network network = createNetworkWithQos(hostNetworkQos);
         NetworkAttachment networkAttachment = createNetworkAttachmentWithoutOverriddenQos();
 
-        Mockito.when(hostNetworkQosDao.get(network.getQosId())).thenReturn(hostNetworkQos);
+        when(hostNetworkQosDao.get(network.getQosId())).thenReturn(hostNetworkQos);
 
         assertThat(effectiveHostNetworkQos.getQos(networkAttachment, network), is(hostNetworkQos));
-        Mockito.verify(hostNetworkQosDao).get(Mockito.eq(network.getQosId()));
-        Mockito.verifyNoMoreInteractions(hostNetworkQosDao);
+        verify(hostNetworkQosDao).get(eq(network.getQosId()));
+        verifyNoMoreInteractions(hostNetworkQosDao);
     }
 
     @Test
@@ -65,7 +68,7 @@ public class EffectiveHostNetworkQosTest {
         HostNetworkQos networkAttachmentHostNetworkQos = HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos());
 
         assertThat(effectiveHostNetworkQos.getQos(networkAttachment, network), is(networkAttachmentHostNetworkQos));
-        Mockito.verifyNoMoreInteractions(hostNetworkQosDao);
+        verifyNoMoreInteractions(hostNetworkQosDao);
 
     }
 

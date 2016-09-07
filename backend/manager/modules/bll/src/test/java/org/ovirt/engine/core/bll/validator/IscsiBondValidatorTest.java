@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
@@ -46,7 +46,7 @@ public class IscsiBondValidatorTest {
 
     @Before
     public void setUp() {
-        validator = Mockito.spy(new IscsiBondValidator());
+        validator = spy(new IscsiBondValidator());
 
         doReturn(dbFacade).when(validator).getDBFacade();
         doReturn(iscsiBondDao).when(dbFacade).getIscsiBondDao();

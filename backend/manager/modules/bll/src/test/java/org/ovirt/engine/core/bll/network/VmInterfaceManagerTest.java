@@ -5,6 +5,7 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -17,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
@@ -67,7 +67,7 @@ public class VmInterfaceManagerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setupMocks() {
-        vmInterfaceManager = Mockito.spy(new VmInterfaceManager(macPool));
+        vmInterfaceManager = spy(new VmInterfaceManager(macPool));
         doReturn(vmNetworkStatisticsDao).when(vmInterfaceManager).getVmNetworkStatisticsDao();
         doReturn(vmNetworkInterfaceDao).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();

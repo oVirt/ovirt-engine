@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -45,6 +44,6 @@ public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQ
 
         returnedVmTemplates = new ArrayList<>();
         when(getQueryParameters().getId()).thenReturn(quotaId);
-        Mockito.when(vmTemplateDao.getAllTemplatesRelatedToQuotaId(quotaId)).thenReturn(returnedVmTemplates);
+        when(vmTemplateDao.getAllTemplatesRelatedToQuotaId(quotaId)).thenReturn(returnedVmTemplates);
     }
 }

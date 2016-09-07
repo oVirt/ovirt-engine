@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -37,7 +37,7 @@ public class OvfDataUpdaterTest {
 
     @Before
     public void setUp() {
-        ovfDataUpdater = Mockito.spy(OvfDataUpdater.getInstance());
+        ovfDataUpdater = spy(OvfDataUpdater.getInstance());
         map = new HashMap<>();
         doReturn(storagePoolDao).when(ovfDataUpdater).getStoragePoolDao();
         mockAnswers();

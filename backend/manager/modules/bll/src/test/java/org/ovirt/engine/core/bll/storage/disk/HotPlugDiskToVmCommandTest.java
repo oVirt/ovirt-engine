@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -223,7 +222,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setClusterCompatibilityVersion(Version.getLast());
         doReturn(vdsDao).when(command).getVdsDao();
-        when(vdsDao.get(Mockito.any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
     }
 
     protected void mockInterfaceList() {
@@ -290,7 +289,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         vmDevice.setId(new VmDeviceId());
         vmDevice.setIsPlugged(plugged);
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
-        when(vmDeviceDao.get(Mockito.any(VmDeviceId.class))).thenReturn(vmDevice);
+        when(vmDeviceDao.get(any(VmDeviceId.class))).thenReturn(vmDevice);
     }
 
 }

@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll.network.cluster.helper;
 
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -10,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -59,8 +64,8 @@ public class DisplayNetworkClusterHelperTest {
                 TEST_NETWORK_NAME,
                 mockAuditLogDirector);
 
-        Mockito.when(mockNetworkCluster.getId()).thenReturn(TEST_NETWORK_CLUSTER_ID);
-        Mockito.when(mockNetworkClusterDao.get(TEST_NETWORK_CLUSTER_ID)).thenReturn(mockNetworkClusterBeforeUpdate);
+        when(mockNetworkCluster.getId()).thenReturn(TEST_NETWORK_CLUSTER_ID);
+        when(mockNetworkClusterDao.get(TEST_NETWORK_CLUSTER_ID)).thenReturn(mockNetworkClusterBeforeUpdate);
     }
 
     /**
@@ -106,15 +111,15 @@ public class DisplayNetworkClusterHelperTest {
     private void testIsDisplayToBeUpdatedInner(boolean displayNetworkToBeSet,
             boolean displayNetworkBeforeUpdate,
             boolean expectedResult) {
-        Mockito.when(mockNetworkCluster.isDisplay()).thenReturn(displayNetworkToBeSet);
-        Mockito.when(mockNetworkClusterBeforeUpdate.isDisplay()).thenReturn(displayNetworkBeforeUpdate);
+        when(mockNetworkCluster.isDisplay()).thenReturn(displayNetworkToBeSet);
+        when(mockNetworkClusterBeforeUpdate.isDisplay()).thenReturn(displayNetworkBeforeUpdate);
 
         final boolean actual = underTest.isDisplayToBeUpdated();
 
-        Mockito.verify(mockNetworkCluster).getId();
-        Mockito.verify(mockNetworkClusterDao).get(TEST_NETWORK_CLUSTER_ID);
-        Mockito.verify(mockNetworkCluster).isDisplay();
-        Mockito.verify(mockNetworkClusterBeforeUpdate).isDisplay();
+        verify(mockNetworkCluster).getId();
+        verify(mockNetworkClusterDao).get(TEST_NETWORK_CLUSTER_ID);
+        verify(mockNetworkCluster).isDisplay();
+        verify(mockNetworkClusterBeforeUpdate).isDisplay();
 
         Assert.assertEquals(expectedResult, actual);
     }
@@ -128,8 +133,8 @@ public class DisplayNetworkClusterHelperTest {
 
         testWarnOnActiveVmInner(true);
 
-        Mockito.verify(mockAuditLogDirector).log(auditLogableBaseCaptor.capture(),
-                Mockito.same(AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM));
+        verify(mockAuditLogDirector).log(auditLogableBaseCaptor.capture(),
+                same(AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM));
 
         final AuditLogableBase actualLoggable = auditLogableBaseCaptor.getValue();
         Assert.assertEquals(TEST_CLUSTER_ID, actualLoggable.getClusterId());
@@ -141,20 +146,20 @@ public class DisplayNetworkClusterHelperTest {
 
         testWarnOnActiveVmInner(false);
 
-        Mockito.verifyZeroInteractions(mockAuditLogDirector);
+        verifyZeroInteractions(mockAuditLogDirector);
     }
 
     private void testWarnOnActiveVmInner(boolean activeVm) {
         final List<VM> clusterVms = Collections.singletonList(mockVm);
 
-        Mockito.when(mockNetworkCluster.getClusterId()).thenReturn(TEST_CLUSTER_ID);
-        Mockito.when(mockVmDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(clusterVms);
-        Mockito.when(mockVm.isRunning()).thenReturn(activeVm);
+        when(mockNetworkCluster.getClusterId()).thenReturn(TEST_CLUSTER_ID);
+        when(mockVmDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(clusterVms);
+        when(mockVm.isRunning()).thenReturn(activeVm);
 
         underTest.warnOnActiveVm();
 
-        Mockito.verify(mockNetworkCluster, Mockito.atLeastOnce()).getClusterId();
-        Mockito.verify(mockVmDao).getAllForCluster(TEST_CLUSTER_ID);
-        Mockito.verify(mockVm).isRunning();
+        verify(mockNetworkCluster, atLeastOnce()).getClusterId();
+        verify(mockVmDao).getAllForCluster(TEST_CLUSTER_ID);
+        verify(mockVm).isRunning();
     }
 }

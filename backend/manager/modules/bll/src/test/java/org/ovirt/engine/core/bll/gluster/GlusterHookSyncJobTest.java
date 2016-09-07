@@ -6,7 +6,9 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -19,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -94,8 +95,8 @@ public class GlusterHookSyncJobTest {
 
     private void initMocks() {
 
-        hookSyncJob = Mockito.spy(GlusterHookSyncJob.getInstance());
-        logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
+        hookSyncJob = spy(GlusterHookSyncJob.getInstance());
+        logUtil = spy(GlusterAuditLogUtil.getInstance());
         hookSyncJob.setLogUtil(logUtil);
         doReturn(glusterUtil).when(hookSyncJob).getGlusterUtil();
         doReturn(getServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[0]);
@@ -212,9 +213,9 @@ public class GlusterHookSyncJobTest {
                 argThat(vdsServer2()));
 
         hookSyncJob.refreshHooks();
-        Mockito.verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
-        Mockito.verify(hooksDao, times(0)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
-        Mockito.verify(hooksDao, times(0)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
+        verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
+        verify(hooksDao, times(0)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
+        verify(hooksDao, times(0)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
     }
 
     @Test
@@ -231,10 +232,10 @@ public class GlusterHookSyncJobTest {
                 any(GlusterHookVDSParameters.class));
 
         hookSyncJob.refreshHooks();
-        Mockito.verify(hooksDao, times(2)).save(any(GlusterHookEntity.class));
-        Mockito.verify(hooksDao, times(2)).updateGlusterHookContent(any(Guid.class), any(String.class), any(String.class));
-        Mockito.verify(hooksDao, times(0)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
-        Mockito.verify(hooksDao, times(0)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
+        verify(hooksDao, times(2)).save(any(GlusterHookEntity.class));
+        verify(hooksDao, times(2)).updateGlusterHookContent(any(Guid.class), any(String.class), any(String.class));
+        verify(hooksDao, times(0)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
+        verify(hooksDao, times(0)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
     }
 
     @Test
@@ -249,9 +250,9 @@ public class GlusterHookSyncJobTest {
         doReturn(getHook(2, true)).when(hooksDao).getById(EXISTING_HOOK_IDS[2]);
 
         hookSyncJob.refreshHooks();
-        Mockito.verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
-        Mockito.verify(hooksDao, times(2)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
-        Mockito.verify(hooksDao, times(2)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
+        verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
+        verify(hooksDao, times(2)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
+        verify(hooksDao, times(2)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
     }
 
     @Test
@@ -266,9 +267,9 @@ public class GlusterHookSyncJobTest {
         doReturn(getHook(2, true)).when(hooksDao).getById(EXISTING_HOOK_IDS[2]);
 
         hookSyncJob.refreshHooks();
-        Mockito.verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
-        Mockito.verify(hooksDao, times(1)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
-        Mockito.verify(hooksDao, times(1)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
+        verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
+        verify(hooksDao, times(1)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
+        verify(hooksDao, times(1)).updateGlusterHookConflictStatus(any(Guid.class), any(Integer.class));
     }
 
     @Test
@@ -284,9 +285,9 @@ public class GlusterHookSyncJobTest {
                 argThat(vdsServer2()));
 
         hookSyncJob.refreshHooks();
-        Mockito.verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
-        Mockito.verify(hooksDao, times(1)).saveGlusterServerHook(any(GlusterServerHook.class));
-        Mockito.verify(hooksDao, times(1)).updateGlusterHookConflictStatus(EXISTING_HOOK_IDS[1], GlusterHookConflictFlags.CONTENT_CONFLICT.getValue());
+        verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
+        verify(hooksDao, times(1)).saveGlusterServerHook(any(GlusterServerHook.class));
+        verify(hooksDao, times(1)).updateGlusterHookConflictStatus(EXISTING_HOOK_IDS[1], GlusterHookConflictFlags.CONTENT_CONFLICT.getValue());
     }
 
     @Test
@@ -303,11 +304,11 @@ public class GlusterHookSyncJobTest {
         doReturn(getHook(2, true)).when(hooksDao).getById(EXISTING_HOOK_IDS[2]);
 
         hookSyncJob.refreshHooks();
-        Mockito.verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
-        Mockito.verify(hooksDao, times(1)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
-        Mockito.verify(hooksDao, times(1)).saveGlusterServerHook(any(GlusterServerHook.class));
-        Mockito.verify(hooksDao, times(1)).updateGlusterHookConflictStatus(EXISTING_HOOK_IDS[1], GlusterHookConflictFlags.CONTENT_CONFLICT.getValue());
-        Mockito.verify(hooksDao, times(1)).updateGlusterHookConflictStatus(EXISTING_HOOK_IDS[2], GlusterHookConflictFlags.MISSING_HOOK.getValue());
+        verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
+        verify(hooksDao, times(1)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
+        verify(hooksDao, times(1)).saveGlusterServerHook(any(GlusterServerHook.class));
+        verify(hooksDao, times(1)).updateGlusterHookConflictStatus(EXISTING_HOOK_IDS[1], GlusterHookConflictFlags.CONTENT_CONFLICT.getValue());
+        verify(hooksDao, times(1)).updateGlusterHookConflictStatus(EXISTING_HOOK_IDS[2], GlusterHookConflictFlags.MISSING_HOOK.getValue());
 
     }
 

@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 
 import java.lang.reflect.Field;
 
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.springframework.context.annotation.Bean;
 
@@ -25,7 +25,7 @@ public class DbDependentTestBase extends BaseCommandTest {
 
     @After
     public void done() {
-        Mockito.reset(dbFacade);
+        reset(dbFacade);
     }
 
     @Bean

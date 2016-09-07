@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -44,10 +44,10 @@ public class UpdateVdsCommandTest {
         oldVdsData.setClusterCompatibilityVersion(new Version("1.2.3"));
         parameters.setvds(newVdsData);
 
-        UpdateVdsCommand<UpdateVdsActionParameters> commandMock = Mockito.mock(UpdateVdsCommand.class);
-        Mockito.when(commandMock.getVdsId()).thenReturn(vdsId);
-        Mockito.when(commandMock.validate()).thenCallRealMethod();
-        Mockito.when(commandMock.getParameters()).thenReturn(parameters);
+        UpdateVdsCommand<UpdateVdsActionParameters> commandMock = mock(UpdateVdsCommand.class);
+        when(commandMock.getVdsId()).thenReturn(vdsId);
+        when(commandMock.validate()).thenCallRealMethod();
+        when(commandMock.getParameters()).thenReturn(parameters);
         Version version = new Version("1.2.3");
         Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(version);
@@ -56,13 +56,13 @@ public class UpdateVdsCommandTest {
                 parameters.getFenceAgents(),
                 new Version("1.2.3").toString())).thenReturn(true);
 
-        VdsDao vdsDaoMock = Mockito.mock(VdsDao.class);
-        Mockito.when(vdsDaoMock.get(vdsId)).thenReturn(oldVdsData);
+        VdsDao vdsDaoMock = mock(VdsDao.class);
+        when(vdsDaoMock.get(vdsId)).thenReturn(oldVdsData);
         //now return the old vds data
-        Mockito.when(vdsDaoMock.getByName("BAR")).thenReturn(oldVdsData);
+        when(vdsDaoMock.getByName("BAR")).thenReturn(oldVdsData);
 
-        Mockito.when(commandMock.getVdsDao()).thenReturn(vdsDaoMock);
-        Mockito.when(commandMock.getDbFacade()).thenReturn(Mockito.mock(DbFacade.class));
+        when(commandMock.getVdsDao()).thenReturn(vdsDaoMock);
+        when(commandMock.getDbFacade()).thenReturn(mock(DbFacade.class));
         VdsHandler.init();
 
         Assert.assertFalse(commandMock.validate());

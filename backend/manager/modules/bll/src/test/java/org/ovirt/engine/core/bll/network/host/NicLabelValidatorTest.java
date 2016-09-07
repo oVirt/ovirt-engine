@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
@@ -40,7 +39,7 @@ public class NicLabelValidatorTest {
                         any(Guid.class),
                         any(String.class),
                         any(EngineMessage.class),
-                        Matchers.<BusinessEntityMap<VdsNetworkInterface>> any());
+                        any(BusinessEntityMap.class));
 
         assertEquals(validationReuslt, validator.validateCoherentNicIdentification(new NicLabel()));
     }

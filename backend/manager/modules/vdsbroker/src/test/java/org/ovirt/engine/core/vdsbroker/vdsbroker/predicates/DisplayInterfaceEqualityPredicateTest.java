@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.predicates;
 
+import static org.mockito.Mockito.when;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -23,31 +24,31 @@ public class DisplayInterfaceEqualityPredicateTest {
 
     @Before
     public void setUp() throws Exception {
-        Mockito.when(mockIface.getName()).thenReturn(TEST_INTERFACE_NAME);
-        Mockito.when(mockIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
+        when(mockIface.getName()).thenReturn(TEST_INTERFACE_NAME);
+        when(mockIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
         underTest = new DisplayInterfaceEqualityPredicate(mockIface);
     }
 
     @Test
     public void testEvalPositive() throws Exception {
-        Mockito.when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
-        Mockito.when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
+        when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
+        when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
         Assert.assertTrue(underTest.test(mockOtherIface));
     }
 
     @Test
     public void testEvalDifferentName() throws Exception {
-        Mockito.when(mockOtherIface.getName()).thenReturn("not" + TEST_INTERFACE_NAME);
-        Mockito.when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
+        when(mockOtherIface.getName()).thenReturn("not" + TEST_INTERFACE_NAME);
+        when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
         Assert.assertFalse(underTest.test(mockOtherIface));
     }
 
     @Test
     public void testEvalDifferentAddress() throws Exception {
-        Mockito.when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
-        Mockito.when(mockOtherIface.getIpv4Address()).thenReturn("not" + TEST_INTERFACE_ADDRESS);
+        when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
+        when(mockOtherIface.getIpv4Address()).thenReturn("not" + TEST_INTERFACE_ADDRESS);
 
         Assert.assertFalse(underTest.test(mockOtherIface));
     }

@@ -5,6 +5,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -172,9 +172,9 @@ public class StorageDeviceSyncJobTest {
     public void testRefreshStorageDevices() {
         mockVdsCommand();
         syncJob.refreshStorageDevices();
-        Mockito.verify(storageDeviceDao, times(5)).save(any(StorageDevice.class));
-        Mockito.verify(storageDeviceDao, times(2)).removeAllInBatch(any(List.class));
-        Mockito.verify(storageDeviceDao, times(1)).updateAllInBatch(any(List.class));
+        verify(storageDeviceDao, times(5)).save(any(StorageDevice.class));
+        verify(storageDeviceDao, times(2)).removeAllInBatch(any(List.class));
+        verify(storageDeviceDao, times(1)).updateAllInBatch(any(List.class));
     }
 
     private List<Cluster> getClusters() {

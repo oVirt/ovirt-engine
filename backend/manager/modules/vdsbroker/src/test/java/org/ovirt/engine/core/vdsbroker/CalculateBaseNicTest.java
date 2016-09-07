@@ -2,7 +2,10 @@ package org.ovirt.engine.core.vdsbroker;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -13,9 +16,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -48,11 +49,10 @@ public class CalculateBaseNicTest {
 
     @Test()
     public void testGetBaseNicVerifyDelegation() throws Exception {
-        CalculateBaseNic spy = Mockito.spy(calculateBaseNic);
+        CalculateBaseNic spy = spy(calculateBaseNic);
 
         spy.getBaseNic(baseNic);
-        verify(spy).getBaseNic(Matchers.<VdsNetworkInterface> any(),
-            Matchers.<Map<String, VdsNetworkInterface>> any());
+        verify(spy).getBaseNic(any(VdsNetworkInterface.class), anyMapOf(String.class, VdsNetworkInterface.class));
     }
 
     @Test()

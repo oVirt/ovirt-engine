@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.bll.common.predicates;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
@@ -17,22 +21,22 @@ public class NicIsPluggedPredicateTest {
     @Test
     public void testEvalPositive() throws Exception {
 
-        Mockito.when(mockVmNetworkInterface.isPlugged()).thenReturn(true);
+        when(mockVmNetworkInterface.isPlugged()).thenReturn(true);
 
-        Assert.assertTrue(NicIsPluggedPredicate.getInstance().test(mockVmNetworkInterface));
+        assertTrue(NicIsPluggedPredicate.getInstance().test(mockVmNetworkInterface));
 
-        Mockito.verify(mockVmNetworkInterface).isPlugged();
-        Mockito.verify(mockVmNetworkInterface, Mockito.never()).isLinked();
+        verify(mockVmNetworkInterface).isPlugged();
+        verify(mockVmNetworkInterface, never()).isLinked();
     }
 
     @Test
     public void testEvalNegative() throws Exception {
 
-        Mockito.when(mockVmNetworkInterface.isPlugged()).thenReturn(false);
+        when(mockVmNetworkInterface.isPlugged()).thenReturn(false);
 
-        Assert.assertFalse(NicIsPluggedPredicate.getInstance().test(mockVmNetworkInterface));
+        assertFalse(NicIsPluggedPredicate.getInstance().test(mockVmNetworkInterface));
 
-        Mockito.verify(mockVmNetworkInterface).isPlugged();
-        Mockito.verify(mockVmNetworkInterface, Mockito.never()).isLinked();
+        verify(mockVmNetworkInterface).isPlugged();
+        verify(mockVmNetworkInterface, never()).isLinked();
     }
 }

@@ -11,6 +11,7 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
@@ -32,7 +33,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -116,9 +116,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-        command = Mockito.spy(new ProcessOvfUpdateForStoragePoolCommand<>(
-                new ProcessOvfUpdateForStoragePoolParameters(), null));
-        ovfUpdateProcessHelper = Mockito.spy(new OvfUpdateProcessHelper(vmDeviceUtils));
+        command = spy(new ProcessOvfUpdateForStoragePoolCommand<>(new ProcessOvfUpdateForStoragePoolParameters(), null));
+        ovfUpdateProcessHelper = spy(new OvfUpdateProcessHelper(vmDeviceUtils));
         doReturn(ITEMS_COUNT_PER_UPDATE).when(command).loadConfigValue();
         doReturn(new ArrayList<DiskImage>()).when(ovfUpdateProcessHelper).getAllImageSnapshots(any(DiskImage.class));
         doCallRealMethod().when(command).executeCommand();
