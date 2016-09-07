@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -81,6 +82,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
         if (entityFromConfiguration == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
+        }
+
+        if (!ImagesHandler.isImagesExists(getImages(), getStoragePool().getId())) {
+            return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
         }
 
         for (DiskImage image : getImages()) {
