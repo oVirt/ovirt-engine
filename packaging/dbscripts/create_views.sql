@@ -673,6 +673,14 @@ LEFT JOIN vms_for_disk_view vfdv
     ON i.image_group_id = vfdv.device_id
 GROUP BY storage_domain_id;
 
+CREATE OR REPLACE VIEW vg_discard_support_view AS
+SELECT volume_group_id,
+    BOOL_AND(COALESCE(luns.discard_max_size, 0) > 0) AS supports_discard,
+    BOOL_AND(COALESCE(luns.discard_zeroes_data, FALSE)) AS supports_discard_zeroes_data
+FROM luns
+WHERE volume_group_id <> ''
+GROUP BY volume_group_id;
+
 CREATE OR REPLACE VIEW storage_domains AS
 
 SELECT storage_domain_static.id AS id,
@@ -699,7 +707,9 @@ SELECT storage_domain_static.id AS id,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator AS warning_low_space_indicator,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
-    storage_domain_dynamic.external_status AS external_status
+    storage_domain_dynamic.external_status AS external_status,
+    vg_discard_support_view.supports_discard AS supports_discard,
+    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data
 FROM storage_domain_static
 INNER JOIN storage_domain_dynamic
     ON storage_domain_static.id = storage_domain_dynamic.id
@@ -712,7 +722,9 @@ LEFT JOIN domains_with_unregistered_entities_view
 LEFT JOIN storage_domains_image_sizes
     ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id
 LEFT JOIN storage_domain_shared_status
-    ON storage_domain_shared_status.storage_id = storage_domain_static.id;
+    ON storage_domain_shared_status.storage_id = storage_domain_static.id
+LEFT JOIN vg_discard_support_view
+    ON storage_domain_static.storage = vg_discard_support_view.volume_group_id;
 
 
 CREATE OR REPLACE VIEW storage_domains_without_storage_pools AS
@@ -741,7 +753,9 @@ SELECT DISTINCT storage_domain_static.id AS id,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator AS warning_low_space_indicator,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
-    storage_domain_dynamic.external_status AS external_status
+    storage_domain_dynamic.external_status AS external_status,
+    vg_discard_support_view.supports_discard AS supports_discard,
+    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data
 FROM storage_domain_static
 INNER JOIN storage_domain_dynamic
     ON storage_domain_static.id = storage_domain_dynamic.id
@@ -752,7 +766,9 @@ LEFT JOIN storage_domain_shared_status
 LEFT JOIN domains_with_unregistered_entities_view
     ON domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
 LEFT JOIN storage_domains_image_sizes
-    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
+    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id
+LEFT JOIN vg_discard_support_view
+    ON storage_domain_static.storage = vg_discard_support_view.volume_group_id;
 
 CREATE OR REPLACE VIEW storage_domains_for_search AS
 
@@ -786,7 +802,9 @@ SELECT storage_domain_static.id AS id,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator AS warning_low_space_indicator,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
-    storage_domain_dynamic.external_status AS external_status
+    storage_domain_dynamic.external_status AS external_status,
+    vg_discard_support_view.supports_discard AS supports_discard,
+    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data
 FROM storage_domain_static
 INNER JOIN storage_domain_dynamic
     ON storage_domain_static.id = storage_domain_dynamic.id
@@ -811,7 +829,9 @@ LEFT JOIN storage_domain_shared_status
 LEFT JOIN domains_with_unregistered_entities_view
     ON domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
 LEFT JOIN storage_domains_image_sizes
-    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
+    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id
+LEFT JOIN vg_discard_support_view
+    ON storage_domain_static.storage = vg_discard_support_view.volume_group_id;
 
 CREATE OR REPLACE VIEW luns_view AS
 

@@ -13,6 +13,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented {
     private static final long serialVersionUID = -6162192446628804305L;
 
+    private Boolean supportsDiscard;
+
+    private Boolean supportsDiscardZeroesData;
+
     public StorageDomain() {
         staticData = new StorageDomainStatic();
         dynamicData = new StorageDomainDynamic();
@@ -364,6 +368,22 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         staticData.setWipeAfterDelete(wipeAfterDelete);
     }
 
+    public Boolean getSupportsDiscard() {
+        return supportsDiscard;
+    }
+
+    public void setSupportsDiscard(Boolean supportsDiscard) {
+        this.supportsDiscard = supportsDiscard;
+    }
+
+    public Boolean getSupportsDiscardZeroesData() {
+        return supportsDiscardZeroesData;
+    }
+
+    public void setSupportsDiscardZeroesData(Boolean supportsDiscardZeroesData) {
+        this.supportsDiscardZeroesData = supportsDiscardZeroesData;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -374,7 +394,9 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
                 storageDomainSharedStatus,
                 storageDomainOverCommitPercent,
                 storagePoolIsoMapData,
-                totalDiskSize
+                totalDiskSize,
+                supportsDiscard,
+                supportsDiscardZeroesData
         );
     }
 
@@ -391,7 +413,9 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
                 && committedDiskSize == other.committedDiskSize
                 && storageDomainSharedStatus == other.storageDomainSharedStatus
                 && storageDomainOverCommitPercent == other.storageDomainOverCommitPercent
-                && Objects.equals(totalDiskSize, other.totalDiskSize);
+                && Objects.equals(totalDiskSize, other.totalDiskSize)
+                && Objects.equals(supportsDiscard, other.supportsDiscard)
+                && Objects.equals(supportsDiscardZeroesData, other.supportsDiscardZeroesData);
     }
 
     @Override

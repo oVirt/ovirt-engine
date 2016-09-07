@@ -150,6 +150,8 @@ public class StorageDomainMapper {
             model.setStorageFormat(StorageFormatMapper.map(entity.getStorageFormat(), null));
         }
         model.setWipeAfterDelete(entity.getWipeAfterDelete());
+        model.setSupportsDiscard(entity.getSupportsDiscard());
+        model.setSupportsDiscardZeroesData(entity.getSupportsDiscardZeroesData());
         return model;
     }
 
