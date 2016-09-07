@@ -116,7 +116,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         }
 
         if (getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList((DiskImage) getDisk()));
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator((DiskImage) getDisk());
             if (!validate(diskImagesValidator.diskImagesNotLocked()) ||
                     !validate(diskImagesValidator.diskImagesNotIllegal())) {
                 return false;

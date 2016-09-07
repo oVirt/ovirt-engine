@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,10 @@ public class DiskImagesValidator {
 
     public DiskImagesValidator(Iterable<DiskImage> disks) {
         this.diskImages = disks;
+    }
+
+    public DiskImagesValidator(DiskImage... disks) {
+        this.diskImages = Arrays.asList(disks);
     }
 
     /**

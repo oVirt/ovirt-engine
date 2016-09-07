@@ -143,7 +143,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList(diskImage));
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImage);
 
         if (diskImage.isOvfStore()
                 && !validate(diskImagesValidator.disksInStatus(ImageStatus.ILLEGAL,
@@ -244,7 +244,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private DiskImagesValidator createDiskImagesValidator(DiskImage disk) {
-      return new DiskImagesValidator(Collections.singletonList(disk));
+      return new DiskImagesValidator(disk);
     }
 
     protected boolean checkDerivedDisksFromDiskNotExist(DiskImage diskImage) {

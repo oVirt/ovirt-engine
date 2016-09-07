@@ -180,7 +180,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 DiskStorageType.CINDER == getOldDisk().getDiskStorageType();
 
         if (isDiskImageOrCinder) {
-            ValidationResult imagesNotLocked = new DiskImagesValidator(Collections.singletonList((DiskImage) getOldDisk())).diskImagesNotLocked();
+            ValidationResult imagesNotLocked = new DiskImagesValidator((DiskImage) getOldDisk()).diskImagesNotLocked();
             if (!imagesNotLocked.isValid()) {
                 return validate(imagesNotLocked);
             }

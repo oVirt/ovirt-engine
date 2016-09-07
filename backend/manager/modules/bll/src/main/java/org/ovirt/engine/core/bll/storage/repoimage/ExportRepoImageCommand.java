@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.repoimage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -252,7 +251,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
             }
         }
 
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Arrays.asList(getDiskImage()));
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(getDiskImage());
         if (!validate(diskImagesValidator.diskImagesNotIllegal())
                 || !validate(diskImagesValidator.diskImagesNotLocked())) {
             return false;
