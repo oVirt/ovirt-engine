@@ -316,9 +316,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         command.getVm().setKernelUrl(kernel);
         command.createVm();
 
-        // Check Vm
-        VM vm = vmDao.get(command.getParameters().getVmId());
-        return vm;
+        return vmDao.get(command.getParameters().getVmId());
     }
 
     /**
