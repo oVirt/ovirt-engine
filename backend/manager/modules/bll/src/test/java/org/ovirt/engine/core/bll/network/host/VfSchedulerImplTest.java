@@ -364,7 +364,7 @@ public class VfSchedulerImplTest {
 
         HostDevice vf = null;
         if (hasFreeVf) {
-            vf = createFreeVf(vnic, hostNicVfsConfig);
+            vf = createFreeVf(hostNicVfsConfig);
             mockVfShareIommuGroup(vf, freeVfShareIommuGroup);
 
             if (!freeVfShareIommuGroup && (allNetworksAllowed || vnicNetworkInSriovConfig || vnicLabelInSriovConfig)) {
@@ -478,8 +478,7 @@ public class VfSchedulerImplTest {
         return hostDevice;
     }
 
-    private HostDevice createFreeVf(VmNetworkInterface vnic,
-            HostNicVfsConfig hostNicVfsConfig) {
+    private HostDevice createFreeVf(HostNicVfsConfig hostNicVfsConfig) {
         HostDevice vf = createVf();
         ArgumentMatcher<List<String>> matchNotContainVf = new ArgumentMatcher<List<String>>() {
 
