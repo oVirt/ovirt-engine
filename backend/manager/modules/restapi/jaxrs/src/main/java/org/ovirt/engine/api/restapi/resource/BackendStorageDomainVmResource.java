@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Map;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -147,8 +148,7 @@ public class BackendStorageDomainVmResource
 
     @Override
     public StorageDomainVmDiskAttachmentsResource getDiskAttachmentsResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendExportDomainDiskAttachmentsResource(this));
     }
 
     @Override
