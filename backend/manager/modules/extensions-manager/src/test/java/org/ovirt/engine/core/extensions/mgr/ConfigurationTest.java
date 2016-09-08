@@ -88,7 +88,7 @@ public class ConfigurationTest {
 
     public enum TestEnum {
         A
-    };
+    }
 
     /**
      * Check that retrieving a file works as expected.
@@ -171,7 +171,7 @@ public class ConfigurationTest {
 
     public interface TypedString {
         String getA();
-    };
+    }
 
     /**
      * Check that typed views support primitive boolean parameters.
@@ -193,7 +193,7 @@ public class ConfigurationTest {
     public interface TestTypedPrimitiveBoolean {
         boolean isA();
         boolean isB();
-    };
+    }
 
     /**
      * Check that typed views support boxed boolean parameters.
@@ -215,7 +215,7 @@ public class ConfigurationTest {
     public interface TestTypedBoxedBoolean {
         Boolean isA();
         Boolean isB();
-    };
+    }
 
     /**
      * Check that typed views support primitive integer parameters, including negative values.
@@ -246,7 +246,7 @@ public class ConfigurationTest {
         int getM1();
         int get1234();
         int getM1234();
-    };
+    }
 
     /**
      * Check that typed views support boxed integer parameters, including negative values.
@@ -277,7 +277,7 @@ public class ConfigurationTest {
         Integer getM1();
         Integer get1234();
         Integer getM1234();
-    };
+    }
 
     /**
      * Check that typed views support enum parameters.
@@ -318,7 +318,7 @@ public class ConfigurationTest {
 
     public interface TypedArray {
         String[] getA();
-    };
+    }
 
     /**
      * Check that typed views supports lists of strings.
@@ -340,7 +340,7 @@ public class ConfigurationTest {
 
     public interface TypedList {
         List<String> getA();
-    };
+    }
 
     /**
      * Check that typed views supports files.
@@ -359,7 +359,7 @@ public class ConfigurationTest {
 
     public interface TypedFile {
         File getA();
-    };
+    }
 
     /**
      * Check that nested typed views are supported.
@@ -379,7 +379,7 @@ public class ConfigurationTest {
     public interface TypedNested {
         String getB();
         TypedNested getA();
-    };
+    }
 
     /**
      * Check that the absolute key of a parameter inside a view is constructed correctly.
