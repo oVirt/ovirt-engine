@@ -110,7 +110,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
 
     @Test
     public void testGetApplicationModeObject() {
-        ObjectNode result = testServlet.getApplicationModeObject(Integer.valueOf(255));
+        ObjectNode result = testServlet.getApplicationModeObject(255);
         assertEquals("255", result.get("value").asText()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
