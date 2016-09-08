@@ -718,14 +718,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     protected void mockInterfaceList() {
-        ArrayList<String> diskInterfaces = new ArrayList<>(
-                Arrays.asList(new String[] {
-                        "IDE",
-                        "VirtIO",
-                        "VirtIO_SCSI"
-                }));
-
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn
+                (Arrays.asList("IDE", "VirtIO", "VirtIO_SCSI"));
     }
 
     protected VM createVmStatusDown() {
