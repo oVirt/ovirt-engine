@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
@@ -274,18 +275,15 @@ public class VfSchedulerImplTest {
             boolean freeVfShareIommuGroup,
             boolean vfDirectlyAttached) {
         HostNicVfsConfig hostNicVfsConfig = new HostNicVfsConfig();
-        List<HostDevice> vfs = new ArrayList<>();
-        for (VmNetworkInterface vnic : passthroughVnics) {
-            vfs.add(updateVfsConfig(hostNicVfsConfig,
-                    vnic,
-                    numOfVfs,
-                    allNetworksAllowed,
-                    networkInSriovConfig,
-                    labelInSriovConfig,
-                    hasFreeVf,
-                    freeVfShareIommuGroup,
-                    vfDirectlyAttached));
-        }
+        List<HostDevice> vfs = passthroughVnics.stream().map(vnic -> updateVfsConfig(hostNicVfsConfig,
+                vnic,
+                numOfVfs,
+                allNetworksAllowed,
+                networkInSriovConfig,
+                labelInSriovConfig,
+                hasFreeVf,
+                freeVfShareIommuGroup,
+                vfDirectlyAttached)).collect(Collectors.toList());
         mockVfsConfigsOnHost(Collections.singletonList(hostNicVfsConfig));
         return vfs;
     }
