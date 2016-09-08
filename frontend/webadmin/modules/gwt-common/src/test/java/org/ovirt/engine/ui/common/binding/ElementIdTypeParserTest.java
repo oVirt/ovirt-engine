@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -89,8 +90,8 @@ public class ElementIdTypeParserTest {
         stubPassingField(ownerTypeField2, mock(JClassType.class), "ownerTypeField2"); //$NON-NLS-1$
         stubPassingField(ownerTypeParentField, ownerTypeParentFieldType, "ownerTypeParentField"); //$NON-NLS-1$
 
-        Set<? extends JClassType> ownerTypeParentFieldTypeFlattenedSupertypeHierarchy = new HashSet<>(
-                Arrays.asList(ownerTypeParentFieldType));
+        Set<? extends JClassType> ownerTypeParentFieldTypeFlattenedSupertypeHierarchy =
+                Collections.singleton(ownerTypeParentFieldType);
         doReturn(ownerTypeParentFieldTypeFlattenedSupertypeHierarchy).when(ownerTypeParentFieldType)
                 .getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldType.getFields()).thenReturn(new JField[] {
@@ -219,7 +220,7 @@ public class ElementIdTypeParserTest {
     @Test(expected = UnableToCompleteException.class)
     public void doParse_unhandledFieldTypeRecursion() throws UnableToCompleteException {
         Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
-                new HashSet<>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
+                Collections.singleton(ownerTypeParentFieldTypeSubField1Type);
         doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
@@ -230,7 +231,7 @@ public class ElementIdTypeParserTest {
     @Test
     public void doParse_handledFieldTypeRecursion() throws UnableToCompleteException {
         Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
-                new HashSet<>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
+                Collections.singleton(ownerTypeParentFieldTypeSubField1Type);
         doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });

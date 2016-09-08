@@ -11,6 +11,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +70,7 @@ public class DiskSnapshotsValidatorTest {
 
     @Test
     public void diskSnapshotsDontExist() {
-        assertThat(validator.diskSnapshotsNotExist(Arrays.asList(Guid.newGuid())),
+        assertThat(validator.diskSnapshotsNotExist(Collections.singletonList(Guid.newGuid())),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST));
     }
 

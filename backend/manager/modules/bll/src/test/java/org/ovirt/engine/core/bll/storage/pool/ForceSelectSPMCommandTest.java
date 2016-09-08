@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -106,7 +106,7 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
 
     @Test
     public void testCDAStoragePoolHasTasks() {
-        List<Guid> tasks = Arrays.asList(Guid.newGuid());
+        List<Guid> tasks = Collections.singletonList(Guid.newGuid());
         doReturn(tasks).when(asyncTaskDaoMock).getAsyncTaskIdsByStoragePoolId(storagePoolId);
         ValidateTestUtils.runAndAssertValidateFailure
                 ("validate did not fail on a Storage Pool with running tasks", command,

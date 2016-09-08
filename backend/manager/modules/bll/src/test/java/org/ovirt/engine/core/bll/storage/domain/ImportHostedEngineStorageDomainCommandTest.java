@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.storage.domain.ImportHostedEngineStorageDomainCommand.SUPPORTED_DOMAIN_TYPES;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -277,7 +276,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
         // base disk dao
         doReturn(dbFacade).when(cmd).getDbFacade();
         when(dbFacade.getBaseDiskDao()).thenReturn(baseDiskDao);
-        List<BaseDisk> baseDisks = Arrays.asList(new BaseDisk());
+        List<BaseDisk> baseDisks = Collections.singletonList(new BaseDisk());
         when(baseDiskDao.getDisksByAlias(anyString())).thenReturn(baseDisks);
         // remove disk
         when(backend.runInternalAction(
@@ -322,7 +321,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
         if (answerWithDomain) {
             sd = new StorageDomain();
             sd.getStorageStaticData().setConnection(new StorageServerConnections());
-            domains = Arrays.asList(sd);
+            domains = Collections.singletonList(sd);
         }
 
         doReturn(createQueryReturnValueWith(domains))

@@ -10,6 +10,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +58,7 @@ public class NumaValidatorTest {
 
         vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid()));
+        vm.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(2);
         vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
@@ -78,7 +79,7 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectHostWihtoutNumaSupport() {
-        vdsNumaNodes = new ArrayList(Arrays.asList(createVdsNumaNode(1)));
+        vdsNumaNodes = new ArrayList(Collections.singletonList(createVdsNumaNode(1)));
         assertValidationFailure(underTest.validateNumaCompatibility(vm, vm.getvNumaNodeList(), vdsNumaNodes),
                 EngineMessage.HOST_NUMA_NOT_SUPPORTED);
     }
@@ -108,7 +109,7 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectTooMuchHostNodes() {
-        vm.setvNumaNodeList(Arrays.asList(createVmNumaNode(1, vdsNumaNodes)));
+        vm.setvNumaNodeList(Collections.singletonList(createVmNumaNode(1, vdsNumaNodes)));
         vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
@@ -140,7 +141,7 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldValidateSingleNodePinning() {
-        vm.setvNumaNodeList(Arrays.asList(createVmNumaNode(0, Arrays.asList(createVdsNumaNode(1)))));
+        vm.setvNumaNodeList(Collections.singletonList(createVmNumaNode(0, Collections.singletonList(createVdsNumaNode(1)))));
         vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
         assertTrue(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());
     }

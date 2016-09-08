@@ -9,6 +9,7 @@ import static org.ovirt.engine.core.common.businessentities.MigrationSupport.PIN
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,14 +70,14 @@ public class InClusterUpgradeValidatorTest {
 
     @Test
     public void shouldDetectUpgradePossible() {
-        assertThat(validator.isUpgradePossible(Arrays.asList(newHost1, newHost2), Arrays.asList(validVM)))
+        assertThat(validator.isUpgradePossible(Arrays.asList(newHost1, newHost2), Collections.singletonList(validVM)))
                 .isEqualTo(ValidationResult.VALID);
     }
 
     @Test
     public void shouldDetectInvalidHostOsIdentifier() {
         newHost1.setHostOs("which OS am I?");
-        assertThat(validator.isUpgradePossible(Arrays.asList(newHost1, newHost2), Arrays.asList(validVM)))
+        assertThat(validator.isUpgradePossible(Arrays.asList(newHost1, newHost2), Collections.singletonList(validVM)))
                 .isNotEqualTo(ValidationResult.VALID);
     }
 
@@ -103,14 +104,14 @@ public class InClusterUpgradeValidatorTest {
 
     @Test
     public void shouldDetectNumaPinning() {
-        invalidVM.setvNumaNodeList(Arrays.asList(createVmNumaNode(1, Arrays.asList(createVdsNumaNode(1)))));
+        invalidVM.setvNumaNodeList(Collections.singletonList(createVmNumaNode(1, Collections.singletonList(createVdsNumaNode(1)))));
         assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
                 EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_NUMA_PINNED.name());
     }
 
     @Test
     public void shouldAllowUnpinnedNumaNodes() {
-        validVM.setvNumaNodeList(Arrays.asList(createVmNumaNode(1)));
+        validVM.setvNumaNodeList(Collections.singletonList(createVmNumaNode(1)));
         assertThat(validator.checkVmReadyForUpgrade(validVM)).isEmpty();
     }
 
@@ -135,8 +136,8 @@ public class InClusterUpgradeValidatorTest {
         invalidVM.setMigrationSupport(PINNED_TO_HOST);
         invalidVM.setId(Guid.Empty);
         newHost1.setHostOs("invalid os");
-        ValidationResult validationResult = validator.isUpgradePossible(Arrays.asList(newHost1),
-                Arrays.asList(invalidVM));
+        ValidationResult validationResult = validator.isUpgradePossible(Collections.singletonList(newHost1),
+                Collections.singletonList(invalidVM));
         assertThat(validationResult.getVariableReplacements()).contains(
                 "CLUSTER_UPGRADE_DETAIL_HOST_INVALID_OS",
                 "CLUSTER_UPGRADE_DETAIL_VM_CPUS_PINNED",

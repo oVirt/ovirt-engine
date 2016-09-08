@@ -14,6 +14,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -80,7 +81,7 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
 
         vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid()));
+        vm.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(4);
         vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
@@ -105,7 +106,7 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Test
     public void canUpdateNumaPinning() {
-        updatedNumaNodes = Arrays.asList(createVmNumaNode(1, vdsNumaNodes));
+        updatedNumaNodes = Collections.singletonList(createVmNumaNode(1, vdsNumaNodes));
         final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         command.executeCommand();
         verify(vmNumaNodeDao).massUpdateNumaNode(eq(updatedNumaNodes));
@@ -113,7 +114,7 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Test
     public void canDetectMissingRequiredHostNumaNodes() {
-        updatedNumaNodes = Arrays.asList(createVmNumaNodeWithId(0, vdsNumaNodes, NODE_ID_0));
+        updatedNumaNodes = Collections.singletonList(createVmNumaNodeWithId(0, vdsNumaNodes, NODE_ID_0));
         vm.setvNumaNodeList(existingNumaNodes);
         vdsNumaNodes.remove(0);
         final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromParams();

@@ -650,9 +650,9 @@ public class HostSetupNetworksValidatorTest {
                         .setParams(new ParametersBuilder()
                                 .addRemovedNetworkAttachments(networkAttachmentA)
                                 .build())
-                        .addExistingInterfaces(Arrays.asList(nicA))
-                        .addExistingAttachments(Arrays.asList(networkAttachmentA))
-                        .addNetworks(Arrays.asList(networkA))
+                        .addExistingInterfaces(Collections.singletonList(nicA))
+                        .addExistingAttachments(Collections.singletonList(networkAttachmentA))
+                        .addNetworks(Collections.singletonList(networkA))
                         .build();
 
         List<String> vmNames = Arrays.asList("vmName1", "vmName2");

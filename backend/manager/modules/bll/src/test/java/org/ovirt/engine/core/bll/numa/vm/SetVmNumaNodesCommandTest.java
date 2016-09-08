@@ -14,6 +14,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,7 @@ public class SetVmNumaNodesCommandTest extends BaseCommandTest {
 
         vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid()));
+        vm.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(4);
         vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
@@ -104,7 +105,7 @@ public class SetVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Test
     public void canSetNumaPinning() {
-        newNumaNodes = Arrays.asList(createVmNumaNode(1, vdsNumaNodes));
+        newNumaNodes = Collections.singletonList(createVmNumaNode(1, vdsNumaNodes));
         final SetVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         command.executeCommand();
         verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(eq(existingNumaNodeIds));

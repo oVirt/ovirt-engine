@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -154,7 +153,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     private static DiskImage createImage() {
         final DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(Guid.newGuid())));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
         return diskImage;
     }
 

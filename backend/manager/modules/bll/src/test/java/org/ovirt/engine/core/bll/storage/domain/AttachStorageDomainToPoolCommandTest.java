@@ -100,7 +100,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
         when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
-        when(diskImageDao.getAllForStorageDomain(any(Guid.class))).thenReturn(Collections.EMPTY_LIST);
+        when(diskImageDao.getAllForStorageDomain(any(Guid.class))).thenReturn(Collections.emptyList());
         when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
         doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
         doReturn(backendInternal).when(cmd).getBackend();
@@ -115,8 +115,8 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         mockGetStorageDomainInfoVdsCommand(storageDomain);
         mockAttachStorageDomainVdsCommand();
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
-        doReturn(Collections.EMPTY_LIST).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
-        doReturn(Collections.EMPTY_LIST).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
+        doReturn(Collections.emptyList()).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
+        doReturn(Collections.emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {

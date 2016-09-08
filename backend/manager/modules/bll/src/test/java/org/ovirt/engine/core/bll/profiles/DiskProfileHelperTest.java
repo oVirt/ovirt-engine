@@ -9,6 +9,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,9 +67,9 @@ public class DiskProfileHelperTest {
                 .thenReturn(ValidationResult.VALID);
         doReturn(Guid.newGuid()).when(permissionDao)
                 .getEntityPermissions(anyObject(), anyObject(), anyObject(), anyObject());
-        doReturn(Arrays.asList(diskProfile_a)).when(diskProfileDao).getAllForStorageDomain
+        doReturn(Collections.singletonList(diskProfile_a)).when(diskProfileDao).getAllForStorageDomain
                 (STORAGE_DOMAIN_1);
-        doReturn(Arrays.asList(diskProfile_b)).when(diskProfileDao).getAllForStorageDomain
+        doReturn(Collections.singletonList(diskProfile_b)).when(diskProfileDao).getAllForStorageDomain
                 (STORAGE_DOMAIN_2);
     }
 

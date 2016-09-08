@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -93,12 +94,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         vds2.setClusterId(Guid.newGuid());
         vds2.setStatus(VDSStatus.Up);
 
-        return new ArrayList<VDS>() {
-            {
-                add(vds1);
-                add(vds2);
-            }
-        };
+        return Arrays.asList(vds1, vds2);
     }
 
     private void mockBackend(boolean succeeded, EngineError errorCode, GlusterServiceStatus status) {

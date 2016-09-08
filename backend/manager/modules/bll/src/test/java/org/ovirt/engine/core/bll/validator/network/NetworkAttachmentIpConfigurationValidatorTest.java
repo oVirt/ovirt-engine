@@ -6,7 +6,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import static org.ovirt.engine.core.utils.ReplacementUtils.createSetVariableString;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -294,11 +294,11 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     }
 
     private void initIpv4Address() {
-        getTestedNetworkAttachment().getIpConfiguration().setIPv4Addresses(Arrays.asList(new IPv4Address()));
+        getTestedNetworkAttachment().getIpConfiguration().setIPv4Addresses(Collections.singletonList(new IPv4Address()));
     }
 
     private void initIpv6Address() {
-        getTestedNetworkAttachment().getIpConfiguration().setIpV6Addresses(Arrays.asList(new IpV6Address()));
+        getTestedNetworkAttachment().getIpConfiguration().setIpV6Addresses(Collections.singletonList(new IpV6Address()));
     }
 
 }

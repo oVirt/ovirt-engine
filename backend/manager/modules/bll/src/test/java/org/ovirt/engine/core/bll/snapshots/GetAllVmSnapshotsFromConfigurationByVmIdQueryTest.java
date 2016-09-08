@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQueryTest extends AbstractU
     private void setUpDaoMocks() {
         snapshotDaoMock = mock(SnapshotDao.class);
         doReturn(snapshotDaoMock).when(getQuery()).getSnapshotDao();
-        when(snapshotDaoMock.getAllWithConfiguration(vmId)).thenReturn(Arrays.asList(snapshot));
+        when(snapshotDaoMock.getAllWithConfiguration(vmId)).thenReturn(Collections.singletonList(snapshot));
     }
 
     @Test

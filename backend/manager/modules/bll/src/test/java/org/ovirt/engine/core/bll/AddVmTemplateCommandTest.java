@@ -12,12 +12,10 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -302,11 +300,11 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     private void setupDedicatedHostForVmAndTemplate(boolean setDefaultHostForTemplate){
         Guid hostId = Guid.newGuid();
-        vm.setDedicatedVmForVdsList(Arrays.asList(hostId));
+        vm.setDedicatedVmForVdsList(Collections.singletonList(hostId));
 
         AddVmTemplateParameters parameters = new AddVmTemplateParameters();
         VmStatic vmStatic = new VmStatic();
-        vmStatic.setDedicatedVmForVdsList(setDefaultHostForTemplate ? Arrays.asList(hostId) : new ArrayList<>());
+        vmStatic.setDedicatedVmForVdsList(setDefaultHostForTemplate ? Collections.singletonList(hostId) : Collections.emptyList());
         parameters.setMasterVm(vmStatic);
         parameters.setTemplateType(VmEntityType.TEMPLATE);
         doReturn(parameters).when(cmd).getParameters();
@@ -333,11 +331,9 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     }
 
     private List<DiskImage> getDisksList(Guid spId) {
-        List disksList = new ArrayList(1);
         DiskImage disk = new DiskImage();
         disk.setStorageIds(new ArrayList<>(Collections.singletonList(spId)));
-        disksList.add(disk);
-        return disksList;
+        return Collections.singletonList(disk);
     }
 
 }

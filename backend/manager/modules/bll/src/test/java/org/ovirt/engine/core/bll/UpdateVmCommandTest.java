@@ -195,7 +195,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<>());
-        displayTypeMap.get(osId).put(version, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        displayTypeMap.get(osId).put(version, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
 
         VmHandler.init();
@@ -362,7 +362,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     private void mockVmDevice(VmDevice vmDevice) {
-        when(vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Arrays.asList(vmDevice));
+        when(vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Collections.singletonList(vmDevice));
         doReturn(vmDeviceDao).when(dbFacade).getVmDeviceDao();
     }
 
@@ -452,7 +452,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         when(command.isVirtioScsiEnabledForVm(any(Guid.class))).thenReturn(true);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Arrays.asList("VirtIO")));
+                Collections.singletonList("VirtIO"));
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
@@ -550,7 +550,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setRunOnVds(GUIDS[1]);
         vm.setRunOnVdsName("host_1");
         vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-        vmStatic.setDedicatedVmForVdsList(Arrays.asList(GUIDS[2]));
+        vmStatic.setDedicatedVmForVdsList(Collections.singletonList(GUIDS[2]));
         command.initEffectiveCompatibilityVersion();
         assertFalse("validate should fail with can't pin VM.", command.validate());
         assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_PINNED_VM_NOT_RUNNING_ON_DEDICATED_HOST);
@@ -573,7 +573,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setRunOnVds(GUIDS[2]);
         vm.setRunOnVdsName("host_2");
         vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-        vmStatic.setDedicatedVmForVdsList(Arrays.asList(GUIDS[2]));
+        vmStatic.setDedicatedVmForVdsList(Collections.singletonList(GUIDS[2]));
         command.initEffectiveCompatibilityVersion();
         assertTrue("validate should allow pinning VM.", command.validate());
     }

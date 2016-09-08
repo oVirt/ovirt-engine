@@ -14,6 +14,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -523,7 +524,7 @@ public class FrontendActionTest {
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSize1() {
         EngineFault testFault = new EngineFault();
-        ArrayList<String> translatedErrors = new ArrayList<>(Arrays.asList("Translated Message 1")); //$NON-NLS-1$
+        ArrayList<String> translatedErrors = new ArrayList<>(Collections.singletonList("Translated Message 1")); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
         when(mockValidateErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
         VdcActionParametersBase testParameters = new VdcActionParametersBase();

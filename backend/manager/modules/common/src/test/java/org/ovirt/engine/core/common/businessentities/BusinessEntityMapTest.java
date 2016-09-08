@@ -46,7 +46,7 @@ public class BusinessEntityMapTest {
     public void testGetByNameReturnsItemOfThatName() throws Exception {
         String itemName = "name";
         TestItem item = new TestItem(Guid.newGuid(), itemName);
-        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Arrays.asList(item));
+        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(item));
 
         assertThat(map.get(itemName), is(item));
     }
@@ -55,7 +55,7 @@ public class BusinessEntityMapTest {
     public void testGetByIdReturnsItemOfThatId() throws Exception {
         Guid itemId = Guid.newGuid();
         TestItem testItem = new TestItem(itemId, null);
-        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Arrays.asList(testItem));
+        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(testItem));
 
         assertThat(map.get(itemId), is(testItem));
     }
@@ -63,7 +63,7 @@ public class BusinessEntityMapTest {
     @Test
     public void testGetByNameReturnsNullIfNotExist() throws Exception {
         TestItem testItem = new TestItem(Guid.newGuid(), "name");
-        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Arrays.asList(testItem));
+        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(testItem));
 
         assertThat(map.get("different name"), nullValue());
     }
@@ -71,7 +71,7 @@ public class BusinessEntityMapTest {
     @Test
     public void testGetByIdReturnsNullIfNotExist() throws Exception {
         TestItem testItem = new TestItem(Guid.newGuid(), null);
-        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Arrays.asList(testItem));
+        BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(testItem));
 
         assertThat(map.get(Guid.newGuid()), nullValue());
     }

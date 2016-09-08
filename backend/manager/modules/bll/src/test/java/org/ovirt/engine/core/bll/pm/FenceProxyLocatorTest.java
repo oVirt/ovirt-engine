@@ -13,7 +13,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.After;
@@ -310,7 +310,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
         when(fencedHost.getClusterId()).thenReturn(FENCED_HOST_CLUSTER_ID);
         when(fencedHost.getStoragePoolId()).thenReturn(FENCED_HOST_DATACENTER_ID);
         when(fencedHost.getHostName()).thenReturn("fencedHost");
-        when(fencedHost.getFenceAgents()).thenReturn(Arrays.asList(createFenceAgent(FENCECD_HOST_ID, "ipmilan")));
+        when(fencedHost.getFenceAgents()).thenReturn(Collections.singletonList(createFenceAgent(FENCECD_HOST_ID, "ipmilan")));
     }
 
     private void mockProxySourcesForFencedHost(List<FenceProxySourceType> fenceProxySources) {
@@ -365,19 +365,13 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
         return host;
     }
 
-    private List<VDS> createHostList(VDS... hosts) {
-        List<VDS> hostList = new LinkedList<>();
-        hostList.addAll(Arrays.asList(hosts));
-        return hostList;
-    }
-
     private void mockExistingHosts(final VDS... hosts) {
         // we need to recreate the list on each call, because the list is altered in FenceProxyLocator
         when(vdsDao.getAll()).thenAnswer(
                 new Answer<List<VDS>>() {
                     @Override
                     public List<VDS> answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        return createHostList(hosts);
+                        return Arrays.asList(hosts);
                     }
                 }
         );

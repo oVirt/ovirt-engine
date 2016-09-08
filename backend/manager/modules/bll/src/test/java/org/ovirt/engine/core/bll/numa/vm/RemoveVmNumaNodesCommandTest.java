@@ -13,6 +13,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -80,7 +81,7 @@ public class RemoveVmNumaNodesCommandTest extends BaseCommandTest {
 
         vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid()));
+        vm.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(4);
         vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
@@ -105,7 +106,7 @@ public class RemoveVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Test
     public void canDeleteNodeWithHighestIndex() {
-        removeNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(2, NODE_ID_2)));
+        removeNumaNodes = new ArrayList<>(Collections.singletonList(createVmNumaNodeWithId(2, NODE_ID_2)));
         vm.setvNumaNodeList(existingNumaNodes);
         final RemoveVmNumaNodesCommand command = mockedCommandWithVmFromDb();
         ValidateTestUtils.runAndAssertValidateSuccess(command);

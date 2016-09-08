@@ -299,7 +299,7 @@ public class HostNetworkAttachmentsPersisterTest {
         Guid userProvidedNetworkAttachmentId = userNetworkAttachment.getId();
 
         // user attachments references network, which is not assigned to NIC.
-        createPersister(Arrays.asList(userNetworkAttachment)).persistNetworkAttachments();
+        createPersister(Collections.singletonList(userNetworkAttachment)).persistNetworkAttachments();
 
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
 
@@ -326,11 +326,11 @@ public class HostNetworkAttachmentsPersisterTest {
         userNetworkAttachment.setIpConfiguration(createIpConfiguration());
 
         when(networkAttachmentDao.getAllForHost(eq(hostId)))
-                .thenReturn(new ArrayList<>(Arrays.asList(userNetworkAttachment)));
+                .thenReturn(new ArrayList<>(Collections.singletonList(userNetworkAttachment)));
 
 
         // user attachments references network, which is not assigned to NIC.
-        createPersister(Arrays.asList(userNetworkAttachment)).persistNetworkAttachments();
+        createPersister(Collections.singletonList(userNetworkAttachment)).persistNetworkAttachments();
 
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
 
@@ -467,13 +467,13 @@ public class HostNetworkAttachmentsPersisterTest {
         Guid removedAttachmentId = removedNetworkAttachment.getId();
 
         when(networkAttachmentDao.getAllForHost(eq(hostId)))
-                .thenReturn(new ArrayList<>(Arrays.asList(removedNetworkAttachment)));
+                .thenReturn(new ArrayList<>(Collections.singletonList(removedNetworkAttachment)));
 
         NetworkAttachment userNetworkAttachment = new NetworkAttachment(removedNetworkAttachment);
         userNetworkAttachment.setId(Guid.newGuid());
 
         // user attachments references network, which is not assigned to NIC.
-        createPersister(Arrays.asList(userNetworkAttachment),
+        createPersister(Collections.singletonList(userNetworkAttachment),
                 Collections.singleton(removedAttachmentId),
                 interfaceWithAttachedClusterNetworkA)
                         .persistNetworkAttachments();

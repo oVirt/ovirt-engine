@@ -5,6 +5,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class LabelFilterPolicyUnitTest {
                 .entities(vm, host1)
                 .build();
 
-        List<Label> labels = Arrays.asList(red);
+        List<Label> labels = Collections.singletonList(red);
         doReturn(labels).when(labelDao).getAllByEntityIds(any());
 
         assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))

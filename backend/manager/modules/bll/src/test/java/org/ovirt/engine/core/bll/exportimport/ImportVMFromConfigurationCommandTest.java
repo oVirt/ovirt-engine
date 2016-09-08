@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -115,11 +114,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         final int osId = 0;
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> graphicsAndDisplays = new HashMap<>();
         graphicsAndDisplays.put(osId, new HashMap());
-        graphicsAndDisplays.get(osId).put(null, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        graphicsAndDisplays.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(
                 Collections.singletonMap(osId,
                         Collections.singletonMap(Version.getLast(),
-                                Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)))));
+                                Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)))));
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
         when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
@@ -137,7 +136,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         Version clusterVersion = null;
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<>());
-        displayTypeMap.get(osId).put(clusterVersion, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        displayTypeMap.get(osId).put(clusterVersion, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 

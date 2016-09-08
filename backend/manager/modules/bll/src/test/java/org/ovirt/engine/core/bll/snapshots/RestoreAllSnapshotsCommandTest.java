@@ -8,7 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -122,7 +122,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     private List<DiskImage> createDiskImageList() {
         DiskImage disk = new DiskImage();
         disk.setImageId(diskImageId);
-        disk.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
+        disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
         List<DiskImage> diskImageList = new ArrayList<>();
         diskImageList.add(disk);
         return diskImageList;
@@ -175,7 +175,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     private void mockDiskImageDao() {
         List<Disk> diskImageList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
-        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(Guid.newGuid())));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
         diskImageList.add(diskImage);
         doReturn(diskDao).when(spyCommand).getDiskDao();
         when(diskDao.getAllForVm(vmId)).thenReturn(diskImageList);

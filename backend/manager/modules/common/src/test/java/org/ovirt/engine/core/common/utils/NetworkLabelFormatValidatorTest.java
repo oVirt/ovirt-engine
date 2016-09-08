@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,14 +39,14 @@ public class NetworkLabelFormatValidatorTest {
     @Parameterized.Parameters
     public static Collection<Object[]> ipAddressParams() {
         return Arrays.asList(new Object[][] {
-                { new HashSet<String>(), true },
+                { Collections.emptySet(), true },
                 { null, true },
-                { new HashSet<>(Arrays.asList("abc")), true },
+                { Collections.singleton("abc"), true },
                 { new HashSet<>(Arrays.asList("abc", "xyz")), true },
-                { new HashSet<>(Arrays.asList("abc-_sc")), true },
-                { new HashSet<>(Arrays.asList("")), false },
-                { new HashSet<>(Arrays.asList(" ")), false },
-                { new HashSet<>(Arrays.asList("abc*")), false },
+                { Collections.singleton("abc-_sc"), true },
+                { Collections.singleton(""), false },
+                { Collections.singleton(" "), false },
+                { Collections.singleton("abc*"), false },
                 { new HashSet<>(Arrays.asList("aaa", "abc*")), false }
         });
     }

@@ -5,7 +5,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,13 +55,13 @@ public class GetAllExternalNetworksOnProviderQueryTest
 
         Network network = mock(Network.class);
         ProviderNetwork providerNetwork = mock(ProviderNetwork.class);
-        when(client.getAll()).thenReturn(Arrays.asList(network));
+        when(client.getAll()).thenReturn(Collections.singletonList(network));
         when(network.getProvidedBy()).thenReturn(providerNetwork);
         when(providerNetwork.getExternalId()).thenReturn("");
 
         Guid id = mock(Guid.class);
         when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(dcDao);
-        when(dcDao.getDcIdByExternalNetworkId(any(String.class))).thenReturn(Arrays.asList(id));
+        when(dcDao.getDcIdByExternalNetworkId(any(String.class))).thenReturn(Collections.singletonList(id));
 
         Map<Network, Set<Guid>> expected = new HashMap<>();
         expected.put(network, Collections.singleton(id));

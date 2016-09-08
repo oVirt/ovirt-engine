@@ -57,7 +57,7 @@ public class EntitiesTest {
     @Test
     public void collectiontoStringOneElement() {
         String s = "abc";
-        assertEquals("[" + s + "]", Entities.collectionToString(Arrays.asList(s), ""));
+        assertEquals("[" + s + "]", Entities.collectionToString(Collections.singletonList(s), ""));
     }
 
     @Test

@@ -11,7 +11,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -111,7 +110,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     }
 
     private void spySdValidator() {
-        Set<Guid> sdIds = new HashSet<>(Arrays.asList(STORAGE_DOMAIN_ID));
+        Set<Guid> sdIds = new HashSet<>(Collections.singletonList(STORAGE_DOMAIN_ID));
         storageDomainsValidator = spy(new MultipleStorageDomainsValidator(STORAGE_POOL_ID, sdIds));
         doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
         doReturn(sdDao).when(storageDomainsValidator).getStorageDomainDao();
@@ -211,7 +210,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     private DiskImage createDiskImage(Guid storageDomainId) {
         DiskImage image = new DiskImage();
         image.setImageId(Guid.newGuid());
-        ArrayList<Guid> sdIds = new ArrayList<>(Arrays.asList(storageDomainId));
+        ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(storageDomainId));
         image.setStorageIds(sdIds);
         return image;
     }

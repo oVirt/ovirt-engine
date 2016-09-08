@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -53,7 +53,7 @@ public class CidrValidationTest {
     public void checkCidrBadFormat() {
         doReturn(false).when(mockedCidrValidator).isCidrFormatValid(CIDR);
         ValidationResult actualResult = underTest.validate(CIDR);
-        ValidationResult expectedResult = new ValidationResult(false, Arrays.asList(BAD_CIDR_FORMAT));
+        ValidationResult expectedResult = new ValidationResult(false, Collections.singletonList(BAD_CIDR_FORMAT));
         assertEquals(expectedResult, actualResult);
 
     }
@@ -63,7 +63,7 @@ public class CidrValidationTest {
         doReturn(true).when(mockedCidrValidator).isCidrFormatValid(CIDR);
         doReturn(false).when(mockedCidrValidator).isCidrNetworkAddressValid(CIDR);
         ValidationResult actualResult = underTest.validate(CIDR);
-        ValidationResult expectedResult = new ValidationResult(false, Arrays.asList(CIDR_IS_NOT_A_NETWORK_ADDRESS));
+        ValidationResult expectedResult = new ValidationResult(false, Collections.singletonList(CIDR_IS_NOT_A_NETWORK_ADDRESS));
         assertEquals(expectedResult, actualResult);
     }
 

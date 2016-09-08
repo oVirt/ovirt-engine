@@ -48,7 +48,7 @@ public class UnmanagedNetworkValidatorTest {
     @Test
     public void testFilterNicsWithUnmanagedNetworksNetworkImplementationDetailsIsNull(){
         VdsNetworkInterface nicWithNetworkImplementationsDetailsNull = createNic("eth1");
-        List<VdsNetworkInterface> existingInterfaces = Arrays.asList(nicWithNetworkImplementationsDetailsNull);
+        List<VdsNetworkInterface> existingInterfaces = Collections.singletonList(nicWithNetworkImplementationsDetailsNull);
         Set<String> unmanagedNicsSet = validator.filterNicsWithUnmanagedNetworks(existingInterfaces, Collections.emptySet());
         assertTrue(unmanagedNicsSet.isEmpty());
     }
@@ -85,7 +85,7 @@ public class UnmanagedNetworkValidatorTest {
 
 
         NicLabel labelWithoutUnmanaged = new NicLabel(null, "eth_other", "label1");
-        Collection<NicLabel> labelsNotOnUnmanagedNetwork = Arrays.asList(labelWithoutUnmanaged);
+        Collection<NicLabel> labelsNotOnUnmanagedNetwork = Collections.singletonList(labelWithoutUnmanaged);
 
         result = validator.validateLabels(nicWithUnmanagedNetwork, labelsNotOnUnmanagedNetwork);
         assertTrue(result.isValid());
@@ -101,7 +101,7 @@ public class UnmanagedNetworkValidatorTest {
 
         VdsNetworkInterface vlanNic = createVlanNic(nic, "eth0.100", 100, false);
 
-        List<VdsNetworkInterface> existingInterfaces = Arrays.asList(vlanNic);
+        List<VdsNetworkInterface> existingInterfaces = Collections.singletonList(vlanNic);
         Set<String> nicsWithUnmanagedNetworks = validator.filterNicsWithUnmanagedNetworks(existingInterfaces, Collections.emptySet());
         assertEquals(1, nicsWithUnmanagedNetworks.size());
         String vlanNicName = nicsWithUnmanagedNetworks.iterator().next();
@@ -115,7 +115,7 @@ public class UnmanagedNetworkValidatorTest {
 
 
         NicLabel labelWithoutUnmanaged = new NicLabel(null, "eth_other", "label1");
-        Collection<NicLabel> labelsNotOnUnmanagedNetwork = Arrays.asList(labelWithoutUnmanaged);
+        Collection<NicLabel> labelsNotOnUnmanagedNetwork = Collections.singletonList(labelWithoutUnmanaged);
 
         result = validator.validateLabels(vlanNicName, labelsNotOnUnmanagedNetwork);
         assertTrue(result.isValid());
@@ -135,7 +135,7 @@ public class UnmanagedNetworkValidatorTest {
         List<NetworkAttachment> attachementList = Arrays.asList(attachement1, attachement2);
         Nic unmgmtNic = createNicWithNetworkImplementationDetails(unmanagedNicName, false);
 
-        List<VdsNetworkInterface> existingInterfaces = Arrays.asList(unmgmtNic);
+        List<VdsNetworkInterface> existingInterfaces = Collections.singletonList(unmgmtNic);
         Set<String> nicsWithUnmanagedNetworks = validator.filterNicsWithUnmanagedNetworks(existingInterfaces, Collections.emptySet());
         assertEquals(1, nicsWithUnmanagedNetworks.size());
         String filteredNicName = nicsWithUnmanagedNetworks.iterator().next();
@@ -167,7 +167,7 @@ public class UnmanagedNetworkValidatorTest {
         Nic nic = createNic(unmanagedBaseNicName);
         VdsNetworkInterface vlanNic = createVlanNic(nic, "eth0.100", 100, false);
 
-        List<VdsNetworkInterface> existingInterfaces = Arrays.asList(vlanNic);
+        List<VdsNetworkInterface> existingInterfaces = Collections.singletonList(vlanNic);
         Set<String> nicsWithUnmanagedNetworks = validator.filterNicsWithUnmanagedNetworks(existingInterfaces, Collections.emptySet());
         assertEquals(1, nicsWithUnmanagedNetworks.size());
         String filteredNicName = nicsWithUnmanagedNetworks.iterator().next();
@@ -194,15 +194,15 @@ public class UnmanagedNetworkValidatorTest {
         network.setName(networkName);
 
         ValidationResult result = validator.validateRemovedUnmanagedNetworks(
-                Arrays.asList(networkName),
-                Arrays.asList(nic),
+                Collections.singletonList(networkName),
+                Collections.singletonList(nic),
                 new BusinessEntityMap<>(Collections.emptySet()));
         assertTrue(result.isValid());
 
         result = validator.validateRemovedUnmanagedNetworks(
-                Arrays.asList(networkName),
-                Arrays.asList(nic),
-                new BusinessEntityMap<>(Arrays.asList(network)));
+                Collections.singletonList(networkName),
+                Collections.singletonList(nic),
+                new BusinessEntityMap<>(Collections.singletonList(network)));
 
         assertThat(result,
                 failsWith(EngineMessage.REMOVED_UNMANAGED_NETWORK_IS_A_CLUSTER_NETWORK,
@@ -211,7 +211,7 @@ public class UnmanagedNetworkValidatorTest {
         String unmanagedNetworkNotPresentOnAnyNic = "unmanagedNetworkNotPresentOnAnyNic";
         result = validator.validateRemovedUnmanagedNetworks(
                 Arrays.asList(networkName, unmanagedNetworkNotPresentOnAnyNic),
-                Arrays.asList(nic),
+                Collections.singletonList(nic),
                 new BusinessEntityMap<>(Collections.emptySet()));
 
         assertThat(result,

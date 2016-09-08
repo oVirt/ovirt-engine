@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.ClassRule;
@@ -19,7 +20,7 @@ public class HostUpgradeManagerTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.PackageNamesForCheckUpdate, Arrays.asList("a", "b", "c")),
             mockConfig(ConfigValues.UserPackageNamesForCheckUpdate, Arrays.asList("b", "c", "d", "", null)),
-            mockConfig(ConfigValues.OvirtNodePackageNamesForCheckUpdate, Arrays.asList("e"))
+            mockConfig(ConfigValues.OvirtNodePackageNamesForCheckUpdate, Collections.singletonList("e"))
     );
 
     @Test
@@ -31,7 +32,7 @@ public class HostUpgradeManagerTest {
 
     @Test
     public void testGetOvirtNodePackagesForCheckUpdate() throws Exception {
-        Collection<String> expectedPackages = new HashSet<>(Arrays.asList("e"));
+        Collection<String> expectedPackages = new HashSet<>(Collections.singletonList("e"));
         Collection<String> actualPackages = HostUpgradeManager.getPackagesForCheckUpdate(VDSType.oVirtNode);
         assertEquals(expectedPackages, actualPackages);
     }

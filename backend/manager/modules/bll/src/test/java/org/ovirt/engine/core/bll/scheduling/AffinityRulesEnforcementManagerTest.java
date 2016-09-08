@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
@@ -106,7 +107,7 @@ public class AffinityRulesEnforcementManagerTest {
     public void shouldNotMigrateVmOnClusterTwoWhileMigrating() {
         final VM migratingVM = new VM();
         migratingVM.setClusterId(cluster2.getId());
-        when(clusterDao.getWithoutMigratingVms()).thenReturn(Arrays.asList(cluster1));
+        when(clusterDao.getWithoutMigratingVms()).thenReturn(Collections.singletonList(cluster1));
         arem.refresh();
         verify(arem).migrateVM(vm1);
         verify(arem, times(1)).migrateVM(any(VM.class));

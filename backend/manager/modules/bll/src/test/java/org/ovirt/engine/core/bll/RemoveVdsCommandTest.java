@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -207,7 +206,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockHasVolumeOnServer(true);
 
         String vmName = "abc";
-        mockVmsPinnedToHost(Arrays.asList(vmName));
+        mockVmsPinnedToHost(Collections.singletonList(vmName));
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS);

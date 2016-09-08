@@ -3,9 +3,8 @@ package org.ovirt.engine.core.compat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +18,7 @@ public class PropertyInfoTest {
     public void testGetAvailableValues() {
         setSomeValue("Anakin");
         Map<String, String> values = new HashMap<>();
-        Set<String> properties = new HashSet<>(Arrays.asList("somevalue"));
+        Set<String> properties = Collections.singleton("somevalue");
         TypeCompat.getPropertyValues(this, properties, values);
         assertFalse(properties.isEmpty());
         assertEquals("Standard", "Anakin", values.get("somevalue"));

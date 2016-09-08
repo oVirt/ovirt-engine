@@ -11,7 +11,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -103,7 +102,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters() {
-        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId,
+        return Collections.singletonList(new LiveMigrateDiskParameters(diskImageId,
                 srcStorageId,
                 dstStorageId,
                 vmId,
@@ -113,7 +112,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters(Guid srcStorageId, Guid dstStorageId) {
-        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId,
+        return Collections.singletonList(new LiveMigrateDiskParameters(diskImageId,
                 srcStorageId,
                 dstStorageId,
                 vmId,
@@ -335,7 +334,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         diskImage.setId(diskImageGroupId);
         diskImage.getImage().setId(diskImageId);
         diskImage.setStoragePoolId(storagePoolId);
-        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(srcStorageId)));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(srcStorageId)));
 
         when(diskImageDao.getAncestor(diskImageId)).thenReturn(diskImage);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);

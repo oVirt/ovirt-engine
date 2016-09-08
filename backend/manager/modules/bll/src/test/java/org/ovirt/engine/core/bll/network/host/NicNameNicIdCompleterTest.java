@@ -9,7 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class NicNameNicIdCompleterTest {
         nic.setId(Guid.newGuid());
         nic.setName("existingNic");
 
-        List<VdsNetworkInterface> nics = Arrays.asList(nic);
+        List<VdsNetworkInterface> nics = Collections.singletonList(nic);
         completer = new NicNameNicIdCompleter(nics);
     }
 

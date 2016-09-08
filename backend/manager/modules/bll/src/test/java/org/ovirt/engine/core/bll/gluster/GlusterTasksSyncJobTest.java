@@ -11,6 +11,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +159,7 @@ public class GlusterTasksSyncJobTest {
     @Test
     public void cleanOrphanTasksWhenNoVolume() {
         doReturn(new HashMap<>()).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
-        doReturn(Arrays.asList(TASK_GUIDS[2])).when(provider).getMonitoredTaskIDsInDB();
+        doReturn(Collections.singletonList(TASK_GUIDS[2])).when(provider).getMonitoredTaskIDsInDB();
         doReturn(null).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[2]);
         doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
 

@@ -405,7 +405,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private void mockVmWithDisk(Guid storageId) {
         DiskImage image = new DiskImage();
         image.setId(Guid.newGuid());
-        image.setStorageIds(new ArrayList<>(Arrays.asList(storageId)));
+        image.setStorageIds(new ArrayList<>(Collections.singletonList(storageId)));
         DiskVmElement dve = new DiskVmElement(image.getId(), vmId);
         image.setDiskVmElements(Collections.singletonList(dve));
         mockVm().getDiskMap().put(image.getId(), image);
@@ -871,7 +871,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Arrays.asList("VirtIO")));
+                new ArrayList<>(Collections.singletonList("VirtIO")));
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
@@ -939,7 +939,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Arrays.asList("VirtIO_SCSI")));
+                new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));

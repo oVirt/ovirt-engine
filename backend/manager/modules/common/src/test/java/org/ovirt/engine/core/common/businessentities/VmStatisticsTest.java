@@ -19,17 +19,17 @@ public class VmStatisticsTest {
 
     @Test
     public void addToHistoryNullBefore() {
-        assertEquals(Arrays.asList(12), statistics.addToHistory(null, 12, 100));
+        assertEquals(Collections.singletonList(12), statistics.addToHistory(null, 12, 100));
     }
 
     @Test
     public void addToHistoryEmptyBefore() {
-        assertEquals(Arrays.asList(12), statistics.addToHistory(new ArrayList<Integer>(), 12, 100));
+        assertEquals(Collections.singletonList(12), statistics.addToHistory(new ArrayList<Integer>(), 12, 100));
     }
 
     @Test
     public void addToHistoryOneValueBefore() {
-        assertEquals(Arrays.asList(10, 12), statistics.addToHistory(Arrays.asList(10), 12, 100));
+        assertEquals(Arrays.asList(10, 12), statistics.addToHistory(Collections.singletonList(10), 12, 100));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class VmStatisticsTest {
 
     @Test
     public void addToHistoryOneLimit() {
-        assertEquals(Arrays.asList(13), statistics.addToHistory(Arrays.asList(9, 10, 11, 12), 13, 1));
+        assertEquals(Collections.singletonList(13), statistics.addToHistory(Arrays.asList(9, 10, 11, 12), 13, 1));
     }
 
     @Test

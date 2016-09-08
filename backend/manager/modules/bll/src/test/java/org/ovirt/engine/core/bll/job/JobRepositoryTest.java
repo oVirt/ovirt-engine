@@ -7,7 +7,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -89,14 +88,14 @@ public class JobRepositoryTest {
     private void mockStepDao(Guid jobId) {
         Step step = new Step();
         step.setJobId(jobId);
-        when(stepDao.getStepsByJobId(eq(jobId))).thenReturn(Arrays.asList(step));
+        when(stepDao.getStepsByJobId(eq(jobId))).thenReturn(Collections.singletonList(step));
     }
 
     private void mockJobSubjectEntityDao(Guid jobId) {
         when(jobSubjectEntityDao.getJobSubjectEntityByJobId(eq(jobId)))
                 .thenReturn(JOB_SUBJECT_ENTITIES_MAP);
 
-        when(jobSubjectEntityDao.getJobIdByEntityId(any(Guid.class))).thenReturn(Arrays.<Guid> asList(jobId));
+        when(jobSubjectEntityDao.getJobIdByEntityId(any(Guid.class))).thenReturn(Collections.singletonList(jobId));
     }
 
     private void mockDaos(Job job) {

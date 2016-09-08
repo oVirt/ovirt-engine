@@ -27,9 +27,9 @@ public class DisjointRangesTest {
     public static List<Object[]> parameters() {
         return Arrays.asList(new Object[][] {
                 { Collections.<LongRange>emptyList(), Collections.<LongRange>emptyList() },
-                { Arrays.asList(pair(1, 2)), Arrays.asList(pair(1, 2)) },
+                { Collections.singletonList(pair(1, 2)), Collections.singletonList(pair(1, 2)) },
                 { Arrays.asList(pair(1, 2), pair(3, 4)), Arrays.asList(pair(1, 2), pair(3, 4)) },
-                { Arrays.asList(pair(1, 3), pair(2, 5)), Arrays.asList(pair(1, 5)) },
+                { Arrays.asList(pair(1, 3), pair(2, 5)), Collections.singletonList(pair(1, 5)) },
                 { Arrays.asList(pair(1, 3), pair(5, 7), pair(6, 7)), Arrays.asList(pair(1, 3), pair(5, 7)) },
                 { Arrays.asList(pair(1, 2), pair(5, 7), pair(4, 7)), Arrays.asList(pair(1, 2), pair(4, 7)) },
                 { Arrays.asList(pair(1, 3), pair(5, 7), pair(4, 7)), Arrays.asList(pair(1, 3), pair(4, 7)) },

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.spy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -151,11 +152,11 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
     private List<DiskImage> mockImages() {
         DiskImage image1 = new DiskImage();
         image1.setImageId(IMAGE_ID_1);
-        image1.setStorageIds(new ArrayList<>(Arrays.asList(STORAGE_DOMAIN_ID)));
+        image1.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID)));
 
         DiskImage image2 = new DiskImage();
         image2.setImageId(IMAGE_ID_2);
-        image2.setStorageIds(new ArrayList<>(Arrays.asList(STORAGE_DOMAIN_ID)));
+        image2.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID)));
 
         return new ArrayList<>(Arrays.asList(image1, image2));
     }
@@ -165,7 +166,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
         DiskImage image3 = new DiskImage();
         image3.setImageId(IMAGE_ID_3);
-        image3.setStorageIds(new ArrayList<>(Arrays.asList(STORAGE_DOMAIN_ID)));
+        image3.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID)));
         images.add(image3);
         return images;
     }

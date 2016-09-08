@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -45,9 +45,9 @@ public class ObjectIdentityCheckerTest {
         jedi2.saberColor = "red"; // Gone to the dark side
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
 
-        boolean changed = oic.isFieldsUpdated(jedi1, jedi2, Arrays.asList("name"));
+        boolean changed = oic.isFieldsUpdated(jedi1, jedi2, Collections.singletonList("name"));
         assertFalse("No Change", changed);
-        changed = oic.isFieldsUpdated(jedi1, jedi2, Arrays.asList("saberColor"));
+        changed = oic.isFieldsUpdated(jedi1, jedi2, Collections.singletonList("saberColor"));
         assertTrue("1 Change", changed);
     }
 

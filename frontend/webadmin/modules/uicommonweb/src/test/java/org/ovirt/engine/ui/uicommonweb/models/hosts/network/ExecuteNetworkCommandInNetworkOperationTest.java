@@ -483,7 +483,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         when(bondNetworkInterfaceModelA.getSlaves())
                 .thenReturn(Arrays.asList(networkInterfaceModelOfNicA, networkInterfaceModelOfNicB));
 
-        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Arrays.asList(logicalNetworkModelOfNetworkA));
+        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
         NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(bondNetworkInterfaceModelA,
                 logicalNetworkModelOfNetworkA);
 
@@ -521,7 +521,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 logicalNetworkModelOfNetworkA);
 
         Bond bondB = createBond(Guid.newGuid(), "bondB", Arrays.asList(nicC, nicD)).toBond(); //$NON-NLS-1$
-        addBondToParamsAndModel(bondB, bondNetworkInterfaceModelB, Arrays.asList(logicalNetworkModelOfNetworkA));
+        addBondToParamsAndModel(bondB, bondNetworkInterfaceModelB, Collections.singletonList(logicalNetworkModelOfNetworkA));
 
         when(bondNetworkInterfaceModelA.getItems())
                 .thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));

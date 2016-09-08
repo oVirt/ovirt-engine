@@ -146,7 +146,7 @@ public class NetworkAttachmentsValidatorTest {
 
     @Test
     public void testValidateNetworkExclusiveOnNicsVmNetworkMustBeSoleAttachedInterface() throws Exception {
-        checkVmNetworkIsSoleAssignedInterface(false, Arrays.asList(NetworkType.VM), vmNetwork1);
+        checkVmNetworkIsSoleAssignedInterface(false, Collections.singletonList(NetworkType.VM), vmNetwork1);
     }
 
     @Test

@@ -5,7 +5,6 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -1639,7 +1638,7 @@ public class BackendVmsResourceTest
     protected void setUpGetGraphicsMultipleExpectations(int times) throws Exception {
         Map<Guid, List<GraphicsDevice>> vmDevices = new HashMap<>();
         for (int i = 0; i < times; i++) {
-            vmDevices.put(GUIDS[i], Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+            vmDevices.put(GUIDS[i], Collections.singletonList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
 
         setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevicesMultiple,

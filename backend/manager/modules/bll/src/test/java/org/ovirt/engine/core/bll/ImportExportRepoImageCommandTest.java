@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -161,13 +161,13 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
 
         diskImage = new DiskImage();
         diskImage.setId(diskImageId);
-        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
         diskImage.setStoragePoolId(storagePoolId);
         diskImage.setImageStatus(ImageStatus.OK);
 
         when(storageDomainDao.get(repoStorageDomainId)).thenReturn(imageStorageDomain);
         when(storageDomainDao.getAllForStorageDomain(storageDomainId))
-                .thenReturn(Arrays.asList(diskStorageDomain));
+                .thenReturn(Collections.singletonList(diskStorageDomain));
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
         when(diskDao.get(diskImageGroupId)).thenReturn(diskImage);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);

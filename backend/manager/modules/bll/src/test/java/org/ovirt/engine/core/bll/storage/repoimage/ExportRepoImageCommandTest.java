@@ -4,7 +4,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         vm = new VM();
         vm.setStatus(VMStatus.Down);
 
-        when(vmDao.getVmsListForDisk(getDiskImageId(), Boolean.FALSE)).thenReturn(Arrays.asList(vm));
+        when(vmDao.getVmsListForDisk(getDiskImageId(), Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
 
         ExportRepoImageParameters exportParameters = new ExportRepoImageParameters(
                 getDiskImageGroupId(), getRepoStorageDomainId());

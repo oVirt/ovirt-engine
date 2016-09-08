@@ -15,7 +15,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -208,7 +208,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         image.setVolumeFormat(volumeFormat);
         image.setVolumeType(volumeType);
 
-        resultMap.put(new VmTemplate(), Arrays.asList(image));
+        resultMap.put(new VmTemplate(), Collections.singletonList(image));
         result.setReturnValue(resultMap);
         result.setSucceeded(true);
 

@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
@@ -114,7 +113,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
         final MacPool existingMacPool = new MacPool();
         existingMacPool.setId(macPool1Id);
         existingMacPool.setName(macPool1Name);
-        when(macPoolDaoMock.getAll()).thenReturn(Arrays.asList(existingMacPool));
+        when(macPoolDaoMock.getAll()).thenReturn(Collections.singletonList(existingMacPool));
 
         macPool.setId(macPool2Id);
         macPool.setName(macPool2Name);

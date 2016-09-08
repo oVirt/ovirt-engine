@@ -64,7 +64,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     }
 
     private List<MoveDiskParameters> createMoveDisksParameters() {
-        return Arrays.asList(new MoveDiskParameters(diskImageId, srcStorageId, dstStorageId));
+        return Collections.singletonList(new MoveDiskParameters(diskImageId, srcStorageId, dstStorageId));
     }
 
     @Test

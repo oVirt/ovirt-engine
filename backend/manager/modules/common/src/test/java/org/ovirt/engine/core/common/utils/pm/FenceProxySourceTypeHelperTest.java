@@ -105,9 +105,9 @@ public class FenceProxySourceTypeHelperTest {
     @Test
     public void saveListWithValidValues() {
         List<List<FenceProxySourceType>> validLists = new ArrayList<>();
-        validLists.add(Arrays.asList(CLUSTER));
-        validLists.add(Arrays.asList(DC));
-        validLists.add(Arrays.asList(OTHER_DC));
+        validLists.add(Collections.singletonList(CLUSTER));
+        validLists.add(Collections.singletonList(DC));
+        validLists.add(Collections.singletonList(OTHER_DC));
         validLists.add(Arrays.asList(CLUSTER, DC, OTHER_DC));
 
         for (List<FenceProxySourceType> validList : validLists) {

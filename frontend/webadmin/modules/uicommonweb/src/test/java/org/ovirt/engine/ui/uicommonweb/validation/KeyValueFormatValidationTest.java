@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +28,9 @@ public class KeyValueFormatValidationTest {
     private static final String ERROR_MESSAGE_EMPTY_ALLOWED = "ERROR_MESSAGE_EMPTY_ALLOWED";//$NON-NLS-1$
     private static final String FORMAT = "FORMAT";//$NON-NLS-1$
     private static final ValidationResult failureValidationResultEmptyNotAllowed = new ValidationResult(false,
-            Arrays.asList(ERROR_MESSAGE_EMPTY_NOT_ALLOWED));
+            Collections.singletonList(ERROR_MESSAGE_EMPTY_NOT_ALLOWED));
     private static final ValidationResult failureValidationResultEmptyAllowed = new ValidationResult(false,
-            Arrays.asList(ERROR_MESSAGE_EMPTY_ALLOWED));
+            Collections.singletonList(ERROR_MESSAGE_EMPTY_ALLOWED));
     private static final ValidationResult successfulValidationResult = new ValidationResult();
     private KeyValueFormatValidation underTest;
 

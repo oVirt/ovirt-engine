@@ -9,10 +9,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
@@ -34,8 +32,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
 
     private VmWatchdogType vmWatchdogType = VmWatchdogType.i6300esb;
 
-    private static final Set<VmWatchdogType> WATCHDOG_MODELS = new HashSet<>(
-            Arrays.asList(VmWatchdogType.i6300esb));
+    private static final Set<VmWatchdogType> WATCHDOG_MODELS = Collections.singleton(VmWatchdogType.i6300esb);
 
     @Test
     public void getSpecParams() {

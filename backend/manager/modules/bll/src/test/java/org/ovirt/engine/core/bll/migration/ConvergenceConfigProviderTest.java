@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -35,9 +35,9 @@ public class ConvergenceConfigProviderTest {
         List<MigrationPolicy> policies = new ArrayList<>();
 
         ConvergenceConfig config = new ConvergenceConfig();
-        config.setInitialItems(Arrays.asList(new ConvergenceItem("setDowntime2", 1)));
-        config.setLastItems(Arrays.asList(new ConvergenceItem("setDowntime3", 15)));
-        config.setConvergenceItems(Arrays.asList(new ConvergenceItemWithStallingLimit(1, "someAction", 12)));
+        config.setInitialItems(Collections.singletonList(new ConvergenceItem("setDowntime2", 1)));
+        config.setLastItems(Collections.singletonList(new ConvergenceItem("setDowntime3", 15)));
+        config.setConvergenceItems(Collections.singletonList(new ConvergenceItemWithStallingLimit(1, "someAction", 12)));
 
         MigrationPolicy policy = new MigrationPolicy(id, "some name", "some long description", config);
         policies.add(policy);

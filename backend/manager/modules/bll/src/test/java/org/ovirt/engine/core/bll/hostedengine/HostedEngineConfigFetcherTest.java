@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -129,7 +128,7 @@ public class HostedEngineConfigFetcherTest {
     @Test
     public void volumesListIsEmpty() {
         // given
-        mockVdsCommand(VDSCommandType.GetImagesList, successfulReturnValue(Arrays.asList(IMAGE_ID)));
+        mockVdsCommand(VDSCommandType.GetImagesList, successfulReturnValue(Collections.singletonList(IMAGE_ID)));
         mockVdsCommand(VDSCommandType.GetVolumesList, successfulReturnValue(Collections.emptyList()));
         // when
         Map<String, String> config = fetchConfig();
@@ -230,8 +229,8 @@ public class HostedEngineConfigFetcherTest {
     }
 
     private void givenListOfImagesAndVolumes() {
-        mockVdsCommand(VDSCommandType.GetImagesList, successfulReturnValue(Arrays.asList(IMAGE_ID)));
-        mockVdsCommand(VDSCommandType.GetVolumesList, successfulReturnValue(Arrays.asList(VOLUME_ID)));
+        mockVdsCommand(VDSCommandType.GetImagesList, successfulReturnValue(Collections.singletonList(IMAGE_ID)));
+        mockVdsCommand(VDSCommandType.GetVolumesList, successfulReturnValue(Collections.singletonList(VOLUME_ID)));
     }
 
     private void givenTheWantedDiskImage() {

@@ -254,7 +254,7 @@ public class VfSchedulerImplTest {
 
         when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), isNull(List.class))).thenReturn(vf);
 
-        mockVfsConfigsOnHost(Arrays.asList(hostNicVfsConfig));
+        mockVfsConfigsOnHost(Collections.singletonList(hostNicVfsConfig));
 
         String freeVf = vfScheduler.findFreeVfForVnic(hostId, createNetwork(vnic.getNetworkName()), vmId);
 
