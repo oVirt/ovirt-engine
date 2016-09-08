@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,13 +82,11 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
 
         String expectedDiskAlias = ImagesHandler.getDefaultDiskAlias(vm.getName(), "3");
 
-        Disk removedDisk = null;
-        for (Disk disk : vm.getDiskMap().values()) {
-            if (disk.getDiskAlias().equals(expectedDiskAlias)) {
-                removedDisk = disk;
-            }
-        }
-        vm.getDiskMap().remove(removedDisk.getId());
+        Optional<Guid> removedDiskId =
+                vm.getDiskMap().values().stream()
+                        .filter(d -> d.getDiskAlias().equals(expectedDiskAlias)).map(Disk::getId).findFirst();
+
+        removedDiskId.ifPresent(id -> vm.getDiskMap().remove(id));
 
         getQuery().executeQueryCommand();
         assertEquals(expectedDiskAlias, getQuery().getQueryReturnValue().getReturnValue());
