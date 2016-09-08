@@ -339,6 +339,25 @@ public class BaseBackendResource {
         return EnumValidator.validateEnum(reason, detail, clz, name);
     }
 
+    /**
+     * Checks if the given value is within the range given by the {@code min} and {@code max} parameters. If the value
+     * is {@code null} it will do nothing.
+     *
+     * @param name the name of the attribute
+     * @param value the value of the attribute
+     * @param min the min value of the range
+     * @param max the max value of the range
+     */
+    public void validateRange(String name, Integer value, int min, int max) {
+        if (value != null && (value < min || value > max)) {
+            Fault fault = new Fault();
+            fault.setReason(localize(Messages.VALUE_OUT_OF_RANGE_REASON));
+            fault.setDetail(localize(Messages.VALUE_OUT_OF_RANGE_DETAIL_TEMPLATE, value.toString(), name,
+                String.valueOf(min), String.valueOf(max)));
+            throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(fault).build());
+        }
+    }
+
     public <E extends Enum<E>> List<E> validateEnumValues(Class<E> clz, List<String> names) {
         ArrayList<E> enumList = new ArrayList<>();
 

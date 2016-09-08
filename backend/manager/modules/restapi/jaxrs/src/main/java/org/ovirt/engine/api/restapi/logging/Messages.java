@@ -35,5 +35,9 @@ public enum Messages {
 
     CANT_USE_SYSPREP_AND_CLOUD_INIT_SIMULTANEOUSLY,
 
-    INVALID_OPERATION_ON_NON_SRIOV_NIC;
+    INVALID_OPERATION_ON_NON_SRIOV_NIC,
+
+    // Reason and template to use when a value is out of range:
+    VALUE_OUT_OF_RANGE_REASON,
+    VALUE_OUT_OF_RANGE_DETAIL_TEMPLATE,
 }

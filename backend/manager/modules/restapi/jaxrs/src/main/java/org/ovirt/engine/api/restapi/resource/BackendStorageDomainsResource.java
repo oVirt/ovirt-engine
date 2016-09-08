@@ -253,6 +253,8 @@ public class BackendStorageDomainsResource
     @Override
     public Response add(StorageDomain storageDomain) {
         validateParameters(storageDomain, "host.id|name", "type", "storage");
+        validateRange("nfs_timeio", storageDomain.getStorage().getNfsTimeo(), 0, 65535);
+        validateRange("nfs_retrans", storageDomain.getStorage().getNfsRetrans(), 0, 65535);
         HostStorage storageConnectionFromUser = storageDomain.getStorage();
         Guid hostId = getHostId(storageDomain);
         StorageServerConnections cnx = null;
