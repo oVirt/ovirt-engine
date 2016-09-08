@@ -198,23 +198,17 @@ public class QuotaManagerTest {
         dbCalls = 0;
     }
 
-    private boolean consumeForStorageQuota(Guid quotaId) {
-        QuotaConsumptionParametersWrapper parameters = null;
-        try {
-            parameters = parametersWrapper.clone();
-            parameters.getParameters().add(new QuotaStorageConsumptionParameter(
-                    quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1d));
-        } catch (CloneNotSupportedException e) {  }
+    private boolean consumeForStorageQuota(Guid quotaId) throws CloneNotSupportedException {
+        QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
+        parameters.getParameters().add(new QuotaStorageConsumptionParameter(
+                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1d));
         return quotaManager.consume(parameters);
     }
 
-    private boolean consumeForVdsQuota(Guid quotaId) {
-        QuotaConsumptionParametersWrapper parameters = null;
-        try {
-            parameters = parametersWrapper.clone();
-            parameters.getParameters().add(new QuotaClusterConsumptionParameter(
-                    quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 1));
-        } catch (CloneNotSupportedException e) {}
+    private boolean consumeForVdsQuota(Guid quotaId) throws CloneNotSupportedException {
+        QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
+        parameters.getParameters().add(new QuotaClusterConsumptionParameter(
+                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 1));
         return quotaManager.consume(parameters);
     }
 
@@ -479,14 +473,14 @@ public class QuotaManagerTest {
     }
 
     @Test
-    public void testUseDefaultQuotaStorage() {
+    public void testUseDefaultQuotaStorage() throws CloneNotSupportedException {
         assertTrue(consumeForStorageQuota(null));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testUseDefaultQuotaVds() {
+    public void testUseDefaultQuotaVds() throws CloneNotSupportedException {
         assertTrue(consumeForVdsQuota(null));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
