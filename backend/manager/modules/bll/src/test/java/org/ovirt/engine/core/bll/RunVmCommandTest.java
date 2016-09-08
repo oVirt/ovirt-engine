@@ -309,7 +309,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     private VM createVmForTesting(String initrd, String kernel) {
-        mockVm(command);
+        mockVm();
 
         // Set parameter
         command.getVm().setInitrdUrl(initrd);
@@ -322,7 +322,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     /**
      * Mock a VM.
      */
-    private VM mockVm(RunVmCommand<RunVmParams> spyVmCommand) {
+    private VM mockVm() {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         doReturn(vmDao).when(command).getVmDao();
