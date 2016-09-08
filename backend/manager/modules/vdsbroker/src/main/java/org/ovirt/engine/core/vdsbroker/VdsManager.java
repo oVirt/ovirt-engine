@@ -349,7 +349,10 @@ public class VdsManager {
         try {
             updateAvailable = resourceManager.isUpdateAvailable(cachedVds);
         } catch (Exception e) {
-            log.error("Failed to check if updates are available for host '{}'", cachedVds.getName());
+            log.error("Failed to check if updates are available for host '{}' with exception '{}'",
+                    cachedVds.getName(),
+                    StringUtils.defaultString(e.getMessage(), e.getCause().toString()));
+            log.debug("Exception", e);
             AuditLogableBase auditLog = new AuditLogableBase();
             auditLog.setVds(cachedVds);
             auditLog.addCustomValue("Message", StringUtils.defaultString(e.getMessage(), e.getCause().toString()));
