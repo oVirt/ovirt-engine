@@ -91,7 +91,6 @@ public class QuotaManagerTest {
     private StoragePool storage_pool = new StoragePool();
     private ArrayList<String> validationMessages = new ArrayList<>();
     private QuotaConsumptionParametersWrapper parametersWrapper;
-    private boolean hardEnforcement = true;
     private boolean auditLogWritten = false;
     private int dbCalls = 0;
     private static final String EXPECTED_NUMBER_OF_DB_CALLS = "%d DB calls were expected. %d invoked";
@@ -172,9 +171,7 @@ public class QuotaManagerTest {
     }
 
     private void setStoragePool() {
-        storage_pool.setQuotaEnforcementType(hardEnforcement ?
-                QuotaEnforcementTypeEnum.HARD_ENFORCEMENT :
-                QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT);
+        storage_pool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
         storage_pool.setId(new Guid("00000000-0000-0000-0000-000000001111"));
     }
 
