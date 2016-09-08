@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -64,6 +65,6 @@ public class SsoMapperTest {
     public void mapIncompleteSsoFromRestToBackend() throws Exception {
         Sso restSso = new Sso();
 
-        assertEquals(null, SsoMapper.map(restSso, null));
+        assertNull(SsoMapper.map(restSso, null));
     }
 }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -74,7 +74,7 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
         createCommand();
         mockCommand();
         cmd.executeCommand();
-        assertEquals("return value should be true", true, cmd.getReturnValue().getSucceeded());
+        assertTrue("return value should be true", cmd.getReturnValue().getSucceeded());
     }
 
     private void mockCommandParameters() {

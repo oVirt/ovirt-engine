@@ -104,7 +104,7 @@ public class TagsDirectorTest {
         tagsDirector.addTag(tag);
         Tags tags = tagsDirector.getRootTag();
         assertNotNull(tags);
-        assertEquals(tags.getTagId(), TagsDirector.ROOT_TAG_ID);
+        assertEquals(TagsDirector.ROOT_TAG_ID, tags.getTagId());
         assertEquals(1, tags.getChildren().size());
         assertEquals("tag1", tags.getChildren().get(0).getTagName());
     }

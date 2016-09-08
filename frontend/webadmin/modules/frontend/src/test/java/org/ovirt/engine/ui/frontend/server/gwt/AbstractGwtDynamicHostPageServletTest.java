@@ -203,9 +203,9 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     public void testGetUserInfoObject() {
         ObjectNode result = testServlet.getUserInfoObject(mockUser, "mockSsoToken"); //$NON-NLS-1$ //$NON-NLS-2$
         assertNotNull(result.get("id")); //$NON-NLS-1$
-        assertEquals(result.get("userName").asText(), "admin"); //$NON-NLS-1$ //$NON-NLS-2$
-        assertEquals(result.get("domain").asText(), "internal"); //$NON-NLS-1$ //$NON-NLS-2$
-        assertEquals(result.get("ssoToken").asText(), "mockSsoToken"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("admin", result.get("userName").asText()); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("internal", result.get("domain").asText()); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("mockSsoToken", result.get("ssoToken").asText()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test

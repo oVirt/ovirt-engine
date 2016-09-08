@@ -71,8 +71,8 @@ public class BrandingThemeTest {
     public void testGetCascadingResource() {
         assertTrue("getCascadingResource not reading file from resources.properties", //$NON-NLS-1$
                 testTheme.getCascadingResource("favicon").getFile().getAbsolutePath().contains("/01-test.brand/images/favicon.ico")); //$NON-NLS-1$ //$NON-NLS-2$
-        assertTrue("getCascadingResource not reading contentType from resources.properties", //$NON-NLS-1$
-                testTheme.getCascadingResource("favicon").getContentType().equals("someMadeUp/contentType")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("getCascadingResource not reading contentType from resources.properties", "someMadeUp/contentType",
+                testTheme.getCascadingResource("favicon").getContentType()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test

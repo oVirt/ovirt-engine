@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,8 +87,8 @@ public class InternalClusterPoliciesTest {
         assertEquals(uuid, policy.getId());
         assertEquals("test-policy", policy.getName());
         assertEquals("test-description", policy.getDescription());
-        assertEquals(true, policy.isDefaultPolicy());
-        assertEquals(true, policy.isLocked());
+        assertTrue(policy.isDefaultPolicy());
+        assertTrue(policy.isLocked());
 
         assertNotNull(policy.getFilterPositionMap());
         assertEquals(-1L, (long) policy.getFilterPositionMap().get(getUnitId(CpuLevelFilterPolicyUnit.class)));

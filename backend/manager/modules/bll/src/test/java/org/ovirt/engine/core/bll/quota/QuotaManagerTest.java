@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.quota;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -196,7 +197,7 @@ public class QuotaManagerTest {
     }
 
     private void assertDbWasCalled(int expectedNumOfCalls) {
-        assertTrue(String.format(EXPECTED_NUMBER_OF_DB_CALLS, expectedNumOfCalls, dbCalls), expectedNumOfCalls == dbCalls);
+        assertEquals(String.format(EXPECTED_NUMBER_OF_DB_CALLS, expectedNumOfCalls, dbCalls), expectedNumOfCalls, dbCalls);
         dbCalls = 0;
     }
 

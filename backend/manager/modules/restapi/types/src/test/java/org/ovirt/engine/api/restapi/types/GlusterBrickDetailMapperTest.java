@@ -33,7 +33,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
         volDetailsEntity.setBrickDetails(getBrickDetails(1, 2, 4));
         GlusterBrickAdvancedDetails model = GlusterBrickDetailMapper.map(volDetailsEntity, null);
         assertNotNull(model);
-        assertEquals(model.getGlusterClients().getGlusterClients().size(), 2);
+        assertEquals(2, model.getGlusterClients().getGlusterClients().size());
         assertEquals(model.getMntOptions(), volDetailsEntity.getBrickDetails().get(0).getBrickProperties().getMntOptions());
         assertEquals(model.getMemoryPools().getGlusterMemoryPools().size(), volDetailsEntity.getBrickDetails().get(0).getMemoryStatus().getMemPools().size());
 
@@ -55,7 +55,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
         volDetailsEntity.setBrickDetails(getBrickDetails(2, 2, 2));
 
         GlusterBrickAdvancedDetails model = GlusterBrickDetailMapper.map(volDetailsEntity, null);
-        assertEquals(model.getGlusterClients().getGlusterClients().size(), 2);
+        assertEquals(2, model.getGlusterClients().getGlusterClients().size());
         assertEquals(model.getMntOptions(), volDetailsEntity.getBrickDetails().get(0).getBrickProperties().getMntOptions());
         assertEquals(model.getMemoryPools().getGlusterMemoryPools().size(), volDetailsEntity.getBrickDetails().get(0).getMemoryStatus().getMemPools().size());
 

@@ -60,8 +60,8 @@ public class FenceValidatorTest {
         List<String> messages = new LinkedList<>();
         boolean result = validator.isProxyHostAvailable(new VDS(), messages);
         assertFalse(result);
-        assertEquals(messages.size(), 1);
-        assertEquals(messages.get(0), "VDS_NO_VDS_PROXY_FOUND");
+        assertEquals(1, messages.size());
+        assertEquals("VDS_NO_VDS_PROXY_FOUND", messages.get(0));
     }
 
     @Test
@@ -78,8 +78,8 @@ public class FenceValidatorTest {
         List<String> messages = new LinkedList<>();
         boolean result = validator.isHostExists(null, messages);
         assertFalse(result);
-        assertEquals(messages.size(), 1);
-        assertEquals(messages.get(0), "ACTION_TYPE_FAILED_HOST_NOT_EXIST");
+        assertEquals(1, messages.size());
+        assertEquals("ACTION_TYPE_FAILED_HOST_NOT_EXIST", messages.get(0));
     }
 
     @Test
@@ -96,8 +96,8 @@ public class FenceValidatorTest {
         when(configUtils.getValue(eq(ConfigValues.DisableFenceAtStartupInSec), any(String.class))).thenReturn(5);
         when(backend.getStartedAt()).thenReturn(new DateTime(new Date()));
         boolean result = validator.isStartupTimeoutPassed(messages);
-        assertEquals(messages.size(), 1);
-        assertEquals(messages.get(0), "VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL");
+        assertEquals(1, messages.size());
+        assertEquals("VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL", messages.get(0));
         assertFalse(result);
     }
 
@@ -116,8 +116,8 @@ public class FenceValidatorTest {
         List<String> messages = new LinkedList<>();
         boolean result = validator.isPowerManagementEnabledAndLegal(vds, null, messages);
         assertFalse(result);
-        assertEquals(messages.size(), 1);
-        assertEquals(messages.get(0), "VDS_FENCE_DISABLED");
+        assertEquals(1, messages.size());
+        assertEquals("VDS_FENCE_DISABLED", messages.get(0));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class FenceValidatorTest {
         List<String> messages = new LinkedList<>();
         boolean result = validator.isPowerManagementEnabledAndLegal(vds, null, messages);
         assertFalse(result);
-        assertEquals(messages.size(), 2);
+        assertEquals(2, messages.size());
         assertTrue(messages.contains("ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT"));
         assertTrue(messages.contains("VDS_FENCE_DISABLED"));
     }
@@ -144,7 +144,7 @@ public class FenceValidatorTest {
         List<String> messages = new LinkedList<>();
         boolean result = validator.isPowerManagementEnabledAndLegal(vds, cluster, messages);
         assertFalse(result);
-        assertEquals(messages.size(), 2);
+        assertEquals(2, messages.size());
         assertTrue(messages.contains("ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED"));
         assertTrue(messages.contains("VDS_FENCE_DISABLED"));
     }

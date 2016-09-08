@@ -131,7 +131,7 @@ public class OsRepositoryImplTest {
     @Test
     public void testGetNetworkDevices() throws Exception {
         List<String> networkDevices = OsRepositoryImpl.INSTANCE.getNetworkDevices(777, null);
-        assertTrue(networkDevices.size() == 2);
+        assertEquals(2, networkDevices.size());
         for (String device : NETWORK_DEVICES.split(",")) {
             assertTrue(networkDevices.contains(device));
         }
@@ -140,7 +140,7 @@ public class OsRepositoryImplTest {
     @Test
     public void testGetDiskHotpluggableInterfaces() throws Exception {
         Set<String> diskHotpluggableInterfaces = OsRepositoryImpl.INSTANCE.getDiskHotpluggableInterfaces(777, null);
-        assertTrue(diskHotpluggableInterfaces.size() == 2);
+        assertEquals(2, diskHotpluggableInterfaces.size());
         for (String diskHotpluggableInterface : DISK_HOTPLUGGABLE_INTERFACES.split(",")) {
             assertTrue(diskHotpluggableInterfaces.contains(diskHotpluggableInterface.trim()));
         }
@@ -149,7 +149,7 @@ public class OsRepositoryImplTest {
     @Test
     public void testGetWatchDogModels() throws Exception {
         List<String> watchDogModels = OsRepositoryImpl.INSTANCE.getWatchDogModels(777, null);
-        assertTrue(watchDogModels.size() == 2);
+        assertEquals(2, watchDogModels.size());
         for (String model : WATCH_DOG_MODELS.split(",")) {
             assertTrue(watchDogModels.contains(model.trim()));
         }
@@ -162,12 +162,12 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testGetMinimumRam() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getMinimumRam(777, null) == 1024);
+        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
     }
 
     @Test
     public void testGetMaximumRam() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getMaximumRam(777, null) == 2048);
+        assertEquals(2048, OsRepositoryImpl.INSTANCE.getMaximumRam(777, null));
     }
 
     @Test
@@ -203,36 +203,36 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testGetMaxPciDevices() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getMaxPciDevices(777, null) == 26);
+        assertEquals(26, OsRepositoryImpl.INSTANCE.getMaxPciDevices(777, null));
     }
 
     @Test
     public void testGetSysprepPath() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getSysprepPath(777, null).equals(PATH_TO_SYSPREP));
+        assertEquals(PATH_TO_SYSPREP, OsRepositoryImpl.INSTANCE.getSysprepPath(777, null));
     }
 
     @Test
     public void testGetSysprepFileName() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getSysprepFileName(1, null).equals(SYSPREP_INF));
-        assertTrue(OsRepositoryImpl.INSTANCE.getSysprepFileName(11, null).equals(UNATTEND_XML));
-        assertTrue(OsRepositoryImpl.INSTANCE.getSysprepFileName(20, null).equals(UNATTEND_XML));
+        assertEquals(SYSPREP_INF, OsRepositoryImpl.INSTANCE.getSysprepFileName(1, null));
+        assertEquals(UNATTEND_XML, OsRepositoryImpl.INSTANCE.getSysprepFileName(11, null));
+        assertEquals(UNATTEND_XML, OsRepositoryImpl.INSTANCE.getSysprepFileName(20, null));
     }
 
     @Test
     public void testGetProductKey() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getProductKey(777, null).equals(SOME_PRODUCT_KEY));
+        assertEquals(SOME_PRODUCT_KEY, OsRepositoryImpl.INSTANCE.getProductKey(777, null));
     }
 
     @Test
     public void testGetSoundDevice() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getSoundDevice(777, null).equals(SOUND_DEVICE));
+        assertEquals(SOUND_DEVICE, OsRepositoryImpl.INSTANCE.getSoundDevice(777, null));
     }
 
     @Test
     public void testGetCdInterface() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null, null).equals("ide"));
-        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.I440FX).equals("ide"));
-        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.Q35).equals("sata"));
+        assertEquals("ide", OsRepositoryImpl.INSTANCE.getCdInterface(777, null, null));
+        assertEquals("ide", OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.I440FX));
+        assertEquals("sata", OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.Q35));
     }
 
     @Test

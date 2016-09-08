@@ -228,9 +228,9 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
         assertTrue(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getReturnValue().getActionReturnValue(), sd);
-        assertTrue(sd.getStorageStaticData().getConnection().getUserName().equals(ISCSIUSER));
-        assertTrue(sd.getStorageStaticData().getConnection().getPassword().equals(ISCSIPASS));
-        assertTrue(sd.getStorageStaticData().getStorage().equals(VG_ID.toString()));
+        assertEquals(ISCSIUSER, sd.getStorageStaticData().getConnection().getUserName());
+        assertEquals(ISCSIPASS, sd.getStorageStaticData().getConnection().getPassword());
+        assertEquals(sd.getStorageStaticData().getStorage(), VG_ID.toString());
     }
 
     protected ArrayList<LUNs> createSdLuns() {

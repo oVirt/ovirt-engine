@@ -55,8 +55,8 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(result.get().getCandidateHosts().size(), 1);
-        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
+        assertEquals(1, result.get().getCandidateHosts().size());
+        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
     @Test
@@ -79,8 +79,8 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(result.get().getCandidateHosts().size(), 1);
-        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
+        assertEquals(1, result.get().getCandidateHosts().size());
+        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
     /**
@@ -129,8 +129,8 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(result.get().getCandidateHosts().size(), 1);
-        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
+        assertEquals(1, result.get().getCandidateHosts().size());
+        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
     /**

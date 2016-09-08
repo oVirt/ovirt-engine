@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -63,20 +64,20 @@ public class VirtMonitoringStrategyTest {
         VDS vds = createBaseVds();
         vds.setHostOs("Fedora - 20 - 3");
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.Up));
+        assertEquals(VDSStatus.Up, vds.getStatus());
         vds.setKvmEnabled(Boolean.TRUE);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.Up));
+        assertEquals(VDSStatus.Up, vds.getStatus());
         vds.setKvmEnabled(Boolean.FALSE);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+        assertEquals(VDSStatus.NonOperational, vds.getStatus());
         vds.setKvmEnabled(Boolean.TRUE);
         vds.setStatus(VDSStatus.Up);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.Up));
+        assertEquals(VDSStatus.Up, vds.getStatus());
         vds.getSupportedRngSources().clear();
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+        assertEquals(VDSStatus.NonOperational, vds.getStatus());
     }
 
     @Test
@@ -85,7 +86,7 @@ public class VirtMonitoringStrategyTest {
         vdsFromDb.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
         vds.setHostOs("RHEL - 7Server - 1.el7");
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+        assertEquals(VDSStatus.NonOperational, vds.getStatus());
     }
 
     @Test
@@ -94,7 +95,7 @@ public class VirtMonitoringStrategyTest {
         vdsFromDb.setHostOs("RHEL - 7Server - 1.el7");
         vds.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+        assertEquals(VDSStatus.NonOperational, vds.getStatus());
     }
 
     @Test

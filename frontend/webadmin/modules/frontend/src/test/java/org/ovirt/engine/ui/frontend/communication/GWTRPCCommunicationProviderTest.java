@@ -219,7 +219,7 @@ public class GWTRPCCommunicationProviderTest {
         allResults.add(testResult2);
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
         assertEquals("Result should have one results", 1, result.size()); //$NON-NLS-1$
-        assertEquals("Result should match", result.get(0), testResult2); //$NON-NLS-1$
+        assertEquals("Result should match", testResult2, result.get(0)); //$NON-NLS-1$
     }
 
     @Test

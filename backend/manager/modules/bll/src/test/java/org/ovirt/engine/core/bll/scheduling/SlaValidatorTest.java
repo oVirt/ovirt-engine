@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,13 +36,13 @@ public class SlaValidatorTest {
     @Test
     public void validateVmMemoryCanStartOnVds() {
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 0);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     @Test
     public void validateVmMemoryCantStartOnVdsBecauseOfPending() {
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 65);
-        assertEquals(vmPassedMemoryRequirement, false);
+        assertFalse(vmPassedMemoryRequirement);
     }
 
 
@@ -49,14 +50,14 @@ public class SlaValidatorTest {
     public void validateVmMemoryCanStartOnVdsBecauseOfLowGuestOverhead() {
         vds.setGuestOverhead(0);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 65);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     @Test
     public void validateVmMemoryCantStartOnVdsBecauseOfGuestOverhead() {
         vds.setGuestOverhead(256);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 0);
-        assertEquals(vmPassedMemoryRequirement, false);
+        assertFalse(vmPassedMemoryRequirement);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class SlaValidatorTest {
         vm.setMinAllocatedMem(8865);
         vm.setVmMemSizeMb(8865);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 0);
-        assertEquals(vmPassedMemoryRequirement, false);
+        assertFalse(vmPassedMemoryRequirement);
     }
 
     @Test
@@ -73,14 +74,14 @@ public class SlaValidatorTest {
         vm.setVmMemSizeMb(8865);
         vds.setGuestOverhead(0);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 0);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     @Test
     public void validateVmMemoryCantStartOnVdsHostTooSmall() {
         vds.setMemFree(8835L);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 0);
-        assertEquals(vmPassedMemoryRequirement, false);
+        assertFalse(vmPassedMemoryRequirement);
     }
 
     @Test
@@ -88,21 +89,21 @@ public class SlaValidatorTest {
         vds.setMemFree(8835L);
         vds.setGuestOverhead(0);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 0);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     @Test
     public void validateVmMemoryCanStartOnVdsHighPendingButSwapHelps() {
         vds.setSwapFree(80L);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 65);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     @Test
     public void validateVmMemoryCantStartOnVdsHighPendingSwapSmall() {
         vds.setSwapFree(60L);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, 65);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     // Test overcommit rules for VM to host assignments
@@ -111,7 +112,7 @@ public class SlaValidatorTest {
     @Test
     public void validateVmMemoryCanRunOnVds() {
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     @Test
@@ -119,7 +120,7 @@ public class SlaValidatorTest {
         vm.setMinAllocatedMem(10000);
         vm.setVmMemSizeMb(10000);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm);
-        assertEquals(vmPassedMemoryRequirement, false);
+        assertFalse(vmPassedMemoryRequirement);
     }
 
     @Test
@@ -128,21 +129,21 @@ public class SlaValidatorTest {
         vm.setVmMemSizeMb(10000);
         vds.setPhysicalMemMb(15000);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     @Test
     public void validateVmMemoryCantRunOnVdsSmallHost() {
         vds.setPhysicalMemMb(5000);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm);
-        assertEquals(vmPassedMemoryRequirement, false);
+        assertFalse(vmPassedMemoryRequirement);
     }
 
     @Test
     public void validateVmMemoryCantRunOnVdsHighOverhead() {
         vds.setGuestOverhead(1024);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm);
-        assertEquals(vmPassedMemoryRequirement, false);
+        assertFalse(vmPassedMemoryRequirement);
     }
 
     @Test
@@ -151,7 +152,7 @@ public class SlaValidatorTest {
         vm.setVmMemSizeMb(10000);
         vds.setGuestOverhead(-1200);
         boolean vmPassedMemoryRequirement = SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm);
-        assertEquals(vmPassedMemoryRequirement, true);
+        assertTrue(vmPassedMemoryRequirement);
     }
 
     private VM basicVm() {

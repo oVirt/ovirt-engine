@@ -74,7 +74,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<org.ovirt.e
             }
         });
         Cluster transform = getMapper().map(cluster, null);
-        assertEquals(transform.getTransparentHugepages(), false);
+        assertFalse(transform.getTransparentHugepages());
     }
 
     @Test
@@ -87,6 +87,6 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<org.ovirt.e
             }
         });
         Cluster transform = getMapper().map(cluster, null);
-        assertEquals(transform.getTransparentHugepages(), true);
+        assertTrue(transform.getTransparentHugepages());
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -92,7 +93,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
         doReturn(slaveUpServerID).when(geoRepUtil).getUpServerId(any(Guid.class));
         doReturn(false).when(geoRepUtil).checkEmptyGlusterVolume(slaveUpServerID, slaveVolume.getName());
         List<GlusterGeoRepNonEligibilityReason> actual = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)), slaveVolume);
-        assertTrue(actual.size() == getNonEligibilityReasonsForSlaveVolume2().size());
+        assertEquals(actual.size(), getNonEligibilityReasonsForSlaveVolume2().size());
         assertTrue(getNonEligibilityReasonsForSlaveVolume2().containsAll(actual));
     }
 
@@ -103,7 +104,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
         doReturn(slaveUpServerId).when(geoRepUtil).getUpServerId(any(Guid.class));
         doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(slaveUpServerId, slaveVolume.getName());
         List<GlusterGeoRepNonEligibilityReason> actual = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)), slaveVolume);
-        assertTrue(actual.size() == getNonEligibilityReasonsForSlaveVolume3().size());
+        assertEquals(actual.size(), getNonEligibilityReasonsForSlaveVolume3().size());
         assertTrue(getNonEligibilityReasonsForSlaveVolume3().containsAll(actual));
     }
 
@@ -111,7 +112,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     public void testExecuteQueryCommnadOnVolume4() {
         doReturn(null).when(geoRepUtil).getUpServerId(any(Guid.class));
         List<GlusterGeoRepNonEligibilityReason> actual = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, null), baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_4_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, null));
-        assertTrue(actual.size() == getNonEligibilityReasonsForSlaveVolume4().size());
+        assertEquals(actual.size(), getNonEligibilityReasonsForSlaveVolume4().size());
         assertTrue(getNonEligibilityReasonsForSlaveVolume4().containsAll(actual));
     }
 }

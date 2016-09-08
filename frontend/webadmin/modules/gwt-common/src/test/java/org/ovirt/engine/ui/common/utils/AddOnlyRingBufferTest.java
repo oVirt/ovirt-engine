@@ -47,8 +47,8 @@ public class AddOnlyRingBufferTest {
     @Test
     public void bufferEmpty() {
         assertArrayEquals(testedListToArray(), new String[0]);
-        assertEquals(tested.head(), 0);
-        assertEquals(tested.size(), 0);
+        assertEquals(0, tested.head());
+        assertEquals(0, tested.size());
         assertTrue(tested.isEmpty());
         assertFalse(tested.isFull());
     }
@@ -58,8 +58,8 @@ public class AddOnlyRingBufferTest {
         assertNull(tested.add("A")); //$NON-NLS-1$
         assertNull(tested.add("B")); //$NON-NLS-1$
         assertArrayEquals(testedListToArray(), new String[] { "A", "B" }); //$NON-NLS-1$ //$NON-NLS-2$
-        assertEquals(tested.head(), 0);
-        assertEquals(tested.size(), 2);
+        assertEquals(0, tested.head());
+        assertEquals(2, tested.size());
         assertFalse(tested.isEmpty());
         assertFalse(tested.isFull());
     }
@@ -72,8 +72,8 @@ public class AddOnlyRingBufferTest {
         assertNull(tested.add("D")); //$NON-NLS-1$
         assertNull(tested.add("E")); //$NON-NLS-1$
         assertArrayEquals(testedListToArray(), new String[] { "A", "B", "C", "D", "E" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        assertEquals(tested.head(), 0);
-        assertEquals(tested.size(), 5);
+        assertEquals(0, tested.head());
+        assertEquals(5, tested.size());
         assertFalse(tested.isEmpty());
         assertTrue(tested.isFull());
     }
@@ -88,8 +88,8 @@ public class AddOnlyRingBufferTest {
         assertEquals("A", tested.add("F")); //$NON-NLS-1$ //$NON-NLS-2$
         assertEquals("B", tested.add("G")); //$NON-NLS-1$ //$NON-NLS-2$
         assertArrayEquals(testedListToArray(), new String[] { "C", "D", "E", "F", "G" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        assertEquals(tested.head(), 2);
-        assertEquals(tested.size(), 5);
+        assertEquals(2, tested.head());
+        assertEquals(5, tested.size());
         assertFalse(tested.isEmpty());
         assertTrue(tested.isFull());
     }
@@ -102,8 +102,8 @@ public class AddOnlyRingBufferTest {
         assertNull(tested.add("D")); //$NON-NLS-1$
         tested.reset(1, 2);
         assertArrayEquals(testedListToArray(), new String[] { "B", "C" }); //$NON-NLS-1$ //$NON-NLS-2$
-        assertEquals(tested.head(), 1);
-        assertEquals(tested.size(), 2);
+        assertEquals(1, tested.head());
+        assertEquals(2, tested.size());
         assertFalse(tested.isEmpty());
         assertFalse(tested.isFull());
     }

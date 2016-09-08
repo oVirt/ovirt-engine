@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -130,7 +131,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     public void testGetUserIDWithNoUser() {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(new VdcQueryParametersBase());
 
-        assertEquals("wrong guid", null, query.getUserID());
+        assertNull("wrong guid", query.getUserID());
     }
 
     /* Test Utilities */

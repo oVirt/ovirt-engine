@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -274,7 +275,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        assertTrue(validate.isEmpty() == !isImportAsNewEntity);
+        assertNotEquals(validate.isEmpty(), isImportAsNewEntity);
     }
 
     /**

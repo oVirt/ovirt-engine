@@ -3,6 +3,7 @@ package org.ovirt.engine.core.branding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -47,7 +48,7 @@ public class BrandingManagerTest {
         assertNotNull("There should be a result", result2); //$NON-NLS-1$
         assertEquals("There should be five active themes", 5, result2.size()); //$NON-NLS-1$
         // The second result should be the exact same object as the first one.
-        assertTrue("The result are not the same object", result == result2); //$NON-NLS-1$
+        assertSame("The result are not the same object", result, result2); //$NON-NLS-1$
     }
 
     @Test
@@ -60,7 +61,7 @@ public class BrandingManagerTest {
         JsonNode resultNode = mapper.readTree(parser);
         // There should be 5 key value pairs (1 from user portal, 4 common)
         assertEquals("Size should be 5", 5, resultNode.size()); //$NON-NLS-1$
-        assertEquals(resultNode.get("application_title").getTextValue(), "User Portal"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("User Portal", resultNode.get("application_title").getTextValue()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test

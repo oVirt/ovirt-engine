@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -83,7 +84,6 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
-
 
 public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
@@ -257,7 +257,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
         command.executeVmCommand();
-        assertTrue(oldDisk.getVmSnapshotId() == null);
+        assertNull(oldDisk.getVmSnapshotId());
     }
 
     @Test

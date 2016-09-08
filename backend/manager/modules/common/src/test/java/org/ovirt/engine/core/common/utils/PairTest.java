@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -29,7 +30,7 @@ public class PairTest {
         Pair<Boolean, String> p2 = new Pair<>(true, "abc");
         Pair<Boolean, String> p3 = new Pair<>(false, "abc");
 
-        assertTrue(p1.equals(p2));
-        assertFalse(p1.equals(p3));
+        assertEquals(p1, p2);
+        assertNotEquals(p1, p3);
     }
 }

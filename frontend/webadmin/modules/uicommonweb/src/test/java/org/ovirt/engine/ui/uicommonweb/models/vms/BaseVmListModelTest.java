@@ -154,7 +154,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(LARGE_ICON_ID, vm.getLargeIconId());
         assertEquals(SMALL_ICON_ID, vm.getSmallIconId());
         assertEquals(NUM_OF_IO_THREADS.intValue(), vm.getNumOfIoThreads());
-        assertEquals(vm.getConsoleDisconnectAction(), ConsoleDisconnectAction.REBOOT);
+        assertEquals(ConsoleDisconnectAction.REBOOT, vm.getConsoleDisconnectAction());
     }
 
     /**

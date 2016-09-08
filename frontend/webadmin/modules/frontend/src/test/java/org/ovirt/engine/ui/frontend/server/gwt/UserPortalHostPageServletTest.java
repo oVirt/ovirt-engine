@@ -27,8 +27,7 @@ public class UserPortalHostPageServletTest extends AbstractGwtDynamicHostPageSer
 
     @Test
     public void testGetSelectorScriptName() {
-        assertEquals(testServlet.getSelectorScriptName(),
-                "userportal.nocache.js"); //$NON-NLS-1$
+        assertEquals("userportal.nocache.js", testServlet.getSelectorScriptName()); //$NON-NLS-1$
     }
 
     @Test

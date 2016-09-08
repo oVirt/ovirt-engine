@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.timer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class JobWrapperTest {
 
     @Test
     public void testMethodAllowsConcurrent() throws Exception {
-        assertEquals(false, JobWrapper.methodAllowsConcurrent(new Dummy(), "serialOnly"));
-        assertEquals(true, JobWrapper.methodAllowsConcurrent(new Dummy(), "normalJob"));
+        assertFalse(JobWrapper.methodAllowsConcurrent(new Dummy(), "serialOnly"));
+        assertTrue(JobWrapper.methodAllowsConcurrent(new Dummy(), "normalJob"));
     }
 }

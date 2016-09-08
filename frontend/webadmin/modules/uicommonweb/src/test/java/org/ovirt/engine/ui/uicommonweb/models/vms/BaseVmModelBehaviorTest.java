@@ -147,7 +147,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertTrue(model.getMigrateCompressed().getSelectedItem());
         assertEquals(LARGE_ICON_DATA, model.getIcon().getEntity().getIcon());
         assertEquals(LARGE_OS_DEFAULT_ICON_DATA, model.getIcon().getEntity().getOsDefaultIcon());
-        assertEquals(model.getConsoleDisconnectAction().getSelectedItem(), ConsoleDisconnectAction.LOCK_SCREEN);
+        assertEquals(ConsoleDisconnectAction.LOCK_SCREEN, model.getConsoleDisconnectAction().getSelectedItem());
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder} */

@@ -71,10 +71,10 @@ public class CpuProfileHelperTest {
     @Test
     public void createCpuProfileTest() {
         CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(CLUSTER_ID, CLUSTER_NAME);
-        assertEquals(cpuProfile.getName(), CLUSTER_NAME);
-        assertEquals(cpuProfile.getClusterId(), CLUSTER_ID);
+        assertEquals(CLUSTER_NAME, cpuProfile.getName());
+        assertEquals(CLUSTER_ID, cpuProfile.getClusterId());
         assertNotNull(cpuProfile.getId());
-        assertEquals(cpuProfile.getProfileType(), ProfileType.CPU);
+        assertEquals(ProfileType.CPU, cpuProfile.getProfileType());
     }
 
     @Test

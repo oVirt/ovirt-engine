@@ -613,7 +613,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue());
         assertEquals("List size should be 0", 0, actionTypes.size()); //$NON-NLS-1$
         assertEquals("List size should be 0", 0, testParameters.size()); //$NON-NLS-1$
         assertEquals("List size should be 0", 0, callbacks.size()); //$NON-NLS-1$
@@ -645,7 +645,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue());
         // Second call to runAction, the size of the parameters should have decreased
         verify(mockService).runAction(eq(VdcActionType.AddBricksToGlusterVolume), eq(testParameters.get(0)),
                 callbackAction.capture());
@@ -654,7 +654,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback, times(2)).executed(callbackParam.capture());
-        assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue());
         verifyAsyncActionStartedAndSucceeded();
     }
 
@@ -684,7 +684,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue());
         // Second call to runAction
         verify(mockService).runAction(eq(VdcActionType.AddBricksToGlusterVolume), eq(testParameters.get(0)),
                 callbackAction.capture());
@@ -693,7 +693,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(false);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionFailureCallback).executed(callbackParam.capture());
-        assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue());
         verifyAsyncActionStartedAndSucceeded();
     }
 
@@ -723,7 +723,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(false);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionFailureCallback).executed(callbackParam.capture());
-        assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue());
         // Second call to runAction, the size of the parameters should have decreased
         verify(mockService, never()).runAction(eq(VdcActionType.AddBricksToGlusterVolume), eq(testParameters.get(0)),
                 callbackAction.capture());

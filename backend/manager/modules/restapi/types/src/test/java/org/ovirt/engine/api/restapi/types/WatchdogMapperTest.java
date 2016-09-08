@@ -21,8 +21,8 @@ public class WatchdogMapperTest {
         entity.setId(Guid.Empty);
         Watchdog model = WatchdogMapper.map(entity, null);
         assertNotNull(model);
-        assertEquals(model.getAction(), WatchdogAction.RESET);
-        assertEquals(model.getModel(), WatchdogModel.I6300ESB);
+        assertEquals(WatchdogAction.RESET, model.getAction());
+        assertEquals(WatchdogModel.I6300ESB, model.getModel());
     }
 
     @Test
@@ -33,8 +33,8 @@ public class WatchdogMapperTest {
         model.setId(Guid.Empty.toString());
         VmWatchdog entity = WatchdogMapper.map(model, null);
         assertNotNull(entity);
-        assertEquals(entity.getAction(), VmWatchdogAction.RESET);
-        assertEquals(entity.getModel(), VmWatchdogType.i6300esb);
+        assertEquals(VmWatchdogAction.RESET, entity.getAction());
+        assertEquals(VmWatchdogType.i6300esb, entity.getModel());
     }
 
     @Test

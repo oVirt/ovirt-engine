@@ -30,7 +30,7 @@ public class SizeConverterTest {
         long megabytes = 3L;
         long bytes = SizeConverter.convert(megabytes, SizeConverter.SizeUnit.MiB,
                 SizeConverter.SizeUnit.BYTES).longValue();
-        assertEquals(bytes, 3145728);
+        assertEquals(3145728, bytes);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class SizeConverterTest {
         long gigabytes = 3L;
         long bytes = SizeConverter.convert(gigabytes, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue();
-        assertEquals(bytes, 3221225472L);
+        assertEquals(3221225472L, bytes);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class SizeConverterTest {
         long bytes = 3221228000L;
         int gigabytes = SizeConverter.convert(bytes, SizeConverter.SizeUnit.BYTES,
                 SizeConverter.SizeUnit.GiB).intValue();
-        assertEquals(gigabytes, 3);
+        assertEquals(3, gigabytes);
     }
 
     @Test
@@ -54,35 +54,35 @@ public class SizeConverterTest {
         long bytes = 3160000L;
         int megabytes = SizeConverter.convert(bytes, SizeConverter.SizeUnit.BYTES,
                 SizeConverter.SizeUnit.MiB).intValue();
-        assertEquals(megabytes, 3);
+        assertEquals(3, megabytes);
     }
 
     @Test
     public void testConvertMegaBytesToTB() {
         long mb = 5 * 1024 * 1024;
         int tbs = SizeConverter.convert(mb, SizeUnit.MiB, SizeUnit.TiB).intValue();
-        assertEquals(tbs, 5);
+        assertEquals(5, tbs);
     }
 
     @Test
     public void testConvertTiBToYiB() {
         double tib = 100 * Math.pow(1024, 4);
         int yib = SizeConverter.convert((long)tib, SizeUnit.TiB, SizeUnit.YiB).intValue();
-        assertEquals(yib, 100);
+        assertEquals(100, yib);
     }
 
     @Test
     public void testConvertMiBToEiB() {
         double mib = 15 * Math.pow(1024, 4);
         int eib = SizeConverter.convert((long)mib, SizeUnit.MiB, SizeUnit.EiB).intValue();
-        assertEquals(eib, 15);
+        assertEquals(15, eib);
     }
 
     @Test
     public void testConvertPiBToZiB() {
         double pib = 15 * Math.pow(1024, 2);
         int zib = SizeConverter.convert((long)pib, SizeUnit.PiB, SizeUnit.ZiB).intValue();
-        assertEquals(zib, 15);
+        assertEquals(15, zib);
     }
 
     @Test

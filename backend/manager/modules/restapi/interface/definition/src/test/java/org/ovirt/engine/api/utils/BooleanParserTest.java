@@ -16,7 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,8 @@ public class BooleanParserTest {
      */
     @Test
     public void testAcceptsBooleans() {
-        assertEquals(BooleanParser.parseBoolean("true"), true);
-        assertEquals(BooleanParser.parseBoolean("false"), false);
+        assertTrue(BooleanParser.parseBoolean("true"));
+        assertFalse(BooleanParser.parseBoolean("false"));
     }
 
     /**
@@ -40,8 +41,8 @@ public class BooleanParserTest {
      */
     @Test
     public void testAccepts01() {
-        assertEquals(BooleanParser.parseBoolean("1"), true);
-        assertEquals(BooleanParser.parseBoolean("0"), false);
+        assertTrue(BooleanParser.parseBoolean("1"));
+        assertFalse(BooleanParser.parseBoolean("0"));
     }
 
     /**
@@ -50,10 +51,10 @@ public class BooleanParserTest {
     @Test
     public void testIgnoresCase() {
         for (String value : getCaseCombinations("true")) {
-            assertEquals(BooleanParser.parseBoolean(value), true);
+            assertTrue(BooleanParser.parseBoolean(value));
         }
         for (String value : getCaseCombinations("false")) {
-            assertEquals(BooleanParser.parseBoolean(value), false);
+            assertFalse(BooleanParser.parseBoolean(value));
         }
     }
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
@@ -76,8 +77,8 @@ public class VmsListFetcherTest {
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm().getStatus() != data.vdsmVm().getVmDynamic().getStatus());
         //then
-        assertTrue(vmsListFetcher.getChangedVms().size() == 1);
-        assertTrue(vmsListFetcher.getChangedVms().get(0).getFirst() == data.dbVm().getDynamicData());
+        assertEquals(1, vmsListFetcher.getChangedVms().size());
+        assertSame(vmsListFetcher.getChangedVms().get(0).getFirst(), data.dbVm().getDynamicData());
     }
 
     @Theory
@@ -117,7 +118,7 @@ public class VmsListFetcherTest {
         assumeTrue(data.dbVm() == null);
         //then
         verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
-        assertTrue(vdsManagerArgumentCaptor.getValue().size() == 0);
+        assertEquals(0, vdsManagerArgumentCaptor.getValue().size());
     }
 
     @Theory

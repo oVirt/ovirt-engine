@@ -26,7 +26,7 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
         setupMocks(cmd);
         mockBackendStatusChange(cmd, true);
         cmd.executeCommand();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_ENABLE);
+        assertEquals(AuditLogType.GLUSTER_HOOK_ENABLE, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -35,7 +35,7 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
         setupMocks(cmd);
         mockBackendStatusChange(cmd, false);
         cmd.executeCommand();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_ENABLE_FAILED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_ENABLE_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test

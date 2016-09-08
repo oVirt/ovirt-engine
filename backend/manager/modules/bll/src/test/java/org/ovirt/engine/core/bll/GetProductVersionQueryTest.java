@@ -41,6 +41,6 @@ public class GetProductVersionQueryTest extends AbstractQueryTest<VdcQueryParame
         assertEquals(version.getMajor(), major);
         assertEquals(version.getMinor(), minor);
         assertEquals(version.getBuild(), build);
-        assertEquals(version.getRevision(), 0);
+        assertEquals(0, version.getRevision());
     }
 }

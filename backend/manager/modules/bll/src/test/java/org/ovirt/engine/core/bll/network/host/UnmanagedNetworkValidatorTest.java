@@ -139,7 +139,7 @@ public class UnmanagedNetworkValidatorTest {
         Set<String> nicsWithUnmanagedNetworks = validator.filterNicsWithUnmanagedNetworks(existingInterfaces, Collections.emptySet());
         assertEquals(1, nicsWithUnmanagedNetworks.size());
         String filteredNicName = nicsWithUnmanagedNetworks.iterator().next();
-        assertEquals(filteredNicName, unmanagedNicName);
+        assertEquals(unmanagedNicName, filteredNicName);
 
         ValidationResult result = validator.validateAttachements(filteredNicName, attachementList);
         assertThat(result,
@@ -171,7 +171,7 @@ public class UnmanagedNetworkValidatorTest {
         Set<String> nicsWithUnmanagedNetworks = validator.filterNicsWithUnmanagedNetworks(existingInterfaces, Collections.emptySet());
         assertEquals(1, nicsWithUnmanagedNetworks.size());
         String filteredNicName = nicsWithUnmanagedNetworks.iterator().next();
-        assertEquals(filteredNicName, unmanagedBaseNicName);
+        assertEquals(unmanagedBaseNicName, filteredNicName);
 
         ValidationResult result = validator.validateAttachements(filteredNicName, attachementList);
         assertThat(result,

@@ -114,11 +114,11 @@ public class MultiValueMapUtilsTest {
     @Test
     public void testMultiValueMapOfSets() {
         MultiValueMapUtils.addToMapOfSets(key, value, mapOfSets);
-        assertEquals(mapOfSets.get(key).size(), 1);
+        assertEquals(1, mapOfSets.get(key).size());
         MultiValueMapUtils.addToMapOfSets(key, value, mapOfSets);
-        assertEquals(mapOfSets.get(key).size(), 1);
+        assertEquals(1, mapOfSets.get(key).size());
         MultiValueMapUtils.addToMapOfSets(key, RandomUtils.instance().nextInt() + value, mapOfSets);
-        assertEquals(mapOfSets.get(key).size(), 2);
+        assertEquals(2, mapOfSets.get(key).size());
     }
 
 

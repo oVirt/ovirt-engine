@@ -23,7 +23,7 @@ public class EnumNameAutoCompleterTest {
         assertTrue("luke", comps.contains("luke"));
         assertTrue("leia", comps.contains("leia"));
 
-        assertTrue(comp.getCompletion("Z").length == 0);
+        assertEquals(0, comp.getCompletion("Z").length);
     }
 
     @Test

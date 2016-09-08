@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +23,7 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
     @Test
     public void testValidate() {
         UpdateRngDeviceCommand command = mockCommand();
-        assertEquals(true, command.validate());
+        assertTrue(command.validate());
     }
 
     private UpdateRngDeviceCommand mockCommand() {

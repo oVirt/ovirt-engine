@@ -77,7 +77,7 @@ public class ExternalNetworkTokenProviderTest {
     @Test
     public void testGetToken() {
 
-        assertEquals(tokenProvider.getToken(), TOKEN_ID);
+        assertEquals(TOKEN_ID, tokenProvider.getToken());
 
         verify(mockTokensResource).authenticate(usernamePasswordCaptor.capture());
         verifyUsernamePassword();

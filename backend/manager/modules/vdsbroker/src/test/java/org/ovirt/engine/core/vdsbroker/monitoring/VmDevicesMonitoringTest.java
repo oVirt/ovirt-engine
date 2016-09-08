@@ -198,30 +198,30 @@ public class VmDevicesMonitoringTest {
 
         ArgumentCaptor<Collection> updateCaptor = ArgumentCaptor.forClass(Collection.class);
         verify(vmDeviceDao, times(1)).updateAllInBatch(updateCaptor.capture());
-        assertEquals(updateCaptor.getValue().size(), 2);
+        assertEquals(2, updateCaptor.getValue().size());
 
         ArgumentCaptor<List> removeCaptor = ArgumentCaptor.forClass(List.class);
         verify(vmDeviceDao, times(1)).removeAll(removeCaptor.capture());
         List removedDeviceIds = removeCaptor.getValue();
-        assertEquals(removedDeviceIds.size(), 1);
+        assertEquals(1, removedDeviceIds.size());
         VmDeviceId deviceId = (VmDeviceId) removedDeviceIds.get(0);
         assertEquals(deviceId.getDeviceId(), usbControllerId);
-        assertEquals(deviceId.getVmId(), VM_ID);
+        assertEquals(VM_ID, deviceId.getVmId());
 
         ArgumentCaptor<List> saveCaptor = ArgumentCaptor.forClass(List.class);
         verify(vmDeviceDao, times(1)).saveAll(saveCaptor.capture());
         List savedDevices = saveCaptor.getValue();
-        assertEquals(savedDevices.size(), 1);
+        assertEquals(1, savedDevices.size());
         VmDevice device = (VmDevice) savedDevices.get(0);
-        assertEquals(device.getAddress(), SERIAL_DEVICE_ADDRESS);
+        assertEquals(SERIAL_DEVICE_ADDRESS, device.getAddress());
 
         ArgumentCaptor<List> updateHashesCaptor = ArgumentCaptor.forClass(List.class);
         verify(vmDynamicDao, times(1)).updateDevicesHashes(updateHashesCaptor.capture());
         List updatedHashes = updateHashesCaptor.getValue();
-        assertEquals(updatedHashes.size(), 1);
+        assertEquals(1, updatedHashes.size());
         Pair<Guid, String> hashInfo = (Pair<Guid, String>) updatedHashes.get(0);
-        assertEquals(hashInfo.getFirst(), VM_ID);
-        assertEquals(hashInfo.getSecond(), NEW_HASH);
+        assertEquals(VM_ID, hashInfo.getFirst());
+        assertEquals(NEW_HASH, hashInfo.getSecond());
     }
 
     @Test
@@ -253,16 +253,16 @@ public class VmDevicesMonitoringTest {
         List<List> values = updateHashesCaptor.getAllValues();
 
         List updatedHashes = values.get(0);
-        assertEquals(updatedHashes.size(), 1);
+        assertEquals(1, updatedHashes.size());
         Pair<Guid, String> hashInfo = (Pair<Guid, String>) updatedHashes.get(0);
-        assertEquals(hashInfo.getFirst(), VM_ID);
-        assertEquals(hashInfo.getSecond(), VmDevicesMonitoring.UPDATE_HASH);
+        assertEquals(VM_ID, hashInfo.getFirst());
+        assertEquals(VmDevicesMonitoring.UPDATE_HASH, hashInfo.getSecond());
 
         updatedHashes = values.get(1);
-        assertEquals(updatedHashes.size(), 1);
+        assertEquals(1, updatedHashes.size());
         hashInfo = (Pair<Guid, String>) updatedHashes.get(0);
-        assertEquals(hashInfo.getFirst(), VM_ID);
-        assertEquals(hashInfo.getSecond(), INITIAL_HASH);
+        assertEquals(VM_ID, hashInfo.getFirst());
+        assertEquals(INITIAL_HASH, hashInfo.getSecond());
     }
 
     @Test

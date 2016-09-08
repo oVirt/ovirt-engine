@@ -71,7 +71,7 @@ public class VmSlaPolicyCommandTest {
 
         Answer<?> answer = invocation -> {
             VDSCommandType commandType = (VDSCommandType) invocation.getArguments()[0];
-            assertEquals(commandType, VDSCommandType.UpdateVmPolicy);
+            assertEquals(VDSCommandType.UpdateVmPolicy, commandType);
 
             UpdateVmPolicyVDSParams params = (UpdateVmPolicyVDSParams) invocation.getArguments()[1];
             VDSReturnValue retVal = new VDSReturnValue();
@@ -117,7 +117,7 @@ public class VmSlaPolicyCommandTest {
         parameters.setCpuQos(cpuQos);
 
         vdsFunction = params -> {
-            assertEquals(params.getCpuLimit().intValue(), 50);
+            assertEquals(50, params.getCpuLimit().intValue());
             return true;
         };
 
@@ -134,7 +134,7 @@ public class VmSlaPolicyCommandTest {
         parameters.setCpuQos(cpuQos);
 
         vdsFunction = params -> {
-            assertEquals(params.getCpuLimit().intValue(), 100);
+            assertEquals(100, params.getCpuLimit().intValue());
             return true;
         };
 

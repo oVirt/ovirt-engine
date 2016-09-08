@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
@@ -42,7 +43,7 @@ public class JsonObjectDeserializerTest {
 
     @Test
     public void testNullSerialize() {
-        assertEquals(null, new JsonObjectDeserializer().deserialize(null, JsonSerializablePojo.class));
+        assertNull(new JsonObjectDeserializer().deserialize(null, JsonSerializablePojo.class));
     }
 
     @Test
@@ -71,7 +72,7 @@ public class JsonObjectDeserializerTest {
         VdcActionParametersBase params = new JsonObjectDeserializer().deserialize(getVdcActionParamsJson(), VdcActionParametersBase.class);
         assertNotNull(params.getLockProperties());
         assertTrue(params.getLockProperties().isWait());
-        assertEquals(params.getLockProperties().getScope(), Scope.None);
+        assertEquals(Scope.None, params.getLockProperties().getScope());
     }
 
     private String getVdcActionParamsJson() {
@@ -121,13 +122,13 @@ public class JsonObjectDeserializerTest {
         buf.append("}");
         Map<String, Serializable> data = new JsonObjectDeserializer().deserialize(buf.toString(), HashMap.class);
         assertNotNull(data);
-        assertEquals(data.get("NEXT_COMMAND_TYPE"), VdcActionType.DestroyImage);
+        assertEquals(VdcActionType.DestroyImage, data.get("NEXT_COMMAND_TYPE"));
     }
 
     @Test
     public void testEnumDeserializationLiteralDoesNotExist() {
         Kind kind = new JsonObjectDeserializer().deserialize("\"RED\"", Kind.class);
-        assertEquals(null, kind);
+        assertNull(kind);
     }
 
 }

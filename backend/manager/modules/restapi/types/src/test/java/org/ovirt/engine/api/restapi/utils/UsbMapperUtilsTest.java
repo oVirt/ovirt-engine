@@ -32,13 +32,13 @@ public class UsbMapperUtilsTest {
     @Test
     public void getUsbTypeEnabledLegacy() {
         UsbPolicy usbPolicy = UsbPolicy.ENABLED_LEGACY;
-        assertEquals(UsbMapperUtils.getUsbType(usbPolicy), UsbType.LEGACY);
+        assertEquals(UsbType.LEGACY, UsbMapperUtils.getUsbType(usbPolicy));
     }
 
     @Test
     public void getUsbTypeEnabledNative() {
         UsbPolicy usbPolicy = UsbPolicy.ENABLED_NATIVE;
-        assertEquals(UsbMapperUtils.getUsbType(usbPolicy), UsbType.NATIVE);
+        assertEquals(UsbType.NATIVE, UsbMapperUtils.getUsbType(usbPolicy));
     }
 
     @Test

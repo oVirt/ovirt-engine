@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +35,7 @@ public class StorageTypeTest {
 
     @Test
     public void testNewStorageTypes() {
-        assertTrue("A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain " +
-                "method accordingly", StorageType.values().length == 9);
+        assertEquals("A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain " +
+                "method accordingly", 9, StorageType.values().length);
     }
 }

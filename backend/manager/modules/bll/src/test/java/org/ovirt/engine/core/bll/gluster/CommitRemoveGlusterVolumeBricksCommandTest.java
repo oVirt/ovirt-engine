@@ -139,7 +139,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
 
         verify(cmd, times(1)).endStepJobCommitted();
         verify(cmd, times(1)).releaseVolumeLock();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
 
         verify(cmd, never()).endStepJobCommitted();
         verify(cmd, never()).releaseVolumeLock();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT_FAILED);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test

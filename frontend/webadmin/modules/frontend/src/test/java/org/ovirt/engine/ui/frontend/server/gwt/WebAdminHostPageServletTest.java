@@ -80,7 +80,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
 
     @Test
     public void testGetSelectorScriptName() {
-        assertEquals(testServlet.getSelectorScriptName(), "webadmin.nocache.js"); //$NON-NLS-1$
+        assertEquals("webadmin.nocache.js", testServlet.getSelectorScriptName()); //$NON-NLS-1$
     }
 
     @Test
@@ -111,7 +111,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     @Test
     public void testGetApplicationModeObject() {
         ObjectNode result = testServlet.getApplicationModeObject(Integer.valueOf(255));
-        assertEquals(result.get("value").asText(), "255"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("255", result.get("value").asText()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
@@ -127,13 +127,13 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
             pluginData.add(mockData);
         }
         ArrayNode result = testServlet.getPluginDefinitionsArray(pluginData);
-        assertEquals(result.size(), mockDataCount);
+        assertEquals(mockDataCount, result.size());
         for (int i = 0; i < mockDataCount; i++) {
             JsonNode item = result.get(i);
             assertEquals(item.get("name").asText(), "name" + i); //$NON-NLS-1$ //$NON-NLS-2$
             assertEquals(item.get("url").asText(), "url" + i); //$NON-NLS-1$ //$NON-NLS-2$
             assertTrue(item.get("config") instanceof ObjectNode); //$NON-NLS-1$
-            assertEquals(item.get("enabled").asBoolean(), true); //$NON-NLS-1$
+            assertTrue(item.get("enabled").asBoolean()); //$NON-NLS-1$
         }
     }
 

@@ -100,7 +100,7 @@ public class AddCpuProfileCommandTest extends BaseCommandTest{
     public void getPermissionCheckSubjectsTest() {
         List<PermissionSubject> permissions = addCpuProfileCommand.getPermissionCheckSubjects();
 
-        assertEquals(permissions.size(), 1);
+        assertEquals(1, permissions.size());
         PermissionSubject permissionSubject = permissions.get(0);
 
         assertEquals(CLUSTER_ID, permissionSubject.getObjectId());

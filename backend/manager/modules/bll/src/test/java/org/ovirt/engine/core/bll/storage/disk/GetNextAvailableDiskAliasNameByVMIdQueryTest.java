@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -54,7 +55,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
 
         // Execute query.
         getQuery().executeQueryCommand();
-        assertEquals(null, getQuery().getQueryReturnValue().getReturnValue());
+        assertNull(getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test

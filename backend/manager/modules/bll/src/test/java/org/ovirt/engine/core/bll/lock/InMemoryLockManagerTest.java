@@ -90,11 +90,11 @@ public class InMemoryLockManagerTest {
         Pair<Boolean, Set<String>> lockResult = LockManagerFactory.getLockManager().acquireLock(lockLock1);
         assertFalse(lockResult.getFirst());
         assertTrue(lockResult.getSecond().contains(ERROR1));
-        assertEquals(lockResult.getSecond().size(), 1);
+        assertEquals(1, lockResult.getSecond().size());
         lockResult = LockManagerFactory.getLockManager().acquireLock(updateLock2);
         assertFalse(lockResult.getFirst());
         assertTrue(lockResult.getSecond().contains(ERROR2));
-        assertEquals(lockResult.getSecond().size(), 1);
+        assertEquals(1, lockResult.getSecond().size());
         LockManagerFactory.getLockManager().releaseLock(updateAndLockLock);
         assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
         assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock2).getFirst());
@@ -106,7 +106,7 @@ public class InMemoryLockManagerTest {
         assertFalse(lockResult.getFirst());
         assertTrue(lockResult.getSecond().contains(ERROR1));
         assertTrue(lockResult.getSecond().contains(ERROR3));
-        assertEquals(lockResult.getSecond().size(), 2);
+        assertEquals(2, lockResult.getSecond().size());
         LockManagerFactory.getLockManager().releaseLock(updateAndLockLock);
         LockManagerFactory.getLockManager().releaseLock(updateLock3);
     }
@@ -125,7 +125,7 @@ public class InMemoryLockManagerTest {
     public void checkShowLocks() {
         assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
         assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock2).getFirst());
-        assertTrue(lockMager.showAllLocks().size() == 2);
+        assertEquals(2, lockMager.showAllLocks().size());
         LockManagerFactory.getLockManager().clear();
         assertTrue(lockMager.showAllLocks().isEmpty());
     }

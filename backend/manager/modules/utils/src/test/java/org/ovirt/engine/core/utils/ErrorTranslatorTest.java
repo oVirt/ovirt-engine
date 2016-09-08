@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +42,7 @@ public class ErrorTranslatorTest {
     public void testNoStringSubstitutionWithList() {
         ErrorTranslator et = new ErrorTranslatorImpl(FILENAME);
         List<String> error = et.translateErrorText(Arrays.asList(TEST_KEY_NO_REPLACEMENT));
-        assertTrue("Size", error.size() == 1);
+        assertEquals("Size", 1, error.size());
         assertEquals("String should equal", "VM not found", error.get(0));
     }
 
@@ -53,7 +52,7 @@ public class ErrorTranslatorTest {
         List<String> error = et.translateErrorText(Arrays.asList(TEST_KEY_WITH_REPLACEMENT,
                 "$action SOMEACTION", "$type SOME Type"));
         String result = "Cannot SOMEACTION SOME Type. VM's Image doesn't exist.";
-        assertTrue("Size", error.size() == 1);
+        assertEquals("Size", 1, error.size());
         assertEquals("String should equal", result, error.get(0));
     }
 

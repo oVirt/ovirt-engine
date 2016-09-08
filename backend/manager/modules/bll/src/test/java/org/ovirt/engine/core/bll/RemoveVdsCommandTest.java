@@ -231,7 +231,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockHasMultipleClusters(true);
         mockForExecute();
         command.executeCommand();
-        assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_REMOVE_VDS);
+        assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
         verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
         verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
         verify(volumeDao, never()).removeByClusterId(any(Guid.class));
@@ -249,7 +249,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockHasMultipleClusters(false);
         mockForExecute();
         command.executeCommand();
-        assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_REMOVE_VDS);
+        assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
         verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
         verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
         verify(volumeDao, times(1)).removeByClusterId(any(Guid.class));

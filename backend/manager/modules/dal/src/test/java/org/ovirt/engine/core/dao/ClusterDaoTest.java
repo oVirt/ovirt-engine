@@ -436,7 +436,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     public void testGetClusterByClusterPolicyIdNegative() {
         List<Cluster> result = dao.getClustersByClusterPolicyId(Guid.newGuid());
 
-        assertEquals(result.size(), 0);
+        assertEquals(0, result.size());
     }
 
     /**

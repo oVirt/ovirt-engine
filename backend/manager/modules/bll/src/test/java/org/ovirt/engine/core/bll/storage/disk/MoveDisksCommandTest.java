@@ -96,7 +96,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Down, null, diskImageId);
 
         command.updateParameters();
-        assertTrue(command.getMoveDiskParametersList().size() == 1);
+        assertEquals(1, command.getMoveDiskParametersList().size());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         initDiskImage(diskImageId);
 
         command.updateParameters();
-        assertTrue(command.getMoveDiskParametersList().size() == 1);
+        assertEquals(1, command.getMoveDiskParametersList().size());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         command.updateParameters();
-        assertTrue(command.getLiveMigrateVmDisksParametersList().size() == 1);
+        assertEquals(1, command.getLiveMigrateVmDisksParametersList().size());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         command.updateParameters();
-        assertTrue(command.getLiveMigrateVmDisksParametersList().size() == 1);
+        assertEquals(1, command.getLiveMigrateVmDisksParametersList().size());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Down, Guid.newGuid(), diskImageId, false);
 
         command.updateParameters();
-        assertEquals(command.getMoveDiskParametersList().size(), 1);
+        assertEquals(1, command.getMoveDiskParametersList().size());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageId, false);
 
         command.updateParameters();
-        assertEquals(command.getMoveDiskParametersList().size(), 1);
+        assertEquals(1, command.getMoveDiskParametersList().size());
     }
 
     @Test
@@ -168,8 +168,8 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Down, Guid.newGuid(), diskImageId2);
 
         command.updateParameters();
-        assertTrue(command.getMoveDiskParametersList().size() == 1);
-        assertTrue(command.getLiveMigrateVmDisksParametersList().size() == 1);
+        assertEquals(1, command.getMoveDiskParametersList().size());
+        assertEquals(1, command.getLiveMigrateVmDisksParametersList().size());
     }
 
     @Test

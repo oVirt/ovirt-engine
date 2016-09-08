@@ -126,7 +126,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
 
         verify(cmd, times(1)).endStepJobAborted(any(String.class));
         verify(cmd, times(1)).releaseVolumeLock();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
 
         verify(cmd, never()).endStepJobAborted(any(String.class));
         verify(cmd, never()).releaseVolumeLock();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP_FAILED);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test

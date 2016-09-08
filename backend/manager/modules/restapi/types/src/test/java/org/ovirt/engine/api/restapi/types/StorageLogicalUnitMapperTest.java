@@ -48,14 +48,14 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         model.setDiskId(Guid.Empty);
         model.setStatus(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Free);
         LogicalUnit entity = StorageLogicalUnitMapper.map(model, (LogicalUnit) null);
-        assertEquals(entity.getVendorId(), "vendor_id_1");
-        assertEquals(entity.getProductId(), "product_id_1");
-        assertEquals(entity.getSerial(), "some_serial");
-        assertEquals(entity.getLunMapping(), Integer.valueOf(5));
-        assertEquals(entity.getVolumeGroupId(), "volume_group_id_1");
+        assertEquals("vendor_id_1", entity.getVendorId());
+        assertEquals("product_id_1", entity.getProductId());
+        assertEquals("some_serial", entity.getSerial());
+        assertEquals(Integer.valueOf(5), entity.getLunMapping());
+        assertEquals("volume_group_id_1", entity.getVolumeGroupId());
         assertEquals(entity.getStorageDomainId(), Guid.Empty.toString());
         assertEquals(entity.getDiskId(), Guid.Empty.toString());
-        assertEquals(entity.getStatus(), LunStatus.FREE);
+        assertEquals(LunStatus.FREE, entity.getStatus());
     }
 
     @Test

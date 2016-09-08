@@ -227,7 +227,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
                  argThat(anyMap()),
                 booleanThat(booleanMatcher(false)));
         verify(cmd).releaseVolumeLock();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -242,7 +242,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
                 argThat(anyMap()),
                 booleanThat(booleanMatcher(true)));
         verify(cmd).releaseVolumeLock();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -257,7 +257,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
                 anyMapOf(String.class, String.class),
                 anyBoolean());
         verify(cmd, never()).releaseVolumeLock();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test

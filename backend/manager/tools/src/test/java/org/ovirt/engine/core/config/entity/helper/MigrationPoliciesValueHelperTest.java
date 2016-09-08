@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.config.entity.helper;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -10,21 +11,21 @@ public class MigrationPoliciesValueHelperTest {
 
     @Test
     public void emptyIsNotValid() {
-        assertEquals(helper.validate(null, "").isOk(), false);
+        assertFalse(helper.validate(null, "").isOk());
     }
 
     @Test
     public void incorrectJsonNotValid() {
-        assertEquals(helper.validate(null, "this is not a valid json").isOk(), false);
+        assertFalse(helper.validate(null, "this is not a valid json").isOk());
     }
 
     @Test
     public void notAnyValidJsonIsValid() {
-        assertEquals(helper.validate(null, "{}").isOk(), false);
+        assertFalse(helper.validate(null, "{}").isOk());
     }
 
     @Test
     public void listOfMigrationPoliciesIsValid() {
-        assertEquals(helper.validate(null, helper.getExamplePolicy()).isOk(), true);
+        assertTrue(helper.validate(null, helper.getExamplePolicy()).isOk());
     }
 }

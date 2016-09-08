@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -127,7 +128,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         setStorageDomainStatus(StorageDomainStatus.Active);
         assertFalse(cmd.checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
         List<String> messages = cmd.getReturnValue().getValidationMessages();
-        assertEquals(messages.size(), 2);
+        assertEquals(2, messages.size());
         assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
         assertEquals(messages.get(1), String.format("$status %1$s", StorageDomainStatus.Active));
     }
@@ -153,7 +154,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
 
         assertTrue(cmd.isLunsAlreadyInUse(specifiedLunIds));
         List<String> messages = cmd.getReturnValue().getValidationMessages();
-        assertEquals(messages.size(), 2);
+        assertEquals(2, messages.size());
         assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS.toString());
         assertEquals(messages.get(1), String.format("$lunIds %1$s", cmd.getFormattedLunId(lun1, lun1.getStorageDomainName())));
     }
@@ -169,21 +170,21 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     public void shouldNotElectActiveHostedEngineDomain() {
         prepareStorageDomainForElection(StorageDomainStatus.Active, HE_STORAGE_DOMAIN_NAME);
         when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
-        assertEquals(null, cmd.electNewMaster());
+        assertNull(cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectUnknownHostedEngineDomain() {
         prepareStorageDomainForElection(StorageDomainStatus.Unknown, HE_STORAGE_DOMAIN_NAME);
         when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
-        assertEquals(null, cmd.electNewMaster());
+        assertNull(cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectInactiveHostedEngineDomain() {
         prepareStorageDomainForElection(StorageDomainStatus.Inactive, HE_STORAGE_DOMAIN_NAME);
         when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
-        assertEquals(null, cmd.electNewMaster(false, true, false));
+        assertNull(cmd.electNewMaster(false, true, false));
     }
 
     @Test

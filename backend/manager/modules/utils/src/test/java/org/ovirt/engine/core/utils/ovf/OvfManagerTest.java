@@ -164,7 +164,7 @@ public class OvfManagerTest {
                 assertEquals(device.getDevice(), VmDeviceType.VNC.getName());
             }
         }
-        assertEquals(graphicsDeviceCount, 1);
+        assertEquals(1, graphicsDeviceCount);
     }
 
     @Test
@@ -183,7 +183,7 @@ public class OvfManagerTest {
                 assertEquals(device.getDevice(), VmDeviceType.SPICE.getName());
             }
         }
-        assertEquals(graphicsDeviceCount, 1);
+        assertEquals(1, graphicsDeviceCount);
     }
 
     @Test
@@ -205,7 +205,7 @@ public class OvfManagerTest {
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
         manager.importTemplate(xml, newtemplate, new ArrayList<>(), new ArrayList<>());
-        assertEquals("imported template is different than expected", template, newtemplate);
+        assertEquals("imported template is different than expected", newtemplate, template);
         assertEquals("imported db generation is different than expected", template.getDbGeneration(), newtemplate.getDbGeneration());
     }
 
@@ -268,7 +268,7 @@ public class OvfManagerTest {
 
     private <T extends BusinessEntity> void assertCollection(List<T> colA, List<T> colB, Function<Pair<T, T>, Boolean> function) {
         assertEquals(colA.size(), colB.size());
-        assertEquals(CollectionUtils.disjunction(colA, colB).size(), 0);
+        assertEquals(0, CollectionUtils.disjunction(colA, colB).size());
 
         // Might look a bit overkill to check equals as well but disjunction is based on the hash so double checking is good
         for (T itemA : colA) {

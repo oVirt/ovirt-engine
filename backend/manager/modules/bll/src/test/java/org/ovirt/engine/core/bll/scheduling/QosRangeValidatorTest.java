@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,7 +94,7 @@ public class QosRangeValidatorTest {
     }
 
     private void assertValidateMsgCount(List<String> validationMessages, String msg, int count) {
-        assertTrue(Collections.frequency(validationMessages, msg) == count);
+        assertEquals(Collections.frequency(validationMessages, msg), count);
     }
 
 }

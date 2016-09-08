@@ -63,8 +63,8 @@ public class DiskSnapshotsValidatorTest {
 
     @Test
     public void diskSnapshotsExist() {
-        assertEquals(validator.diskSnapshotsNotExist(Arrays.asList(disk1.getImageId(), disk2.getImageId())),
-                ValidationResult.VALID);
+        assertEquals(ValidationResult.VALID,
+                validator.diskSnapshotsNotExist(Arrays.asList(disk1.getImageId(), disk2.getImageId())));
     }
 
     @Test

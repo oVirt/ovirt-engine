@@ -168,7 +168,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         verify(cmd).startSubStep();
         verify(cmd).handleTaskReturn(asyncTaskToBeReturned);
         verify(cmd).updateBricksWithTaskID(asyncTaskToBeReturned);
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS);
+        assertEquals(AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -179,7 +179,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         assertTrue(cmd.validate());
         cmd.executeCommand();
 
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS_FAILED);
+        assertEquals(AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test

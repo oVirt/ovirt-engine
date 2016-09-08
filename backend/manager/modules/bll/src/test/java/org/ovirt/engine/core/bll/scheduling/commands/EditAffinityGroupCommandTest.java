@@ -92,7 +92,7 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
     @Test
     public void excuteCommandTest() {
         command.executeCommand();
-        assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_UPDATED_AFFINITY_GROUP);
+        assertEquals(AuditLogType.USER_UPDATED_AFFINITY_GROUP, command.getAuditLogTypeValue());
     }
 
     private AffinityGroup createAffinityGroup() {

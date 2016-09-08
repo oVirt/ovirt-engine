@@ -172,7 +172,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
     public void getPermissionCheckSubjectsTest() {
         List<PermissionSubject> permissions = addClusterCommand.getPermissionCheckSubjects();
 
-        assertEquals(permissions.size(), 2);
+        assertEquals(2, permissions.size());
 
         PermissionSubject permissionSubject = permissions.get(0);
         assertEquals(cluster.getStoragePoolId(), permissionSubject.getObjectId());

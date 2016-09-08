@@ -2,6 +2,7 @@ package org.ovirt.engine.core.compat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -29,12 +30,12 @@ public class GuidTest {
         guidFromString = Guid.createGuidFromString(guid.toString());
         assertEquals(guidFromString, guid);
         guidFromString = Guid.createGuidFromString(null);
-        assertEquals(guidFromString, null);
+        assertNull(guidFromString);
 
         guidFromString = Guid.createGuidFromStringDefaultEmpty(guid.toString());
         assertEquals(guidFromString, guid);
         guidFromString = Guid.createGuidFromStringDefaultEmpty(null);
-        assertEquals(guidFromString, Guid.Empty);
+        assertEquals(Guid.Empty, guidFromString);
     }
 
     @Test

@@ -243,7 +243,7 @@ public class VmMapperTest extends
         VmMapper.map(ovfConfig, ConfigurationType.OVF, model);
         assertNotNull(model.getInitialization());
         assertNotNull(model.getInitialization().getConfiguration());
-        assertEquals(model.getInitialization().getConfiguration().getData(), ovfConfig);
+        assertEquals(ovfConfig, model.getInitialization().getConfiguration().getData());
         assertEquals(model.getInitialization().getConfiguration().getType(),
                 configurationType);
     }
@@ -257,7 +257,7 @@ public class VmMapperTest extends
         vm.setDynamicData(vmDynamic);
         Vm map = VmMapper.map(vm, (Vm) null);
         assertNotNull(map.getFqdn());
-        assertEquals(map.getFqdn(), "localhost.localdomain");
+        assertEquals("localhost.localdomain", map.getFqdn());
     }
 
     @Test
@@ -270,8 +270,8 @@ public class VmMapperTest extends
         vm.setDynamicData(vmDynamic);
         Vm map = VmMapper.map(vm, (Vm) null);
         assertNotNull(map.getGuestTimeZone());
-        assertEquals(map.getGuestTimeZone().getUtcOffset(), "-01:00");
-        assertEquals(map.getGuestTimeZone().getName(), "This is not a timezone");
+        assertEquals("-01:00", map.getGuestTimeZone().getUtcOffset());
+        assertEquals("This is not a timezone", map.getGuestTimeZone().getName());
     }
 
     @Test
@@ -291,22 +291,22 @@ public class VmMapperTest extends
         Vm map = VmMapper.map(vm, (Vm) null);
 
         assertNotNull(map.getGuestOperatingSystem());
-        assertEquals(map.getGuestOperatingSystem().getFamily(), "Linux");
-        assertEquals(map.getGuestOperatingSystem().getCodename(), "Santiago");
-        assertEquals(map.getGuestOperatingSystem().getDistribution(), "Red Hat Enterprise Linux Server");
-        assertEquals(map.getGuestOperatingSystem().getVersion().getFullVersion(), "6.5");
+        assertEquals("Linux", map.getGuestOperatingSystem().getFamily());
+        assertEquals("Santiago", map.getGuestOperatingSystem().getCodename());
+        assertEquals("Red Hat Enterprise Linux Server", map.getGuestOperatingSystem().getDistribution());
+        assertEquals("6.5", map.getGuestOperatingSystem().getVersion().getFullVersion());
         assertNotNull(map.getGuestOperatingSystem().getVersion().getMajor());
-        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMajor(), 6);
+        assertEquals(6, (long) map.getGuestOperatingSystem().getVersion().getMajor());
         assertNotNull(map.getGuestOperatingSystem().getVersion().getMinor());
-        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMinor(), 5);
+        assertEquals(5, (long) map.getGuestOperatingSystem().getVersion().getMinor());
         assertNull(map.getGuestOperatingSystem().getVersion().getBuild());
         assertNull(map.getGuestOperatingSystem().getVersion().getRevision());
-        assertEquals(map.getGuestOperatingSystem().getArchitecture(), "x86_64");
-        assertEquals(map.getGuestOperatingSystem().getKernel().getVersion().getFullVersion(), "2.6.32-431.el6.x86_64");
-        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getMajor(), 2);
-        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getMinor(), 6);
-        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getBuild(), 32);
-        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getRevision(), 431);
+        assertEquals("x86_64", map.getGuestOperatingSystem().getArchitecture());
+        assertEquals("2.6.32-431.el6.x86_64", map.getGuestOperatingSystem().getKernel().getVersion().getFullVersion());
+        assertEquals(2, (long)map.getGuestOperatingSystem().getKernel().getVersion().getMajor());
+        assertEquals(6, (long)map.getGuestOperatingSystem().getKernel().getVersion().getMinor());
+        assertEquals(32, (long)map.getGuestOperatingSystem().getKernel().getVersion().getBuild());
+        assertEquals(431, (long)map.getGuestOperatingSystem().getKernel().getVersion().getRevision());
     }
 
     @Test
@@ -326,18 +326,18 @@ public class VmMapperTest extends
         Vm map = VmMapper.map(vm, (Vm) null);
 
         assertNotNull(map.getGuestOperatingSystem());
-        assertEquals(map.getGuestOperatingSystem().getFamily(), "Windows");
-        assertEquals(map.getGuestOperatingSystem().getCodename(), "");
-        assertEquals(map.getGuestOperatingSystem().getDistribution(), "");
-        assertEquals(map.getGuestOperatingSystem().getVersion().getFullVersion(), "6.2.4800");
+        assertEquals("Windows", map.getGuestOperatingSystem().getFamily());
+        assertEquals("", map.getGuestOperatingSystem().getCodename());
+        assertEquals("", map.getGuestOperatingSystem().getDistribution());
+        assertEquals("6.2.4800", map.getGuestOperatingSystem().getVersion().getFullVersion());
         assertNotNull(map.getGuestOperatingSystem().getVersion().getMajor());
-        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMajor(), 6);
+        assertEquals(6, (long) map.getGuestOperatingSystem().getVersion().getMajor());
         assertNotNull(map.getGuestOperatingSystem().getVersion().getMinor());
-        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMinor(), 2);
+        assertEquals(2, (long) map.getGuestOperatingSystem().getVersion().getMinor());
         assertNotNull(map.getGuestOperatingSystem().getVersion().getBuild());
-        assertEquals((long) map.getGuestOperatingSystem().getVersion().getBuild(), 4800);
+        assertEquals(4800, (long) map.getGuestOperatingSystem().getVersion().getBuild());
         assertNull(map.getGuestOperatingSystem().getVersion().getRevision());
-        assertEquals(map.getGuestOperatingSystem().getArchitecture(), "x86_64");
+        assertEquals("x86_64", map.getGuestOperatingSystem().getArchitecture());
         assertNull(map.getGuestOperatingSystem().getKernel());
     }
 
@@ -402,10 +402,10 @@ public class VmMapperTest extends
     @Test
     public void testMapConfigurationType() {
         org.ovirt.engine.core.common.businessentities.ConfigurationType configurationTypeBll = VmMapper.map(ConfigurationType.OVF, null);
-        assertEquals(configurationTypeBll, org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF);
+        assertEquals(org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF, configurationTypeBll);
 
         ConfigurationType configurationTypeApi = VmMapper.map(org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF, null);
-        assertEquals(configurationTypeApi, ConfigurationType.OVF);
+        assertEquals(ConfigurationType.OVF, configurationTypeApi);
     }
 
     @Test
@@ -464,20 +464,20 @@ public class VmMapperTest extends
     @Test
     public void getUsbPolicyNullUsb() {
         Usb usb = null;
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnCreate(usb));
     }
 
     @Test
     public void getUsbPolicyIsSetDisabled() {
         Usb usb = new Usb();
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnCreate(usb));
     }
 
     @Test
     public void getUsbPolicySetDisabled() {
         Usb usb = new Usb();
         usb.setEnabled(false);
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnCreate(usb));
     }
 
     @Test
@@ -485,7 +485,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         usb.setType(UsbType.NATIVE);
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb), UsbPolicy.ENABLED_NATIVE);
+        assertEquals(UsbPolicy.ENABLED_NATIVE, VmMapper.getUsbPolicyOnCreate(usb));
     }
 
     @Test
@@ -493,7 +493,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb), UsbPolicy.ENABLED_LEGACY);
+        assertEquals(UsbPolicy.ENABLED_LEGACY, VmMapper.getUsbPolicyOnCreate(usb));
     }
 
     @Test
@@ -542,42 +542,42 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNotSetLegacyPolicyUsb() {
         Usb usb = new Usb();
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED));
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNotSetNativePolicyUsb() {
         Usb usb = new Usb();
         usb.setType(UsbType.NATIVE);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED));
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledNotSetLegacyPolicyUsb() {
         Usb usb = new Usb();
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY), UsbPolicy.ENABLED_LEGACY);
+        assertEquals(UsbPolicy.ENABLED_LEGACY, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY));
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNotSetLegacyPolicyUsb() {
         Usb usb = new Usb();
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_LEGACY);
+        assertEquals(UsbPolicy.ENABLED_LEGACY, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE));
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledNotSetNativePolicyUsb() {
         Usb usb = new Usb();
         usb.setType(UsbType.NATIVE);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY), UsbPolicy.ENABLED_NATIVE);
+        assertEquals(UsbPolicy.ENABLED_NATIVE, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY));
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNotSetNativePolicyUsb() {
         Usb usb = new Usb();
         usb.setType(UsbType.NATIVE);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_NATIVE);
+        assertEquals(UsbPolicy.ENABLED_NATIVE, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE));
     }
 
     @Test
@@ -585,7 +585,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(false);
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED));
     }
 
     @Test
@@ -593,7 +593,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(false);
         usb.setType(UsbType.NATIVE);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED));
     }
 
     @Test
@@ -601,7 +601,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(false);
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY));
     }
 
     @Test
@@ -609,7 +609,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(false);
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.DISABLED);
+        assertEquals(UsbPolicy.DISABLED, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE));
     }
 
     @Test
@@ -617,7 +617,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         usb.setType(UsbType.LEGACY);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_LEGACY);
+        assertEquals(UsbPolicy.ENABLED_LEGACY, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE));
     }
 
     @Test
@@ -625,7 +625,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         usb.setType(UsbType.NATIVE);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_NATIVE);
+        assertEquals(UsbPolicy.ENABLED_NATIVE, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE));
     }
 
     @Test
@@ -633,7 +633,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         usb.setType(UsbType.NATIVE);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.ENABLED_NATIVE);
+        assertEquals(UsbPolicy.ENABLED_NATIVE, VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED));
     }
 
     @Test
@@ -646,16 +646,16 @@ public class VmMapperTest extends
         vm.setDynamicData(vmDynamic);
         Sessions sessions = VmMapper.map(vm, new Sessions());
         assertNotNull(sessions);
-        assertEquals(sessions.getSessions().size(), 2);
+        assertEquals(2, sessions.getSessions().size());
         Session consoleSession =
                 sessions.getSessions().get(0).getUser().getUserName().equals("admin") ? sessions.getSessions().get(0)
                         : sessions.getSessions().get(1);
         Session guestSession =
                 sessions.getSessions().get(0).getUser().getUserName().equals("Ori") ? sessions.getSessions().get(0)
                         : sessions.getSessions().get(1);
-        assertEquals(consoleSession.getUser().getUserName(), "admin");
-        assertEquals(consoleSession.getIp().getAddress(), "1.1.1.1");
+        assertEquals("admin", consoleSession.getUser().getUserName());
+        assertEquals("1.1.1.1", consoleSession.getIp().getAddress());
         assertTrue(consoleSession.isConsoleUser());
-        assertEquals(guestSession.getUser().getUserName(), "Ori");
+        assertEquals("Ori", guestSession.getUser().getUserName());
     }
 }

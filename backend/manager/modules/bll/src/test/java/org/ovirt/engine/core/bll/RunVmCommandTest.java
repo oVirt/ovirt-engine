@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -178,8 +179,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         String Initrd = "/boot/initrd.initrd";
         String Kernel = "/boot/kernel.image";
         VM vm = createVmForTesting(Initrd, Kernel);
-        assertEquals(vm.getInitrdUrl(), Initrd);
-        assertEquals(vm.getKernelUrl(), Kernel);
+        assertEquals(Initrd, vm.getInitrdUrl());
+        assertEquals(Kernel, vm.getKernelUrl());
     }
 
     @Test
@@ -196,7 +197,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         String initrd = "initrd";
         String kernel = "kernel";
         VM vm = createVmForTesting(initrd, RunVmCommand.ISO_PREFIX + kernel);
-        assertEquals(vm.getInitrdUrl(), initrd);
+        assertEquals(initrd, vm.getInitrdUrl());
         assertEquals(vm.getKernelUrl(), ACTIVE_ISO_PREFIX + "/" + kernel);
     }
 
@@ -206,14 +207,14 @@ public class RunVmCommandTest extends BaseCommandTest {
         String kernel = "kernel";
         VM vm = createVmForTesting(RunVmCommand.ISO_PREFIX + initrd, kernel);
         assertEquals(vm.getInitrdUrl(), ACTIVE_ISO_PREFIX + "/" + initrd);
-        assertEquals(vm.getKernelUrl(), kernel);
+        assertEquals(kernel, vm.getKernelUrl());
     }
 
     @Test
     public void validateIsoPrefixNameForKernelAndNullForInitrd() throws Exception {
         String kernel = "kernel";
         VM vm = createVmForTesting(null, RunVmCommand.ISO_PREFIX + kernel);
-        assertEquals(vm.getInitrdUrl(), null);
+        assertNull(vm.getInitrdUrl());
         assertEquals(vm.getKernelUrl(), ACTIVE_ISO_PREFIX + "/" + kernel);
     }
 
@@ -221,7 +222,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void validateIsoPrefixCaseSensitive() throws Exception {
         String initrd = "ISO://";
         VM vm = createVmForTesting(initrd, null);
-        assertEquals(vm.getInitrdUrl(), "");
+        assertEquals("", vm.getInitrdUrl());
     }
 
     @Test
@@ -229,8 +230,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         String initrd = RunVmCommand.ISO_PREFIX;
         String kernelUrl = RunVmCommand.ISO_PREFIX;
         VM vm = createVmForTesting(initrd, kernelUrl);
-        assertEquals(vm.getInitrdUrl(), "");
-        assertEquals(vm.getKernelUrl(), "");
+        assertEquals("", vm.getInitrdUrl());
+        assertEquals("", vm.getKernelUrl());
     }
 
     @Test
@@ -238,8 +239,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         String initrd = "@#$!";
         String kernelUrl = "    ";
         VM vm = createVmForTesting(initrd, kernelUrl);
-        assertEquals(vm.getInitrdUrl(), initrd);
-        assertEquals(vm.getKernelUrl(), kernelUrl);
+        assertEquals(initrd, vm.getInitrdUrl());
+        assertEquals(kernelUrl, vm.getKernelUrl());
     }
 
     @Test
@@ -247,7 +248,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         String initrd = "initrd";
         VM vm = createVmForTesting(RunVmCommand.ISO_PREFIX + initrd, null);
         assertEquals(vm.getInitrdUrl(), ACTIVE_ISO_PREFIX + "/" + initrd);
-        assertEquals(vm.getKernelUrl(), null);
+        assertNull(vm.getKernelUrl());
     }
 
     @Test
@@ -264,7 +265,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void validateIsoPrefixWithTrippleSlash() throws Exception {
         String initrd = RunVmCommand.ISO_PREFIX + "/";
         VM vm = createVmForTesting(initrd, null);
-        assertEquals(vm.getInitrdUrl(), ACTIVE_ISO_PREFIX + "/");
+        assertEquals(ACTIVE_ISO_PREFIX + "/", vm.getInitrdUrl());
     }
 
     @Test
@@ -280,14 +281,14 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void validateInitrdWithSlashOnly() throws Exception {
         String initrd = "/";
         VM vm = createVmForTesting(initrd, null);
-        assertEquals(vm.getInitrdUrl(), "/");
+        assertEquals("/", vm.getInitrdUrl());
     }
 
     @Test
     public void validateIsoPrefixWithBackSlash() throws Exception {
         String initrd = "iso:\\";
         VM vm = createVmForTesting(initrd, null);
-        assertEquals(vm.getInitrdUrl(), "iso:\\");
+        assertEquals("iso:\\", vm.getInitrdUrl());
     }
 
     @Test
@@ -295,8 +296,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         String initrd = "/boot";
         String kernelImage = "/boot";
         VM vm = createVmForTesting(initrd, kernelImage);
-        assertEquals(vm.getInitrdUrl(), initrd);
-        assertEquals(vm.getKernelUrl(), kernelImage);
+        assertEquals(initrd, vm.getInitrdUrl());
+        assertEquals(kernelImage, vm.getKernelUrl());
     }
 
     @Test
@@ -304,8 +305,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         String initrd = "i";
         String kernelImage = "k";
         VM vm = createVmForTesting(initrd, kernelImage);
-        assertEquals(vm.getInitrdUrl(), "i");
-        assertEquals(vm.getKernelUrl(), "k");
+        assertEquals("i", vm.getInitrdUrl());
+        assertEquals("k", vm.getKernelUrl());
     }
 
     private VM createVmForTesting(String initrd, String kernel) {

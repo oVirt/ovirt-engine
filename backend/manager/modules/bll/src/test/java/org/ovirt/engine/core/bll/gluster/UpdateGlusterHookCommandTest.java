@@ -116,7 +116,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         mockBackend(true, null);
         cmd.executeCommand();
         verify(hooksDao, times(1)).updateGlusterHook(any(GlusterHookEntity.class));
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_UPDATED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_UPDATED, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         mockForReadContent(true, null);
         cmd.executeCommand();
         verify(hooksDao, times(1)).updateGlusterHook(any(GlusterHookEntity.class));
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_UPDATED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_UPDATED, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         mockBackend(false, EngineError.GlusterHookUpdateFailed);
         cmd.executeCommand();
         verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_UPDATE_FAILED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_UPDATE_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         try {
             cmd.executeCommand();
         }catch (EngineException e) {
-            assertEquals(e.getErrorCode(), EngineError.GlusterHookNotFound);
+            assertEquals(EngineError.GlusterHookNotFound, e.getErrorCode());
         }
         verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
     }

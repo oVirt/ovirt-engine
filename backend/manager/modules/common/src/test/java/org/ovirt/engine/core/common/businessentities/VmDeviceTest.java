@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -12,9 +13,9 @@ public class VmDeviceTest {
         Guid vmId = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
         Guid deviceId = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
         VmDevice device1 = createVmDevice(deviceId, vmId);
-        assertTrue(device1.compareTo(device1) == 0);
+        assertEquals(0, device1.compareTo(device1));
         VmDevice device2 = createVmDevice(deviceId, vmId);
-        assertTrue(device1.compareTo(device2) == 0);
+        assertEquals(0, device1.compareTo(device2));
 
     }
 

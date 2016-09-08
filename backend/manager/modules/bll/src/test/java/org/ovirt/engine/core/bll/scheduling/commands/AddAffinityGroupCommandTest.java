@@ -56,7 +56,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     @Test
     public void excuteCommandTest() {
         command.executeCommand();
-        assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_ADDED_AFFINITY_GROUP);
+        assertEquals(AuditLogType.USER_ADDED_AFFINITY_GROUP, command.getAuditLogTypeValue());
     }
 
     @Test

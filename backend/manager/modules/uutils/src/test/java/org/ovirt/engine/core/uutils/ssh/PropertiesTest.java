@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.uutils.ssh;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
@@ -15,22 +16,22 @@ public class PropertiesTest {
     @Test
     public void testProperties() throws IOException {
         try (final SSHClient ssh = new SSHClient()) {
-            assertEquals(ssh.getHost(), null);
-            assertEquals(ssh.getPort(), 22);
-            assertEquals(ssh.getUser(), null);
-            assertEquals(ssh.getDisplayHost(), "N/A");
+            assertNull(ssh.getHost());
+            assertEquals(22, ssh.getPort());
+            assertNull(ssh.getUser());
+            assertEquals("N/A", ssh.getDisplayHost());
 
             ssh.setHost("host1");
-            assertEquals(ssh.getHost(), "host1");
-            assertEquals(ssh.getDisplayHost(), "host1");
+            assertEquals("host1", ssh.getHost());
+            assertEquals("host1", ssh.getDisplayHost());
             ssh.setHost("host1", 1234);
-            assertEquals(ssh.getPort(), 1234);
-            assertEquals(ssh.getDisplayHost(), "host1:1234");
+            assertEquals(1234, ssh.getPort());
+            assertEquals("host1:1234", ssh.getDisplayHost());
             ssh.setUser("user1");
-            assertEquals(ssh.getUser(), "user1");
-            assertEquals(ssh.getDisplayHost(), "user1@host1:1234");
+            assertEquals("user1", ssh.getUser());
+            assertEquals("user1@host1:1234", ssh.getDisplayHost());
             ssh.setHost("host2");
-            assertEquals(ssh.getDisplayHost(), "user1@host2");
+            assertEquals("user1@host2", ssh.getDisplayHost());
         }
     }
 }

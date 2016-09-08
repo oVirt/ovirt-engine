@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.compat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -12,6 +13,6 @@ public class StringHelperTest {
 
         //TODO: is this the intended behavior?
         assertEquals("foo,,bar", StringHelper.join(",", new String[]{"foo", null, "bar"}));
-        assertEquals(null, StringHelper.join(null, null));
+        assertNull(StringHelper.join(null, null));
     }
 }

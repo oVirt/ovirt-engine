@@ -10,17 +10,17 @@ public class VmBaseMapperTest {
     @Test
     public void testMapOriginTypeRhev() {
         String s = VmBaseMapper.map(OriginType.RHEV, null);
-        assertEquals(s, "rhev");
+        assertEquals("rhev", s);
         OriginType s2 = VmMapper.map(s, OriginType.RHEV);
-        assertEquals(s2, OriginType.RHEV);
+        assertEquals(OriginType.RHEV, s2);
     }
 
     @Test
     public void testMapOriginTypeOvirt() {
         String s = VmBaseMapper.map(OriginType.OVIRT, null);
-        assertEquals(s, "ovirt");
+        assertEquals("ovirt", s);
         OriginType s2 = VmMapper.map(s, OriginType.OVIRT);
-        assertEquals(s2, OriginType.OVIRT);
+        assertEquals(OriginType.OVIRT, s2);
     }
 
 }

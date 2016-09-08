@@ -181,6 +181,6 @@ public class MetadataDiskDescriptionHandlerTest {
         Disk diskToEnrich = new DiskImage();
         MetadataDiskDescriptionHandler.getInstance().enrichDiskByJsonDescription(
                 MetadataDiskDescriptionHandler.getInstance().generateJsonDiskDescription(disk), diskToEnrich);
-        assertEquals(disk, diskToEnrich);
+        assertEquals(diskToEnrich, disk);
     }
 }

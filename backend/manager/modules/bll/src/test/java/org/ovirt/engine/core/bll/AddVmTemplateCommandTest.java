@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -293,10 +294,10 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     }
 
     private void verifyPermissions(PermissionSubject editDefaultHostPermission, PermissionSubject permissionSubject) {
-            assertTrue(permissionSubject.getMessage().equals(editDefaultHostPermission.getMessage()));
-            assertTrue(permissionSubject.getActionGroup().equals(editDefaultHostPermission.getActionGroup()));
-            assertTrue(permissionSubject.getObjectId().equals(editDefaultHostPermission.getObjectId()));
-            assertTrue(permissionSubject.getObjectType().equals(editDefaultHostPermission.getObjectType()));
+        assertEquals(permissionSubject.getMessage(), editDefaultHostPermission.getMessage());
+        assertEquals(permissionSubject.getActionGroup(), editDefaultHostPermission.getActionGroup());
+        assertEquals(permissionSubject.getObjectId(), editDefaultHostPermission.getObjectId());
+        assertEquals(permissionSubject.getObjectType(), editDefaultHostPermission.getObjectType());
     }
 
     private void setupDedicatedHostForVmAndTemplate(boolean setDefaultHostForTemplate){

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
         domainsList.add(tempStorageDomains);
 
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
-        assertTrue(listReturned.size() == 2);
+        assertEquals(2, listReturned.size());
     }
 
     /**

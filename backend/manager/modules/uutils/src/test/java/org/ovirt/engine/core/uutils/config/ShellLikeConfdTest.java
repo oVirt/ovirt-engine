@@ -66,8 +66,8 @@ public class ShellLikeConfdTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetSuffixedProperty() throws Exception {
 
-        assertEquals(config.getProperty("key00", "non_existent", false), "value0");
-        assertEquals(config.getProperty("key01", "suffixed", false), "suffixed val");
-        assertEquals(config.getProperty("non_existent", "non_existent", false), "throws exception");
+        assertEquals("value0", config.getProperty("key00", "non_existent", false));
+        assertEquals("suffixed val", config.getProperty("key01", "suffixed", false));
+        assertEquals("throws exception", config.getProperty("non_existent", "non_existent", false));
     }
 }

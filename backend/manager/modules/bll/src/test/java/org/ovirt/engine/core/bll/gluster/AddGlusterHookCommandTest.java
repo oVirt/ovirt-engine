@@ -115,7 +115,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         cmd.executeCommand();
         verify(hooksDao, times(1)).updateGlusterHook(any(GlusterHookEntity.class));
         verify(hooksDao, times(3)).removeGlusterServerHook(any(Guid.class), any(Guid.class));
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_ADDED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_ADDED, cmd.getAuditLogTypeValue());
     }
 
 
@@ -127,7 +127,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         cmd.executeCommand();
         verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
         verify(hooksDao, never()).removeGlusterServerHook(any(Guid.class), any(Guid.class));
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_ADD_FAILED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_ADD_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test

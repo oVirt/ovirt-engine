@@ -66,7 +66,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
         setupMocks();
         doNothing().when(hookSyncJob).refreshHooksInCluster(getCluster(), true);
         cmd.executeCommand();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REFRESH);
+        assertEquals(AuditLogType.GLUSTER_HOOK_REFRESH, cmd.getAuditLogTypeValue());
     }
 
     @Test
@@ -78,8 +78,8 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
             cmd.executeCommand();
             fail("Expected EngineException");
         } catch (EngineException e) {
-            assertEquals(e.getErrorCode(), EngineError.GlusterHookListException);
-            assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REFRESH_FAILED);
+            assertEquals(EngineError.GlusterHookListException, e.getErrorCode());
+            assertEquals(AuditLogType.GLUSTER_HOOK_REFRESH_FAILED, cmd.getAuditLogTypeValue());
         }
     }
 

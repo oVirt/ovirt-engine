@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.uutils.ssh;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.BufferedReader;
@@ -62,8 +61,8 @@ public class SSHDialogTest {
             if (throwable != null) {
                 throw throwable;
             }
-            assertTrue(expect.size() == 0);
-            assertTrue(send.size() == 0);
+            assertEquals(0, expect.size());
+            assertEquals(0, send.size());
         }
 
         @Override

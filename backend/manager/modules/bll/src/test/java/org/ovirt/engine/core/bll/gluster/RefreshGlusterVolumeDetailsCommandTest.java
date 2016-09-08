@@ -152,7 +152,7 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
         cmd = spy(createTestCommand(volumeId1));
         prepareMocks(cmd);
         cmd.executeCommand();
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_DETAILS_REFRESH);
+        assertEquals(AuditLogType.GLUSTER_VOLUME_DETAILS_REFRESH, cmd.getAuditLogTypeValue());
         verify(syncJob, times(1)).refreshVolumeDetails(any(VDS.class), any(GlusterVolumeEntity.class));
     }
 }

@@ -101,7 +101,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         mockBackend(true, null);
         cmd.executeCommand();
         verify(hooksDao, times(1)).remove(any(Guid.class));
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REMOVED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_REMOVED, cmd.getAuditLogTypeValue());
     }
 
 
@@ -112,7 +112,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         mockBackend(false, EngineError.GlusterHookRemoveFailed);
         cmd.executeCommand();
         verify(hooksDao, never()).remove(any(Guid.class));
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REMOVE_FAILED);
+        assertEquals(AuditLogType.GLUSTER_HOOK_REMOVE_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test

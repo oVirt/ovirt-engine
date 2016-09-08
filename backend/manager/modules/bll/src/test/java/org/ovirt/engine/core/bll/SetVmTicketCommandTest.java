@@ -38,7 +38,7 @@ public class SetVmTicketCommandTest extends BaseCommandTest {
         user.setLoginName("Legolas");
         user.setDomain("");
         command.setCurrentUser(user);
-        assertEquals(command.getConsoleUserName(), "Legolas");
+        assertEquals("Legolas", command.getConsoleUserName());
     }
 
     /**
@@ -51,6 +51,6 @@ public class SetVmTicketCommandTest extends BaseCommandTest {
         user.setLoginName("Legolas");
         user.setDomain("MiddleEarth.com");
         command.setCurrentUser(user);
-        assertEquals(command.getConsoleUserName(), "Legolas@MiddleEarth.com");
+        assertEquals("Legolas@MiddleEarth.com", command.getConsoleUserName());
     }
 }

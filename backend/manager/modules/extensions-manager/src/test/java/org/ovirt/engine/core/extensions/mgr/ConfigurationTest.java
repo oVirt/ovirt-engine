@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -408,7 +409,7 @@ public class ConfigurationTest {
         assertNotNull(view1);
         Configuration view2 = config.getView("a");
         assertNotNull(view2);
-        assertTrue(view1 == view2);
+        assertSame(view1, view2);
     }
 
     /**
@@ -424,7 +425,7 @@ public class ConfigurationTest {
         assertNotNull(view1);
         TypedString view2 = config.getView(TypedString.class);
         assertNotNull(view2);
-        assertTrue(view1 == view2);
+        assertSame(view1, view2);
     }
 
     /**

@@ -74,7 +74,7 @@ public class EngineConfigLogicTest {
         String updatedValue = engineConfigLogic.fetchConfigKey(key, null).getValue();
 
         log.info("{} new value: {}", key, updatedValue);
-        assertEquals(updatedValue, newValue);
+        assertEquals(newValue, updatedValue);
 
         // Restoring original value
         engineConfigLogic.persist(key, oldValue, "");

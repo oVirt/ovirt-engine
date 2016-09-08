@@ -558,7 +558,7 @@ public class NetworkDeviceHelperImplTest {
             }
 
             for (Guid capturedVmId : capturedVmIds) {
-                assertEquals(null, capturedVmId);
+                assertNull(capturedVmId);
             }
         }
     }

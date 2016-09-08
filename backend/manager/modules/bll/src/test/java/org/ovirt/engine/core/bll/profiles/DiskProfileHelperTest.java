@@ -88,25 +88,25 @@ public class DiskProfileHelperTest {
     @Test
     public void setAndValidateWithoutDiskProfilesTest() {
         map.put(diskImage, STORAGE_DOMAIN_1);
-        assertEquals(diskProfileHelper.setAndValidateDiskProfiles(map, dbUser), ValidationResult.VALID);
+        assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
     }
 
     @Test
     public void setAndValidateSingleProfileTest() {
         diskImage.setDiskProfileId(diskProfile_a.getId());
         map.put(diskImage, STORAGE_DOMAIN_1);
-        assertEquals(diskProfileHelper.setAndValidateDiskProfiles(map, dbUser), ValidationResult.VALID);
+        assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
     }
 
     @Test
     public void setAndValidateMultipleStorageDomainsAndDiskProfilesTest() {
         diskImage.setDiskProfileIds(new ArrayList<Guid>(Arrays.asList(diskProfile_a.getId(), diskProfile_b.getId())));
         map.put(diskImage, STORAGE_DOMAIN_1);
-        assertEquals(diskProfileHelper.setAndValidateDiskProfiles(map, dbUser), ValidationResult.VALID);
+        assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
         diskImage.setDiskProfileIds(new ArrayList<Guid>(Arrays.asList(diskProfile_a.getId(), diskProfile_b.getId())));
         map.clear();
         map.put(diskImage, STORAGE_DOMAIN_2);
-        assertEquals(diskProfileHelper.setAndValidateDiskProfiles(map, dbUser), ValidationResult.VALID);
+        assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
         map.clear();
     }
 

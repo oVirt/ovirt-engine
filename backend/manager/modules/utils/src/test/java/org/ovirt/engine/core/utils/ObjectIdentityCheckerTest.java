@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -24,7 +25,7 @@ public class ObjectIdentityCheckerTest {
         Jedi jedi2 = new Jedi();
 
         List<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
-        assertTrue("Should be no changes", changes.size() == 0);
+        assertEquals("Should be no changes", 0, changes.size());
     }
 
     @Test
@@ -34,7 +35,7 @@ public class ObjectIdentityCheckerTest {
         jedi2.saberColor = "red"; // Gone to the dark side
 
         List<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
-        assertTrue("Should be 1 changes", changes.size() == 1);
+        assertEquals("Should be 1 changes", 1, changes.size());
     }
 
     @Test

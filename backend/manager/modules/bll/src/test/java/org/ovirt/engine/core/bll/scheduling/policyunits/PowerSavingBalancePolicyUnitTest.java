@@ -66,8 +66,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
-        assertEquals(result.get().getCandidateHosts().size(), 1);
-        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
+        assertEquals(1, result.get().getCandidateHosts().size());
+        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
     @Test
@@ -93,8 +93,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(result.get().getCandidateHosts().size(), 1);
-        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
+        assertEquals(1, result.get().getCandidateHosts().size());
+        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
     @Test
@@ -120,8 +120,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(result.get().getCandidateHosts().size(), 1);
-        assertNotEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
+        assertEquals(1, result.get().getCandidateHosts().size());
+        assertNotEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
     @Test
@@ -146,8 +146,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
-        assertEquals(result.get().getCandidateHosts().size(), 1);
-        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
+        assertEquals(1, result.get().getCandidateHosts().size());
+        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
     @Test
