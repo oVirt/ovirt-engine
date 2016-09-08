@@ -43,7 +43,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     /**
      * The command under test.
      */
-    AddGlusterHookCommand cmd;
+    private AddGlusterHookCommand cmd;
 
     @Mock
     private VdsDao vdsDao;
