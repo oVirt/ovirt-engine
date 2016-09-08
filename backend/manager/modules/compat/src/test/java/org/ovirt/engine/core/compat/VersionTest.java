@@ -29,8 +29,8 @@ public class VersionTest {
 
     @Test
     public void compare() {
-        assertTrue(Version.v3_6.compareTo(Version.v4_0) == -1);
-        assertTrue(Version.v4_0.compareTo(Version.v3_6) == 1);
+        assertTrue(Version.v3_6.compareTo(Version.v4_0) < 0);
+        assertTrue(Version.v4_0.compareTo(Version.v3_6) > 0);
         assertTrue(Version.v3_6.compareTo(new Version("3.6")) == 0);
     }
 
