@@ -769,8 +769,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
                 VmDevice device = createVmDevice(diskImageGuid, vm.getId());
                 vmsWithVmDevice.add(new Pair<>(vm, device));
             }
-        } else {
-            vms = Collections.emptyList();
         }
 
         when(vmDao.getVmsWithPlugInfo(diskImageGuid)).thenReturn(vmsWithVmDevice);
