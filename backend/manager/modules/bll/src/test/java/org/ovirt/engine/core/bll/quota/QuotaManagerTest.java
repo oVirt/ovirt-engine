@@ -97,7 +97,7 @@ public class QuotaManagerTest {
     private static final String EXPECTED_NUMBER_OF_DB_CALLS = "%d DB calls were expected. %d invoked";
 
     @Before
-    public void testSetup() {
+    public void setUp() {
         setStoragePool();
         mockQuotaDao();
         doReturn(quotaDao).when(quotaManager).getQuotaDao();
