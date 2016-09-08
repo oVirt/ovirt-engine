@@ -38,8 +38,8 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
 
     private ScanStorageForUnregisteredDisksCommand<StorageDomainParametersBase> cmd;
 
-    DiskImage diskImageForTest = new DiskImage();
-    Guid storageId = Guid.newGuid();
+    private DiskImage diskImageForTest = new DiskImage();
+    private Guid storageId = Guid.newGuid();
 
     public void mockCommand() throws IOException, OvfReaderException {
         mockCommandParameters();
