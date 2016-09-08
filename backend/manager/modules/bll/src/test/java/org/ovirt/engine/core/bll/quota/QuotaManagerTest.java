@@ -4,8 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -72,8 +75,6 @@ public class QuotaManagerTest {
 
     private static final String EXPECTED_EMPTY_CAN_DO_MESSAGE = "Can-Do-Action message was expected to be empty";
     private static final String EXPECTED_CAN_DO_MESSAGE = "Can-Do-Action message was expected (result: empty)";
-    private static final String EXPECTED_NO_AUDIT_LOG_MESSAGE = "No AuditLog massage was expected";
-    private static final String EXPECTED_AUDIT_LOG_MESSAGE = "AuditLog massage was expected";
 
     @Mock
     private QuotaDao quotaDao;
@@ -91,7 +92,6 @@ public class QuotaManagerTest {
     private StoragePool storage_pool = new StoragePool();
     private ArrayList<String> validationMessages = new ArrayList<>();
     private QuotaConsumptionParametersWrapper parametersWrapper;
-    private boolean auditLogWritten = false;
     private int dbCalls = 0;
     private static final String EXPECTED_NUMBER_OF_DB_CALLS = "%d DB calls were expected. %d invoked";
 
@@ -102,15 +102,7 @@ public class QuotaManagerTest {
         doReturn(quotaDao).when(quotaManager).getQuotaDao();
         doReturn(quotaManagerAuditLogger).when(quotaManager).getQuotaManagerAuditLogger();
 
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                if (invocation.getArguments()[0] != null) {
-                    auditLogWritten = true;
-                }
-                return null;
-            }
-        }).when(quotaManagerAuditLogger).auditLog(any(AuditLogType.class), any(AuditLogableBase.class));
+        doNothing().when(quotaManagerAuditLogger).auditLog(any(AuditLogType.class), any(AuditLogableBase.class));
 
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.setStoragePool(storage_pool);
@@ -185,12 +177,11 @@ public class QuotaManagerTest {
     }
 
     private void assertAuditLogWritten() {
-        assertTrue(EXPECTED_AUDIT_LOG_MESSAGE, auditLogWritten);
-        auditLogWritten = false;
+        verify(quotaManagerAuditLogger).auditLog(any(AuditLogType.class), any(AuditLogableBase.class));
     }
 
     private void assertAuditLogNotWritten() {
-        assertFalse(EXPECTED_NO_AUDIT_LOG_MESSAGE, auditLogWritten);
+        verify(quotaManagerAuditLogger).auditLog(eq(null), any(AuditLogableBase.class));
     }
 
     private void assertDbWasCalled(int expectedNumOfCalls) {
