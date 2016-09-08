@@ -21,9 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -367,14 +365,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     private void mockExistingHosts(final VDS... hosts) {
         // we need to recreate the list on each call, because the list is altered in FenceProxyLocator
-        when(vdsDao.getAll()).thenAnswer(
-                new Answer<List<VDS>>() {
-                    @Override
-                    public List<VDS> answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        return Arrays.asList(hosts);
-                    }
-                }
-        );
+        when(vdsDao.getAll()).thenAnswer(invocationOnMock -> Arrays.asList(hosts));
     }
 
     private void mockVdsFenceOptions(boolean agentsCompatibleWithProxy) {

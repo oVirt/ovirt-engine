@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -69,7 +68,7 @@ public class VmSlaPolicyCommandTest {
         doReturn(vmDao).when(command).getVmDao();
         doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
 
-        Answer<?> answer = invocation -> {
+        doAnswer(invocation -> {
             VDSCommandType commandType = (VDSCommandType) invocation.getArguments()[0];
             assertEquals(VDSCommandType.UpdateVmPolicy, commandType);
 
@@ -77,9 +76,7 @@ public class VmSlaPolicyCommandTest {
             VDSReturnValue retVal = new VDSReturnValue();
             retVal.setSucceeded(vdsFunction.apply(params));
             return retVal;
-        };
-
-        doAnswer(answer).when(command).runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
+        }).when(command).runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
 
         vm = new VM();
         vm.setId(VM_ID);

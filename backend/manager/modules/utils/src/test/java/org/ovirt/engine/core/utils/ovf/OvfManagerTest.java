@@ -23,9 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -116,16 +114,13 @@ public class OvfManagerTest {
 
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
-        when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(new Answer<Integer>() {
-            @Override
-            public Integer answer(InvocationOnMock invocation) throws Throwable {
-                for (Map.Entry<Integer, String> entry : osIdsToNames.entrySet()) {
-                    if (invocation.getArguments()[0].equals(entry.getValue())) {
-                        return entry.getKey();
-                    }
+        when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(invocation-> {
+            for (Map.Entry<Integer, String> entry : osIdsToNames.entrySet()) {
+                if (invocation.getArguments()[0].equals(entry.getValue())) {
+                    return entry.getKey();
                 }
-                return 0;
             }
+            return 0;
         });
         when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any(Version.class))).thenReturn(gndDefaultOs);
         when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any(Version.class))).thenReturn(gndExistingOs);

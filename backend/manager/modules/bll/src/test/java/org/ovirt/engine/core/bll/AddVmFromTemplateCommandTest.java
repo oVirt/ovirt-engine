@@ -16,9 +16,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -93,14 +91,10 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
     }
 
     private void mockGetAllSnapshots() {
-        doAnswer(new Answer<List<DiskImage>>() {
-            @Override
-            public List<DiskImage> answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                DiskImage arg = (DiskImage) args[0];
-                List<DiskImage> list  = createDiskSnapshot(arg.getId(), 3);
-                return list;
-            }
+        doAnswer(invocation -> {
+            Object[] args = invocation.getArguments();
+            DiskImage arg = (DiskImage) args[0];
+            return createDiskSnapshot(arg.getId(), 3);
         }).when(command).getAllImageSnapshots(any(DiskImage.class));
     }
 

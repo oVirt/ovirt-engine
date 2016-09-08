@@ -34,8 +34,6 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -164,13 +162,8 @@ public class RunVmCommandTest extends BaseCommandTest {
      *            - Valid Iso patch or blank (when the Iso is not active.
      */
     private void setIsoPrefixVDSMethod(final String isoPrefix) {
-        doAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return ImagesHandler.cdPathWindowsToLinux(invocation.getArguments()[0].toString(), isoPrefix);
-            }
-
-        }).when(command).cdPathWindowsToLinux(anyString());
+        doAnswer(invocation -> ImagesHandler.cdPathWindowsToLinux(invocation.getArguments()[0].toString(), isoPrefix))
+                .when(command).cdPathWindowsToLinux(anyString());
     }
 
     @Test

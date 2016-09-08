@@ -33,7 +33,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
@@ -177,27 +176,27 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void mockAnswers() {
-        doAnswer((Answer<String>) invocation -> {
+        doAnswer(invocation -> {
             VM vm = (VM) invocation.getArguments()[0];
             return vm.getId().toString();
         }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyListOf(DiskImage.class));
 
-        doAnswer((Answer<String>) invocation -> {
+        doAnswer(invocation -> {
             VmTemplate template = (VmTemplate) invocation.getArguments()[0];
             return template.getId().toString();
         }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(VmTemplate.class), anyListOf(DiskImage.class));
 
-        doAnswer((Answer<List<VM>>) invocation -> {
+        doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
             return neededIds.stream().map(id -> vms.get(id)).collect(Collectors.toList());
         }).when(vmDao).getVmsByIds(anyListOf(Guid.class));
 
-        doAnswer((Answer<List<VmTemplate>>) invocation -> {
+        doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
             return neededIds.stream().map(id -> templates.get(id)).collect(Collectors.toList());
         }).when(vmTemplateDao).getVmTemplatesByIds(anyListOf(Guid.class));
 
-        doAnswer((Answer<Boolean>) invocation -> {
+        doAnswer(invocation -> {
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> updateMap =
                     (Map<Guid, KeyValuePairCompat<String, List<Guid>>>) invocation.getArguments()[1];
             assertTrue("too many ovfs were sent in one vdsm call", updateMap.size() <= ITEMS_COUNT_PER_UPDATE);
@@ -206,7 +205,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         doReturn(true).when(ovfUpdateProcessHelper).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
 
-        doAnswer((Answer<Object>) invocation -> {
+        doAnswer(invocation -> {
             List<Guid> ids = (List<Guid>) invocation.getArguments()[0];
             List<Long> values = (List<Long>) invocation.getArguments()[1];
             assertFalse("update of ovf version in db shouldn't be called with an empty value list",
@@ -225,7 +224,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations
                 (anyListOf(Guid.class), anyListOf(Long.class), anyListOf(String.class));
 
-        doAnswer((Answer<Object>) invocation -> {
+        doAnswer(invocation -> {
             StoragePoolStatus desiredStatus = (StoragePoolStatus) invocation.getArguments()[0];
             return buildStoragePoolsList().stream()
                     .filter(p -> desiredStatus.equals(p.getStatus()))
@@ -235,7 +234,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(poolDomainsOvfInfo.values().stream().map(Pair::getSecond).collect(Collectors.toList()))
                 .when(storageDomainDao).getAllForStoragePool(any(Guid.class));
 
-        doAnswer((Answer<Object>) invocation -> {
+        doAnswer(invocation -> {
             Guid domainId = (Guid) invocation.getArguments()[0];
             Pair<List<StorageDomainOvfInfo>, StorageDomain> pair = poolDomainsOvfInfo.get(domainId);
             if (pair != null) {

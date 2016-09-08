@@ -29,8 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
@@ -531,15 +529,10 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainDaoGet(final int domainSpaceGB) {
-        doAnswer(new Answer<StorageDomain>() {
-
-            @Override
-            public StorageDomain answer(InvocationOnMock invocation) throws Throwable {
-                StorageDomain result = createStorageDomain(domainSpaceGB);
-                result.setId((Guid) invocation.getArguments()[0]);
-                return result;
-            }
-
+        doAnswer(invocation -> {
+            StorageDomain result = createStorageDomain(domainSpaceGB);
+            result.setId((Guid) invocation.getArguments()[0]);
+            return result;
         }).when(sdDao).get(any(Guid.class));
     }
 
@@ -740,13 +733,10 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockGetAllSnapshots(AddVmFromTemplateCommand<AddVmParameters> command) {
-        doAnswer(new Answer<List<DiskImage>>() {
-            @Override
-            public List<DiskImage> answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                DiskImage arg = (DiskImage) args[0];
-                return createDiskSnapshot(arg.getId(), 3);
-            }
+        doAnswer(invocation -> {
+            Object[] args = invocation.getArguments();
+            DiskImage arg = (DiskImage) args[0];
+            return createDiskSnapshot(arg.getId(), 3);
         }).when(command).getAllImageSnapshots(any(DiskImage.class));
     }
 

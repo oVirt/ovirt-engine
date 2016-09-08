@@ -16,8 +16,6 @@ import java.util.Collections;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -117,12 +115,9 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         doReturn(Collections.emptyList()).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
         doReturn(Collections.emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
-        doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                map = (StoragePoolIsoMap) invocation.getArguments()[0];
-                return null;
-            }
+        doAnswer(invocation -> {
+            map = (StoragePoolIsoMap) invocation.getArguments()[0];
+            return null;
         }).when(isoMapDao).save(any(StoragePoolIsoMap.class));
 
         cmd.setCompensationContext(mock(CompensationContext.class));

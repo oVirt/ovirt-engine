@@ -21,9 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -247,17 +245,15 @@ public class AffinityRulesEnforcerTest {
 
     private void prepareVmDao(VM... vmList) {
         final List<VM> vms = Arrays.asList(vmList);
-        doAnswer(new Answer() {
-            @Override public Object answer(InvocationOnMock invocation) throws Throwable {
-                final List<VM> selectedVms = new ArrayList<>();
-                final Set<Guid> vmIds = new HashSet<>((List<Guid>) invocation.getArguments()[0]);
-                for(VM vm :vms){
-                    if(vmIds.contains(vm.getId())){
-                        selectedVms.add(vm);
-                    }
+        doAnswer(invocation -> {
+            final List<VM> selectedVms = new ArrayList<>();
+            final Set<Guid> vmIds = new HashSet<>((List<Guid>) invocation.getArguments()[0]);
+            for(VM vm :vms){
+                if(vmIds.contains(vm.getId())){
+                    selectedVms.add(vm);
                 }
-                return selectedVms;
             }
+            return selectedVms;
         }).when(vmDao).getVmsByIds(anyList());
         for (VM vm : vmList) {
             when(vmDao.get(eq(vm.getId()))).thenReturn(vm);

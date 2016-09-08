@@ -16,9 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -56,34 +54,26 @@ public class OvfDataUpdaterTest {
     }
 
     private void mockAnswers() {
-        doAnswer(new Answer<VdcReturnValueBase>() {
-            @Override
-            public VdcReturnValueBase answer(InvocationOnMock invocation) throws Throwable {
-                VdcReturnValueBase returnValueBase = new VdcReturnValueBase();
-                Map<Guid, Boolean> domains = new HashMap<>();
-                Set<Guid> domainIds = new HashSet<>();
-                domainIds.add(Guid.newGuid());
-                domainIds.add(Guid.newGuid());
-                for (Guid domainId : domainIds) {
-                    domains.put(domainId, Boolean.FALSE);
-                }
-                returnValueBase.setActionReturnValue(domainIds);
-                Guid storagePoolId = (Guid) invocation.getArguments()[0];
-                map.put(storagePoolId, domains);
-                return returnValueBase;
+        doAnswer(invocation -> {
+            VdcReturnValueBase returnValueBase = new VdcReturnValueBase();
+            Map<Guid, Boolean> domains = new HashMap<>();
+            Set<Guid> domainIds = new HashSet<>();
+            domainIds.add(Guid.newGuid());
+            domainIds.add(Guid.newGuid());
+            for (Guid domainId : domainIds) {
+                domains.put(domainId, Boolean.FALSE);
             }
-
+            returnValueBase.setActionReturnValue(domainIds);
+            Guid storagePoolId = (Guid) invocation.getArguments()[0];
+            map.put(storagePoolId, domains);
+            return returnValueBase;
         }).when(ovfDataUpdater).performOvfUpdateForStoragePool(any(Guid.class));
 
-        doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Guid storagePoolId = (Guid) invocation.getArguments()[0];
-                Guid storageDomainId = (Guid) invocation.getArguments()[1];
-                map.get(storagePoolId).put(storageDomainId, Boolean.TRUE);
-                return null;
-            }
-
+        doAnswer(invocation -> {
+            Guid storagePoolId = (Guid) invocation.getArguments()[0];
+            Guid storageDomainId = (Guid) invocation.getArguments()[1];
+            map.get(storagePoolId).put(storageDomainId, Boolean.TRUE);
+            return null;
         }).when(ovfDataUpdater).performOvfUpdateForDomain(any(Guid.class), any(Guid.class));
     }
 
