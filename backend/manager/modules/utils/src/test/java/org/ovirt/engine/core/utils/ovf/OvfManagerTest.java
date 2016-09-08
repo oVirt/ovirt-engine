@@ -262,11 +262,11 @@ public class OvfManagerTest {
                         equals(diskPair.getSecond().getDiskVmElementForVm(vm.getId())));
     }
 
-    private <T extends BusinessEntity> void assertCollection(List<T> colA, List<T> colB) {
+    private <T extends BusinessEntity<?>> void assertCollection(List<T> colA, List<T> colB) {
         assertCollection(colA, colB, null);
     }
 
-    private <T extends BusinessEntity> void assertCollection(List<T> colA, List<T> colB, Function<Pair<T, T>, Boolean> function) {
+    private <T extends BusinessEntity<?>> void assertCollection(List<T> colA, List<T> colB, Function<Pair<T, T>, Boolean> function) {
         assertEquals(colA.size(), colB.size());
         assertEquals(0, CollectionUtils.disjunction(colA, colB).size());
 
