@@ -728,7 +728,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
     }
 
-    protected VM createVmStatusDown(VM... otherPluggedVMs) {
+    protected VM createVmStatusDown() {
         return createVm(VMStatus.Down);
     }
 
