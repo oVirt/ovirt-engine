@@ -286,8 +286,7 @@ public class OvfManagerTest {
     //       for now the export date will just be removed but in the future it's better to inject the date to the
     //       writer.
     private String deleteExportDateValueFromXml(String xml) throws Exception{
-        String xmlNoExportDate = xml.replaceFirst("<ExportDate>[\\s\\S]*?<\\/ExportDate>", "");
-        return xmlNoExportDate;
+        return xml.replaceFirst("<ExportDate>[\\s\\S]*?<\\/ExportDate>", "");
     }
 
     private VM serializeAndDeserialize(VM inputVm) throws OvfReaderException {
