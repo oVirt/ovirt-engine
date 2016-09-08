@@ -29,8 +29,6 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 public class OvfDataUpdaterTest {
     private OvfDataUpdater ovfDataUpdater;
     private Map<Guid, Map<Guid, Boolean>> map;
-    private StoragePool pool1;
-    private StoragePool pool2;
 
     @Mock
     private StoragePoolDao storagePoolDao;
@@ -42,10 +40,10 @@ public class OvfDataUpdaterTest {
         doReturn(storagePoolDao).when(ovfDataUpdater).getStoragePoolDao();
         mockAnswers();
 
-        pool1 = new StoragePool();
+        StoragePool pool1 = new StoragePool();
         pool1.setId(Guid.newGuid());
 
-        pool2 = new StoragePool();
+        StoragePool pool2 = new StoragePool();
         pool2.setId(Guid.newGuid());
 
         doReturn(Arrays.asList(pool1, pool2)).when(storagePoolDao).getAllByStatus(StoragePoolStatus.Up);
