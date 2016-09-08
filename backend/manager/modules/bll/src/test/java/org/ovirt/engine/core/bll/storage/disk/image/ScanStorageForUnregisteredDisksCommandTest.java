@@ -62,8 +62,8 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
     private void createDiskForTest(DiskImage diskImage) {
         diskImage.setDiskAlias("Disk Alias");
         diskImage.setDiskDescription("Disk Description");
-        diskImage.setSizeInGigabytes(10 * 1024 * 1024 * 1024);
-        diskImage.setActualSize(10 * 1024 * 1024 * 1024);
+        diskImage.setSizeInGigabytes(10L * 1024 * 1024 * 1024);
+        diskImage.setActualSize(10L * 1024 * 1024 * 1024);
         diskImage.setId(Guid.newGuid());
         diskImage.setImageId(Guid.newGuid());
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(storageId)));
