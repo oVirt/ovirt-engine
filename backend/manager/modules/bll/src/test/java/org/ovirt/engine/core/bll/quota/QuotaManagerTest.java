@@ -21,9 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -111,31 +109,16 @@ public class QuotaManagerTest {
     }
 
     private void mockQuotaDao() {
-        doAnswer(new Answer<Quota>() {
-            @Override
-            public Quota answer(InvocationOnMock invocation) throws Throwable {
-                return mockStorageQuotaGlobalNotExceeded();
-            }
-        }).when(quotaDao).getById(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED);
+        doAnswer(i -> mockStorageQuotaGlobalNotExceeded()).when(quotaDao).getById(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED);
         when(quotaDao.getById(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockStorageQuotaGlobalOverThreshold());
         when(quotaDao.getById(STORAGE_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockStorageQuotaGlobalInGrace());
         when(quotaDao.getById(STORAGE_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockStorageQuotaGlobalOverGrace());
-        doAnswer(new Answer<Quota>() {
-            @Override
-            public Quota answer(InvocationOnMock invocation) throws Throwable {
-                return mockStorageQuotaSpecificNotExceeded();
-            }
-        }).when(quotaDao).getById(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED);
+        doAnswer(i -> mockStorageQuotaSpecificNotExceeded()).when(quotaDao).getById(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED);
         when(quotaDao.getById(STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD)).thenReturn(mockStorageQuotaSpecificOverThreshold());
         when(quotaDao.getById(STORAGE_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockStorageQuotaSpecificInGrace());
         when(quotaDao.getById(STORAGE_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockStorageQuotaSpecificOverGrace());
 
-        doAnswer(new Answer<Quota>() {
-            @Override
-            public Quota answer(InvocationOnMock invocation) throws Throwable {
-                return mockVCPUQuotaGlobalNotExceeded();
-            }
-        }).when(quotaDao).getById(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED);
+        doAnswer(i -> mockVCPUQuotaGlobalNotExceeded()).when(quotaDao).getById(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED);
         when(quotaDao.getById(VCPU_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockVCPUQuotaGlobalOverThreshold());
         when(quotaDao.getById(VCPU_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockVCPUQuotaGlobalInGrace());
         when(quotaDao.getById(VCPU_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockVCPUQuotaGlobalOverGrace());
@@ -148,12 +131,7 @@ public class QuotaManagerTest {
         when(quotaDao.getById(MEM_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockMemQuotaGlobalOverThreshold());
         when(quotaDao.getById(MEM_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockMemQuotaGlobalInGrace());
         when(quotaDao.getById(MEM_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockMemQuotaGlobalOverGrace());
-        doAnswer(new Answer<Quota>() {
-            @Override
-            public Quota answer(InvocationOnMock invocation) throws Throwable {
-                return mockMemQuotaSpecificNotExceeded();
-            }
-        }).when(quotaDao).getById(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
+        doAnswer(i -> mockMemQuotaSpecificNotExceeded()).when(quotaDao).getById(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_OVER_THRESHOLD)).thenReturn(mockMemQuotaSpecificOverThreshold());
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockMemQuotaSpecificInGrace());
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockMemQuotaSpecificOverGrace());
