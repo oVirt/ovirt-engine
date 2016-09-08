@@ -766,8 +766,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         List<Pair<VM, VmDevice>> vmsWithVmDevice = new ArrayList<>();
         if (vms != null) {
             for (VM vm : vms) {
-            VmDevice device = createVmDevice(diskImageGuid, vm.getId());
-            vmsWithVmDevice.add(new Pair<>(vm, device));
+                VmDevice device = createVmDevice(diskImageGuid, vm.getId());
+                vmsWithVmDevice.add(new Pair<>(vm, device));
             }
         } else {
             vms = Collections.emptyList();
