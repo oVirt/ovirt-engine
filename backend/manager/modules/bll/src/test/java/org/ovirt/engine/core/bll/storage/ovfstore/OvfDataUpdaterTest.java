@@ -88,10 +88,6 @@ public class OvfDataUpdaterTest {
     }
 
     private void verify() {
-        for (Map<Guid, Boolean> map1 : map.values()) {
-            for (Boolean b : map1.values()) {
-                assertTrue(b);
-            }
-        }
+        assertTrue(map.values().stream().flatMap(x -> x.values().stream()).allMatch(x -> x));
     }
 }
