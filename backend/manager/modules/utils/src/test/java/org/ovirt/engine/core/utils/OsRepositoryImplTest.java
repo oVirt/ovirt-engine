@@ -81,7 +81,6 @@ public class OsRepositoryImplTest {
         String actual = OsRepositoryImpl.INSTANCE.toString();
         String expected = OsRepositoryImpl.INSTANCE.name();
         Assert.assertNotSame(expected, actual);
-        System.out.println(actual);
     }
 
     @Test
