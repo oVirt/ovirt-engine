@@ -70,10 +70,6 @@ public class DiskProfileHelperTest {
                 (STORAGE_DOMAIN_1);
         doReturn(Arrays.asList(diskProfile_b)).when(diskProfileDao).getAllForStorageDomain
                 (STORAGE_DOMAIN_2);
-        doReturn(Arrays.asList(diskProfile_a)).when(diskProfileDao).getAllForStorageDomain
-                (STORAGE_DOMAIN_1, USER_ENTITY_ID, true);
-        doReturn(Arrays.asList(diskProfile_b)).when(diskProfileDao).getAllForStorageDomain
-                (STORAGE_DOMAIN_2, USER_ENTITY_ID, true);
     }
 
     private DiskImage createDisk() {

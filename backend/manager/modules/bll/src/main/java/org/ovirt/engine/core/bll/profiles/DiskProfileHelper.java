@@ -112,7 +112,7 @@ public class DiskProfileHelper {
         if (storageDomainId != null) {
             List<Guid> diskProfileIds = diskImage.getDiskProfileIds();
             List<DiskProfile> diskProfilesListByStorageDomain =
-                    diskProfileDao.getAllForStorageDomain(storageDomainId, user.getId(), true);
+                    diskProfileDao.getAllForStorageDomain(storageDomainId);
             Optional<DiskProfile> match = diskProfilesListByStorageDomain.stream()
                     .filter(profile -> diskProfileIds.contains(profile.getId()))
                     .findFirst();
