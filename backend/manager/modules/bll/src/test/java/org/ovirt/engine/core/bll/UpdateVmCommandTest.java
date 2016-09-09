@@ -417,7 +417,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testCanEditARunningVM() {
         prepareVmToPassValidate();
         vm.setStatus(VMStatus.Up);
-        mockDiskDaoGetAllForVm(Collections.<Disk>emptyList(), true);
+        mockDiskDaoGetAllForVm(Collections.emptyList(), true);
         mockVmValidator();
 
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();

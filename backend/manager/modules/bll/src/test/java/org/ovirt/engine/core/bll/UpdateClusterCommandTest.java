@@ -795,7 +795,7 @@ public class UpdateClusterCommandTest {
     }
 
     private void allQueriesForVms() {
-        when(vmDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.<VM>emptyList());
+        when(vmDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.emptyList());
     }
 
     private void clusterHasVds() {

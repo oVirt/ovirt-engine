@@ -129,13 +129,13 @@ public class NetworkDeviceHelperImplTest {
 
     @Test
     public void getNicByNetDeviceValid() {
-        mockNics(Collections.<VdsNetworkInterface> emptyList(), true);
+        mockNics(Collections.emptyList(), true);
         assertEquals(nic, networkDeviceHelper.getNicByPciDevice(pciDevice));
     }
 
     @Test
     public void getNicByNetDeviceWithNonDbDevicesNoNetDevice() {
-        mockNics(Collections.<VdsNetworkInterface> emptyList(), true);
+        mockNics(Collections.emptyList(), true);
         Collection<HostDevice> devices = new ArrayList<>();
         devices.add(pciDevice);
 

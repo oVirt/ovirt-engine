@@ -15,7 +15,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -91,7 +90,7 @@ public class HostMonitoringTest {
         when(dbFacade.getClusterDao()).thenReturn(groupDao);
         when(groupDao.get(any(Guid.class))).thenReturn(cluster);
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
-        when(interfaceDao.getAllInterfacesForVds(any(Guid.class))).thenReturn(Collections.<VdsNetworkInterface>emptyList());
+        when(interfaceDao.getAllInterfacesForVds(any(Guid.class))).thenReturn(Collections.emptyList());
     }
 
     private void initVds() {

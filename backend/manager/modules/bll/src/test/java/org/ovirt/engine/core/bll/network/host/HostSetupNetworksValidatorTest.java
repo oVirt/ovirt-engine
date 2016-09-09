@@ -302,7 +302,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
-            .addExistingInterfaces(Collections.<VdsNetworkInterface>singletonList(bond))
+            .addExistingInterfaces(Collections.singletonList(bond))
             .addExistingAttachments((List<NetworkAttachment>) null)
             .addNetworks(Collections.singletonList(labeledNetwork))
             .build();
@@ -391,7 +391,7 @@ public class HostSetupNetworksValidatorTest {
             .addExistingInterfaces((List<VdsNetworkInterface>) null)
             .build();
 
-        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()), isValid());
+        assertThat(validator.validRemovedBonds(Collections.emptyList()), isValid());
     }
 
     @Test
@@ -404,7 +404,7 @@ public class HostSetupNetworksValidatorTest {
             .build();
 
         final EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND;
-        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
+        assertThat(validator.validRemovedBonds(Collections.emptyList()),
             failsWith(engineMessage,
                 ReplacementUtils.getVariableAssignmentString(engineMessage, notABond.getName())));
     }
@@ -417,7 +417,7 @@ public class HostSetupNetworksValidatorTest {
             .build();
 
         EngineMessage engineMessage = EngineMessage.NETWORK_BOND_RECORDS_DOES_NOT_EXISTS;
-        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
+        assertThat(validator.validRemovedBonds(Collections.emptyList()),
             failsWith(engineMessage,
                 ReplacementUtils.getListVariableAssignmentString(engineMessage,
                     Collections.singletonList(idOfInexistingInterface))));
@@ -431,7 +431,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
-            .addExistingInterfaces(Collections.<VdsNetworkInterface>singletonList(bond))
+            .addExistingInterfaces(Collections.singletonList(bond))
             .build();
 
         NetworkAttachment requiredNetworkAttachment = new NetworkAttachment();
@@ -456,10 +456,10 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
-            .addExistingInterfaces(Collections.<VdsNetworkInterface>singletonList(bond))
+            .addExistingInterfaces(Collections.singletonList(bond))
             .build();
 
-        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()), isValid());
+        assertThat(validator.validRemovedBonds(Collections.emptyList()), isValid());
     }
 
     @SuppressWarnings("unchecked")
@@ -1072,8 +1072,8 @@ public class HostSetupNetworksValidatorTest {
             .build();
 
         assertThat(validator.validateCustomProperties(SimpleCustomPropertiesUtil.getInstance(),
-                        Collections.<String, String> emptyMap(),
-                        Collections.<String, String> emptyMap()),
+                        Collections.emptyMap(),
+                        Collections.emptyMap()),
                 isValid());
     }
 
@@ -1098,8 +1098,8 @@ public class HostSetupNetworksValidatorTest {
 
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT;
         assertThat(validator.validateCustomProperties(SimpleCustomPropertiesUtil.getInstance(),
-                Collections.<String, String> emptyMap(),
-                Collections.<String, String> emptyMap()),
+                Collections.emptyMap(),
+                Collections.emptyMap()),
             failsWith(engineMessage,
                     ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, networkA.getName())));
 
@@ -1128,8 +1128,8 @@ public class HostSetupNetworksValidatorTest {
             .thenReturn(Collections.<ValidationError>emptyList());
 
         assertThat(validator.validateCustomProperties(simpleCustomPropertiesUtilMock,
-                Collections.<String, String> emptyMap(),
-                Collections.<String, String> emptyMap()),
+                Collections.emptyMap(),
+                Collections.emptyMap()),
             isValid());
     }
 

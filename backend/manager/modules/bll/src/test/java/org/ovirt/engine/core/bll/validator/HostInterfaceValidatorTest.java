@@ -112,7 +112,7 @@ public class HostInterfaceValidatorTest {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         vdsNetworkInterface.setBonded(false);
         HostInterfaceValidator validator = new HostInterfaceValidator(vdsNetworkInterface);
-        assertThat(validator.validBond(Collections.<VdsNetworkInterface> emptyList()), isValid());
+        assertThat(validator.validBond(Collections.emptyList()), isValid());
     }
 
     @Test

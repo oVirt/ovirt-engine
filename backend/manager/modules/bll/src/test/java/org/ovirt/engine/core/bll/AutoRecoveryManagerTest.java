@@ -27,8 +27,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
@@ -79,10 +77,9 @@ public class AutoRecoveryManagerTest {
         storageDomains.add(domain);
         when(storageDomainDaoMock.listFailedAutorecoverables()).thenReturn(storageDomains);
 
-        when(interfaceDaoMock.getAllInterfacesForVds(any(Guid.class)))
-                .thenReturn(Collections.<VdsNetworkInterface> emptyList());
+        when(interfaceDaoMock.getAllInterfacesForVds(any(Guid.class))).thenReturn(Collections.emptyList());
 
-        when(networkDaoMock.getAllForCluster(any(Guid.class))).thenReturn(Collections.<Network> emptyList());
+        when(networkDaoMock.getAllForCluster(any(Guid.class))).thenReturn(Collections.emptyList());
     }
 
     @Test

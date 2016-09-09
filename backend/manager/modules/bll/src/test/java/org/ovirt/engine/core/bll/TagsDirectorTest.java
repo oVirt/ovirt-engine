@@ -52,7 +52,7 @@ public class TagsDirectorTest {
     @Before
     public void setup() {
         tagsDirector = spy(TagsDirector.getInstance());
-        when(tagDao.getAllForParent(any(Guid.class))).thenReturn(Collections.<Tags> emptyList());
+        when(tagDao.getAllForParent(any(Guid.class))).thenReturn(Collections.emptyList());
         doReturn(tagDao).when(tagsDirector).getTagDao();
         doNothing().when(tagsDirector).updateTagInBackend(any(Tags.class));
         tagsDirector.init();

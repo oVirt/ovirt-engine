@@ -161,7 +161,7 @@ public class AddVdsCommandTest {
 
         when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
-                : Collections.<String> emptySet());
+                : Collections.emptySet());
 
         when(commandMock.getGlusterDBUtils()).thenReturn(glusterDBUtils);
 

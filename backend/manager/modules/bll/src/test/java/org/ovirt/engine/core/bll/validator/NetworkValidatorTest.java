@@ -187,7 +187,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void vlanIdNoNetworks() throws Exception {
-        vlanIdAvailableTest(isValid(), Collections.<Network> emptyList());
+        vlanIdAvailableTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -239,7 +239,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void noIscsiBondsForNetowrkTest() throws Exception {
-        notIscsiBondNetworkTest(isValid(), Collections.<IscsiBond> emptyList());
+        notIscsiBondNetworkTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -249,7 +249,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkNameNoNetworks() throws Exception {
-        networkNameAvailableTest(isValid(), Collections.<Network> emptyList());
+        networkNameAvailableTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -286,7 +286,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkNotInUseByVms() throws Exception {
-        networkNotUsedByVmsTest(isValid(), Collections.<VM> emptyList());
+        networkNotUsedByVmsTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -306,7 +306,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkNotInUseByHosts() throws Exception {
-        networkNotUsedByHostsTest(isValid(), Collections.<VDS> emptyList());
+        networkNotUsedByHostsTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -326,7 +326,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkNotInUseByTemplates() throws Exception {
-        networkNotUsedByTemplatesTest(isValid(), Collections.<VmTemplate> emptyList());
+        networkNotUsedByTemplatesTest(isValid(), Collections.emptyList());
     }
 
     @Test

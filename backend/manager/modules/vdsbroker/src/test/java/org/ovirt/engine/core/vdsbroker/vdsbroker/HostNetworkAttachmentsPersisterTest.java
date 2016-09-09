@@ -177,7 +177,7 @@ public class HostNetworkAttachmentsPersisterTest {
                 networkAttachmentWithoutNetworkAssigned
         )));
 
-        createPersister(Collections.<NetworkAttachment> emptyList()).persistNetworkAttachments();
+        createPersister(Collections.emptyList()).persistNetworkAttachments();
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
         verify(networkAttachmentDao).remove(eq(networkAttachmentForClusterNetworkB.getId()));
         verify(networkAttachmentDao).remove(eq(networkAttachmentWithoutNetworkAssigned.getId()));
@@ -203,7 +203,7 @@ public class HostNetworkAttachmentsPersisterTest {
                 .getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
 
         callPersistNetworkAttachmentsAndVerifyThatNetworkAttachmentIsSynced(networkAttachmentForClusterNetworkA,
-                createPersister(Collections.<NetworkAttachment> emptyList()));
+                createPersister(Collections.emptyList()));
     }
 
     @Test
@@ -220,7 +220,7 @@ public class HostNetworkAttachmentsPersisterTest {
         when(networkAttachmentDao.getAllForHost(eq(hostId)))
                 .thenReturn(Collections.singletonList(upToDateNetworkAttachment));
 
-        createPersister(Collections.<NetworkAttachment> emptyList()).persistNetworkAttachments();
+        createPersister(Collections.emptyList()).persistNetworkAttachments();
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
         verifyNoMoreInteractions(networkAttachmentDao);
     }
@@ -258,7 +258,7 @@ public class HostNetworkAttachmentsPersisterTest {
     @Test
     public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithoutNetworkDoNotPersist() throws Exception {
         when(networkAttachmentDao.getAllForHost(eq(hostId)))
-                .thenReturn(Collections.<NetworkAttachment> emptyList());
+                .thenReturn(Collections.emptyList());
 
         createPersister(Collections.singletonList(createNetworkAttachment(null)),
             new VdsNetworkInterface[] {}).persistNetworkAttachments();
@@ -272,7 +272,7 @@ public class HostNetworkAttachmentsPersisterTest {
     @Test
     public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithNetworkNotAttachedToNicDoNotPersist() throws Exception {
         when(networkAttachmentDao.getAllForHost(eq(hostId)))
-                .thenReturn(Collections.<NetworkAttachment> emptyList());
+                .thenReturn(Collections.emptyList());
 
         // user attachments references network, which is not assigned to NIC.
         createPersister(Collections.singletonList(createNetworkAttachment(clusterNetworkB)),
@@ -423,8 +423,7 @@ public class HostNetworkAttachmentsPersisterTest {
     public void testPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNic() {
         when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
 
-        createPersister(Collections.emptyList(), interfaceWithAttachedClusterNetworkA)
-                .persistNetworkAttachments();
+        createPersister(Collections.emptyList(), interfaceWithAttachedClusterNetworkA).persistNetworkAttachments();
 
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
 
@@ -452,7 +451,7 @@ public class HostNetworkAttachmentsPersisterTest {
             Collections.singletonList(networkAttachment),
             interfaceWithAttachedClusterNetworkA, nic);
 
-        when(networkAttachmentDao.getAllForHost(hostId)).thenReturn(Collections.<NetworkAttachment> emptyList());
+        when(networkAttachmentDao.getAllForHost(hostId)).thenReturn(Collections.emptyList());
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage(HostNetworkAttachmentsPersister.INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED);

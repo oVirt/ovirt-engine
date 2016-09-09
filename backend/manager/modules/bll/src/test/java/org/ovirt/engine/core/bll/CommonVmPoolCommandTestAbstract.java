@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -222,8 +221,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     private void mockVmNetworkInterfaceDao() {
         when(dbFacada.getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDao);
-        when(vmNetworkInterfaceDao.getAllForTemplate(vmTemplateId))
-                .thenReturn(Collections.<VmNetworkInterface> emptyList());
+        when(vmNetworkInterfaceDao.getAllForTemplate(vmTemplateId)).thenReturn(Collections.emptyList());
     }
 
     private void mockClusterDao() {

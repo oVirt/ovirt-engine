@@ -164,7 +164,7 @@ public class CommandBaseTest extends BaseCommandTest {
         SPMAsyncTaskHandler handler1 = mock(SPMAsyncTaskHandler.class);
         SPMAsyncTaskHandler handler2 = mock(SPMAsyncTaskHandler.class);
         CommandBase<VdcActionParametersBase> command = spy(new CommandBaseDummy(new VdcActionParametersBase()));
-        when(command.getTaskHandlers()).thenReturn(Arrays.<SPMAsyncTaskHandler> asList(handler1, handler2));
+        when(command.getTaskHandlers()).thenReturn(Arrays.asList(handler1, handler2));
 
         command.getReturnValue().setSucceeded(true);
         command.endActionInTransactionScope();
@@ -188,7 +188,7 @@ public class CommandBaseTest extends BaseCommandTest {
         SPMAsyncTaskHandler handler1 = mock(SPMAsyncTaskHandler.class);
         SPMAsyncTaskHandler handler2 = mock(SPMAsyncTaskHandler.class);
         CommandBase<VdcActionParametersBase> command = spy(new CommandBaseDummy(new VdcActionParametersBase()));
-        when(command.getTaskHandlers()).thenReturn(Arrays.<SPMAsyncTaskHandler> asList(handler1, handler2));
+        when(command.getTaskHandlers()).thenReturn(Arrays.asList(handler1, handler2));
 
         command.getParameters().setTaskGroupSuccess(false);
         command.getParameters().setExecutionIndex(1);

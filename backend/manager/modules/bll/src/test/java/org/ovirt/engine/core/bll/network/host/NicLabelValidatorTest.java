@@ -336,7 +336,7 @@ public class NicLabelValidatorTest {
 
     private NicLabelValidator createNicLabelValidator() {
         return createNicLabelValidator(createHostSetupNetworksParams(),
-                Collections.<VdsNetworkInterface> emptyList());
+                Collections.emptyList());
     }
 
     private NicLabelValidator createNicLabelValidator(List<VdsNetworkInterface> nics) {
@@ -345,7 +345,7 @@ public class NicLabelValidatorTest {
     }
 
     private NicLabelValidator createNicLabelValidator(HostSetupNetworksParameters params) {
-        return createNicLabelValidator(params, Collections.<VdsNetworkInterface> emptyList());
+        return createNicLabelValidator(params, Collections.emptyList());
     }
 
     private NicLabelValidator createNicLabelValidator(HostSetupNetworksParameters params,

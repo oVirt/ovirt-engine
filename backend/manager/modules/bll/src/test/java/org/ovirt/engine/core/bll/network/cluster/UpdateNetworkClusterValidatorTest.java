@@ -16,8 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
@@ -112,8 +110,8 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
         when(oldNetworkCluster.isManagement()).thenReturn(managementBefore);
         when(networkCluster.isManagement()).thenReturn(managementAfter);
         when(vdsDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
-                                                                               Collections.<VDS> emptyList() :
-                                                                               Collections.<VDS> singletonList(null));
+                                                                               Collections.emptyList() :
+                                                                               Collections.singletonList(null));
         assertThat(validator.managementNetworkChange(), expectedResult);
     }
 
@@ -151,7 +149,7 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
         when(cluster.supportsGlusterService()).thenReturn(glusterService);
         doReturn(brickDao).when(validator).getGlusterBrickDao();
         when(brickDao.getAllByClusterAndNetworkId(any(Guid.class), any(Guid.class))).thenReturn(hasBricks ?
-                Collections.<GlusterBrickEntity> singletonList(null) : Collections.<GlusterBrickEntity> emptyList());
+                Collections.singletonList(null) : Collections.emptyList());
         assertThat(validator.glusterNetworkInUseAndUnset(cluster), expectedResult);
     }
 }

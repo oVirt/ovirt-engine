@@ -63,7 +63,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
 
     private SchedulingManager mockScheduler() {
         SchedulingManager mock = mock(SchedulingManager.class);
-        when(mock.getClusterPolicies()).thenReturn(Collections.<ClusterPolicy>emptyList());
+        when(mock.getClusterPolicies()).thenReturn(Collections.emptyList());
         return mock;
     }
 

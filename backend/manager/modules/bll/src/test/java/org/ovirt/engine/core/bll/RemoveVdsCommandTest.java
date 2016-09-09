@@ -147,7 +147,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
-        mockVmsPinnedToHost(Collections.<String> emptyList());
+        mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(false);
         mockHasVolumeOnServer(false);
@@ -160,7 +160,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
-        mockVmsPinnedToHost(Collections.<String> emptyList());
+        mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
@@ -188,7 +188,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
-        mockVmsPinnedToHost(Collections.<String> emptyList());
+        mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);

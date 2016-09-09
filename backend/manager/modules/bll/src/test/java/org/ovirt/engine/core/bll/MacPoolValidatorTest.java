@@ -148,8 +148,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     public void testNotRemovingUsedPoolRecordNotUsed() throws Exception {
         macPool.setId(Guid.newGuid());
 
-        when(clusterDao.getAllClustersByMacPoolId(macPool.getId()))
-                .thenReturn(Collections.<Cluster> emptyList());
+        when(clusterDao.getAllClustersByMacPoolId(macPool.getId())).thenReturn(Collections.emptyList());
 
         assertThat(macPoolValidator.notRemovingUsedPool(), isValid());
     }

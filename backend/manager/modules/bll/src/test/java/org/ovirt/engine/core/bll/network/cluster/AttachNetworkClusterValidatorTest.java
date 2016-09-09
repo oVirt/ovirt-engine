@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -57,8 +56,8 @@ public class AttachNetworkClusterValidatorTest extends NetworkClusterValidatorTe
                                              Matcher<ValidationResult> expectedResult) {
         when(networkCluster.isManagement()).thenReturn(managementAfter);
         when(vdsDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
-                                                                               Collections.<VDS> emptyList() :
-                                                                               Collections.<VDS> singletonList(null));
+                                                                               Collections.emptyList() :
+                                                                               Collections.singletonList(null));
         assertThat(validator.managementNetworkChange(), expectedResult);
     }
 

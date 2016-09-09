@@ -82,7 +82,7 @@ public class GetErrataCountsForHostQueryTest
 
     @Test
     public void noAvailableHostErrata() {
-        setupToReportErrata(Collections.<Erratum> emptyList());
+        setupToReportErrata(Collections.emptyList());
         getQuery().executeQueryCommand();
 
         assertNotNull(getQuery().getQueryReturnValue().getReturnValue());

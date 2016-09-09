@@ -35,10 +35,10 @@ public class NetworkMtuValidatorTest {
     public void testNetworksOnNicMatchMtuWhenNoNetworksAreProvided() throws Exception {
 
         Map<String, List<Network>> networksOnNics =
-            Collections.singletonMap("nicName", Collections.<Network> emptyList());
+            Collections.singletonMap("nicName", Collections.emptyList());
 
         NetworkMtuValidator networkMtuValidator =
-            new NetworkMtuValidator(new BusinessEntityMap<>(Collections.<Network> emptyList()));
+            new NetworkMtuValidator(new BusinessEntityMap<>(Collections.emptyList()));
 
         assertThat(networkMtuValidator.validateMtu(networksOnNics), isValid());
     }

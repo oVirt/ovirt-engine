@@ -184,7 +184,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNameNoVnicProfiles() throws Exception {
-        vnicProfileAvailableTest(isValid(), Collections.<VnicProfile> emptyList());
+        vnicProfileAvailableTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -235,14 +235,14 @@ public class VnicProfileValidatorTest {
     @Test
     public void portMirroringEnableSupported() {
         mockVnicProfilePortMirroringChange(false);
-        mockVmsUsingVnicProfile(Collections.<VM> emptyList());
+        mockVmsUsingVnicProfile(Collections.emptyList());
         assertThat(validator.portMirroringNotChangedIfUsedByVms(), isValid());
     }
 
     @Test
     public void portMirroringChangeNotSupported() {
         mockVnicProfilePortMirroringChange(false);
-        mockVmsUsingVnicProfile(Collections.<VM> singletonList(mock(VM.class)));
+        mockVmsUsingVnicProfile(Collections.singletonList(mock(VM.class)));
         assertThat(validator.portMirroringNotChangedIfUsedByVms(), failsWithVnicProfileInUse());
     }
 
@@ -271,7 +271,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNotInUseByVms() throws Exception {
-        vnicProfileNotUsedByVmsTest(isValid(), Collections.<VM> emptyList());
+        vnicProfileNotUsedByVmsTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -290,7 +290,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNotInUseByTemplates() throws Exception {
-        vnicProfileNotUsedByTemplatesTest(isValid(), Collections.<VmTemplate> emptyList());
+        vnicProfileNotUsedByTemplatesTest(isValid(), Collections.emptyList());
     }
 
     @Test
@@ -381,8 +381,8 @@ public class VnicProfileValidatorTest {
         when(updatedVnicProfile.isPassthrough()).thenReturn(pasthroughNew);
         when(vnicProfileDao.get(any(Guid.class))).thenReturn(updatedVnicProfile);
 
-        mockVmsUsingVnicProfile(profileUsedByVms ? Collections.<VM> singletonList(mock(VM.class))
-                : Collections.<VM> emptyList());
+        mockVmsUsingVnicProfile(profileUsedByVms ? Collections.singletonList(mock(VM.class))
+                : Collections.emptyList());
     }
 
     @Test
