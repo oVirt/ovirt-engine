@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.KeyPairProvider;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
@@ -93,17 +91,12 @@ public class SSHD {
                                 "-i"
                         }));
         sshd.setCommandFactory(
-                new CommandFactory() {
-                    @Override
-                    public Command createCommand(String command) {
-                        return new ProcessShellFactory(
-                                new String[] {
-                                        "/bin/sh",
-                                        "-c",
-                                        command
-                                }).create();
-                    }
-                });
+                command -> new ProcessShellFactory(
+                        new String[] {
+                                "/bin/sh",
+                                "-c",
+                                command
+                        }).create());
     }
 
     public int getPort() {
