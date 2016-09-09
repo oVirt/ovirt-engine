@@ -61,7 +61,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     private AddVmTemplateCommand<AddVmTemplateParameters> cmd;
     private VM vm;
-    private Cluster cluster;
     private Guid spId;
 
     @Mock
@@ -101,7 +100,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         when(vmDao.get(vmId)).thenReturn(vm);
 
         // The cluster to use
-        cluster = new Cluster();
+        Cluster cluster = new Cluster();
         cluster.setCpuName("Intel Conroe Family");
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setId(clusterId);
