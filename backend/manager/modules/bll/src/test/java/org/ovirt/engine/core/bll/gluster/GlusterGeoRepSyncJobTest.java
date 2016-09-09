@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,11 +41,17 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.lock.LockManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterGeoRepSyncJobTest {
     private static final Guid CLUSTER_GUID = new Guid("CC111111-1111-1111-1111-111111111111");
+
+    @ClassRule
+    public static MockEJBStrategyRule mockEJBStrategyRule =
+            new MockEJBStrategyRule(BeanType.LOCK_MANAGER, mock(LockManager.class));
 
     @Mock
     private GlusterGeoRepDao geoRepDao;
@@ -87,7 +94,6 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
-        doReturn(getMockLock()).when(syncJob).acquireGeoRepSessionLock(any(Guid.class));
         doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUID);
     }
 
@@ -141,17 +147,6 @@ public class GlusterGeoRepSyncJobTest {
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.refreshGeoRepSessionStatus();
         verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(any(List.class));
-    }
-
-    private EngineLock getMockLock() {
-        return new EngineLock() {
-
-            @Override
-            public void close() {
-
-            }
-
-        };
     }
 
     private Object getSessionsVDSReturnVal(boolean ret, int count) {
