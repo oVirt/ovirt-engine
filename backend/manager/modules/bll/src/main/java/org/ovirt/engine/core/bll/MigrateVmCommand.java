@@ -127,7 +127,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected boolean initVdss() {
         setVdsIdRef(getVm().getRunOnVds());
-        Guid vdsToRunOn =
+        Optional<Guid> vdsToRunOn =
                 schedulingManager.schedule(getCluster(),
                         getVm(),
                         getVdsBlackList(),
@@ -136,13 +136,16 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         new ArrayList<>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
-        setDestinationVdsId(vdsToRunOn);
-        if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
-            getRunVdssList().add(vdsToRunOn);
+        setDestinationVdsId(vdsToRunOn.orElse(null));
+
+        if (vdsToRunOn.isPresent()) {
+            getRunVdssList().add(vdsToRunOn.get());
         }
+
         VmHandler.updateVmGuestAgentVersion(getVm());
 
-        if (vdsToRunOn != null && vdsToRunOn.equals(Guid.Empty)) {
+
+        if (!vdsToRunOn.isPresent()) {
             return false;
         }
 

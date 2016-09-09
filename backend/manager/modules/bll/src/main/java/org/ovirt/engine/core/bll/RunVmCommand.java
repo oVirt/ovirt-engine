@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -813,7 +814,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected boolean getVdsToRunOn() {
-        Guid vdsToRunOn =
+        Optional<Guid> vdsToRunOn =
                 schedulingManager.schedule(getCluster(),
                         getVm(),
                         getRunVdssList(),
@@ -822,9 +823,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         new ArrayList<>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
-        setVdsId(vdsToRunOn);
-        if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
-            getRunVdssList().add(vdsToRunOn);
+        setVdsId(vdsToRunOn.orElse(null));
+        if (vdsToRunOn.isPresent()) {
+            getRunVdssList().add(vdsToRunOn.get());
         }
 
         setVds(null);

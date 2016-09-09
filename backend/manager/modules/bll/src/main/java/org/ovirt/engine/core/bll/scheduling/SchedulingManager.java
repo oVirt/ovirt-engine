@@ -290,7 +290,8 @@ public class SchedulingManager implements BackendService {
 
     }
 
-    public Guid schedule(@NotNull Cluster cluster,
+    @NotNull
+    public Optional<Guid> schedule(@NotNull Cluster cluster,
             @NotNull VM vm,
             @NotNull List<Guid> hostBlackList,
             @NotNull List<Guid> hostWhiteList,
@@ -345,10 +346,10 @@ public class SchedulingManager implements BackendService {
                 }
             }
 
-            return bestHost.orElse(null);
+            return bestHost;
         } catch (InterruptedException e) {
             log.error("interrupted", e);
-            return null;
+            return Optional.empty();
         } finally {
             releaseCluster(cluster.getId());
 
