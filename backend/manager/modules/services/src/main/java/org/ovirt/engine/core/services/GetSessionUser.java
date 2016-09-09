@@ -3,6 +3,7 @@ package org.ovirt.engine.core.services;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,9 +14,6 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +28,9 @@ public class GetSessionUser extends HttpServlet {
     private static final int FAILED_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
     private static final Logger log = LoggerFactory.getLogger(GetSessionUser.class);
+
+    @Inject
+    private BackendInternal backend;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doProcessRequest(request, response);
@@ -53,7 +54,6 @@ public class GetSessionUser extends HttpServlet {
     private boolean runQuery(HttpServletResponse response, String sessionID) {
         boolean returnValue = false;
 
-        BackendInternal backend = EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
         log.debug("Calling ValidateSession query");
 
         VdcQueryReturnValue queryReturnValue = backend.runInternalQuery(VdcQueryType.ValidateSession,

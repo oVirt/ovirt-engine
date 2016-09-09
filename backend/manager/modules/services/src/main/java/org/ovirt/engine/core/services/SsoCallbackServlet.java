@@ -3,6 +3,7 @@ package org.ovirt.engine.core.services;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,9 +13,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.TerminateSessionsForTokenParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +21,9 @@ public class SsoCallbackServlet extends HttpServlet {
     private static final long serialVersionUID = 6329289042799650200L;
 
     private static Logger log = LoggerFactory.getLogger(SsoCallbackServlet.class);
+
+    @Inject
+    private BackendInternal backend;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -44,7 +45,6 @@ public class SsoCallbackServlet extends HttpServlet {
     }
 
     private void handleLogout(String accessToken, HttpServletResponse response) {
-        BackendInternal backend = EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
         VdcReturnValueBase returnValue = backend.runInternalAction(VdcActionType.TerminateSessionsForToken,
                 new TerminateSessionsForTokenParameters(accessToken));
 

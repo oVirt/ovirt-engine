@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +17,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.PKIResources;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +27,9 @@ public class RegisterServlet extends HttpServlet {
     private static final int SSH_PORT = 22;
     private static final int VDSM_PORT = 54321;
     private static final int INTERFACE_VERSION = 1;
+
+    @Inject
+    private BackendInternal backend;
 
     protected void getVersionV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -91,10 +92,7 @@ public class RegisterServlet extends HttpServlet {
             throw new RuntimeException("Unique id was not provided");
         }
 
-        VdcQueryReturnValue queryReturnValue  =  ((BackendInternal)EjbUtils.findBean(
-            BeanType.BACKEND,
-            BeanProxyType.LOCAL
-        )).runInternalQuery(
+        VdcQueryReturnValue queryReturnValue  =  backend.runInternalQuery(
             VdcQueryType.RegisterVds,
             new RegisterVdsParameters(
                 Guid.Empty,
