@@ -20,14 +20,10 @@ public abstract class AbstractBackendResourceLoggingTest extends Assert {
         field.set(null, newValue);
     }
 
-    protected void setUpLogExpectations(boolean debug) {
-        try {
-            Field field = BaseBackendResource.class.getDeclaredField("log");
-            Logger logger = mock(Logger.class);
-            when(logger.isDebugEnabled()).thenReturn(debug);
-            setFinalStatic(field, logger);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    protected void setUpLogExpectations(boolean debug) throws Exception {
+        Field field = BaseBackendResource.class.getDeclaredField("log");
+        Logger logger = mock(Logger.class);
+        when(logger.isDebugEnabled()).thenReturn(debug);
+        setFinalStatic(field, logger);
     }
 }
