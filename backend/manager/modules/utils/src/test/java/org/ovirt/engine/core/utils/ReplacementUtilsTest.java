@@ -36,13 +36,7 @@ public class ReplacementUtilsTest {
 
     @Test
     public void replaceWithNameableCollection() {
-        Nameable item = new Nameable() {
-
-            @Override
-            public String getName() {
-                return PROPERTY_VALUE;
-            }
-        };
+        Nameable item = () -> PROPERTY_VALUE;
 
         List<Nameable> items = Collections.singletonList(item);
         validateReplacements(ReplacementUtils.replaceWithNameable(PROPERTY_NAME, items), items);
