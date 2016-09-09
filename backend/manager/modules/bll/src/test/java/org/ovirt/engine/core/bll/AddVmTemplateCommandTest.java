@@ -287,7 +287,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         permissionCheckSubjects.stream()
                 .filter(permissionSubject ->
                         ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES == permissionSubject.getActionGroup())
-                .forEach(permissionSubject -> {verifyPermissions(editDefaultHostPermission, permissionSubject);});
+                .forEach(permissionSubject -> verifyPermissions(editDefaultHostPermission, permissionSubject));
     }
 
     private void verifyPermissions(PermissionSubject editDefaultHostPermission, PermissionSubject permissionSubject) {
