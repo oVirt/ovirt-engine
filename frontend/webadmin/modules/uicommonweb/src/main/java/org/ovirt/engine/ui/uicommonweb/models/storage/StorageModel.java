@@ -557,7 +557,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 }
                 else {
                     formats.add(StorageFormatType.V3);
-                    selectItem = StorageFormatType.V3;
+                    formats.add(StorageFormatType.V4);
+                    selectItem = StorageFormatType.V4;
                 }
             }
             else { // Unassigned DC:
@@ -579,7 +580,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 }
 
                 formats.add(StorageFormatType.V3);
-                selectItem = StorageFormatType.V3;
+                formats.add(StorageFormatType.V4);
+                selectItem = StorageFormatType.V4;
             }
         }
 

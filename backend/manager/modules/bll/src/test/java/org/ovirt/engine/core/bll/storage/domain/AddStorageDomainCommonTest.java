@@ -114,7 +114,8 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     public void validateSucceedsInitFormatDataDomain() {
         sd.setStorageFormat(null);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
-        assertEquals("Format not initialized correctly", StorageFormatType.V3, sd.getStorageFormat());
+        StorageFormatType targetStorageFormatType = StorageFormatType.values()[StorageFormatType.values().length - 1];
+        assertEquals("Format not initialized correctly", targetStorageFormatType, sd.getStorageFormat());
     }
 
     @Test
@@ -145,13 +146,6 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageName(RandomUtils.instance().nextString(11));
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-    }
-
-    @Test
-    public void validateSucceedsPoolNotSpecified() {
-        sd.setStorageFormat(null);
-        vds.setStoragePoolId(null);
-        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test

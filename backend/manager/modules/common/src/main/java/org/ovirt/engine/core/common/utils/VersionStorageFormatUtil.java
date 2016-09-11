@@ -16,7 +16,7 @@ public class VersionStorageFormatUtil {
     static {
         versionToFormat.put(Version.v3_6, StorageFormatType.V3);
         versionToFormat.put(Version.v4_0, StorageFormatType.V3);
-        versionToFormat.put(Version.v4_1, StorageFormatType.V3);
+        versionToFormat.put(Version.v4_1, StorageFormatType.V4);
     };
 
     private static final Map<StorageFormatType, Version> earliestVersionSupported = new TreeMap<>();

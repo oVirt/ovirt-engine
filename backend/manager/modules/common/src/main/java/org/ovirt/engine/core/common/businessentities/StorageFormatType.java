@@ -7,7 +7,8 @@ public enum StorageFormatType {
 
     V1("0"),
     V2("2"),
-    V3("3");
+    V3("3"),
+    V4("4");
 
     private final String value;
     private static final Map<String, StorageFormatType> mappings = new HashMap<>();

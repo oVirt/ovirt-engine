@@ -276,8 +276,8 @@ public class StorageDomainValidator {
             }
         }
 
-        // V3 is applicable only for data storage domains
-        if (storageFormat == StorageFormatType.V3) {
+        // Above V3 is applicable only for data storage domains
+        if (storageFormat.compareTo(StorageFormatType.V3) >= 0) {
             if (!storageDomainFunction.isDataDomain()) {
                 validationSucceeded = false;
             }
