@@ -62,7 +62,11 @@ public class VmManager {
 
     @PostConstruct
     public void init() {
-        updateStaticFields(vmStaticDao.get(vmId));
+        VmStatic vmStatic = vmStaticDao.get(vmId);
+        // vmStatic is null for externally managed VMs
+        if (vmStatic != null) {
+            updateStaticFields(vmStatic);
+        }
     }
 
     private void updateStaticFields(VmStatic vmStatic) {

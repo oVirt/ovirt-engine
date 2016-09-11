@@ -46,6 +46,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -60,6 +61,9 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
 
     @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
+
+    @Inject
+    private ResourceManager resourceManager;
 
     private Set<String> graphicsDeviceTypes = new HashSet<>(Arrays.asList(
             GraphicsType.SPICE.toString().toLowerCase(),
@@ -202,7 +206,9 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                         createAddExternalVmContext(vmStatic));
         if (!returnValue.getSucceeded()) {
             log.debug("Failed adding Externally managed VM '{}'", vmStatic.getName());
+            return;
         }
+        resourceManager.getVmManager(vmStatic.getId()).update(vmStatic);
     }
 
     // Visible for testing
