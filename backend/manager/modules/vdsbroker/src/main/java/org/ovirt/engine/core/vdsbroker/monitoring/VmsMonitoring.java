@@ -21,10 +21,8 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
@@ -68,10 +66,6 @@ public class VmsMonitoring implements BackendService {
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
-    @Inject
-    private VdsNumaNodeDao vdsNumaNodeDao;
-    @Inject
-    private VmNumaNodeDao vmNumaNodeDao;
 
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
@@ -178,9 +172,7 @@ public class VmsMonitoring implements BackendService {
                 resourceManager,
                 vmDynamicDao,
                 vmNetworkInterfaceDao,
-                vdsDynamicDao,
-                vdsNumaNodeDao,
-                vmNumaNodeDao);
+                vdsDynamicDao);
     }
 
     private boolean shouldAnalyzeVm(Pair<VmDynamic, VdsmVm> pair, long fetchTime, Guid vdsId) {

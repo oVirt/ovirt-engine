@@ -327,8 +327,6 @@ public class VmAnalyzerTest {
                 auditLogDirector,
                 resourceManager,
                 vdsDynamicDao,
-                null,
-                null,
                 null));
         doNothing().when(vmAnalyzer).resetVmInterfaceStatistics();
         doReturn(vmManager).when(vmAnalyzer).getVmManager();

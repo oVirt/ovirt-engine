@@ -15,7 +15,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
@@ -47,7 +45,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -102,10 +99,8 @@ public class VmAnalyzer {
     private ResourceManager resourceManager;
 
     private final boolean updateStatistics;
-    private Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider;
 
     private VdsDynamicDao vdsDynamicDao;
-    private VmNumaNodeDao vmNumaNodeDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     public VmAnalyzer(
@@ -116,8 +111,6 @@ public class VmAnalyzer {
             AuditLogDirector auditLogDirector,
             ResourceManager resourceManager,
             VdsDynamicDao vdsDynamicDao,
-            Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
-            VmNumaNodeDao vmNumaNodeDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
@@ -126,8 +119,6 @@ public class VmAnalyzer {
         this.auditLogDirector = auditLogDirector;
         this.resourceManager = resourceManager;
         this.vdsDynamicDao = vdsDynamicDao;
-        this.vdsNumaNodesProvider = vdsNumaNodesProvider;
-        this.vmNumaNodeDao = vmNumaNodeDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
     }
 
