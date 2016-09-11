@@ -24,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -82,13 +81,6 @@ public class DiskValidatorTest {
         vm.setId(Guid.newGuid());
         vm.setVmOs(1);
         return vm;
-    }
-
-    private VDS createVds() {
-        Guid vdsId = Guid.newGuid();
-        VDS vds = new VDS();
-        vds.setId(vdsId);
-        return vds;
     }
 
     private void initializeOsRepository (int osId, DiskInterface diskInterface) {
