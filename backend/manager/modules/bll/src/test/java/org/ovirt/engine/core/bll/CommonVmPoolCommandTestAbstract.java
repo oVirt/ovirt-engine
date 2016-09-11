@@ -127,6 +127,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     @Test
     public void validateSufficientSpaceOnDestinationDomains() {
         setupForStorageTests();
+        command.ensureDestinationImageMap();
         assertTrue(command.checkDestDomains());
         verify(multipleSdValidator).allDomainsWithinThresholds();
         verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));

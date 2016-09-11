@@ -171,7 +171,6 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         if (getVmPool().isAutoStorageSelect()) {
             initTargetDomains();
         }
-        ensureDestinationImageMap();
 
         nameForVmInPoolGenerator = new NameForVmInPoolGenerator(getParameters().getVmPool().getName());
     }
@@ -376,6 +375,8 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             return false;
         }
 
+        ensureDestinationImageMap();
+
         // check if the selected template is compatible with Cluster architecture.
         if (!getVmTemplate().getId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)
                 && getCluster().getArchitecture() != getVmTemplate().getClusterArch()) {
@@ -493,7 +494,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         return destinationMap;
     }
 
-    private void ensureDestinationImageMap() {
+    protected void ensureDestinationImageMap() {
         if (getVmPool().isAutoStorageSelect() || MapUtils.isEmpty(getParameters().getDiskInfoDestinationMap())) {
             diskInfoDestinationMap = new HashMap<>();
 
