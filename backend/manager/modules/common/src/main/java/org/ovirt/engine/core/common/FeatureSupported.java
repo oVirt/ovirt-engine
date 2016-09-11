@@ -125,4 +125,8 @@ public class FeatureSupported {
     public static boolean isGetNamesOfVmsFromExternalProviderSupported(Version version) {
         return supportedInConfig(ConfigValues.GetNamesOfVmsFromExternalProviderSupported, version);
     }
+
+    public static boolean virtioScsiIoThread(Version version) {
+        return supportedInConfig(ConfigValues.VirtIOScsiIOThread, version);
+    }
 }

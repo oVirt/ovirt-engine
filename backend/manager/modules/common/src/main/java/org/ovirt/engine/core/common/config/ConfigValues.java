@@ -1920,5 +1920,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GetNamesOfVmsFromExternalProviderSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    VirtIOScsiIOThread,
+
     Invalid
 }

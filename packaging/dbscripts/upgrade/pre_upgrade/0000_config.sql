@@ -311,6 +311,7 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 
 
 select fn_db_add_config_value_for_versions_up_to('Ipv6Supported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('VirtIOScsiIOThread', 'false', '4.0');
 select fn_db_add_config_value('IPTablesConfigSiteCustom','','general');
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');

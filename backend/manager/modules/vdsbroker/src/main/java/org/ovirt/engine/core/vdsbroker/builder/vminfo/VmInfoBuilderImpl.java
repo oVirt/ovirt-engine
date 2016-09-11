@@ -319,18 +319,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     if (disk.getDiskStorageType() == DiskStorageType.LUN) {
                         struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
                     }
-
-                    if (vm.getNumOfIoThreads() != 0) {
-                        // simple round robin e.g. for 2 threads and 4 disks it will be pinned like this:
-                        // disk 0 -> iothread 1
-                        // disk 1 -> iothread 2
-                        // disk 2 -> iothread 1
-                        // disk 3 -> iothread 2
-                        int pinTo = pinnedDriveIndex % vm.getNumOfIoThreads() + 1;
-                        pinnedDriveIndex++;
-                        vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinTo);
-                    }
-
+                    pinnedDriveIndex = pinToIoThreads(vmDevice, pinnedDriveIndex);
                     break;
                 case VirtIO_SCSI:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
@@ -345,6 +334,9 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         int unit = vmDeviceVirtioScsiUnitMap.get(vmDevice);
                         vmDevice.setAddress(
                                 vmInfoBuildUtils.createAddressForScsiDisk(virtioScsiIndex, unit).toString());
+                    }
+                    if (FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion())) {
+                        pinnedDriveIndex = pinToIoThreads(vmDevice, pinnedDriveIndex);
                     }
                     break;
                 case SPAPR_VSCSI:
@@ -410,6 +402,20 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
 
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
+    }
+
+    private int pinToIoThreads(VmDevice vmDevice, int pinnedDriveIndex) {
+        if (vm.getNumOfIoThreads() != 0) {
+            // simple round robin e.g. for 2 threads and 4 disks it will be pinned like this:
+            // disk 0 -> iothread 1
+            // disk 1 -> iothread 2
+            // disk 2 -> iothread 1
+            // disk 3 -> iothread 2
+            int pinTo = pinnedDriveIndex % vm.getNumOfIoThreads() + 1;
+            pinnedDriveIndex++;
+            vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinTo);
+        }
+        return pinnedDriveIndex;
     }
 
     @Override
