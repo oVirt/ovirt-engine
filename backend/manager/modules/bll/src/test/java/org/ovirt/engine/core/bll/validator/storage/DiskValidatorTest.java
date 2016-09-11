@@ -83,7 +83,7 @@ public class DiskValidatorTest {
         return vm;
     }
 
-    private void initializeOsRepository (int osId, DiskInterface diskInterface) {
+    private void initializeOsRepository(DiskInterface diskInterface) {
         ArrayList<String> supportedDiskInterfaces = new ArrayList<>();
         supportedDiskInterfaces.add(diskInterface.name());
         when(osRepository.getDiskInterfaces(1, null)).thenReturn(supportedDiskInterfaces);
@@ -94,7 +94,7 @@ public class DiskValidatorTest {
 
     @Before
     public void setUp() {
-        initializeOsRepository(1, DiskInterface.VirtIO);
+        initializeOsRepository(DiskInterface.VirtIO);
         disk = createDiskImage();
         disk.setDiskAlias("disk1");
         validator = spy(new DiskValidator(disk, vmDeviceUtils));
@@ -162,7 +162,7 @@ public class DiskValidatorTest {
     @Test
     public void diskInterfaceSupportedByOs() {
         VM vm = createVM();
-        initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
+        initializeOsRepository(DiskInterface.VirtIO);
         DiskVmElement dve = new DiskVmElement();
         dve.setDiskInterface(DiskInterface.VirtIO);
         assertThat(validator.isDiskInterfaceSupported(vm, dve), isValid());
@@ -172,7 +172,7 @@ public class DiskValidatorTest {
     public void diskInterfaceNotSupportedByOs() {
         VM vm = createVM();
         vm.setVmOs(2);
-        initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
+        initializeOsRepository(DiskInterface.VirtIO);
         DiskVmElement dve = new DiskVmElement();
         dve.setDiskInterface(DiskInterface.VirtIO);
         assertThat(validator.isDiskInterfaceSupported(vm, dve), failsWith(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
