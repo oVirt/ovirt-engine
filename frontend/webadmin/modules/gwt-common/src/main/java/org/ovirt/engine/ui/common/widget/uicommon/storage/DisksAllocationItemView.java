@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
@@ -21,7 +22,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel>, HasElementId, FocusableComponentsContainer {
 
-    interface Driver extends SimpleBeanEditorDriver<DiskModel, DisksAllocationItemView> {
+    interface Driver extends UiCommonEditorDriver<DiskModel, DisksAllocationItemView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, DisksAllocationItemView> {
@@ -174,6 +174,11 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     @Override
     public DiskModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

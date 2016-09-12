@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -13,7 +14,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -37,7 +37,7 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
     @WithElementId
     NetworkQosWidget qosWidget;
 
-    interface Driver extends SimpleBeanEditorDriver<NetworkQoSModel, NetworkQoSPopupView> {
+    interface Driver extends UiCommonEditorDriver<NetworkQoSModel, NetworkQoSPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, NetworkQoSPopupView> {
@@ -85,4 +85,8 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

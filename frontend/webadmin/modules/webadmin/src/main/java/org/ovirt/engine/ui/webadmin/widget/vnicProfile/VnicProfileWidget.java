@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.vnicProfile;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfileModel> implements HasValueChangeHandlers<VnicProfileModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VnicProfileModel, VnicProfileWidget> {
+    interface Driver extends UiCommonEditorDriver<VnicProfileModel, VnicProfileWidget> {
     }
 
     interface WidgetUiBinder extends UiBinder<Widget, VnicProfileWidget> {
@@ -101,6 +101,11 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     @Override
     public VnicProfileModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

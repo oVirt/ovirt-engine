@@ -274,4 +274,10 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         nativeImpl.setVmId(getEntity().getId());
         nativeImpl.setAdmin(Frontend.getInstance().getLoggedInUser().isAdmin());
     }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getErrorEvent());
+        super.cleanup();
+    }
 }

@@ -1,16 +1,18 @@
 package org.ovirt.engine.ui.common.binding;
 
 import org.ovirt.engine.ui.common.editor.AbstractUiCommonModelEditorDriver;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.editor.UiCommonEventMap;
 import org.ovirt.engine.ui.common.editor.UiCommonListenerMap;
 import org.ovirt.engine.ui.common.editor.UiCommonModelEditorDelegate;
+
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.TreeLogger.Type;
 import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JClassType;
+import com.google.gwt.core.ext.typeinfo.JField;
 import com.google.gwt.core.ext.typeinfo.TypeOracle;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.editor.rebind.AbstractEditorDriverGenerator;
 import com.google.gwt.editor.rebind.model.EditorData;
 import com.google.gwt.editor.rebind.model.EditorModel;
@@ -18,15 +20,17 @@ import com.google.gwt.user.rebind.SourceWriter;
 
 public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator {
 
+    private JClassType baseModelType;
     private JClassType entityModelType;
     private JClassType listModelType;
+    private JClassType hasCleanupType;
     private TreeLogger logger;
     private EditorModel model;
     private SourceWriter sw;
 
     @Override
     protected Class<?> getDriverInterfaceType() {
-        return SimpleBeanEditorDriver.class;
+        return UiCommonEditorDriver.class;
     }
 
     @Override
@@ -55,8 +59,10 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
             SourceWriter sw)
             throws UnableToCompleteException {
         TypeOracle typeOracle = context.getTypeOracle();
+        baseModelType = eraseType(typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.Model")); //$NON-NLS-1$
         entityModelType = eraseType(typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.EntityModel")); //$NON-NLS-1$
         listModelType = eraseType(typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.ListModel")); //$NON-NLS-1$
+        hasCleanupType = eraseType(typeOracle.findType("org.ovirt.engine.ui.uicommonweb.HasCleanup")); //$NON-NLS-1$
 
         this.logger = logger;
         this.model = model;
@@ -66,7 +72,7 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
         writeListenerMap();
         writeEventMap();
         writeOwnerModels();
-
+        writeCleanup();
     }
 
     /**
@@ -204,7 +210,49 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
 
     }
 
+    private void writeCleanup() {
+        JClassType editorType = model.getEditorType();
+
+        logger.log(Type.DEBUG, "Starting to write cleanup impl. for editor " //$NON-NLS-1$
+                + editorType.getQualifiedSourceName());
+
+        sw.println();
+        sw.println("@Override"); //$NON-NLS-1$
+        sw.println("public void cleanup() {"); //$NON-NLS-1$
+        sw.indent();
+
+        sw.println("if (getObject() != null) {"); //$NON-NLS-1$
+        sw.indent();
+
+        if (model.getProxyType().isAssignableTo(hasCleanupType)) {
+            sw.println("getObject().cleanup();"); //$NON-NLS-1$
+        }
+
+        for (EditorData editorData : model.getEditorData()) {
+            if (editorData.getPropertyOwnerType().isAssignableTo(hasCleanupType)) {
+                sw.println(String.format("getObject()%s.cleanup();", //$NON-NLS-1$
+                        editorData.getBeanOwnerExpression()));
+            }
+        }
+
+        sw.outdent();
+        sw.println("}"); //$NON-NLS-1$
+
+        for (JField field : editorType.getFields()) {
+            JClassType fieldClassType = field.getType().isClassOrInterface();
+            if (fieldClassType != null && fieldClassType.isAssignableTo(hasCleanupType)
+                    && !field.getType().isClassOrInterface().isAssignableTo(baseModelType)) {
+                sw.println(String.format("getEditor().%s.cleanup();", //$NON-NLS-1$
+                        field.getName()));
+            }
+        }
+
+        sw.outdent();
+        sw.println("}"); //$NON-NLS-1$
+    }
+
     private JClassType eraseType(JClassType classType) {
         return classType == null ? null : classType.getErasedType();
     }
+
 }

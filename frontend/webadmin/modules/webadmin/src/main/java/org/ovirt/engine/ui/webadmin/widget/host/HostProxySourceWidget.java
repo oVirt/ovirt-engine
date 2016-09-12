@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
 import org.ovirt.engine.ui.common.css.OvirtCss;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceProxyModel;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FenceProxyModel>
     implements HasValueChangeHandlers<FenceProxyModel>, HasEnabled {
 
-    interface Driver extends SimpleBeanEditorDriver<FenceProxyModel, HostProxySourceWidget> {
+    interface Driver extends UiCommonEditorDriver<FenceProxyModel, HostProxySourceWidget> {
     }
 
     public interface WidgetUiBinder extends UiBinder<Widget, HostProxySourceWidget> {
@@ -60,6 +60,11 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FencePr
     @Override
     public FenceProxyModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

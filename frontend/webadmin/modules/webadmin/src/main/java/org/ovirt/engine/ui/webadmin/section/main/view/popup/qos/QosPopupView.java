@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -14,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosParametersModel
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -49,7 +49,7 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final SimpleBeanEditorDriver<QosModel<T, P>, QosPopupView<T, P>> driver;
+    private final UiCommonEditorDriver<QosModel<T, P>, QosPopupView<T, P>> driver;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -90,8 +90,13 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
+
     protected abstract void createQosWidget();
 
-    protected abstract SimpleBeanEditorDriver<QosModel<T, P>, QosPopupView<T, P>> createDriver();
+    protected abstract UiCommonEditorDriver<QosModel<T, P>, QosPopupView<T, P>> createDriver();
 
 }

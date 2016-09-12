@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
 public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
@@ -578,5 +577,11 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         else {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
+    }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getUpdateCompleteEvent());
+        super.cleanup();
     }
 }

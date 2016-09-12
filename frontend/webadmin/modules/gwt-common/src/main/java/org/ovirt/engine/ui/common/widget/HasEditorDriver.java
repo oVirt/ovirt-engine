@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
+
 import com.google.gwt.editor.client.Editor;
 
 /**
@@ -8,7 +10,7 @@ import com.google.gwt.editor.client.Editor;
  * @param <T>
  *            The type being edited.
  */
-public interface HasEditorDriver<T> extends Editor<T> {
+public interface HasEditorDriver<T> extends Editor<T>, HasCleanup {
 
     /**
      * Initialize the Editor from the given object.

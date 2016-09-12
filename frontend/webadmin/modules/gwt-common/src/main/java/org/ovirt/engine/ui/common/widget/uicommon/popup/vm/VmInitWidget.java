@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -33,7 +34,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ClientBundle;
@@ -49,7 +49,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitModel> implements IndexedPanel {
 
-    interface Driver extends SimpleBeanEditorDriver<VmInitModel, VmInitWidget> {
+    interface Driver extends UiCommonEditorDriver<VmInitModel, VmInitWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, VmInitWidget> {
@@ -781,5 +781,10 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Override
     public VmInitModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

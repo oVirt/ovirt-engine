@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -24,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.Panel;
 
 public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<UnitVmModel, VmMakeTemplatePopupWidget> {
+    interface Driver extends UiCommonEditorDriver<UnitVmModel, VmMakeTemplatePopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, VmMakeTemplatePopupWidget> {
@@ -259,6 +259,11 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @Override
     public UnitVmModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesT
 import org.ovirt.engine.ui.userportal.widget.basic.VmPausedImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmUpMaskImage;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -48,7 +48,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<UserPortalItemModel, MainTabBasicListItemView> {
+    interface Driver extends UiCommonEditorDriver<UserPortalItemModel, MainTabBasicListItemView> {
     }
 
     public interface Style extends CssResource {
@@ -227,6 +227,11 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public UserPortalItemModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

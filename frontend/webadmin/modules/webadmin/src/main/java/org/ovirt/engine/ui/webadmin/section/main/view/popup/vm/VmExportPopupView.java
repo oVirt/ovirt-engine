@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel>
         implements VmExportPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ExportVmModel, VmExportPopupView> {
+    interface Driver extends UiCommonEditorDriver<ExportVmModel, VmExportPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmExportPopupView> {
@@ -81,4 +81,8 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

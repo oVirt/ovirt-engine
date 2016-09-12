@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -55,7 +56,6 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -78,7 +78,7 @@ import com.google.inject.Inject;
 
 public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupView<ImportVmFromExportDomainModel> implements ImportVmFromExportDomainPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportVmFromExportDomainModel, ImportVmFromExportDomainPopupView> {
+    interface Driver extends UiCommonEditorDriver<ImportVmFromExportDomainModel, ImportVmFromExportDomainPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmFromExportDomainPopupView> {
@@ -737,6 +737,11 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             appTable.flush();
         }
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

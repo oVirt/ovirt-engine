@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
@@ -27,7 +28,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -43,7 +43,7 @@ import com.google.inject.Inject;
 public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBoundPopupView<ConfigureLocalStorageModel>
     implements ConfigureLocalStoragePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ConfigureLocalStorageModel, HostConfigureLocalStoragePopupView> {
+    interface Driver extends UiCommonEditorDriver<ConfigureLocalStorageModel, HostConfigureLocalStoragePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostConfigureLocalStoragePopupView> {
@@ -364,6 +364,11 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
     @Override
     public ConfigureLocalStorageModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

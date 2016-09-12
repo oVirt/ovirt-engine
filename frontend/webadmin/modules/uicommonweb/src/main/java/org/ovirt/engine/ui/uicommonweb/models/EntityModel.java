@@ -144,4 +144,10 @@ public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
     public Convertible asConvertible() {
         return new Convertible(this);
     }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getEntityChangedEvent());
+        super.cleanup();
+    }
 }

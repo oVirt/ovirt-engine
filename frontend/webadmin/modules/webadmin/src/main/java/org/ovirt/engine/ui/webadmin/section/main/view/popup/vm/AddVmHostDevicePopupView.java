@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
 
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 
 public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmHostDevicesModel> implements AddVmHostDevicePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<AddVmHostDevicesModel, AddVmHostDevicePopupView> {
+    interface Driver extends UiCommonEditorDriver<AddVmHostDevicesModel, AddVmHostDevicePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AddVmHostDevicePopupView> {
@@ -163,6 +163,11 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
     @Override
     public AddVmHostDevicesModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

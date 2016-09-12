@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.css.OvirtCss;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.TabbedView;
@@ -111,7 +112,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -135,7 +135,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel>
     implements TabbedView {
 
-    interface Driver extends SimpleBeanEditorDriver<UnitVmModel, AbstractVmPopupWidget> {
+    interface Driver extends UiCommonEditorDriver<UnitVmModel, AbstractVmPopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<DialogTabPanel, AbstractVmPopupWidget> {
@@ -1836,6 +1836,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vmInitEditor.flush();
         serialNumberPolicyEditor.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget.ViewIdHan
 import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget.ViewUiBinder;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 
 public class VmwarePropertiesWidget extends AbstractModelBoundPopupWidget<VmwarePropertiesModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VmwarePropertiesModel, VmwarePropertiesWidget> {
+    interface Driver extends UiCommonEditorDriver<VmwarePropertiesModel, VmwarePropertiesWidget> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -104,6 +104,11 @@ public class VmwarePropertiesWidget extends AbstractModelBoundPopupWidget<Vmware
     @Override
     public VmwarePropertiesModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

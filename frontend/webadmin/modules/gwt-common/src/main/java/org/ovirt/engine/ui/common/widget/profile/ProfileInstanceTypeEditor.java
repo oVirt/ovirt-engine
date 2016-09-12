@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.profile;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
@@ -11,7 +12,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<VnicInstanceType> implements HasValueChangeHandlers<VnicInstanceType>, HasElementId {
 
-    interface Driver extends SimpleBeanEditorDriver<VnicInstanceType, ProfileInstanceTypeEditor> {
+    interface Driver extends UiCommonEditorDriver<VnicInstanceType, ProfileInstanceTypeEditor> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -96,4 +96,8 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

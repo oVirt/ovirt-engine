@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -8,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -17,9 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<GlusterStorageModel, GlusterStorageView> {
-
-        Driver driver = GWT.create(Driver.class);
+    interface Driver extends UiCommonEditorDriver<GlusterStorageModel, GlusterStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, GlusterStorageView> {
@@ -30,6 +28,8 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     interface ViewIdHandler extends ElementIdHandler<GlusterStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -65,7 +65,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
         localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void addStyles() {
@@ -83,7 +83,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     @Override
     public void edit(GlusterStorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         pathExampleLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
 
@@ -91,7 +91,12 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     @Override
     public GlusterStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

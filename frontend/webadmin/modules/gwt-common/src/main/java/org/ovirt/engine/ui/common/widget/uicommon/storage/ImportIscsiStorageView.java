@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
@@ -24,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -35,7 +35,7 @@ import com.google.gwt.view.client.SelectionModel;
 
 public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStorageModel> implements HasValidation {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportIscsiStorageModel, ImportIscsiStorageView> {
+    interface Driver extends UiCommonEditorDriver<ImportIscsiStorageModel, ImportIscsiStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, ImportIscsiStorageView> {
@@ -263,6 +263,11 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
     @Override
     public ImportIscsiStorageModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

@@ -76,9 +76,4 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
         sharedMacPoolModelProvider.getModel().stopRefresh();
     }
 
-    @Override
-    protected boolean shouldDestroyOnClose() {
-        return true;
-    }
-
 }

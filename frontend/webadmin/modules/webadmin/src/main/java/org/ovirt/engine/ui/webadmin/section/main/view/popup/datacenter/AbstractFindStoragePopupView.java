@@ -16,7 +16,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 
-public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<ListModel> {
+public abstract class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<ListModel> {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractFindStoragePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -84,4 +84,8 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         return table.asEditor().flush();
     }
 
+    @Override
+    public void cleanup() {
+        // TODO clean up stuff if needed
+    }
 }

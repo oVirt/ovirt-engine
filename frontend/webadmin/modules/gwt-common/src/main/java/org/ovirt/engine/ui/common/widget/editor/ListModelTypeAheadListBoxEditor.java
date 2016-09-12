@@ -4,6 +4,8 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
+
 import com.google.gwt.editor.client.IsEditor;
 
 /**
@@ -12,7 +14,7 @@ import com.google.gwt.editor.client.IsEditor;
  *            SuggestBox item type.
  */
 public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetWithLabel<T, ListModelTypeAheadListBox<T>>
-        implements IsEditor<WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>>> {
+        implements IsEditor<WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>>>, HasCleanup {
 
     private final WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>> editor;
 
@@ -57,10 +59,15 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         getContentWidget().setUsePatternFly(usePatternFly);
     }
 
+    @Override
+    public void cleanup() {
+        getContentWidget().cleanup();
+    }
+
     /**
      * A renderer for the suggest box. Receives an instance of the EntityModel and returns two kinds of the rendering.
      */
-    public static interface SuggestBoxRenderer<T> {
+    public interface SuggestBoxRenderer<T> {
         /**
          * Returns the string that will be shown in the text box (not the suggestions list). Can be only clean string.
          * <p>

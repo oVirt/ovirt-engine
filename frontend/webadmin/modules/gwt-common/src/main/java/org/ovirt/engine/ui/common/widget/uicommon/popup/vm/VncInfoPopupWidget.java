@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VncInfoPopupWidget extends AbstractModelBoundPopupWidget<VncInfoModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VncInfoModel, VncInfoPopupWidget> {
+    interface Driver extends UiCommonEditorDriver<VncInfoModel, VncInfoPopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<VerticalPanel, VncInfoPopupWidget> {
@@ -44,4 +44,8 @@ public class VncInfoPopupWidget extends AbstractModelBoundPopupWidget<VncInfoMod
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

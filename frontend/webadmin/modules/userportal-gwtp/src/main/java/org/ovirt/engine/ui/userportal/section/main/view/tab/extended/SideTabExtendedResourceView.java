@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.SubTableResources;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -28,7 +29,6 @@ import org.ovirt.engine.ui.userportal.widget.QuotaStorageProgressBar;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.resources.VmTable;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -53,7 +53,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<ResourcesModel, SideTabExtendedResourceView> {
+    interface Driver extends UiCommonEditorDriver<ResourcesModel, SideTabExtendedResourceView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SideTabExtendedResourceView> {
@@ -321,4 +321,8 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

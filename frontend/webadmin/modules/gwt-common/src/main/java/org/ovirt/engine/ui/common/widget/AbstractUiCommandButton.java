@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -32,7 +33,14 @@ import com.google.gwt.user.client.ui.Widget;
  * </pre>
  */
 public abstract class AbstractUiCommandButton extends Composite
-        implements HasUiCommandClickHandlers, HasLabel, FocusableComponentsContainer {
+        implements HasUiCommandClickHandlers, HasLabel, FocusableComponentsContainer, HasCleanup {
+
+    private final IEventListener<PropertyChangedEventArgs> listener = new IEventListener<PropertyChangedEventArgs>() {
+        @Override
+        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            updateButton();
+        }
+    };
 
     private UICommand command;
 
@@ -55,12 +63,7 @@ public abstract class AbstractUiCommandButton extends Composite
     public void setCommand(UICommand command) {
         this.command = command;
 
-        command.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                updateButton();
-            }
-        });
+        command.getPropertyChangedEvent().addListener(listener);
 
         updateButton();
     }
@@ -101,4 +104,8 @@ public abstract class AbstractUiCommandButton extends Composite
 
     protected abstract Widget getButtonWidget();
 
+    @Override
+    public void cleanup() {
+        getCommand().getPropertyChangedEvent().removeListener(listener);
+    }
 }

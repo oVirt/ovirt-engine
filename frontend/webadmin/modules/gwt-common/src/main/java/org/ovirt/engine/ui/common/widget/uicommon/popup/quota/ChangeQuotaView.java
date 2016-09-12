@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ChangeQuotaView extends Composite implements HasEditorDriver<ChangeQuotaModel>, HasElementId {
 
-    interface Driver extends SimpleBeanEditorDriver<ChangeQuotaModel, ChangeQuotaView> {
+    interface Driver extends UiCommonEditorDriver<ChangeQuotaModel, ChangeQuotaView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, ChangeQuotaView> {
@@ -97,6 +97,11 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
     @Override
     public ChangeQuotaModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

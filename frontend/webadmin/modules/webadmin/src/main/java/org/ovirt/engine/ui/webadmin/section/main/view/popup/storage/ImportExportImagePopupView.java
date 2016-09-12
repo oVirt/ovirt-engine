@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -34,7 +35,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -47,7 +47,7 @@ import com.google.inject.Inject;
 public class ImportExportImagePopupView extends AbstractModelBoundPopupView<ImportExportRepoImageBaseModel> implements
         ImportExportImagePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportExportRepoImageBaseModel, ImportExportImagePopupView> {
+    interface Driver extends UiCommonEditorDriver<ImportExportRepoImageBaseModel, ImportExportImagePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportExportImagePopupView> {
@@ -197,6 +197,11 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     @Override
     public ImportExportRepoImageBaseModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

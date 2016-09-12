@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGe
 import org.ovirt.engine.ui.webadmin.widget.label.VersionValueLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostGeneralModel>
     implements SubTabHostGeneralSoftwarePresenter.ViewDef, Editor<HostGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<HostGeneralModel, SubTabHostGeneralSoftwareView> {
+    interface Driver extends UiCommonEditorDriver<HostGeneralModel, SubTabHostGeneralSoftwareView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostGeneralSoftwareView> {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.quota;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -12,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -63,7 +63,7 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
     @Ignore
     Label cpuLabel;
 
-    interface Driver extends SimpleBeanEditorDriver<EditQuotaClusterModel, EditQuotaClusterPopupView> {
+    interface Driver extends UiCommonEditorDriver<EditQuotaClusterModel, EditQuotaClusterPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, EditQuotaClusterPopupView> {
@@ -120,6 +120,11 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
     @Override
     public EditQuotaClusterModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

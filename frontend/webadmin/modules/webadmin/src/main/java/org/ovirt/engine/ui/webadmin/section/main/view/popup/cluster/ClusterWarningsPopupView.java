@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -11,7 +12,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterWarningsModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterWarningsPopupPresenterWidget;
 
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -26,7 +26,7 @@ public class ClusterWarningsPopupView
         extends AbstractModelBoundPopupView<ClusterWarningsModel>
         implements ClusterWarningsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ClusterWarningsModel, ClusterWarningsPopupView> {
+    interface Driver extends UiCommonEditorDriver<ClusterWarningsModel, ClusterWarningsPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ClusterWarningsPopupView> {
@@ -127,5 +127,10 @@ public class ClusterWarningsPopupView
     @Override
     public ClusterWarningsModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

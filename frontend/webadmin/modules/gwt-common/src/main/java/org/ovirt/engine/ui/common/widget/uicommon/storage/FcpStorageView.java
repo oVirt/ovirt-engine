@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -12,7 +13,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -99,6 +99,11 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModel> impleme
     }
 
     @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
+
+    @Override
     public void focus() {
     }
 
@@ -115,7 +120,7 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModel> impleme
         contentPanel.setWidget(sanStorageLunToTargetList);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<SanStorageModel, FcpStorageView> {
+    interface Driver extends UiCommonEditorDriver<SanStorageModel, FcpStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, FcpStorageView> {

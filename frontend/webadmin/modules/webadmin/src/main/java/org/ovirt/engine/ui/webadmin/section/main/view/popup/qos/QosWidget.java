@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosParametersModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -15,7 +15,7 @@ public abstract class QosWidget<T extends QosBase, P extends QosParametersModel<
     @UiField
     FlowPanel mainPanel;
 
-    protected SimpleBeanEditorDriver<P, QosWidget<T, P>> driver;
+    protected UiCommonEditorDriver<P, QosWidget<T, P>> driver;
 
     private QosParametersModel<? extends QosBase> model;
     private final IEventListener<PropertyChangedEventArgs> propertyChangeListener;
@@ -62,4 +62,8 @@ public abstract class QosWidget<T extends QosBase, P extends QosParametersModel<
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

@@ -42,4 +42,11 @@ public class KeyValueLineModel extends Model {
         getValues().setIsAvailable(false);
     }
 
+    @Override
+    public void cleanup() {
+        getKeys().cleanup();
+        getValue().cleanup();
+        getValues().cleanup();
+        super.cleanup();
+    }
 }

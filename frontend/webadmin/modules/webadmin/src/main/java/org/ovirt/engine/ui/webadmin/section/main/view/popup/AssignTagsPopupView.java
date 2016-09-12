@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagListModel>
         implements AssignTagsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<TagListModel, AssignTagsPopupView> {
+    interface Driver extends UiCommonEditorDriver<TagListModel, AssignTagsPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AssignTagsPopupView> {
@@ -130,6 +130,11 @@ public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagList
     @Override
     public TagListModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface AssignTagTreeResources extends CellTree.Resources {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,7 +32,7 @@ import com.google.inject.Inject;
 
 public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<NfsStorageModel, NfsStorageView> {
+    interface Driver extends UiCommonEditorDriver<NfsStorageModel, NfsStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, NfsStorageView> {
@@ -171,6 +171,11 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @Override
     public NfsStorageModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

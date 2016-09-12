@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -312,4 +313,20 @@ public class ListModel<T> extends Model {
         }
     }
 
+    @Override
+    public void cleanup() {
+        cleanupEvents(getSelectedItemChangedEvent(),
+                getSelectedItemsChangedEvent(),
+                getItemsChangedEvent());
+
+        if (getItems() != null) {
+            for (T item : getItems()) {
+                if (item instanceof HasCleanup) {
+                    ((HasCleanup) item).cleanup();
+                }
+            }
+        }
+
+        super.cleanup();
+    }
 }

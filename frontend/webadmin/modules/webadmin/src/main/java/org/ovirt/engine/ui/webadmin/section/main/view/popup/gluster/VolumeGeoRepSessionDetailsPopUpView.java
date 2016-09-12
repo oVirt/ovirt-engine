@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeGeoRepSessionDetailsPopUpPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -30,7 +30,7 @@ import com.google.inject.Inject;
 
 public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopupView<VolumeGeoRepSessionDetailsModel> implements VolumeGeoRepSessionDetailsPopUpPresenterWidget.ViewDef{
 
-    interface Driver extends SimpleBeanEditorDriver<VolumeGeoRepSessionDetailsModel, VolumeGeoRepSessionDetailsPopUpView> {
+    interface Driver extends UiCommonEditorDriver<VolumeGeoRepSessionDetailsModel, VolumeGeoRepSessionDetailsPopUpView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VolumeGeoRepSessionDetailsPopUpView> {
@@ -230,4 +230,8 @@ public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopup
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

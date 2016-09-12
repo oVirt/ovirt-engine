@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -14,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<SnapshotModel, VmSnapshotPreviewPopupWidget> {
+    interface Driver extends UiCommonEditorDriver<SnapshotModel, VmSnapshotPreviewPopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, VmSnapshotPreviewPopupWidget> {
@@ -115,6 +115,11 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
     @Override
     public SnapshotModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

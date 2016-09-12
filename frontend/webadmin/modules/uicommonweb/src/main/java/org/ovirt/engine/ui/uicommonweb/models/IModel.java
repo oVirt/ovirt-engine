@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
 import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
@@ -9,7 +10,7 @@ import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
  * It's purpose for existence is purely to restrict the {@link org.ovirt.engine.ui.uicommonweb.models.HasEntity}
  * interface to subclasses of {@link org.ovirt.engine.ui.uicommonweb.models.Model}.
  */
-public interface IModel extends IProvidePropertyChangedEvent {
+public interface IModel extends IProvidePropertyChangedEvent, HasCleanup {
 
     void setWindow(Model value);
 

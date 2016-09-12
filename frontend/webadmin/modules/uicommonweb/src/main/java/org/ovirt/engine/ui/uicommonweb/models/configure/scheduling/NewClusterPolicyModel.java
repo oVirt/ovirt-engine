@@ -560,4 +560,10 @@ public class NewClusterPolicyModel extends Model {
         refreshCustomProperties(null, true);
     }
 
+    @Override
+    public void cleanup() {
+        cleanupEvents(getFiltersChangedEvent(),
+                getFunctionsChangedEvent());
+        super.cleanup();
+    }
 }

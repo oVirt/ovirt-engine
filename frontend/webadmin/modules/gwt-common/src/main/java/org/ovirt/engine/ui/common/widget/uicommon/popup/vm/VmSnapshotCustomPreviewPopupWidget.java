@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -37,7 +38,6 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -56,7 +56,7 @@ import com.google.gwt.view.client.NoSelectionModel;
 
 public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupWidget<PreviewSnapshotModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<PreviewSnapshotModel, VmSnapshotCustomPreviewPopupWidget> {
+    interface Driver extends UiCommonEditorDriver<PreviewSnapshotModel, VmSnapshotCustomPreviewPopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<SplitLayoutPanel, VmSnapshotCustomPreviewPopupWidget> {
@@ -400,6 +400,11 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     public PreviewSnapshotModel flush() {
         previewTable.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     private SafeHtml imageResourceToSafeHtml(ImageResource resource) {

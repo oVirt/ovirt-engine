@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -7,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAre
 import org.ovirt.engine.ui.uicommonweb.models.clusters.GlusterHookContentModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 
 public class GlusterHookContentPopupView extends AbstractModelBoundPopupView<GlusterHookContentModel> implements GlusterHookContentPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<GlusterHookContentModel, GlusterHookContentPopupView> {
+    interface Driver extends UiCommonEditorDriver<GlusterHookContentModel, GlusterHookContentPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, GlusterHookContentPopupView> {
@@ -63,6 +63,11 @@ public class GlusterHookContentPopupView extends AbstractModelBoundPopupView<Glu
     @Override
     public GlusterHookContentModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

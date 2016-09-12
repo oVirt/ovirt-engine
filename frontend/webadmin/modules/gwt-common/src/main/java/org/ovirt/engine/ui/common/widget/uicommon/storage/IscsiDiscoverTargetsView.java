@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.FocusComposite;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
@@ -41,7 +41,7 @@ import com.google.inject.Inject;
 
 public class IscsiDiscoverTargetsView extends FocusComposite implements HasEditorDriver<SanStorageModelBase>, HasKeyPressHandlers {
 
-    interface Driver extends SimpleBeanEditorDriver<SanStorageModelBase, IscsiDiscoverTargetsView> {
+    interface Driver extends UiCommonEditorDriver<SanStorageModelBase, IscsiDiscoverTargetsView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, IscsiDiscoverTargetsView> {
@@ -236,6 +236,11 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     @Override
     public SanStorageModelBase flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

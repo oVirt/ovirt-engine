@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -10,7 +11,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostFenceProxyPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 
 public class HostFenceProxyPopupView extends AbstractModelBoundPopupView<FenceProxyModel> implements HostFenceProxyPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<FenceProxyModel, HostFenceProxyPopupView> {
+    interface Driver extends UiCommonEditorDriver<FenceProxyModel, HostFenceProxyPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostFenceProxyPopupView> {
@@ -83,4 +83,8 @@ public class HostFenceProxyPopupView extends AbstractModelBoundPopupView<FencePr
         return doFlush ? driver.flush() : null;
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

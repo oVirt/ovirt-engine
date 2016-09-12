@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -23,7 +24,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -37,7 +37,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubTabClusterGeneralView extends AbstractSubTabFormView<Cluster, ClusterListModel<Void>, ClusterGeneralModel>
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, SubTabClusterGeneralView> {
+    interface Driver extends UiCommonEditorDriver<ClusterGeneralModel, SubTabClusterGeneralView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterGeneralView> {

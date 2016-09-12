@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.quota;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -11,7 +12,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -43,7 +43,7 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
     @Ignore
     Label storageLabel;
 
-    interface Driver extends SimpleBeanEditorDriver<EditQuotaStorageModel, EditQuotaStoragePopupView> {
+    interface Driver extends UiCommonEditorDriver<EditQuotaStorageModel, EditQuotaStoragePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, EditQuotaStoragePopupView> {
@@ -95,6 +95,11 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
     @Override
     public EditQuotaStorageModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

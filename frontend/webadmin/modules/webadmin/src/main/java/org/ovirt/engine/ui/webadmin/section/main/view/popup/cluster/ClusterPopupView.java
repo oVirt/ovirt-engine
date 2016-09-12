@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
@@ -57,7 +58,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -73,7 +73,7 @@ import com.google.inject.Inject;
 
 public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ClusterModel, ClusterPopupView> {
+    interface Driver extends UiCommonEditorDriver<ClusterModel, ClusterPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ClusterPopupView> {
@@ -327,7 +327,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "enableHaReservation.entity")
     @WithElementId
     EntityModelCheckBoxEditor enableHaReservationEditor;
-
 
     @UiField(provided = true)
     @Path(value = "clusterPolicy.selectedItem")
@@ -822,6 +821,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     public ClusterModel flush() {
         serialNumberPolicyEditor.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

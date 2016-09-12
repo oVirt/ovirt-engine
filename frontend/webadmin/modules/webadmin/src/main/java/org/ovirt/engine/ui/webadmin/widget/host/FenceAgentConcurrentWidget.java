@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
 import org.ovirt.engine.ui.common.css.OvirtCss;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class FenceAgentConcurrentWidget extends AbstractModelBoundPopupWidget<FenceAgentModel> implements HasEnabled {
 
-    interface Driver extends SimpleBeanEditorDriver<FenceAgentModel, FenceAgentConcurrentWidget> {
+    interface Driver extends UiCommonEditorDriver<FenceAgentModel, FenceAgentConcurrentWidget> {
     }
 
     public interface WidgetUiBinder extends UiBinder<Widget, FenceAgentConcurrentWidget> {
@@ -80,6 +80,11 @@ public class FenceAgentConcurrentWidget extends AbstractModelBoundPopupWidget<Fe
     @Override
     public FenceAgentModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @UiHandler("editFenceAgent")

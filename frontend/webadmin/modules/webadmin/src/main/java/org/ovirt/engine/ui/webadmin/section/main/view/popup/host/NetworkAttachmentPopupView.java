@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -28,7 +29,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAtt
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -233,6 +233,12 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
     }
 
     @Override
+    public void cleanup() {
+        qosWidget.cleanup();
+        driver.cleanup();
+    }
+
+    @Override
     public void focusInput() {
         ipv4BootProtocol.setFocus(true);
     }
@@ -242,7 +248,7 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
         return tabPanel;
     }
 
-    interface Driver extends SimpleBeanEditorDriver<NetworkAttachmentModel, NetworkAttachmentPopupView> {
+    interface Driver extends UiCommonEditorDriver<NetworkAttachmentModel, NetworkAttachmentPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, NetworkAttachmentPopupView> {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.HorizontalSplitTable;
@@ -28,7 +29,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.Import
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -42,7 +42,7 @@ import com.google.inject.Inject;
 
 public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImportNetworksModel> implements ImportNetworksPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<BaseImportNetworksModel, ImportNetworksPopupView> { }
+    interface Driver extends UiCommonEditorDriver<BaseImportNetworksModel, ImportNetworksPopupView> { }
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -221,6 +221,11 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
     @Override
     public BaseImportNetworksModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

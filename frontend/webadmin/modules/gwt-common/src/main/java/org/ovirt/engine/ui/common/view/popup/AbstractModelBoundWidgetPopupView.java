@@ -43,6 +43,11 @@ public abstract class AbstractModelBoundWidgetPopupView<T extends Model> extends
     }
 
     @Override
+    public void cleanup() {
+        popupWidget.cleanup();
+    }
+
+    @Override
     public void focusInput() {
         popupWidget.focusInput();
     }

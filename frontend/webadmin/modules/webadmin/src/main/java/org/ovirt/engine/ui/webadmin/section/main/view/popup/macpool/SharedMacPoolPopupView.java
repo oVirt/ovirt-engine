@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -7,7 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 
 public class SharedMacPoolPopupView extends AbstractModelBoundPopupView<SharedMacPoolModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<SharedMacPoolModel, SharedMacPoolPopupView> {
+    interface Driver extends UiCommonEditorDriver<SharedMacPoolModel, SharedMacPoolPopupView> {
     }
 
     private Driver driver = GWT.create(Driver.class);
@@ -60,6 +60,8 @@ public class SharedMacPoolPopupView extends AbstractModelBoundPopupView<SharedMa
         return driver.flush();
     }
 
-
+    public void cleanup() {
+        driver.cleanup();
+    }
 
 }
