@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -26,7 +27,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterServicePresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, ClusterListModel<Void>, ClusterServiceModel>
         implements SubTabClusterServicePresenter.ViewDef, Editor<ClusterServiceModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<ClusterServiceModel, SubTabClusterServiceView> {
+    interface Driver extends UiCommonEditorDriver<ClusterServiceModel, SubTabClusterServiceView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterServiceView> {

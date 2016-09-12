@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,7 +29,7 @@ import com.google.inject.Inject;
 public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel>
         implements VmMigratePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<MigrateModel, VmMigratePopupView> {
+    interface Driver extends UiCommonEditorDriver<MigrateModel, VmMigratePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmMigratePopupView> {
@@ -136,4 +136,8 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

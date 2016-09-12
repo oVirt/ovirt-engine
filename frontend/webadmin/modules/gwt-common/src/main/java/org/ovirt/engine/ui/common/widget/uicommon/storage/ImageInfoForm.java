@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
@@ -15,12 +16,11 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiConstructor;
 
 public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<ImageInfoModel, ImageInfoForm> {
+    interface Driver extends UiCommonEditorDriver<ImageInfoModel, ImageInfoForm> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -80,6 +80,11 @@ public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> 
     @Override
     protected void doEdit(ImageInfoModel model) {
         driver.edit(model);
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

@@ -58,6 +58,29 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         propertyChangedEvent = value;
     }
 
+    @Override
+    public void cleanup() {
+        if (hasEventBusSet()) {
+            unsetEventBus();
+        }
+
+        cleanupEvents(getPropertyChangedEvent());
+
+        for (UICommand command : getCommands()) {
+            command.cleanup();
+        }
+
+        invalidTabs.clear();
+    }
+
+    protected void cleanupEvents(Event<?>... events) {
+        for (Event<?> event : events) {
+            if (event != null) {
+                event.clearListeners();
+            }
+        }
+    }
+
     private Model window;
 
     @Override

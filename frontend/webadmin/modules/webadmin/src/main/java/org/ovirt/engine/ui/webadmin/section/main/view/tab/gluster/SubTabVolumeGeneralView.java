@@ -6,6 +6,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -26,15 +27,15 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.VolumeCapacityLabel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ValueLabel;
 
 public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolumeEntity, VolumeListModel, VolumeGeneralModel> implements SubTabVolumeGeneralPresenter.ViewDef, Editor<VolumeGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VolumeGeneralModel, SubTabVolumeGeneralView> {
+    interface Driver extends UiCommonEditorDriver<VolumeGeneralModel, SubTabVolumeGeneralView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVolumeGeneralView> {

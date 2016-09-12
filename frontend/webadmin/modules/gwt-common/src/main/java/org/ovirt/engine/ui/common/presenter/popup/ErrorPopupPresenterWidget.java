@@ -29,9 +29,4 @@ public class ErrorPopupPresenterWidget extends AbstractPopupPresenterWidget<Erro
         onClose();
     }
 
-    @Override
-    protected boolean shouldDestroyOnClose() {
-        return true;
-    }
-
 }

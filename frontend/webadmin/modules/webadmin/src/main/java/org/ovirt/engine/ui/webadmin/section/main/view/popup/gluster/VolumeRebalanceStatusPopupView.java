@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -26,7 +27,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractHumanReadableTim
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractRebalanceFileSizeColumn;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,7 +37,7 @@ import com.google.inject.Inject;
 
 public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<VolumeRebalanceStatusModel> implements VolumeRebalanceStatusPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<VolumeRebalanceStatusModel, VolumeRebalanceStatusPopupView> {
+    interface Driver extends UiCommonEditorDriver<VolumeRebalanceStatusModel, VolumeRebalanceStatusPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VolumeRebalanceStatusPopupView> {
@@ -236,6 +236,11 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @Override
     public VolumeRebalanceStatusModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

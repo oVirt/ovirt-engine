@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -37,7 +38,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaUtilizationStatusColumn;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -167,7 +167,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     ArrayList<Guid> selectedClusterGuid = new ArrayList<>();
     ArrayList<Guid> selectedStorageGuid = new ArrayList<>();
 
-    interface Driver extends SimpleBeanEditorDriver<QuotaModel, QuotaPopupView> {
+    interface Driver extends UiCommonEditorDriver<QuotaModel, QuotaPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, QuotaPopupView> {
@@ -513,6 +513,11 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaClusterTable.flush();
         quotaStorageTable.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

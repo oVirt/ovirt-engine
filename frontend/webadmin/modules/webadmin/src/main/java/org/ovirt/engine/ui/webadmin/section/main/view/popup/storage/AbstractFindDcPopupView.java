@@ -70,4 +70,8 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         return table.asEditor().flush();
     }
 
+    @Override
+    public void cleanup() {
+        // TODO clean up stuff if needed
+    }
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -38,7 +38,7 @@ import com.google.inject.Inject;
 
 public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> implements RolePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<RoleModel, RolePopupView> {
+    interface Driver extends UiCommonEditorDriver<RoleModel, RolePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RolePopupView> {
@@ -229,6 +229,11 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
     @Override
     public RoleModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     private void expandTree() {

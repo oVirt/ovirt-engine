@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -25,7 +26,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -36,7 +36,7 @@ import com.google.inject.Inject;
 
 public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> implements VolumePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<VolumeModel, VolumePopupView> {
+    interface Driver extends UiCommonEditorDriver<VolumeModel, VolumePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VolumePopupView> {
@@ -257,6 +257,11 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @Override
     public VolumeModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

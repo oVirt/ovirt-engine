@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.tag;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -8,7 +9,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 
 public class TagPopupView extends AbstractModelBoundPopupView<TagModel> implements TagPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<TagModel, TagPopupView> {
+    interface Driver extends UiCommonEditorDriver<TagModel, TagPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, TagPopupView> {
@@ -56,6 +56,11 @@ public class TagPopupView extends AbstractModelBoundPopupView<TagModel> implemen
     @Override
     public TagModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

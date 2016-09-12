@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageModel> implements HasValidation {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportFcpStorageModel, ImportFcpStorageView> {
+    interface Driver extends UiCommonEditorDriver<ImportFcpStorageModel, ImportFcpStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, ImportFcpStorageView> {
@@ -134,6 +134,11 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
     @Override
     public ImportFcpStorageModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

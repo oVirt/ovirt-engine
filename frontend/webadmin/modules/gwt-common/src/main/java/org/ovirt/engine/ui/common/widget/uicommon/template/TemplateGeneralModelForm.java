@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
@@ -12,11 +13,10 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<TemplateGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<TemplateGeneralModel, TemplateGeneralModelForm> {
+    interface Driver extends UiCommonEditorDriver<TemplateGeneralModel, TemplateGeneralModelForm> {
     }
 
     StringValueLabel name = new StringValueLabel();
@@ -118,6 +118,11 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         // Required because of type conversion
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
         isStateless.setValue(Boolean.toString(getModel().getIsStateless()));
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
 }

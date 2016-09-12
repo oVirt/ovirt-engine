@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.DOM;

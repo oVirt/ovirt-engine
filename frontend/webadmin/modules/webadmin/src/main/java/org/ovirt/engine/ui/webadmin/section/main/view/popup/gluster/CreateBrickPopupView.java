@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -32,7 +33,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -43,7 +43,7 @@ import com.google.inject.Inject;
 
 public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBrickModel> implements CreateBrickPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<CreateBrickModel, CreateBrickPopupView> {
+    interface Driver extends UiCommonEditorDriver<CreateBrickModel, CreateBrickPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, CreateBrickPopupView> {
@@ -203,6 +203,11 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     public CreateBrickModel flush() {
         deviceTable.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     public String formatSize(double size) {

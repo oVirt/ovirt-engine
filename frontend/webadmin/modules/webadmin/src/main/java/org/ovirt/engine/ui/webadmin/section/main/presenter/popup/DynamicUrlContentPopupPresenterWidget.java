@@ -59,11 +59,6 @@ public class DynamicUrlContentPopupPresenterWidget extends AbstractPopupPresente
     }
 
     @Override
-    protected boolean shouldDestroyOnClose() {
-        return true;
-    }
-
-    @Override
     protected void handleEscapeKey() {
         if (closeOnEscKey) {
             onClose();

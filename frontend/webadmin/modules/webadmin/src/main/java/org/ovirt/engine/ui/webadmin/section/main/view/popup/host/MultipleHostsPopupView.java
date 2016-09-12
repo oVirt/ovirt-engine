@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHo
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -36,7 +36,7 @@ import com.google.inject.Inject;
 
 public class MultipleHostsPopupView extends AbstractModelBoundPopupView<MultipleHostsModel> implements MultipleHostsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<MultipleHostsModel, MultipleHostsPopupView> {
+    interface Driver extends UiCommonEditorDriver<MultipleHostsModel, MultipleHostsPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, MultipleHostsPopupView> {
@@ -195,4 +195,8 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

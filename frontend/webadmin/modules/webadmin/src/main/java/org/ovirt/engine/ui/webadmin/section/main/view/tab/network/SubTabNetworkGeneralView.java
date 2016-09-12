@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -24,7 +25,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNet
 import org.ovirt.engine.ui.webadmin.widget.renderer.MtuRenderer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ValueLabel;
@@ -40,7 +40,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<NetworkGeneralModel, SubTabNetworkGeneralView> {
+    interface Driver extends UiCommonEditorDriver<NetworkGeneralModel, SubTabNetworkGeneralView> {
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();

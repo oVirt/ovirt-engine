@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,7 +27,7 @@ import com.google.inject.Inject;
 public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoundPopupView<ConfirmationModel>
         implements ForceRemoveConfirmationPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, ForceRemoveConfirmationPopupView> {
+    interface Driver extends UiCommonEditorDriver<ConfirmationModel, ForceRemoveConfirmationPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ForceRemoveConfirmationPopupView> {
@@ -113,4 +113,8 @@ public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoun
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

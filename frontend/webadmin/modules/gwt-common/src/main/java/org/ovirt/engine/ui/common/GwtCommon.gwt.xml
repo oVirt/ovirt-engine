@@ -43,7 +43,7 @@
 
     <!-- Use custom GWT Editor Driver generator -->
     <generate-with class="org.ovirt.engine.ui.common.binding.UiCommonEditorDriverGenerator">
-        <when-type-assignable class="com.google.gwt.editor.client.SimpleBeanEditorDriver" />
+        <when-type-assignable class="org.ovirt.engine.ui.common.editor.UiCommonEditorDriver" />
     </generate-with>
 
     <!-- Register IdHandler generator -->

@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -261,6 +262,21 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         modelCommandInvoker.invokeCancelCommand();
     }
 
+    @Override
+    protected boolean shouldDestroyOnClose() {
+        // We will call hideAndUnbind manually after executing "Cancel" command
+        return false;
+    }
+
+    @Override
+    public void hideAndUnbind() {
+        super.hideAndUnbind();
+
+        getView().cleanup();
+        this.model.cleanup();
+        this.model = null;
+    }
+
     /**
      * Callback right before any command is executed on the popup.
      */
@@ -353,4 +369,5 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     public T getModel() {
         return model;
     }
+
 }

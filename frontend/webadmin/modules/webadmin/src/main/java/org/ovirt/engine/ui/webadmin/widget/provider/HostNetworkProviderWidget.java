@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.provider;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
@@ -23,7 +24,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -32,7 +32,7 @@ import com.google.inject.Inject;
 public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<HostNetworkProviderModel>
     implements PatternFlyCompatible {
 
-    interface Driver extends SimpleBeanEditorDriver<HostNetworkProviderModel, HostNetworkProviderWidget> {
+    interface Driver extends UiCommonEditorDriver<HostNetworkProviderModel, HostNetworkProviderWidget> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -117,6 +117,11 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     public HostNetworkProviderModel flush() {
         neutronAgentWidget.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

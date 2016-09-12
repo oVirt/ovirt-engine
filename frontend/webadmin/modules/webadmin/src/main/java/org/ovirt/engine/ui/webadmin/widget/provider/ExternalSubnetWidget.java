@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -11,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalSubnetModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 
 public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<ExternalSubnetModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<ExternalSubnetModel, ExternalSubnetWidget> {
+    interface Driver extends UiCommonEditorDriver<ExternalSubnetModel, ExternalSubnetWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, ExternalSubnetWidget> {
@@ -89,5 +89,10 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
     public ExternalSubnetModel flush() {
         dnsServersEditor.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

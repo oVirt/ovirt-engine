@@ -74,4 +74,8 @@ public class HasDataListModelEditorAdapter<M extends ListModel, T> implements Ha
         return listModel;
     }
 
+    @Override
+    public void cleanup() {
+        listModel.cleanup();
+    }
 }

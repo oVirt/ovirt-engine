@@ -121,6 +121,11 @@ public class NumaSupportPopupView extends AbstractModelBoundPopupView<NumaSuppor
     }
 
     @Override
+    public void cleanup() {
+        // TODO clean up stuff if needed
+    }
+
+    @Override
     public void setUnassignedGroupPanel(View view) {
         unassignedvNumaNodesContainer.insert(view, 1);
     }

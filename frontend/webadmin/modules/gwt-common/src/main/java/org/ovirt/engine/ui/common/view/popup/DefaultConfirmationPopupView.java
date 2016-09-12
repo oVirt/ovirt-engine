@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.view.popup;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -10,7 +11,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 
 public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView implements DefaultConfirmationPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, DefaultConfirmationPopupView> {
+    interface Driver extends UiCommonEditorDriver<ConfirmationModel, DefaultConfirmationPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DefaultConfirmationPopupView> {
@@ -70,4 +70,8 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

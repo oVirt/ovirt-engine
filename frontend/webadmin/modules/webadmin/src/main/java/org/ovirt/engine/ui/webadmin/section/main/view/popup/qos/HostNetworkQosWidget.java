@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
@@ -9,8 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosPara
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,7 +22,7 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
         String valueBox();
     }
 
-    interface Driver extends SimpleBeanEditorDriver<HostNetworkQosParametersModel, HostNetworkQosWidget> {
+    interface Driver extends UiCommonEditorDriver<HostNetworkQosParametersModel, HostNetworkQosWidget> {
     }
 
     interface WidgetUiBinder extends UiBinder<FlowPanel, HostNetworkQosWidget> {

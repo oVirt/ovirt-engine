@@ -145,6 +145,11 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         return modelProvider.getModel();
     }
 
+    @Override
+    public void cleanup() {
+        // TODO clean up stuff if needed
+    }
+
     private void setHeaderColumnWidths(List<String> widths) {
         for (int i = 0; i < tableHeader.getColumnCount(); i++) {
             tableHeader.setColumnWidth(tableHeader.getColumn(i), widths.get(i));

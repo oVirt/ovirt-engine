@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -30,7 +31,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -42,9 +42,8 @@ import com.google.inject.Inject;
 public class GlusterVolumeSnapshotCreatePopupView extends
         AbstractModelBoundPopupView<GlusterVolumeSnapshotModel> implements
         GlusterVolumeSnapshotCreatePopupPresenterWidget.ViewDef {
-    interface Driver
-            extends
-            SimpleBeanEditorDriver<GlusterVolumeSnapshotModel, GlusterVolumeSnapshotCreatePopupView> {
+
+    interface Driver extends UiCommonEditorDriver<GlusterVolumeSnapshotModel, GlusterVolumeSnapshotCreatePopupView> {
     }
 
     interface ViewUiBinder extends
@@ -339,6 +338,11 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @Override
     public GlusterVolumeSnapshotModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

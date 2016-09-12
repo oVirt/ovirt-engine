@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -21,7 +22,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,7 +36,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<PoolGeneralModel, SubTabPoolGeneralView> {
+    interface Driver extends UiCommonEditorDriver<PoolGeneralModel, SubTabPoolGeneralView> {
     }
 
     StringValueLabel cpuInfo = new StringValueLabel();

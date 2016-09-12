@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -33,7 +34,6 @@ import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberValueLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentTextBoxLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -44,7 +44,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostGeneralModel>
     implements SubTabHostGeneralInfoPresenter.ViewDef, Editor<HostGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<HostGeneralModel, SubTabHostGeneralInfoView> {
+    interface Driver extends UiCommonEditorDriver<HostGeneralModel, SubTabHostGeneralInfoView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostGeneralInfoView> {

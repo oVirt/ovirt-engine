@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditor;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
+
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.editor.client.adapters.OptionalFieldEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -23,7 +25,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
  * @see OptionalFieldEditor
  */
 public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel<T, ?>>
-        extends OptionalFieldEditor<T, LeafValueEditor<T>> implements UiCommonEditor<T> {
+        extends OptionalFieldEditor<T, LeafValueEditor<T>> implements UiCommonEditor<T>, HasCleanup {
 
     public static <T, W extends AbstractValidatedWidgetWithLabel<T, ?>> WidgetWithLabelEditor<T, W> of(
             LeafValueEditor<T> subEditor, W widgetWithLabel) {
@@ -128,4 +130,10 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
         widgetWithLabel.setTabIndex(index);
     }
 
+    @Override
+    public void cleanup() {
+        if (widgetWithLabel instanceof HasCleanup) {
+            ((HasCleanup) widgetWithLabel).cleanup();
+        }
+    }
 }

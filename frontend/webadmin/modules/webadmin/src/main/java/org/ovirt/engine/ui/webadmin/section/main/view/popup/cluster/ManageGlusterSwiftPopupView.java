@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -25,7 +26,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageG
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -37,7 +37,7 @@ import com.google.inject.Inject;
 
 public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<ManageGlusterSwiftModel> implements ManageGlusterSwiftPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ManageGlusterSwiftModel, ManageGlusterSwiftPopupView> {
+    interface Driver extends UiCommonEditorDriver<ManageGlusterSwiftModel, ManageGlusterSwiftPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ManageGlusterSwiftPopupView> {
@@ -237,6 +237,11 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     public ManageGlusterSwiftModel flush() {
         hostServicesTable.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

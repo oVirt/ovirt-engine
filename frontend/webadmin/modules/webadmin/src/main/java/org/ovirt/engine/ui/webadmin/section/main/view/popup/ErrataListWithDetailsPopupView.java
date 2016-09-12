@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.widget.errata.ErrataDetailModelForm;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,9 +28,6 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
  */
 public abstract class ErrataListWithDetailsPopupView extends AbstractModelBoundPopupView<AbstractErrataCountModel>
     implements ErrataListWithDetailsPopupPresenterWidget.ViewDef {
-
-    interface Driver extends SimpleBeanEditorDriver<AbstractErrataCountModel, ErrataListWithDetailsPopupView> {
-    }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ErrataListWithDetailsPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -55,16 +51,12 @@ public abstract class ErrataListWithDetailsPopupView extends AbstractModelBoundP
 
     protected final AbstractErrataListModel model;
 
-    private final Driver driver = GWT.create(Driver.class);
-
     public ErrataListWithDetailsPopupView(EventBus eventBus, AbstractErrataListModel model) {
-
         super(eventBus);
         errataDetailModelForm = new ErrataDetailModelForm();
         model.setItemsFilter(null);
         this.model = model;
 
-        driver.initialize(this);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         errataDetailModelForm.initialize();
     }
@@ -118,6 +110,11 @@ public abstract class ErrataListWithDetailsPopupView extends AbstractModelBoundP
     @Override
     public AbstractErrataCountModel flush() {
         return null;
+    }
+
+    @Override
+    public void cleanup() {
+        // TODO clean up stuff if needed
     }
 
     @Override

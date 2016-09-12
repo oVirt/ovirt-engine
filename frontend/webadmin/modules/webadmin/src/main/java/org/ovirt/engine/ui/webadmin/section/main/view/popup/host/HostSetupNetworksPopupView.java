@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
@@ -39,7 +40,6 @@ import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 import org.ovirt.engine.ui.webadmin.widget.footer.StatusPanel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -51,7 +51,7 @@ import com.google.inject.Inject;
 
 public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<HostSetupNetworksModel> implements HostSetupNetworksPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<HostSetupNetworksModel, HostSetupNetworksPopupView> {
+    interface Driver extends UiCommonEditorDriver<HostSetupNetworksModel, HostSetupNetworksPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostSetupNetworksPopupView> {
@@ -228,6 +228,11 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @Override
     public HostSetupNetworksModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     private void updateNetworks(List<LogicalNetworkModel> allNetworks) {

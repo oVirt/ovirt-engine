@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.quota;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ChangeQuotaItemView extends Composite implements HasEditorDriver<ChangeQuotaItemModel>, HasElementId {
 
-    interface Driver extends SimpleBeanEditorDriver<ChangeQuotaItemModel, ChangeQuotaItemView> {
+    interface Driver extends UiCommonEditorDriver<ChangeQuotaItemModel, ChangeQuotaItemView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, ChangeQuotaItemView> {
@@ -99,4 +99,8 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
     public void setElementId(String elementId) {
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

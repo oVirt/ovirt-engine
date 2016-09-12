@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -42,7 +42,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final SimpleBeanEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver;
+    private final UiCommonEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver;
 
     protected RegisterEntityInfoPanel<E> registerEntityInfoPanel;
 
@@ -62,7 +62,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
 
     @Inject
     public RegisterEntityPopupView(EventBus eventBus,
-            SimpleBeanEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver) {
+            UiCommonEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver) {
         super(eventBus);
         this.driver = driver;
 
@@ -146,6 +146,11 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
     @Override
     public RegisterEntityModel<E> flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     protected Column<ImportEntityData<E>, String> getClusterColumn() {

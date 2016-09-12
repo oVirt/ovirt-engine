@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -40,7 +41,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -55,7 +55,7 @@ import com.google.inject.Inject;
 
 public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsModel> implements ImportVmsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportVmsModel, ImportVmsPopupView> { }
+    interface Driver extends UiCommonEditorDriver<ImportVmsModel, ImportVmsPopupView> { }
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -478,6 +478,11 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @Override
     public ImportVmsModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

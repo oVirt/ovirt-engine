@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> implements HasValidation {
 
-    interface Driver extends SimpleBeanEditorDriver<IscsiStorageModel, IscsiStorageView> {
+    interface Driver extends UiCommonEditorDriver<IscsiStorageModel, IscsiStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, IscsiStorageView> {
@@ -228,6 +228,11 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Override
     public IscsiStorageModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBox;
@@ -15,14 +16,13 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
 public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImportGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VmImportGeneralModel, VmImportGeneralModelForm> {
+    interface Driver extends UiCommonEditorDriver<VmImportGeneralModel, VmImportGeneralModelForm> {
     }
 
     @Path("name.entity")
@@ -76,6 +76,11 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
 
         // Required because of type conversion
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     private Widget getOperatingSystemWidget() {

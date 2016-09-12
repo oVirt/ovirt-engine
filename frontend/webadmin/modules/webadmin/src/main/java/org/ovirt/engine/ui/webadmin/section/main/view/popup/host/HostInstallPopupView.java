@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfigura
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -30,7 +31,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -49,7 +49,7 @@ import com.google.inject.Inject;
  */
 public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallModel> implements HostInstallPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<InstallModel, HostInstallPopupView> {
+    interface Driver extends UiCommonEditorDriver<InstallModel, HostInstallPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostInstallPopupView> {
@@ -244,6 +244,12 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     public InstallModel flush() {
         networkProviderWidget.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        networkProviderWidget.cleanup();
+        driver.cleanup();
     }
 
     @Override

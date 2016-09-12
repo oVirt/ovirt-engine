@@ -1,6 +1,10 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -28,7 +32,8 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Base SuggestBox widget that adapts to UiCommon list model items.
  */
-public abstract class BaseListModelSuggestBox<T> extends Composite implements EditorWidget<T, TakesConstrainedValueEditor<T>>, HasConstrainedValue<T> {
+public abstract class BaseListModelSuggestBox<T> extends Composite implements
+    EditorWidget<T, TakesConstrainedValueEditor<T>>, HasConstrainedValue<T>, HasCleanup {
 
     private TakesConstrainedValueEditor<T> editor;
 
@@ -37,6 +42,8 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
     private SuggestBox suggestBox;
 
     private ListModelSuggestionDisplay suggestionDisplay;
+
+    protected List<HandlerRegistration> handlerRegistrations = new ArrayList<>();
 
     public BaseListModelSuggestBox(MultiWordSuggestOracle suggestOracle) {
         this(suggestOracle, 445);
@@ -48,12 +55,12 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
         suggestBox.removeStyleName("gwt-SuggestBox"); //$NON-NLS-1$
 
-        suggestBox.addSelectionHandler(new SelectionHandler<Suggestion>() {
+        handlerRegistrations.add(suggestBox.addSelectionHandler(new SelectionHandler<Suggestion>() {
             @Override
             public void onSelection(SelectionEvent<Suggestion> event) {
                 ValueChangeEvent.fire(suggestBox, event.getSelectedItem().getReplacementString());
             }
-        });
+        }));
 
     }
 
@@ -87,17 +94,23 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
     @Override
     public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-        return asSuggestBox().addKeyUpHandler(handler);
+        HandlerRegistration handlerRegistration = asSuggestBox().addKeyUpHandler(handler);
+        handlerRegistrations.add(handlerRegistration);
+        return handlerRegistration;
     }
 
     @Override
     public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
-        return asSuggestBox().addKeyDownHandler(handler);
+        HandlerRegistration handlerRegistration = asSuggestBox().addKeyDownHandler(handler);
+        handlerRegistrations.add(handlerRegistration);
+        return handlerRegistration;
     }
 
     @Override
     public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
-        return asSuggestBox().addKeyPressHandler(handler);
+        HandlerRegistration handlerRegistration = asSuggestBox().addKeyPressHandler(handler);
+        handlerRegistrations.add(handlerRegistration);
+        return handlerRegistration;
     }
 
     @Override
@@ -175,7 +188,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> handler) {
-        return asSuggestBox().addValueChangeHandler(new ValueChangeHandler<String>() {
+        HandlerRegistration handlerRegistration = asSuggestBox().addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 try {
@@ -186,6 +199,15 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
                 }
             }
         });
+        handlerRegistrations.add(handlerRegistration);
+        return handlerRegistration;
+    }
+
+    @Override
+    public void cleanup() {
+        for (HandlerRegistration registration : handlerRegistrations) {
+            registration.removeHandler();
+        }
     }
 
     class ListModelSuggestionDisplay extends DefaultSuggestionDisplay {
@@ -267,6 +289,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
          *
          * @see <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1160774">Bug 1160774</a>
          */
+        // TODO(vs) we don't support IE9 anymore, we should remove this code
         private void fixIe9Scrollbar() {
             boolean isIe9 = Window.Navigator.getUserAgent().contains("MSIE 9.0"); //$NON-NLS-1$
             if (isIe9 && super.isSuggestionListShowing()) {

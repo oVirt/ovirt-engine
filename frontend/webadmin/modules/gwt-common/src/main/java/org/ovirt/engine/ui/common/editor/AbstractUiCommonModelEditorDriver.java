@@ -8,11 +8,10 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.EditorVisitor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.editor.client.impl.BaseEditorDriver;
 
 /**
- * Base class for generated SimpleBeanEditorDriver implementations for editing EntityModel and ListModel instances.
+ * Base class for generated UiCommonEditorDriver implementations for editing EntityModel and ListModel instances.
  *
  * @param <T>
  *            the type being edited
@@ -20,7 +19,7 @@ import com.google.gwt.editor.client.impl.BaseEditorDriver;
  *            the Editor type
  */
 public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E extends Editor<T>>
-        extends BaseEditorDriver<T, E> implements SimpleBeanEditorDriver<T, E> {
+        extends BaseEditorDriver<T, E> implements UiCommonEditorDriver<T, E> {
 
     private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
     private EditorVisitor visitor;

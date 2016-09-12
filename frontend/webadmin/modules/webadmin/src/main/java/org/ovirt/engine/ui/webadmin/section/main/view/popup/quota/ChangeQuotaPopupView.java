@@ -39,4 +39,8 @@ public class ChangeQuotaPopupView extends AbstractModelBoundPopupView<ChangeQuot
         return changeQuotaView.flush();
     }
 
+    @Override
+    public void cleanup() {
+        changeQuotaView.cleanup();
+    }
 }

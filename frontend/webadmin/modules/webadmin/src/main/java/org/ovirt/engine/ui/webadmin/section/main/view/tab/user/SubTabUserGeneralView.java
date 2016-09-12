@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.user;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGeneralPresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,7 +33,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<UserGeneralModel, SubTabUserGeneralView> {
+    interface Driver extends UiCommonEditorDriver<UserGeneralModel, SubTabUserGeneralView> {
     }
 
     StringValueLabel domain = new StringValueLabel();

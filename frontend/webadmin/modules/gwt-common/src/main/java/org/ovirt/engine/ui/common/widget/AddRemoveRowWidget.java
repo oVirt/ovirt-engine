@@ -10,11 +10,13 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.dom.client.Style.Clear;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -45,7 +47,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <V>
  *            the type of widget used to display each value.
  */
-public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Widget & HasValueChangeHandlers<T>>
+public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Widget & HasValueChangeHandlers<T> & HasCleanup>
     extends AbstractModelBoundPopupWidget<M> implements HasEnabled {
 
     public interface WidgetStyle extends CssResource {
@@ -101,8 +103,9 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
      */
     protected void init(M model) {
         items.clear();
-        contentPanel.clear();
+        cleanContentPanel();
 
+        cleanupModelItems();
         modelItems = model.getItems();
         if (modelItems == null) {
             modelItems = new LinkedList<>();
@@ -118,6 +121,16 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             while (i.hasNext()) {
                 T value = i.next();
                 addEntry(value, !i.hasNext());
+            }
+        }
+    }
+
+    private void cleanupModelItems() {
+        if (modelItems != null) {
+            for (T item : modelItems) {
+                if (item instanceof HasCleanup) {
+                    ((HasCleanup) item).cleanup();
+                }
             }
         }
     }
@@ -158,6 +171,38 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             }
         }
         return model;
+    }
+
+    private void cleanContentPanel() {
+        for (int i = 0; i < contentPanel.getWidgetCount(); i++) {
+            Widget widget = contentPanel.getWidget(i);
+            if (widget instanceof HasCleanup) {
+                ((HasCleanup) widget).cleanup();
+            }
+        }
+        contentPanel.clear();
+    }
+
+    @Override
+    public void cleanup() {
+        if (model != null) {
+            model.cleanup();
+            model = null;
+        }
+        cleanupModelItems();
+        cleanupNonGhostItems();
+        cleanContentPanel();
+    }
+
+    private void cleanupNonGhostItems() {
+        for (Pair<T, V> item : items) {
+            T value = item.getFirst();
+            if (!isGhost(value)) {
+                if (item instanceof HasCleanup) {
+                    ((HasCleanup) value).cleanup();
+                }
+            }
+        }
     }
 
     protected Pair<T, V> addGhostEntry() {
@@ -300,7 +345,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         getEntry(widget).setButtonsEnabled(enabled);
     }
 
-    protected class AddRemoveRowPanel extends FlowPanel {
+    protected class AddRemoveRowPanel extends FlowPanel implements HasCleanup {
 
         private List<PushButton> buttons = new LinkedList<>();
         private SimplePanel div = new SimplePanel();
@@ -352,6 +397,15 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             add(div);
         }
 
+        public void cleanup() {
+            for (int i = 0; i < getWidgetCount(); i++) {
+                Widget widget = getWidget(i);
+                if (widget instanceof HasCleanup) {
+                    ((HasCleanup) widget).cleanup();
+                }
+            }
+            clear();
+        }
     }
 
     @Override

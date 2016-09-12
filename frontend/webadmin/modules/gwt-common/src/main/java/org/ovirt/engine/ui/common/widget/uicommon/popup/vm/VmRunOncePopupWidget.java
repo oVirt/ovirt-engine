@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -32,7 +33,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -57,7 +57,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<RunOnceModel, VmRunOncePopupWidget> {
+    interface Driver extends UiCommonEditorDriver<RunOnceModel, VmRunOncePopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<ScrollPanel, VmRunOncePopupWidget> {
@@ -723,6 +723,12 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     public RunOnceModel flush() {
         vmInitWidget.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        vmInitWidget.cleanup();
+        driver.cleanup();
     }
 
     private String typeAheadNameTemplateNullSafe(String name) {
