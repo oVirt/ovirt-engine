@@ -126,7 +126,7 @@ public abstract class BaseDaoTestCase {
         return connection;
     }
 
-    private static DataSource createDataSource() {
+    private static DataSource createDataSource() throws Exception {
         DataSource result = null;
         Properties properties = new Properties();
 
@@ -162,9 +162,6 @@ public abstract class BaseDaoTestCase {
             if (initSql != null && !initSql.isEmpty()) {
                 needInitializationSql = true;
             }
-        } catch (Exception error) {
-            error.printStackTrace();
-            throw new RuntimeException("Cannot create data source", error);
         } finally {
             if (is != null) {
                 try {
