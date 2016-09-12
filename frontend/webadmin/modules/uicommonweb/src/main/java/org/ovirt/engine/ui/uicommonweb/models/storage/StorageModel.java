@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -540,9 +541,17 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             if (!dataCenter.getId().equals(UnassignedDataCenterId)) {
                 getFormat().setIsChangeable(false);
 
+                // If data center is not yet initialized the storage pool format type is null although its version might
+                // not support specific storage formats for example v4.0 Data Center and v4 storage domains which
+                // supported only for v4.1.
+                if (dataCenter.getStoragePoolFormatType() == null) {
+                    StorageFormatType targetFormat =
+                            VersionStorageFormatUtil.getForVersion(dataCenter.getCompatibilityVersion());
+                    dataCenter.setStoragePoolFormatType(targetFormat);
+                }
+
                 // If data center has format defined and the selected-item role is Data, choose it.
-                if (dataCenter.getStoragePoolFormatType() != null
-                        && getCurrentStorageItem().getRole().isDataDomain()) {
+                if (getCurrentStorageItem().getRole().isDataDomain()) {
                     formats.add(dataCenter.getStoragePoolFormatType());
                     selectItem = dataCenter.getStoragePoolFormatType();
                 }
@@ -554,11 +563,6 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 else if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
                         || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
                     formats.add(StorageFormatType.V1);
-                }
-                else {
-                    formats.add(StorageFormatType.V3);
-                    formats.add(StorageFormatType.V4);
-                    selectItem = StorageFormatType.V4;
                 }
             }
             else { // Unassigned DC:
