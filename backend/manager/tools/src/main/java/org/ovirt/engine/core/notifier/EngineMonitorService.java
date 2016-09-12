@@ -32,7 +32,6 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.ShutdownHook;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.db.DbUtils;
 import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -387,19 +386,15 @@ public class EngineMonitorService implements Runnable {
      */
     private void insertEventIntoAuditLog(String eventType, int eventId, int severity, String message)
             throws SQLException {
-        Connection connection = null;
-        PreparedStatement ps = null;
-        try {
-            connection = ds.getConnection();
-            ps = connection.prepareStatement("insert into audit_log(log_time, log_type_name , log_type, severity, message) values (?,?,?,?,?)");
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement
+                     ("insert into audit_log(log_time, log_type_name , log_type, severity, message) values (?,?,?,?,?)")) {
             ps.setTimestamp(1, new Timestamp(new Date().getTime()));
             ps.setString(2, eventType);
             ps.setInt(3, eventId);
             ps.setInt(4, severity);
             ps.setString(5, message);
             ps.executeUpdate();
-        } finally {
-            DbUtils.closeQuietly(ps, connection);
         }
     }
 

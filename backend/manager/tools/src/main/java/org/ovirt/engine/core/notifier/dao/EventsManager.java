@@ -25,7 +25,6 @@ import org.ovirt.engine.core.notifier.filter.AuditLogEventType;
 import org.ovirt.engine.core.notifier.filter.FirstMatchSimpleFilter;
 import org.ovirt.engine.core.notifier.transport.Observable;
 import org.ovirt.engine.core.notifier.transport.Observer;
-import org.ovirt.engine.core.utils.db.DbUtils;
 import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,40 +50,27 @@ public class EventsManager implements Observer {
 
     private Map<String, String> populateEventMap() throws SQLException {
         Map<String, String> eventMap = new HashMap<>();
-        Connection connection = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            connection = ds.getConnection();
-            ps = connection.prepareStatement(
-                            "SELECT em.event_up_name, em.event_down_name " +
-                            "FROM event_map em;");
-
-            rs = ps.executeQuery();
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "SELECT em.event_up_name, em.event_down_name " +
+                     "FROM event_map em;");
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 eventMap.put(rs.getString("event_up_name"), rs.getString("event_down_name"));
             }
-
-        } finally {
-            DbUtils.closeQuietly(rs, ps, connection);
         }
         return eventMap;
     }
 
     public List<FirstMatchSimpleFilter.FilterEntry> getAuditLogEventSubscribers() throws SQLException {
-        Connection connection = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         List<FirstMatchSimpleFilter.FilterEntry> eventSubscribers = new ArrayList<>();
-        try {
-            connection = ds.getConnection();
-            ps = connection.prepareStatement(
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
                             "SELECT event_subscriber.event_up_name, " +
                             "       event_subscriber.method_address, " +
                             "       event_subscriber.notification_method " +
                             "FROM event_subscriber ");
-
-            rs = ps.executeQuery();
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String eventUpName = rs.getString("event_up_name");
                 String eventDownName = eventMap.get(eventUpName);
@@ -105,22 +91,15 @@ public class EventsManager implements Observer {
 
                 }
             }
-
-        } finally {
-            DbUtils.closeQuietly(rs, ps, connection);
         }
         return eventSubscribers;
     }
 
     public List<AuditLogEvent> getAuditLogEvents() throws SQLException {
-        List<AuditLogEvent> auditLogEvents = new ArrayList<>();
         HashSet<String> downEvents = new HashSet<>(eventMap.values());
-        Connection connection = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            connection = ds.getConnection();
-            ps = connection.prepareStatement(
+        List<AuditLogEvent> auditLogEvents = new ArrayList<>();
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
                             "SELECT al.audit_log_id, al.log_type_name, " +
                             "       al.user_id, al.user_name, " +
                             "       al.vm_id, al.vm_name, al.vm_template_id, al.vm_template_name, " +
@@ -129,13 +108,10 @@ public class EventsManager implements Observer {
                             "       al.log_time, al.severity, al.message " +
                             "FROM audit_log al " +
                             "WHERE al.processed = FALSE ;");
-
-            rs = ps.executeQuery();
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 auditLogEvents.add(extractAuditLogEvent(rs, downEvents));
             }
-        } finally {
-            DbUtils.closeQuietly(rs, ps, connection);
         }
         if (log.isDebugEnabled()) {
             log.debug("{} unprocessed events read from audit_log database table.", auditLogEvents.size());
@@ -188,16 +164,12 @@ public class EventsManager implements Observer {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -daysToSendOnStartup);
         Timestamp ts = new Timestamp(calendar.getTimeInMillis());
-        Connection connection = null;
-        PreparedStatement statement = null;
         int updatedRecords;
-        try {
-            connection = ds.getConnection();
-            statement = connection.prepareStatement(
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE audit_log " +
                     "SET  processed = 'true' " +
-                    "WHERE processed = 'false' AND log_time < ? ;"
-                    );
+                    "WHERE processed = 'false' AND log_time < ? ;")) {
             statement.setTimestamp(1, ts);
             updatedRecords = statement.executeUpdate();
             if (updatedRecords > 0) {
@@ -205,8 +177,6 @@ public class EventsManager implements Observer {
             }
         } catch (SQLException e) {
             throw new NotificationServiceException("Failed mark old events as processed.", e);
-        } finally {
-            DbUtils.closeQuietly(statement, connection);
         }
     }
 
@@ -216,22 +186,17 @@ public class EventsManager implements Observer {
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -daysToKeepHistory);
             Timestamp startDeleteFrom = new Timestamp(cal.getTimeInMillis());
-            Connection connection = null;
-            PreparedStatement deleteStmt = null;
             int deletedRecords;
-            try {
-                connection = ds.getConnection();
-                deleteStmt = connection.prepareStatement(
+            try (Connection connection = ds.getConnection();
+                 PreparedStatement deleteStmt = connection.prepareStatement(
                         "DELETE " +
                         "FROM event_notification_hist " +
-                        "WHERE sent_at < ? ;");
+                        "WHERE sent_at < ? ;")) {
                 deleteStmt.setTimestamp(1, startDeleteFrom);
                 deletedRecords = deleteStmt.executeUpdate();
                 if (deletedRecords > 0) {
                     log.debug("{} records were deleted from \"event_notification_hist\" table.", deletedRecords);
                 }
-            } finally {
-                DbUtils.closeQuietly(deleteStmt, connection);
             }
         }
 
@@ -239,35 +204,25 @@ public class EventsManager implements Observer {
 
     public void updateAuditLogEventProcessed(long auditLogId)
             throws SQLException {
-        Connection connection = null;
-        PreparedStatement ps = null;
-        try {
-            connection = ds.getConnection();
-            ps = connection.prepareStatement(
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
                     "UPDATE audit_log " +
                     "SET processed = 'true' " +
-                    "WHERE audit_log_id = ? ;");
+                    "WHERE audit_log_id = ? ;")) {
             ps.setLong(1, auditLogId);
             int updated = ps.executeUpdate();
             if (updated != 1) {
                 log.error("Failed to mark audit_log entry as processed for audit_log_id: {}",
                         auditLogId);
             }
-        } finally {
-            DbUtils.closeQuietly(ps, connection);
         }
-
     }
 
     @Override
     public void update(Observable o, DispatchResult dispatchResult) {
         AuditLogEvent event = dispatchResult.getEvent();
-
-        Connection connection = null;
-        CallableStatement cs = null;
-        try {
-            connection = ds.getConnection();
-            cs = connection.prepareCall("{call Insertevent_notification_hist(?,?,?,?,?,?)}");
+        try (Connection connection = ds.getConnection();
+             CallableStatement cs = connection.prepareCall("{call Insertevent_notification_hist(?,?,?,?,?,?)}")) {
             cs.setLong(1, event.getId());
             cs.setString(2, event.getLogTypeName());
             cs.setString(3, dispatchResult.getNotificationMethod().name());
@@ -277,9 +232,6 @@ public class EventsManager implements Observer {
             cs.executeUpdate();
         } catch (SQLException e) {
             log.error("Could not insert event notification history event", e);
-        } finally {
-            DbUtils.closeQuietly(cs, connection);
         }
-
     }
 }
