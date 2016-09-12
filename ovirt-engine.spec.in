@@ -193,7 +193,7 @@ BuildRequires:	unzip
 
 Requires(pre):	shadow-utils
 
-Requires:	%{jboss} >= 10.0.0
+Requires:	%{jboss} >= 10.1.0
 Conflicts:	%{jboss} >= 11.0.0
 %if %{ovirt_wildfly_overlay}
 Requires:	ovirt-engine-wildfly-overlay >= 10.0.0
