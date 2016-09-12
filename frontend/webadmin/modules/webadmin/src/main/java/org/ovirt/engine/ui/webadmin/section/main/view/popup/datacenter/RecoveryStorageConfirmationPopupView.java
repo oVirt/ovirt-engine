@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,7 +33,7 @@ import com.google.inject.Inject;
 
 public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopupView<ConfirmationModel> implements RecoveryStoragePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, RecoveryStorageConfirmationPopupView> {
+    interface Driver extends UiCommonEditorDriver<ConfirmationModel, RecoveryStorageConfirmationPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RecoveryStorageConfirmationPopupView> {
@@ -132,6 +132,11 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     public ConfirmationModel flush() {
         storageDomainItems.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     private void initTable() {

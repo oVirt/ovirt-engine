@@ -155,4 +155,9 @@ public class LoginModel extends Model {
         return getUserName().getIsValid() && getProfile().getIsValid();
     }
 
+    @Override
+    public void cleanup() {
+        cleanupEvents(getLoggedInEvent());
+        super.cleanup();
+    }
 }

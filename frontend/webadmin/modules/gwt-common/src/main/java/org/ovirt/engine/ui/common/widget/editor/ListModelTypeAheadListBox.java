@@ -131,39 +131,39 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
     private void registerListeners() {
         SuggestBoxFocusHandler handlers = new SuggestBoxFocusHandler();
-        suggestBox.getValueBox().addBlurHandler(handlers);
-        suggestBox.getValueBox().addFocusHandler(handlers);
+        handlerRegistrations.add(suggestBox.getValueBox().addBlurHandler(handlers));
+        handlerRegistrations.add(suggestBox.getValueBox().addFocusHandler(handlers));
 
         // not listening to focus because it would show the suggestions also after the whole browser
         // gets the focus back (after loosing it) if this was the last element with focus
-        suggestBox.getValueBox().addClickHandler(new ClickHandler() {
+        handlerRegistrations.add(suggestBox.getValueBox().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 switchSuggestions();
             }
-        });
+        }));
 
-        dropDownImage.addMouseDownHandler(new FocusHandlerEnablingMouseHandlers(handlers));
-        dropDownImage.addMouseUpHandler(new FocusHandlerEnablingMouseHandlers(handlers) {
+        handlerRegistrations.add(dropDownImage.addMouseDownHandler(new FocusHandlerEnablingMouseHandlers(handlers)));
+        handlerRegistrations.add(dropDownImage.addMouseUpHandler(new FocusHandlerEnablingMouseHandlers(handlers) {
             @Override
             public void onMouseUp(MouseUpEvent event) {
                 super.onMouseUp(event);
                 switchSuggestions();
             }
-        });
+        }));
 
-        getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseDownEvent.getType());
+        handlerRegistrations.add(getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseDownEvent.getType()));
 
         // no need to do additional switchSuggestions() - it is processed by MenuBar itself
-        getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseUpEvent.getType());
+        handlerRegistrations.add(getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseUpEvent.getType()));
 
-        addValueChangeHandler(new ValueChangeHandler<T>() {
+        handlerRegistrations.add(addValueChangeHandler(new ValueChangeHandler<T>() {
             @Override
             public void onValueChange(ValueChangeEvent<T> event) {
                 // if the value has been changed using the mouse
                 setValue(event.getValue());
             }
-        });
+        }));
 
     }
 

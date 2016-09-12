@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
 public class NfsStorageModel extends FileStorageModel {
 
     //retrans nfs option max value
@@ -251,5 +250,11 @@ public class NfsStorageModel extends FileStorageModel {
         getRetransmissions().setIsChangeable(isStorageEditable);
         getTimeout().setIsChangeable(isStorageEditable);
         getMountOptions().setIsChangeable(isStorageEditable);
+    }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getPathChangedEvent());
+        super.cleanup();
     }
 }

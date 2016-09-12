@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.StorageQosParamete
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParametersModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<StorageQosParametersModel, StorageQosWidget> {
+    interface Driver extends UiCommonEditorDriver<StorageQosParametersModel, StorageQosWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, StorageQosWidget> {

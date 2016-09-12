@@ -88,14 +88,13 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
     }
 
     /**
-     * By default, closing the popup doesn't release its registered handlers.
+     * By default, closing the popup will release its registered handlers.
      * <p>
-     * Non-singleton popup presenter widgets <em>should</em> override this method
-     * and return {@code true} to ensure proper handler disposal. Alternatively,
-     * use {@link #hideAndUnbind} to manually hide and dispose of the popup.
+     * Alternatively, override this method to return {@code false} and call
+     * {@link #hideAndUnbind} to manually hide and dispose of the popup.
      */
     protected boolean shouldDestroyOnClose() {
-        return false;
+        return true;
     }
 
     /**

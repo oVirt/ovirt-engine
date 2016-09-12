@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -38,7 +39,6 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -53,7 +53,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<AttachDiskModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<AttachDiskModel, VmDiskAttachPopupWidget> {
+    interface Driver extends UiCommonEditorDriver<AttachDiskModel, VmDiskAttachPopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, VmDiskAttachPopupWidget> {
@@ -539,6 +539,11 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     @Override
     public AttachDiskModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

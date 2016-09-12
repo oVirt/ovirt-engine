@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.Composite;
@@ -14,7 +15,7 @@ import com.google.gwt.user.client.ui.Composite;
  * @param <T>
  *            Model type being edited.
  */
-public abstract class AbstractModelBoundFormWidget<T extends EntityModel> extends Composite implements Editor<T>, HasElementId {
+public abstract class AbstractModelBoundFormWidget<T extends EntityModel> extends Composite implements Editor<T>, HasElementId, HasCleanup {
 
     private final ModelProvider<T> modelProvider;
     private final GeneralFormPanel formPanel;

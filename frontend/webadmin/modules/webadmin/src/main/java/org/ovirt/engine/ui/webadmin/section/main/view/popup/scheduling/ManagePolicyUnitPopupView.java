@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.Mana
 import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -30,7 +30,7 @@ import com.google.inject.Inject;
 
 public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<ManagePolicyUnitModel> implements ManagePolicyUnitPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ManagePolicyUnitModel, ManagePolicyUnitPopupView> {
+    interface Driver extends UiCommonEditorDriver<ManagePolicyUnitModel, ManagePolicyUnitPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ManagePolicyUnitPopupView> {
@@ -145,4 +145,8 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

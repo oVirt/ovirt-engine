@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<VmInterfaceModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VmInterfaceModel, NetworkInterfacePopupWidget> {
+    interface Driver extends UiCommonEditorDriver<VmInterfaceModel, NetworkInterfacePopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, NetworkInterfacePopupWidget> {
@@ -201,6 +201,11 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Override
     public VmInterfaceModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     private void applyStyles() {

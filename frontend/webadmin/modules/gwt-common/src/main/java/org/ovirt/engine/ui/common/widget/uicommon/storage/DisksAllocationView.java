@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -23,7 +24,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId,
     FocusableComponentsContainer, PatternFlyCompatible {
 
-    interface Driver extends SimpleBeanEditorDriver<DisksAllocationModel, DisksAllocationView> {
+    interface Driver extends UiCommonEditorDriver<DisksAllocationModel, DisksAllocationView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, DisksAllocationView> {
@@ -184,6 +184,11 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @Override
     public DisksAllocationModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     public void setListHeight(String listHeight) {

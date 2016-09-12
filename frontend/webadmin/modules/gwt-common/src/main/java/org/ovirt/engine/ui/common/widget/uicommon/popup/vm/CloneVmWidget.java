@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -10,7 +11,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<CloneVmModel, CloneVmWidget> {
+    interface Driver extends UiCommonEditorDriver<CloneVmModel, CloneVmWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, CloneVmWidget> {
@@ -72,6 +72,11 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
     @Override
     public CloneVmModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

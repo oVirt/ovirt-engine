@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileStats;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -23,7 +24,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -36,7 +36,7 @@ import com.google.inject.Inject;
 
 public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupView<VolumeProfileStatisticsModel> implements VolumeProfileStatisticsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<VolumeProfileStatisticsModel, VolumeProfileStatisticsPopupView> {
+    interface Driver extends UiCommonEditorDriver<VolumeProfileStatisticsModel, VolumeProfileStatisticsPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VolumeProfileStatisticsPopupView> {
@@ -308,5 +308,10 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     @Override
     public VolumeProfileStatisticsModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -10,7 +11,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupW
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<VmNextRunConfigurationModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VmNextRunConfigurationModel, VmNextRunConfigurationWidget> {
+    interface Driver extends UiCommonEditorDriver<VmNextRunConfigurationModel, VmNextRunConfigurationWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, VmNextRunConfigurationWidget> {
@@ -154,5 +154,10 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     private void setVisibilityToChangedFieldsExpander(boolean flag) {
         changedFieldsPanel.setVisible(flag);
         changedFieldsPanelTitle.setVisible(flag);
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

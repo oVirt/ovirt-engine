@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,7 +24,7 @@ import com.google.inject.Inject;
 
 public class VolumeParameterPopupView extends AbstractModelBoundPopupView<VolumeParameterModel> implements VolumeParameterPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<VolumeParameterModel, VolumeParameterPopupView> {
+    interface Driver extends UiCommonEditorDriver<VolumeParameterModel, VolumeParameterPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VolumeParameterPopupView> {
@@ -108,6 +108,11 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     @Override
     public VolumeParameterModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

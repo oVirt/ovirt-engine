@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -58,7 +59,6 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -81,7 +81,7 @@ import com.google.inject.Inject;
 
 public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPopupView<ImportVmFromExternalProviderModel> implements ImportVmFromExternalProviderPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportVmFromExternalProviderModel, ImportVmFromExternalProviderPopupView> {
+    interface Driver extends UiCommonEditorDriver<ImportVmFromExternalProviderModel, ImportVmFromExternalProviderPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmFromExternalProviderPopupView> {
@@ -482,6 +482,11 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     @Override
     public ImportVmFromExternalProviderModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     private void initNicsTable() {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.instanceimages;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
@@ -12,7 +13,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -44,7 +44,7 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
 
     private String elementId = DOM.createUniqueId();
 
-    public interface Driver extends SimpleBeanEditorDriver<InstanceImageLineModel, InstanceImageLineEditor> {
+    public interface Driver extends UiCommonEditorDriver<InstanceImageLineModel, InstanceImageLineEditor> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -117,6 +117,11 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
     @Override
     public InstanceImageLineModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

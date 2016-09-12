@@ -166,4 +166,10 @@ public class TagModel extends Model implements TreeNodeInfo {
 
         return getName().getIsValid();
     }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getSelectionChangedEvent());
+        super.cleanup();
+    }
 }

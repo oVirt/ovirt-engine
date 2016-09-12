@@ -1,17 +1,17 @@
 package org.ovirt.engine.ui.userportal.section.main.view.popup.permissions;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.permissions.AbstractPermissionsPopupView;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPortalAdElementListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class PermissionsPopupView extends AbstractPermissionsPopupView<UserPortalAdElementListModel> implements PermissionsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<UserPortalAdElementListModel, PermissionsPopupView> {
+    interface Driver extends UiCommonEditorDriver<UserPortalAdElementListModel, PermissionsPopupView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<PermissionsPopupView> {
@@ -42,4 +42,8 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<UserPorta
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

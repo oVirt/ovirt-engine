@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.userportal.widget.basic.DisksImageWidget;
 import org.ovirt.engine.ui.userportal.widget.basic.IconImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmTypeImage;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -34,7 +34,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<UserPortalBasicListModel, MainTabBasicDetailsView> {
+    interface Driver extends UiCommonEditorDriver<UserPortalBasicListModel, MainTabBasicDetailsView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<MainTabBasicDetailsView> {
@@ -145,6 +145,11 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @Override
     public UserPortalBasicListModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

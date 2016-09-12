@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBondModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<IscsiBondModel, IscsiBondPopupWidget> {
+    interface Driver extends UiCommonEditorDriver<IscsiBondModel, IscsiBondPopupWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, IscsiBondPopupWidget> {
@@ -170,5 +170,10 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
     @Override
     public IscsiBondModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

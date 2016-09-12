@@ -1294,4 +1294,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
         hostSetupNetworksParametersData.setNetworkIdToExistingAttachmentId(networkIdToExistingAttachmentId);
     }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getNicsChangedEvent(),
+                getOperationCandidateEvent());
+        super.cleanup();
+    }
 }

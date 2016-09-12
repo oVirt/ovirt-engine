@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
@@ -71,7 +72,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -95,7 +95,7 @@ import com.google.inject.Inject;
 
 public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<HostModel, HostPopupView> {
+    interface Driver extends UiCommonEditorDriver<HostModel, HostPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostPopupView> {
@@ -920,6 +920,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         fenceAgentsEditor.flush();
         proxySourceEditor.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderSecretPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,7 +27,7 @@ import com.google.inject.Inject;
 
 public class ProviderSecretPopupView extends AbstractModelBoundPopupView<LibvirtSecretModel> implements ProviderSecretPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<LibvirtSecretModel, ProviderSecretPopupView> {
+    interface Driver extends UiCommonEditorDriver<LibvirtSecretModel, ProviderSecretPopupView> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -101,6 +101,11 @@ public class ProviderSecretPopupView extends AbstractModelBoundPopupView<Libvirt
     @Override
     public LibvirtSecretModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

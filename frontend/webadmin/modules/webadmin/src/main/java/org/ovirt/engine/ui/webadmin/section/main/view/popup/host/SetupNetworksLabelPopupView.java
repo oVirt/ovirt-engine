@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -7,7 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 
 public class SetupNetworksLabelPopupView extends AbstractModelBoundPopupView<SetupNetworksLabelModel> implements SetupNetworksLabelPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<SetupNetworksLabelModel, SetupNetworksLabelPopupView> {
+    interface Driver extends UiCommonEditorDriver<SetupNetworksLabelModel, SetupNetworksLabelPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, SetupNetworksLabelPopupView> {
@@ -45,6 +45,11 @@ public class SetupNetworksLabelPopupView extends AbstractModelBoundPopupView<Set
     @Override
     public SetupNetworksLabelModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

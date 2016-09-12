@@ -248,4 +248,10 @@ public abstract class ConsoleModel extends EntityModel<VM> {
     protected String getClientTitle() {
         return getEntity().getName() + ":%d"; //$NON-NLS-1$
     }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getErrorEvent());
+        super.cleanup();
+    }
 }

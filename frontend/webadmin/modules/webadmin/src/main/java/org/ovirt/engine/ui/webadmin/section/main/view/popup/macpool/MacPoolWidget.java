@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -10,14 +11,13 @@ import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class MacPoolWidget extends AbstractModelBoundPopupWidget<MacPoolModel> implements PatternFlyCompatible {
 
-    interface Driver extends SimpleBeanEditorDriver<MacPoolModel, MacPoolWidget> {
+    interface Driver extends UiCommonEditorDriver<MacPoolModel, MacPoolWidget> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -61,6 +61,11 @@ public class MacPoolWidget extends AbstractModelBoundPopupWidget<MacPoolModel> i
     public MacPoolModel flush() {
         macRanges.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

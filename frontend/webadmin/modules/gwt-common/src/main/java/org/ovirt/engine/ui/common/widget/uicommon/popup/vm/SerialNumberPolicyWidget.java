@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.HasEnabled;
 public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<SerialNumberPolicyModel>
         implements HasEnabled {
 
-    interface Driver extends SimpleBeanEditorDriver<SerialNumberPolicyModel, SerialNumberPolicyWidget> {
+    interface Driver extends UiCommonEditorDriver<SerialNumberPolicyModel, SerialNumberPolicyWidget> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -103,6 +103,11 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     @Override
     public SerialNumberPolicyModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     public void setRenderer(VisibilityRenderer renderer) {

@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 
-@SuppressWarnings("unused")
 public class ChangeCDModel extends Model {
 
     public static final EventDefinition executedEventDefinition;
@@ -51,5 +50,11 @@ public class ChangeCDModel extends Model {
         if (command == getDoCommand()) {
             doAction();
         }
+    }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getExecutedEvent());
+        super.cleanup();
     }
 }

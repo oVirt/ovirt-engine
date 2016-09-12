@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -12,7 +13,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -23,7 +23,7 @@ import com.google.inject.Inject;
 
 public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<PosixStorageModel, PosixStorageView> {
+    interface Driver extends UiCommonEditorDriver<PosixStorageModel, PosixStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, PosixStorageView> {
@@ -114,6 +114,11 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     @Override
     public PosixStorageModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

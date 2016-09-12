@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -28,7 +29,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.Fu
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.PolicyUnitListPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.PolicyUnitPanel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClusterPolicyModel> implements ClusterPolicyPopupPresenterWidget.ViewDef {
-    interface Driver extends SimpleBeanEditorDriver<NewClusterPolicyModel, ClusterPolicyPopupView> {
+    interface Driver extends UiCommonEditorDriver<NewClusterPolicyModel, ClusterPolicyPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ClusterPolicyPopupView> {
@@ -309,6 +309,11 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     @Override
     public NewClusterPolicyModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     public interface WidgetStyle extends CssResource {

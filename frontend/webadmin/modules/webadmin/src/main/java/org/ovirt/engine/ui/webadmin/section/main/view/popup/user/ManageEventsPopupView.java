@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -36,7 +36,7 @@ import com.google.inject.Inject;
 public class ManageEventsPopupView extends AbstractModelBoundTreePopupView<EventNotificationModel>
         implements ManageEventsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<EventNotificationModel, ManageEventsPopupView> {
+    interface Driver extends UiCommonEditorDriver<EventNotificationModel, ManageEventsPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ManageEventsPopupView> {
@@ -188,6 +188,11 @@ public class ManageEventsPopupView extends AbstractModelBoundTreePopupView<Event
     @Override
     public EventNotificationModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface AssignTagTreeResources extends CellTree.Resources {

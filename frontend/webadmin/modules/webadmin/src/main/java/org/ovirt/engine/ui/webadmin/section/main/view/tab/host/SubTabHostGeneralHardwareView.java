@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
@@ -23,7 +24,6 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -33,7 +33,7 @@ public class SubTabHostGeneralHardwareView
     extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostHardwareGeneralModel>
     implements SubTabHostGeneralHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostGeneralHardwareView> {
+    interface Driver extends UiCommonEditorDriver<HostHardwareGeneralModel, SubTabHostGeneralHardwareView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostGeneralHardwareView> {

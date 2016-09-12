@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
@@ -15,11 +16,10 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<ClusterGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, ClusterGeneralModelForm> {
+    interface Driver extends UiCommonEditorDriver<ClusterGeneralModel, ClusterGeneralModelForm> {
     }
 
     StringValueLabel name = new StringValueLabel();
@@ -113,6 +113,11 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     @Override
     protected void doEdit(ClusterGeneralModel model) {
         driver.edit(model);
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
 }

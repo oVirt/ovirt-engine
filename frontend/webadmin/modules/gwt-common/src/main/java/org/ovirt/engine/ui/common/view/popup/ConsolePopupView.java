@@ -440,6 +440,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         return null;
     }
 
+    @Override
+    public void cleanup() {
+        // TODO clean up stuff if needed
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void flushToPrivateModel() {

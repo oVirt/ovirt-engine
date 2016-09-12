@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -10,7 +11,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.ExternalSubnetWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 
 public class ExternalSubnetPopupView extends AbstractModelBoundPopupView<NewExternalSubnetModel> implements ExternalSubnetPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<NewExternalSubnetModel, ExternalSubnetPopupView> {
+    interface Driver extends UiCommonEditorDriver<NewExternalSubnetModel, ExternalSubnetPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ExternalSubnetPopupView> {
@@ -68,5 +68,10 @@ public class ExternalSubnetPopupView extends AbstractModelBoundPopupView<NewExte
     public NewExternalSubnetModel flush() {
         subnetWidget.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

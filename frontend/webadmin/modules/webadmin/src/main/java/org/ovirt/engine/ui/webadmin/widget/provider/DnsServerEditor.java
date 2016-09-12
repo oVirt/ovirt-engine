@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.HasEnabled;
 public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<String>>
     implements HasValueChangeHandlers<EntityModel<String>>, HasEnabled {
 
-    public interface Driver extends SimpleBeanEditorDriver<EntityModel<String>, DnsServerEditor> {
+    public interface Driver extends UiCommonEditorDriver<EntityModel<String>, DnsServerEditor> {
     }
 
 
@@ -44,6 +44,11 @@ public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<S
     @Override
     public EntityModel<String> flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

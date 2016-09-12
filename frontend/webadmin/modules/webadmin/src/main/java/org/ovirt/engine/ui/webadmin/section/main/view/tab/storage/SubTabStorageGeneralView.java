@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabSto
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 
 public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDomain, StorageListModel, StorageGeneralModel> implements SubTabStorageGeneralPresenter.ViewDef, Editor<StorageGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<StorageGeneralModel, SubTabStorageGeneralView> {
+    interface Driver extends UiCommonEditorDriver<StorageGeneralModel, SubTabStorageGeneralView> {
     }
 
     interface ViewIdHandler extends ElementIdHandler<SubTabStorageGeneralView> {

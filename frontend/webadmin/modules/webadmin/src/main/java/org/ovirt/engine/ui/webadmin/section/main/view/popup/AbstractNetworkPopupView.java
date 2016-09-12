@@ -399,6 +399,12 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     @Override
+    public void cleanup() {
+        profilesEditor.cleanup();
+        subnetWidget.cleanup();
+    }
+
+    @Override
     public void toggleSubnetVisibility(boolean visible) {
         subnetTab.setVisible(visible);
     }

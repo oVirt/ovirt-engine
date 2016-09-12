@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.form.key_value;
 
 import org.gwtbootstrap3.client.ui.Row;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -10,7 +11,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -28,7 +28,7 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<KeyValueLineModel, KeyValueLineWidget> {
+    interface Driver extends UiCommonEditorDriver<KeyValueLineModel, KeyValueLineWidget> {
     }
 
     private boolean enabled = true;
@@ -95,6 +95,11 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     @Override
     public KeyValueLineModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

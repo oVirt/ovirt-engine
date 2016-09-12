@@ -112,13 +112,13 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
             getView().makeMacPoolButtonInvisible();
         } else {
             getView().getMacPoolButton().setCommand(addMacPoolCommand);
-            getView().getMacPoolButton().addClickHandler(new ClickHandler() {
+            registerHandler(getView().getMacPoolButton().addClickHandler(new ClickHandler() {
 
                 @Override
                 public void onClick(ClickEvent event) {
                     getView().getMacPoolButton().getCommand().execute(model);
                 }
-            });
+            }));
         }
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 
 public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<ImportCloneModel> implements ImportCloneDialogPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportCloneModel, ImportCloneDialogPopupView> {
+    interface Driver extends UiCommonEditorDriver<ImportCloneModel, ImportCloneDialogPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportCloneDialogPopupView> {
@@ -106,4 +106,8 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

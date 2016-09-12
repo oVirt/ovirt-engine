@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.ui.common.css.OvirtCss;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentModel>
     implements HasValueChangeHandlers<FenceAgentModel>, HasEnabled {
 
-    interface Driver extends SimpleBeanEditorDriver<FenceAgentModel, FenceAgentWidget> {
+    interface Driver extends UiCommonEditorDriver<FenceAgentModel, FenceAgentWidget> {
     }
 
     public interface Style extends CssResource {
@@ -192,6 +192,11 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
     @Override
     public FenceAgentModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @UiHandler("editFenceAgent")

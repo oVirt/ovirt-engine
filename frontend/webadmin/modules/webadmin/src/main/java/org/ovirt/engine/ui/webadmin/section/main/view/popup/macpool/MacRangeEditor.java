@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -12,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.HasEnabled;
 
 public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel> implements HasValueChangeHandlers<MacRangeModel>, HasEnabled {
 
-    public interface Driver extends SimpleBeanEditorDriver<MacRangeModel, MacRangeEditor> {
+    public interface Driver extends UiCommonEditorDriver<MacRangeModel, MacRangeEditor> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -91,6 +91,11 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
     @Override
     public MacRangeModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

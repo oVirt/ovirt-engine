@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
@@ -9,11 +10,10 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 public class VmGuestInfoModelForm extends AbstractModelBoundFormWidget<VmGuestInfoModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VmGuestInfoModel, VmGuestInfoModelForm> {
+    interface Driver extends UiCommonEditorDriver<VmGuestInfoModel, VmGuestInfoModelForm> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -81,6 +81,11 @@ public class VmGuestInfoModelForm extends AbstractModelBoundFormWidget<VmGuestIn
     @Override
     protected void doEdit(VmGuestInfoModel model) {
         driver.edit(model);
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -31,7 +31,7 @@ import com.google.inject.Inject;
 
 public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBrickModel> implements RemoveBrickPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<RemoveBrickModel, RemoveBrickPopupView> {
+    interface Driver extends UiCommonEditorDriver<RemoveBrickModel, RemoveBrickPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RemoveBrickPopupView> {
@@ -144,6 +144,11 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
     @Override
     public RemoveBrickModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

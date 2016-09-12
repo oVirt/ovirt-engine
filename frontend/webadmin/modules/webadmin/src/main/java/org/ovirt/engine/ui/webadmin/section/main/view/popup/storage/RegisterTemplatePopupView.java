@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
@@ -10,14 +11,13 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterTemplatePopupPresenterWidget;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplate>
         implements RegisterTemplatePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<RegisterEntityModel<VmTemplate>, RegisterEntityPopupView<VmTemplate>> {
+    interface Driver extends UiCommonEditorDriver<RegisterEntityModel<VmTemplate>, RegisterEntityPopupView<VmTemplate>> {
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();

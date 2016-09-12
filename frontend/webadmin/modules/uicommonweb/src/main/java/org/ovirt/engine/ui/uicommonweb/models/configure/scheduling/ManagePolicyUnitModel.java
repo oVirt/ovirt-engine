@@ -37,4 +37,10 @@ public class ManagePolicyUnitModel extends Model {
                     }
                 });
     }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getRefreshPolicyUnitsEvent());
+        super.cleanup();
+    }
 }

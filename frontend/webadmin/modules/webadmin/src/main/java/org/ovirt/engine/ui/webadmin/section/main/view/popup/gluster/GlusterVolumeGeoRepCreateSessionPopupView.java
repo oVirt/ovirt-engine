@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeGeoRepCreateM
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepCreateSessionPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,7 +27,7 @@ import com.google.inject.Inject;
 
 public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoundPopupView<GlusterVolumeGeoRepCreateModel> implements GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.ViewDef{
 
-    interface Driver extends SimpleBeanEditorDriver<GlusterVolumeGeoRepCreateModel, GlusterVolumeGeoRepCreateSessionPopupView> {
+    interface Driver extends UiCommonEditorDriver<GlusterVolumeGeoRepCreateModel, GlusterVolumeGeoRepCreateSessionPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, GlusterVolumeGeoRepCreateSessionPopupView> {
@@ -198,6 +198,11 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
     @Override
     public GlusterVolumeGeoRepCreateModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     interface WidgetStyle extends CssResource {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -9,13 +10,9 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupW
 import org.ovirt.engine.ui.uicommonweb.models.providers.XENPropertiesModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget.ViewIdHandler;
-import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget.ViewUiBinder;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,7 +21,7 @@ import com.google.inject.Inject;
 
 public class XENPropertiesWidget extends AbstractModelBoundPopupWidget<XENPropertiesModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<XENPropertiesModel, XENPropertiesWidget> {
+    interface Driver extends UiCommonEditorDriver<XENPropertiesModel, XENPropertiesWidget> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -37,7 +34,6 @@ public class XENPropertiesWidget extends AbstractModelBoundPopupWidget<XENProper
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
@@ -79,6 +75,11 @@ public class XENPropertiesWidget extends AbstractModelBoundPopupWidget<XENProper
     @Override
     public XENPropertiesModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

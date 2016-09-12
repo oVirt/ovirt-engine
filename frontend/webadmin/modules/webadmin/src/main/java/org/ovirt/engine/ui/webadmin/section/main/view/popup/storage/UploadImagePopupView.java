@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadI
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -34,7 +34,7 @@ import com.google.inject.Inject;
 
 public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImageModel> implements UploadImagePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<UploadImageModel, UploadImagePopupView> {
+    interface Driver extends UiCommonEditorDriver<UploadImageModel, UploadImagePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, UploadImagePopupView> {
@@ -220,5 +220,10 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     public UploadImageModel flush() {
         vmDiskPopupWidget.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 }

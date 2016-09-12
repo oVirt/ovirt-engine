@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.BrokerType;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -27,7 +27,7 @@ import com.google.inject.Inject;
 
 public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAgentModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<NeutronAgentModel, NeutronAgentWidget> {
+    interface Driver extends UiCommonEditorDriver<NeutronAgentModel, NeutronAgentWidget> {
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -116,4 +116,8 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
 }

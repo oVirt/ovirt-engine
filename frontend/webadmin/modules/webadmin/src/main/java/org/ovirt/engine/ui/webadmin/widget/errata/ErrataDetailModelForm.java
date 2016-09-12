@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.errata;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.EnumTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
@@ -14,12 +15,11 @@ import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.ValueListLabel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 public class ErrataDetailModelForm extends AbstractModelBoundFormWidget<EntityModel<Erratum>> {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    interface Driver extends SimpleBeanEditorDriver<EntityModel<Erratum>, ErrataDetailModelForm> {
+    interface Driver extends UiCommonEditorDriver<EntityModel<Erratum>, ErrataDetailModelForm> {
     }
 
     @Path("entity.id")
@@ -67,6 +67,11 @@ public class ErrataDetailModelForm extends AbstractModelBoundFormWidget<EntityMo
     @Override
     protected void doEdit(EntityModel<Erratum> model) {
         driver.edit(model);
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     @Override

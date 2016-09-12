@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class IscsiTargetToLunView extends Composite implements HasEditorDriver<SanStorageModelBase> {
 
-    interface Driver extends SimpleBeanEditorDriver<SanStorageModelBase, IscsiTargetToLunView> {
+    interface Driver extends UiCommonEditorDriver<SanStorageModelBase, IscsiTargetToLunView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, IscsiTargetToLunView> {
@@ -106,6 +106,11 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
     @Override
     public SanStorageModelBase flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
     public void activateItemsUpdate() {

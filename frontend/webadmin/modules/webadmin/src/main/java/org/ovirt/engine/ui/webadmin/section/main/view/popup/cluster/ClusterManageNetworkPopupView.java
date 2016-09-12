@@ -119,6 +119,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         return networks.asEditor().flush();
     }
 
+    @Override
+    public void cleanup() {
+        // TODO clean up stuff if needed
+    }
+
     private void changeIsAttached(ClusterNetworkModel clusterNetworkModel, Boolean value) {
         clusterNetworkModel.setAttached(value);
         if (!value) {

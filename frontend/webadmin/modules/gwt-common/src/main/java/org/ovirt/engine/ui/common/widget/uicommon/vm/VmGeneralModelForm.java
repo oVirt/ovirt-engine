@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
@@ -12,11 +13,10 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<VmGeneralModel, VmGeneralModelForm> {
+    interface Driver extends UiCommonEditorDriver<VmGeneralModel, VmGeneralModelForm> {
     }
 
     StringValueLabel name = new StringValueLabel();
@@ -145,6 +145,11 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
 
         // Required because of type conversion
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
+    }
+
+    @Override
+    public void cleanup() {
+        driver.cleanup();
     }
 
 }

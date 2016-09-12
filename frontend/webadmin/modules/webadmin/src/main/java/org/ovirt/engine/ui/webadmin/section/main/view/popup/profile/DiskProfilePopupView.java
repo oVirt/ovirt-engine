@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.profile;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -14,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.DiskProfilePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 
 public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfileBaseModel> implements DiskProfilePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<DiskProfileBaseModel, DiskProfilePopupView> {
+    interface Driver extends UiCommonEditorDriver<DiskProfileBaseModel, DiskProfilePopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DiskProfilePopupView> {
@@ -89,6 +89,10 @@ public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfil
         return driver.flush();
     }
 
+    @Override
+    public void cleanup() {
+        driver.cleanup();
+    }
     @Override
     public int setTabIndexes(int nextTabIndex) {
         storageDomainEditor.setTabIndex(nextTabIndex++);
