@@ -113,22 +113,9 @@ public class StandaloneDataSource implements DataSource {
      * or this method is called on a closed connection.
      */
     private void checkConnection() throws SQLException {
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select null");
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select null")) {
             rs.next();
-        }
-        finally {
-            // Statement should be close first
-            if (statement != null) {
-                statement.close();
-            }
-
-            if (rs != null) {
-                rs.close();
-            }
         }
     }
 

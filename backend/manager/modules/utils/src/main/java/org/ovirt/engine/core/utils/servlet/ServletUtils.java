@@ -145,10 +145,8 @@ public class ServletUtils {
      * @throws IOException If there is a problem reading the file or writing to the stream.
      */
     public static void writeFileToStream(final OutputStream out, final File file) throws IOException {
-        // Send the content of the file:
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        // Send the content of the file
+        try (InputStream in = new FileInputStream(file)) {
             byte[] buffer = new byte[4096];
             int count = 0;
             while ((count = in.read(buffer)) != -1) {
@@ -159,11 +157,6 @@ public class ServletUtils {
             final String message = "Error sending file '" + file.getAbsolutePath() + "'.";
             log.error(message, exception);
             throw new IOException(message, exception);
-        }
-        finally {
-            if (in != null) {
-                in.close();
-            }
         }
     }
 

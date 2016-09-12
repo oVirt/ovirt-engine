@@ -25,15 +25,8 @@ public abstract class Configuration {
      */
     public static Configuration loadFile(File file) throws IOException {
         Properties properties = new Properties();
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        try (InputStream in = new FileInputStream(file)) {
             properties.load(in);
-        }
-        finally {
-            if (in != null) {
-                in.close();
-            }
         }
         return new Root(file, properties);
     }

@@ -150,9 +150,7 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
         File file = new File(fileName);
         String[] versions = null;
         if (file.exists()) {
-            BufferedReader input = null;
-            try {
-                input = new BufferedReader(new FileReader(file));
+            try (BufferedReader input = new BufferedReader(new FileReader(file))) {
                 String lineRead = input.readLine();
                 if (lineRead != null) {
                     versions = lineRead.split(",");
@@ -167,14 +165,6 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
                         file.getAbsolutePath(),
                         e.getMessage());
                 log.debug("Exception", e);
-            } finally {
-                if (input != null) {
-                    try {
-                        input.close();
-                    } catch (IOException ignored) {
-                        // Ignore exception on closing a file
-                    }
-                }
             }
         }
         return versions;
@@ -182,11 +172,8 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
 
     private String readIsoVersion(File versionFile) {
         String isoVersionText = null;
-        BufferedReader input = null;
-        try {
-            input = new BufferedReader(new FileReader(versionFile));
+        try (BufferedReader input = new BufferedReader(new FileReader(versionFile))){
             isoVersionText = input.readLine();
-
         } catch (FileNotFoundException e) {
             log.error("Failed to open version file '{}': {}",
                     versionFile.getAbsolutePath(),
@@ -197,14 +184,6 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
                     versionFile.getAbsolutePath(),
                     e.getMessage());
             log.debug("Exception", e);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException ignored) {
-                    // Ignore exception on closing a file
-                }
-            }
         }
         return isoVersionText;
     }

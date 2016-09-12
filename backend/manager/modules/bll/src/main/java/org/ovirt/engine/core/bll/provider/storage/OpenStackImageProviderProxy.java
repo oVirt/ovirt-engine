@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.provider.storage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -213,8 +214,8 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
         byte[] imgContent = new byte[72];
         ImageDownload downloadImage = getClient().images().download(id).execute();
 
-        try {
-            int bytesRead = downloadImage.getInputStream().read(imgContent, 0, imgContent.length);
+        try (InputStream inputStream = downloadImage.getInputStream()) {
+            int bytesRead = inputStream.read(imgContent, 0, imgContent.length);
             if (bytesRead != imgContent.length) {
                 throw new OpenStackImageException(
                         OpenStackImageException.ErrorType.UNABLE_TO_DOWNLOAD_IMAGE,
@@ -224,12 +225,6 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
             throw new OpenStackImageException(
                     OpenStackImageException.ErrorType.UNABLE_TO_DOWNLOAD_IMAGE,
                     "Unable to download image");
-        } finally {
-            try {
-                downloadImage.getInputStream().close();
-            } catch (IOException | IllegalStateException e) {
-                // Silently skip IOException and IllegalStateException errors
-            }
         }
 
         ByteBuffer b = ByteBuffer.wrap(imgContent);

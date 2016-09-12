@@ -437,16 +437,9 @@ public class ConfigurationTest {
      */
     public File writeConf(String... lines) throws IOException {
         File file = tmp.newFile("tmp.conf");
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(file, "UTF-8");
+        try (PrintWriter writer = new PrintWriter(file, "UTF-8")) {
             for (String line : lines) {
                 writer.println(line);
-            }
-        }
-        finally {
-            if (writer != null) {
-                writer.close();
             }
         }
         return file;

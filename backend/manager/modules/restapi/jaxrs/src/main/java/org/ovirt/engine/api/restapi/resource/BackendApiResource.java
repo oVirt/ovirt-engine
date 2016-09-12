@@ -294,14 +294,11 @@ public class BackendApiResource
     }
 
     private Response getSchema() {
-        ByteArrayOutputStream baos = null;
-        InputStream is = null;
         byte[] buffer = new byte[4096];
-        try {
-            baos = new ByteArrayOutputStream();
-            String version = getCurrent().getVersion();
-            String resourcePath = String.format("/v%s/%s", version, API_SCHEMA);
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
+        String version = getCurrent().getVersion();
+        String resourcePath = String.format("/v%s/%s", version, API_SCHEMA);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);){
             int count;
             while ((count = is.read(buffer)) != -1) {
                 baos.write(buffer, 0, count);
@@ -313,17 +310,6 @@ public class BackendApiResource
         } catch (IOException e) {
             log.error("Loading api.xsd file failed.", e);
             return Response.serverError().build();
-        } finally {
-            try {
-                if (baos != null) {
-                    baos.close();
-                }
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                log.error("cannot close a resource", e);
-            }
         }
     }
 

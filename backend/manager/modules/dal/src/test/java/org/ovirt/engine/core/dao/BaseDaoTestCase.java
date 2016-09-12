@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assume.assumeTrue;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -132,19 +131,16 @@ public abstract class BaseDaoTestCase {
 
         Config.setConfigUtils(new DBConfigUtils(false));
 
-        InputStream is = null;
-        try {
-            String job = System.getProperty("JOB_NAME");
-            if (job == null) {
-                job = "";
-            }
-            String number = System.getProperty("BUILD_NUMBER");
-            if (number == null) {
-                number = "";
-            }
-            String schemaNamePostfix = job + number;
-            is = BaseDaoTestCase.class.getResourceAsStream(
-                    "/test-database.properties");
+        String job = System.getProperty("JOB_NAME");
+        if (job == null) {
+            job = "";
+        }
+        String number = System.getProperty("BUILD_NUMBER");
+        if (number == null) {
+            number = "";
+        }
+        String schemaNamePostfix = job + number;
+        try (InputStream is = BaseDaoTestCase.class.getResourceAsStream("/test-database.properties")) {
             properties.load(is);
 
             ClassLoader.getSystemClassLoader().loadClass(
@@ -161,14 +157,6 @@ public abstract class BaseDaoTestCase {
 
             if (initSql != null && !initSql.isEmpty()) {
                 needInitializationSql = true;
-            }
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // ignore
-                }
             }
         }
 

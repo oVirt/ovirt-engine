@@ -48,34 +48,14 @@ public class TarTest {
         }
         else {
             MessageDigest fmd = MessageDigest.getInstance(md.getAlgorithm());
-            InputStream fis = null;
-            InputStream is = null;
-            try {
-                fis = new FileInputStream(fullFile);
-                is = new DigestInputStream(fis, fmd);
+            try (InputStream fis = new FileInputStream(fullFile);
+                 InputStream is = new DigestInputStream(fis, fmd)) {
                 byte[] buf = new byte[1024];
                 int n;
                 while ((n = is.read(buf)) != -1) {
                     // do nothing
                 }
                 md.update(fmd.digest());
-            }
-            finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    }
-                    catch (IOException e) {
-                        // ignore
-                    }
-                }
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        // ignore
-                    }
-                }
             }
         }
     }
@@ -112,20 +92,8 @@ public class TarTest {
             writeFile(new File(tmpDir1, "dir1/file3"), "file2", false);
             writeFile(new File(tmpDir1, "dir1/dir2/file4"), "file4", false);
 
-            OutputStream os = null;
-            try {
-                os = new FileOutputStream(tmpTar);
+            try (OutputStream os = new FileOutputStream(tmpTar)) {
                 Tar.doTar(os, tmpDir1);
-            }
-            finally {
-                if (os != null) {
-                    try {
-                        os.close();
-                    }
-                    catch(IOException e) {
-                        // ignore
-                    }
-                }
             }
 
             new ProcessBuilder("tar", "-C", tmpDir2.getPath(), "-xf", tmpTar.getPath()).start().waitFor();
