@@ -1316,7 +1316,10 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
-* Wed Sep  7 2016 Rafael Martins <rmartins@redhat.com> - 3.6.9.1-1
+* Tue Sep 13 2016 Lev Veyde <lveyde@redhat.com> - 3.6.9.2-1
+- Bump version to 3.6.9.2
+
+* Wed Sep 07 2016 Rafael Martins <rmartins@redhat.com> - 3.6.9.1-1
 - Bump version to 3.6.9.1
 
 * Mon Aug 22 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.9-1
@@ -1325,13 +1328,13 @@ fi
 * Mon Jul 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.8.1-1
 - Bump version to 3.6.8.1
 
-* Tue Jul  5 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.8-1
+* Tue Jul 05 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.8-1
 - Bump version to 3.6.8
 
-* Fri May  6 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.6.2-1
+* Fri May 06 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.6.2-1
 - Bump version to 3.6.6.2
 
-* Tue May  3 2016 Rafael Martins <rmartins@redhat.com> - 3.6.6.1-1
+* Tue May 03 2016 Rafael Martins <rmartins@redhat.com> - 3.6.6.1-1
 - Bump version to 3.6.6.1
 
 * Mon Apr 25 2016 Rafael Martins <rmartins@redhat.com> - 3.6.6-1
