@@ -64,12 +64,17 @@ class Plugin(plugin.PluginBase):
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
-        HostedEngineVmName = vdcoption.VdcOption(
-            statement=statement,
-        ).getVdcOption(
-            'HostedEngineVmName',
-            ownConnection=True,
-        )
+
+        try:
+            HostedEngineVmName = vdcoption.VdcOption(
+                statement=statement,
+            ).getVdcOption(
+                'HostedEngineVmName',
+                ownConnection=True,
+            )
+        except RuntimeError:
+            HostedEngineVmName = 'HostedEngine'
+
         VdsId = statement.execute(
             statement="""
                 SELECT vm_guid, run_on_vds
