@@ -10,7 +10,7 @@ import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleClient;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -67,7 +67,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     @Override
-    public void configure(ISpice spice) {
+    public void configure(ConsoleClient spice) {
         super.configure(spice);
         spice.getOptions().setWanDisableEffects(new ArrayList<WanDisableEffects>());
         spice.getOptions().setWanOptionsEnabled(false);

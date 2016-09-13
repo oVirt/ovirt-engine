@@ -64,19 +64,6 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         privateConnectCommand = value;
     }
 
-    private boolean isConnected;
-
-    public boolean getIsConnected() {
-        return isConnected;
-    }
-
-    public void setIsConnected(boolean value) {
-        if (isConnected != value) {
-            isConnected = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsConnected")); //$NON-NLS-1$
-        }
-    }
-
     private boolean forceVmStatusUp;
 
     public boolean getForceVmStatusUp() {

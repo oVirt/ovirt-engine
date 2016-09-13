@@ -28,7 +28,7 @@ public class VncConsoleModel extends ConsoleModel {
     private static final DynamicMessages dynamicMessages = (DynamicMessages) TypeResolver.getInstance().resolve(DynamicMessages.class);
 
     private ClientConsoleMode consoleMode;
-    private IVnc vncImpl;
+    private ConsoleClient vncImpl;
 
     public VncConsoleModel(VM myVm, Model parentModel) {
         super(myVm, parentModel);
@@ -59,10 +59,10 @@ public class VncConsoleModel extends ConsoleModel {
     public void setVncImplementation(ClientConsoleMode consoleMode) {
         Class implClass = consoleMode == ClientConsoleMode.NoVnc ? INoVnc.class : IVncNative.class;
         this.consoleMode = consoleMode;
-        this.vncImpl = (IVnc) TypeResolver.getInstance().resolve(implClass);
+        this.vncImpl = (ConsoleClient) TypeResolver.getInstance().resolve(implClass);
     }
 
-    public IVnc getVncImpl() {
+    public ConsoleClient getVncImpl() {
         return vncImpl;
     }
 

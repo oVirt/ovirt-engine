@@ -17,9 +17,8 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValue
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleClient;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
@@ -225,12 +224,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         disableSmartcard = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
-            protected void updateModel(ISpice spice, boolean value) {
+            protected void updateModel(ConsoleClient spice, boolean value) {
                 spice.getOptions().setSmartcardEnabledOverridden(value);
             }
 
             @Override
-            protected boolean extractBoolean(ISpice spice) {
+            protected boolean extractBoolean(ConsoleClient spice) {
                 return spice.getOptions().isSmartcardEnabledOverridden();
             }
 
@@ -240,12 +239,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         wanEnabled = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
-            protected void updateModel(ISpice spice, boolean value) {
+            protected void updateModel(ConsoleClient spice, boolean value) {
                 spice.getOptions().setWanOptionsEnabled(value);
             }
 
             @Override
-            protected boolean extractBoolean(ISpice spice) {
+            protected boolean extractBoolean(ConsoleClient spice) {
                 return spice.getOptions().isWanOptionsEnabled();
             }
 
@@ -254,12 +253,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
         remapCtrlAltDeleteSpice = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
             @Override
-            protected void updateModel(ISpice spice, boolean value) {
+            protected void updateModel(ConsoleClient spice, boolean value) {
                 spice.getOptions().setRemapCtrlAltDelete(value);
             }
 
             @Override
-            protected boolean extractBoolean(ISpice spice) {
+            protected boolean extractBoolean(ConsoleClient spice) {
                 return spice.getOptions().isRemapCtrlAltDelete();
             }
 
@@ -267,12 +266,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
         remapCtrlAltDeleteVnc = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new VncRenderer() {
             @Override
-            protected void updateModel(IVnc vnc, boolean value) {
+            protected void updateModel(ConsoleClient vnc, boolean value) {
                 vnc.getOptions().setRemapCtrlAltDelete(value);
             }
 
             @Override
-            protected boolean extractBoolean(IVnc vnc) {
+            protected boolean extractBoolean(ConsoleClient vnc) {
                 return vnc.getOptions().isRemapCtrlAltDelete();
             }
         });
@@ -280,12 +279,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         enableUsbAutoshare = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
-            protected void updateModel(ISpice spice, boolean value) {
+            protected void updateModel(ConsoleClient spice, boolean value) {
                 spice.getOptions().setUsbAutoShare(value);
             }
 
             @Override
-            protected boolean extractBoolean(ISpice spice) {
+            protected boolean extractBoolean(ConsoleClient spice) {
                 return spice.getOptions().isUsbAutoShare();
             }
         });
@@ -294,12 +293,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         openInFullScreen = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
-            protected void updateModel(ISpice spice, boolean value) {
+            protected void updateModel(ConsoleClient spice, boolean value) {
                 spice.getOptions().setFullScreen(value);
             }
 
             @Override
-            protected boolean extractBoolean(ISpice spice) {
+            protected boolean extractBoolean(ConsoleClient spice) {
                 return spice.getOptions().isFullScreen();
             }
         });
@@ -308,12 +307,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         enableSpiceProxy = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
-            protected void updateModel(ISpice spice, boolean value) {
+            protected void updateModel(ConsoleClient spice, boolean value) {
                 spice.getOptions().setSpiceProxyEnabled(value);
             }
 
             @Override
-            protected boolean extractBoolean(ISpice spice) {
+            protected boolean extractBoolean(ConsoleClient spice) {
                 return spice.getOptions().isSpiceProxyEnabled();
             }
         });
@@ -617,7 +616,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         @Override
         public boolean render(ConsoleModel value) {
             if (value instanceof SpiceConsoleModel) {
-                return extractBoolean(((SpiceConsoleModel) value).getspice());
+                return extractBoolean(((SpiceConsoleModel) value).getSpiceImpl());
             }
 
             return false;
@@ -626,15 +625,15 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         @Override
         public ConsoleModel read(boolean value, ConsoleModel model) {
             if (model instanceof SpiceConsoleModel) {
-                updateModel(((SpiceConsoleModel) model).getspice(), value);
+                updateModel(((SpiceConsoleModel) model).getSpiceImpl(), value);
             }
 
             return model;
         }
 
-        protected abstract void updateModel(ISpice spice, boolean value);
+        protected abstract void updateModel(ConsoleClient spice, boolean value);
 
-        protected abstract boolean extractBoolean(ISpice spice);
+        protected abstract boolean extractBoolean(ConsoleClient spice);
     }
 
     private abstract class VncRenderer implements ValueCheckboxRenderer<ConsoleModel> {
@@ -658,9 +657,9 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             return model;
         }
 
-        protected abstract void updateModel(IVnc spice, boolean value);
+        protected abstract void updateModel(ConsoleClient spice, boolean value);
 
-        protected abstract boolean extractBoolean(IVnc spice);
+        protected abstract boolean extractBoolean(ConsoleClient spice);
     }
 
 

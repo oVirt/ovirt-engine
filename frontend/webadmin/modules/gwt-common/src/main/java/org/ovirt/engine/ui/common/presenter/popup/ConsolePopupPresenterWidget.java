@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsolesImpl;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleClient;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
@@ -151,7 +151,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     }
 
     private void initListeners(final ConsolePopupModel model) {
-        ISpice spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getspice();
+        ConsoleClient spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getSpiceImpl();
         if (spice == null) {
             return;
         }
@@ -169,7 +169,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             return;
         }
 
-        ISpice spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getspice();
+        ConsoleClient spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getSpiceImpl();
         if (spice == null) {
             return;
         }
@@ -200,12 +200,12 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         getView().setDisableSmartcardVisible(model.getVmConsoles().getVm().isSmartcardEnabled());
 
-        ISpice spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getspice();
+        ConsoleClient spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getSpiceImpl();
         if (spice != null) {
             if (!spice.getOptions().isWanOptionsEnabled()) {
                 getView().selectWanOptionsEnabled(false);
             }
-            spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().getOptions().isSpiceProxyEnabled();
+            spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getSpiceImpl().getOptions().isSpiceProxyEnabled();
         }
 
         getView().setSpiceHtml5ImplEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());

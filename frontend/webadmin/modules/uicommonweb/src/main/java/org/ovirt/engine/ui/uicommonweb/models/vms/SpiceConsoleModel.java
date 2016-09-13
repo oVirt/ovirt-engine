@@ -28,8 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -43,11 +41,11 @@ public class SpiceConsoleModel extends ConsoleModel {
 
     private static final DynamicMessages dynamicMessages = (DynamicMessages) TypeResolver.getInstance().resolve(DynamicMessages.class);
 
-    private ISpice privatespice;
+    private ConsoleClient spiceImpl;
     private ClientConsoleMode consoleMode;
 
-    private void setspice(ISpice value) {
-        privatespice = value;
+    private void setSpiceImpl(ConsoleClient value) {
+        spiceImpl = value;
     }
 
     public ClientConsoleMode getClientConsoleMode() {
@@ -70,8 +68,8 @@ public class SpiceConsoleModel extends ConsoleModel {
         return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault));
     }
 
-    public ISpice getspice() {
-        return privatespice;
+    public ConsoleClient getSpiceImpl() {
+        return spiceImpl;
     }
 
     public boolean isWanOptionsAvailableForMyVm() {
@@ -82,7 +80,7 @@ public class SpiceConsoleModel extends ConsoleModel {
     }
 
     /**
-     * Sets implementation of ISpice which will be used
+     * Sets implementation of ConsoleClient which will be used
      * and performs sets initial configuration as well (different for WA/UP).
      *
      * Default mode is "Auto"
@@ -93,11 +91,11 @@ public class SpiceConsoleModel extends ConsoleModel {
 
         switch (consoleMode) {
             case Native:
-                setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
+                setSpiceImpl((ConsoleClient) TypeResolver.getInstance().resolve(ISpiceNative.class));
                 break;
             case Html5:
                 if (consoleUtils.webBasedClientsSupported()) {
-                    setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceHtml5.class));
+                    setSpiceImpl((ConsoleClient) TypeResolver.getInstance().resolve(ISpiceHtml5.class));
                 } else {
                     getLogger().debug("Cannot select SPICE-HTML5."); //$NON-NLS-1$
                     setDefaultConsoleMode();
@@ -108,25 +106,16 @@ public class SpiceConsoleModel extends ConsoleModel {
             break;
         }
 
-        getConfigurator().configure(getspice());
-
-        if (!getspice().getConnectedEvent().getListeners().contains(this)) {
-            getspice().getConnectedEvent().addListener(this);
-        }
+        getConfigurator().configure(getSpiceImpl());
 
         if (getEntity() != null) {
             boolean isSpiceProxyDefined = consoleUtils.isSpiceProxyDefined(getEntity());
-            getspice().getOptions().setSpiceProxyEnabled(isSpiceProxyDefined);
+            getSpiceImpl().getOptions().setSpiceProxyEnabled(isSpiceProxyDefined);
         }
     }
 
     private void setDefaultConsoleMode() {
-        setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
-    }
-
-    @Override
-    public boolean canConnect() {
-        return super.canConnect() && !getIsConnected();
+        setSpiceImpl((ConsoleClient) TypeResolver.getInstance().resolve(ISpiceNative.class));
     }
 
     @Override
@@ -141,7 +130,7 @@ public class SpiceConsoleModel extends ConsoleModel {
 
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
             if (!AsyncDataProvider.getInstance().isWindowsOsType(getEntity().getVmOsId()) || !getEntity().getHasSpiceDriver()) {
-                getspice().getOptions().setWanOptionsEnabled(false);
+                getSpiceImpl().getOptions().setWanOptionsEnabled(false);
             }
 
             UICommand invokeConsoleCommand = new UICommand("invokeConsoleCommand", new BaseCommandTarget() { //$NON-NLS-1$
@@ -163,32 +152,6 @@ public class SpiceConsoleModel extends ConsoleModel {
         return getEntity().getGraphicsInfos().containsKey(GraphicsType.SPICE) && hasVmSpiceSupport;
     }
 
-    @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-        super.eventRaised(ev, sender, args);
-
-        if (ev.equals(getspice().getDisconnectedEvent())) {
-            spice_Disconnected(sender, (ErrorCodeEventArgs) args);
-        }
-        else if (ev.equals(getspice().getConnectedEvent())) {
-            spice_Connected(sender);
-        }
-    }
-
-    private void spice_Disconnected(Object sender, ErrorCodeEventArgs e) {
-        getspice().getDisconnectedEvent().removeListener(this);
-
-        setIsConnected(false);
-
-        if (e.getErrorCode() > 100) {
-            getErrorEvent().raise(this, e);
-        }
-    }
-
-    private void spice_Connected(Object sender) {
-        setIsConnected(true);
-    }
-
     private void cancel() {
         setWindow(null);
     }
@@ -208,7 +171,7 @@ public class SpiceConsoleModel extends ConsoleModel {
             throw new IllegalStateException("Trying to invoke SPICE console but VM GraphicsInfo is null.");//$NON-NLS-1$
         }
 
-        final ConsoleOptions options = getspice().getOptions();
+        final ConsoleOptions options = getSpiceImpl().getOptions();
         options.setVmId(getEntity().getId());
         // configure options
         ConfigureConsoleOptionsParams parameters = new ConfigureConsoleOptionsParams(options, true);
@@ -231,12 +194,9 @@ public class SpiceConsoleModel extends ConsoleModel {
                             configuredOptions.setSpiceProxy(null); // override spice proxy from backend
                         }
 
-                        // Subscribe to events.
-                        getspice().getDisconnectedEvent().addListener(SpiceConsoleModel.this);
-
                         try {
-                            getspice().setOptions(configuredOptions);
-                            getspice().invokeClient();
+                            getSpiceImpl().setOptions(configuredOptions);
+                            getSpiceImpl().invokeClient();
                         } catch (RuntimeException ex) {
                             getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$
                         }

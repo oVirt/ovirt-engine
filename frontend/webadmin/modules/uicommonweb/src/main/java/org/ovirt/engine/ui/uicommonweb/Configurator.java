@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleClient;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -207,14 +207,14 @@ public abstract class Configurator {
         }
     }
 
-    public void configure(ISpice spice) {
+    public void configure(ConsoleClient spice) {
         spice.getOptions().setAdminConsole(getSpiceAdminConsole());
         spice.getOptions().setUsbFilter(getUsbFilter());
         updateSpiceUsbAutoShare(spice);
         updateSpiceFullScreenDefault(spice);
     }
 
-    private void updateSpiceUsbAutoShare(final ISpice spice) {
+    private void updateSpiceUsbAutoShare(final ConsoleClient spice) {
         AsyncDataProvider.getInstance().getSpiceUsbAutoShare(new AsyncQuery<>(new AsyncCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean returnValue) {
@@ -225,7 +225,7 @@ public abstract class Configurator {
 
     protected abstract ConfigurationValues spiceFullScreenConfigKey();
 
-    private void updateSpiceFullScreenDefault(final ISpice spice) {
+    private void updateSpiceFullScreenDefault(final ConsoleClient spice) {
         AsyncDataProvider.getInstance().getConfigurationValueBoolean(new AsyncQuery<>(
                 new AsyncCallback<Boolean>() {
                     @Override

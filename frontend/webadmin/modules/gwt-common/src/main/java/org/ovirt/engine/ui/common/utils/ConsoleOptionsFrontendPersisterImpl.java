@@ -14,9 +14,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.PoolConsolesImpl;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsolesImpl;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleClient;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
@@ -159,7 +158,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
     protected void storeSpiceData(VmConsoles vmConsoles, KeyMaker keyMaker) {
         SpiceConsoleModel consoleModel = vmConsoles.getConsoleModel(SpiceConsoleModel.class);
-        ISpice spice = asSpice(vmConsoles);
+        ConsoleClient spice = asSpice(vmConsoles);
 
         clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_MODE),
                 consoleModel.getClientConsoleMode().toString());
@@ -206,7 +205,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
             logger.log(Level.WARNING, "Failed loading SPICE data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
 
-        ISpice spice = asSpice(vmConsoles);
+        ConsoleClient spice = asSpice(vmConsoles);
         if (vmConsoles.getConsoleModel(SpiceConsoleModel.class).isWanOptionsAvailableForMyVm()) {
             spice.getOptions().setWanOptionsEnabled(readBool(keyMaker.make(WAN_OPTIONS)));
         }
@@ -222,11 +221,11 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
                 readBool(keyMaker.make(REMAP_CAD_SPICE), getRemapCtrlAltDelDefault()));
     }
 
-    protected ISpice asSpice(VmConsoles vmConsoles) {
-        return vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice();
+    protected ConsoleClient asSpice(VmConsoles vmConsoles) {
+        return vmConsoles.getConsoleModel(SpiceConsoleModel.class).getSpiceImpl();
     }
 
-    protected IVnc asVnc(VmConsoles vmConsoles) {
+    protected ConsoleClient asVnc(VmConsoles vmConsoles) {
         return vmConsoles.getConsoleModel(VncConsoleModel.class).getVncImpl();
     }
 

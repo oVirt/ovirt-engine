@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleClient;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -79,14 +79,14 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     @Override
-    public void configure(ISpice spice) {
+    public void configure(ConsoleClient spice) {
         super.configure(spice);
 
         updateWanColorDepthOptions(spice);
         updateWANDisableEffects(spice);
     }
 
-    private void updateWANDisableEffects(final ISpice spice) {
+    private void updateWANDisableEffects(final ConsoleClient spice) {
         AsyncDataProvider.getInstance().getWANDisableEffects(new AsyncQuery<>(new AsyncCallback<List<WanDisableEffects>>() {
             @SuppressWarnings("unchecked")
             @Override
@@ -96,7 +96,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         }));
     }
 
-    private void updateWanColorDepthOptions(final ISpice spice) {
+    private void updateWanColorDepthOptions(final ConsoleClient spice) {
         AsyncDataProvider.getInstance().getWANColorDepth(new AsyncQuery<>(new AsyncCallback<WanColorDepth>() {
             @Override
             public void onSuccess(WanColorDepth returnValue) {
