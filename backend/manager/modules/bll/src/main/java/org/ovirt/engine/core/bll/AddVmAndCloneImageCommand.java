@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +12,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -140,7 +144,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     private List<DiskImage> getDiskImagesToValidate() {
         List<Disk> disks = getDiskDao().getAllForVm(getSourceVmFromDb().getId());
-        List<DiskImage> allDisks = ImagesHandler.filterImageDisks(disks, true, false, true);
+        List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks, true);
         allDisks.addAll(cinderDisks);
         return allDisks;

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -40,11 +43,9 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         Set<Guid> imagesToBeRemoved = new HashSet<>();
         List<DiskImage> images = getParameters().getImages();
         if (images == null) {
-            images =
-                    ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
-                            true,
-                            false,
-                            true);
+            images = DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
+                    ONLY_NOT_SHAREABLE,
+                    ONLY_ACTIVE);
         }
         for (DiskImage image : images) {
             if (Boolean.TRUE.equals(image.getActive())) {

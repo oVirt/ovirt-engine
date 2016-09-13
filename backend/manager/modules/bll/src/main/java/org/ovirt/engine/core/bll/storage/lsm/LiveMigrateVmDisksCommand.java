@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +26,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -391,7 +395,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected boolean checkImagesStatus() {
-        List<DiskImage> disksToCheck = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false, true);
+        List<DiskImage> disksToCheck = DisksFilter.filterImageDisks(getDiskDao().getAllForVm(getVmId()),
+                ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         return validate(diskImagesValidator.diskImagesNotLocked())
                 && validate(diskImagesValidator.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain());

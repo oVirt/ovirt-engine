@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -597,7 +601,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(images, true, false, true);
+            List<DiskImage> diskImagesToCheck = DisksFilter.filterImageDisks(images, ONLY_NOT_SHAREABLE,
+                    ONLY_ACTIVE);
             diskImagesToCheck.addAll(cinderDisks);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
@@ -645,7 +650,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected boolean validateSpaceRequirements() {
         // update vm snapshots for storage free space check
         ImagesHandler.fillImagesBySnapshots(getVm());
-        List<DiskImage>  disksList =  ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false, true);
+        List<DiskImage>  disksList =  DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE,
+                ONLY_ACTIVE);
         List<DiskImage> disksListForStorageChecks = createDiskDummiesForSpaceValidations(disksList);
         MultipleStorageDomainsValidator multipleSdValidator = getStorageDomainsValidator(
                 getVm().getStoragePoolId(), getStorageGuidSet());
@@ -823,7 +829,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
-        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(images, true, false, true);
+        List<DiskImage> diskImages = DisksFilter.filterImageDisks(images, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         for (DiskImage diskImage : diskImages) {
             addVmTemplateImage(srcDeviceIdToTargetDeviceIdMapping, diskImage);
         }

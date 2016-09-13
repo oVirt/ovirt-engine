@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +32,7 @@ import org.ovirt.engine.core.bll.memory.StatelessSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -124,7 +129,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private List<DiskImage> getDiskImages(List<Disk> disks) {
         if (cachedImagesDisks == null) {
-            cachedImagesDisks = ImagesHandler.filterImageDisks(disks, true, true, true);
+            cachedImagesDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE,
+                    ONLY_SNAPABLE, ONLY_ACTIVE);
         }
         return cachedImagesDisks;
 
@@ -479,7 +485,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private SnapshotVDSCommandParameters buildLiveSnapshotParameters(Snapshot snapshot) {
         List<Disk> pluggedDisksForVm = getDiskDao().getAllForVm(getVm().getId(), true);
-        List<DiskImage> filteredPluggedDisksForVm = ImagesHandler.filterImageDisks(pluggedDisksForVm, false, true, true);
+        List<DiskImage> filteredPluggedDisksForVm = DisksFilter.filterImageDisks(pluggedDisksForVm,
+                ONLY_SNAPABLE, ONLY_ACTIVE);
 
         // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
         List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getDisksList());
@@ -632,7 +639,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         SnapshotsValidator snapshotValidator = createSnapshotValidator();
         StoragePoolValidator spValidator = createStoragePoolValidator();
         DiskImagesValidator diskImagesValidatorForChain =
-                createDiskImageValidator(ImagesHandler.filterImageDisks(getDisksList(), true, true, true));
+                createDiskImageValidator(DisksFilter.filterImageDisks(getDisksList(), ONLY_NOT_SHAREABLE,
+                        ONLY_SNAPABLE, ONLY_ACTIVE));
         if (!(validateVM(vmValidator) && validate(spValidator.isUp())
                 && validate(vmValidator.vmNotIlegal())
                 && validate(vmValidator.vmNotLocked())

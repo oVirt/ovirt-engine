@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -203,7 +206,7 @@ public class VmPoolHandler implements BackendService {
         }
 
         List<Disk> disks = diskDao.getAllForVm(vmId);
-        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true, false);
+        List<DiskImage> vmImages = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_SNAPABLE);
 
         VM vm = vmDao.get(vmId);
         StoragePool sp = storagePoolDao.get(vm.getStoragePoolId());

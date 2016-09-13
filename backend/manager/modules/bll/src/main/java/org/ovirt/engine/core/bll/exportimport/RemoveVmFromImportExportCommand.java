@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,7 +15,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RemoveVmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverFromExportDomain;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -108,7 +111,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
 
     private void removeDiskImages() {
         List<DiskImage> images =
-                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false, true);
+                DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         for (DiskImage image : images) {
             image.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
             image.setStoragePoolId(getParameters().getStoragePoolId());

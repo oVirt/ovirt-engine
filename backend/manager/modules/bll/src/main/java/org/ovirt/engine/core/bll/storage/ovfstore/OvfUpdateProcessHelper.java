@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage.ovfstore;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -96,7 +100,7 @@ public class OvfUpdateProcessHelper {
 
     public ArrayList<DiskImage> getVmImagesFromDb(VM vm) {
         ArrayList<DiskImage> allVmImages = new ArrayList<>();
-        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
+        List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskList(), ONLY_SNAPABLE, ONLY_ACTIVE);
 
         for (DiskImage diskImage : filteredDisks) {
             allVmImages.addAll(getAllImageSnapshots(diskImage));

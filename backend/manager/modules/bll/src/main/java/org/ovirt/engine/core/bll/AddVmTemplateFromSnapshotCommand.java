@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
@@ -109,11 +113,8 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     protected List<DiskImage> getVmDisksFromDB() {
 
         if (cachedDisksFromDb == null) {
-            cachedDisksFromDb =
-                    ImagesHandler.filterImageDisks(getVm().getDiskMap().values(),
-                            false,
-                            true,
-                            true);
+            cachedDisksFromDb = DisksFilter.filterImageDisks(getVm().getDiskMap().values(),
+                    ONLY_SNAPABLE, ONLY_ACTIVE);
             cachedDisksFromDb.addAll(ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true));
         }
         return cachedDisksFromDb;

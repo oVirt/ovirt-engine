@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -100,10 +104,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     protected Collection<DiskImage> getAdjustedDiskImagesFromConfiguration() {
         if (diskImagesFromConfiguration == null) {
             diskImagesFromConfiguration =
-                    ImagesHandler.filterImageDisks(vmFromConfiguration.getDiskMap().values(),
-                            false,
-                            true,
-                            true);
+                    DisksFilter.filterImageDisks(vmFromConfiguration.getDiskMap().values(),
+                            ONLY_SNAPABLE, ONLY_ACTIVE);
             diskImagesFromConfiguration.addAll(ImagesHandler.filterDisksBasedOnCinder(vmFromConfiguration.getDiskMap().values(), true));
             adjustDisksImageConfiguration(diskImagesFromConfiguration);
         }

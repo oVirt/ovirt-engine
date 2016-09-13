@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -524,7 +527,9 @@ public final class ImagesHandler {
     }
 
     public static List<DiskImage> getPluggedActiveImagesForVm(Guid vmId) {
-        return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId, true), true, false, true);
+        return DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId, true),
+                ONLY_NOT_SHAREABLE,
+                ONLY_ACTIVE);
     }
 
     /**
@@ -546,36 +551,6 @@ public final class ImagesHandler {
                 diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage.getImageId()));
             }
         }
-    }
-
-    /**
-     * Filter image disks by attributes.
-     *
-     *
-     * @param listOfDisks
-     *            - The list of disks to be filtered.
-     * @param allowOnlyNotShareableDisks
-     *            - Indication whether to allow only disks that are not shareable
-     * @param allowOnlySnapableDisks
-     *            - Indication whether to allow only disks which are allowed to be snapshoted.
-     * @param allowOnlyActiveDisks
-     *            - Indication whether to allow only disks that are not disk snapshots.
-     * @return - List filtered of disk images according to the given filters.
-     */
-    public static List<DiskImage> filterImageDisks(Collection<? extends Disk> listOfDisks,
-                                                   boolean allowOnlyNotShareableDisks,
-                                                   boolean allowOnlySnapableDisks,
-                                                   boolean allowOnlyActiveDisks) {
-        List<DiskImage> diskImages = new ArrayList<>();
-        for (Disk disk : listOfDisks) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                    (!allowOnlyNotShareableDisks || !disk.isShareable()) &&
-                    (!allowOnlySnapableDisks || disk.isAllowSnapshot()) &&
-                    (!allowOnlyActiveDisks || Boolean.TRUE.equals(((DiskImage)disk).getActive()))) {
-                diskImages.add((DiskImage) disk);
-            }
-        }
-        return diskImages;
     }
 
     public static List<LunDisk> filterDiskBasedOnLuns(Collection<? extends Disk> listOfDisks,

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -136,8 +139,8 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
             return false;
         }
 
-        List<DiskImage> templateDiskImages = ImagesHandler.filterImageDisks(
-                getVmTemplate().getDiskTemplateMap().values(), true, false, false);
+        List<DiskImage> templateDiskImages = DisksFilter.filterImageDisks(getVmTemplate().getDiskTemplateMap().values(),
+                ONLY_NOT_SHAREABLE);
         for (DiskImage dit : templateDiskImages) {
             DiskImage diskImage = diskInfoDestinationMap.get(dit.getId());
             if (!ImagesHandler.checkImageConfiguration(
@@ -168,8 +171,8 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     protected boolean verifySourceDomains() {
         Map<Guid, StorageDomain> poolDomainsMap = Entities.businessEntitiesById(getPoolDomains());
         EnumSet<StorageDomainStatus> validDomainStatuses = EnumSet.of(StorageDomainStatus.Active);
-        List<DiskImage> templateDiskImages = ImagesHandler.filterImageDisks(
-                getImagesToCheckDestinationStorageDomains(), true, false, false);
+        List<DiskImage> templateDiskImages = DisksFilter.filterImageDisks(getImagesToCheckDestinationStorageDomains(),
+                ONLY_NOT_SHAREABLE);
         validDisksDomains =
                 ImagesHandler.findDomainsInApplicableStatusForDisks(templateDiskImages,
                         poolDomainsMap,
@@ -183,8 +186,8 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Override
     protected void chooseDisksSourceDomains() {
         diskInfoSourceMap = new HashMap<>();
-        List<DiskImage> templateDiskImages = ImagesHandler.filterImageDisks(
-                getImagesToCheckDestinationStorageDomains(), true, false, false);
+        List<DiskImage> templateDiskImages = DisksFilter.filterImageDisks(getImagesToCheckDestinationStorageDomains(),
+                ONLY_NOT_SHAREABLE);
         for (DiskImage disk : templateDiskImages) {
             Guid diskId = disk.getId();
             Set<Guid> validDomainsForDisk = validDisksDomains.get(diskId);

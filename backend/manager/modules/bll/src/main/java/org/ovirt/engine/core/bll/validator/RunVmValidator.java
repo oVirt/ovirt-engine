@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +19,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -385,7 +389,7 @@ public class RunVmValidator {
      */
     protected ValidationResult isImagesExceededVolumesInImageChain() {
         List<DiskImage> allImageDisks =
-                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), false, true, false);
+                DisksFilter.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), ONLY_SNAPABLE);
 
         DiskImagesValidator diskImagesValidatorForChain = createDiskImageValidator(allImageDisks);
         return diskImagesValidatorForChain.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
@@ -398,7 +402,7 @@ public class RunVmValidator {
      */
     protected ValidationResult hasSpaceForSnapshots() {
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
-        List<DiskImage> allDisks = ImagesHandler.filterImageDisks(disks, false, true, false);
+        List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_SNAPABLE);
 
         Set<Guid> sdIds = ImagesHandler.getAllStorageIdsForImageIds(allDisks);
 
@@ -548,7 +552,7 @@ public class RunVmValidator {
 
     private List<DiskImage> getVmImageDisks() {
         if (cachedVmImageDisks == null) {
-            cachedVmImageDisks = ImagesHandler.filterImageDisks(getVmDisks(), true, false, false);
+            cachedVmImageDisks = DisksFilter.filterImageDisks(getVmDisks(), ONLY_NOT_SHAREABLE);
             cachedVmImageDisks.addAll(ImagesHandler.filterDisksBasedOnCinder(getVmDisks(), true));
         }
 

@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +19,7 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -298,7 +303,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
             // Filter out shareable/nonsnapable disks
             List<CinderDisk> CinderImagesToPreview = ImagesHandler.filterDisksBasedOnCinder(imagesToPreview);
-            imagesToPreview = ImagesHandler.filterImageDisks(imagesToPreview, true, true, false);
+            imagesToPreview = DisksFilter.filterImageDisks(imagesToPreview, ONLY_NOT_SHAREABLE, ONLY_SNAPABLE);
             imagesToPreview.addAll(CinderImagesToPreview);
         }
         return imagesToPreview;
@@ -353,7 +358,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
         updateVmDisksFromDb();
         List<DiskImage> diskImages =
-                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, true, true);
+                DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE,
+                        ONLY_SNAPABLE, ONLY_ACTIVE);
         diskImages.addAll(ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true));
         if (!diskImages.isEmpty()) {
           if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {

@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -32,8 +34,8 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
     @SuppressWarnings("unchecked")
     @Override
     protected void executeCommand() {
-        List<DiskImage> imageTemplates = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(
-                getVmTemplateId()), false, false, true);
+        List<DiskImage> imageTemplates = DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(
+                getVmTemplateId()), ONLY_ACTIVE);
         for (DiskImage template : imageTemplates) {
             // remove this disk in all domain that were sent
             for (Guid domain : (Collection<Guid>)CollectionUtils.intersection(getParameters().getStorageDomainsList(), template.getStorageIds())) {

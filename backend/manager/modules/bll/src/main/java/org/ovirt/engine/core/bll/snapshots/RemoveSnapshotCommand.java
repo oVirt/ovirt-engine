@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +17,7 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -429,7 +433,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private List<DiskImage> getDiskImagesToValidate() {
         List<Disk> disks = getDiskDao().getAllForVm(getVmId());
-        List<DiskImage> allDisks = ImagesHandler.filterImageDisks(disks, true, false, true);
+        List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks);
         allDisks.addAll(cinderDisks);
         return allDisks;

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,7 +13,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -125,7 +128,7 @@ public class VmValidator {
     public ValidationResult vmNotHavingDeviceSnapshotsAttachedToOtherVms(boolean onlyPlugged) {
         List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vm.getId());
         ValidationResult result =
-                new DiskImagesValidator(ImagesHandler.filterImageDisks(vmDisks, true, false, true))
+                new DiskImagesValidator(DisksFilter.filterImageDisks(vmDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE))
                         .diskImagesSnapshotsNotAttachedToOtherVms(onlyPlugged);
         if (result != ValidationResult.VALID) {
             return result;

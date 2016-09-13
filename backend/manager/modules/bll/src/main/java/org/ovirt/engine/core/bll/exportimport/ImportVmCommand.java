@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +34,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmUtils;
@@ -632,7 +635,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void moveOrCopyAllImageGroups() {
         moveOrCopyAllImageGroups(getVm().getId(),
-                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false, true));
+                DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_ACTIVE));
         copyAllMemoryImages(getVm().getId());
     }
 

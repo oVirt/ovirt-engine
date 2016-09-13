@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +23,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
@@ -102,10 +106,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private boolean removeVm() {
-        final List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskList(),
-                true,
-                false,
-                true);
+        final List<DiskImage> diskImages = DisksFilter.filterImageDisks(getVm().getDiskList(), ONLY_NOT_SHAREABLE,
+                ONLY_ACTIVE);
 
         final List<LunDisk> lunDisks =
                 ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values(), false);
@@ -224,7 +226,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         Collection<Disk> vmDisks = getVm().getDiskMap().values();
-        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false, true);
+        List<DiskImage> vmImages = DisksFilter.filterImageDisks(vmDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         vmImages.addAll(ImagesHandler.filterDisksBasedOnCinder(vmDisks));
         if (!vmImages.isEmpty()) {
             Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);

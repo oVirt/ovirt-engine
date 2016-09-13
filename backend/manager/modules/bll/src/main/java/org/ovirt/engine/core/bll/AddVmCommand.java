@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
 import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
 
 import java.nio.charset.Charset;
@@ -31,6 +33,7 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
@@ -734,7 +737,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean setAndValidateDiskProfiles() {
         if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
             Map<DiskImage, Guid> map = new HashMap<>();
-            List<DiskImage> diskImages = ImagesHandler.filterImageDisks(diskInfoDestinationMap.values(), true, false, true);
+            List<DiskImage> diskImages = DisksFilter.filterImageDisks(diskInfoDestinationMap.values(),
+                    ONLY_NOT_SHAREABLE,
+                    ONLY_ACTIVE);
             for (DiskImage diskImage : diskImages) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
@@ -1169,7 +1174,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
             lockVM();
             Collection<DiskImage> templateDisks = getImagesToCheckDestinationStorageDomains();
-            List<DiskImage> diskImages = ImagesHandler.filterImageDisks(templateDisks, true, false, true);
+            List<DiskImage> diskImages = DisksFilter.filterImageDisks(templateDisks, ONLY_NOT_SHAREABLE,
+                    ONLY_ACTIVE);
             for (DiskImage image : diskImages) {
                 VdcReturnValueBase result = runInternalActionWithTasksContext(
                         getDiskCreationCommandType(),

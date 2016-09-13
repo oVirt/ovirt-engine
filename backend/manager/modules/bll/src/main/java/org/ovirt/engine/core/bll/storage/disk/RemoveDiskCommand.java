@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,6 +24,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -279,7 +283,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 return false;
             }
 
-            List<DiskImage> diskList = ImagesHandler.filterImageDisks(Collections.singletonList(getDisk()), true, false, true);
+            List<DiskImage> diskList = DisksFilter.filterImageDisks(Collections.singletonList(getDisk()),
+                    ONLY_NOT_SHAREABLE,
+                    ONLY_ACTIVE);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskList);
             if (!validate(diskImagesValidator.diskImagesNotLocked())) {
                 return false;

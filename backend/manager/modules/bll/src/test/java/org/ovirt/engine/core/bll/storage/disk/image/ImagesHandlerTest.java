@@ -88,16 +88,6 @@ public class ImagesHandlerTest {
     }
 
     @Test
-    public void filterImageDisksFilterDiskSnapshots() {
-        disk1.setActive(true);
-
-        List<DiskImage> result = ImagesHandler.filterImageDisks(Arrays.asList(disk1, disk2), false, false, true);
-
-        assertEquals("Wrong number of Guids returned", 1, result.size());
-        assertTrue("The result should contain the active image disk", result.contains(disk1));
-    }
-
-    @Test
     public void filterDiskBasedOnLunsReturnsOnlyLunDisks() {
         List<LunDisk> returnedLuns = ImagesHandler.filterDiskBasedOnLuns(Arrays.asList(disk1, lunDisk1), true);
         assertEquals("The returned list should contain only lun disks.",

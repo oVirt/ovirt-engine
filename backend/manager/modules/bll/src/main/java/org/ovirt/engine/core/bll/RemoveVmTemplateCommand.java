@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -236,7 +239,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     private List<DiskImage> getImageTemplates() {
         if (imageTemplates == null) {
             List<Disk> allImages = DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId());
-            imageTemplates = ImagesHandler.filterImageDisks(allImages, false, false, true);
+            imageTemplates = DisksFilter.filterImageDisks(allImages, ONLY_ACTIVE);
             imageTemplates.addAll(ImagesHandler.filterDisksBasedOnCinder(allImages, true));
         }
         return imageTemplates;
@@ -267,7 +270,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
         List<Disk> templateImages = DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId());
         final List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateImages);
-        final List<DiskImage> diskImages = ImagesHandler.filterImageDisks(templateImages, false, false, true);
+        final List<DiskImage> diskImages = DisksFilter.filterImageDisks(templateImages, ONLY_ACTIVE);
         // Set VM to lock status immediately, for reducing race condition.
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
 

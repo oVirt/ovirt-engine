@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -24,6 +27,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -628,7 +632,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     protected boolean performImagesChecks() {
         List<DiskImage> diskImagesToCheck =
-                ImagesHandler.filterImageDisks(getImagesList(), true, false, true);
+                DisksFilter.filterImageDisks(getImagesList(), ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
         return validate(diskImagesValidator.diskImagesNotLocked());
     }

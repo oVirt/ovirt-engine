@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -17,6 +20,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.IconUtils;
@@ -423,7 +427,7 @@ public class SnapshotsManager {
         }
 
         if (disks == null) {
-            disks = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), false, true, true);
+            disks = DisksFilter.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), ONLY_SNAPABLE, ONLY_ACTIVE);
             disks.addAll(ImagesHandler.getCinderLeafImages(getDiskDao().getAllForVm(vm.getId()), false));
         }
         populateDisksWithVmData(disks, vm.getId());

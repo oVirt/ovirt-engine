@@ -7,7 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -77,7 +77,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                     MemoryUtils.METADATA_SIZE_IN_BYTES);
             StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                     getStoragePoolId(), diskDummiesForMemSize,
-                    ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), false, false, false), getVm());
+                    DisksFilter.filterImageDisks(getDiskDao().getAllForVm(getVmId())), getVm());
             if (storageDomain != null) {
                 cachedStorageDomainId = storageDomain.getId();
             }
