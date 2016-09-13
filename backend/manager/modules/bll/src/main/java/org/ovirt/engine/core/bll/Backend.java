@@ -121,10 +121,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private static boolean firstInitialization = true;
 
     @Inject
-    // TODO: YZ consider removing injector from here - every dependency should be obtained through CDI.
-    // If that is here in order to declare the dependency on BeanManager - that should be re-considered.
-    private Injector injector;
-    @Inject
     private ServiceLoader serviceLoader;
     @Inject
     private DbFacade dbFacade;

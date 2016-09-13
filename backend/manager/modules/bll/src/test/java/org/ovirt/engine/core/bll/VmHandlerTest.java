@@ -11,7 +11,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -29,7 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-/** A test case for the {@link VmHandler} class. */
+@RunWith(MockitoJUnitRunner.class)
 public class VmHandlerTest {
 
     @Rule

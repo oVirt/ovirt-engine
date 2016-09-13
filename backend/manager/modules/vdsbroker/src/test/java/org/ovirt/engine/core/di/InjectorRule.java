@@ -1,54 +1,142 @@
 package org.ovirt.engine.core.di;
 
-import static org.mockito.Mockito.RETURNS_MOCKS;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
+import javax.enterprise.util.TypeLiteral;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 public class InjectorRule extends TestWatcher {
 
-    // create a new injector instance
-    private final Injector mockedInjector;
+    private static final Map<String, Object> beansCache = new ConcurrentHashMap<>();
+
+    private static volatile boolean cdiInitialized = false;
 
     public InjectorRule() {
-        mockedInjector = mock(Injector.class);
-        when(mockedInjector.getManager()).thenReturn(mock(BeanManager.class, RETURNS_MOCKS));
-    }
-
-    private void overrideInjector(Injector mockedInjector) {
-        try {
-            // set the internal injector
-            Field holdingMember = Injector.class.getDeclaredField("injector");
-            holdingMember.setAccessible(true);
-            holdingMember.set(Injector.class, mockedInjector);
-        } catch (Exception e) {
-            // if something bad happened the test shouldn't run
-            throw new RuntimeException(e);
+        if (!cdiInitialized) {
+            TestCDIPovider testCDIPovider = new TestCDIPovider();
+            CDI.setCDIProvider(() -> testCDIPovider);
+            cdiInitialized = true;
         }
-    }
-
-    @Override
-    protected void starting(Description description) {
-        super.starting(description);
-        overrideInjector(mockedInjector);
     }
 
     @Override
     protected void finished(Description description) {
         super.finished(description);
-        overrideInjector(null);
-        reset(mockedInjector);
     }
 
     public <T> void bind(Class<T> pureClsType, T instance) {
-        when(mockedInjector.instanceOf(pureClsType)).thenReturn(instance);
+        beansCache.put(pureClsType.getName(), instance);
+    }
+
+    private class TestCDIPovider<T> extends CDI<T> {
+
+        public TestCDIPovider() {
+        }
+
+        @Override
+        public BeanManager getBeanManager() {
+            return mock(BeanManager.class, RETURNS_DEEP_STUBS);
+        }
+
+        @Override
+        public Instance<T> select(Annotation... var1) {
+            return null;
+        }
+
+        @Override
+        public <U extends T> Instance<U> select(TypeLiteral<U> typeLiteral, Annotation... annotations) {
+            return null;
+        }
+
+        @Override
+        public boolean isUnsatisfied() {
+            return false;
+        }
+
+        @Override
+        public boolean isAmbiguous() {
+            return false;
+        }
+
+        @Override
+        public void destroy(T t) {
+
+        }
+
+        @Override
+        public <U extends T> Instance<U> select(Class<U> aClass, Annotation... annotations) {
+            return new SimpleInstanceIdGenerator<U>((U) beansCache.get(aClass.getName()));
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return null;
+        }
+
+        @Override
+        public T get() {
+            return null;
+        }
+    }
+
+    private class SimpleInstanceIdGenerator<T> implements Instance<T> {
+
+        private final T value;
+
+        public SimpleInstanceIdGenerator(T value) {
+            this.value = value;
+        }
+
+        @Override
+        public T get() {
+            return value;
+        }
+
+        @Override
+        public Instance<T> select(Annotation... annotations) {
+            return null;
+        }
+
+        @Override
+        public <U extends T> Instance<U> select(Class<U> aClass, Annotation... annotations) {
+            return null;
+        }
+
+        @Override
+        public <U extends T> Instance<U> select(TypeLiteral<U> typeLiteral, Annotation... annotations) {
+            return null;
+        }
+
+        @Override
+        public boolean isUnsatisfied() {
+            return false;
+        }
+
+        @Override
+        public boolean isAmbiguous() {
+            return false;
+        }
+
+        @Override
+        public void destroy(T u) {
+
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return null;
+        }
     }
 
 }

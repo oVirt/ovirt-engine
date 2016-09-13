@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.di;
 
-import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.InjectionTarget;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.enterprise.util.AnnotationLiteral;
 
 /**
  * an application wide interaction point with the CDI container mostly to gap all the existing unmanaged code
@@ -14,18 +13,7 @@ import javax.inject.Singleton;
  * Typically this injector could be used anywhere to get a manage instance from instances which
  * aren't managed like some utility singletons etc
  */
-@Singleton
 public class Injector {
-
-    private static Injector injector;
-
-    @Inject
-    private BeanManager manager;
-
-    @PostConstruct
-    private void init() {
-        injector = this;
-    }
 
     /**
      * This method will take an instance and will fulfill all its dependencies, which are members
@@ -37,9 +25,9 @@ public class Injector {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> T injectMembers(T instance) {
-        AnnotatedType type = injector.getManager().createAnnotatedType(instance.getClass());
-        InjectionTarget injectionTarget = injector.getManager().createInjectionTarget(type);
-        injectionTarget.inject(instance, injector.getManager().createCreationalContext(null));
+        AnnotatedType type = CDI.current().getBeanManager().createAnnotatedType(instance.getClass());
+        InjectionTarget injectionTarget = CDI.current().getBeanManager().createInjectionTarget(type);
+        injectionTarget.inject(instance, CDI.current().getBeanManager().createCreationalContext(null));
         injectionTarget.postConstruct(instance);
         return instance;
     }
@@ -54,20 +42,11 @@ public class Injector {
      * @return the instance of type <code><T></T></code> which is managed by the CDI container
      */
     public static <T extends Object> T get(Class<T> clazz) {
-        return injector.instanceOf(clazz);
+        return CDI.current().select(clazz, DefaultLiteral.INSTANCE).get();
     }
 
-    /**
-     * convenience method, good for mocking and whoever holds a direct instance of Injector in hand.<br>
-     * after all its a jdk "bug" to call a static method on an instance.<br>
-     *{@link Injector#get(Class)} should supply the same behavior exactly
-     * @return instance of T
-     * @see #get(Class)
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends Object> T instanceOf(Class<T> clazz) {
-        Bean<?> bean = injector.getManager().getBeans(clazz).iterator().next();
-        return (T) injector.getManager().getReference(bean, clazz, injector.getManager().createCreationalContext(bean));
+    public static class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
+        public static final DefaultLiteral INSTANCE = new DefaultLiteral();
     }
 
     /**
@@ -75,7 +54,7 @@ public class Injector {
      * tests that need to ignore the manager.
      */
     public BeanManager getManager() {
-        return manager;
+        return CDI.current().getBeanManager();
     }
 
 }
