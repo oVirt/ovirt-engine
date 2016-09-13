@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -418,7 +419,9 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                     getVmDeviceDao().update(vmDeviceForVm);
                 }
 
-                if (getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface()) {
+                if ((getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface()) ||
+                        ((getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot()) && (
+                                getDiskVmElement().getDiskInterface() == DiskInterface.IDE))) {
                     vmDeviceForVm.setAddress("");
                     getVmDeviceDao().clearDeviceAddress(getOldDisk().getId());
                 }
