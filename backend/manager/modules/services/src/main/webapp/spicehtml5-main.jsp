@@ -50,6 +50,12 @@
         <script src="files/spice-html5/thirdparty/rng.js"></script>
         <script src="files/spice-html5/thirdparty/sha1.js"></script>
         <script src="files/spice-html5/ticket.js"></script>
+        <script src="files/spice-html5/filexfer.js"></script>
+        <script src="files/spice-html5/playback.js"></script>
+        <script src="files/spice-html5/resize.js"></script>
+        <script src="files/spice-html5/simulatecursor.js"></script>
+        <script src="files/spice-html5/spicearraybuffer.js"></script>
+        <script src="files/spice-html5/webm.js"></script>
         <link rel="stylesheet" type="text/css" href="files/spice-html5/spice.css" />
 
         <script src="theme/00-ovirt.brand/patternfly/components/jquery/dist/jquery.min.js"></script>
