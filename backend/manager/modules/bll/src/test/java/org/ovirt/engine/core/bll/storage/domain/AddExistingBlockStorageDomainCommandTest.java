@@ -46,6 +46,7 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
         doNothing().when(command).addStorageDomainInDb();
         doNothing().when(command).updateStorageDomainDynamicFromIrs();
         doNothing().when(command).saveLUNsInDB(anyListOf(LUNs.class));
+        doNothing().when(command).updateMetadataDevices();
     }
 
     @Test

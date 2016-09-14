@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -24,6 +26,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         AddStorageDomainCommon<T> {
 
+    @Inject
+    private BlockStorageDomainHelper blockStorageDomainHelper;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -38,6 +43,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     @Override
     protected void executeCommand() {
         updateStaticDataDefaults();
+
         // Add StorageDomain object to DB and update statistics
         addStorageDomainInDb();
         updateStorageDomainDynamicFromIrs();
@@ -45,8 +51,16 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
         // Add relevant LUNs to DB
         List<LUNs> luns = getLUNsFromVgInfo(getStorageDomain().getStorage());
         saveLUNsInDB(luns);
-
+        updateMetadataDevices();
         setSucceeded(true);
+    }
+
+    protected void updateMetadataDevices() {
+        if (getStorageDomain().getVgMetadataDevice() == null || getStorageDomain().getFirstMetadataDevice() == null) {
+            blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
+                    getVds().getId());
+            storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
+        }
     }
 
     @Override
