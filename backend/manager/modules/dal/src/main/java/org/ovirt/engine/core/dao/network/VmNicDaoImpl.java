@@ -10,6 +10,8 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,6 +19,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNicDao {
+
+    private final Logger log = LoggerFactory.getLogger(VmNicDaoImpl.class);
 
     public VmNicDaoImpl() {
         super("VmInterface");

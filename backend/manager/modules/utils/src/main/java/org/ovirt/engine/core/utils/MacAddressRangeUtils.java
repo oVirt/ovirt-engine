@@ -120,6 +120,7 @@ public class MacAddressRangeUtils {
     }
 
     public static long macToLong(String mac) {
+        log.debug("Processing MAC address: {}.", mac);
         return Long.parseLong(StringUtils.remove(mac, ':'), HEX_RADIX);
     }
 

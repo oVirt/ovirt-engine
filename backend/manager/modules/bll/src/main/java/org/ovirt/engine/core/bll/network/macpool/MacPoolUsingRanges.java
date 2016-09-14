@@ -34,9 +34,9 @@ public final class MacPoolUsingRanges implements MacPool {
     }
 
     private void initialize() {
-        log.info("Start initializing {}", getClass().getSimpleName());
+        log.info("Initializing {}", this);
         this.macsStorage = createMacsStorage(rangesBoundaries);
-        log.info("Finished initializing. Available MACs in pool: {}", macsStorage.getAvailableMacsCount());
+        log.info("Finished initializing {}. Available MACs in pool: {}", this, macsStorage.getAvailableMacsCount());
     }
 
     /**
@@ -48,6 +48,7 @@ public final class MacPoolUsingRanges implements MacPool {
     private MacsStorage createMacsStorage(Collection<LongRange> rangesBoundaries) {
         MacsStorage macsStorage = new MacsStorage(allowDuplicates);
         for (LongRange range : rangesBoundaries) {
+            log.debug("Adding range {} to pool {}.", range, this);
             macsStorage.addRange(range.getMinimumLong(), range.getMaximumLong());
         }
 
@@ -84,11 +85,12 @@ public final class MacPoolUsingRanges implements MacPool {
 
     @Override
     public void freeMac(String mac) {
-        macsStorage.freeMac(MacAddressRangeUtils.macToLong(mac));
+        this.freeMacs(Collections.singletonList(mac));
     }
 
     @Override
     public boolean addMac(String mac) {
+        log.debug("Allocating custom mac address {} from {}.", mac, this);
         boolean added = macsStorage.useMac(MacAddressRangeUtils.macToLong(mac));
         logWhenMacPoolIsEmpty();
         return added;
@@ -96,17 +98,21 @@ public final class MacPoolUsingRanges implements MacPool {
 
     @Override
     public void forceAddMac(String mac) {
+        log.debug("Forcibly allocating custom mac address {} from {}", mac, this);
         macsStorage.useMacNoDuplicityCheck(MacAddressRangeUtils.macToLong(mac));
         logWhenMacPoolIsEmpty();
     }
 
     @Override
     public boolean isMacInUse(String mac) {
-        return macsStorage.isMacInUse(MacAddressRangeUtils.macToLong(mac));
+        boolean result = macsStorage.isMacInUse(MacAddressRangeUtils.macToLong(mac));
+        log.debug("Mac {} isMacInUse={}", mac, result);
+        return result;
     }
 
     @Override
     public void freeMacs(List<String> macs) {
+        log.debug("Releasing mac addresses {} back to {}", macs, this);
         for (String mac : macs) {
             macsStorage.freeMac(MacAddressRangeUtils.macToLong(mac));
         }
@@ -114,16 +120,22 @@ public final class MacPoolUsingRanges implements MacPool {
 
     @Override
     public List<String> allocateMacAddresses(int numberOfAddresses) {
+        log.debug("Allocating {} mac addresses from {}.", numberOfAddresses, this);
         List<Long> macs = macsStorage.allocateAvailableMacs(numberOfAddresses);
-        Collections.sort(macs);
+        List<String> result = MacAddressRangeUtils.macAddressesToStrings(macs);
+
+        log.debug("Allocated mac addresses: {} from {}.", result, this);
+        Collections.sort(result);
         logWhenMacPoolIsEmpty();
 
-        return MacAddressRangeUtils.macAddressesToStrings(macs);
+        return result;
     }
 
     @Override
     public boolean isMacInRange(String mac) {
-        return macsStorage.isMacInRange(MacAddressRangeUtils.macToLong(mac));
+        boolean result = macsStorage.isMacInRange(MacAddressRangeUtils.macToLong(mac));
+        log.debug("Mac {} isMacInRange={}", mac, result);
+        return result;
     }
 
     @Override

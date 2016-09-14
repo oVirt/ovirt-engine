@@ -88,8 +88,8 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     public void testPoolDoesNotExistForGivenCluster() throws Exception {
         macPoolPerCluster.initialize();
         expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(MacPoolPerCluster.INEXISTENT_POOL_EXCEPTION_MESSAGE);
-        getMacPool(Guid.newGuid());
+        expectedException.expectMessage(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(null));
+        getMacPool(cluster.getId());
     }
 
     @Test
@@ -191,8 +191,10 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         macPoolPerCluster.initialize();
 
         expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(MacPoolPerCluster.INEXISTENT_POOL_EXCEPTION_MESSAGE);
-        macPoolPerCluster.modifyPool(createMacPool(null, null));
+        MacPool macPool = createMacPool(null, null);
+        Guid macPoolId = macPool.getId();
+        expectedException.expectMessage(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId));
+        macPoolPerCluster.modifyPool(macPool);
     }
 
     @Test
@@ -203,10 +205,11 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
 
         assertThat(getMacPool(cluster.getId()), is(notNullValue()));
 
-        macPoolPerCluster.removePool(macPool.getId());
+        Guid macPoolId = macPool.getId();
+        macPoolPerCluster.removePool(macPoolId);
 
         expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(MacPoolPerCluster.INEXISTENT_POOL_EXCEPTION_MESSAGE);
+        expectedException.expectMessage(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId));
         getMacPool(cluster.getId());
     }
 

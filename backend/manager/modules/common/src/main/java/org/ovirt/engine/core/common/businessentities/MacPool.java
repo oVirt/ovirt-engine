@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -118,5 +119,17 @@ public class MacPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
                 name,
                 ranges
         );
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("id", id)
+                .append("name", name)
+                .append("description", description)
+                .append("ranges", ranges)
+                .append("allowDuplicateMacAddresses", allowDuplicateMacAddresses)
+                .append("defaultPool", defaultPool)
+                .build();
     }
 }

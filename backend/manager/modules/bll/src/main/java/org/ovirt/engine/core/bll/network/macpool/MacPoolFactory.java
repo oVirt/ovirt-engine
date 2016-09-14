@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
-import javax.inject.Singleton;
+import javax.ejb.Singleton;
 
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 

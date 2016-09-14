@@ -40,14 +40,17 @@ public class MacPoolPerCluster {
     private static final Logger log = LoggerFactory.getLogger(MacPoolPerCluster.class);
 
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
-    static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
     private final Map<Guid, MacPool> macPools = new HashMap<>();
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
 
     //required by J2EE specification; session bean should have no-arg constructor.
-    public MacPoolPerCluster() {}
+    public MacPoolPerCluster() {
+    }
 
-    MacPoolPerCluster(MacPoolDao macPoolDao, ClusterDao clusterDao, MacPoolFactory macPoolFactory, DecoratedMacPoolFactory decoratedMacPoolFactory) {
+    MacPoolPerCluster(MacPoolDao macPoolDao,
+            ClusterDao clusterDao,
+            MacPoolFactory macPoolFactory,
+            DecoratedMacPoolFactory decoratedMacPoolFactory) {
         this.macPoolDao = macPoolDao;
         this.clusterDao = clusterDao;
         this.macPoolFactory = macPoolFactory;
@@ -72,6 +75,7 @@ public class MacPoolPerCluster {
         List<String> macsForMacPool = macPoolDao.getAllMacsForMacPool(macPool.getId());
 
         final MacPool pool = createPoolInternal(macPool);
+        log.debug("Initializing {} with macs: {}", pool, macsForMacPool);
         for (String mac : macsForMacPool) {
             pool.forceAddMac(mac);
         }
@@ -96,6 +100,11 @@ public class MacPoolPerCluster {
         return getMacPoolById(getMacPoolId(clusterId), commandContext);
     }
 
+    /**
+     * Do not use this method from elsewhere, than from compensation mechanism.
+     * @param macPoolId id of MacPool.
+     * @return {@link MacPool instance} having given ID.
+     */
     public MacPool getMacPoolById(Guid macPoolId) {
         return getMacPoolById(macPoolId, Collections.emptyList());
     }
@@ -106,7 +115,9 @@ public class MacPoolPerCluster {
      */
     private MacPool getMacPoolById(Guid macPoolId, List<MacPoolDecorator> decorators) {
         try (AutoCloseableLock lock = readLockResource()) {
-            return getMacPoolWithoutLocking(macPoolId, decorators);
+            MacPool result = getMacPoolWithoutLocking(macPoolId, decorators);
+            log.debug("Returning {} for requested id={}", result, macPoolId);
+            return result;
         }
     }
 
@@ -123,7 +134,7 @@ public class MacPoolPerCluster {
         final MacPool poolById = macPools.get(macPoolId);
 
         if (poolById == null) {
-            throw new IllegalStateException(INEXISTENT_POOL_EXCEPTION_MESSAGE);
+            throw new IllegalStateException(createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId));
         }
 
         return decoratedMacPoolFactory.createDecoratedPool(poolById, decorators);
@@ -143,6 +154,7 @@ public class MacPoolPerCluster {
             throw new IllegalStateException(UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST);
         }
 
+        log.debug("Creating new MacPool {}.", macPool);
         MacPool poolForScope = macPoolFactory.createMacPool(macPool);
         macPools.put(macPool.getId(), poolForScope);
         return poolForScope;
@@ -153,11 +165,13 @@ public class MacPoolPerCluster {
      */
     public void modifyPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         try (AutoCloseableLock lock = writeLockResource()) {
-            if (!macPools.containsKey(macPool.getId())) {
-                throw new IllegalStateException(INEXISTENT_POOL_EXCEPTION_MESSAGE);
+            Guid macPoolId = macPool.getId();
+            if (!macPools.containsKey(macPoolId)) {
+                throw new IllegalStateException(createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId));
             }
 
-            removeWithoutLocking(macPool.getId());
+            log.debug("Updating pool {}. (old will be deleted and new initialized from db entity)", macPool);
+            removeWithoutLocking(macPoolId);
             initializeMacPool(macPool);
         }
     }
@@ -169,7 +183,12 @@ public class MacPoolPerCluster {
     }
 
     private void removeWithoutLocking(Guid macPoolId) {
+        log.debug("Removing pool id=", macPoolId);
         macPools.remove(macPoolId);
+    }
+
+    String createExceptionMessageMacPoolHavingIdDoesNotExist(Guid macPoolId) {
+        return String.format("Pool for id=\"%1$s\" does not exist", macPoolId);
     }
 
     protected AutoCloseableLock writeLockResource() {

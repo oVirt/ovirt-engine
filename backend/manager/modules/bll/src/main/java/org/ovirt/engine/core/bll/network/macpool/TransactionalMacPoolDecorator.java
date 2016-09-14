@@ -9,12 +9,17 @@ import java.util.List;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.ReleaseMacsTransientCompensation;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecorator implements MacPoolDecorator {
+
+    private static final Logger log = LoggerFactory.getLogger(TransactionalMacPoolDecorator.class);
 
     private final UsingCompensationState usingCompensationState;
     private final UsingTxDecoratorState usingTxDecoratorState;
@@ -54,6 +59,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
             states.add(nontransactionalState);
         }
 
+        log.debug("Using {} as allocation strategies", states);
         return states;
     }
 
@@ -65,8 +71,13 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     @Override
     public final void freeMacs(List<String> macs) {
         List<String> macsToRelease = filterOutUnusedMacs(macs);
-        if (! macsToRelease.isEmpty()) {
-            getStrategyForMacRelease().releaseMacsOnCommit(macsToRelease);
+        if (macsToRelease.isEmpty()) {
+            log.warn("Trying to release MACs using empty collection as parameter.");
+        } else {
+            //we need to recalculate this on every call, since command context might change in between calls
+            TransactionalStrategyState strategyForMacRelease = getStrategyForMacRelease();
+            log.debug("Using {} as release strategy", strategyForMacRelease);
+            strategyForMacRelease.releaseMacsOnCommit(macsToRelease);
         }
     }
 
@@ -124,6 +135,8 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
 
     private class UsingCompensationState implements TransactionalStrategyState {
+        private final Logger log = LoggerFactory.getLogger(UsingCompensationState.class);
+
         private final CommandContext commandContext;
         private final ReleaseMacsCompensationListener compensationListener;
 
@@ -147,15 +160,25 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
             CompensationContext compensationContext = this.commandContext.getCompensationContext();
 
             ReleaseMacsCompensationListener compensationListener = this.compensationListener;
+            log.debug("Registering macs: {} to be released in case of successful execution", macs);
             compensationListener.macsToReleaseOnCommit.addAll(macs);
-            compensationContext.addListener(compensationListener);
 
+            log.debug("Registering compensation listener {}" + compensationListener);
+            compensationContext.addListener(compensationListener);
         }
 
         public boolean shouldUseCompensation() {
 
             CompensationContext compensationContext = this.commandContext.getCompensationContext();
-            return compensationContext != null && compensationContext.isCompensationEnabled();
+            boolean result = compensationContext != null && compensationContext.isCompensationEnabled();
+            log.debug("Should use compensation?: {}", result);
+
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.forInstance(this).build();
         }
 
         private class ReleaseMacsCompensationListener implements CompensationContext.CompensationListener {
@@ -163,11 +186,15 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
             @Override
             public void afterCompensation() {
+                log.debug("Compensation occurred, clearing macs to be released after commit: {}",
+                        macsToReleaseOnCommit);
+
                 macsToReleaseOnCommit.clear();
             }
 
             @Override
             public void cleaningCompensationDataAfterSuccess() {
+                log.debug("Command successfully executed, releasing macs: {}" + macsToReleaseOnCommit);
                 macsToReleaseOnCommit.forEach(macPool::freeMac);
             }
 
@@ -175,6 +202,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     }
 
     private class UsingTxDecoratorState implements TransactionalStrategyState {
+        private final Logger log = LoggerFactory.getLogger(UsingTxDecoratorState.class);
 
         @Override
         public void releaseMacsInCaseOfRollback(List<String> macs) {
@@ -187,7 +215,13 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
         }
 
         private void registerRollbackHandler(TransactionCompletionListener rollbackHandler) {
+            log.debug("Registering rollback handler {}", rollbackHandler);
             TransactionSupport.registerRollbackHandler(rollbackHandler);
+        }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.forInstance(this).build();
         }
 
         private class ReturnToPoolOnCommit extends ReleaseMacsAfterEndOfTransaction {
@@ -197,6 +231,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
             @Override
             public void onSuccess() {
+                log.debug("Command succeeded, releasing macs {}.", super.macs);
                 releaseMacs();
             }
         }
@@ -208,6 +243,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
             @Override
             public void onRollback() {
+                log.debug("Rollback occurred, releasing macs {}.", super.macs);
                 releaseMacs();
             }
 
@@ -227,6 +263,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     }
 
     private class NontransactionalState implements TransactionalStrategyState {
+        private final Logger log = LoggerFactory.getLogger(NontransactionalState.class);
 
         @Override
         public void releaseMacsInCaseOfRollback(List<String> macs) {
@@ -235,7 +272,13 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
         @Override
         public void releaseMacsOnCommit(List<String> macs) {
+            log.debug("Non-tx, non-compensation state, immediately releasing macs {}.", macs);
             macs.forEach(macPool::freeMac);
+        }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.forInstance(this).build();
         }
     }
 
