@@ -9,8 +9,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @ApplicationScoped
 public class LockedObjectFactory {
+    private static final Logger log = LoggerFactory.getLogger(LockedObjectFactory.class);
+
     /**
      * @param instance class to be decorated.
      * @param interfaceClass class type of interface implemented by the decorated class.
@@ -22,6 +27,7 @@ public class LockedObjectFactory {
             ReentrantReadWriteLock lock) {
         Objects.requireNonNull(instance);
 
+        log.debug("Creating locking proxy for {} using lock: {}", instance, lock);
         //noinspection unchecked
         return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
                 new Class<?>[] { interfaceClass },
