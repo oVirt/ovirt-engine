@@ -21,6 +21,7 @@
 
 import gettext
 
+from otopi import constants as otopicons
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
@@ -44,6 +45,16 @@ class Plugin(plugin.PluginBase):
             plugin=self,
             dbenvkeys=oprovisioncons.Const.PROVISION_DB_ENV_KEYS,
             defaults=oprovisioncons.Const.DEFAULT_PROVISION_DB_ENV_KEYS,
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER_KEYS
+        ].append(
+            oprovisioncons.ProvDBEnv.PASSWORD
         )
 
     @plugin.event(
