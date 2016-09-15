@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -534,12 +531,6 @@ public final class ImagesHandler {
             disksApplicableDomainsMap.put(diskImage.getId(), diskApplicableDomain);
         }
         return disksApplicableDomainsMap;
-    }
-
-    public static List<DiskImage> getPluggedActiveImagesForVm(Guid vmId) {
-        return DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId, true),
-                ONLY_NOT_SHAREABLE,
-                ONLY_ACTIVE);
     }
 
     /**

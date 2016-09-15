@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +23,7 @@ import org.ovirt.engine.core.bll.migration.ConvergenceConfigProvider;
 import org.ovirt.engine.core.bll.migration.ConvergenceSchedule;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -592,7 +595,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
-                && validate(new DiskImagesValidator(ImagesHandler.getPluggedActiveImagesForVm(vm.getId())).diskImagesNotLocked())
+                && validate(new DiskImagesValidator(
+                        DisksFilter.filterImageDisks(diskDao.getAllForVm(vm.getId(), true),
+                                ONLY_NOT_SHAREABLE,
+                                ONLY_ACTIVE)).diskImagesNotLocked())
                 && schedulingManager.canSchedule(getCluster(),
                         getVm(),
                         getVdsBlackList(),
