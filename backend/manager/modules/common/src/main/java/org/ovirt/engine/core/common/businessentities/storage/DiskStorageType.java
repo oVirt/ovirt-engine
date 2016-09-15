@@ -27,6 +27,17 @@ public enum DiskStorageType implements Identifiable {
         this.value = value;
     }
 
+    private static Map<Class<? extends Disk>, DiskStorageType> classToType = new HashMap<>();
+    static {
+        classToType.put(LunDisk.class, LUN);
+        classToType.put(DiskImage.class, IMAGE);
+        classToType.put(CinderDisk.class, CINDER);
+    }
+
+    public static DiskStorageType forClass(Class<? extends Disk> clazz) {
+        return classToType.get(clazz);
+    }
+
     @Override
     public int getValue() {
         return value;

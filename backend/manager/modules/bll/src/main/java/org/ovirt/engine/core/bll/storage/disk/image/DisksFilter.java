@@ -12,10 +12,33 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 
 public class DisksFilter {
+
+    /**
+     * A generic {@link Predicate} for filtering {@link Disk}s by their storage type and then casting them
+     * to the appropriate concrete implementation.
+     */
+    private static class DiskStorageTypePredicate<T extends Disk> implements Predicate<Disk> {
+        private Class<T> implementingDiskType;
+
+        private DiskStorageTypePredicate(Class<T> implementingDiskType) {
+            this.implementingDiskType = implementingDiskType;
+        }
+
+        @Override
+        public boolean test(Disk disk) {
+            return DiskStorageType.forClass(implementingDiskType) == disk.getDiskStorageType();
+        }
+
+        public Class<T> getImplementingDiskType() {
+            return implementingDiskType;
+        }
+    }
+
     /**
      * Filters out all disks that are not images.
      */
-    public static final Predicate<Disk> ONLY_IMAGES = d -> d.getDiskStorageType() == DiskStorageType.IMAGE;
+    public static final DiskStorageTypePredicate<DiskImage> ONLY_IMAGES =
+            new DiskStorageTypePredicate<>(DiskImage.class);
 
     /**
      * Filters out all disks that are not snapable (retains only disks that we can take a snapshot of).
@@ -44,7 +67,7 @@ public class DisksFilter {
         Predicate<Disk> chain = Stream.concat(Stream.of(ONLY_IMAGES), Arrays.stream(predicates)).reduce(Predicate::and).orElse(p -> true);
 
         return disks.stream().filter(chain)
-                .map(DiskImage.class::cast)
+                .map(ONLY_IMAGES.getImplementingDiskType()::cast)
                 .collect(Collectors.toList());
     }
 }
