@@ -13,27 +13,27 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 
 public class DisksFilter {
     /**
-     * Filters out all Disks that are not images
+     * Filters out all disks that are not images.
      */
     public static final Predicate<Disk> ONLY_IMAGES = d -> d.getDiskStorageType() == DiskStorageType.IMAGE;
 
     /**
-     * Filters out all disks that are not snapable (retains only disks that we can take a snapshot of)
+     * Filters out all disks that are not snapable (retains only disks that we can take a snapshot of).
      */
     public static final Predicate<Disk> ONLY_SNAPABLE = Disk::isAllowSnapshot;
 
     /**
-     * Filters out all disks that are shareable
+     * Filters out all disks that are shareable.
      */
     public static final Predicate<Disk> ONLY_NOT_SHAREABLE = d -> !d.isShareable();
 
     /**
-     * Filters out all disks that are not active
+     * Filters out all disks that are not active.
      */
     public static final Predicate<Disk> ONLY_ACTIVE = d -> Boolean.TRUE.equals(((DiskImage) d).getActive());
 
     /**
-     * This method is filtering a list of disks retaining only disk images and continues to filter the list by the
+     * This method filters a list of disks retaining only disk images and continues to filter the list by the
      * specified predicates.
      *
      * @param disks The collection of disks to filter
