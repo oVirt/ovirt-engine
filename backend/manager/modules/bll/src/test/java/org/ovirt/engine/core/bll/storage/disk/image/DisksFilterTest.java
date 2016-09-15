@@ -33,6 +33,19 @@ public class DisksFilterTest {
     }
 
     @Test
+    public void testFilterNonLunDisks() {
+        Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false);
+        Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true);
+        Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true);
+
+        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk);
+        List<LunDisk> filteredList = DisksFilter.filterLunDisks(disksList);
+
+        assertEquals(1, filteredList.size());
+        assertThat(filteredList, containsInAnyOrder(lunDisk));
+    }
+
+    @Test
     public void testFilterShareableDisks() {
         Disk shareableDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false);
         Disk shareableDisk2 = createDisk(DiskStorageType.IMAGE, false, true, false);

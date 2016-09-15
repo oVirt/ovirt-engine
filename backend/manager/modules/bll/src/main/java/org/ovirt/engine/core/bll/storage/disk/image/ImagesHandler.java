@@ -563,18 +563,6 @@ public final class ImagesHandler {
         }
     }
 
-    public static List<LunDisk> filterDiskBasedOnLuns(Collection<? extends Disk> listOfDisks,
-            boolean allowShareableDisks) {
-        List<LunDisk> lunDisks = new ArrayList<>();
-        for (Disk disk : listOfDisks) {
-            if (disk.getDiskStorageType() == DiskStorageType.LUN &&
-                    (allowShareableDisks || !disk.isShareable())) {
-                lunDisks.add((LunDisk) disk);
-            }
-        }
-        return lunDisks;
-    }
-
     public static List<CinderDisk> filterDisksBasedOnCinder(Collection<? extends Disk> listOfDisks) {
         return filterDisksBasedOnCinder(listOfDisks, false);
     }

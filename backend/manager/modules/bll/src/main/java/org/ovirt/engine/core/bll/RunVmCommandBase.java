@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -244,7 +245,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (getVm().getDiskMap().isEmpty()) {
             vmHandler.updateDisksFromDb(getVm());
         }
-        List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values(), true);
+        List<LunDisk> lunDisks = DisksFilter.filterLunDisks(getVm().getDiskMap().values());
         for (LunDisk lunDisk : lunDisks) {
             LUNs lun = lunDisk.getLun();
             lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));

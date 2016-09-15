@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 
 public class DisksFilter {
 
@@ -41,6 +42,11 @@ public class DisksFilter {
             new DiskStorageTypePredicate<>(DiskImage.class);
 
     /**
+     * Filters out all disks that are not Luns.
+     */
+    public static final DiskStorageTypePredicate<LunDisk> ONLY_LUNS = new DiskStorageTypePredicate<>(LunDisk.class);
+
+    /**
      * Filters out all disks that are not snapable (retains only disks that we can take a snapshot of).
      */
     public static final Predicate<Disk> ONLY_SNAPABLE = Disk::isAllowSnapshot;
@@ -65,6 +71,18 @@ public class DisksFilter {
      */
     public static List<DiskImage> filterImageDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
         return filterDisksByStorageType(disks, ONLY_IMAGES, predicates);
+    }
+
+    /**
+     * This method filters a list of disks retaining only lun disks and continues to filter the list by the
+     * specified predicates.
+     *
+     * @param disks The collection of disks to filter
+     * @param predicates The predicates to filter by
+     * @return A filtered list of disks
+     */
+    public static List<LunDisk> filterLunDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
+        return filterDisksByStorageType(disks, ONLY_LUNS, predicates);
     }
 
     /**

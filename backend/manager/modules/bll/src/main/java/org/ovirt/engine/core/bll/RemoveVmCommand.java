@@ -105,7 +105,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 ONLY_ACTIVE);
 
         final List<LunDisk> lunDisks =
-                ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values(), false);
+                DisksFilter.filterLunDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE);
 
         for (VmNic nic : getInterfaces()) {
             new ExternalNetworkManager(nic).deallocateIfExternal();
