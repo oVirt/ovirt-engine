@@ -19,6 +19,8 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
 
     private SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase> command;
     private StorageDomainParametersBase parameters;
+    private LUNs lunFromVg;
+    private LUNs lunFromDb;
 
     @Before
     public void setUp() {
@@ -26,6 +28,8 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         parameters.setVdsId(Guid.newGuid());
 
         command = spy(new SyncLunsInfoForBlockStorageDomainCommand<>(parameters, null));
+        lunFromVg = new LUNs();
+        lunFromDb = new LUNs();
     }
 
     @Test
@@ -59,56 +63,52 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
 
     private Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb(Guid lunFromVgLunId, Guid lunFromDbLunId,
             Guid lunFromVgPvId, Guid lunFromDbPvId) {
-        LUNs lunFromVG = new LUNs();
-        lunFromVG.setLUNId(lunFromVgLunId.toString());
-        lunFromVG.setPhysicalVolumeId(lunFromVgPvId.toString());
+        setLunsIds(lunFromVgLunId, lunFromDbLunId, lunFromVgPvId, lunFromDbPvId);
+        return getLunsToUpdateInDb();
+    }
 
-        LUNs lunFromDB = new LUNs();
-        lunFromDB.setLUNId(lunFromDbLunId.toString());
-        lunFromDB.setPhysicalVolumeId(lunFromDbPvId.toString());
-
-        return getLunsToUpdateInDb(lunFromVG, lunFromDB);
+    private void setLunsIds(Guid lunFromVgLunId, Guid lunFromDbLunId, Guid lunFromVgPvId, Guid lunFromDbPvId) {
+        lunFromVg.setLUNId(lunFromVgLunId.toString());
+        lunFromVg.setPhysicalVolumeId(lunFromVgPvId.toString());
+        lunFromDb.setLUNId(lunFromDbLunId.toString());
+        lunFromDb.setPhysicalVolumeId(lunFromDbPvId.toString());
     }
 
     @Test
     public void testGetLunsToUpdateInDbForSameLun() {
-        LUNs lun = new LUNs();
-        Guid lunId = Guid.newGuid();
-        lun.setLUNId(lunId.toString());
-        lun.setPhysicalVolumeId(Guid.newGuid().toString());
-        List<LUNs> upToDateLuns = getLunsToUpdateInDb(lun, lun).get(command.noOp);
+        setLunsSameLunAndPvIds();
+        List<LUNs> upToDateLuns = getLunsToUpdateInDb().get(command.noOp);
 
-        assertLunIdInList(upToDateLuns, lunId);
+        assertLunIdInList(upToDateLuns, lunFromVg.getLUNId());
     }
 
     @Test
     public void testGetLunsToUpdateInDbDiffDeviceSize() {
-        Guid pvID = Guid.newGuid();
-        Guid lunID = Guid.newGuid();
+        setLunsSameLunAndPvIds();
+        lunFromVg.setDeviceSize(20);
+        lunFromDb.setDeviceSize(10);
+        List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb().get(command.updateExistingLuns);
 
-        LUNs lunFromVG = new LUNs();
-        lunFromVG.setLUNId(lunID.toString());
-        lunFromVG.setPhysicalVolumeId(pvID.toString());
-        lunFromVG.setDeviceSize(20);
+        assertLunIdInList(existingLunsToUpdateInDb, lunFromVg.getLUNId());
+    }
 
-        LUNs lunFromDB = new LUNs();
-        lunFromDB.setLUNId(lunID.toString());
-        lunFromDB.setPhysicalVolumeId(pvID.toString());
-        lunFromDB.setDeviceSize(10);
-
-        List<LUNs> existingLunsToUpdateInDb =
-                getLunsToUpdateInDb(lunFromVG, lunFromDB).get(command.updateExistingLuns);
-
-        assertLunIdInList(existingLunsToUpdateInDb, lunID);
+    private void setLunsSameLunAndPvIds() {
+        Guid lunId = Guid.newGuid();
+        Guid pvId = Guid.newGuid();
+        setLunsIds(lunId, lunId, pvId, pvId);
     }
 
     private void assertLunIdInList(List<LUNs> luns, Guid requestedLunId) {
-        assertEquals(luns.stream().map(LUNs::getLUNId).findAny().orElse(null), requestedLunId.toString());
+        assertLunIdInList(luns, requestedLunId.toString());
     }
 
-    private Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb(LUNs lunFromVG, LUNs lunFromDB) {
-        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVG);
-        List<LUNs> lunsFromDb = Collections.singletonList(lunFromDB);
+    private void assertLunIdInList(List<LUNs> luns, String requestedLunId) {
+        assertEquals(luns.stream().map(LUNs::getLUNId).findAny().orElse(null), requestedLunId);
+    }
+
+    private Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb() {
+        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVg);
+        List<LUNs> lunsFromDb = Collections.singletonList(lunFromDb);
         return command.getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
     }
 }
