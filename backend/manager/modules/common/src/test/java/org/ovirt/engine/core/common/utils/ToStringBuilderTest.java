@@ -177,7 +177,6 @@ public class ToStringBuilderTest {
                 + createAttributeOutput(mapName, Arrays.toString(mapValue.entrySet().toArray()))
                 + ToStringBuilder.ATTRIBUTES_LIST_SUFFIX;
 
-        System.out.println("ToString: " + expected);
         assertEquals(
                 expected,
                 ToStringBuilder.forInstance(null)
