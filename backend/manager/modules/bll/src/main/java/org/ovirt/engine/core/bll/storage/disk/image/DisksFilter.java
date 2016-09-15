@@ -64,10 +64,24 @@ public class DisksFilter {
      * @return A filtered list of disks
      */
     public static List<DiskImage> filterImageDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
-        Predicate<Disk> chain = Stream.concat(Stream.of(ONLY_IMAGES), Arrays.stream(predicates)).reduce(Predicate::and).orElse(p -> true);
+        return filterDisksByStorageType(disks, ONLY_IMAGES, predicates);
+    }
+
+    /**
+     * This method filters a list of disks retaining only disks of a certain storage type and continues to filter the list by
+     * the specified predicates.
+     *
+     * @param disks The collection of disks to filter
+     * @param storageTypePredicate The predicate that defines the storage type to filter by
+     * @param predicates The predicates to filter by
+     * @return A filtered list of disks
+     */
+    private static <T extends Disk> List<T> filterDisksByStorageType
+        (Collection<? extends Disk> disks, DiskStorageTypePredicate<T> storageTypePredicate, Predicate<Disk>... predicates) {
+        Predicate<Disk> chain = Stream.concat(Stream.of(storageTypePredicate), Arrays.stream(predicates)).reduce(Predicate::and).orElse(p -> true);
 
         return disks.stream().filter(chain)
-                .map(ONLY_IMAGES.getImplementingDiskType()::cast)
+                .map(storageTypePredicate.getImplementingDiskType()::cast)
                 .collect(Collectors.toList());
     }
 }
