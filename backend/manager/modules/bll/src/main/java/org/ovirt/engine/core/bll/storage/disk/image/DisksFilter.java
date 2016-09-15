@@ -62,6 +62,11 @@ public class DisksFilter {
     public static final Predicate<Disk> ONLY_ACTIVE = d -> Boolean.TRUE.equals(((DiskImage) d).getActive());
 
     /**
+     * Filters out all disks that are not plugged.
+     */
+    public static final Predicate<Disk> ONLY_PLUGGED = Disk::getPlugged;
+
+    /**
      * This method filters a list of disks retaining only disk images and continues to filter the list by the
      * specified predicates.
      *

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
 import java.util.Arrays;
@@ -21,9 +22,9 @@ public class DisksFilterTest {
 
     @Test
     public void testFilterNonImageDisks() {
-        Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false);
-        Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true);
-        Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true);
+        Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false, false);
+        Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true, false);
+        Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true, false);
 
         List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk);
         List<DiskImage> filteredList = DisksFilter.filterImageDisks(disksList);
@@ -34,9 +35,9 @@ public class DisksFilterTest {
 
     @Test
     public void testFilterNonLunDisks() {
-        Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false);
-        Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true);
-        Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true);
+        Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false, false);
+        Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true, false);
+        Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true, false);
 
         List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk);
         List<LunDisk> filteredList = DisksFilter.filterLunDisks(disksList);
@@ -47,10 +48,10 @@ public class DisksFilterTest {
 
     @Test
     public void testFilterShareableDisks() {
-        Disk shareableDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false);
-        Disk shareableDisk2 = createDisk(DiskStorageType.IMAGE, false, true, false);
-        Disk nonShareableDisk1 = createDisk(DiskStorageType.IMAGE, true, false, true);
-        Disk nonShareableDisk2 = createDisk(DiskStorageType.IMAGE, false, false, true);
+        Disk shareableDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false, false);
+        Disk shareableDisk2 = createDisk(DiskStorageType.IMAGE, false, true, false, false);
+        Disk nonShareableDisk1 = createDisk(DiskStorageType.IMAGE, true, false, true, false);
+        Disk nonShareableDisk2 = createDisk(DiskStorageType.IMAGE, false, false, true, false);
 
         List<Disk> disksList = Arrays.asList(shareableDisk1, nonShareableDisk1, shareableDisk2, nonShareableDisk2);
         List<DiskImage> filteredList = DisksFilter.filterImageDisks(disksList, ONLY_NOT_SHAREABLE);
@@ -61,10 +62,10 @@ public class DisksFilterTest {
 
     @Test
     public void testFilterNonActiveDisks() {
-        Disk activeDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false);
-        Disk activeDisk2 = createDisk(DiskStorageType.IMAGE, true, false, true);
-        Disk nonActiveDisk1 = createDisk(DiskStorageType.IMAGE, false, true, false);
-        Disk nonActiveDisk2 = createDisk(DiskStorageType.IMAGE, false, false, true);
+        Disk activeDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false, false);
+        Disk activeDisk2 = createDisk(DiskStorageType.IMAGE, true, false, true, false);
+        Disk nonActiveDisk1 = createDisk(DiskStorageType.IMAGE, false, true, false, false);
+        Disk nonActiveDisk2 = createDisk(DiskStorageType.IMAGE, false, false, true, false);
 
         List<Disk> disksList = Arrays.asList(activeDisk1, nonActiveDisk1, activeDisk2, nonActiveDisk2);
         List<DiskImage> filteredList = DisksFilter.filterImageDisks(disksList, ONLY_ACTIVE);
@@ -75,10 +76,10 @@ public class DisksFilterTest {
 
     @Test
     public void testFilterNonSnapableDisks() {
-        Disk snapableDisk1 = createDisk(DiskStorageType.IMAGE, true, false, true);
-        Disk snapableDisk2 = createDisk(DiskStorageType.IMAGE, false, false, true);
-        Disk nonSnapableDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false);
-        Disk nonSnapableDisk2 = createDisk(DiskStorageType.IMAGE, false, true, false);
+        Disk snapableDisk1 = createDisk(DiskStorageType.IMAGE, true, false, true, false);
+        Disk snapableDisk2 = createDisk(DiskStorageType.IMAGE, false, false, true, false);
+        Disk nonSnapableDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false, false);
+        Disk nonSnapableDisk2 = createDisk(DiskStorageType.IMAGE, false, true, false, false);
 
         List<Disk> disksList = Arrays.asList(snapableDisk1, nonSnapableDisk1, snapableDisk2, nonSnapableDisk2);
         List<DiskImage> filteredList = DisksFilter.filterImageDisks(disksList, ONLY_SNAPABLE);
@@ -87,7 +88,22 @@ public class DisksFilterTest {
         assertThat(filteredList, containsInAnyOrder(snapableDisk1, snapableDisk2));
     }
 
-    private Disk createDisk(DiskStorageType type, boolean isActive, boolean isShareable, boolean isSnapable) {
+    @Test
+    public void testFilterUnpluggedDisks() {
+        Disk pluggedDisk1 = createDisk(DiskStorageType.IMAGE, true, false, true, true);
+        Disk pluggedDisk2 = createDisk(DiskStorageType.IMAGE, false, false, true, true);
+        Disk unpluggedDisk1 = createDisk(DiskStorageType.IMAGE, true, true, false, false);
+        Disk unpluggedDisk2 = createDisk(DiskStorageType.IMAGE, false, true, false, false);
+
+        List<Disk> disksList = Arrays.asList(pluggedDisk1, unpluggedDisk1, pluggedDisk2, unpluggedDisk2);
+        List<DiskImage> filteredList = DisksFilter.filterImageDisks(disksList, ONLY_PLUGGED);
+
+        assertEquals(2, filteredList.size());
+        assertThat(filteredList, containsInAnyOrder(pluggedDisk1, pluggedDisk2));
+    }
+
+    private Disk createDisk
+            (DiskStorageType type, boolean isActive, boolean isShareable, boolean isSnapable, boolean isPlugged) {
         Disk disk = null;
         switch (type) {
         case IMAGE:
@@ -105,6 +121,7 @@ public class DisksFilterTest {
             setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
             break;
         }
+        disk.setPlugged(isPlugged);
         return disk;
     }
 
