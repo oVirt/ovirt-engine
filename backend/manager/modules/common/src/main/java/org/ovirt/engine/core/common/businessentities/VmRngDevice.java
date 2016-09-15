@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents paravirtualized rng device.
@@ -19,6 +21,8 @@ import org.ovirt.engine.core.compat.StringHelper;
  *  For more information about RNG device see libvirt documentation.
  */
 public class VmRngDevice extends VmDevice implements Serializable {
+
+    private static Logger log = LoggerFactory.getLogger(VmRngDevice.class);
 
     /**
      * Enum representing source for RNG device backend.
@@ -36,9 +40,13 @@ public class VmRngDevice extends VmDevice implements Serializable {
         if (csvSources != null) {
             for (String chunk : csvSources.split(",")) {
                 if (!StringHelper.isNullOrEmpty(chunk)) {
-                    Source src = Source.valueOf(chunk);
-                    if (src != null) {
-                        result.add(src);
+                    try {
+                        Source src = Source.valueOf(chunk);
+                        if (src != null) {
+                            result.add(src);
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        log.warn("Unknown RNG source '{}'", chunk);
                     }
                 }
             }
