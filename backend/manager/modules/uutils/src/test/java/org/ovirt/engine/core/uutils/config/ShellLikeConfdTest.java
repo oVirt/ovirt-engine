@@ -4,7 +4,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -40,18 +39,12 @@ public class ShellLikeConfdTest {
         Collections.sort(res);
 
         String reference;
-        InputStream in = null;
-        try {
-            in = new FileInputStream(URLDecoder.decode(ClassLoader.getSystemResource("config.conf.ref").getPath(), "UTF-8"));
+        try (InputStream in =
+             new FileInputStream(URLDecoder.decode(ClassLoader.getSystemResource("config.conf.ref").getPath(), "UTF-8"))) {
+
             byte[] buffer = new byte[2048];
             int size = in.read(buffer);
             reference = new String(buffer, 0, size, StandardCharsets.UTF_8);
-        }
-        finally {
-            try {
-                in.close();
-            }
-            catch (IOException e) {}
         }
         assertArrayEquals(reference.split("\n"), res.toArray());
     }
