@@ -1,3 +1,10 @@
+-- This script is commented out since any network can be the management
+-- network from 4.0 and the logic should be :
+-- If a display network is not set by any network, set it to the management network
+-- If a migration network is not set by any network, set it to the management network
+
+SELECT 04010280;
+/*
 CREATE FUNCTION __temp_set_display_migration() RETURNS VOID AS $$
 DECLARE
     mgmt_name CHARACTER VARYING(15);
@@ -30,4 +37,5 @@ $$ LANGUAGE plpgsql;
 SELECT __temp_set_display_migration();
 
 DROP FUNCTION __temp_set_display_migration();
+*/
 
