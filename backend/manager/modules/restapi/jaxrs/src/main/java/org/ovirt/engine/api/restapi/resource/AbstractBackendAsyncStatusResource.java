@@ -2,13 +2,13 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
+import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,20 +34,19 @@ public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
 
     @Override
     protected R addLinks(R model, Class<? extends BaseResource> suggestedParent, String... excludeSubCollectionMembers) {
-        model.setHref(UriBuilder.fromPath(getPath(uriInfo)).build().toString());
+        Current current = CurrentManager.get();
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(current.getPrefix());
+        if (current.getVersionSource() == VersionSource.URL) {
+            buffer.append("/v");
+            buffer.append(current.getVersion());
+        }
+        buffer.append(current.getPath());
+        model.setHref(buffer.toString());
         return model;
     }
 
     protected void setReason(Fault fault) {
         fault.setReason(localize(Messages.ASYNCHRONOUS_TASK_FAILED));
-    }
-
-    private String getPath(UriInfo uriInfo) {
-        StringBuilder path = new StringBuilder();
-        // avoid encoding forward slashes to keep URI looking consistent
-        for (String p : uriInfo.getPath().split("/")) {
-            (path.length() == 0 ? path : path.append("/")).append(urlEncode(p));
-        }
-        return LinkCreator.combine(uriInfo.getBaseUri().getPath(), path.toString());
     }
 }
