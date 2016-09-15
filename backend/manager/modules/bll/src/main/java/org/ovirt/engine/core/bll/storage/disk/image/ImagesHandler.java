@@ -563,23 +563,6 @@ public final class ImagesHandler {
         }
     }
 
-    public static List<CinderDisk> filterDisksBasedOnCinder(Collection<? extends Disk> listOfDisks) {
-        return filterDisksBasedOnCinder(listOfDisks, false);
-    }
-
-    public static List<CinderDisk> filterDisksBasedOnCinder(Collection<? extends Disk> listOfDisks,
-            boolean onlyPluggedDisks) {
-        List<CinderDisk> cinderDisks = new ArrayList<>();
-        for (Disk disk : listOfDisks) {
-            if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
-                if (!onlyPluggedDisks || disk.getPlugged()) {
-                    cinderDisks.add((CinderDisk) disk);
-                }
-            }
-        }
-        return cinderDisks;
-    }
-
     public static void removeDiskImage(DiskImage diskImage, Guid vmId) {
         try {
             removeDiskFromVm(vmId, diskImage.getId());
@@ -713,7 +696,7 @@ public final class ImagesHandler {
 
     public static List<DiskImage> getCinderLeafImages(List<Disk> disks, boolean onlyPluggedDisks) {
         List<DiskImage> leafCinderDisks = new ArrayList<>();
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks, onlyPluggedDisks);
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks, d -> !onlyPluggedDisks || d.getPlugged());
         for (CinderDisk cinder : cinderDisks) {
             leafCinderDisks.add(ImagesHandler.getSnapshotLeaf(cinder.getId()));
         }

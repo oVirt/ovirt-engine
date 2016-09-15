@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
 import java.util.ArrayList;
@@ -580,7 +581,7 @@ public class RunVmValidator {
     private List<DiskImage> getVmImageDisks() {
         if (cachedVmImageDisks == null) {
             cachedVmImageDisks = DisksFilter.filterImageDisks(getVmDisks(), ONLY_NOT_SHAREABLE);
-            cachedVmImageDisks.addAll(ImagesHandler.filterDisksBasedOnCinder(getVmDisks(), true));
+            cachedVmImageDisks.addAll(DisksFilter.filterCinderDisks(getVmDisks(), ONLY_PLUGGED));
         }
 
         return cachedVmImageDisks;

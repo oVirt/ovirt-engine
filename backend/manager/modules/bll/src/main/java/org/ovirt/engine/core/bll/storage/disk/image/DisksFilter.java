@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -45,6 +46,12 @@ public class DisksFilter {
      * Filters out all disks that are not Luns.
      */
     public static final DiskStorageTypePredicate<LunDisk> ONLY_LUNS = new DiskStorageTypePredicate<>(LunDisk.class);
+
+    /**
+     * Filters out all disks that are not Cinder disks.
+     */
+    public static final DiskStorageTypePredicate<CinderDisk> ONLY_CINDER =
+            new DiskStorageTypePredicate<>(CinderDisk.class);
 
     /**
      * Filters out all disks that are not snapable (retains only disks that we can take a snapshot of).
@@ -88,6 +95,18 @@ public class DisksFilter {
      */
     public static List<LunDisk> filterLunDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
         return filterDisksByStorageType(disks, ONLY_LUNS, predicates);
+    }
+
+    /**
+     * This method filters a list of disks retaining only cinder disks and continues to filter the list by the
+     * specified predicates.
+     *
+     * @param disks The collection of disks to filter
+     * @param predicates The predicates to filter by
+     * @return A filtered list of disks
+     */
+    public static List<CinderDisk> filterCinderDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
+        return filterDisksByStorageType(disks, ONLY_CINDER, predicates);
     }
 
     /**

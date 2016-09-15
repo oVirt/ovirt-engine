@@ -638,7 +638,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.VM_ID_EXISTS);
         }
 
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskInfoDestinationMap.values());
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(diskInfoDestinationMap.values());
         CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisks);
         if (!validate(cinderDisksValidator.validateCinderDiskLimits())) {
             return false;
@@ -1191,7 +1191,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void addVmCinderDisks(Collection<DiskImage> templateDisks) {
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateDisks);
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(templateDisks);
         if (cinderDisks.isEmpty()) {
             return;
         }

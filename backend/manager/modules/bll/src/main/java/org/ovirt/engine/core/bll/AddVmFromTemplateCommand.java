@@ -72,8 +72,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     protected void init() {
         super.init();
         T parameters = getParameters();
-        List<CinderDisk> cinderDisks =
-                ImagesHandler.filterDisksBasedOnCinder(getVmTemplate().getDiskTemplateMap().values());
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(getVmTemplate().getDiskTemplateMap().values());
         parameters.setUseCinderCommandCallback(!cinderDisks.isEmpty());
     }
 

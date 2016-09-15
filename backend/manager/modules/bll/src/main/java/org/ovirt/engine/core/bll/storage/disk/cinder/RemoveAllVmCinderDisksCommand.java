@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
@@ -82,7 +82,7 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         List<CinderDisk> imageDisks = getParameters().cinderDisks;
         List<CinderDisk> cinderDisks = new ArrayList<>();
         if (imageDisks == null) {
-            cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskDao.getAllForVm(getVmId()));
+            cinderDisks = DisksFilter.filterCinderDisks(diskDao.getAllForVm(getVmId()));
         } else {
             for (DiskImage diskImage : imageDisks) {
                 cinderDisks.add((CinderDisk) diskImage);

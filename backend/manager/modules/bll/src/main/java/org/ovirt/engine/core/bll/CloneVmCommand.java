@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -118,7 +118,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
         if (diskImagesFromConfiguration == null) {
             diskImagesFromConfiguration = DisksFilter.filterImageDisks(loadedImages, ONLY_SNAPABLE, ONLY_ACTIVE);
-            diskImagesFromConfiguration.addAll(ImagesHandler.filterDisksBasedOnCinder(loadedImages, true));
+            diskImagesFromConfiguration.addAll(DisksFilter.filterCinderDisks(loadedImages, ONLY_PLUGGED));
         }
         return diskImagesFromConfiguration;
     }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.common.config.ConfigValues.VdsRefreshRate;
 
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -265,7 +265,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (getVm().getDiskMap().isEmpty()) {
             vmHandler.updateDisksFromDb(getVm());
         }
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true);
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED);
         for (CinderDisk cinderDisk : cinderDisks) {
             CinderBroker cinderBroker = new CinderBroker(cinderDisk.getStorageIds().get(0), getReturnValue().getExecuteFailedMessages());
             try {

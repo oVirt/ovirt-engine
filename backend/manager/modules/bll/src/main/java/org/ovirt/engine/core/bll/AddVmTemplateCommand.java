@@ -1144,7 +1144,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private List<CinderDisk> getCinderDisks() {
         if (cinderDisks == null) {
-            cinderDisks = ImagesHandler.filterDisksBasedOnCinder(images);
+            cinderDisks = DisksFilter.filterCinderDisks(images);
         }
         return cinderDisks;
     }

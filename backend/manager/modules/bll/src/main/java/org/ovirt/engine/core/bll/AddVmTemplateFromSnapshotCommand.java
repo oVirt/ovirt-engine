@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         if (cachedDisksFromDb == null) {
             cachedDisksFromDb = DisksFilter.filterImageDisks(getVm().getDiskMap().values(),
                     ONLY_SNAPABLE, ONLY_ACTIVE);
-            cachedDisksFromDb.addAll(ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true));
+            cachedDisksFromDb.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
         }
         return cachedDisksFromDb;
     }

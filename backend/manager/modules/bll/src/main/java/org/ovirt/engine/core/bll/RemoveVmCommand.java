@@ -221,7 +221,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
         Collection<Disk> vmDisks = getVm().getDiskMap().values();
         List<DiskImage> vmImages = DisksFilter.filterImageDisks(vmDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
-        vmImages.addAll(ImagesHandler.filterDisksBasedOnCinder(vmDisks));
+        vmImages.addAll(DisksFilter.filterCinderDisks(vmDisks));
         if (!vmImages.isEmpty()) {
             Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
             MultipleStorageDomainsValidator storageValidator = new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
@@ -362,7 +362,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     private List<CinderDisk> getCinderDisks() {
         if (cinderDisks == null) {
-            cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+            cinderDisks = DisksFilter.filterCinderDisks(getVm().getDiskMap().values());
         }
         return cinderDisks;
     }

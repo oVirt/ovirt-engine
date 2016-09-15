@@ -515,7 +515,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private void addRedundantCinderSnapshots(Guid previewedSnapshotId, List<DiskImage> imagesFromActiveSnapshot) {
         List<CinderDisk> cinderImagesForPreviewedSnapshot =
-                ImagesHandler.filterDisksBasedOnCinder(diskImageDao.getAllSnapshotsForVmSnapshot(previewedSnapshotId));
+                DisksFilter.filterCinderDisks(diskImageDao.getAllSnapshotsForVmSnapshot(previewedSnapshotId));
         Set<Guid> criticalSnapshotsChain = getCriticalSnapshotsChain(imagesFromActiveSnapshot, cinderImagesForPreviewedSnapshot);
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
             List<Guid> redundantSnapshotIdsToDelete = CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(

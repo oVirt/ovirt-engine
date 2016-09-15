@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
 import java.util.Collection;
@@ -13,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -67,7 +67,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         super.init();
         VM vm = vmDao.get(getVmIdFromSnapshot());
         vmHandler.updateDisksFromDb(vm);
-        boolean isCinderDisksExist = !ImagesHandler.filterDisksBasedOnCinder(vm.getDiskList()).isEmpty();
+        boolean isCinderDisksExist = !DisksFilter.filterCinderDisks(vm.getDiskList()).isEmpty();
         getParameters().setUseCinderCommandCallback(isCinderDisksExist);
     }
 
@@ -106,7 +106,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             diskImagesFromConfiguration =
                     DisksFilter.filterImageDisks(vmFromConfiguration.getDiskMap().values(),
                             ONLY_SNAPABLE, ONLY_ACTIVE);
-            diskImagesFromConfiguration.addAll(ImagesHandler.filterDisksBasedOnCinder(vmFromConfiguration.getDiskMap().values(), true));
+            diskImagesFromConfiguration.addAll(
+                    DisksFilter.filterCinderDisks(vmFromConfiguration.getDiskMap().values(), ONLY_PLUGGED));
             adjustDisksImageConfiguration(diskImagesFromConfiguration);
         }
         return diskImagesFromConfiguration;

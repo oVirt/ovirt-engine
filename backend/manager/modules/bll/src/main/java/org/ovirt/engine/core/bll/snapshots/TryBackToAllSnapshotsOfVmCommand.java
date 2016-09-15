@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
 import java.util.ArrayList;
@@ -79,8 +80,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         // No need to filter the images for partial preview as being done in the execute phase since the callback can
         // also support no child commands, this should be changed once all commands will facilitate the CoCo
         // infrastructure.
-        getParameters().setUseCinderCommandCallback(
-                !ImagesHandler.filterDisksBasedOnCinder(getImagesToPreview()).isEmpty());
+        getParameters().setUseCinderCommandCallback(!DisksFilter.filterCinderDisks(getImagesToPreview()).isEmpty());
     }
 
     @Override
@@ -300,7 +300,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     diskImageDao.getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
 
             // Filter out shareable/nonsnapable disks
-            List<CinderDisk> CinderImagesToPreview = ImagesHandler.filterDisksBasedOnCinder(imagesToPreview);
+            List<CinderDisk> CinderImagesToPreview = DisksFilter.filterCinderDisks(imagesToPreview);
             imagesToPreview = DisksFilter.filterImageDisks(imagesToPreview, ONLY_NOT_SHAREABLE, ONLY_SNAPABLE);
             imagesToPreview.addAll(CinderImagesToPreview);
         }
@@ -358,7 +358,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         List<DiskImage> diskImages =
                 DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE,
                         ONLY_SNAPABLE, ONLY_ACTIVE);
-        diskImages.addAll(ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true));
+        diskImages.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
         if (!diskImages.isEmpty()) {
           if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
               return false;
@@ -396,7 +396,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     public boolean validateCinder() {
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskDao.getAllForVm(getVmId()));
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(diskDao.getAllForVm(getVmId()));
         if (!cinderDisks.isEmpty()) {
             CinderDisksValidator cinderDisksValidator = getCinderDisksValidator(cinderDisks);
             return validate(cinderDisksValidator.validateCinderDiskLimits());

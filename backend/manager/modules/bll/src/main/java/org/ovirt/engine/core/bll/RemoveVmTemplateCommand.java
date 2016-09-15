@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -78,8 +78,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
     @Override
     public void init() {
         initStoragePoolInfo();
-        getParameters().setUseCinderCommandCallback(
-                !ImagesHandler.filterDisksBasedOnCinder(getImageTemplates()).isEmpty());
+        getParameters().setUseCinderCommandCallback(!DisksFilter.filterCinderDisks(getImageTemplates()).isEmpty());
     }
 
     @Override
@@ -231,7 +230,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         if (imageTemplates == null) {
             List<Disk> allImages = diskDao.getAllForVm(getVmTemplateId());
             imageTemplates = DisksFilter.filterImageDisks(allImages, ONLY_ACTIVE);
-            imageTemplates.addAll(ImagesHandler.filterDisksBasedOnCinder(allImages, true));
+            imageTemplates.addAll(DisksFilter.filterCinderDisks(allImages, ONLY_PLUGGED));
         }
         return imageTemplates;
     }
@@ -260,7 +259,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
             shiftBaseTemplateToSuccessor();
         }
         List<Disk> templateImages = diskDao.getAllForVm(getVmTemplateId());
-        final List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateImages);
+        final List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(templateImages);
         final List<DiskImage> diskImages = DisksFilter.filterImageDisks(templateImages, ONLY_ACTIVE);
         // Set VM to lock status immediately, for reducing race condition.
         vmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());

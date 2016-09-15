@@ -80,7 +80,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             if (snapshot != null) {
                 setSnapshotName(snapshot.getDescription());
                 getParameters().setUseCinderCommandCallback(
-                        !ImagesHandler.filterDisksBasedOnCinder(getSourceImages()).isEmpty());
+                        !DisksFilter.filterCinderDisks(getSourceImages()).isEmpty());
             }
         }
         setStoragePoolId(getVm().getStoragePoolId());
@@ -432,7 +432,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private List<DiskImage> getDiskImagesToValidate() {
         List<Disk> disks = diskDao.getAllForVm(getVmId());
         List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks);
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks);
         allDisks.addAll(cinderDisks);
         return allDisks;
     }

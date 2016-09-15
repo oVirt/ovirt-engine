@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -472,7 +471,7 @@ public class VmHandler implements BackendService {
      */
     public void filterImageDisksForVM(VM vm) {
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskMap().values(), ONLY_ACTIVE);
-        List<CinderDisk> filteredCinderDisks = ImagesHandler.filterDisksBasedOnCinder(vm.getDiskMap().values());
+        List<CinderDisk> filteredCinderDisks = DisksFilter.filterCinderDisks(vm.getDiskMap().values());
         filteredDisks.addAll(filteredCinderDisks);
         @SuppressWarnings("unchecked")
         Collection<? extends Disk> vmDisksToRemove = CollectionUtils.subtract(vm.getDiskMap().values(), filteredDisks);

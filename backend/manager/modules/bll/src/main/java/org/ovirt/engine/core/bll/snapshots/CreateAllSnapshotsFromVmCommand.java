@@ -207,7 +207,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     public boolean validateCinder() {
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskDao.getAllForVm(getVmId()));
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(diskDao.getAllForVm(getVmId()));
         if (!cinderDisks.isEmpty()) {
             CinderDisksValidator cinderDisksValidator = getCinderDisksValidator(cinderDisks);
             return validate(cinderDisksValidator.validateCinderDiskSnapshotsLimits());
@@ -565,7 +565,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private boolean isCinderDisksExist() {
-        return !ImagesHandler.filterDisksBasedOnCinder(getDisksList()).isEmpty();
+        return !DisksFilter.filterCinderDisks(getDisksList()).isEmpty();
     }
 
     private void handleVmFailure(EngineException e, AuditLogType auditLogType, String warnMessage) {
