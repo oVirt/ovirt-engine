@@ -53,13 +53,6 @@ public class ShellLikeConfdTest {
             }
             catch (IOException e) {}
         }
-        for (Object o:res.toArray()){
-            System.out.println(o);
-        }
-        for (Object o:reference.split("\n")){
-            System.out.println(o);
-        }
-
         assertArrayEquals(reference.split("\n"), res.toArray());
     }
 
