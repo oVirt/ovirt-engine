@@ -3,14 +3,19 @@ package org.ovirt.engine.core.bll.storage.repoimage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 
 public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBase> extends QueriesCommandBase<P> {
+
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
     public GetImagesListQueryBase(P parameters) {
         super(parameters);
@@ -33,7 +38,7 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
             return new ArrayList<>();
         }
 
-        return IsoDomainListSyncronizer.getInstance().getUserRequestForStorageDomainRepoFileList
+        return isoDomainListSynchronizer.getUserRequestForStorageDomainRepoFileList
                 (storageDomainId, getParameters().getImageType(), getParameters().getForceRefresh());
     }
 }

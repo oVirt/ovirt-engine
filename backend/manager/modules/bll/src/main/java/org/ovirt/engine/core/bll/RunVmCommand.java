@@ -28,7 +28,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
@@ -112,6 +112,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Inject
     private HostDeviceManager hostDeviceManager;
+
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -447,8 +450,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getVm().getIsoPath();
     }
 
-    protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
-        return IsoDomainListSyncronizer.getInstance();
+    protected IsoDomainListSynchronizer getIsoDomainListSynchronizer() {
+        return isoDomainListSynchronizer;
     }
 
     private void createVmStatelessImages() {
@@ -864,17 +867,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             // Fetch cached Iso files from active Iso domain.
             List<RepoImage> repoFilesMap =
-                    getIsoDomainListSyncronizer().getCachedIsoListByDomainId(isoDomainId, ImageFileType.ISO);
+                    getIsoDomainListSynchronizer().getCachedIsoListByDomainId(isoDomainId, ImageFileType.ISO);
             Version bestClusterVer = null;
             int bestToolVer = 0;
             for (RepoImage map : repoFilesMap) {
                 String fileName = StringUtils.defaultString(map.getRepoImageId(), "");
                 Matcher matchToolPattern =
-                        Pattern.compile(IsoDomainListSyncronizer.REGEX_TOOL_PATTERN).matcher(fileName);
+                        Pattern.compile(IsoDomainListSynchronizer.REGEX_TOOL_PATTERN).matcher(fileName);
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
-                    Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_CLUSTER_LEVEL));
-                    int toolVersion = Integer.parseInt(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_VERSION));
+                    Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL));
+                    int toolVersion = Integer.parseInt(matchToolPattern.group(IsoDomainListSynchronizer.TOOL_VERSION));
 
                     if (clusterVer.compareTo(getVm().getCompatibilityVersion()) <= 0) {
                         if ((bestClusterVer == null)
@@ -903,7 +906,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (attachCd) {
             String rhevToolsPath =
-                    String.format("%1$s%2$s_%3$s.iso", IsoDomainListSyncronizer.getGuestToolsSetupIsoPrefix(),
+                    String.format("%1$s%2$s_%3$s.iso", IsoDomainListSynchronizer.getGuestToolsSetupIsoPrefix(),
                             selectedToolsClusterVersion, selectedToolsVersion);
 
             String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,
@@ -1051,7 +1054,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected Guid getActiveIsoDomainId() {
         if (cachedActiveIsoDomainId == null) {
-            cachedActiveIsoDomainId = getIsoDomainListSyncronizer()
+            cachedActiveIsoDomainId = getIsoDomainListSynchronizer()
                     .findActiveISODomain(getVm().getStoragePoolId());
         }
 

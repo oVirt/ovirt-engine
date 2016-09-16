@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmOperationCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -18,6 +20,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Version;
 
 public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends VmOperationCommandBase<T> {
+
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
+
     private String cdImagePath;
 
     public ChangeDiskCommand(T parameters, CommandContext cmdContext) {
@@ -58,7 +64,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             return failVmStatusIllegal();
         }
 
-        if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
+        if ((isoDomainListSynchronizer.findActiveISODomain(getVm().getStoragePoolId()) == null)
                 && !StringUtils.isEmpty(cdImagePath)) {
             return failValidation(EngineMessage.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }

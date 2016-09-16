@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -78,6 +78,8 @@ public class VmPoolHandler implements BackendService {
     private DbUserDao dbUserDao;
     @Inject
     private ClusterDao clusterDao;
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
     public EngineLock createLock(Guid vmId) {
         return new EngineLock(
@@ -293,7 +295,7 @@ public class VmPoolHandler implements BackendService {
     }
 
     private Guid findActiveISODomain(Guid storagePoolId) {
-        return IsoDomainListSyncronizer.getInstance().findActiveISODomain(storagePoolId);
+        return isoDomainListSynchronizer.findActiveISODomain(storagePoolId);
     }
 
     private StoragePool fetchStoragePool(Guid storagePoolId) {

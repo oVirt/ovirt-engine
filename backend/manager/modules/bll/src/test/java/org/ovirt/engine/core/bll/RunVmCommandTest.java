@@ -37,7 +37,7 @@ import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
@@ -110,7 +110,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     private BackendInternal backend;
 
     @Mock
-    private IsoDomainListSyncronizer isoDomainListSyncronizer;
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
     @Mock
     OsRepository osRepository;
@@ -352,7 +352,7 @@ public class RunVmCommandTest extends BaseCommandTest {
             protected void loadPayloadDevice() {
             }
         });
-        mockIsoDomainListSyncronizer();
+        mockIsoDomainListSynchronizer();
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();
         doNothing().when(command).initParametersForPassthroughVnics();
@@ -370,8 +370,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         vmHandlerRule.updateOsRepository(osRepository);
     }
 
-    private void mockIsoDomainListSyncronizer() {
-        doReturn(isoDomainListSyncronizer).when(command).getIsoDomainListSyncronizer();
+    private void mockIsoDomainListSynchronizer() {
+        doReturn(isoDomainListSynchronizer).when(command).getIsoDomainListSynchronizer();
     }
 
     @Test

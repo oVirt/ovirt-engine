@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -35,12 +37,18 @@ import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
+
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
+
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     public ActivateStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -88,9 +96,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
             activateCinderStorageDomain();
             return;
         }
-        final StoragePoolIsoMap map =
-                DbFacade.getInstance()
-                        .getStoragePoolIsoMapDao()
+        final StoragePoolIsoMap map = storagePoolIsoMapDao
                         .get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
         // Master domain must not go through the Activating status.
@@ -114,7 +120,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
         TransactionSupport.executeInNewTransaction(() -> {
             map.setStatus(StorageDomainStatus.Active);
-            DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+            storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                 calcStoragePoolStatusByDomainsStatus();
             }
@@ -125,7 +131,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         log.info("ActivateStorage Domain. After change storage pool status in vds. Time: {}",
                 new Date());
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
-            IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),
+            isoDomainListSynchronizer.refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),
                     getStoragePool().getId());
         }
         setSucceeded(true);

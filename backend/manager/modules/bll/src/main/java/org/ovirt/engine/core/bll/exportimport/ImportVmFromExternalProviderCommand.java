@@ -21,7 +21,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -67,6 +67,9 @@ implements QuotaStorageDependent {
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
@@ -432,10 +435,7 @@ implements QuotaStorageDependent {
     }
 
     protected Guid getActiveIsoDomainId() {
-        return getIsoDomainListSyncronizer().findActiveISODomain(getStoragePoolId());
+        return isoDomainListSynchronizer.findActiveISODomain(getStoragePoolId());
     }
 
-    protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
-        return IsoDomainListSyncronizer.getInstance();
-    }
 }

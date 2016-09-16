@@ -15,11 +15,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import org.ovirt.engine.core.bll.Backend;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -41,13 +45,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -65,16 +68,41 @@ import org.slf4j.LoggerFactory;
  * appropriate file data.<BR/>
  */
 @SuppressWarnings("synthetic-access")
-public class IsoDomainListSyncronizer {
-    private static final Logger log = LoggerFactory.getLogger(IsoDomainListSyncronizer.class);
-    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
-    private List<RepoImage> problematicRepoFileList = new ArrayList<>();
+@Singleton
+public class IsoDomainListSynchronizer implements BackendService {
+    private static final Logger log = LoggerFactory.getLogger(IsoDomainListSynchronizer.class);
+
     private static final int MIN_TO_MILLISECONDS = 60 * 1000;
-    private static volatile IsoDomainListSyncronizer isoDomainListSyncronizer;
-    private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
-    private int isoDomainRefreshRate;
-    private RepoFileMetaDataDao repoStorageDom;
+    private static final String ISO_VDSM_FILE_PATTERN = "*.iso";
+    private static final Pattern ISO_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.iso$", Pattern.CASE_INSENSITIVE);
+    private static final String FLOPPY_VDSM_FILE_PATTERN = "*.vfd";
+    private static final Pattern FLOPPY_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.vfd$", Pattern.CASE_INSENSITIVE);
+    private static final String ALL_FILES_PATTERN = "*";
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private VDSBrokerFrontend resourceManager;
+
+    @Inject
+    private RepoFileMetaDataDao repoFileMetaDataDao;
+
+    @Inject
     private ProviderDao providerDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
+
+    private List<RepoImage> problematicRepoFileList = new ArrayList<>();
+    private final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
+    private int isoDomainRefreshRate;
 
     public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
     public static final String TOOL_VERSION = "toolVersion";
@@ -83,26 +111,17 @@ public class IsoDomainListSyncronizer {
                     getGuestToolsSetupIsoPrefix(),
                     TOOL_CLUSTER_LEVEL,
                     TOOL_VERSION);
-    public static final String ISO_VDSM_FILE_PATTERN = "*.iso";
-    public static final Pattern ISO_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.iso$", Pattern.CASE_INSENSITIVE);
-    public static final String FLOPPY_VDSM_FILE_PATTERN = "*.vfd";
-    public static final Pattern FLOPPY_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.vfd$", Pattern.CASE_INSENSITIVE);
-    public static final String ALL_FILES_PATTERN = "*";
 
     // Not kept as static member to enable reloading the config value
     public static String getGuestToolsSetupIsoPrefix() {
         return Config.getValue(ConfigValues.GuestToolsSetupIsoPrefix);
     }
 
-    /**
-     * private constructor to initialize the quartz scheduler
-     */
-    private IsoDomainListSyncronizer() {
+    @PostConstruct
+    private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
-        repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
-        providerDao = DbFacade.getInstance().getProviderDao();
         isoDomainRefreshRate = Config.<Integer> getValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
-        Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(this,
+        schedulerUtil.scheduleAFixedDelayJob(this,
                 "fetchIsoDomains",
                 new Class[] {},
                 new Object[] {},
@@ -113,29 +132,12 @@ public class IsoDomainListSyncronizer {
     }
 
     /**
-     * Returns the singleton instance.
-     * @return Singleton instance of IsoDomainManager
-     */
-    public static IsoDomainListSyncronizer getInstance() {
-        if (isoDomainListSyncronizer == null) {
-            synchronized (IsoDomainListSyncronizer.class) {
-                if (isoDomainListSyncronizer == null) {
-                    isoDomainListSyncronizer = new IsoDomainListSyncronizer();
-                }
-            }
-        }
-        return isoDomainListSyncronizer;
-    }
-
-    /**
      * Check and update if needed each Iso domain in each Data Center in the system.
      */
     @OnTimerMethodAnnotation("fetchIsoDomains")
     public synchronized void fetchIsoDomains() {
         // Gets all the active Iso storage domains.
-        List<RepoImage> repofileList = DbFacade.getInstance()
-                .getRepoFileMetaDataDao()
-                .getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
+        List<RepoImage> repofileList = repoFileMetaDataDao.getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
                         StoragePoolStatus.Up,
                         StorageDomainStatus.Active,
                         VDSStatus.Up);
@@ -197,7 +199,7 @@ public class IsoDomainListSyncronizer {
     private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType) {
         boolean refreshResult;
         List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
-        StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
+        StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
 
         if (storageDomain.getStorageDomainType() == StorageDomainType.ISO) {
             refreshResult = refreshIsoDomain(storageDomainId, tempProblematicRepoFileList, imageType);
@@ -221,8 +223,6 @@ public class IsoDomainListSyncronizer {
     }
 
     private boolean refreshImageDomain(final StorageDomain storageDomain, final ImageFileType imageType) {
-        final RepoFileMetaDataDao repoFileMetaDataDao = repoStorageDom;
-
         Provider provider = providerDao.get(new Guid(storageDomain.getStorage()));
         final OpenStackImageProviderProxy client = ProviderProxyFactory.getInstance().create(provider);
 
@@ -351,10 +351,7 @@ public class IsoDomainListSyncronizer {
 
     // Fetch all the Storage pools for this Iso domain Id.
     private List<StoragePoolIsoMap> fetchAllStoragePoolsForIsoDomain(Guid storageDomainId, ImageFileType imageType) {
-        List<StoragePoolIsoMap> isoMapList =
-                DbFacade.getInstance()
-                        .getStoragePoolIsoMapDao()
-                        .getAllForStorage(storageDomainId);
+        List<StoragePoolIsoMap> isoMapList = storagePoolIsoMapDao.getAllForStorage(storageDomainId);
         log.debug("Fetched {} storage pools for '{}' file type, in Iso domain '{}'.",
                 isoMapList.size(),
                 imageType,
@@ -411,7 +408,7 @@ public class IsoDomainListSyncronizer {
         List<RepoImage> fileListMD = new ArrayList<>();
         if (isoStorageDomainId != null) {
             fileListMD =
-                    repoStorageDom.getRepoListForStorageDomain(isoStorageDomainId, imageType);
+                    repoFileMetaDataDao.getRepoListForStorageDomain(isoStorageDomainId, imageType);
         }
         return fileListMD;
     }
@@ -446,7 +443,7 @@ public class IsoDomainListSyncronizer {
      *            - The file type extension (ISO  or Floppy).
      * @see #handleErrorLog(List)
      */
-    private static void handleErrorLog(Guid storagePoolId, Guid storageDomainId, ImageFileType imageType) {
+    private void handleErrorLog(Guid storagePoolId, Guid storageDomainId, ImageFileType imageType) {
         List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
 
         RepoImage repoImage = createMockRepositoryFileMetaData(
@@ -468,7 +465,7 @@ public class IsoDomainListSyncronizer {
      *            - List of repository file meta data, each one indicating a problematic repository domain.
      * @return true, if has problematic storage domains, false otherwise (List is empty).
      */
-    private static boolean handleErrorLog(List<RepoImage> problematicFileListForHandleError) {
+    private boolean handleErrorLog(List<RepoImage> problematicFileListForHandleError) {
         boolean hasProblematic = false;
         if (problematicFileListForHandleError != null && !problematicFileListForHandleError.isEmpty()) {
             StringBuilder problematicStorages = new StringBuilder();
@@ -520,11 +517,11 @@ public class IsoDomainListSyncronizer {
      * @param repoImage
      *            - The problematic storage domain.
      */
-    private static String buildDetailedAuditLogMessage(RepoImage repoImage) {
+    private String buildDetailedAuditLogMessage(RepoImage repoImage) {
         String storageDomainName = "Repository not found";
         if (repoImage != null && repoImage.getRepoDomainId() != null) {
             StorageDomain storageDomain =
-                    DbFacade.getInstance().getStorageDomainDao().get(repoImage.getRepoDomainId());
+                    storageDomainDao.get(repoImage.getRepoDomainId());
             if (storageDomain != null) {
                 storageDomainName =
                         String.format("%s (%s file type)",
@@ -560,10 +557,9 @@ public class IsoDomainListSyncronizer {
         }
     }
 
-    private static boolean refreshIsoFileListMetaData(final Guid repoStorageDomainId,
-                                                      final RepoFileMetaDataDao repoFileMetaDataDao,
-                                                      final Map<String, Map<String, Object>> fileStats,
-                                                      final ImageFileType imageType) {
+    private boolean refreshIsoFileListMetaData(final Guid repoStorageDomainId,
+                                               final Map<String, Map<String, Object>> fileStats,
+                                               final ImageFileType imageType) {
         Lock syncObject = getSyncObject(repoStorageDomainId, imageType);
         try {
             syncObject.lock();
@@ -750,7 +746,6 @@ public class IsoDomainListSyncronizer {
         }
 
         boolean refreshSucceeded = refreshIsoFileListMetaData(repoStorageDomainId,
-                repoStorageDom,
                 fileStats,
                 imageFileType);
 
@@ -810,7 +805,6 @@ public class IsoDomainListSyncronizer {
             String filePattern) {
 
         try {
-            VDSBrokerFrontend resourceManager = Backend.getInstance().getResourceManager();
             return resourceManager.runVdsCommand(VDSCommandType.GetFileStats,
                     new GetFileStatsParameters(repoStoragePoolId,
                             repoStorageDomainId, filePattern, false));
@@ -832,7 +826,7 @@ public class IsoDomainListSyncronizer {
      *            - The file type supposed to be refreshed.
      * @return - The Lock object, which represent the domain and the file type, to lock.
      */
-    private static Lock getSyncObject(Guid domainId, ImageFileType imageType) {
+    private Lock getSyncObject(Guid domainId, ImageFileType imageType) {
         Pair<Guid, ImageFileType> domainPerFileType = new Pair<>(domainId, imageType);
         syncDomainForFileTypeMap.putIfAbsent(domainPerFileType, new ReentrantLock());
         return syncDomainForFileTypeMap.get(domainPerFileType);
@@ -844,7 +838,7 @@ public class IsoDomainListSyncronizer {
      * @param problematicRepoFilesList
      *            - List of Iso domain names, which encounter problem fetching from VDSM.
      */
-    private static void addToAuditLogErrorMessage(String problematicRepoFilesList) {
+    private void addToAuditLogErrorMessage(String problematicRepoFilesList) {
         AuditLogableBase logable = new AuditLogableBase();
 
         // Get translated error by error code ,if no translation found (should not happened) ,
@@ -856,7 +850,7 @@ public class IsoDomainListSyncronizer {
     /**
      * Add audit log message when fetch encounter problems.
      */
-    private static void addToAuditLogSuccessMessage(String IsoDomain, String imageType) {
+    private void addToAuditLogSuccessMessage(String IsoDomain, String imageType) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("imageDomains", String.format("%s (%s file type)", IsoDomain, imageType));
         auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
@@ -877,7 +871,7 @@ public class IsoDomainListSyncronizer {
      * @return Iso Guid of active Iso, and null if not.
      */
     public Guid findActiveISODomain(Guid storagePoolId) {
-        List<StorageDomain> domains = getStorageDomainDao().getAllForStoragePool(
+        List<StorageDomain> domains = storageDomainDao.getAllForStoragePool(
                 storagePoolId);
         for (StorageDomain domain : domains) {
             if (domain.getStorageDomainType() == StorageDomainType.ISO &&
@@ -888,7 +882,4 @@ public class IsoDomainListSyncronizer {
         return null;
     }
 
-    private StorageDomainDao getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDao();
-    }
 }
