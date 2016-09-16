@@ -58,7 +58,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
-import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -115,7 +114,6 @@ import org.slf4j.LoggerFactory;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private static final Logger log = LoggerFactory.getLogger(Backend.class);
-    private ITagsHandler tagsHandler;
 
     private ErrorTranslator errorsTranslator;
     private ErrorTranslator vdsErrorsTranslator;
@@ -156,6 +154,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private JobRepository jobRepository;
     @Inject
     private ExecutionHandler executionHandler;
+    @Inject
+    private TagsDirector tagsDirector;
 
     @Inject
     private Instance<BackendActionExecutor> actionExecutor;
@@ -168,8 +168,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initHandlers() {
-        tagsHandler = HandlersFactory.createTagsHandler();
-        BaseConditionFieldAutoCompleter.tagsHandler = tagsHandler;
+        BaseConditionFieldAutoCompleter.tagsHandler = tagsDirector;
         VmHandler.init();
         VdsHandler.init();
         VmTemplateHandler.init();
@@ -273,7 +272,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         serviceLoader.load(AuditLogCleanupManager.class);
         serviceLoader.load(CommandEntityCleanupManager.class);
 
-        TagsDirector.getInstance().init();
+        serviceLoader.load(TagsDirector.class);
 
         IsoDomainListSyncronizer.getInstance();
 

@@ -7,12 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
+import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.utils.collections.CopyOnAccessMap;
 import org.slf4j.Logger;
@@ -22,7 +28,8 @@ import org.slf4j.LoggerFactory;
  * This class responsible to In memory Tags handling. On Vdc starting in memory tags tree initialized. All Tags changing
  * operations go throw this class
  */
-public class TagsDirector {
+@Singleton
+public class TagsDirector implements BackendService, ITagsHandler {
 
     /**
      * This pattern is used to replace '\\' in the expression that may be added by handling a '_' character with an
@@ -40,6 +47,12 @@ public class TagsDirector {
 
     protected static final Guid ROOT_TAG_ID = Guid.Empty;
 
+    @Inject
+    private BackendInternal backend;
+
+    @Inject
+    private TagDao tagDao;
+
     /**
      * In memory nodes cache for quicker access to each node by ID: O(1) instead O(lnN) of tree
      */
@@ -49,15 +62,11 @@ public class TagsDirector {
      */
     private final Map<String, Tags> tagsMapByName = new CopyOnAccessMap<>(new HashMap<>());
 
-    private static TagsDirector instance = new TagsDirector();
-
-    private TagsDirector() {
-    }
-
     /**
      * In memory tree initialized during initialization
      */
 
+    @PostConstruct
     protected void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
         tagsMapByID.clear();
@@ -116,7 +125,7 @@ public class TagsDirector {
     }
 
     protected TagDao getTagDao() {
-        return DbFacade.getInstance().getTagDao();
+        return tagDao;
     }
 
     private void removeTagAndChildren(Tags tag) {
@@ -124,10 +133,6 @@ public class TagsDirector {
             removeTagAndChildren(child);
         }
         removeTagFromHash(tag);
-    }
-
-    public static TagsDirector getInstance() {
-        return instance;
     }
 
     public void addTag(Tags tag) {
@@ -208,7 +213,7 @@ public class TagsDirector {
     }
 
     protected void updateTagInBackend(Tags tag) {
-        Backend.getInstance().runInternalAction(VdcActionType.UpdateTag, new TagsOperationParameters(tag));
+        backend.runInternalAction(VdcActionType.UpdateTag, new TagsOperationParameters(tag));
     }
 
     /**
@@ -220,6 +225,7 @@ public class TagsDirector {
      *            the ID of the 'root' tag.
      * @return a comma separated list of IDs.
      */
+    @Override
     public String getTagIdAndChildrenIds(Guid tagId) {
         Tags tag = getTagById(tagId);
         if (tag == null) {
@@ -229,6 +235,7 @@ public class TagsDirector {
         return sb.toString();
     }
 
+    @Override
     public String getTagNameAndChildrenNames(Guid tagId) {
         Tags tag = getTagById(tagId);
         StringBuilder sb = tag.getTagNameAndChildrenNames();
@@ -252,11 +259,12 @@ public class TagsDirector {
      * @return a comma separated list of IDs.
      */
     public String getTagIdAndChildrenIds(String tagName) {
-        Tags tag = getTagByName(tagName);
+        Tags tag = getTagByTagName(tagName);
         StringBuilder sb = tag.getTagIdAndChildrenIds();
         return sb.toString();
     }
 
+    @Override
     public String getTagNamesAndChildrenNamesByRegExp(String tagNameRegExp) {
         // add RegEx chars or beginning of string ('^') and end of string ('$'):
         tagNameRegExp = String.format("^%1$s$", tagNameRegExp);
@@ -312,7 +320,8 @@ public class TagsDirector {
     /**
      * Get tag from in memory data structure (by name).
      */
-    public Tags getTagByName(String tagName) {
+    @Override
+    public Tags getTagByTagName(String tagName) {
         if (tagsMapByName.containsKey(tagName)) {
             return tagsMapByName.get(tagName);
         } else {

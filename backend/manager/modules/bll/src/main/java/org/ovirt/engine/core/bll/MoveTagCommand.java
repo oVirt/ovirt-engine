@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
@@ -8,6 +10,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase<T> {
+
+    @Inject
+    private TagsDirector tagsDirector;
+
     private String _oldParnetTagName = "[null]";
 
     public MoveTagCommand(T parameters, CommandContext cmdContext) {
@@ -21,7 +27,7 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
             addValidationMessage(EngineMessage.TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF);
             returnValue = false;
         }
-        if (TagsDirector.getInstance()
+        if (tagsDirector
                 .isTagDescestorOfTag(getParameters().getTagId(), getParameters().getNewParentId())) {
             addValidationMessage(EngineMessage.TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF);
             returnValue = false;
@@ -34,7 +40,7 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
     }
 
     public String getNewParentTagName() {
-        Tags newParent = TagsDirector.getInstance().getTagById(getParameters().getNewParentId());
+        Tags newParent = tagsDirector.getTagById(getParameters().getNewParentId());
         if (newParent != null) {
             return newParent.getTagName();
         }
@@ -44,7 +50,7 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
 
     private void initOldParentTagName() {
         if (getTag() != null && getTag().getParentId() != null) {
-            Tags parent = TagsDirector.getInstance().getTagById(new Guid(getTag().getParentId().toString()));
+            Tags parent = tagsDirector.getTagById(new Guid(getTag().getParentId().toString()));
             if (parent != null) {
                 _oldParnetTagName = parent.getTagName();
             }
@@ -54,7 +60,7 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
     @Override
     protected void executeCommand() {
         initOldParentTagName();
-        TagsDirector.getInstance().moveTag(getParameters().getTagId(), getParameters().getNewParentId());
+        tagsDirector.moveTag(getParameters().getTagId(), getParameters().getNewParentId());
         setSucceeded(true);
     }
 

@@ -6,8 +6,17 @@ import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.TagDao;
+
+import javax.inject.Inject;
 
 public class AddTagCommand<T extends TagsOperationParameters> extends TagsCommandOperationBase<T> {
+
+    @Inject
+    private TagsDirector tagsDirector;
+
+    @Inject
+    private TagDao tagDao;
 
     public AddTagCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -16,16 +25,15 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
     @Override
     protected void executeCommand() {
 
-        DbFacade.getInstance().getTagDao().save(getTag());
-        TagsDirector.getInstance().addTag(getTag());
+        tagDao.save(getTag());
+        tagsDirector.addTag(getTag());
 
         setSucceeded(true);
     }
 
     @Override
     protected boolean validate() {
-        Tags tag = DbFacade.getInstance().getTagDao()
-                .getByName(getParameters().getTag().getTagName());
+        Tags tag = tagDao.getByName(getParameters().getTag().getTagName());
         if (tag != null) {
             addValidationMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_IN_USE);
             return false;

@@ -23,7 +23,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
@@ -33,7 +35,9 @@ import org.ovirt.engine.core.dao.TagDao;
 @RunWith(MockitoJUnitRunner.class)
 public class TagsDirectorTest {
 
-    private TagsDirector tagsDirector;
+    @InjectMocks
+    @Spy
+    private TagsDirector tagsDirector = new TagsDirector();
 
     @Mock
     private TagDao tagDao;
@@ -51,7 +55,6 @@ public class TagsDirectorTest {
 
     @Before
     public void setup() {
-        tagsDirector = spy(TagsDirector.getInstance());
         when(tagDao.getAllForParent(any(Guid.class))).thenReturn(Collections.emptyList());
         doReturn(tagDao).when(tagsDirector).getTagDao();
         doNothing().when(tagsDirector).updateTagInBackend(any(Tags.class));
@@ -223,7 +226,7 @@ public class TagsDirectorTest {
 
     @Test
     public void testGetTagByNameNotExists() {
-        Tags fromTagsDirector = tagsDirector.getTagByName("does not exist");
+        Tags fromTagsDirector = tagsDirector.getTagByTagName("does not exist");
         assertNull(fromTagsDirector);
     }
 
@@ -231,7 +234,7 @@ public class TagsDirectorTest {
     public void testGetByName() {
         Tags tag = createTag("tag1", "desc1");
         tagsDirector.addTag(tag);
-        Tags fromTagsDirector = tagsDirector.getTagByName("tag1");
+        Tags fromTagsDirector = tagsDirector.getTagByTagName("tag1");
         assertNotNull(fromTagsDirector);
         assertEquals(tag, fromTagsDirector);
     }

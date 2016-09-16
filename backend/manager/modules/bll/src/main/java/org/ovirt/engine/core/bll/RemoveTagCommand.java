@@ -1,13 +1,21 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.TagDao;
 
 public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCommandBase<T> {
+
+    @Inject
+    private TagsDirector tagsDirector;
+
+    @Inject
+    private TagDao tagDao;
 
     public RemoveTagCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -16,12 +24,12 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
     @Override
     protected void executeCommand() {
         if (getTagId() != null) {
-            String tagIdAndChildrenIds = TagsDirector.getInstance().getTagIdAndChildrenIds(getTagId());
-            TagsDirector.getInstance().removeTag(getTag().getTagId());
+            String tagIdAndChildrenIds = tagsDirector.getTagIdAndChildrenIds(getTagId());
+            tagsDirector.removeTag(getTag().getTagId());
             String[] IDsArray = tagIdAndChildrenIds.split("[,]", -1);
             for (String id : IDsArray) {
                 id = id.replace("'", "");
-                DbFacade.getInstance().getTagDao().remove(new Guid(id));
+                tagDao.remove(new Guid(id));
             }
             setSucceeded(true);
         }
@@ -30,7 +38,7 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
     @Override
     protected boolean validate() {
         boolean returnValue = true;
-        if (getTagId() == null || DbFacade.getInstance().getTagDao().get(getTagId()) == null) {
+        if (getTagId() == null || tagDao.get(getTagId()) == null) {
             addValidationMessage(EngineMessage.TAGS_CANNOT_REMOVE_TAG_NOT_EXIST);
             returnValue = false;
         }
