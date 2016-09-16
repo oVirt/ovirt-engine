@@ -5,6 +5,8 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -48,6 +50,8 @@ public class JsonObjectSerializer implements Serializer {
         formattedMapper.getSerializationConfig().addMixInAnnotations(RunVmParams.class, JsonRunVmParamsMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(EngineFault.class, JsonEngineFaultMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(Collection.class, JsonCollectionMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(Map.class, JsonMapMixIn.class);
 
         formattedMapper.configure(Feature.INDENT_OUTPUT, true);
         formattedMapper.enableDefaultTyping();
