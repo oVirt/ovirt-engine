@@ -131,14 +131,8 @@ public abstract class BaseDaoTestCase {
 
         Config.setConfigUtils(new DBConfigUtils(false));
 
-        String job = System.getProperty("JOB_NAME");
-        if (job == null) {
-            job = "";
-        }
-        String number = System.getProperty("BUILD_NUMBER");
-        if (number == null) {
-            number = "";
-        }
+        String job = System.getProperty("JOB_NAME", "");
+        String number = System.getProperty("BUILD_NUMBER", "");
         String schemaNamePostfix = job + number;
         try (InputStream is = BaseDaoTestCase.class.getResourceAsStream("/test-database.properties")) {
             properties.load(is);
