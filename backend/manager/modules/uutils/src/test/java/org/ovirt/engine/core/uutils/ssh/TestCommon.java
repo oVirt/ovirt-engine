@@ -34,11 +34,15 @@ import java.security.NoSuchAlgorithmException;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test class for SSHClient.
  */
 public class TestCommon {
+
+    private static Logger log = LoggerFactory.getLogger(TestCommon.class);
 
     static String host;
     static int port;
@@ -53,7 +57,7 @@ public class TestCommon {
         host = System.getProperty("ssh-host");
 
         if (host == null) {
-            System.out.println("WARNING: using internal daemon");
+            log.warn("WARNING: using internal daemon");
             try {
                 keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
             } catch (NoSuchAlgorithmException e) {
