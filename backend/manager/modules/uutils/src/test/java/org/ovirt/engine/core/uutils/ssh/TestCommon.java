@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -41,26 +40,18 @@ public class TestCommon {
     static SSHD sshd;
 
     @BeforeClass
-    public static void initialize() {
+    public static void initialize() throws Exception {
         host = System.getProperty("ssh-host");
 
         if (host == null) {
             log.warn("WARNING: using internal daemon");
-            try {
-                keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
+            keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
             host = "localhost";
             user = "root";
             password = "password";
             sshd = new SSHD();
             sshd.setUser(user, password, keyPair.getPublic());
-            try {
-                sshd.start();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sshd.start();
             port = sshd.getPort();
         } else {
             port = Integer.parseInt(System.getProperty("ssh-test-port", "22"));
@@ -77,8 +68,6 @@ public class TestCommon {
                 KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) keyStore.getEntry("1",
                         new KeyStore.PasswordProtection(p12_password.toCharArray()));
                 keyPair = new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
             } finally {
                 if (fis != null) {
                     try {

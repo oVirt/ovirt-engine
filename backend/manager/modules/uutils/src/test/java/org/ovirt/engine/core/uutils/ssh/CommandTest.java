@@ -23,7 +23,7 @@ public class CommandTest extends TestCommon {
     SSHClient client;
 
     @Before
-    public void setUp() throws IOException, Exception {
+    public void setUp() throws Exception {
         client = new SSHClient();
         client.setSoftTimeout(softTimeout);
         client.setHardTimeout(hardTimeout);
@@ -35,14 +35,10 @@ public class CommandTest extends TestCommon {
     }
 
     @After
-    public void tearDown() {
-        try {
-            if (client != null) {
-                client.close();
-                client = null;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void tearDown() throws Exception {
+        if (client != null) {
+            client.close();
+            client = null;
         }
     }
 

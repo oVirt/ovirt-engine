@@ -8,8 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import javax.naming.TimeLimitExceededException;
 
 import org.apache.sshd.ClientSession;
@@ -35,14 +33,10 @@ public class TimeoutTest extends TestCommon {
     }
 
     @After
-    public void tearDown() {
-        try {
-            if (client != null) {
-                client.close();
-                client = null;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void tearDown() throws Exception {
+        if (client != null) {
+            client.close();
+            client = null;
         }
     }
 

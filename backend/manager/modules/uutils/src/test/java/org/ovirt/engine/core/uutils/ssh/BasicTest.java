@@ -3,7 +3,6 @@ package org.ovirt.engine.core.uutils.ssh;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
@@ -34,14 +33,10 @@ public class BasicTest extends TestCommon {
     }
 
     @After
-    public void tearDown() {
-        try {
-            if (client != null) {
-                client.close();
-                client = null;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void tearDown() throws Exception {
+        if (client != null) {
+            client.close();
+            client = null;
         }
     }
 

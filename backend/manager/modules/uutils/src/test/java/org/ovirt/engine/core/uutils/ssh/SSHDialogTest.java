@@ -244,14 +244,10 @@ public class SSHDialogTest {
     }
 
     @After
-    public void tearDown() {
-        try {
-            if (sshDialog != null) {
-                sshDialog.close();
-                sshDialog = null;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void tearDown() throws Exception {
+        if (sshDialog != null) {
+            sshDialog.close();
+            sshDialog = null;
         }
     }
 

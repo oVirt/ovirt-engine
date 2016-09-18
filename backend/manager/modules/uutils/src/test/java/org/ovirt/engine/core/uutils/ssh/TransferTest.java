@@ -28,13 +28,8 @@ public class TransferTest extends TestCommon {
     File local2;
     SSHClient client;
 
-    byte[] digestFile(File file) throws IOException {
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+    byte[] digestFile(File file) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
         try (InputStream is = new FileInputStream(file)) {
             byte[] buffer = new byte[1024];
             int n;
@@ -75,7 +70,7 @@ public class TransferTest extends TestCommon {
     }
 
     @Before
-    public void setUp() throws IOException, Exception {
+    public void setUp() throws Exception {
         remote = String.format("/tmp/ssh-test-%1$s.tmp", System.currentTimeMillis());
         local2 = File.createTempFile("ssh-test-", ".tmp");
 
