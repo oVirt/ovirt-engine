@@ -19,6 +19,8 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ public class TestCommon {
     static long largeTestHardTimeout;
     static SSHD sshd;
 
+    @BeforeClass
     public static void initialize() {
         host = System.getProperty("ssh-host");
 
@@ -94,6 +97,7 @@ public class TestCommon {
     /**
      * Terminate.
      */
+    @AfterClass
     public static void terminate() {
         if (sshd != null) {
             sshd.stop();

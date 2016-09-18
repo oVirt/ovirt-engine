@@ -17,24 +17,12 @@ import org.apache.sshd.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TimeoutTest {
+public class TimeoutTest extends TestCommon {
 
     SSHClient client;
-
-    @BeforeClass
-    public static void init() {
-        TestCommon.initialize();
-    }
-
-    @AfterClass
-    public static void cleanUp() {
-        TestCommon.terminate();
-    }
 
     @Before
     public void setUp() {

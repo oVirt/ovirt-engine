@@ -10,10 +10,8 @@ import java.security.KeyPairGenerator;
 import javax.naming.AuthenticationException;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -21,20 +19,10 @@ import org.junit.Test;
  *
  * Authentication and sanity.
  */
-public class BasicTest {
+public class BasicTest extends TestCommon {
     static final String helloCommand = "echo test";
     static final String helloResult = "test\n";
     SSHClient client;
-
-    @BeforeClass
-    public static void init() {
-        TestCommon.initialize();
-    }
-
-    @AfterClass
-    public static void cleanUp() {
-        TestCommon.terminate();
-    }
 
     @Before
     public void setUp() {

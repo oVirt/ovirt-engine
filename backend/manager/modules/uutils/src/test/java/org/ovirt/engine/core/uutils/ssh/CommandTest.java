@@ -11,28 +11,16 @@ import java.io.InputStream;
 import javax.naming.TimeLimitExceededException;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Command tests.
  */
-public class CommandTest {
+public class CommandTest extends TestCommon {
     static final int softTimeout = 10 * 1000;
     static final int hardTimeout = 40 * 1000;
     SSHClient client;
-
-    @BeforeClass
-    public static void init() {
-        TestCommon.initialize();
-    }
-
-    @AfterClass
-    public static void cleanUp() {
-        TestCommon.terminate();
-    }
 
     @Before
     public void setUp() throws IOException, Exception {

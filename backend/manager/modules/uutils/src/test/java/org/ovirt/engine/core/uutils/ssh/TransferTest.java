@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  * Long transfer test.
  */
-public class TransferTest {
+public class TransferTest extends TestCommon {
     String remote;
     static File local1;
     File local2;
@@ -47,9 +47,6 @@ public class TransferTest {
 
     @BeforeClass
     public static void init() throws IOException {
-
-        TestCommon.initialize();
-
         local1 = File.createTempFile("ssh-test-", ".tmp");
 
         SecureRandom random;
@@ -75,7 +72,6 @@ public class TransferTest {
             }
             local1 = null;
         }
-        TestCommon.terminate();
     }
 
     @Before
