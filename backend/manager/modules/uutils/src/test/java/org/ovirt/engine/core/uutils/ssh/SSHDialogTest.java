@@ -144,9 +144,7 @@ public class SSHDialogTest {
     private static KeyPair getKeyPair(String p12, String alias, String password) throws KeyStoreException {
 
         KeyStore.PrivateKeyEntry entry;
-        InputStream in = null;
-        try {
-            in = new FileInputStream(p12);
+        try (InputStream in = new FileInputStream(p12)) {
             KeyStore ks = KeyStore.getInstance("PKCS12");
             ks.load(in, password.toCharArray());
 
@@ -161,13 +159,6 @@ public class SSHDialogTest {
                             p12,
                             alias),
                     e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                }
-            }
         }
 
         if (entry == null) {
