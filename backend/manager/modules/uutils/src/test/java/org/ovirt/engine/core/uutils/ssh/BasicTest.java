@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.uutils.ssh;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
@@ -9,7 +10,6 @@ import java.security.KeyPairGenerator;
 import javax.naming.AuthenticationException;
 
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -82,7 +82,7 @@ public class BasicTest extends TestCommon {
 
     @Test
     public void testHostKey() throws Exception {
-        Assume.assumeNotNull(TestCommon.sshd);
+        assumeNotNull(TestCommon.sshd);
         client.connect();
         assertEquals(TestCommon.sshd.getKey(), client.getHostKey());
     }
