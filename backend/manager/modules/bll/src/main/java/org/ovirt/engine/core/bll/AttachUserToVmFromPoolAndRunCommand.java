@@ -152,7 +152,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         DbUser user = getDbUser();
         if (user != null && user.getId() == null) {
             user.setId(Guid.newGuid());
-            getDbUserDao().save(user);
+            dbUserDao.save(user);
         }
     }
 

@@ -19,7 +19,7 @@ public class AttachUserToTagCommand<T extends AttachEntityToTagParameters> exten
         TagsUserMap map;
         if (getTagId() != null) {
             for (Guid userGuid : getUserList()) {
-                DbUser user = DbFacade.getInstance().getDbUserDao().get(userGuid);
+                DbUser user = dbUserDao.get(userGuid);
                 if (DbFacade.getInstance().getTagDao().getTagUserByTagIdAndByuserId(getTagId(), userGuid) == null) {
                     map = new TagsUserMap(getTagId(), userGuid);
                     DbFacade.getInstance().getTagDao().attachUserToTag(map);

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DbUserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +34,6 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
 
     @Inject
     private SessionDataContainer sessionDataContainer;
-
-    @Inject
-    private DbUserDao dbUserDao;
 
     public LoginOnBehalfCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

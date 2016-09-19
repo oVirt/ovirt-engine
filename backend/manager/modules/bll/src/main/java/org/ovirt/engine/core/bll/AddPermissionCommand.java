@@ -78,7 +78,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // give permission
         if (getParameters().getUser() == null
                 && getParameters().getGroup() == null
-                && getDbUserDao().get(adElementId) == null
+                && dbUserDao.get(adElementId) == null
                 && dbGroupDao.get(adElementId) == null) {
             getReturnValue().getValidationMessages().add(EngineMessage.USER_MUST_EXIST_IN_DB.toString());
             return false;
@@ -114,7 +114,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             Guid id = user.getId();
             String directory = user.getDomain();
             String externalId = user.getExternalId();
-            DbUser existing = getDbUserDao().getByIdOrExternalId(id, directory, externalId);
+            DbUser existing = dbUserDao.getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 user = existing;
             }
@@ -224,7 +224,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             if (result.getSucceeded()) {
                 Guid id = result.getActionReturnValue();
                 if (id != null) {
-                    return getDbUserDao().get(id);
+                    return dbUserDao.get(id);
                 }
                 return null;
             }

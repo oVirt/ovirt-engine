@@ -31,7 +31,7 @@ public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> exte
 
     protected DbUser getDbUser() {
         if (dbUser == null) {
-            dbUser = getDbUserDao().get(getAdUserId());
+            dbUser = dbUserDao.get(getAdUserId());
         }
 
         return dbUser;
@@ -45,7 +45,7 @@ public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> exte
 
     public String getAdUserName() {
         if (adUserName == null) {
-            DbUser user = getDbUserDao().get(getAdUserId());
+            DbUser user = dbUserDao.get(getAdUserId());
             if (user != null) {
                 adUserName = user.getLoginName();
             }

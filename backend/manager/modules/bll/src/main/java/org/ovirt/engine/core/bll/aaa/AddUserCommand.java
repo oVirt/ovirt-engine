@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> {
 
@@ -35,13 +34,12 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
     @Override
     protected void executeCommand() {
         DbUser user = getParameters().getUserToAdd();
-        DbUser userFromDb =
-                DbFacade.getInstance().getDbUserDao().getByExternalId(user.getDomain(), user.getExternalId());
+        DbUser userFromDb = dbUserDao.getByExternalId(user.getDomain(), user.getExternalId());
         if (userFromDb == null) {
-            DbFacade.getInstance().getDbUserDao().save(user);
+            dbUserDao.save(user);
         } else {
             user.setId(userFromDb.getId());
-            DbFacade.getInstance().getDbUserDao().update(user);
+            dbUserDao.update(user);
         }
         setActionReturnValue(user.getId());
         setSucceeded(true);

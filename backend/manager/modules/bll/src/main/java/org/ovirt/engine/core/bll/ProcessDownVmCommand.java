@@ -155,7 +155,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             return false;
         }
 
-        List<DbUser> users = getDbUserDao().getAllForVm(getVmId());
+        List<DbUser> users = dbUserDao.getAllForVm(getVmId());
         // check if this VM is attached to a user
         if (users == null || users.isEmpty()) {
             // if not, check if new version or need to restore stateless

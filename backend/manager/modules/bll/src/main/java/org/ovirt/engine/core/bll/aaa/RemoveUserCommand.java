@@ -49,7 +49,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
         }
 
         // Delete the user itself:
-        getDbUserDao().remove(id);
+        dbUserDao.remove(id);
 
         setSucceeded(true);
     }
@@ -66,7 +66,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
         }
 
         // Check that the user exists in the database:
-        DbUser dbUser = getDbUserDao().get(id);
+        DbUser dbUser = dbUserDao.get(id);
         if (dbUser == null) {
             addValidationMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
             return false;

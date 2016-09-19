@@ -46,7 +46,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
             returnValue = false;
         }
         if(!Objects.equals(p.getAdElementId(), getParameters().getTargetId())
-            && getDbUserDao().get(getParameters().getTargetId()) != null) {
+            && dbUserDao.get(getParameters().getTargetId()) != null) {
             addValidationMessage(EngineMessage.INHERITED_PERMISSION_CANT_BE_REMOVED);
             returnValue = false;
         }
@@ -70,7 +70,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         }
 
         permissionDao.remove(perms.getId());
-        getDbUserDao().updateLastAdminCheckStatus(userId);
+        dbUserDao.updateLastAdminCheckStatus(userId);
         setSucceeded(true);
     }
 

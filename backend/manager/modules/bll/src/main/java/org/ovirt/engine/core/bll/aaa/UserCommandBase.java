@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class UserCommandBase<T extends IdParameters> extends CommandBase<T> {
 
@@ -33,7 +32,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
 
     public String getAdUserName() {
         if (adUserName == null) {
-            DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
+            DbUser user = dbUserDao.get(getAdUserId());
             if (user != null) {
                 adUserName = user.getLoginName();
             }

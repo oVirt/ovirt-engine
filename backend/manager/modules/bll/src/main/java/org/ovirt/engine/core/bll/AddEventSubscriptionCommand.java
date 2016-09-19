@@ -41,7 +41,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
             // get notification method
             if (eventNotificationMethod != null) {
                 // Validate user
-                DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
+                DbUser user = dbUserDao.get(subscriberId);
                 if (user == null) {
                     addValidationMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                     retValue = false;

@@ -21,10 +21,7 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
         EventNotificationMethod event_notification_method = getParameters().getEventSubscriber().getEventNotificationMethod();
         if (event_notification_method != null) {
             // Validate user
-            DbUser user =
-                    DbFacade.getInstance()
-                            .getDbUserDao()
-                            .get(getParameters().getEventSubscriber().getSubscriberId());
+            DbUser user = dbUserDao.get(getParameters().getEventSubscriber().getSubscriberId());
             if (user == null) {
                 addValidationMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                 retValue = false;
