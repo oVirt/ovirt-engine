@@ -37,10 +37,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -166,8 +164,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private void updateMemberDomainsFormat(StorageFormatType targetFormat) {
         Guid spId = getStoragePool().getId();
-        StorageDomainStaticDao sdStatDao = DbFacade.getInstance().getStorageDomainStaticDao();
-        List<StorageDomainStatic> domains = sdStatDao.getAllForStoragePool(spId);
+        List<StorageDomainStatic> domains = storageDomainStaticDao.getAllForStoragePool(spId);
         for (StorageDomainStatic domain : domains) {
             StorageDomainType sdType = domain.getStorageDomainType();
 
@@ -176,7 +173,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                                domain.getId(), sdType, targetFormat);
 
                 domain.setStorageFormat(targetFormat);
-                sdStatDao.update(domain);
+                storageDomainStaticDao.update(domain);
             }
         }
     }
@@ -207,7 +204,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             return false;
         }
 
-        List<StorageDomainStatic> poolDomains = getStorageDomainStaticDao().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomainStatic> poolDomains = storageDomainStaticDao.getAllForStoragePool(getStoragePool().getId());
         if (getOldStoragePool().isLocal() && !getStoragePool().isLocal()
                 && poolDomains.stream().anyMatch(sdc -> sdc.getStorageType() == StorageType.LOCALFS)) {
             return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_LOCAL);

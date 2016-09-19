@@ -122,7 +122,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
                 return false;
             }
 
-            StorageDomainStatic sds = getStorageDomainStaticDao().get(((DiskImage) getDisk()).getStorageIds().get(0));
+            StorageDomainStatic sds = storageDomainStaticDao.get(((DiskImage) getDisk()).getStorageIds().get(0));
             if (!sds.getStorageType().isBlockDomain()) {
                 addValidationMessageVariable("diskAlias", getDiskAlias());
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);

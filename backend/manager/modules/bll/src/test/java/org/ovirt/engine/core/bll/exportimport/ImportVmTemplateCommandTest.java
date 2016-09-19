@@ -68,6 +68,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainDao storageDomainDao;
 
+    @Mock
+    private StorageDomainStaticDao storageDomainStaticDao;
+
     @Spy
     @InjectMocks
     private ImportVmTemplateCommand command =
@@ -216,13 +219,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainStatic(StorageType storageType) {
-        final StorageDomainStaticDao dao = mock(StorageDomainStaticDao.class);
-
         final StorageDomainStatic domain = new StorageDomainStatic();
         domain.setStorageType(storageType);
-        when(dao.get(any(Guid.class))).thenReturn(domain);
-
-        doReturn(dao).when(command).getStorageDomainStaticDao();
+        when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(domain);
     }
 
     protected ImportVmTemplateParameters createParameters() {

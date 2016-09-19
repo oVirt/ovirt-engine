@@ -332,7 +332,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected StorageDomainStatic loadStorageDomainStaticData(Guid domainId) {
-        return getStorageDomainStaticDao().get(domainId);
+        return storageDomainStaticDao.get(domainId);
     }
 
     protected DiskImage getVolumeInfo(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,

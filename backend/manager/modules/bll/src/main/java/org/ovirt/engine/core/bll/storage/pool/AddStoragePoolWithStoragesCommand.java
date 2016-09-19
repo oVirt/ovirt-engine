@@ -181,7 +181,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         updateStoragePoolMasterDomainVersionInDiffTransaction();
                     }
                     if (staticDomainChanged) {
-                        getStorageDomainStaticDao().update(staticDomain);
+                        storageDomainStaticDao.update(staticDomain);
                     }
                     storageDomain.setStatus(StorageDomainStatus.Locked);
                     if (existingInDb) {
@@ -244,7 +244,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     private void registerOvfStoreDisks() {
         for (final Guid storageDomainId : getParameters().getStorages()) {
-            if (getStorageDomainStaticDao().get(storageDomainId).getStorageDomainType().isDataDomain()) {
+            if (storageDomainStaticDao.get(storageDomainId).getStorageDomainType().isDataDomain()) {
                 resetOvfStoreAndUnregisteredDisks();
                 TransactionSupport.executeInNewTransaction(() -> {
                     List<DiskImage> ovfStoreDiskImages = getAllOVFDisks(storageDomainId, getStoragePool().getId());

@@ -313,7 +313,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 List<Guid> problematicDomainsIds =
                         IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getDomains(), storagePool);
                 for (Guid domainId : problematicDomainsIds) {
-                    StorageDomainStatic domainInfo = getStorageDomainStaticDao().get(domainId);
+                    StorageDomainStatic domainInfo = storageDomainStaticDao.get(domainId);
                     log.error("Storage Domain '{}' of pool '{}' is in problem in host '{}'",
                             domainInfo != null ? domainInfo.getStorageName() : domainId,
                             getStoragePool().getName(),

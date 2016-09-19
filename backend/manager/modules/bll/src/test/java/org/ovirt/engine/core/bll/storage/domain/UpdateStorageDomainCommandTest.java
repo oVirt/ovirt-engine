@@ -71,7 +71,6 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
 
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
-        doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();
 
         when(sdsDao.get(sdId)).thenReturn(oldSdStatic);
     }

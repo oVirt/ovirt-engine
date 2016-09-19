@@ -623,7 +623,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 if (storage == null) {
                     // if storage is null then we need to check if it doesn't exist or
                     // domain is not in the same storage pool as the vm
-                    if (DbFacade.getInstance().getStorageDomainStaticDao().get(destImageDomain) == null) {
+                    if (storageDomainStaticDao.get(destImageDomain) == null) {
                         addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
                     } else {
                         addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);

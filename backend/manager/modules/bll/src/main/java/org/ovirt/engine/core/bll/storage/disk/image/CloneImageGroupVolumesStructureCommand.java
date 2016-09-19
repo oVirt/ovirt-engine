@@ -74,7 +74,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     }
 
     private StorageDomainStatic getStorageDomainStatic(Guid domainId) {
-        return getStorageDomainStaticDao().get(domainId);
+        return storageDomainStaticDao.get(domainId);
     }
 
 

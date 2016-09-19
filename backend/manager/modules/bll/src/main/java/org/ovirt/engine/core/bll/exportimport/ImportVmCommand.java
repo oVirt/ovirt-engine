@@ -408,7 +408,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (getParameters().getCopyCollapse() && !isTemplateExistsOnExportDomain()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING,
                     String.format("$DomainName %1$s",
-                            getStorageDomainStaticDao().get(getParameters().getSourceDomainId()).getStorageName()));
+                            storageDomainStaticDao.get(getParameters().getSourceDomainId()).getStorageName()));
         }
 
         if (!validateVmArchitecture()) {
@@ -677,7 +677,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
         params.setParentParameters(getParameters());
 
-        StorageDomainStatic storageDomain = getStorageDomainStaticDao().get(storageId);
+        StorageDomainStatic storageDomain = storageDomainStaticDao.get(storageId);
         if (storageDomain.getStorageType().isBlockDomain()) {
             params.setUseCopyCollapse(true);
             params.setVolumeType(VolumeType.Preallocated);
@@ -928,7 +928,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 snapshot.getVmId(), snapshot.getId());
         DiskImage memoryDisk = MemoryUtils.createMemoryDisk(
                 vm,
-                getStorageDomainStaticDao().get(guids.get(0)).getStorageType());
+                storageDomainStaticDao.get(guids.get(0)).getStorageType());
         memoryDisk.setId(guids.get(2));
         memoryDisk.setImageId(guids.get(3));
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));

@@ -117,7 +117,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
      */
     private VolumeFormat getTargetVolumeFormat(VolumeFormat volumeFormat, VolumeType volumeType, Guid storageDomainId) {
         if (volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse) {
-            StorageDomainStatic destDomain = getStorageDomainStaticDao().get(storageDomainId);
+            StorageDomainStatic destDomain = storageDomainStaticDao.get(storageDomainId);
             if (destDomain.getStorageType().isBlockDomain()) {
                 return VolumeFormat.COW;
             }

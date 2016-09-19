@@ -36,7 +36,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
         // Only after validating the existence of the storage domain in DB, we set the field lastTimeUsedAsMaster in the
         // storage domain which is about to be updated.
-        oldDomain = getStorageDomainStaticDao().get(getStorageDomain().getId());
+        oldDomain = storageDomainStaticDao.get(getStorageDomain().getId());
         getStorageDomain().setLastTimeUsedAsMaster(oldDomain.getLastTimeUsedAsMaster());
 
         return validateStoragePropertiesUpdate();
@@ -107,7 +107,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     @Override
     protected void executeCommand() {
-        getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
+        storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
         if (storageDomainNameChanged && getStoragePool() != null) {
             runVdsCommand(
                             VDSCommandType.SetStorageDomainDescription,

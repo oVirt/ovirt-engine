@@ -260,7 +260,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
         if (isUpdatedToShareable(getOldDisk(), getNewDisk())) {
 
-            StorageDomainStatic sds = getStorageDomainStaticDao().get(((DiskImage)getNewDisk()).getStorageIds().get(0));
+            StorageDomainStatic sds = storageDomainStaticDao.get(((DiskImage)getNewDisk()).getStorageIds().get(0));
             if (sds.getStorageType() == StorageType.GLUSTERFS) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
             }

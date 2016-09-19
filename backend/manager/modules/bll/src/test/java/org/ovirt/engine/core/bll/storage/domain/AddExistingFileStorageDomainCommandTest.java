@@ -68,7 +68,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
         doReturn(vdsDao).when(command).getVdsDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
-        doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
 
         doReturn(false).when(command).isStorageWithSameNameExists();
 
@@ -93,7 +92,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testAlreadyExistStorageDomain() {
-        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(parameters.getStorageDomain());
+        when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(parameters.getStorageDomain());
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);

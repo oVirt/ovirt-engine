@@ -198,7 +198,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             detachStorageDomainWithEntities(masterDomain);
             getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
             masterDomain.setStorageDomainType(StorageDomainType.Data);
-            getDbFacade().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
+            storageDomainStaticDao.update(masterDomain.getStorageStaticData());
             getCompensationContext().stateChanged();
             return null;
         });

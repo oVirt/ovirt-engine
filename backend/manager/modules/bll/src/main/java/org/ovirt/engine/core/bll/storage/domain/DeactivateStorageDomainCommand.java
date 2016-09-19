@@ -375,7 +375,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     private void updateStorageDomainStaticData(StorageDomainStatic storageDomainStatic) {
-        getStorageDomainStaticDao().update(storageDomainStatic);
+        storageDomainStaticDao.update(storageDomainStatic);
     }
 
     @Override

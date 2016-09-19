@@ -90,7 +90,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected void addStorageDomainInDb() {
         TransactionSupport.executeInNewTransaction(() -> {
             StorageDomainStatic storageStaticData = getStorageDomain().getStorageStaticData();
-            DbFacade.getInstance().getStorageDomainStaticDao().save(storageStaticData);
+            storageDomainStaticDao.save(storageStaticData);
 
             getCompensationContext().snapshotNewEntity(storageStaticData);
             StorageDomainDynamic newStorageDynamic =

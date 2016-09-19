@@ -392,7 +392,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             log.info("Updating storage domain '{}' (type '{}') to format '{}'",
                     getStorageDomain().getId(), sdType, targetFormat);
             storageStaticData.setStorageFormat(targetFormat);
-            getStorageDomainStaticDao().update(storageStaticData);
+            storageDomainStaticDao.update(storageStaticData);
         } else {
             log.debug("Skipping format update for domain '{}' format is '{}'",
                     getStorageDomain().getId(), storageStaticData.getStorageFormat());

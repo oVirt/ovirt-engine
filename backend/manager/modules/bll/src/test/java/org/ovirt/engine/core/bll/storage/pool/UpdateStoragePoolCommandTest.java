@@ -93,7 +93,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
         doReturn(spDao).when(cmd).getStoragePoolDao();
-        doReturn(sdDao).when(cmd).getStorageDomainStaticDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(networkDao).when(cmd).getNetworkDao();

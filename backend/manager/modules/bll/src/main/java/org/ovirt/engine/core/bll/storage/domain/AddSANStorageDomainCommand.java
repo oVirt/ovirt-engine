@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters> extends AddStorageDomainCommand<T> {
@@ -43,7 +42,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         }
         getStorageDomain().setStorage(storage);
         if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && addStorageDomainInIrs()) {
-            DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
+            storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
             updateStorageDomainDynamicFromIrs();
             proceedVGLunsInDb();
             setSucceeded(true);

@@ -376,7 +376,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setParentParameters(getParameters());
 
-        StorageDomainStatic sourceDomain = getStorageDomainStaticDao().get(storageDomainId);
+        StorageDomainStatic sourceDomain = storageDomainStaticDao.get(storageDomainId);
 
         // if the data domain is a block based storage, the memory volume type is preallocated
         // so we need to use copy collapse in order to convert it to be sparsed in the export domain
