@@ -113,7 +113,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        if (!validate(vmStatusLegal(getVmDynamicDao().get(getParameters().getVmId()).getStatus()))) {
+        if (!validate(vmStatusLegal(vmDynamicDao.get(getParameters().getVmId()).getStatus()))) {
             return false;
         }
 

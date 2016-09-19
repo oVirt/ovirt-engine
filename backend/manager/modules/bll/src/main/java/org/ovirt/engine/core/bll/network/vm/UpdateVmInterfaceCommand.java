@@ -322,7 +322,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 return ValidationResult.VALID;
             }
 
-            Guid vdsId = getVmDynamicDao().get(nic.getVmId()).getRunOnVds();
+            Guid vdsId = vmDynamicDao.get(nic.getVmId()).getRunOnVds();
             List<VdsNetworkInterface> hostNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(vdsId);
             for (VdsNetworkInterface hostNic : hostNics) {
                 if (network.getName().equals(hostNic.getNetworkName())) {

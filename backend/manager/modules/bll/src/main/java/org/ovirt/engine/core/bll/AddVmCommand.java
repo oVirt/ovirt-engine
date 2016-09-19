@@ -1156,7 +1156,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         vmDynamic.setIp("");
         vmDynamic.setFqdn("");
         vmDynamic.setLastStopTime(new Date());
-        getVmDynamicDao().save(vmDynamic);
+        vmDynamicDao.save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);
     }
 

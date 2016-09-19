@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.Ticketing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,13 +151,12 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // and proceed only if the previous user in the database is null. This
         // is needed to prevent races between different users trying to access
         // the console of the same virtual machine simultaneously.
-        final VmDynamicDao dao = DbFacade.getInstance().getVmDynamicDao();
         if (vm.getAllowConsoleReconnect() || neededPermissions) {
-            dao.update(vm.getDynamicData());
+            vmDynamicDao.update(vm.getDynamicData());
             sendTicket();
         }
         else {
-            final boolean saved = dao.updateConsoleUserWithOptimisticLocking(vm.getDynamicData());
+            final boolean saved = vmDynamicDao.updateConsoleUserWithOptimisticLocking(vm.getDynamicData());
             if (saved) {
                 sendTicket();
             }

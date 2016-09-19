@@ -151,7 +151,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
 
     private void mockDynamicVmDao() {
         VmDynamic mockDynamicVm = getVmDynamic();
-        doReturn(vmDynamicDao).when(spyCommand).getVmDynamicDao();
         when(vmDynamicDao.get(vmId)).thenReturn(mockDynamicVm);
     }
 

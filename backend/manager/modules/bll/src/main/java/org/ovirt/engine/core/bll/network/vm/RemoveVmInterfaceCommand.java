@@ -73,7 +73,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE);
         }
 
-        VmDynamic vm = getVmDynamicDao().get(getParameters().getVmId());
+        VmDynamic vm = vmDynamicDao.get(getParameters().getVmId());
         if (vm.getStatus() != VMStatus.Down && vm.getStatus() != VMStatus.ImageLocked
                 && getDbFacade().getVmDeviceDao()
                         .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))

@@ -285,7 +285,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // get vm status from db to check its really down before locking
         // relevant only if template created from vm
         if (isVmInDb) {
-            VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getVmId());
+            VmDynamic vmDynamic = vmDynamicDao.get(getVmId());
             if (!isVmStatusValid(vmDynamic.getStatus())) {
                 throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }

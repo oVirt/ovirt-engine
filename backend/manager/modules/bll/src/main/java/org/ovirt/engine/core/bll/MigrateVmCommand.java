@@ -323,7 +323,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public void runningSucceded() {
         try {
             getDowntime();
-            getVmDynamicDao().clearMigratingToVds(getVmId());
+            vmDynamicDao.clearMigratingToVds(getVmId());
             updateVmAfterMigrationToDifferentCluster();
         }
         finally {

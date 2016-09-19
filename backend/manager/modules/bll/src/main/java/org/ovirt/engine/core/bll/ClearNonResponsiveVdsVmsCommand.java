@@ -90,6 +90,6 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
     }
 
     private boolean hasVMs() {
-        return !getVmDynamicDao().getAllRunningForVds(getVdsId()).isEmpty();
+        return !vmDynamicDao.getAllRunningForVds(getVdsId()).isEmpty();
     }
 }

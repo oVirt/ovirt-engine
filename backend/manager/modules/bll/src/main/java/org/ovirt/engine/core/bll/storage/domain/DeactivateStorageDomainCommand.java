@@ -152,7 +152,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         List<VmStatic> vms = vmStaticDao.getAllByStoragePoolId(getStorageDomain().getStoragePoolId());
         List<String> vmNames = new LinkedList<>();
         for (VmStatic vmStatic : vms) {
-            VmDynamic vmDynamic = getVmDynamicDao().get(vmStatic.getId());
+            VmDynamic vmDynamic = vmDynamicDao.get(vmStatic.getId());
             if (vmDynamic.getStatus() != VMStatus.Down && !StringUtils.isEmpty(vmDynamic.getCurrentCd())) {
                 vmNames.add(vmStatic.getName());
             }

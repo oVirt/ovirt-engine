@@ -562,7 +562,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private void addVmDynamic() {
         VmDynamic tempVar = createVmDynamic();
-        getVmDynamicDao().save(tempVar);
+        vmDynamicDao.save(tempVar);
         getCompensationContext().snapshotNewEntity(tempVar);
     }
 

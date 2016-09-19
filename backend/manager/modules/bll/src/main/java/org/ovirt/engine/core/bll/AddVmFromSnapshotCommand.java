@@ -227,7 +227,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     protected void unlockEntities() {
         // Assumption - this is last DB change of command, no need for compensation here
         snapshotDao.updateStatus(sourceSnapshotId, SnapshotStatus.OK);
-        getVmDynamicDao().updateStatus(getVmId(), VMStatus.Down);
+        vmDynamicDao.updateStatus(getVmId(), VMStatus.Down);
     }
 
     @Override

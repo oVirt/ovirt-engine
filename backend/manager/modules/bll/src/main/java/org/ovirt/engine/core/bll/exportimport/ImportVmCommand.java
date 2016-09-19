@@ -1031,7 +1031,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             removeVmSnapshots();
             endActionOnAllImageGroups();
             removeVmNetworkInterfaces();
-            getVmDynamicDao().remove(getVmId());
+            vmDynamicDao.remove(getVmId());
             getVmStatisticsDao().remove(getVmId());
             vmStaticDao.remove(getVmId());
             setSucceeded(true);
