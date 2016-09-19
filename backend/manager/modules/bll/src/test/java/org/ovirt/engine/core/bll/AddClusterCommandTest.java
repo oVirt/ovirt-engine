@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
@@ -17,7 +16,9 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -75,27 +76,26 @@ public class AddClusterCommandTest extends BaseCommandTest {
     @Mock
     private NetworkClusterDao networkClusterDao;
 
-    private AddClusterCommand<?> addClusterCommand;
-    private CommandContext commandContext;
-    private Cluster cluster;
+    private Cluster cluster = createCluster();
+    private ManagementNetworkOnClusterOperationParameters parameters = createParameters(cluster);
+    private CommandContext commandContext = CommandContext.createContext(parameters.getSessionId());
+
+    @Spy
+    @InjectMocks
+    private AddClusterCommand<ManagementNetworkOnClusterOperationParameters> addClusterCommand =
+            new AddClusterCommand<>(parameters, commandContext);
 
     @Mock
     private BackendInternal backend;
-    @Mock
-    private ManagementNetworkOnClusterOperationParameters parameters;
 
     @Before
     public void setUp() {
-        createCluster();
-        createParameters();
-        injectMocks();
-        createCommandContext();
-        createCommand();
+        mockDao();
         mockBackend();
     }
 
-    private void createCluster() {
-        cluster = new Cluster();
+    private static Cluster createCluster() {
+        Cluster cluster = new Cluster();
         cluster.setName(CLUSTER_NAME);
         cluster.setDescription(CLUSTER_DESCRIPTION);
         cluster.setStoragePoolId(DATA_CENTER_ID);
@@ -106,43 +106,23 @@ public class AddClusterCommandTest extends BaseCommandTest {
         cluster.setCompatibilityVersion(SET_COMPATIBILITY_VERSION);
         cluster.setMigrateOnError(MIGRATE_ON_ERROR);
         cluster.setArchitecture(ARCHITECTURE_TYPE);
+        return cluster;
     }
 
-    private void createParameters() {
-        parameters = new ManagementNetworkOnClusterOperationParameters(cluster);
+    private static ManagementNetworkOnClusterOperationParameters createParameters(Cluster cluster) {
+        ManagementNetworkOnClusterOperationParameters parameters =
+                new ManagementNetworkOnClusterOperationParameters(cluster);
         parameters.setCorrelationId(CORRELATION_ID);
+        return parameters;
     }
 
-    private void injectMocks() {
-        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        injectorRule.bind(ClusterDao.class, clusterDao);
-        injectorRule.bind(Network.class, managementNetwork);
-        injectorRule.bind(NetworkClusterDao.class, networkClusterDao);
-    }
-
-    private void createCommandContext() {
-        commandContext = CommandContext.createContext(parameters.getSessionId());
-    }
-
-    private void createCommand() {
-        AddClusterCommand addClusterCommandInstance = new AddClusterCommand<>(parameters, commandContext);
-
-        addClusterCommandInstance.cpuFlagsManagerHandler = cpuFlagsManagerHandler;
-        addClusterCommandInstance.networkClusterDao = networkClusterDao;
-        addClusterCommandInstance.macPoolDao = macPoolDao;
-
-        addClusterCommand = spy(addClusterCommandInstance);
-        doReturn(ARCHITECTURE_TYPE).when(addClusterCommand).getArchitecture();
-        doReturn(backend).when(addClusterCommand).getBackend();
+    private void mockDao() {
         doReturn(clusterDao).when(addClusterCommand).getClusterDao();
-        doReturn(managementNetwork).when(addClusterCommand).getManagementNetwork();
 
         when(macPoolDao.getDefaultPool()).thenReturn(new MacPool());
     }
 
     private void mockBackend() {
-        doReturn(backend).when(addClusterCommand).getBackend();
-
         VdcReturnValueBase addClusterReturnValue = mock(VdcReturnValueBase.class);
         when(addClusterReturnValue.getSucceeded()).thenReturn(true);
 
