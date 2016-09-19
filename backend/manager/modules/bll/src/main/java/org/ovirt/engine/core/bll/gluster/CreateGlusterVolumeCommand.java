@@ -39,15 +39,15 @@ import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSPa
 @NonTransactiveCommandAttribute
 public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGlusterVolumeParameters> {
 
-    private GlusterVolumeEntity volume;
-
     public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params, CommandContext commandContext) {
         super(params, commandContext);
-        volume = getParameters().getVolume();
-
-        if (volume != null) {
-            setClusterId(volume.getClusterId());
+        if (getVolume() != null) {
+            setClusterId(getVolume().getClusterId());
         }
+    }
+
+    private GlusterVolumeEntity getVolume() {
+        return getParameters().getVolume();
     }
 
     @Override
@@ -59,8 +59,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            if (volume != null) {
-                jobProperties.put(GlusterConstants.VOLUME, volume.getName());
+            if (getVolume() != null) {
+                jobProperties.put(GlusterConstants.VOLUME, getVolume().getName());
             }
         }
 
@@ -77,10 +77,10 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     protected List<Class<?>> getValidationGroups() {
 
         addValidationGroup(CreateEntity.class);
-        if (volume.getVolumeType().isReplicatedType()) {
+        if (getVolume().getVolumeType().isReplicatedType()) {
             addValidationGroup(CreateReplicatedVolume.class);
         }
-        if (volume.getVolumeType().isStripedType()) {
+        if (getVolume().getVolumeType().isStripedType()) {
             addValidationGroup(CreateStripedVolume.class);
         }
         return super.getValidationGroups();
@@ -103,18 +103,18 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
-        if (volume.getVolumeType().isDispersedType()) {
+        if (getVolume().getVolumeType().isDispersedType()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED);
             return false;
         }
 
-        if (volumeNameExists(volume.getName())) {
+        if (volumeNameExists(getVolume().getName())) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
-            addValidationMessageVariable("volumeName", volume.getName());
+            addValidationMessageVariable("volumeName", getVolume().getName());
             return false;
         }
 
-        return validateBricks(volume);
+        return validateBricks(getVolume());
     }
 
     private boolean volumeNameExists(String volumeName) {
@@ -130,26 +130,26 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     @Override
     protected void executeCommand() {
         // set the gluster volume name for audit purpose
-        setGlusterVolumeName(volume.getName());
+        setGlusterVolumeName(getVolume().getName());
 
-        if(volume.getTransportTypes() == null || volume.getTransportTypes().isEmpty()) {
-            volume.addTransportType(TransportType.TCP);
+        if(getVolume().getTransportTypes() == null || getVolume().getTransportTypes().isEmpty()) {
+            getVolume().addTransportType(TransportType.TCP);
         }
 
         // GLUSTER access protocol is enabled by default
-        volume.addAccessProtocol(AccessProtocol.GLUSTER);
-        if (!volume.getAccessProtocols().contains(AccessProtocol.NFS)) {
-            volume.disableNFS();
+        getVolume().addAccessProtocol(AccessProtocol.GLUSTER);
+        if (!getVolume().getAccessProtocols().contains(AccessProtocol.NFS)) {
+            getVolume().disableNFS();
         }
 
-        if (volume.getAccessProtocols().contains(AccessProtocol.CIFS)) {
-            volume.enableCifs();
+        if (getVolume().getAccessProtocols().contains(AccessProtocol.CIFS)) {
+            getVolume().enableCifs();
         }
 
         VDSReturnValue returnValue = runVdsCommand(
                 VDSCommandType.CreateGlusterVolume,
                         new CreateGlusterVolumeVDSParameters(upServer.getId(),
-                                volume,
+                                getVolume(),
                                 upServer.getClusterCompatibilityVersion(),
                                 getParameters().isForce()));
         setSucceeded(returnValue.getSucceeded());
