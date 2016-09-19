@@ -3,14 +3,15 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
@@ -44,18 +45,17 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     @Mock
     private VdsDao vdsDao;
 
-    private UpgradeOvirtNodeInternalCommand<InstallVdsParameters> createCommand(InstallVdsParameters params) {
-        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command =
-                spy(new UpgradeOvirtNodeInternalCommand<>(params, null));
-        doReturn(vdsDao).when(command).getVdsDao();
-        return command;
-    }
+    @Spy
+    @InjectMocks
+    private UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command =
+            new UpgradeOvirtNodeInternalCommand<>(createParameters(), null);
 
     @Before
     public void mockVdsDao() {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtVintageNode);
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        doReturn(vdsDao).when(command).getVdsDao();
     }
 
     private static InstallVdsParameters createParameters() {
@@ -74,44 +74,34 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     @Test
     public void validateSucceeds() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
-        InstallVdsParameters param = createParameters();
-        param.setoVirtIsoFile(VALID_VERSION_OVIRT_ISO_FILENAME);
-        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
+        command.getParameters().setoVirtIsoFile(VALID_VERSION_OVIRT_ISO_FILENAME);
         assertTrue(command.validate());
     }
 
     @Test
     public void validateFailsNullParameterForIsoFile() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
-        InstallVdsParameters param = createParameters();
-        param.setoVirtIsoFile(null);
-        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
+        command.getParameters().setoVirtIsoFile(null);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
     }
 
     @Test
     public void validateFailsMissingIsoFile() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
-        InstallVdsParameters param = createParameters();
-        param.setoVirtIsoFile(INVALID_VERSION_OVIRT_ISO_FILENAME);
-        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
+        command.getParameters().setoVirtIsoFile(INVALID_VERSION_OVIRT_ISO_FILENAME);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
     }
 
     @Test
     public void validateFailsIsoVersionNotCompatible() {
         mockVdsWithOsVersion(INVALID_OVIRT_VERSION);
-        InstallVdsParameters param = createParameters();
-        param.setoVirtIsoFile(VALID_VERSION_OVIRT_ISO_FILENAME);
-        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
+        command.getParameters().setoVirtIsoFile(VALID_VERSION_OVIRT_ISO_FILENAME);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
     }
 
     @Test
     public void validateFailsIfHostDoesNotExists() {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
-        InstallVdsParameters param = createParameters();
-        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 
