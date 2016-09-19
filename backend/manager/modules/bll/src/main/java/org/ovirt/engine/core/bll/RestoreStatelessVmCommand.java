@@ -78,13 +78,9 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
             return false;
         }
 
-        if (!statelessDiskSnapshots.isEmpty()) {
-            // restore all snapshots
-            return runInternalActionWithTasksContext(VdcActionType.RestoreAllSnapshots,
-                    buildRestoreAllSnapshotsParameters(statelessDiskSnapshots),
-                    getLock()).getSucceeded();
-        }
-        return true;
+        return runInternalActionWithTasksContext(VdcActionType.RestoreAllSnapshots,
+                buildRestoreAllSnapshotsParameters(statelessDiskSnapshots),
+                getLock()).getSucceeded();
     }
 
     private boolean detachDisksNotPartOfStatelessSnapshot(List<DiskImage> statelessDiskSnapshots) {

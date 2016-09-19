@@ -371,12 +371,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (isRunAsStateless()) {
             fetchVmDisksFromDb();
-            if (getVm().getDiskList().isEmpty()) {
-                // If there are no snappable disks, there is no meaning for
-                // running as stateless, log a warning and run normally
-                warnIfNotAllDisksPermitSnapshots();
-                return setFlow(RunVmFlow.RUN);
-            }
 
             if (isStatelessSnapshotExistsForVm()) {
                 log.error("VM '{}' ({}) already contains stateless snapshot, removing it",

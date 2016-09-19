@@ -457,7 +457,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         params.setRunAsStateless(true);
         doReturn(params).when(command).getParameters();
         doNothing().when(command).fetchVmDisksFromDb();
-        assertEquals(RunVmFlow.RUN, command.getFlow());
+        doReturn(false).when(command).isStatelessSnapshotExistsForVm();
+        assertEquals(RunVmFlow.CREATE_STATELESS_IMAGES, command.getFlow());
     }
 
     @Test
