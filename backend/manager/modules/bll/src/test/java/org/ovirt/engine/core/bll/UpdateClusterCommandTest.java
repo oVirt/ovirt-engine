@@ -10,7 +10,6 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,7 +28,9 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
@@ -99,9 +100,6 @@ public class UpdateClusterCommandTest {
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
     );
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
     @Mock
     DbFacade dbFacadeMock;
 
@@ -147,7 +145,10 @@ public class UpdateClusterCommandTest {
         return network;
     }
 
-    private UpdateClusterCommand<ManagementNetworkOnClusterOperationParameters> cmd;
+    @Spy
+    @InjectMocks
+    private UpdateClusterCommand<ManagementNetworkOnClusterOperationParameters> cmd =
+            new UpdateClusterCommand<>(new ManagementNetworkOnClusterOperationParameters(), null);
 
     @Test
     public void nameInUse() {
@@ -571,16 +572,14 @@ public class UpdateClusterCommandTest {
 
     private void createCommand(final Cluster group) {
         setValidCpuVersionMap();
-        final ManagementNetworkOnClusterOperationParameters param =
-                new ManagementNetworkOnClusterOperationParameters(group, managementNetworkId);
 
-        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        cmd = spy(new UpdateClusterCommand<>(param, null));
+        cmd.getParameters().setManagementNetworkId(managementNetworkId);
+        cmd.getParameters().setCluster(group);
+        cmd.setClusterId(group.getId());
 
         doReturn(0).when(cmd).compareCpuLevels(any(Cluster.class));
 
         doReturn(vmStaticDao).when(cmd).getVmStaticDao();
-        doReturn(cpuFlagsManagerHandler).when(cmd).getCpuFlagsManagerHandler();
         doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
@@ -590,14 +589,12 @@ public class UpdateClusterCommandTest {
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
-        doReturn(defaultManagementNetworkFinder).when(cmd).getDefaultManagementNetworkFinder();
         doReturn(clusterFeatureDao).when(cmd).getClusterFeatureDao();
         doReturn(hostFeatureDao).when(cmd).getHostFeatureDao();
         doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
         doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any(VDS.class));
 
         // cluster upgrade
-        doReturn(schedulingManager).when(cmd).getSchedulingManager();
         doReturn(vmNumaNodeDao).when(cmd).getVmNumaNodeDao();
         doReturn(inClusterUpgradeValidator).when(cmd).getUpgradeValidator();
         doReturn(new ClusterPolicy()).when(schedulingManager).getClusterPolicy(any(Guid.class));

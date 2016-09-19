@@ -15,12 +15,15 @@ public class ManagementNetworkOnClusterOperationParameters extends ClusterOperat
 
     public ManagementNetworkOnClusterOperationParameters(Cluster cluster, Guid managementNetworkId) {
         super(cluster);
-
         this.managementNetworkId = managementNetworkId;
     }
 
     public Guid getManagementNetworkId() {
         return managementNetworkId;
+    }
+
+    public void setManagementNetworkId(Guid managementNetworkId) {
+        this.managementNetworkId = managementNetworkId;
     }
 
     public ManagementNetworkOnClusterOperationParameters() {

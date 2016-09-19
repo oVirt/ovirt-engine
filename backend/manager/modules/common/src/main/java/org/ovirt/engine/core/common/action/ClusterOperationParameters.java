@@ -19,6 +19,10 @@ public class ClusterOperationParameters extends ClusterParametersBase {
         return cluster;
     }
 
+    public void setCluster(Cluster cluster) {
+        this.cluster = cluster;
+    }
+
     private boolean privateIsInternalCommand;
 
     public boolean getIsInternalCommand() {
