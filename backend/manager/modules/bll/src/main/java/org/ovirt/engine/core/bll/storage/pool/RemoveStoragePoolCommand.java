@@ -62,7 +62,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         removeNetworks();
 
         // Detach master storage domain last.
-        List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomain> storageDomains = storageDomainDao.getAllForStoragePool(getStoragePool().getId());
         Collections.sort(storageDomains, Comparator.comparing(StorageDomain::getStorageDomainType));
 
         if (storageDomains.size() > 0) {
@@ -233,7 +233,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             // as it will be impossible to remove it.
             StorageHelperDirector.getInstance().getItem(domain.getStorageType())
                     .storageDomainRemoved(domain.getStorageStaticData());
-            getStorageDomainDao().remove(domain.getId());
+            storageDomainDao.remove(domain.getId());
             return null;
         });
 
@@ -283,7 +283,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         final List<StorageDomain> poolDomains =
-                getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
+                storageDomainDao.getAllForStoragePool(getStoragePool().getId());
         final List<StorageDomain> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
         if (!activeOrLockedDomains.isEmpty()) {

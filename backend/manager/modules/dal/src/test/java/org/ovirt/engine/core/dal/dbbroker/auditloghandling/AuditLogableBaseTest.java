@@ -16,6 +16,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -45,7 +47,11 @@ public class AuditLogableBaseTest {
     protected static final String DOMAIN = "testDomain";
     private static final StorageDomain STORAGE_DOMAIN = new StorageDomain();
 
+    @Mock
+    StorageDomainDao storageDomainDao;
+
     @Spy
+    @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
 
     @Before
@@ -71,7 +77,6 @@ public class AuditLogableBaseTest {
         when(storagePoolDao.get(GUID)).thenReturn(p);
         doReturn(storagePoolDao).when(b).getStoragePoolDao();
 
-        final StorageDomainDao storageDomainDao = mock(StorageDomainDao.class);
         final StorageDomain domain = new StorageDomain();
         domain.setStatus(StorageDomainStatus.Active);
 
@@ -82,7 +87,6 @@ public class AuditLogableBaseTest {
         final List<StorageDomain> storageDomainList = Arrays.asList(sd1, sd2, domain);
         when(storageDomainDao.getForStoragePool(GUID, GUID)).thenReturn(domain);
         when(storageDomainDao.getAllForStorageDomain(GUID2)).thenReturn(storageDomainList);
-        doReturn(storageDomainDao).when(b).getStorageDomainDao();
 
         final VmTemplateDao vmTemplateDao = mock(VmTemplateDao.class);
         final VmTemplate t = new VmTemplate();

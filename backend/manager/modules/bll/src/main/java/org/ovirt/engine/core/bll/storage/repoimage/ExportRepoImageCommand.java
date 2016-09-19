@@ -227,7 +227,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     }
 
     public String getDestinationStorageDomainName() {
-        return getStorageDomainDao().get(getParameters().getDestinationDomainId()).getName();
+        return storageDomainDao.get(getParameters().getDestinationDomainId()).getName();
     }
 
     @Override

@@ -51,7 +51,6 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         when(vmDao.getVmsListForDisk(getDiskImageId(), Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
 
         doReturn(vmDao).when(cmd).getVmDao();
-        doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDao();
         doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDao();
         doReturn(getDiskDao()).when(cmd).getDiskDao();
     }

@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T>{
@@ -70,7 +69,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
 
     @Override
     protected boolean validate() {
-        StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+        StorageDomain storage = storageDomainDao.getForStoragePool(
                 getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
         if (storage == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);

@@ -358,7 +358,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Before
     public void initializeMocks() {
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
         doReturn(vmNicDao).when(command).getVmNicDao();

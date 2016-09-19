@@ -117,8 +117,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected Guid getMasterDomainIdFromDb() {
         Guid ret = Guid.Empty;
         if (getStoragePool() != null) {
-            ret = getStorageDomainDao()
-                    .getMasterStorageDomainIdForPool(getStoragePool().getId());
+            ret = storageDomainDao.getMasterStorageDomainIdForPool(getStoragePool().getId());
         }
 
         return ret;
@@ -258,7 +257,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                             null,
                             null));
                 }
-                getStorageDomainDao().removeEntitesFromStorageDomain(storageDomainId);
+                storageDomainDao.removeEntitesFromStorageDomain(storageDomainId);
                 return null;
             });
         }
@@ -302,7 +301,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected void calcStoragePoolStatusByDomainsStatus() {
         StorageDomain masterDomain =
-                getStorageDomainDao().getStorageDomains(getStoragePool().getId(), StorageDomainType.Master)
+                storageDomainDao.getStorageDomains(getStoragePool().getId(), StorageDomainType.Master)
                         .stream().findFirst().orElse(null);
 
         // if no master then Uninitialized

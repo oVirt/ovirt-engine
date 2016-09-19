@@ -294,7 +294,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             return storageDomainsMap.get(storageDomainId);
         }
 
-        StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(storageDomainId, storagePoolId);
+        StorageDomain storageDomain = storageDomainDao.getForStoragePool(storageDomainId, storagePoolId);
         storageDomainsMap.put(storageDomainId, storageDomain);
 
         return storageDomain;

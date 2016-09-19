@@ -88,7 +88,6 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         map = new StoragePoolIsoMap();
         cmd.init();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
     }
 
     @Test

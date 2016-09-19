@@ -83,7 +83,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
             return true;
         }
         DiskImage diskImage = (DiskImage) getDisk();
-        StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
+        StorageDomain storageDomain = storageDomainDao.getForStoragePool(
                 diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
         return validate(storageDomainValidator.isDomainExistAndActive());

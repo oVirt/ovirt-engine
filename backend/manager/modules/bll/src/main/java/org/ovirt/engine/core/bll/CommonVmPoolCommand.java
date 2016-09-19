@@ -57,7 +57,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
@@ -85,9 +84,6 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
-
-    @Inject
-    StorageDomainDao storageDomainDao;
 
     @Inject
     DiskProfileDao diskProfileDao;
@@ -532,7 +528,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             }
             StorageDomain domain = destStorages.get(domainId);
             if (domain == null) {
-                domain = getStorageDomainDao().getForStoragePool(domainId, getVmTemplate().getStoragePoolId());
+                domain = this.storageDomainDao.getForStoragePool(domainId, getVmTemplate().getStoragePoolId());
                 destStorages.put(domainId, domain);
             }
             if (storageToDisksMap.containsKey(domainId)) {

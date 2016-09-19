@@ -89,7 +89,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
 
         for (DiskImage image : getImages()) {
-            StorageDomain sd = getStorageDomainDao().getForStoragePool(
+            StorageDomain sd = storageDomainDao.getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
             if (!validate(new StorageDomainValidator(sd).isDomainExistAndActive())) {
                 return false;

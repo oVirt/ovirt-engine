@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -61,9 +60,6 @@ implements QuotaStorageDependent {
 
     private static final Pattern VMWARE_DISK_NAME_PATTERN = Pattern.compile("\\[.*?\\] .*/(.*).vmdk");
     private static final Pattern DISK_NAME_PATTERN = Pattern.compile(".*/([^.]+).*");
-
-    @Inject
-    private StorageDomainDao storageDomainDao;
 
     @Inject
     private DiskProfileHelper diskProfileHelper;

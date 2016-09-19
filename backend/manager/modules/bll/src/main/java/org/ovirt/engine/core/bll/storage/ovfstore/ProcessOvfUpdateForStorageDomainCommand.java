@@ -211,7 +211,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         updateDate = new Date();
 
         List<Guid> vmAndTemplatesIds =
-                getStorageDomainDao().getVmAndTemplatesIdsByStorageDomainId(getParameters().getStorageDomainId(),
+                storageDomainDao.getVmAndTemplatesIdsByStorageDomainId(getParameters().getStorageDomainId(),
                         false,
                         false);
 

@@ -97,10 +97,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     // now the domain should have the mapping
                     // with the pool in db
                     StorageDomain storageDomain =
-                            DbFacade.getInstance()
-                                    .getStorageDomainDao()
-                                    .getForStoragePool(storageDomainId,
-                                            getStoragePool().getId());
+                            storageDomainDao.getForStoragePool(storageDomainId, getStoragePool().getId());
                     StorageHelperDirector.getInstance()
                             .getItem(storageDomain.getStorageType())
                             .connectStorageToDomainByVdsId(storageDomain,
@@ -149,8 +146,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     private boolean updateStorageDomainsInDb() {
         boolean result  = TransactionSupport.executeInNewTransaction(() -> {
             for (Guid storageDomainId : getParameters().getStorages()) {
-                StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(
-                            storageDomainId);
+                StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
                 if (storageDomain != null) {
                     StoragePoolIsoMap mapFromDB =
                         DbFacade.getInstance()
@@ -283,7 +279,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             boolean hasData = false;
             StorageFormatType storageFormat = null;
             for (Guid storageDomainId : getParameters().getStorages()) {
-                StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
+                StorageDomain domain = storageDomainDao.get(storageDomainId);
                 StorageDomainToPoolRelationValidator
                         storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(domain.getStorageStaticData(), getStoragePool());
                 if (isStorageDomainNotNull(domain) && validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
@@ -331,7 +327,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     private boolean isDomainAttachedToDifferentStoragePool() {
         if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
             for (Guid storageDomainId : getParameters().getStorages()) {
-                StorageDomain domain = getStorageDomainDao().get(storageDomainId);
+                StorageDomain domain = storageDomainDao.get(storageDomainId);
                 if (domain.getStorageDomainType().isDataDomain() && isStorageDomainAttachedToStoragePool(domain)) {
                     return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
                 }

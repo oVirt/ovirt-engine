@@ -92,7 +92,6 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         doReturn(isoMapDao).when(cmd).getStoragePoolIsoMapDao();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
 

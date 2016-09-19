@@ -41,7 +41,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
     }
 
     protected List<StorageDomain> getStorageDomainsByConnId(String connectionId) {
-        return getStorageDomainDao().getAllByConnectionId(Guid.createGuidFromString(connectionId));
+        return storageDomainDao.getAllByConnectionId(Guid.createGuidFromString(connectionId));
     }
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {

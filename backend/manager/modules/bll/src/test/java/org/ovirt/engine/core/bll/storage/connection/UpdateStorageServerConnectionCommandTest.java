@@ -106,7 +106,6 @@ public class UpdateStorageServerConnectionCommandTest extends
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
         doReturn(lunDao).when(command).getLunDao();
         doReturn(vmDao).when(command).getVmDao();
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 
     protected StorageDomain createDomain() {

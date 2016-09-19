@@ -47,7 +47,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
     }
 
     protected List<StorageDomain> getStorageDomainsByConnId(String connectionId) {
-        return getStorageDomainDao().getAllByConnectionId(Guid.createGuidFromString(connectionId));
+        return storageDomainDao.getAllByConnectionId(Guid.createGuidFromString(connectionId));
     }
 
     /**

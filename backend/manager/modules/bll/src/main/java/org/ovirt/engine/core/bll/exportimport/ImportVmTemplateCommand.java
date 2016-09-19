@@ -248,7 +248,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     protected StorageDomain getSourceDomain() {
         if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
-            sourceDomain = getStorageDomainDao().getForStoragePool(sourceDomainId, getStoragePool().getId());
+            sourceDomain = storageDomainDao.getForStoragePool(sourceDomainId, getStoragePool().getId());
         }
         return sourceDomain;
     }

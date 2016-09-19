@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
@@ -64,7 +63,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                 .storageDomainRemoved(getStorageDomain().getStorageStaticData());
 
-        DbFacade.getInstance().getStorageDomainDao().remove(getStorageDomain().getId());
+        storageDomainDao.remove(getStorageDomain().getId());
 
         if (getStoragePool() != null) {
             // if iso reset path for pool

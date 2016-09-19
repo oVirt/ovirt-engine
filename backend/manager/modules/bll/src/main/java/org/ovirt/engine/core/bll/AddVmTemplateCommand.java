@@ -619,8 +619,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             Set<Guid> destImageDomains = getStorageGuidSet();
             destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
             for (Guid destImageDomain : destImageDomains) {
-                StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
-                        destImageDomain, getVm().getStoragePoolId());
+                StorageDomain storage = storageDomainDao.getForStoragePool(destImageDomain, getVm().getStoragePoolId());
                 if (storage == null) {
                     // if storage is null then we need to check if it doesn't exist or
                     // domain is not in the same storage pool as the vm

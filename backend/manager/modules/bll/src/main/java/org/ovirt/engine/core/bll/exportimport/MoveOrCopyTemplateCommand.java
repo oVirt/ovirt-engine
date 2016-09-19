@@ -142,7 +142,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {
-        return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
+        return storageDomainDao.getForStoragePool(domainId, getStoragePool().getId());
     }
 
     protected boolean validateSpaceRequirements(Collection<DiskImage> diskImages) {

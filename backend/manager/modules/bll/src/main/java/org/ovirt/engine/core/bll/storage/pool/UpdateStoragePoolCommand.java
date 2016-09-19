@@ -299,9 +299,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private StorageDomain getMasterDomain() {
         if (masterDomainForPool == null) {
-            Guid masterId = getStorageDomainDao().getMasterStorageDomainIdForPool(getStoragePoolId());
+            Guid masterId = storageDomainDao.getMasterStorageDomainIdForPool(getStoragePoolId());
             if (Guid.Empty.equals(masterId)) {
-                masterDomainForPool = getStorageDomainDao().get(masterId);
+                masterDomainForPool = storageDomainDao.get(masterId);
             }
         }
         return masterDomainForPool;

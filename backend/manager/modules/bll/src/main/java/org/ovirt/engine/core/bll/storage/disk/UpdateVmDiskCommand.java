@@ -231,7 +231,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     protected StorageDomainValidator getStorageDomainValidator(DiskImage diskImage) {
-        StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
+        StorageDomain storageDomain = storageDomainDao.getForStoragePool(
                 diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
         return new StorageDomainValidator(storageDomain);
     }
@@ -446,8 +446,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     private void updateMetaDataDescription(DiskImage diskImage) {
         StorageDomain storageDomain =
-                getStorageDomainDao().getForStoragePool(diskImage.getStorageIds().get(0),
-                        getVm().getStoragePoolId());
+                storageDomainDao.getForStoragePool(diskImage.getStorageIds().get(0), getVm().getStoragePoolId());
         if (!getStorageDomainValidator((DiskImage) getNewDisk()).isDomainExistAndActive().isValid()) {
             auditLogForNoMetadataDescriptionUpdate(AuditLogType.UPDATE_DESCRIPTION_FOR_DISK_SKIPPED_SINCE_STORAGE_DOMAIN_NOT_ACTIVE,
                     storageDomain,

@@ -144,7 +144,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
         if (isImageDisk) {
-            StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
+            StorageDomain storageDomain = storageDomainDao.getForStoragePool(
                     ((DiskImage) disk).getStorageIds().get(0), ((DiskImage) disk).getStoragePoolId());
             StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
             if (!validate(storageDomainValidator.isDomainExistAndActive())) {

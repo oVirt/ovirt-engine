@@ -65,7 +65,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 } else {
-                    StorageDomain domain = getStorageDomainDao().get(image.getStorageIds().get(0));
+                    StorageDomain domain = storageDomainDao.get(image.getStorageIds().get(0));
                     failedRemoving.add(image);
                     log.error("Can't remove image id '{}' for VM id '{}' from domain id '{}' due to: {}.",
                             image.getImageId(),

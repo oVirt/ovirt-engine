@@ -65,6 +65,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private Backend backend;
 
+    @Mock
+    private StorageDomainDao storageDomainDao;
+
     @Spy
     @InjectMocks
     private ImportVmTemplateCommand command =
@@ -169,12 +172,11 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     private void mockStorageDomains() {
         final ImportVmTemplateParameters parameters = command.getParameters();
-        final StorageDomainDao dao = mock(StorageDomainDao.class);
 
         final StorageDomain srcDomain = new StorageDomain();
         srcDomain.setStorageDomainType(StorageDomainType.ImportExport);
         srcDomain.setStatus(StorageDomainStatus.Active);
-        when(dao.getForStoragePool(parameters.getSourceDomainId(), parameters.getStoragePoolId()))
+        when(storageDomainDao.getForStoragePool(parameters.getSourceDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(srcDomain);
 
         final StorageDomain destDomain = new StorageDomain();
@@ -182,10 +184,8 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         destDomain.setUsedDiskSize(0);
         destDomain.setAvailableDiskSize(1000);
         destDomain.setStatus(StorageDomainStatus.Active);
-        when(dao.getForStoragePool(parameters.getDestDomainId(), parameters.getStoragePoolId()))
+        when(storageDomainDao.getForStoragePool(parameters.getDestDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(destDomain);
-
-        doReturn(dao).when(command).getStorageDomainDao();
     }
 
     private void mockStoragePool() {

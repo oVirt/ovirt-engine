@@ -108,7 +108,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     }
 
     protected void proccessDomainsForOvfUpdate(StoragePool pool) {
-        List<StorageDomain> domainsInPool = getStorageDomainDao().getAllForStoragePool(pool.getId());
+        List<StorageDomain> domainsInPool = storageDomainDao.getAllForStoragePool(pool.getId());
         for (StorageDomain domain : domainsInPool) {
             if (!domain.getStorageDomainType().isDataDomain() || domain.getStatus() != StorageDomainStatus.Active) {
                 continue;

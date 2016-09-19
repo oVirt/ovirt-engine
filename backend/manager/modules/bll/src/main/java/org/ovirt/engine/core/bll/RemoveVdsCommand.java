@@ -85,7 +85,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         StoragePool storagePool = getStoragePoolDao().getForVds(getParameters().getVdsId());
 
         if (returnValue && storagePool != null && storagePool.isLocal()) {
-            if (!getStorageDomainDao().getAllForStoragePool(storagePool.getId()).isEmpty()) {
+            if (!storageDomainDao.getAllForStoragePool(storagePool.getId()).isEmpty()) {
                 returnValue = failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
             }
         }

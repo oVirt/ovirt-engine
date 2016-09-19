@@ -138,6 +138,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected GlusterHooksDao glusterHooksDao;
 
+    @Inject
+    protected StorageDomainDao storageDomainDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -326,12 +329,12 @@ public class AuditLogableBase extends TimeoutBase {
     public StorageDomain getStorageDomain() {
         if (storageDomain == null && getStorageDomainId() != null) {
             if (storagePoolId != null && getStoragePool() != null) {
-                storageDomain = getStorageDomainDao().getForStoragePool(
+                storageDomain = storageDomainDao.getForStoragePool(
                         getStorageDomainId(), getStoragePool().getId());
             }
             if (storageDomain == null) {
                 final List<StorageDomain> storageDomainList =
-                        getStorageDomainDao().getAllForStorageDomain(getStorageDomainId());
+                        storageDomainDao.getAllForStorageDomain(getStorageDomainId());
                 if (storageDomainList.size() != 0) {
                     storageDomain = storageDomainList.get(0);
                     for (final StorageDomain storageDomainFromList : storageDomainList) {
@@ -655,10 +658,6 @@ public class AuditLogableBase extends TimeoutBase {
             glusterVolume = glusterVolumeDao.getById(glusterVolumeId);
         }
         return glusterVolume;
-    }
-
-    public StorageDomainDao getStorageDomainDao() {
-        return getDbFacade().getStorageDomainDao();
     }
 
     public StoragePoolDao getStoragePoolDao() {

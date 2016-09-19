@@ -66,7 +66,7 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
 
     private void updateConnectionMapForFiberChannel(Set<StorageDomainStatus> statuses) {
         List<StorageDomain> storageDomainList =
-                getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
+                storageDomainDao.getAllForStoragePool(getStoragePool().getId());
         for (StorageDomain sd : storageDomainList) {
             if (sd.getStorageType() == StorageType.FCP && statuses.contains(sd.getStatus())) {
                 MultiValueMapUtils.addToMap(StorageType.FCP,

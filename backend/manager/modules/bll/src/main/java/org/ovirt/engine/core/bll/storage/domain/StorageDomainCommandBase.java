@@ -178,7 +178,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkMasterDomainIsUp() {
         boolean hasUpMaster =
-                !getStorageDomainDao().getStorageDomains
+                !storageDomainDao.getStorageDomains
                         (getStoragePool().getId(), StorageDomainType.Master, StorageDomainStatus.Active).isEmpty();
 
         if (!hasUpMaster) {
@@ -316,7 +316,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             return null;
         }
 
-        List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomain> storageDomains = storageDomainDao.getAllForStoragePool(getStoragePool().getId());
 
         if (storageDomains.isEmpty()) {
             log.warn("Cannot elect new master, no storage domains found for pool {}", getStoragePool().getName());

@@ -387,7 +387,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected StorageDomain getSourceDomain() {
         if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
-            sourceDomain = getStorageDomainDao().getForStoragePool(sourceDomainId, getStoragePool().getId());
+            sourceDomain = storageDomainDao.getForStoragePool(sourceDomainId, getStoragePool().getId());
         }
         return sourceDomain;
     }
@@ -401,7 +401,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {
-        return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
+        return storageDomainDao.getForStoragePool(domainId, getStoragePool().getId());
     }
 
     @Override

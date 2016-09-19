@@ -210,7 +210,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         localDomain.setStorageType(StorageType.LOCALFS);
         StorageDomain sharedDomain =
                 createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(localDomain, sharedDomain));
         cmd.setStoragePool(new StoragePool());
         when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
@@ -224,7 +223,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         localDomain.setStorageType(StorageType.LOCALFS);
         StorageDomain sharedDomain =
                 createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
         cmd.setStoragePool(new StoragePool());
         when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
@@ -240,7 +238,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         StorageDomain sharedDomain =
                 createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
         sharedDomain.setLastTimeUsedAsMaster(System.currentTimeMillis());
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
         cmd.setStoragePool(new StoragePool());
         when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
@@ -256,7 +253,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         StorageDomain sharedDomain =
                 createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
         sharedDomain.setLastTimeUsedAsMaster(System.currentTimeMillis() - 1000);
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
         cmd.setStoragePool(new StoragePool());
         when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
@@ -266,7 +262,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     private StorageDomain prepareLocalStorageDomainForElection(StorageDomainStatus status, String name) {
         final StorageDomain localDomain = createDataStorageDomain(status, name, LOCAL_SD_ID);
         localDomain.setStorageType(StorageType.LOCALFS);
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(localDomain));
         cmd.setStoragePool(new StoragePool());
         return localDomain;
@@ -274,7 +269,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
 
     private StorageDomain prepareSharedStorageDomainForElection(StorageDomainStatus status, String name) {
         final StorageDomain sharedDomain = createDataStorageDomain(status, name, SHARED_SD_ID);
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(sharedDomain));
         cmd.setStoragePool(new StoragePool());
         return sharedDomain;
@@ -282,7 +276,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
 
     private StorageDomain prepareStorageDomainForElection(StorageDomainStatus status, String name) {
         final StorageDomain domain = createDataStorageDomain(status, name, HE_SD_ID);
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(domain));
         cmd.setStoragePool(new StoragePool());
         return domain;

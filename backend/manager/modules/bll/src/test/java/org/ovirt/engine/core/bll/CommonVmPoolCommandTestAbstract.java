@@ -22,6 +22,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -106,6 +107,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
      * The command under test.
      */
     @Spy
+    @InjectMocks
     protected CommonVmPoolCommand<AddVmPoolParameters> command = createCommand();
 
     protected abstract CommonVmPoolCommand<AddVmPoolParameters> createCommand();
@@ -203,7 +205,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private void mockStorageDomainDao(List<StorageDomain> storageDomains) {
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         for (StorageDomain storageDomain : storageDomains) {
             when(storageDomainDao.getForStoragePool(storageDomain.getId(), storagePoolId)).thenReturn(storageDomain);
         }

@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -224,10 +223,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     @Override
     protected boolean buildAndCheckDestStorageDomains() {
         if (diskInfoDestinationMap.isEmpty()) {
-            List<StorageDomain> domains =
-                    DbFacade.getInstance()
-                            .getStorageDomainDao()
-                            .getAllForStoragePool(getStoragePoolId());
+            List<StorageDomain> domains = storageDomainDao.getAllForStoragePool(getStoragePoolId());
             Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
             for (StorageDomain storageDomain : domains) {
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);

@@ -150,7 +150,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     private void activateDataCenter() {
         StorageDomain masterDomain =
-                getStorageDomainDao().getStorageDomains(getStoragePool().getId(), StorageDomainType.Master).stream().findFirst().orElse(null);
+                storageDomainDao.getStorageDomains(getStoragePool().getId(), StorageDomainType.Master).stream().findFirst().orElse(null);
         calcStoragePoolStatusByDomainsStatus();
 
         // fence spm if moving from not operational and master domain is active

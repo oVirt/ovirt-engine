@@ -493,7 +493,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
         doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(baseDiskDao).when(command).getBaseDiskDao();
         doReturn(imageDao).when(command).getImageDao();

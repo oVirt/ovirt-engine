@@ -804,7 +804,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
             Guid storageDomainId = diskImage.getStorageIds().get(0);
             if (destStorages.get(storageDomainId) == null) {
-                StorageDomain storage = getStorageDomainDao().getForStoragePool(storageDomainId, getStoragePoolId());
+                StorageDomain storage = storageDomainDao.getForStoragePool(storageDomainId, getStoragePoolId());
                 StorageDomainValidator validator =
                         new StorageDomainValidator(storage);
                 if (!validate(validator.isDomainExistAndActive()) || !validate(validator.domainIsValidDestination())) {
@@ -831,7 +831,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected List<StorageDomain> getPoolDomains() {
         if (poolDomains == null) {
-            poolDomains = getStorageDomainDao().getAllForStoragePool(vmDisksSource.getStoragePoolId());
+            poolDomains = storageDomainDao.getAllForStoragePool(vmDisksSource.getStoragePoolId());
         }
         return poolDomains;
     }

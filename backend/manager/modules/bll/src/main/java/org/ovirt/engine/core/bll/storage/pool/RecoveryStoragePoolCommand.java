@@ -84,7 +84,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
     }
 
     private StorageDomain loadTargetedMasterDomain() {
-        return getStorageDomainDao().get(getParameters().getNewMasterDomainId());
+        return storageDomainDao.get(getParameters().getNewMasterDomainId());
     }
 
     @Override

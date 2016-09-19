@@ -56,7 +56,7 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
     public StorageDomain getStorageDomain() {
         if (storageDomain == null) {
             Guid providerId = getParameters().getLibvirtSecret().getProviderId();
-            List<StorageDomain> storageDomains = getStorageDomainDao().getAllByConnectionId(providerId);
+            List<StorageDomain> storageDomains = storageDomainDao.getAllByConnectionId(providerId);
             storageDomain = storageDomains.get(0);
         }
         return storageDomain;

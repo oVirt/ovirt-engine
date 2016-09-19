@@ -75,7 +75,6 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
         command.getParameters().setDoFormat(true);
         command.init();
 
-        doReturn(storageDomainDaoMock).when(command).getStorageDomainDao();
         doReturn(storageDomain).when(storageDomainDaoMock).get(storageDomainID);
         doReturn(Collections.singletonList(storageDomain)).when(storageDomainDaoMock).getAllForStorageDomain(storageDomainID);
 

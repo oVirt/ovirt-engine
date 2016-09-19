@@ -97,8 +97,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
         if (!getParameters().getIsInternal()
                 && getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
-            List<StorageDomain> domains =
-                    getStorageDomainDao().getAllForStoragePool(getStorageDomain().getStoragePoolId());
+            List<StorageDomain> domains = storageDomainDao.getAllForStoragePool(getStorageDomain().getStoragePoolId());
 
             List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
 

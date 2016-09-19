@@ -73,7 +73,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         TransactionSupport.executeInNewTransaction(() -> {
             getStorageHelper(dom).storageDomainRemoved(dom.getStorageStaticData());
-            getStorageDomainDao().remove(dom.getId());
+            storageDomainDao.remove(dom.getId());
             return null;
         });
 

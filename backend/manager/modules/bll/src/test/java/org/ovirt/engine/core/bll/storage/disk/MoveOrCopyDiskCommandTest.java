@@ -357,7 +357,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(new ArrayList<DiskImage>()).when(command).getAllImageSnapshots();
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
         doReturn(true).when(command).setAndValidateDiskProfiles();
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         doReturn(disk.getId()).when(command).getImageGroupId();
     }
 

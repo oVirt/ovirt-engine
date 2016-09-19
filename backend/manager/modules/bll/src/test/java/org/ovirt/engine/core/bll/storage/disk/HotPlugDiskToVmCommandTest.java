@@ -202,7 +202,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         storageDomain.setId(storageDomainId);
         storageDomain.setStoragePoolId(storagePoolId);
 
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         when(storageDomainDao.get(any(Guid.class))).thenReturn(storageDomain);
         when(storageDomainDao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
     }
