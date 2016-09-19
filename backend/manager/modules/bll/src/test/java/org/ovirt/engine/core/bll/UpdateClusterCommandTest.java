@@ -10,7 +10,6 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -244,19 +243,14 @@ public class UpdateClusterCommandTest {
     public void versionDecreaseNoHostsOrNetwork() {
         createCommandWithOlderVersion();
         setupCpu();
-        StoragePoolDao storagePoolDao2 = mock(StoragePoolDao.class);
-        when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
-        doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
         initAndAssertValidation(true);
     }
 
     @Test
     public void versionDecreaseLowerVersionThanDC() {
         createCommandWithOlderVersion();
-        StoragePoolDao storagePoolDao2 = mock(StoragePoolDao.class);
-        when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
-        doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
-        doReturn(storagePoolDao2).when(dbFacadeMock).getStoragePoolDao();
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
         setupCpu();
         validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
     }
