@@ -48,8 +48,10 @@ public class DwhHeartBeat implements BackendService {
     @OnTimerMethodAnnotation(DWH_HEART_BEAT_METHOD)
     public void engineIsRunningNotification() {
         try {
+            log.debug("DWH Heart Beat - Start");
             heartBeatVar.setDateTime(new Date());
             dwhHistoryTimekeepingDao.save(heartBeatVar);
+            log.debug("DWH Heart Beat - End");
         } catch (Exception ex) {
             log.error("Error updating DWH Heart Beat: {}", ex.getMessage());
             log.debug("Exception", ex);
