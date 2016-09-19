@@ -115,10 +115,10 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     }
 
     protected void removeNetwork() {
-        List<VmNic> list = getVmNicDao().getAllForTemplate(getVmTemplateId());
+        List<VmNic> list = vmNicDao.getAllForTemplate(getVmTemplateId());
         for (VmNic iface : list) {
             vmDeviceDao.remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
-            getVmNicDao().remove(iface.getId());
+            vmNicDao.remove(iface.getId());
         }
     }
 

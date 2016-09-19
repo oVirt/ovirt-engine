@@ -231,7 +231,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // Check PCI and IDE limits are ok
         if (returnValue) {
 
-            List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
+            List<VmNic> interfaces = vmNicDao.getAllForTemplate(getParameters().getVmTemplateData().getId());
             List<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(getVmTemplateId());
 
             if (!validate(VmValidator.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),

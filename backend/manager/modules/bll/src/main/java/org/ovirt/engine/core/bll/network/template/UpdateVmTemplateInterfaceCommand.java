@@ -31,7 +31,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
     @Override
     protected void executeCommand() {
-        getVmNicDao().update(getParameters().getInterface());
+        vmNicDao.update(getParameters().getInterface());
         VmDevice vmDevice =
                 vmDeviceDao.get(new VmDeviceId(getParameters().getInterface().getId(),
                         getParameters().getVmTemplateId()));
@@ -52,7 +52,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateId());
+        List<VmNic> interfaces = vmNicDao.getAllForTemplate(getParameters().getVmTemplateId());
         if (!validate(templateExists())) {
             return false;
         }
@@ -139,7 +139,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         VmNic nic = getParameters().getInterface();
 
         if (nic != null && nic.getVnicProfileId() != null && getVmTemplate() != null) {
-            VmNic oldNic = getVmNicDao().get(nic.getId());
+            VmNic oldNic = vmNicDao.get(nic.getId());
 
             if (oldNic == null || isVnicProfileChanged(oldNic, nic)) {
                 permissionList.add(new PermissionSubject(nic.getVnicProfileId(),

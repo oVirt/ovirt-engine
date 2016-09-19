@@ -87,7 +87,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     }
 
     private void addInterfaceToDb(VmNic vmNetworkInterface) {
-        getVmNicDao().save(vmNetworkInterface);
+        vmNicDao.save(vmNetworkInterface);
         getCompensationContext().snapshotNewEntity(vmNetworkInterface);
 
         vmNetworkStatisticsDao.save(vmNetworkInterface.getStatistics());
@@ -117,7 +117,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmId());
+        List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getVmId());
 
         if (!uniqueInterfaceName(interfaces)) {
             return false;

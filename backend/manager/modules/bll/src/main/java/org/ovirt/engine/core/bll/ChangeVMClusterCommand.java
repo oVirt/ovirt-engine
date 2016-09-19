@@ -67,7 +67,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
         // update vm interfaces
         List<Network> networks = networkDao.getAllForCluster(getParameters().getClusterId());
-        List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmId());
+        List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getVmId());
 
         for (final VmNic iface : interfaces) {
             if (iface.getVnicProfileId() != null) {
@@ -79,7 +79,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 // interface connection
                 if (!networkFoundInCluster) {
                     iface.setVnicProfileId(null);
-                    getVmNicDao().update(iface);
+                    vmNicDao.update(iface);
                 }
             }
         }

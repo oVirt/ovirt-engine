@@ -265,6 +265,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected VmNetworkStatisticsDao vmNetworkStatisticsDao;
 
+    @Inject
+    protected VmNicDao vmNicDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -803,10 +806,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public DbGroupDao getAdGroupDao() {
         return getDbFacade().getDbGroupDao();
-    }
-
-    public VmNicDao getVmNicDao() {
-        return getDbFacade().getVmNicDao();
     }
 
     public AsyncTaskDao getAsyncTaskDao() {

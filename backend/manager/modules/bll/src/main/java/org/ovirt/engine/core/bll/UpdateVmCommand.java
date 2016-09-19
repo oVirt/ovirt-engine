@@ -560,7 +560,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!Objects.equals(getVm().getClusterId(), getParameters().getVmStaticData().getClusterId())) {
             List<Network> networks =
                     networkDao.getAllForCluster(getParameters().getVmStaticData().getClusterId());
-            List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmStaticData().getId());
+            List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getVmStaticData().getId());
 
             for (final VmNic iface : interfaces) {
                 final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
@@ -569,7 +569,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 // if network not exists in cluster we remove the network from the interface
                 if (!networkFound) {
                     iface.setVnicProfileId(null);
-                    getVmNicDao().update(iface);
+                    vmNicDao.update(iface);
                 }
 
             }
@@ -921,7 +921,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     protected boolean isValidPciAndIdeLimit(VM vmFromParams) {
         List<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(getVmId());
-        List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
+        List<VmNic> interfaces = vmNicDao.getAllForVm(getVmId());
 
         return validate(VmValidator.checkPciAndIdeLimit(
                 vmFromParams.getOs(),

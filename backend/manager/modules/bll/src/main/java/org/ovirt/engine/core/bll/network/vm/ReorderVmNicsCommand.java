@@ -56,7 +56,7 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
 
     private void reorderNics() {
         Map<Guid, VmDevice> vmInterfaceDevices = getVmInterfaceDevices();
-        List<VmNic> nics = getVmNicDao().getAllForVm(getParameters().getVmId());
+        List<VmNic> nics = vmNicDao.getAllForVm(getParameters().getVmId());
         List<VmNic> nicsToReorder = new ArrayList<>();
         List<String> macsToReorder = new ArrayList<>();
 
@@ -78,7 +78,7 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
         for (int i = 0; i < nicsToReorder.size(); ++i) {
             VmNic nic = nicsToReorder.get(i);
             nic.setMacAddress(macsToReorder.get(i));
-            getVmNicDao().update(nic);
+            vmNicDao.update(nic);
         }
     }
 }

@@ -417,7 +417,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
     protected boolean verifyAddVm() {
         final List<String> reasons = getReturnValue().getValidationMessages();
-        final int nicsCount = getParameters().getVmsCount() * getVmNicDao().getAllForTemplate(getVmTemplateId()).size();
+        final int nicsCount = getParameters().getVmsCount() * vmNicDao.getAllForTemplate(getVmTemplateId()).size();
         final int priority = getParameters().getVmStaticData().getPriority();
 
         return VmHandler.verifyAddVm(reasons, nicsCount, priority, getMacPool());

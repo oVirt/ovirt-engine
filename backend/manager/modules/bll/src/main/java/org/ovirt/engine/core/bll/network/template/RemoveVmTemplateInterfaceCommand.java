@@ -22,7 +22,7 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
             addCustomValue("InterfaceType", VmInterfaceType.forValue(iface.getType()).getDescription());
         }
         vmDeviceDao.remove(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmTemplateId()));
-        getVmNicDao().remove(getParameters().getInterfaceId());
+        vmNicDao.remove(getParameters().getInterfaceId());
         setSucceeded(true);
     }
 

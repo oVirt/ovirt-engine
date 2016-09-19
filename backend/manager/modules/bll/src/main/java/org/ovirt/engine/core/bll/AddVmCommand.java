@@ -284,7 +284,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected List<? extends VmNic> getVmInterfaces() {
         if (_vmInterfaces == null) {
-            List<VmNic> vmNetworkInterfaces = getVmNicDao().getAllForTemplate(vmInterfacesSourceId);
+            List<VmNic> vmNetworkInterfaces = vmNicDao.getAllForTemplate(vmInterfacesSourceId);
             _vmInterfaces = vmNetworkInterfaces == null ? new ArrayList<>() : vmNetworkInterfaces;
         }
         return _vmInterfaces;
@@ -1097,7 +1097,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             iface.setVmTemplateId(null);
             iface.setVmId(getParameters().getVmStaticData().getId());
             updateProfileOnNic(iface);
-            getVmNicDao().save(iface);
+            vmNicDao.save(iface);
             getCompensationContext().snapshotNewEntity(iface);
             vmNetworkStatisticsDao.save(iface.getStatistics());
             getCompensationContext().snapshotNewEntity(iface.getStatistics());

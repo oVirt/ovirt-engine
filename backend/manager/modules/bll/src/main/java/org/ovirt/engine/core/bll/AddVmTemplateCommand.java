@@ -775,7 +775,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void addVmInterfaces(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
-        List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getMasterVm().getId());
+        List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getMasterVm().getId());
         for (VmNic iface : interfaces) {
             VmNic iDynamic = new VmNic();
             iDynamic.setId(Guid.newGuid());
@@ -785,7 +785,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             iDynamic.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iDynamic.setType(iface.getType());
             iDynamic.setLinked(iface.isLinked());
-            getVmNicDao().save(iDynamic);
+            vmNicDao.save(iDynamic);
             srcDeviceIdToTargetDeviceIdMapping.put(iface.getId(), iDynamic.getId());
         }
     }

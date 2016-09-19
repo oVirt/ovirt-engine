@@ -30,7 +30,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     @Override
     protected void executeVmCommand() {
         this.setVmName(vmStaticDao.get(getParameters().getVmId()).getName());
-        VmNic iface = getVmNicDao().get(getParameters().getInterfaceId());
+        VmNic iface = vmNicDao.get(getParameters().getInterfaceId());
 
         if (iface != null) {
             interfaceName = iface.getName();
@@ -50,7 +50,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         // remove from db
         TransactionSupport.executeInNewTransaction(() -> {
             vmStaticDao.incrementDbGeneration(getParameters().getVmId());
-            getVmNicDao().remove(getParameters().getInterfaceId());
+            vmNicDao.remove(getParameters().getInterfaceId());
             vmNetworkStatisticsDao.remove(getParameters().getInterfaceId());
             vmDeviceDao.remove(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()));
             setSucceeded(true);

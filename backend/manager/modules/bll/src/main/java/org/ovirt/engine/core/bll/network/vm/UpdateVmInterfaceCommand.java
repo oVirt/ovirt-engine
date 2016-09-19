@@ -100,7 +100,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 bumpVmVersion();
                 updatePassthoughDeviceIfNeeded();
                 getCompensationContext().snapshotEntity(oldIface);
-                getVmNicDao().update(getInterface());
+                vmNicDao.update(getInterface());
                 getCompensationContext().stateChanged();
                 return null;
             });
@@ -134,7 +134,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 runVdsCommand(VDSCommandType.UpdateVmInterface,
                         new VmNicDeviceVDSParameters(getVdsId(),
                                 getVm(),
-                                getVmNicDao().get(getInterface().getId()),
+                                vmNicDao.get(getInterface().getId()),
                                 oldVmDevice));
                 break;
             }
@@ -172,7 +172,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         oldVmDevice = vmDeviceDao.get(new VmDeviceId(getInterface().getId(), getVmId()));
-        List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
+        List<VmNic> interfaces = vmNicDao.getAllForVm(getVmId());
         oldIface = interfaces.stream().filter(i -> i.getId().equals(getInterface().getId())).findFirst().orElse(null);
 
         if (oldIface == null || oldVmDevice == null) {
@@ -268,7 +268,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
         if (getInterface() != null && getInterface().getVnicProfileId() != null && getVm() != null) {
-            VmNic oldNic = getVmNicDao().get(getInterface().getId());
+            VmNic oldNic = vmNicDao.get(getInterface().getId());
             if (oldNic == null || isVnicProfileChanged(oldNic, getInterface())) {
                 permissionList.add(new PermissionSubject(getInterface().getVnicProfileId(),
                         VdcObjectType.VnicProfile,

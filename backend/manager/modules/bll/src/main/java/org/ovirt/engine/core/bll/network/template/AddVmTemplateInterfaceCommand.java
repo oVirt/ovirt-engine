@@ -35,7 +35,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 VmInterfaceType.forValue(
                         getParameters().getInterface().getType()).getSpeed());
 
-        getVmNicDao().save(getParameters().getInterface());
+        vmNicDao.save(getParameters().getInterface());
         getVmDeviceUtils().addInterface(
                 getParameters().getVmTemplateId(),
                 getParameters().getInterface().getId(),
@@ -51,7 +51,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateId());
+        List<VmNic> interfaces = vmNicDao.getAllForTemplate(getParameters().getVmTemplateId());
         if (!interfaceNameUnique(interfaces)
                 || !validate(templateExists())
                 || !validate(linkedToTemplate())) {

@@ -486,7 +486,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
             vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
             nic.setVnicProfileId(iface.getVnicProfileId());
-            getVmNicDao().save(nic);
+            vmNicDao.save(nic);
             getCompensationContext().snapshotNewEntity(nic);
 
             VmNetworkStatistics iStat = new VmNetworkStatistics();
@@ -510,9 +510,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected void removeNetwork() {
-        List<VmNic> list = getVmNicDao().getAllForTemplate(getVmTemplateId());
+        List<VmNic> list = vmNicDao.getAllForTemplate(getVmTemplateId());
         for (VmNic iface : list) {
-            getVmNicDao().remove(iface.getId());
+            vmNicDao.remove(iface.getId());
         }
     }
 

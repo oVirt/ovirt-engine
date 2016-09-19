@@ -99,7 +99,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         final List<Network> networks = networkDao.getAllForDataCenter(getStoragePoolId());
         for (Network network : networks) {
             if (network.isExternal()) {
-                for (VmNic nic : getVmNicDao().getAllForNetwork(network.getId())) {
+                for (VmNic nic : vmNicDao.getAllForNetwork(network.getId())) {
                     new ExternalNetworkManager(nic, network).deallocateIfExternal();
                 }
             }

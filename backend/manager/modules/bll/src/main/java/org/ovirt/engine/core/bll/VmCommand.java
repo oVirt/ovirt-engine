@@ -143,7 +143,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected List<VmNic> getInterfaces() {
         if (interfaces == null) {
-            interfaces = getVmNicDao().getAllForVm(getVmId());
+            interfaces = vmNicDao.getAllForVm(getVmId());
         }
 
         return interfaces;
