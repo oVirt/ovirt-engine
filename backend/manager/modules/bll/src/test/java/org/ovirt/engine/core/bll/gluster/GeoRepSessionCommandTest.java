@@ -25,10 +25,6 @@ public class GeoRepSessionCommandTest extends BaseCommandTest {
     protected final Guid geoRepSessionId = new Guid("bbcb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
-    public GeoRepSessionCommandTest() {
-        super();
-    }
-
     protected <T extends GeoRepSessionCommandBase> void prepareMocks(T command) {
         doReturn(geoRepDao).when(command).getGlusterGeoRepDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
