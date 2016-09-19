@@ -18,12 +18,9 @@ import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
-import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
@@ -58,15 +55,11 @@ public abstract class BaseDaoTestCase {
     protected static String initSql;
     protected static DataSource dataSource;
 
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
-
     @BeforeClass
     public static void initTestCase() throws Exception {
         if(dataSource == null) {
             try {
                 dataSource = createDataSource();
-                ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, dataSource);
 
                 final IDataSet dataset = initDataSet();
                 // load data from fixtures to DB

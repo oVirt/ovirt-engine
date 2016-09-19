@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,7 +40,6 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 public class RemoveVdsCommandTest extends BaseCommandTest {
     @Mock
@@ -76,9 +74,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Mock
     private GlusterHooksDao hooksDao;
-
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;

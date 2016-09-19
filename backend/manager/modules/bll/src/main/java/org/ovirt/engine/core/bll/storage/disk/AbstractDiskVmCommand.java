@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -262,7 +261,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                     return getAddressMapForScsiDisk(address, vmDeviceUnitMap, vmDevice, sPaprVscsiIndex, true);
                 }
             } finally {
-                LockManagerFactory.getLockManager().releaseLock(vmDiskHotPlugEngineLock);
+                getLockManager().releaseLock(vmDiskHotPlugEngineLock);
             }
         }
         return null;

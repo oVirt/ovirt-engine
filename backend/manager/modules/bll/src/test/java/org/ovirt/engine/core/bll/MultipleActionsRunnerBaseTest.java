@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
 
@@ -33,9 +32,6 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
-
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     protected static class TestCommand extends CommandBase {
 

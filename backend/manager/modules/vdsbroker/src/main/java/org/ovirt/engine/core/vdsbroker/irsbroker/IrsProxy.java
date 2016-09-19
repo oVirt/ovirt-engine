@@ -79,7 +79,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
@@ -127,6 +127,9 @@ public class IrsProxy {
 
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    private LockManager lockManager;
 
     @Inject
     private StoragePoolDomainHelper storagePoolDomainHelper;
@@ -1575,9 +1578,7 @@ public class IrsProxy {
                         new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
                                 EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
                 EngineLock engineLock = new EngineLock(lockMap, null);
-                if (!LockManagerFactory.getLockManager()
-                        .acquireLock(engineLock)
-                        .getFirst()) {
+                if (!lockManager.acquireLock(engineLock).getFirst()) {
                     log.info("Failed to acquire lock to refresh storage connection and pool metadata for host '{}', skipping it",
                             vdsId);
                     continue;
@@ -1587,7 +1588,7 @@ public class IrsProxy {
                 if (vds.getStatus() != VDSStatus.Up) {
                     log.info("Skipping storage connection and pool metadata information for host '{}' as it's no longer in status UP",
                             vdsId);
-                    LockManagerFactory.getLockManager().releaseLock(engineLock);
+                    lockManager.releaseLock(engineLock);
                     continue;
                 }
 
@@ -1621,7 +1622,7 @@ public class IrsProxy {
                     });
         } finally {
             if (!acquiredLocks.isEmpty()) {
-                LockManagerFactory.getLockManager().releaseLock(new EngineLock(acquiredLocks, null));
+                lockManager.releaseLock(new EngineLock(acquiredLocks, null));
             }
         }
     }

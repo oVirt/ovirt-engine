@@ -8,6 +8,5 @@ public class ArquillianRuleExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.observer(ArquillianRuleExecutor.class);
         builder.service(ArquillianRule.class, RollbackRule.class);
-        builder.service(ArquillianRule.class, MockTransactionManagerRule.class);
     }
 }

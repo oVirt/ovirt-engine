@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -60,10 +60,9 @@ import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ImportHostedEngineStorageDomainCommandTest {
+public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest {
 
     private static final Guid HE_SP_ID = Guid.createGuidFromString("35000000-0000-0000-0000-000000000000");
     private static final Guid HE_SD_ID = Guid.createGuidFromString("35100000-0000-0000-0000-000000000000");
@@ -72,8 +71,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
     private static final String ISCSIUSER = "iscsiuser";
     private static final String ISCSIPASS = "iscsipass";
 
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
     @Mock
     private HostedEngineHelper hostedEngineHelper;
     private StorageDomainManagementParameter parameters = new StorageDomainManagementParameter();

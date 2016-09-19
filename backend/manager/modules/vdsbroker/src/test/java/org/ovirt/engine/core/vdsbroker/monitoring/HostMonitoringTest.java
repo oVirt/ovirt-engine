@@ -24,7 +24,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
@@ -34,9 +33,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class HostMonitoringTest {
-
-    @ClassRule
-    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();

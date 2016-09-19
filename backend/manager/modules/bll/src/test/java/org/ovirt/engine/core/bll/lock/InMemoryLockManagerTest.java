@@ -9,14 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
-import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 
 public class InMemoryLockManagerTest {
 
@@ -32,10 +28,7 @@ public class InMemoryLockManagerTest {
     private EngineLock failLockLock;
     private String updateGuid;
     private String lockGuid;
-    private InMemoryLockManager lockMager = new InMemoryLockManager();
-
-    @Rule
-    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule(BeanType.LOCK_MANAGER, lockMager);
+    private InMemoryLockManager lockManager = new InMemoryLockManager();
 
     @Before
     public void setup() {
@@ -66,67 +59,67 @@ public class InMemoryLockManagerTest {
 
     @Test
     public void checkAcquireLockSuccess() {
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock1).getFirst());
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock2).getFirst());
-        LockManagerFactory.getLockManager().releaseLock(lockLock2);
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock2).getFirst());
-        LockManagerFactory.getLockManager().releaseLock(updateLock1);
-        LockManagerFactory.getLockManager().releaseLock(updateLock2);
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateAndLockLock).getFirst());
-        LockManagerFactory.getLockManager().releaseLock(updateAndLockLock);
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock1).getFirst());
-        assertTrue(lockMager.releaseLock(updateGuid + "1"));
-        assertTrue(lockMager.showAllLocks().isEmpty());
+        assertTrue(lockManager.acquireLock(updateLock1).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        lockManager.releaseLock(lockLock2);
+        assertTrue(lockManager.acquireLock(updateLock2).getFirst());
+        lockManager.releaseLock(updateLock1);
+        lockManager.releaseLock(updateLock2);
+        assertTrue(lockManager.acquireLock(updateAndLockLock).getFirst());
+        lockManager.releaseLock(updateAndLockLock);
+        assertTrue(lockManager.acquireLock(updateLock1).getFirst());
+        assertTrue(lockManager.releaseLock(updateGuid + "1"));
+        assertTrue(lockManager.showAllLocks().isEmpty());
     }
 
     @Test
     public void checkAcquireLockFailure() {
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock1).getFirst());
-        assertFalse(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
-        LockManagerFactory.getLockManager().releaseLock(updateLock1);
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
-        LockManagerFactory.getLockManager().releaseLock(lockLock1);
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateAndLockLock).getFirst());
-        Pair<Boolean, Set<String>> lockResult = LockManagerFactory.getLockManager().acquireLock(lockLock1);
+        assertTrue(lockManager.acquireLock(updateLock1).getFirst());
+        assertFalse(lockManager.acquireLock(lockLock1).getFirst());
+        lockManager.releaseLock(updateLock1);
+        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+        lockManager.releaseLock(lockLock1);
+        assertTrue(lockManager.acquireLock(updateAndLockLock).getFirst());
+        Pair<Boolean, Set<String>> lockResult = lockManager.acquireLock(lockLock1);
         assertFalse(lockResult.getFirst());
         assertTrue(lockResult.getSecond().contains(ERROR1));
         assertEquals(1, lockResult.getSecond().size());
-        lockResult = LockManagerFactory.getLockManager().acquireLock(updateLock2);
+        lockResult = lockManager.acquireLock(updateLock2);
         assertFalse(lockResult.getFirst());
         assertTrue(lockResult.getSecond().contains(ERROR2));
         assertEquals(1, lockResult.getSecond().size());
-        LockManagerFactory.getLockManager().releaseLock(updateAndLockLock);
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock2).getFirst());
-        LockManagerFactory.getLockManager().releaseLock(lockLock1);
-        LockManagerFactory.getLockManager().releaseLock(updateLock2);
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateAndLockLock).getFirst());
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock3).getFirst());
-        lockResult = LockManagerFactory.getLockManager().acquireLock(failLockLock);
+        lockManager.releaseLock(updateAndLockLock);
+        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+        assertTrue(lockManager.acquireLock(updateLock2).getFirst());
+        lockManager.releaseLock(lockLock1);
+        lockManager.releaseLock(updateLock2);
+        assertTrue(lockManager.acquireLock(updateAndLockLock).getFirst());
+        assertTrue(lockManager.acquireLock(updateLock3).getFirst());
+        lockResult = lockManager.acquireLock(failLockLock);
         assertFalse(lockResult.getFirst());
         assertTrue(lockResult.getSecond().contains(ERROR1));
         assertTrue(lockResult.getSecond().contains(ERROR3));
         assertEquals(2, lockResult.getSecond().size());
-        LockManagerFactory.getLockManager().releaseLock(updateAndLockLock);
-        LockManagerFactory.getLockManager().releaseLock(updateLock3);
+        lockManager.releaseLock(updateAndLockLock);
+        lockManager.releaseLock(updateLock3);
     }
 
     @Test
     public void checkClear() {
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock2).getFirst());
-        LockManagerFactory.getLockManager().clear();
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock2).getFirst());
-        LockManagerFactory.getLockManager().clear();
+        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        lockManager.clear();
+        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        lockManager.clear();
     }
 
     @Test
     public void checkShowLocks() {
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock1).getFirst());
-        assertTrue(LockManagerFactory.getLockManager().acquireLock(lockLock2).getFirst());
-        assertEquals(2, lockMager.showAllLocks().size());
-        LockManagerFactory.getLockManager().clear();
-        assertTrue(lockMager.showAllLocks().isEmpty());
+        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        assertEquals(2, lockManager.showAllLocks().size());
+        lockManager.clear();
+        assertTrue(lockManager.showAllLocks().isEmpty());
     }
 }

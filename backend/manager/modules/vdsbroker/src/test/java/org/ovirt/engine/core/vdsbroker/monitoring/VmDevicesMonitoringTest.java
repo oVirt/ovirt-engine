@@ -17,10 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.TransactionManager;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -34,7 +37,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
@@ -42,10 +45,12 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 public class VmDevicesMonitoringTest {
 
     @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+    public static InjectorRule injectorRule = new InjectorRule();
 
     private VmDevicesMonitoring vmDevicesMonitoring;
 
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private TransactionManager transactionManager;
     @Mock
     private VmDynamicDao vmDynamicDao;
     @Mock
@@ -78,6 +83,8 @@ public class VmDevicesMonitoringTest {
         doReturn(vmDynamicDao).when(vmDevicesMonitoring).getVmDynamicDao();
         doReturn(vmDeviceDao).when(vmDevicesMonitoring).getVmDeviceDao();
         doReturn(resourceManager).when(vmDevicesMonitoring).getResourceManager();
+
+        injectorRule.bind(TransactionManager.class, transactionManager);
     }
 
     private static Map<String, Object> getDeviceInfo(Guid id, String deviceType, String device, String address) {

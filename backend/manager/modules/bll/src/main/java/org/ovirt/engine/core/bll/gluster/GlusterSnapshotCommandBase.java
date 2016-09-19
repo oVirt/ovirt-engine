@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 
 public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
 
@@ -54,7 +53,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(group,
                         EngineMessage.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS)), null);
-        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        getLockManager().acquireLockWait(lock);
         return lock;
     }
 }

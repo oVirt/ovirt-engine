@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import javax.transaction.TransactionManager;
+
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,8 +29,13 @@ public abstract class BaseCommandTest {
     @Mock
     protected SsoSessionUtils ssoSessionUtils;
 
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    protected TransactionManager transactionManager;
+
     @Before
-    public void setUpSessionDataContainer() {
+    public void setUpBase() {
         MockitoAnnotations.initMocks(this);
+
+        injectorRule.bind(TransactionManager.class, transactionManager);
     }
 }

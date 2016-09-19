@@ -100,7 +100,6 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -130,6 +129,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     private List<QuotaConsumptionParameter> consumptionParameters;
     protected Map<String, Serializable> commandData;
     private Long sessionSeqId;
+
+    @Inject
+    private LockManager lockManager;
 
     @Inject
     private QuotaManager quotaManager;
@@ -2002,7 +2004,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected LockManager getLockManager() {
-        return LockManagerFactory.getLockManager();
+        return lockManager;
     }
 
     /**

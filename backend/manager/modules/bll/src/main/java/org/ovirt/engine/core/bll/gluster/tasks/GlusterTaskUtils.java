@@ -36,7 +36,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,7 +243,7 @@ public class GlusterTaskUtils {
     }
 
     public LockManager getLockManager() {
-        return LockManagerFactory.getLockManager();
+        return Injector.get(LockManager.class);
     }
     @SuppressWarnings("serial")
     private void logMessage(Guid clusterId, GlusterVolumeEntity volume, final String action, final String status, AuditLogType logType) {

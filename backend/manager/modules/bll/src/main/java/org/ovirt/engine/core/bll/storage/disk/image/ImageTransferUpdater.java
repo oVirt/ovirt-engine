@@ -16,7 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,15 +23,16 @@ public class ImageTransferUpdater {
     private static final Logger log = LoggerFactory.getLogger(ImageTransferUpdater.class);
 
     private final ImageTransferDao imageTransferDao;
+    private final LockManager lockManager;
 
     @Inject
-    ImageTransferUpdater(ImageTransferDao imageTransferDao) {
+    ImageTransferUpdater(ImageTransferDao imageTransferDao, LockManager lockManager) {
         this.imageTransferDao = requireNonNull(imageTransferDao);
+        this.lockManager = requireNonNull(lockManager);
     }
 
     public ImageTransfer updateEntity(ImageTransfer updates, Guid commandId, boolean clearResourceId) {
         // TODO this lock might not be enough; analyze possible concurrent calls
-        LockManager lockManager = LockManagerFactory.getLockManager();
         EngineLock lock = getEntityUpdateLock(commandId);
         try {
             lockManager.acquireLockWait(lock);

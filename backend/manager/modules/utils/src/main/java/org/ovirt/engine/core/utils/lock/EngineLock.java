@@ -2,6 +2,8 @@ package org.ovirt.engine.core.utils.lock;
 
 import java.util.Map;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
@@ -52,7 +54,7 @@ public class EngineLock implements AutoCloseable {
 
     @Override
     public void close() {
-        LockManagerFactory.getLockManager().releaseLock(this);
+        CDI.current().select(LockManager.class).get().releaseLock(this);
     }
 
 }

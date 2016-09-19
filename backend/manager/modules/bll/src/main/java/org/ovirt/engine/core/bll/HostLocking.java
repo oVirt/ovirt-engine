@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -12,15 +13,16 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.slf4j.Logger;
 
 @Singleton
 public class HostLocking {
 
+    @Inject
+    private LockManager lockManager;
+
     public EngineLock acquireMonitorLock(VDS host, String lockReleaseMessage, Logger log) {
         Guid hostId = host.getId();
-        LockManager lockManager = LockManagerFactory.getLockManager();
         Map<String, Pair<String, String>> exclusiveLocks =
                 Collections.singletonMap(hostId.toString(), new Pair<>(LockingGroup.VDS_INIT.name(), ""));
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.transaction;
 
 import javax.ejb.TransactionRolledbackLocalException;
+import javax.enterprise.inject.spi.CDI;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -12,8 +13,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +24,7 @@ public class TransactionSupport {
      * JBoss specific location of TransactionManager
      */
     private static TransactionManager findTransactionManager() {
-        TransactionManager tm = EjbUtils.findResource(ContainerManagedResourceType.TRANSACTION_MANAGER);
-        return tm;
+        return CDI.current().select(TransactionManager.class).get();
     }
 
     /**

@@ -89,7 +89,7 @@ import org.ovirt.engine.core.dao.qos.CpuQosDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
@@ -106,6 +106,8 @@ public class VdsEventListener implements IVdsEventListener {
     Instance<ResourceManager> resourceManagerProvider;
     @Inject
     EventQueue eventQueue;
+    @Inject
+    private LockManager lockManager;
     @Inject
     private AvailableUpdatesFinder availableUpdatesFinder;
     @Inject
@@ -164,7 +166,7 @@ public class VdsEventListener implements IVdsEventListener {
                     new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString())), null);
             try {
-                LockManagerFactory.getLockManager().acquireLockWait(lock);
+                lockManager.acquireLockWait(lock);
                 clearDomainCache(vds);
                 StoragePool storage_pool = storagePoolDao.get(vds.getStoragePoolId());
                 if (StoragePoolStatus.Uninitialized != storage_pool
@@ -178,7 +180,7 @@ public class VdsEventListener implements IVdsEventListener {
                     backend.runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
                 }
             } finally {
-                LockManagerFactory.getLockManager().releaseLock(lock);
+                lockManager.releaseLock(lock);
             }
         }
     }

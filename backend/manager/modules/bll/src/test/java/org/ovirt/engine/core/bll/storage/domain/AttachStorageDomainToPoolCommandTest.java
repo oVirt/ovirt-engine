@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -47,7 +46,6 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
     @Mock
@@ -76,9 +74,6 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
             new AttachStorageDomainToPoolCommand<>(
                     new AttachStorageDomainToPoolParameters(Guid.newGuid(), Guid.newGuid()),
                     CommandContext.createContext(""));
-
-    @ClassRule
-    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     @Test
     public void statusSetInMap() {

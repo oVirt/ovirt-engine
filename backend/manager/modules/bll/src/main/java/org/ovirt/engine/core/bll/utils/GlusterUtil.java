@@ -45,9 +45,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
 import org.ovirt.engine.core.uutils.ssh.SSHClient;
 import org.slf4j.Logger;
@@ -274,7 +275,7 @@ public class GlusterUtil {
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
                         EngineMessage.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
         EngineLock lock = new EngineLock(exclusiveLocks, null);
-        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        Injector.get(LockManager.class).acquireLockWait(lock);
         return lock;
     }
 

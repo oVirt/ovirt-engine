@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 
 public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSnapshotActionParameters> extends GlusterSnapshotCommandBase<T> {
     private GlusterVolumeSnapshotEntity snapshot;
@@ -55,7 +54,7 @@ public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSn
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
                         EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
-        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        getLockManager().acquireLockWait(lock);
         return lock;
     }
 
@@ -63,7 +62,7 @@ public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSn
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
                         EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
-        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        getLockManager().acquireLockWait(lock);
         return lock;
     }
 }

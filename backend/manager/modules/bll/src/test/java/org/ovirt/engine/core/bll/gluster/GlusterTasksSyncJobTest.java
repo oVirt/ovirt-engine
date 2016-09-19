@@ -48,7 +48,6 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterTasksSyncJobTest {
@@ -64,9 +63,6 @@ public class GlusterTasksSyncJobTest {
     private static final Guid[] VOL_GUIDS = {new Guid("AA111111-1111-1111-1111-111111111111"),
         new Guid("AA222222-2222-2222-2222-222222222222"),
         new Guid("AA333333-3333-3333-3333-333333333333")};
-
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @Mock
     private ClusterUtils clusterUtils;

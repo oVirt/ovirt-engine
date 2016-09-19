@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -18,10 +20,14 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends VdsBrokerCommand<P> {
+
+    @Inject
+    private LockManager lockManager;
+
     private EngineLock lock;
 
     public SpmStopVDSCommand(P parameters) {
@@ -41,7 +47,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
         boolean lockAcquired = false;
         try {
             if (canVdsBeReached()) {
-                lockAcquired = LockManagerFactory.getLockManager().acquireLock(retrieveVdsExecutionLock()).getFirst();
+                lockAcquired = lockManager.acquireLock(retrieveVdsExecutionLock()).getFirst();
                 if (!lockAcquired) {
                     getVDSReturnValue().setVdsError(new VDSError(EngineError.ENGINE,
                             "Failed to acquire vds execution lock - related operation is under execution"));
@@ -109,7 +115,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             getVDSReturnValue().setSucceeded(false);
         } finally {
             if (lockAcquired) {
-                LockManagerFactory.getLockManager().releaseLock(retrieveVdsExecutionLock());
+                lockManager.releaseLock(retrieveVdsExecutionLock());
             }
         }
     }

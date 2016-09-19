@@ -92,7 +92,6 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
@@ -499,7 +498,7 @@ public class VmHandler {
     }
 
     protected static LockManager getLockManager() {
-        return LockManagerFactory.getLockManager();
+        return Injector.get(LockManager.class);
     }
 
     /**

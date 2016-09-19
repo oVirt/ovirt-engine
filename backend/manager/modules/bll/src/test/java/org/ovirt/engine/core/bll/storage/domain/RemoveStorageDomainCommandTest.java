@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,12 +35,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 /** A test case for the {@link RemoveStorageDomainCommand} */
 public class RemoveStorageDomainCommandTest extends BaseCommandTest {
-    @ClassRule
-    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     @Spy
     @InjectMocks

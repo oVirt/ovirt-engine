@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -30,10 +29,6 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class CommandBaseTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
-
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     protected String session = "someSession";
 

@@ -17,12 +17,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.TransactionManager;
+
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -74,7 +77,6 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterSyncJobTest {
@@ -88,9 +90,6 @@ public class GlusterSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
-
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
@@ -125,6 +124,8 @@ public class GlusterSyncJobTest {
     private static final Guid NEW_VOL_ID = new Guid("98918f1c-a3d7-4abe-ab25-563bbf0d4fd3");
     private static final String NEW_VOL_NAME = "test-new-vol";
 
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private TransactionManager transactionManager;
     @Mock
     private GlusterVolumeDao volumeDao;
     @Mock
@@ -165,6 +166,7 @@ public class GlusterSyncJobTest {
 
     @Before
     public void before() {
+        injectorRule.bind(TransactionManager.class, transactionManager);
         injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
         injectorRule.bind(AuditLogDirector.class, mock(AuditLogDirector.class));
         glusterManager = spy(GlusterSyncJob.getInstance());
