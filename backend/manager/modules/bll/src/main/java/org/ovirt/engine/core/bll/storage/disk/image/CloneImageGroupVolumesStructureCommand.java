@@ -33,8 +33,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
 
     @Override
     protected void executeCommand() {
-        List<DiskImage> images = getDiskImageDao()
-                .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         ImagesHandler.sortImageList(images);
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images));
         persistCommand(getParameters().getParentCommand(), getCallback() != null);
@@ -88,7 +87,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         log.info("Starting child command {} of {}, image '{}'",
                 completedChildren + 1, getParameters().getImageIds().size(), imageId);
 
-        createImage(getDiskImageDao().getSnapshotById(imageId));
+        createImage(diskImageDao.getSnapshotById(imageId));
         return true;
     }
 

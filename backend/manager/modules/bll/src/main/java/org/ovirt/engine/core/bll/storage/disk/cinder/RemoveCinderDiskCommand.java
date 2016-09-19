@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -62,7 +61,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
             return;
         }
         // Get the first volume to delete from.
-        CinderDisk parentVolume = (CinderDisk) getDiskImageDao().getSnapshotById(disk.getId());
+        CinderDisk parentVolume = (CinderDisk) diskImageDao.getSnapshotById(disk.getId());
         initCinderDiskVolumesParametersList(parentVolume);
         if (!removeCinderVolume(0, getDisk().getStorageIds().get(0))) {
             getImageDao().updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
@@ -75,8 +74,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
     }
 
     private void handleRemoveCinderVolumesForIllegal() {
-        final List<DiskImage> diskSnapshots =
-                DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(cinderDisk.getId());
+        final List<DiskImage> diskSnapshots = diskImageDao.getAllSnapshotsForImageGroup(cinderDisk.getId());
         ImagesHandler.sortImageList(diskSnapshots);
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
                 () -> {

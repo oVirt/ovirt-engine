@@ -115,7 +115,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                     continue;
                 }
 
-                DiskImage image = getDiskImageDao().getSnapshotById(imageId);
+                DiskImage image = diskImageDao.getSnapshotById(imageId);
                 if (image != null) {
                     images.add(image);
                 }
@@ -128,7 +128,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
      * Returns the images chain of the disk.
      */
     protected List<DiskImage> getAllImagesForDisk() {
-        return getDiskImageDao().getAllSnapshotsForImageGroup(getImageGroupId());
+        return diskImageDao.getAllSnapshotsForImageGroup(getImageGroupId());
     }
 
     protected SnapshotsValidator getSnapshotsValidator() {
@@ -311,7 +311,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     private void checkImageIdConsistency(int completedImageIndex) {
         Guid imageId = getParameters().getImageIds().get(completedImageIndex);
         Guid childImageId = getParameters().getChildImageIds().get(completedImageIndex);
-        if (getDiskImageDao().get(childImageId) == null) {
+        if (diskImageDao.get(childImageId) == null) {
             // Swap instances of the removed id with our id
             for (int i = completedImageIndex + 1; i < getParameters().getImageIds().size(); i++) {
                 if (getParameters().getImageIds().get(i).equals(childImageId)) {
@@ -325,7 +325,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     private RemoveSnapshotSingleDiskParameters buildRemoveSnapshotSingleDiskLiveParameters(Guid imageId, int completedChildren) {
-        DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(imageId).get(0);
+        DiskImage dest = diskImageDao.getAllSnapshotsForParent(imageId).get(0);
         RemoveSnapshotSingleDiskParameters parameters =
                 new RemoveSnapshotSingleDiskParameters(imageId, getVmId());
         parameters.setDestinationImageId(dest.getImageId());
@@ -342,14 +342,14 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     private ImagesContainterParametersBase buildRemoveSnapshotSingleDiskParameters(Guid imageId) {
         ImagesContainterParametersBase parameters = new ImagesContainterParametersBase(
                 imageId, getVmId());
-        DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(imageId).get(0);
+        DiskImage dest = diskImageDao.getAllSnapshotsForParent(imageId).get(0);
         parameters.setDestinationImageId(dest.getImageId());
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
         parameters.setParentCommand(getActionType());
         parameters.setWipeAfterDelete(dest.isWipeAfterDelete());
         parameters.setSessionId(getParameters().getSessionId());
-        parameters.setVmSnapshotId(getDiskImageDao().getSnapshotById(imageId).getVmSnapshotId());
+        parameters.setVmSnapshotId(diskImageDao.getSnapshotById(imageId).getVmSnapshotId());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
@@ -479,7 +479,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     protected boolean validateAllDiskImages() {
-        List<DiskImage> images = getDiskImageDao().getAllSnapshotsForImageGroup(getDiskImage().getId());
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getDiskImage().getId());
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
 
         return validate(diskImagesValidator.diskImagesNotLocked()) &&

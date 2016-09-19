@@ -149,7 +149,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     private Map<VM, List<MoveDiskParameters>> createVmDiskParamsMap() {
         Map<VM, List<MoveDiskParameters>> vmDisksMap = new HashMap<>();
         for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
-            DiskImage diskImage = getDiskImageDao().get(moveDiskParameters.getImageId());
+            DiskImage diskImage = diskImageDao.get(moveDiskParameters.getImageId());
 
             Map<Boolean, List<VM>> allVmsForDisk = getVmDao().getForDisk(diskImage.getId(), false);
             List<VM> vmsForPluggedDisk = allVmsForDisk.get(Boolean.TRUE);
@@ -241,7 +241,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         List<PermissionSubject> permissionList = new ArrayList<>();
 
         for (MoveOrCopyImageGroupParameters parameters : getParameters().getParametersList()) {
-            DiskImage diskImage = getDiskImageDao().get(parameters.getImageId());
+            DiskImage diskImage = diskImageDao.get(parameters.getImageId());
             Guid diskId = diskImage == null ? Guid.Empty : diskImage.getId();
             permissionList.add(new PermissionSubject(diskId,
                     VdcObjectType.Disk,

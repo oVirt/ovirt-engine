@@ -370,16 +370,11 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     private void mockDaos() {
         mockVmDao();
-        mockDiskImageDao();
         mockValidators();
     }
 
     private void mockVmDao() {
         doReturn(vmDao).when(command).getVmDao();
-    }
-
-    private void mockDiskImageDao() {
-        doReturn(diskImageDao).when(command).getDiskImageDao();
     }
 
     private void mockValidators() {

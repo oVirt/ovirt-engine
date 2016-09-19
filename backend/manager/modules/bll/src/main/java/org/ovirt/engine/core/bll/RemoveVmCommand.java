@@ -274,7 +274,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         for (Disk disk : getVm().getDiskList()) {
-            List<DiskImage> diskImageList = getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
+            List<DiskImage> diskImageList = diskImageDao.getAllSnapshotsForImageGroup(disk.getId());
             if (diskImageList.size() > 1) {
                 return failValidation(EngineMessage.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_SNAPSHOTS_EXIST);
             }

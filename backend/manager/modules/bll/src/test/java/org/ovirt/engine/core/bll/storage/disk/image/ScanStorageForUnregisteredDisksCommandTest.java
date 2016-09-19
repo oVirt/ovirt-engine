@@ -47,12 +47,6 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
     private DiskImage diskImageForTest = new DiskImage();
     private Guid storageId = Guid.newGuid();
 
-    @Before
-    public void mockCommand() throws IOException, OvfReaderException {
-        mockCommandParameters();
-        setUpCommandEntities();
-    }
-
     private VdcQueryReturnValue generateQueryReturnValueForGetDiskImages(boolean succeeded,
             List<DiskImage> disksFromStorage,
             String exceptionString) {
@@ -82,12 +76,8 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
         assertTrue("return value should be true", cmd.getReturnValue().getSucceeded());
     }
 
-    private void mockCommandParameters() {
-        // Mock the command Parameters
-        doReturn(diskImageDaoMock).when(cmd).getDiskImageDao();
-    }
-
-    private void setUpCommandEntities() throws OvfReaderException {
+    @Before
+    public void setUpCommandEntities() throws OvfReaderException {
         List<DiskImage> disksFromStorage = new ArrayList<>();
         createDiskForTest(diskImageForTest);
         disksFromStorage.add(diskImageForTest);

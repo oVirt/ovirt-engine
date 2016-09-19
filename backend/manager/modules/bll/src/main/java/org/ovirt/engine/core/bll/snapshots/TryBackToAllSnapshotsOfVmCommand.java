@@ -298,7 +298,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     private List<DiskImage> getImagesToPreview() {
         if (imagesToPreview == null) {
             imagesToPreview = getParameters().getDisks() != null ? getParameters().getDisks() :
-                    getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
+                    diskImageDao.getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
 
             // Filter out shareable/nonsnapable disks
             List<CinderDisk> CinderImagesToPreview = ImagesHandler.filterDisksBasedOnCinder(imagesToPreview);

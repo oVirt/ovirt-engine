@@ -64,11 +64,11 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         // Get all the Cinder disk volumes ordered from the leaf to the parent.
         getParameters().getChildCommandsParameters().add(createChildParams(cinderDisk));
         List<DiskImage> dependantVolumesForSnapshot =
-                getDiskImageDao().getAllSnapshotsForParent(cinderDisk.getImageId());
+                diskImageDao.getAllSnapshotsForParent(cinderDisk.getImageId());
         while (!dependantVolumesForSnapshot.isEmpty()) {
             cinderDisk = (CinderDisk) dependantVolumesForSnapshot.get(0);
             getParameters().getChildCommandsParameters().addFirst(createChildParams(cinderDisk));
-            dependantVolumesForSnapshot = getDiskImageDao().getAllSnapshotsForParent(cinderDisk.getImageId());
+            dependantVolumesForSnapshot = diskImageDao.getAllSnapshotsForParent(cinderDisk.getImageId());
         }
     }
 

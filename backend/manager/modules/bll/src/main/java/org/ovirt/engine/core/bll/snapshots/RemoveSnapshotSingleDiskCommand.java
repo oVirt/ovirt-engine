@@ -80,7 +80,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
             Set<Guid> imagesToUpdate = new HashSet<>();
             DiskImage curr = getDestinationDiskImage();
             while (!curr.getParentId().equals(getDiskImage().getParentId())) {
-                curr = getDiskImageDao().getSnapshotById(curr.getParentId());
+                curr = diskImageDao.getSnapshotById(curr.getParentId());
                 imagesToUpdate.add(curr.getImageId());
             }
             syncDbRecords(VmBlockJobType.PULL,

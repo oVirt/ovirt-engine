@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeClassificatio
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -148,7 +149,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     protected CinderDisk getDisk() {
         if (disk == null) {
-            disk = (CinderDisk) getDiskImageDao().get(getImageId());
+            disk = (CinderDisk) diskImageDao.get(getImageId());
         }
         return disk;
     }
@@ -164,7 +165,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
     }
 
     private void updateLastModifiedInParent(Guid parentId) {
-        DiskImage previousSnapshot = getDiskImageDao().getSnapshotById(parentId);
+        DiskImage previousSnapshot = diskImageDao.getSnapshotById(parentId);
 
         // If the old description of the snapshot got overriden, we should restore the previous description
         if (getParameters().getOldLastModifiedValue() != null) {
@@ -186,7 +187,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     @Override
     public CommandCallback getCallback() {
-        return new CreateCinderSnapshotCommandCallback();
+        return Injector.injectMembers(new CreateCinderSnapshotCommandCallback());
     }
 
 }

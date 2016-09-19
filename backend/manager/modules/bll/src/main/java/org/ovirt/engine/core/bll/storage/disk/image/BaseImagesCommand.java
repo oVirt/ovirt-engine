@@ -66,9 +66,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getImage() {
         if (image == null) {
-            image = getDiskImageDao().get(getImageId());
+            image = diskImageDao.get(getImageId());
             if (image == null) {
-                image = getDiskImageDao().getSnapshotById(getImageId());
+                image = diskImageDao.getSnapshotById(getImageId());
             }
         }
         return image;
@@ -136,9 +136,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getDestinationDiskImage() {
         if (destinationImage == null) {
-            destinationImage = getDiskImageDao().get(getDestinationImageId());
+            destinationImage = diskImageDao.get(getDestinationImageId());
             if (destinationImage == null) {
-                destinationImage = getDiskImageDao().getSnapshotById(getDestinationImageId());
+                destinationImage = diskImageDao.getSnapshotById(getDestinationImageId());
             }
         }
         return destinationImage;
@@ -194,7 +194,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             return;
         }
 
-        DiskImage oldImage = getDiskImageDao().getSnapshotById(oldImageId);
+        DiskImage oldImage = diskImageDao.getSnapshotById(oldImageId);
         oldImage.setActive(active);
         getImageDao().update(oldImage.getImage());
     }
@@ -209,7 +209,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return The ID of the image for the same drive, or null if none found.
      */
     protected Guid findImageForSameDrive(Guid snapshotId) {
-        List<DiskImage> imagesFromSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+        List<DiskImage> imagesFromSnapshot = diskImageDao.getAllSnapshotsForVmSnapshot(snapshotId);
         for (DiskImage diskImage : imagesFromSnapshot) {
             if (getDiskImage().getId().equals(diskImage.getId())) {
                 return diskImage.getImageId();
@@ -414,7 +414,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         getImageStorageDomainMapDao().remove(snapshot.getImageId());
         getImageDao().remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =
-                getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getId());
+                diskImageDao.getAllSnapshotsForImageGroup(snapshot.getId());
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {
             getBaseDiskDao().remove(snapshot.getId());
         }

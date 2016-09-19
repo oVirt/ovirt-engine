@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
@@ -137,8 +136,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         // The base snapshot is deleted if everything went well.  In case it's not deleted, we
         // hijack it to preserve a link to the broken image.  This makes the image discoverable
         // so that we can retry the deletion later, yet doesn't corrupt the VM image chain.
-        List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
-                .getAllSnapshotsForParent(topImage.getImageId());
+        List<DiskImage> children = diskImageDao.getAllSnapshotsForParent(topImage.getImageId());
         if (!children.isEmpty()) {
             DiskImage childImage = children.get(0);
             childImage.setParentId(baseImage.getImageId());

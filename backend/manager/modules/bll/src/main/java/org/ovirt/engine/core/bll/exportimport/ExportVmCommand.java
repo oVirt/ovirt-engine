@@ -444,7 +444,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
      */
     private DiskImage getDiskForVolumeInfo(DiskImage disk) {
         if (getParameters().getCopyCollapse()) {
-            return getDiskImageDao().getAncestor(disk.getImageId());
+            return diskImageDao.getAncestor(disk.getImageId());
         } else {
             return disk;
         }

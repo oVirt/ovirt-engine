@@ -170,7 +170,7 @@ public class MergeStatusCommand<T extends MergeParameters>
         DiskImage curr = getParameters().getTopImage();
         imagesToRemove.add(curr.getImageId());
         while (!curr.getParentId().equals(getParameters().getBaseImage().getParentId())) {
-            curr = getDbFacade().getDiskImageDao().getSnapshotById(curr.getParentId());
+            curr = diskImageDao.getSnapshotById(curr.getParentId());
             imagesToRemove.add(curr.getImageId());
         }
         return imagesToRemove;

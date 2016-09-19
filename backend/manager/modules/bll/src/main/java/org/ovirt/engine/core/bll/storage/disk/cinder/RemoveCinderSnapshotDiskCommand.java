@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -49,7 +50,7 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
             DiskImage curr = getDestinationDiskImage();
 
             // Set the parent snapshot to be dependent on the current snapshot descendant id.
-            List<DiskImage> orderedCinderSnapshots = getDiskImageDao().getAllSnapshotsForParent(curr.getImageId());
+            List<DiskImage> orderedCinderSnapshots = diskImageDao.getAllSnapshotsForParent(curr.getImageId());
             if (!orderedCinderSnapshots.isEmpty()) {
                 DiskImage volumeBasedOnsnapshot = orderedCinderSnapshots.get(0);
                 volumeBasedOnsnapshot.setParentId(curr.getParentId());
@@ -62,7 +63,7 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
 
     @Override
     public CommandCallback getCallback() {
-        return new RemoveCinderSnapshotCommandCallback();
+        return Injector.injectMembers(new RemoveCinderSnapshotCommandCallback());
     }
 
     private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {

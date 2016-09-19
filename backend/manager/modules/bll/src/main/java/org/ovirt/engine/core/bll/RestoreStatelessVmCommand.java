@@ -117,7 +117,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
     }
 
     private List<DiskImage> getDiskSnapshotsForVmSnapshot(Guid snapshotId) {
-        List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForVmSnapshot(snapshotId);
         return images != null ? images : Collections.<DiskImage>emptyList();
     }
 

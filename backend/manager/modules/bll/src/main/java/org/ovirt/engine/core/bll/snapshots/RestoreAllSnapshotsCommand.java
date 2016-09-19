@@ -201,7 +201,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * @return - The initial volume of the Cinder disk to delete from.
      */
     private CinderDisk getInitialCinderVolumeToDelete(DiskImage cinderVolume) {
-        List<DiskImage> snapshotsForParent = getDiskImageDao().getAllSnapshotsForParent(cinderVolume.getParentId());
+        List<DiskImage> snapshotsForParent = diskImageDao.getAllSnapshotsForParent(cinderVolume.getParentId());
         Optional<DiskImage> cinderVolumeToRemove = snapshotsForParent.stream().filter(snapshot ->
                 !snapshot.getImageId().equals(cinderVolume.getImageId())).map(Optional::ofNullable).findFirst().orElse(null);
         return cinderVolumeToRemove != null ? (CinderDisk) cinderVolumeToRemove.get() : null;
@@ -279,7 +279,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         VdcReturnValueBase returnValue;
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
         Set<Guid> deletedDisksIds = new HashSet<>();
-        for (DiskImage image : getDiskImageDao().getImagesWithNoDisk(getVm().getId())) {
+        for (DiskImage image : diskImageDao.getImagesWithNoDisk(getVm().getId())) {
             if (!deletedDisksIds.contains(image.getId())) {
                 deletedDisksIds.add(image.getId());
                 if (image.getDiskStorageType() == DiskStorageType.CINDER) {
@@ -320,7 +320,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         List<DiskImage> imagesToRemove = new ArrayList<>();
 
         for (Guid snapshotToRemove : snapshotsToRemove) {
-            List<DiskImage> snapshotDiskImages = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotToRemove);
+            List<DiskImage> snapshotDiskImages = diskImageDao.getAllSnapshotsForVmSnapshot(snapshotToRemove);
             imagesToRemove.addAll(snapshotDiskImages);
         }
 
@@ -383,13 +383,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      */
     protected void restoreSnapshotAndRemoveObsoleteSnapshots(Snapshot targetSnapshot) {
         Guid activeSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
-        List<DiskImage> imagesFromActiveSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(activeSnapshotId);
+        List<DiskImage> imagesFromActiveSnapshot = diskImageDao.getAllSnapshotsForVmSnapshot(activeSnapshotId);
 
         Snapshot previewedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
         if (previewedSnapshot != null) {
             VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(
                     previewedSnapshot.getVmConfiguration(), previewedSnapshot.getVmId(), previewedSnapshot.getId());
-            List<DiskImage> previewedImagesFromDB = getDiskImageDao().getAllSnapshotsForVmSnapshot(previewedSnapshot.getId());
+            List<DiskImage> previewedImagesFromDB = diskImageDao.getAllSnapshotsForVmSnapshot(previewedSnapshot.getId());
             imagesFromPreviewSnapshot.addAll(ImagesHandler.imagesIntersection(vmFromConf.getImages(), previewedImagesFromDB));
         }
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
@@ -495,17 +495,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
         getSnapshotDao().updateStatus(previewedSnapshotId, SnapshotStatus.OK);
         snapshotsToRemove.add(removedSnapshot.getId());
-        List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(removedSnapshot.getId());
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForVmSnapshot(removedSnapshot.getId());
         for (DiskImage image : images) {
             if (image.getDiskStorageType() == DiskStorageType.IMAGE) {
-                DiskImage parentImage = getDiskImageDao().getSnapshotById(image.getParentId());
+                DiskImage parentImage = diskImageDao.getSnapshotById(image.getParentId());
                 Guid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
                 Snapshot candidateSnapToRemove = getSnapshotDao().get(snapshotToRemove);
 
                 while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)
                         && isSnapshotEligibleToBeDeleted(candidateSnapToRemove)) {
                     snapshotsToRemove.add(snapshotToRemove);
-                    parentImage = getDiskImageDao().getSnapshotById(parentImage.getParentId());
+                    parentImage = diskImageDao.getSnapshotById(parentImage.getParentId());
                     snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
                 }
             }
@@ -515,7 +515,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private void addRedundantCinderSnapshots(Guid previewedSnapshotId, List<DiskImage> imagesFromActiveSnapshot) {
         List<CinderDisk> cinderImagesForPreviewedSnapshot =
-                ImagesHandler.filterDisksBasedOnCinder(getDiskImageDao().getAllSnapshotsForVmSnapshot(previewedSnapshotId));
+                ImagesHandler.filterDisksBasedOnCinder(diskImageDao.getAllSnapshotsForVmSnapshot(previewedSnapshotId));
         Set<Guid> criticalSnapshotsChain = getCriticalSnapshotsChain(imagesFromActiveSnapshot, cinderImagesForPreviewedSnapshot);
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
             List<Guid> redundantSnapshotIdsToDelete = CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(
@@ -531,7 +531,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
             List<DiskImage> cinderDiskFromSnapshot = imagesFromActiveSnapshot.stream().filter(diskImage->
                     diskImage.getId().equals(image.getId())).collect(Collectors.toList());
-            for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForLeaf(cinderDiskFromSnapshot.get(0).getImageId())) {
+            for (DiskImage diskImage : diskImageDao.getAllSnapshotsForLeaf(cinderDiskFromSnapshot.get(0).getImageId())) {
                 criticalSnapshotsChain.add(diskImage.getVmSnapshotId());
             }
         }
@@ -545,7 +545,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private List<DiskImage> getImagesList() {
         if (getParameters().getImages() == null && !getSnapshot().getId().equals(Guid.Empty)) {
-            getParameters().setImages(getDiskImageDao().getAllSnapshotsForVmSnapshot(getSnapshot().getId()));
+            getParameters().setImages(diskImageDao.getAllSnapshotsForVmSnapshot(getSnapshot().getId()));
         }
         return getParameters().getImages();
     }

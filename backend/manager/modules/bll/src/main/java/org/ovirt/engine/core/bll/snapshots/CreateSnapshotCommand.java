@@ -152,8 +152,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getImageTemplateId())) {
-                    DiskImage previousSnapshot = getDiskImageDao().getSnapshotById(
-                            getDestinationDiskImage().getParentId());
+                    DiskImage previousSnapshot = diskImageDao.getSnapshotById(getDestinationDiskImage().getParentId());
                     previousSnapshot.setActive(true);
 
                     // If the old description of the snapshot got overriden, we should restore the previous description

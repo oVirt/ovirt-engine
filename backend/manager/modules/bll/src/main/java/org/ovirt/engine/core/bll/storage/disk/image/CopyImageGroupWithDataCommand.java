@@ -66,8 +66,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
 
     private void populateDiskSnapshotsInfoFromStorage() {
         getDiskImage().getSnapshots().clear();
-        List<DiskImage> images = getDiskImageDao()
-                .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         for (DiskImage image : images) {
             getDiskImage().getSnapshots().add(ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
                     getParameters().getSrcDomain(), getParameters().getImageGroupID(), image.getImageId()));

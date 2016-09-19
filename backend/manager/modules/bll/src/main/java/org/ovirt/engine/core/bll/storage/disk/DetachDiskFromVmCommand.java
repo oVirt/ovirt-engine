@@ -65,7 +65,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             // when a disk snapshot is being detached, it will always be part of snapshots - but of it's "original" vm,
             // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
             if (vmDevice.getSnapshotId() == null
-                    && getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
+                    && diskImageDao.getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
                 return failValidation(EngineMessage.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
             }
         }

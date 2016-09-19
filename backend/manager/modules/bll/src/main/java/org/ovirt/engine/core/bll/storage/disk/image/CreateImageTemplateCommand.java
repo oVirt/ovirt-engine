@@ -133,7 +133,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
      *            The disk to fill the volume details in.
      */
     private void fillVolumeInformation(DiskImage disk) {
-        DiskImage ancestor = getDiskImageDao().getAncestor(getDiskImage().getImageId());
+        DiskImage ancestor = diskImageDao.getAncestor(getDiskImage().getImageId());
         disk.setVolumeFormat(ancestor.getVolumeFormat());
         disk.setVolumeType(ancestor.getVolumeType());
     }

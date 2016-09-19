@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
@@ -24,7 +22,6 @@ import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 
@@ -34,10 +31,6 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(LockProperties.Scope.Execution);
     }
-
-    @Inject
-    private DiskImageDao diskImageDao;
-
     private List<UnregisteredDisk> unregisteredDisks = new ArrayList<>();
 
     public ScanStorageForUnregisteredDisksCommand(T parameters, CommandContext commandContext) {
@@ -122,7 +115,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     }
 
     protected void initUnregisteredDisksToDB() {
-        List<DiskImage> existingDisks = getDiskImageDao().getAllForStorageDomain(getParameters().getStorageDomainId());
+        List<DiskImage> existingDisks = diskImageDao.getAllForStorageDomain(getParameters().getStorageDomainId());
         for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
             if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getId()))) {
                 log.info("Disk {} with id '{}' already exists in the engine, therefore will not be " +
@@ -140,10 +133,6 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
 
     protected void saveUnregisterDisk(UnregisteredDisk unregisteredDisk) {
         unregisteredDisksDao.saveUnregisteredDisk(unregisteredDisk);
-    }
-
-    public DiskImageDao getDiskImageDao() {
-        return diskImageDao;
     }
 
     @Override

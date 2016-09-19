@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,8 +163,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         Image image = getImageDao().get(imageId);
         if (image.getStatus() == ImageStatus.ILLEGAL
                 && image.getParentId().equals(Guid.Empty)) {
-            List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
-                    .getAllSnapshotsForParent(imageId);
+            List<DiskImage> children = diskImageDao.getAllSnapshotsForParent(imageId);
             if (children.isEmpty()) {
                 // An illegal, orphaned image means its contents have been merged
                 log.info("Image has been previously merged, proceeding with deletion");
@@ -211,7 +209,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     private DiskImage getActiveDiskImage() {
         Guid snapshotId = getSnapshotDao().getId(getVmId(), Snapshot.SnapshotType.ACTIVE);
-        return getDiskImageDao().getDiskSnapshotForVmSnapshot(getDiskImage().getId(), snapshotId);
+        return diskImageDao.getDiskSnapshotForVmSnapshot(getDiskImage().getId(), snapshotId);
     }
 
     /**
@@ -240,7 +238,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     private void syncDbRecordsMergeFailure() {
         DiskImage curr = getDestinationDiskImage();
         while (!curr.getImageId().equals(getDiskImage().getImageId())) {
-            curr = getDbFacade().getDiskImageDao().getSnapshotById(curr.getParentId());
+            curr = diskImageDao.getSnapshotById(curr.getParentId());
             getImageDao().updateStatus(curr.getImageId(), ImageStatus.ILLEGAL);
         }
     }

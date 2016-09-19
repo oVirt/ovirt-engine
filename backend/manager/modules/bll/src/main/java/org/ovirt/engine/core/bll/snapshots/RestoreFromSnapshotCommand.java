@@ -55,7 +55,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         case PREVIEW:
         case STATELESS:
             if (imageToRemoveId != null) {
-                removeSnapshot(getDiskImageDao().get(imageToRemoveId));
+                removeSnapshot(diskImageDao.get(imageToRemoveId));
             }
 
             break;
@@ -77,13 +77,13 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     }
 
     private void removeOtherImageAndParents(Guid imageId, Guid lastParent) {
-        DiskImage image = getDiskImageDao().getSnapshotById(imageId);
+        DiskImage image = diskImageDao.getSnapshotById(imageId);
         // store other mapped image's parent Id
         Guid currentParent = image.getParentId();
         // Remove other mapped image from Irs and db
         removeSnapshot(image);
         while (!lastParent.equals(currentParent)) {
-            image = getDiskImageDao().getSnapshotById(currentParent);
+            image = diskImageDao.getSnapshotById(currentParent);
             // store current image's parent Id
             currentParent = image.getParentId();
             removeSnapshot(image);

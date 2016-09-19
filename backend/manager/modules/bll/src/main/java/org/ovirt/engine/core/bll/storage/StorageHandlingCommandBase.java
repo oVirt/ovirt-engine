@@ -202,7 +202,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // Check if we have entities related to the Storage Domain.
         List<VM> vmsForStorageDomain = getVmDao().getAllForStorageDomain(storageDomain.getId());
         List<VmTemplate> vmTemplatesForStorageDomain = getVmTemplateDao().getAllForStorageDomain(storageDomain.getId());
-        List<DiskImage> disksForStorageDomain = getDiskImageDao().getAllForStorageDomain(storageDomain.getId());
+        List<DiskImage> disksForStorageDomain = diskImageDao.getAllForStorageDomain(storageDomain.getId());
         removeEntitiesFromStorageDomain(vmsForStorageDomain, vmTemplatesForStorageDomain, disksForStorageDomain, storageDomain.getId());
     }
 
@@ -535,7 +535,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void initUnregisteredDisksToDB(Guid storageDomainId) {
-        List<DiskImage> existingDisks = getDiskImageDao().getAllForStorageDomain(storageDomainId);
+        List<DiskImage> existingDisks = diskImageDao.getAllForStorageDomain(storageDomainId);
         for (Object unregisteredDiskObj : unregisteredDisks) {
             UnregisteredDisk unregisteredDisk = (UnregisteredDisk) unregisteredDiskObj;
             if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getId()))) {

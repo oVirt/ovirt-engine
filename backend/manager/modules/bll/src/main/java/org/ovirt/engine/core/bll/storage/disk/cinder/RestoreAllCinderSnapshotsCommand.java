@@ -88,7 +88,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
     }
 
     private void updateCinderDiskSnapshot(Guid cinderDiskId, Guid snapshotId, Guid vmSnapshotId) {
-        DiskImage diskFromSnapshot = getDiskImageDao().getDiskSnapshotForVmSnapshot(cinderDiskId, snapshotId);
+        DiskImage diskFromSnapshot = diskImageDao.getDiskSnapshotForVmSnapshot(cinderDiskId, snapshotId);
         diskFromSnapshot.setActive(true);
         if (!Guid.isNullOrEmpty(vmSnapshotId)) {
             // Needed for stateless snapshot

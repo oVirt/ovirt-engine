@@ -49,7 +49,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         case END_FAILURE:
             if (diskImage == null) {
                 List<DiskImage> diskImages =
-                        getDiskImageDao().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+                        diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
                 diskImage = diskImages.isEmpty() ? null : diskImages.get(0);
             }
 
@@ -228,7 +228,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     protected void endSuccessfully() {
         if (shouldUpdateStorageDisk()) {
-            List<DiskImage> snapshots = getDiskImageDao()
+            List<DiskImage> snapshots = diskImageDao
                     .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
             setSnapshotForShareableDisk(snapshots);
             for (DiskImage snapshot : snapshots) {
@@ -296,7 +296,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected boolean canPerformRollbackUsingCommand(VdcActionType commandType, VdcActionParametersBase params) {
-        return getDiskImageDao().get(getParameters().getDestinationImageId()) != null;
+        return diskImageDao.get(getParameters().getDestinationImageId()) != null;
     }
 
 }

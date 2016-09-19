@@ -102,7 +102,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      */
     protected List<DiskImage> getSourceImages() {
         if (_sourceImages == null) {
-            _sourceImages = getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
+            _sourceImages = diskImageDao.getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
         }
         return _sourceImages;
     }
@@ -184,7 +184,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // The following is ok because we have tested in the validate that the vm
             // is not a template and the vm is not in preview mode and that
             // this is not the active snapshot.
-            List<DiskImage> images = getDiskImageDao().getAllSnapshotsForParent(source.getImageId());
+            List<DiskImage> images = diskImageDao.getAllSnapshotsForParent(source.getImageId());
             DiskImage dest = null;
             if (!images.isEmpty()) {
                 dest = images.get(0);
@@ -289,7 +289,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     log.error("Could not delete image '{}' from snapshot '{}'",
                             imagesParams.getImageId(), getParameters().getSnapshotId());
 
-                    DiskImage diskImage = getDiskImageDao().getSnapshotById(imagesParams.getImageId());
+                    DiskImage diskImage = diskImageDao.getSnapshotById(imagesParams.getImageId());
                     failedToRemoveDisks.add(diskImage.getDiskAlias());
                 }
             }

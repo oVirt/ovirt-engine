@@ -490,7 +490,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         mockGetForDisk(vm);
         mockGetVmsListForDisk(vm);
         doReturn(snapshotDao).when(command).getSnapshotDao();
-        doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(baseDiskDao).when(command).getBaseDiskDao();
         doReturn(imageDao).when(command).getImageDao();

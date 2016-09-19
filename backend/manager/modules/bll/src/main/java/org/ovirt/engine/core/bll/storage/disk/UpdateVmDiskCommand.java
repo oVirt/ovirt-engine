@@ -266,7 +266,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             }
 
             List<DiskImage> diskImageList =
-                    getDiskImageDao().getAllSnapshotsForImageGroup(getOldDisk().getId());
+                    diskImageDao.getAllSnapshotsForImageGroup(getOldDisk().getId());
 
             // If disk image list is more than one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
@@ -313,7 +313,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             }
 
             if (vmDeviceForVm.getSnapshotId() != null) {
-                DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskInfo().getId(), vmDeviceForVm.getSnapshotId());
+                DiskImage snapshotDisk = diskImageDao.getDiskSnapshotForVmSnapshot(getParameters().getDiskInfo().getId(), vmDeviceForVm.getSnapshotId());
                 if (snapshotDisk.getSize() != newDiskImage.getSize()) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
                 }

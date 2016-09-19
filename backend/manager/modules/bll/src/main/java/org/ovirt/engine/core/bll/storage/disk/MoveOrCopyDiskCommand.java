@@ -273,7 +273,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean checkTemplateInDestStorageDomain() {
         if (getParameters().getOperation() == ImageOperation.Move
                 && !Guid.Empty.equals(getImage().getImageTemplateId())) {
-            DiskImage templateImage = getDiskImageDao().get(getImage().getImageTemplateId());
+            DiskImage templateImage = diskImageDao.get(getImage().getImageTemplateId());
             if (!templateImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }

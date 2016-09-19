@@ -33,7 +33,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
     }
 
     private void removeCinderVolume() {
-        CinderDisk cinderSnapshotToRemove = (CinderDisk) getDiskImageDao().getSnapshotById(getParameters().getImageId());
+        CinderDisk cinderSnapshotToRemove = (CinderDisk) diskImageDao.getSnapshotById(getParameters().getImageId());
 
         // Update the volume with active=false, so removeDiskFromDb will not set active volume on the first volume.
         cinderSnapshotToRemove.setActive(false);

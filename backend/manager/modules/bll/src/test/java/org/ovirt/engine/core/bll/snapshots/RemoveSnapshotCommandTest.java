@@ -73,7 +73,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
-        doReturn(diskImageDao).when(cmd).getDiskImageDao();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         mockVm();
         VmValidator vmValidator = spy(new VmValidator(cmd.getVm()));

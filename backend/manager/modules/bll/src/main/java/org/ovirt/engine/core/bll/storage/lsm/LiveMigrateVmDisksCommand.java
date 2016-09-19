@@ -94,7 +94,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         List<PermissionSubject> permissionList = new ArrayList<>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
-            DiskImage diskImage = getDiskImageDao().get(parameters.getImageId());
+            DiskImage diskImage = diskImageDao.get(parameters.getImageId());
             if (diskImage != null) {
                 permissionList.add(new PermissionSubject(diskImage.getId(),
                         VdcObjectType.Disk,
@@ -272,7 +272,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             return diskImagesMap.get(imageId);
         }
 
-        DiskImage diskImage = getDiskImageDao().get(imageId);
+        DiskImage diskImage = diskImageDao.get(imageId);
         diskImagesMap.put(imageId, diskImage);
 
         return diskImage;
@@ -421,7 +421,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         Guid templateId = getDiskImageByImageId(imageId).getImageTemplateId();
 
         if (!Guid.Empty.equals(templateId)) {
-            DiskImage templateImage = getDiskImageDao().get(templateId);
+            DiskImage templateImage = diskImageDao.get(templateId);
             if (!templateImage.getStorageIds().contains(sourceDomainId)) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }

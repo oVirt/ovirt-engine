@@ -158,7 +158,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
                             removeChildren(currentGuid);
 
-                            DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
+                            DiskImage image = diskImageDao.getSnapshotById(currentGuid);
                             if (image != null) {
                                 removeSnapshot(image);
                                 currentGuid = image.getParentId();
@@ -202,7 +202,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     private void getImageChildren(Guid snapshot, List<Guid> children) {
         List<Guid> list = new ArrayList<>();
-        for (DiskImage image : getDiskImageDao().getAllSnapshotsForParent(snapshot)) {
+        for (DiskImage image : diskImageDao.getAllSnapshotsForParent(snapshot)) {
             list.add(image.getImageId());
         }
         children.addAll(list);
@@ -216,7 +216,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         getImageChildren(snapshot, children);
         Collections.reverse(children);
         for (Guid child : children) {
-            removeSnapshot(getDiskImageDao().getSnapshotById(child));
+            removeSnapshot(diskImageDao.getSnapshotById(child));
         }
     }
 
@@ -225,7 +225,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
      */
     protected List<Snapshot> prepareSnapshotConfigWithoutImage(Guid imageGroupToRemove) {
         List<Snapshot> result = new LinkedList<>();
-        List<DiskImage> snapshotDisks = getDiskImageDao().getAllSnapshotsForImageGroup(imageGroupToRemove);
+        List<DiskImage> snapshotDisks = diskImageDao.getAllSnapshotsForImageGroup(imageGroupToRemove);
         for (DiskImage snapshotDisk : snapshotDisks) {
             Guid vmSnapshotId = snapshotDisk.getVmSnapshotId();
             if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {

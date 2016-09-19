@@ -202,7 +202,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     private boolean isMoveDiskInDbSucceded(Guid targetStorageDomainId) {
         Guid destinationImageId = getParameters().getDestinationImageId();
-        DiskImage diskImage = getDiskImageDao().get(destinationImageId);
+        DiskImage diskImage = diskImageDao.get(destinationImageId);
         return diskImage != null && targetStorageDomainId.equals(diskImage.getStorageIds().get(0));
     }
 
@@ -219,7 +219,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     @SuppressWarnings("synthetic-access")
                     @Override
                     public Object runInTransaction() {
-                        for (DiskImage di : getDiskImageDao()
+                        for (DiskImage di : diskImageDao
                                 .getAllSnapshotsForImageGroup(getParameters().getImageGroupID())) {
                             getImageStorageDomainMapDao().remove(new ImageStorageDomainMapId(di.getImageId(),
                                     sourceStorageDomainId));
@@ -243,7 +243,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     private void updateImagesInfo() {
-        for (DiskImage image : getDiskImageDao().getAllSnapshotsForImageGroup(getParameters().getImageGroupID())) {
+        for (DiskImage image : diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID())) {
             VDSReturnValue ret = runVdsCommand(
                     VDSCommandType.GetImageInfo,
                     new GetImageInfoVDSCommandParameters(getParameters().getStoragePoolId(),

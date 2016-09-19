@@ -31,7 +31,7 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
 
     @Override
     protected void executeCommand() {
-        List<DiskImage> images = getDiskImageDao()
+        List<DiskImage> images = diskImageDao
                 .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         ImagesHandler.sortImageList(images);
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images));

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -9,8 +11,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
+import org.ovirt.engine.core.dao.DiskImageDao;
 
 public class RemoveCinderSnapshotCommandCallback extends ConcurrentChildCommandsExecutionCallback {
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,
@@ -29,7 +35,7 @@ public class RemoveCinderSnapshotCommandCallback extends ConcurrentChildCommands
             return;
         }
         ImageStatus imageStatus = removeCinderSnapshotDiskCommand.getCinderBroker().getSnapshotStatus(diskId);
-        DiskImage disk = command.getDiskImageDao().getSnapshotById(diskId);
+        DiskImage disk = diskImageDao.getSnapshotById(diskId);
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
             case ILLEGAL:

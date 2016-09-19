@@ -366,7 +366,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                     // query returned to UI an illegal image)
                     if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
                         DiskImage snapshotImageInDb =
-                                getDiskImageDao().getSnapshotById(diskImage.getImageId());
+                                diskImageDao.getSnapshotById(diskImage.getImageId());
                         if (snapshotImageInDb == null) {
                             // If the snapshot diskImage is null, it means the disk was probably
                             // erased after the snapshot was created.
