@@ -114,9 +114,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     private StoragePoolIsoMap getStoragePoolIsoMap() {
-        return getStoragePoolIsoMapDao()
-                .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                        getStoragePoolId()));
+        return storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomain().getId(), getStoragePoolId()));
     }
 
     protected boolean isCinderStorageHasNoDisks() {
@@ -194,7 +192,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 context.snapshotEntityStatus(map);
             }
             getStorageDomain().setStatus(status);
-            getStoragePoolIsoMapDao().updateStatus(map.getId(), status);
+            storagePoolIsoMapDao.updateStatus(map.getId(), status);
         }
     }
 
@@ -382,7 +380,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         executeInNewTransaction(() -> {
             context.snapshotEntityStatus(map);
             map.setStatus(status);
-            getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+            storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
             context.stateChanged();
             return null;
         });

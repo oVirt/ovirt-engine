@@ -164,6 +164,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected StoragePoolDao storagePoolDao;
 
+    @Inject
+    protected StoragePoolIsoMapDao storagePoolIsoMapDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -832,10 +835,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public DiskImageDynamicDao getDiskImageDynamicDao() {
         return getDbFacade().getDiskImageDynamicDao();
-    }
-
-    public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
-        return getDbFacade().getStoragePoolIsoMapDao();
     }
 
     public TagDao getTagDao() {

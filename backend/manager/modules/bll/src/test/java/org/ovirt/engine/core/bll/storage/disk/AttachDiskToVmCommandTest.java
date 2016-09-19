@@ -97,7 +97,6 @@ public class AttachDiskToVmCommandTest {
         doReturn(false).when(command).isOperationPerformedOnDiskSnapshot();
 
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
-        doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
         mockStoragePoolIsoMap();
     }
 

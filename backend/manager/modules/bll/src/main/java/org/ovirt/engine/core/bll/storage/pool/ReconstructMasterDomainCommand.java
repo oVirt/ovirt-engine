@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage.pool;
+    package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,8 +142,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             return false;
         }
 
-        List<StoragePoolIsoMap> domains = getStoragePoolIsoMapDao()
-                .getAllForStoragePool(getStoragePool().getId());
+        List<StoragePoolIsoMap> domains = storagePoolIsoMapDao.getAllForStoragePool(getStoragePool().getId());
 
         // set to true here in case of failure in executing/getting answer from the reconstruct vds command,
         // unless we know that the command failed we assume that it succeeded (use by RecoveryStoragePool command in
@@ -240,8 +239,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                         return null;
                     }
 
-                    List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDao()
-                            .getAllForStoragePool(getStoragePool().getId());
+                    List<StoragePoolIsoMap> storagePoolIsoMap =
+                            storagePoolIsoMapDao.getAllForStoragePool(getStoragePool().getId());
                     try {
                         runVdsCommand(
                                 VDSCommandType.ConnectStoragePool,

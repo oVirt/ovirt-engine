@@ -92,7 +92,6 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void statusSetInMap() {
         doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any(StorageDomain.class));
-        doReturn(isoMapDao).when(cmd).getStoragePoolIsoMapDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(asyncTaskDao).when(cmd).getAsyncTaskDao();
         when(storagePoolDao.get(any(Guid.class))).thenReturn(new StoragePool());

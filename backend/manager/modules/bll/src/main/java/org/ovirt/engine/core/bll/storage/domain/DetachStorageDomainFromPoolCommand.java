@@ -78,10 +78,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
             detachStorageDomainWithEntities(getStorageDomain());
             StoragePoolIsoMap mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
             getCompensationContext().snapshotEntity(mapToRemove);
-            DbFacade.getInstance()
-                    .getStoragePoolIsoMapDao()
-                    .remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
-                            mapToRemove.getStoragePoolId()));
+            storagePoolIsoMapDao.remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
+                    mapToRemove.getStoragePoolId()));
             // when detaching SD for data center, we should remove any attachment to qos, which is part of the old
             // data center
             DbFacade.getInstance().getDiskProfileDao().nullifyQosForStorageDomain(getStorageDomain().getId());

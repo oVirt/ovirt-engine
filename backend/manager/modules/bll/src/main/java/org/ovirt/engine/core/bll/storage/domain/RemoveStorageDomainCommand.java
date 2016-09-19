@@ -178,8 +178,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         Guid storageDomainId = storageDomain.getId();
         Guid storagePoolId = storageDomain.getStoragePoolId();
 
-        return getDbFacade().getStoragePoolIsoMapDao()
-                .get(new StoragePoolIsoMapId(storageDomainId, storagePoolId)) != null;
+        return storagePoolIsoMapDao.get(new StoragePoolIsoMapId(storageDomainId, storagePoolId)) != null;
     }
 
     protected boolean detachStorage(StorageDomain dom) {

@@ -313,8 +313,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private boolean isStoragePoolMatching(VM vm) {
-        if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-            getStorageDomainId(), vm.getStoragePoolId())) == null) {
+        if (storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomainId(), vm.getStoragePoolId())) == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
         }
         return true;

@@ -128,7 +128,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         ImagesHandler.fillImagesBySnapshots(getVm());
 
         // check that the target and source domain are in the same storage_pool
-        if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
+        if (storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getStoragePoolId())) == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             return false;

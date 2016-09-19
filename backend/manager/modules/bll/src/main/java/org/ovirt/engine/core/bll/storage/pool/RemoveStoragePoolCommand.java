@@ -143,7 +143,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
             masterDomain.setStatus(StorageDomainStatus.Locked);
-            getDbFacade().getStoragePoolIsoMapDao().update(masterDomain.getStoragePoolIsoMapData());
+            storagePoolIsoMapDao.update(masterDomain.getStoragePoolIsoMapData());
             getCompensationContext().stateChanged();
             return null;
         });

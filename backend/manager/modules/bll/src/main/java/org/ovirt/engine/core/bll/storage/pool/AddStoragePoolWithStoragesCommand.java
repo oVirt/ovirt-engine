@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -149,9 +148,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
                 if (storageDomain != null) {
                     StoragePoolIsoMap mapFromDB =
-                        DbFacade.getInstance()
-                        .getStoragePoolIsoMapDao()
-                                    .get(new StoragePoolIsoMapId(storageDomain.getId(), getStoragePool().getId()));
+                            storagePoolIsoMapDao.get(new StoragePoolIsoMapId(storageDomain.getId(), getStoragePool().getId()));
                     boolean existingInDb = mapFromDB != null;
                     if (existingInDb) {
                         getCompensationContext().snapshotEntity(mapFromDB);
@@ -185,13 +182,9 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     }
                     storageDomain.setStatus(StorageDomainStatus.Locked);
                     if (existingInDb) {
-                        DbFacade.getInstance()
-                                    .getStoragePoolIsoMapDao()
-                                    .update(storageDomain.getStoragePoolIsoMapData());
+                        storagePoolIsoMapDao.update(storageDomain.getStoragePoolIsoMapData());
                     } else {
-                        DbFacade.getInstance()
-                                    .getStoragePoolIsoMapDao()
-                                    .save(storageDomain.getStoragePoolIsoMapData());
+                        storagePoolIsoMapDao.save(storageDomain.getStoragePoolIsoMapData());
                         getCompensationContext().snapshotNewEntity(storageDomain.getStoragePoolIsoMapData());
                     }
                 } else {
@@ -229,11 +222,9 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             // if activate domain failed then set domain status to inactive
             if (!returnValue) {
                 TransactionSupport.executeInNewTransaction(() -> {
-                    DbFacade.getInstance()
-                            .getStoragePoolIsoMapDao()
-                            .updateStatus(
-                                    new StoragePoolIsoMapId(storageDomainId, getStoragePool().getId()),
-                                    StorageDomainStatus.Inactive);
+                    storagePoolIsoMapDao.updateStatus(
+                            new StoragePoolIsoMapId(storageDomainId, getStoragePool().getId()),
+                            StorageDomainStatus.Inactive);
                     return null;
                 });
             }

@@ -186,7 +186,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             return;
         }
         final StoragePoolIsoMap map =
-                getStoragePoolIsoMapDao().get
+                storagePoolIsoMapDao.get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
         map.setStatus(StorageDomainStatus.Unknown);
@@ -274,11 +274,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 log.info("Domain '{}' will remain in '{}' status until deactivated on all hosts",
                         getStorageDomain().getId(), map.getStatus());
             }
-            getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+            storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
             if (newMaster != null) {
                 StoragePoolIsoMap mapOfNewMaster = newMaster.getStoragePoolIsoMapData();
                 mapOfNewMaster.setStatus(StorageDomainStatus.Active);
-                getStoragePoolIsoMapDao().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getStatus());
+                storagePoolIsoMapDao.updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getStatus());
             }
             return null;
         });
@@ -304,10 +304,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             if (!pair.getSecond()) {
                 log.error("Failed to deactivate Cinder storage domain '{}' due to secrets un-registration failure.",
                         getStorageDomain().getName());
-                StoragePoolIsoMap map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+                StoragePoolIsoMap map = storagePoolIsoMapDao.get(new StoragePoolIsoMapId(
                         getParameters().getStorageDomainId(), getParameters().getStoragePoolId()));
                 map.setStatus(StorageDomainStatus.Inactive);
-                getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+                storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
                 return;
             }
         }
@@ -356,7 +356,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     newMasterMap.setStatus(StorageDomainStatus.Unknown);
                     getCompensationContext().snapshotEntityStatus(newMasterMap);
                     newMaster.setStatus(StorageDomainStatus.Locked);
-                    getStoragePoolIsoMapDao().updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
+                    storagePoolIsoMapDao.updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
                 }
                 updateStorageDomainStaticData(newMaster.getStorageStaticData());
                 getCompensationContext().snapshotEntityUpdated(getStorageDomain().getStorageStaticData());

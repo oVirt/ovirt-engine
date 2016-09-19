@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
 public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<ReconstructMasterParameters> {
@@ -111,9 +110,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                                         getParameters().getNewMasterDomainId(),
                                         getParameters().getStoragePoolId(),
                                         StorageDomainStatus.Active);
-                        DbFacade.getInstance()
-                                .getStoragePoolIsoMapDao()
-                                .save(domainPoolMap);
+                        storagePoolIsoMapDao.save(domainPoolMap);
 
                         getParameters().setVdsId(getVds().getId());
                         VdcReturnValueBase returnVal = runInternalAction(
@@ -125,7 +122,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                         storagePoolDao.updateStatus(getStoragePool().getId(), StoragePoolStatus.NonResponsive);
 
                         if (!reconstructVerbExecuted) {
-                            getStoragePoolIsoMapDao().remove(domainPoolMap.getId());
+                            storagePoolIsoMapDao.remove(domainPoolMap.getId());
                         }
 
                         if (returnVal.getSucceeded()) {

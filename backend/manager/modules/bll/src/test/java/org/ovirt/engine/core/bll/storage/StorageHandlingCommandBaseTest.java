@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -48,8 +47,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
         cmd.init();
 
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
-
-        doReturn(storagePoolIsoMapDao).when(cmd).getStoragePoolIsoMapDao();
         when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.emptyList());
     }
 

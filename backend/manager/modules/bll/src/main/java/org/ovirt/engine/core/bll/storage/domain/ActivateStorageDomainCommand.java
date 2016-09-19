@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -46,9 +45,6 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
-
-    @Inject
-    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     public ActivateStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

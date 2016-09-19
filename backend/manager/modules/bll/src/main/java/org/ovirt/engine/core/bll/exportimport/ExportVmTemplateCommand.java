@@ -173,7 +173,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 }
             }
 
-            if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
+            if (storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                             getVmTemplate().getStoragePoolId())) == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }

@@ -94,13 +94,13 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 getReturnValue().setFault(returnValue.getFault());
             }
         } else {
-            map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
+            map = storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                     getParameters().getStoragePoolId()));
             if (map == null) {
                 executeInNewTransaction(() -> {
                     map = new StoragePoolIsoMap(getStorageDomain().getId(), getParameters()
                             .getStoragePoolId(), StorageDomainStatus.Locked);
-                    getStoragePoolIsoMapDao().save(map);
+                    storagePoolIsoMapDao.save(map);
                     getCompensationContext().snapshotNewEntity(map);
                     getCompensationContext().stateChanged();
                     return null;
@@ -161,7 +161,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 executeInNewTransaction(() -> {
                     final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
                     map.setStatus(StorageDomainStatus.Maintenance);
-                    getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+                    storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
 
                     if (sdType == StorageDomainType.Master) {
                         calcStoragePoolStatusByDomainsStatus();

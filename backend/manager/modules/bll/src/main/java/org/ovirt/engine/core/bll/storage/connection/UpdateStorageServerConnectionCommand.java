@@ -243,7 +243,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected Collection<StoragePoolIsoMap> getStoragePoolIsoMap(StorageDomain storageDomain) {
-        return getStoragePoolIsoMapDao().getAllForStorage(storageDomain.getId());
+        return storagePoolIsoMapDao.getAllForStorage(storageDomain.getId());
     }
 
     protected void changeStorageDomainStatusInTransaction(final StorageDomainStatus status) {
@@ -275,7 +275,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected void updateStatus(StoragePoolIsoMap map, StorageDomainStatus status) {
         log.info("Setting domain '{}' to status '{}'", map.getId(), status.name());
         map.setStatus(status);
-        getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+        storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
     }
 
     protected void executeInNewTransaction(TransactionMethod<?> method) {
