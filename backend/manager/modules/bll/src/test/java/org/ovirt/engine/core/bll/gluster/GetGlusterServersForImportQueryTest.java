@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -14,7 +13,9 @@ import java.util.Map;
 import javax.naming.AuthenticationException;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -36,6 +37,9 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private static final String FINGER_PRINT2 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:32";
 
     private VdsStaticDao vdsStaticDao;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     @Override
@@ -87,37 +91,22 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     @Test
     public void testQueryFailsIfServerExists() {
         mockQueryParameters(EXISTING_SERVER, PASSWORD);
-
-        try {
-            getQuery().executeQueryCommand();
-            fail("Query didn't fail when the server already exists!");
-        } catch (RuntimeException e) {
-            assertEquals(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
-        }
+        expectedException.expectMessage(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
+        getQuery().executeQueryCommand();
     }
 
     @Test
     public void testQueryFailsIfPeerExists() {
         mockQueryParameters(NEW_SERVER, PASSWORD);
         doReturn(getVdsStatic()).when(vdsStaticDao).getByHostName(SERVER_NAME1);
-
-        try {
-            getQuery().executeQueryCommand();
-            fail("Query didn't fail when one or more peers already exist(s)!");
-        } catch (RuntimeException e) {
-            assertEquals(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
-        }
+        expectedException.expectMessage(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
+        getQuery().executeQueryCommand();
     }
 
     @Test
     public void testQueryFailsIfWrongPassword() {
         mockQueryParameters(NEW_SERVER, WRONG_PASSWORD);
-
-        try {
-            getQuery().executeQueryCommand();
-            fail("Query didn't fail when wrong password was passed!");
-        } catch (RuntimeException e) {
-            assertEquals(EngineMessage.SSH_AUTHENTICATION_FAILED.toString(), e.getMessage());
-        }
+        expectedException.expectMessage(EngineMessage.SSH_AUTHENTICATION_FAILED.toString());
+        getQuery().executeQueryCommand();
     }
 }
