@@ -310,13 +310,15 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         SnapshotModel selectedModel = previewSnapshotModel.getSnapshotModel();
         boolean includeAllDisksOfSnapshot = selectedDisks.containsAll(disksOfSelectedSnapshot);
         boolean includeMemory = selectedModel.getMemory().getEntity();
-        boolean includeMemoryDifferentClusterVersion = includeMemory && !selectedModel.isVMWithMemoryCompatible();
+        if (includeMemory) {
+            selectedModel.setOldClusterVersionOfSnapshotWithMemory();
+        }
 
         SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());
 
         String warningText = ""; //$NON-NLS-1$
-        if (includeMemoryDifferentClusterVersion) {
+        if (selectedModel.getOldClusterVersionOfSnapshotWithMemory() != null) {
             // Show warning when snapshot with memory originates in different cluster version
             warningText += constants.snapshotPreviewWithMemoryFromDifferentClusterVersion();
         }

@@ -255,8 +255,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String snapshotContainsMemory();
 
-    String snapshotContainsMemoryIncompatibleCluster();
-
     String loadingLabel();
 
     String generalLabel();

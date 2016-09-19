@@ -157,5 +157,7 @@ public interface CommonApplicationMessages extends Messages {
     String principalNote(String note);
 
     String principalNamespace(String namespace);
+
+    String snapshotContainsMemoryIncompatibleCluster(String clusterVersion);
 }
 

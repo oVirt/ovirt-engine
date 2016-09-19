@@ -379,7 +379,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     model.setDisks(snapshotDisks);
                     model.setShowMemorySnapshotWarning(showMemorySnapshotWarning);
                     model.setShowPartialSnapshotWarning(showPartialSnapshotWarning);
-                    model.setOldClusterSnapshotWithMemory(showMemorySnapshotWarning && !model.isVMWithMemoryCompatible(vm));
+                    if (showMemorySnapshotWarning) {
+                        model.setOldClusterVersionOfSnapshotWithMemory(vm);
+                    }
                     setWindow(model);
 
                     model.setTitle(showPartialSnapshotWarning ?
