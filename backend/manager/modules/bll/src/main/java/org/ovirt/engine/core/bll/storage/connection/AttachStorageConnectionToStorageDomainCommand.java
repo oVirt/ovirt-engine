@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetachStorageConnectionParameters>
         extends StorageDomainCommandBase<T> {
@@ -75,8 +74,8 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
     }
 
     private void saveConnection(LUNStorageServerConnectionMap connectionMapRecord) {
-        if (getStorageServerConnectionLunMapDao().get(connectionMapRecord.getId()) == null) {
-            getStorageServerConnectionLunMapDao().save(connectionMapRecord);
+        if (storageServerConnectionLunMapDao.get(connectionMapRecord.getId()) == null) {
+            storageServerConnectionLunMapDao.save(connectionMapRecord);
         }
     }
 
@@ -103,9 +102,5 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__ATTACH);
         addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
-    }
-
-    protected StorageServerConnectionLunMapDao getStorageServerConnectionLunMapDao() {
-        return getDbFacade().getStorageServerConnectionLunMapDao();
     }
 }

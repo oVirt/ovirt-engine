@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -89,8 +88,8 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
                 LUNStorageServerConnectionMap lunConnection = new LUNStorageServerConnectionMap(
                         lunFromVgInfo.getLUNId(), connectionFromDb.getId());
-                if (getStorageServerConnectionLunMapDao().get(lunConnection.getId()) == null) {
-                    getStorageServerConnectionLunMapDao().save(lunConnection);
+                if (storageServerConnectionLunMapDao.get(lunConnection.getId()) == null) {
+                    storageServerConnectionLunMapDao.save(lunConnection);
                 }
             }
         }
@@ -165,10 +164,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
             }
         }
         return false;
-    }
-
-    protected StorageServerConnectionLunMapDao getStorageServerConnectionLunMapDao() {
-        return getDbFacade().getStorageServerConnectionLunMapDao();
     }
 
     @Override

@@ -52,6 +52,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -153,6 +154,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     @Inject
     protected StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
+
+    @Inject
+    protected StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
 
     @Inject
     protected LunDao lunDao;
