@@ -90,7 +90,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         getVmNicDao().save(vmNetworkInterface);
         getCompensationContext().snapshotNewEntity(vmNetworkInterface);
 
-        getDbFacade().getVmNetworkStatisticsDao().save(vmNetworkInterface.getStatistics());
+        vmNetworkStatisticsDao.save(vmNetworkInterface.getStatistics());
         getCompensationContext().snapshotNewEntity(vmNetworkInterface.getStatistics());
     }
 

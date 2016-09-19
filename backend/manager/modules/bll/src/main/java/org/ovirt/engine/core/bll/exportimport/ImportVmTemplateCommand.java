@@ -493,7 +493,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             nic.setStatistics(iStat);
             iStat.setId(iface.getId());
             iStat.setVmId(getVmTemplateId());
-            getDbFacade().getVmNetworkStatisticsDao().save(iStat);
+            vmNetworkStatisticsDao.save(iStat);
             getCompensationContext().snapshotNewEntity(iStat);
         }
 

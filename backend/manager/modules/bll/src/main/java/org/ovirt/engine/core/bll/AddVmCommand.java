@@ -1099,7 +1099,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             updateProfileOnNic(iface);
             getVmNicDao().save(iface);
             getCompensationContext().snapshotNewEntity(iface);
-            getVmNetworkStatisticsDao().save(iface.getStatistics());
+            vmNetworkStatisticsDao.save(iface.getStatistics());
             getCompensationContext().snapshotNewEntity(iface.getStatistics());
         }
     }
