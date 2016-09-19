@@ -104,11 +104,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             return false;
         }
 
-        final ConnectAllHostsToLunCommandReturnValue connectResult =
-                (ConnectAllHostsToLunCommandReturnValue) runInternalAction(
-                        VdcActionType.ConnectAllHostsToLun,
-                        new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(), getParameters()
-                                .getLunIds()));
+        final ConnectAllHostsToLunCommandReturnValue connectResult = connectAllHostsToLun();
         if (!connectResult.getSucceeded()) {
             addValidationMessage(EngineMessage.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
             if (connectResult.getFailedVds() != null) {
@@ -123,6 +119,13 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             getParameters().setLunsList(connectResult.getActionReturnValue());
         }
         return true;
+    }
+
+    protected ConnectAllHostsToLunCommandReturnValue connectAllHostsToLun() {
+        return (ConnectAllHostsToLunCommandReturnValue) runInternalAction(
+                VdcActionType.ConnectAllHostsToLun,
+                new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(),
+                        getParameters().getLunIds()));
     }
 
     @Override
