@@ -83,7 +83,7 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             getParameters().getNewBrick().setStatus(getParameters().getExistingBrick().getStatus());
-            getGlusterBrickDao().replaceBrick(getParameters().getExistingBrick(), getParameters().getNewBrick());
+            glusterBrickDao.replaceBrick(getParameters().getExistingBrick(), getParameters().getNewBrick());
 
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_REPLACE_BRICK_FAILED, returnValue.getVdsError().getMessage());

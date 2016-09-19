@@ -134,11 +134,11 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                         ((Map<Guid, GlusterVolumeEntity>) volDetailsRetVal.getReturnValue()).get(volume.getId());
                 List<GlusterBrickEntity> fetchedBricks = fetchedVolume.getBricks();
                 if (fetchedBricks != null) {
-                    getGlusterBrickDao().removeAllInBatch(volume.getBricks());
+                    glusterBrickDao.removeAllInBatch(volume.getBricks());
                     for (GlusterBrickEntity fetchdBrick : fetchedVolume.getBricks()) {
                         if (fetchdBrick.getServerId() != null) {
                             fetchdBrick.setStatus(GlusterStatus.UP);
-                            getGlusterBrickDao().save(fetchdBrick);
+                            glusterBrickDao.save(fetchdBrick);
                         } else {
                             log.warn("Invalid server details for brick " + fetchdBrick.getName()
                                     + ". Not adding now.");

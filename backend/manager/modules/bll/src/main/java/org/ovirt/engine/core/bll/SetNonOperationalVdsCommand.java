@@ -74,11 +74,11 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
     }
 
     private void updateBrickStatusDown() {
-        List<GlusterBrickEntity> brickEntities = getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getVdsId());
+        List<GlusterBrickEntity> brickEntities = glusterBrickDao.getGlusterVolumeBricksByServerId(getVdsId());
         for (GlusterBrickEntity brick : brickEntities) {
             brick.setStatus(GlusterStatus.DOWN);
         }
-        getDbFacade().getGlusterBrickDao().updateBrickStatuses(brickEntities);
+        glusterBrickDao.updateBrickStatuses(brickEntities);
     }
 
     @Override

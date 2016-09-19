@@ -91,7 +91,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
         public ValidationResult clusterNetworkNotUsedByBricks() {
             return new PluralMessages(EngineMessage.VAR__ENTITIES__GLUSTER_BRICK,
                 EngineMessage.VAR__ENTITIES__GLUSTER_BRICKS)
-                .getNetworkInUse(getEntitiesNames(getGlusterBrickDao().getAllByClusterAndNetworkId(networkCluster.getClusterId(),
+                .getNetworkInUse(getEntitiesNames(glusterBrickDao.getAllByClusterAndNetworkId(networkCluster.getClusterId(),
                     network.getId())));
         }
     }

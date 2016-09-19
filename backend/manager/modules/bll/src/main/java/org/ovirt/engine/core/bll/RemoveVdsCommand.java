@@ -181,7 +181,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private boolean hasVolumeBricksOnServer() {
-        if (getGlusterBrickDao().getGlusterVolumeBricksByServerId(getVdsId()).size() > 0) {
+        if (glusterBrickDao.getGlusterVolumeBricksByServerId(getVdsId()).size() > 0) {
             return true;
         } else {
             return false;

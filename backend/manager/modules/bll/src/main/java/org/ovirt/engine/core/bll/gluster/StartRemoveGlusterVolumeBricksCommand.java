@@ -89,7 +89,7 @@ public class StartRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBa
             brickEntity.getAsyncTask().setTaskId(asyncTask.getTaskId());
         }
 
-        getGlusterBrickDao().updateBrickTasksInBatch(getParameters().getBricks());
+        glusterBrickDao.updateBrickTasksInBatch(getParameters().getBricks());
 
         glusterVolumeDao.updateVolumeTask(getGlusterVolumeId(), asyncTask.getTaskId());
     }

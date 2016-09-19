@@ -313,14 +313,14 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                 brick.setBrickOrder(brick_num);
                 brick_num++;
 
-                getGlusterBrickDao().updateBrickOrder(brick.getId(), brick.getBrickOrder());
+                glusterBrickDao.updateBrickOrder(brick.getId(), brick.getBrickOrder());
             }
             // Adding new bricks
             for (int i = 0; i < newBricks.size(); i++) {
                 brick = newBricks.get(i);
                 brick.setBrickOrder((i + 1) * count - 1);
                 brick.setStatus(getBrickStatus());
-                getGlusterBrickDao().save(brick);
+                glusterBrickDao.save(brick);
             }
 
         } else {
@@ -330,7 +330,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             for (GlusterBrickEntity brick : newBricks) {
                 brick.setBrickOrder(++brickCount);
                 brick.setStatus(getBrickStatus());
-                getGlusterBrickDao().save(brick);
+                glusterBrickDao.save(brick);
             }
         }
 

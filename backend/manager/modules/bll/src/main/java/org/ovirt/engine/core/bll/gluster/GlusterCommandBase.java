@@ -230,7 +230,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             bricks.add(brick.getQualifiedName());
 
             GlusterBrickEntity existingBrick =
-                    getGlusterBrickDao().getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
+                    glusterBrickDao.getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
             if (existingBrick != null) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
                 addValidationMessageVariable("brick", brick.getQualifiedName());
