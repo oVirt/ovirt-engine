@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -35,6 +37,9 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServiceParameters> {
     private final List<String> errors = new ArrayList<>();
+
+    @Inject
+    private GlusterServerServiceDao glusterServerServiceDao;
 
     private static final Map<String, ManageActionDetail> manageActionDetailsMap = new HashMap<>();
 
@@ -88,10 +93,6 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         }
 
         return true;
-    }
-
-    public GlusterServerServiceDao getGlusterServerServiceDao() {
-        return DbFacade.getInstance().getGlusterServerServiceDao();
     }
 
     public GlusterServiceDao getGlusterServiceDao() {
@@ -193,9 +194,9 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         for (GlusterServerService serverService : fetchedServerServices) {
             if (serviceIds.contains(serverService.getServiceId())) {
                 serverService.setStatus(manageActionDetailsMap.get(getParameters().getActionType()).getStatus());
-                getGlusterServerServiceDao().updateByServerIdAndServiceType(serverService);
+                glusterServerServiceDao.updateByServerIdAndServiceType(serverService);
             } else {
-                getGlusterServerServiceDao().save(serverService);
+                glusterServerServiceDao.save(serverService);
             }
         }
     }
