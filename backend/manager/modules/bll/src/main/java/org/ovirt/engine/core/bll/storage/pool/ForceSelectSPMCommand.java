@@ -92,7 +92,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
     }
 
     private boolean isAsyncTasksRunningOnPool(Guid storagePoolId) {
-        List<Guid> tasks = getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(storagePoolId);
+        List<Guid> tasks = asyncTaskDao.getAsyncTaskIdsByStoragePoolId(storagePoolId);
         return !tasks.isEmpty();
     }
 

@@ -133,7 +133,6 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
     }
 
     private void mockCommand() {
-        doReturn(asyncTaskDaoMock).when(command).getAsyncTaskDao();
         doReturn(storagePool).when(storagePoolDaoMock).getForVds(vdsId);
         doReturn(vds).when(vdsDaoMock).get(vdsId);
     }

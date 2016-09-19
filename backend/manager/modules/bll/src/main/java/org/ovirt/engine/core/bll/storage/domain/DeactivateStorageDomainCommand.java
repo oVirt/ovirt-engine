@@ -125,11 +125,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (getStoragePool().getSpmVdsId() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
-                    getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId()).size() > 0) {
+                    asyncTaskDao.getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId()).size() > 0) {
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
             } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&
                     !getParameters().getIsInternal()
-                    && (getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0 ||
+                    && (asyncTaskDao.getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0 ||
                     getCommandEntityDao().getCommandIdsByEntity(getParameters().getStorageDomainId()).size() > 0)) {
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
@@ -320,7 +320,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      */
     private void notifyAsyncTasks() {
         final List<Guid> asyncTasks =
-                getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId());
+                asyncTaskDao.getAsyncTaskIdsByEntity(getParameters().getStorageDomainId());
 
         if (!asyncTasks.isEmpty()) {
             AuditLogableBase auditLogableBase = new AuditLogableBase();

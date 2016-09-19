@@ -311,6 +311,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected StepSubjectEntityDao subjectEntityDao;
 
+    @Inject
+    protected AsyncTaskDao asyncTaskDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -825,10 +828,6 @@ public class AuditLogableBase extends TimeoutBase {
             glusterVolume = glusterVolumeDao.getById(glusterVolumeId);
         }
         return glusterVolume;
-    }
-
-    public AsyncTaskDao getAsyncTaskDao() {
-        return getDbFacade().getAsyncTaskDao();
     }
 
     public DbFacade getDbFacade() {
