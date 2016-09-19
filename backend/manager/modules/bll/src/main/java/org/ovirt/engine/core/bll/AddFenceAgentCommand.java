@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> extends FenceAgentCommandBase {
 
@@ -34,7 +33,7 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
     @Override
     protected void executeCommand() {
         FenceAgent agent = getParameters().getAgent();
-        DbFacade.getInstance().getFenceAgentDao().save(agent);
+        fenceAgentDao.save(agent);
         getReturnValue().setActionReturnValue(agent.getId());
         setSucceeded(true);
     }

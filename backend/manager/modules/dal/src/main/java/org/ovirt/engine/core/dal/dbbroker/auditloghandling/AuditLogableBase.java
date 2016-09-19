@@ -37,6 +37,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.JobDao;
@@ -321,6 +322,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     @Inject
     protected AffinityGroupDao affinityGroupDao;
+
+    @Inject
+    protected FenceAgentDao fenceAgentDao;
 
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable

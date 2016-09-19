@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -225,10 +224,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             private void updateFenceAgents() {
                 if (getParameters().getFenceAgents() != null) { // if == null, means no update. Empty list means
                                                                   // delete agents.
-                    DbFacade.getInstance().getFenceAgentDao().removeByVdsId(getVdsId());
+                    fenceAgentDao.removeByVdsId(getVdsId());
                     for (FenceAgent agent : getParameters().getFenceAgents()) {
                         agent.setHostId(getVdsId());
-                        DbFacade.getInstance().getFenceAgentDao().save(agent);
+                        fenceAgentDao.save(agent);
                     }
                 }
             }

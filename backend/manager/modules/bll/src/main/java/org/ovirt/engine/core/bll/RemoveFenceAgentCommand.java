@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveFenceAgentCommand<T extends FenceAgentCommandParameterBase> extends FenceAgentCommandBase {
 
@@ -17,7 +16,7 @@ public class RemoveFenceAgentCommand<T extends FenceAgentCommandParameterBase> e
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getFenceAgentDao().remove(getParameters().getAgent().getId());
+        fenceAgentDao.remove(getParameters().getAgent().getId());
         setSucceeded(true);
     }
 

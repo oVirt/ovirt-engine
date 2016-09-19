@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -562,7 +561,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (getParameters().getFenceAgents() != null) { // if == null, means no update. Empty list means
             for (FenceAgent agent : getParameters().getFenceAgents()) {
                 agent.setHostId(getVdsId());
-                DbFacade.getInstance().getFenceAgentDao().save(agent);
+                fenceAgentDao.save(agent);
             }
         }
     }
