@@ -62,10 +62,9 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
      */
     private StartRemoveGlusterVolumeBricksCommand cmd;
 
-    private StartRemoveGlusterVolumeBricksCommand createTestCommand(Guid volumeId, int replicaCount) {
-        return new StartRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeId,
-                getBricks(volumeId, 1),
-                replicaCount), null);
+    private StartRemoveGlusterVolumeBricksCommand createTestCommand(Guid volumeId) {
+        return new StartRemoveGlusterVolumeBricksCommand(
+                new GlusterVolumeRemoveBricksParameters(volumeId, getBricks(volumeId, 1), 0), null);
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
@@ -143,7 +142,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommand() {
-        cmd = spy(createTestCommand(volumeId2, 0));
+        cmd = spy(createTestCommand(volumeId2));
         prepareMocks(cmd);
         mockBackend(true, null);
         assertTrue(cmd.validate());
@@ -157,7 +156,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(createTestCommand(volumeId2, 0));
+        cmd = spy(createTestCommand(volumeId2));
         prepareMocks(cmd);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksStartFailed);
         assertTrue(cmd.validate());
@@ -168,21 +167,21 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(createTestCommand(volumeId2, 0));
+        cmd = spy(createTestCommand(volumeId2));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(createTestCommand(volumeId1, 0));
+        cmd = spy(createTestCommand(volumeId1));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand(null, 0));
+        cmd = spy(createTestCommand(null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
