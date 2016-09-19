@@ -12,8 +12,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
@@ -63,7 +61,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
@@ -77,9 +74,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private CinderBroker cinderBroker;
     protected List<DiskImage> ovfDisks;
     protected List<UnregisteredDisk> unregisteredDisks = new ArrayList<>();
-
-    @Inject
-    protected UnregisteredDisksDao unregisteredDisksDao;
 
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

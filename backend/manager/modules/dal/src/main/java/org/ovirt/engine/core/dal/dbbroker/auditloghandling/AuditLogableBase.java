@@ -54,6 +54,7 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -172,6 +173,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     @Inject
     protected UnregisteredOVFDataDao unregisteredOVFDataDao;
+
+    @Inject
+    protected UnregisteredDisksDao unregisteredDisksDao;
 
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable

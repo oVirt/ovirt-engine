@@ -84,7 +84,6 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
 
     private void mockCommandParameters() {
         // Mock the command Parameters
-        doReturn(unregisteredDisksDaoMock).when(cmd).getUnregisteredDisksDao();
         doReturn(diskImageDaoMock).when(cmd).getDiskImageDao();
     }
 

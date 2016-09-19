@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 
@@ -35,9 +34,6 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(LockProperties.Scope.Execution);
     }
-
-    @Inject
-    private UnregisteredDisksDao unregisteredDisksDao;
 
     @Inject
     private DiskImageDao diskImageDao;
@@ -91,7 +87,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     }
 
     protected void removeUnregisteredDisks() {
-        getUnregisteredDisksDao().removeUnregisteredDisk(null, getParameters().getStorageDomainId());
+        unregisteredDisksDao.removeUnregisteredDisk(null, getParameters().getStorageDomainId());
     }
 
     protected VdcQueryReturnValue getUnregisteredDisksFromHost() {
@@ -143,11 +139,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     }
 
     protected void saveUnregisterDisk(UnregisteredDisk unregisteredDisk) {
-        getUnregisteredDisksDao().saveUnregisteredDisk(unregisteredDisk);
-    }
-
-    public UnregisteredDisksDao getUnregisteredDisksDao() {
-        return unregisteredDisksDao;
+        unregisteredDisksDao.saveUnregisteredDisk(unregisteredDisk);
     }
 
     public DiskImageDao getDiskImageDao() {
