@@ -30,7 +30,7 @@ public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCom
     @Override
     protected void init() {
         super.init();
-        georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
+        georepSessions = glusterGeoRepDao.getGeoRepSessions(getGlusterVolumeId());
     }
 
     @Override

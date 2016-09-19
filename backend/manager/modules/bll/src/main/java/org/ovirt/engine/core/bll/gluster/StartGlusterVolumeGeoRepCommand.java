@@ -36,7 +36,7 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             session.setStatus(GeoRepSessionStatus.INITIALIZING);
-            getGlusterGeoRepDao().updateSession(session);
+            glusterGeoRepDao.updateSession(session);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_GEO_REP_START_FAILED_EXCEPTION, returnValue.getVdsError().getMessage());
             return;

@@ -50,7 +50,7 @@ public class PauseGlusterVolumeGeoRepSessionCommand extends GeoRepSessionCommand
             return;
         } else {
             session.setStatus(GeoRepSessionStatus.PAUSED);
-            getGlusterGeoRepDao().updateSession(session);
+            glusterGeoRepDao.updateSession(session);
         }
     }
 

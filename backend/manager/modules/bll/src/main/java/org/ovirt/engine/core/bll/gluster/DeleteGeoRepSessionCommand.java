@@ -44,7 +44,7 @@ public class DeleteGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
                                 getGeoRepSession().getSlaveVolumeName(), getGeoRepSession().getUserName()));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
-            getGlusterGeoRepDao().remove(getGeoRepSession().getId());
+            glusterGeoRepDao.remove(getGeoRepSession().getId());
         } else {
             handleVdsError(AuditLogType.GEOREP_SESSION_DELETE_FAILED, returnValue.getVdsError().getMessage());
         }

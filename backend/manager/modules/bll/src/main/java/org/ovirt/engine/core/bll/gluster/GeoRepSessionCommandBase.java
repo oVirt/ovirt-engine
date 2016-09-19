@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSessionParameters> extends GlusterVolumeCommandBase<T> {
     private GlusterGeoRepSession geoRepSession = null;
@@ -51,10 +50,10 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
     protected GlusterGeoRepSession getGeoRepSession() {
         if (geoRepSession == null) {
             if(getParameters().getGeoRepSessionId() != null) {
-                geoRepSession = getGlusterGeoRepDao().getById(getParameters().getGeoRepSessionId());
+                geoRepSession = glusterGeoRepDao.getById(getParameters().getGeoRepSessionId());
             } else {
                 geoRepSession =
-                        getGlusterGeoRepDao().getGeoRepSession(getGlusterVolumeId(),
+                        glusterGeoRepDao.getGeoRepSession(getGlusterVolumeId(),
                                 getParameters().getSlaveHostId(),
                                 getParameters().getSlaveVolumeName());
             }
@@ -71,9 +70,4 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
         }
         return null;
     }
-
-    protected GlusterGeoRepDao getGlusterGeoRepDao() {
-        return getDbFacade().getGlusterGeoRepDao();
-    }
-
 }

@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -11,12 +13,16 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 
 /**
  * Base class for all Gluster Volume related commands
  */
 public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters> extends GlusterCommandBase<T> {
+
+    @Inject
+    protected GlusterGeoRepDao glusterGeoRepDao;
 
     public GlusterVolumeCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);

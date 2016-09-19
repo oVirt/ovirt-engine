@@ -45,7 +45,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
     @Override
     protected void init() {
         super.init();
-        georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
+        georepSessions = glusterGeoRepDao.getGeoRepSessions(getGlusterVolumeId());
     }
 
     @Override

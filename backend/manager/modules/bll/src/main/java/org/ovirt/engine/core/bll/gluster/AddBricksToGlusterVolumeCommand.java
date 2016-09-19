@@ -122,14 +122,13 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         List<GlusterGeoRepSession> sessions = new ArrayList<>();
 
         // Get all sessions for which the volume is a master
-        List<GlusterGeoRepSession> geoRepSessionsForVolumeAsMaster =
-                getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(volume.getId());
+        List<GlusterGeoRepSession> geoRepSessionsForVolumeAsMaster = glusterGeoRepDao.getGeoRepSessions(volume.getId());
         if (geoRepSessionsForVolumeAsMaster != null && !geoRepSessionsForVolumeAsMaster.isEmpty()) {
             sessions.addAll(geoRepSessionsForVolumeAsMaster);
         }
         // Get session for which the volume is a slave
         GlusterGeoRepSession geoRepSessionForVolumeAsSlave =
-                getDbFacade().getGlusterGeoRepDao().getGeoRepSessionBySlaveVolume(volume.getId());
+                glusterGeoRepDao.getGeoRepSessionBySlaveVolume(volume.getId());
         if (geoRepSessionForVolumeAsSlave != null) {
             sessions.add(geoRepSessionForVolumeAsSlave);
         }

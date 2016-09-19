@@ -60,7 +60,7 @@ public class StopGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVo
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             getGeoRepSession().setStatus(GeoRepSessionStatus.STOPPED);
-            getGlusterGeoRepDao().updateSession(getGeoRepSession());
+            glusterGeoRepDao.updateSession(getGeoRepSession());
         } else {
             handleVdsError(AuditLogType.GEOREP_SESSION_STOP_FAILED, returnValue.getVdsError().getMessage());
         }

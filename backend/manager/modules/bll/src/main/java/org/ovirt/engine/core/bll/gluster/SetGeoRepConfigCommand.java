@@ -57,10 +57,10 @@ public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolu
             geoRepSessionConfig.setValue(configValue);
             geoRepSessionConfig.setKey(configKey);
             geoRepSessionConfig.setId(session.getId());
-            if(getGlusterGeoRepDao().getGeoRepSessionConfigByKey(session.getId(), configKey) == null) {
-                getGlusterGeoRepDao().saveConfig(geoRepSessionConfig);
+            if(glusterGeoRepDao.getGeoRepSessionConfigByKey(session.getId(), configKey) == null) {
+                glusterGeoRepDao.saveConfig(geoRepSessionConfig);
             } else {
-                getGlusterGeoRepDao().updateConfig(geoRepSessionConfig);
+                glusterGeoRepDao.updateConfig(geoRepSessionConfig);
             }
         } else {
             handleVdsError(AuditLogType.GLUSTER_GEOREP_CONFIG_SET_FAILED, returnValue.getVdsError().getMessage());

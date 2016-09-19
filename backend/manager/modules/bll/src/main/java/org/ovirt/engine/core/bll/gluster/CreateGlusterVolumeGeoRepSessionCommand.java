@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeCommandBase<GlusterVolumeGeoRepSessionParameters> {
 
@@ -60,17 +59,13 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_REMOTE_HOSTS_ARE_NOT_ACCESSIBLE);
         }
         GlusterGeoRepSession geoRepSession =
-                getGeoRepDao().getGeoRepSession(getGlusterVolumeId(),
+                glusterGeoRepDao.getGeoRepSession(getGlusterVolumeId(),
                         slaveHost.getId(),
                         getParameters().getSlaveVolumeName());
         if (geoRepSession != null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_GEOREP_SESSION_ALREADY_CREATED);
         }
         return super.validate();
-    }
-
-    protected GlusterGeoRepDao getGeoRepDao() {
-        return getDbFacade().getGlusterGeoRepDao();
     }
 
     protected GlusterVolumeEntity getSlaveVolume() {

@@ -33,7 +33,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
     protected void init() {
         super.init();
         snapshots = getGlusterVolumeSnapshotDao().getAllByVolumeId(getGlusterVolumeId());
-        georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
+        georepSessions = glusterGeoRepDao.getGeoRepSessions(getGlusterVolumeId());
     }
 
     @Override
