@@ -38,7 +38,7 @@ public class UpdateCpuProfileCommand extends UpdateProfileCommandBase<CpuProfile
 
     @Override
     protected ProfilesDao<CpuProfile> getProfileDao() {
-        return getCpuProfileDao();
+        return cpuProfileDao;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class UpdateCpuProfileCommand extends UpdateProfileCommandBase<CpuProfile
     @Override
     protected void executeCommand() {
         // Chcek if qos has changed
-        Guid oldQos = getCpuProfileDao().get(getProfileId()).getQosId();
+        Guid oldQos = cpuProfileDao.get(getProfileId()).getQosId();
         Guid newQos = getProfile().getQosId();
 
         super.executeCommand();

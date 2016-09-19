@@ -33,7 +33,7 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
 
     @Override
     protected ProfilesDao<CpuProfile> getProfileDao() {
-        return getCpuProfileDao();
+        return cpuProfileDao;
     }
 
     @Override

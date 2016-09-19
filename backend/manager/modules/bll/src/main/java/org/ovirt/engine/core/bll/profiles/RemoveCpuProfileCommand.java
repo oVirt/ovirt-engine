@@ -25,7 +25,7 @@ public class RemoveCpuProfileCommand extends RemoveProfileCommandBase<CpuProfile
 
     @Override
     protected ProfilesDao<CpuProfile> getProfileDao() {
-        return getCpuProfileDao();
+        return cpuProfileDao;
     }
 
     @Override
