@@ -190,7 +190,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     }
 
     private List<Pair<Guid, String>> retrieveUnprocessedUnregisteredOvfData(Set<Guid> processedIds) {
-        List<OvfEntityData> ovfList = getUnregisteredOVFDataDao().getAllForStorageDomainByEntityType(
+        List<OvfEntityData> ovfList = unregisteredOVFDataDao.getAllForStorageDomainByEntityType(
                 getParameters().getStorageDomainId(), null);
         List<Pair<Guid, String>> ovfData = new LinkedList<>();
         for (OvfEntityData ovfEntityData : ovfList) {

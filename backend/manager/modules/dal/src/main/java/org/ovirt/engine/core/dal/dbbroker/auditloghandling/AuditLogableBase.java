@@ -170,6 +170,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
+    @Inject
+    protected UnregisteredOVFDataDao unregisteredOVFDataDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -842,10 +845,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public ImageDao getImageDao() {
         return getDbFacade().getImageDao();
-    }
-
-    public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
-        return getDbFacade().getUnregisteredOVFDataDao();
     }
 
     public DbFacade getDbFacade() {

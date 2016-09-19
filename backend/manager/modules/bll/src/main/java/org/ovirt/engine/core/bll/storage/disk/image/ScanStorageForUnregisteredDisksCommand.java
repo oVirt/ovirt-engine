@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 
@@ -39,9 +38,6 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
 
     @Inject
     private UnregisteredDisksDao unregisteredDisksDao;
-
-    @Inject
-    private UnregisteredOVFDataDao unregisteredOVFDataDao;
 
     @Inject
     private DiskImageDao diskImageDao;
@@ -82,7 +78,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
 
         // Filter out all existing disks in the setup.
         List<OvfEntityData> allEntities =
-                getUnregisteredOVFDataDao().getAllForStorageDomainByEntityType(getParameters().getStorageDomainId(),
+                unregisteredOVFDataDao.getAllForStorageDomainByEntityType(getParameters().getStorageDomainId(),
                         null);
         setVmsForUnregisteredDisks(allEntities);
 
@@ -152,10 +148,6 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
 
     public UnregisteredDisksDao getUnregisteredDisksDao() {
         return unregisteredDisksDao;
-    }
-
-    public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
-        return unregisteredOVFDataDao;
     }
 
     public DiskImageDao getDiskImageDao() {

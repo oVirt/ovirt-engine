@@ -109,7 +109,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         storagePoolId = Guid.newGuid();
         clusterId = Guid.newGuid();
 
-        doReturn(unregisteredOVFDataDao).when(cmd).getUnregisteredOVFDataDao();
         doReturn(cluster).when(cmd).getCluster();
         doReturn(Collections.emptyList()).when(cmd).getImages();
 

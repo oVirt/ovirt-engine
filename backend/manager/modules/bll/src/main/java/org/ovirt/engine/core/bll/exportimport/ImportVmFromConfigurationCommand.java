@@ -94,7 +94,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private void initUnregisteredVM() {
         OvfHelper ovfHelper = new OvfHelper();
         List<OvfEntityData> ovfEntityDataList =
-                getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(getParameters().getContainerId(),
+                unregisteredOVFDataDao.getByEntityIdAndStorageDomain(getParameters().getContainerId(),
                         getParameters().getStorageDomainId());
         if (!ovfEntityDataList.isEmpty()) {
             try {
@@ -135,7 +135,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         super.executeCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
-                getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
+                unregisteredOVFDataDao.removeEntity(ovfEntityData.getEntityId(), null);
                 unregisteredDisksDao.removeUnregisteredDiskRelatedToVM(ovfEntityData.getEntityId(), null);
                 auditLogDirector.log(this, AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY);
             } else if (!vmDisksToAttach.isEmpty()) {

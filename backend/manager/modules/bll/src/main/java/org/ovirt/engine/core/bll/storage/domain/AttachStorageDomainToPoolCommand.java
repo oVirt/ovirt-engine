@@ -175,9 +175,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
                     // Update unregistered entities
                     for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
-                        getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
+                        unregisteredOVFDataDao.removeEntity(ovf.getEntityId(),
                                 getParameters().getStorageDomainId());
-                        getUnregisteredOVFDataDao().saveOVFData(ovf);
+                        unregisteredOVFDataDao.saveOVFData(ovf);
                         log.info("Adding OVF data of entity id '{}' and entity name '{}'",
                                 ovf.getEntityId(),
                                 ovf.getEntityName());

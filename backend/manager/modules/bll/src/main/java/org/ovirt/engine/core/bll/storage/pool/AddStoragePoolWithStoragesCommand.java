@@ -246,8 +246,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     // Update unregistered entities
                     for (Object ovf : entitiesFromStorageOvfDisk) {
                         OvfEntityData ovfEntityData = (OvfEntityData) ovf;
-                        getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), storageDomainId);
-                        getUnregisteredOVFDataDao().saveOVFData(ovfEntityData);
+                        unregisteredOVFDataDao.removeEntity(ovfEntityData.getEntityId(), storageDomainId);
+                        unregisteredOVFDataDao.saveOVFData(ovfEntityData);
                         log.info("Adding OVF data of entity id '{}' and entity name '{}'",
                                 ovfEntityData.getEntityId(),
                                 ovfEntityData.getEntityName());

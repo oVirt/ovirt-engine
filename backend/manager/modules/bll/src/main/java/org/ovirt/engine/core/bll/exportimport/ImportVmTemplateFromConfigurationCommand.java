@@ -112,7 +112,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private void initVmTemplate() {
         OvfHelper ovfHelper = new OvfHelper();
         List<OvfEntityData> ovfEntityList =
-                getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(getParameters().getContainerId(),
+                unregisteredOVFDataDao.getByEntityIdAndStorageDomain(getParameters().getContainerId(),
                         getParameters().getStorageDomainId());
         if (!ovfEntityList.isEmpty()) {
             try {
@@ -155,7 +155,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             if (!getImages().isEmpty()) {
                 findAndSaveDiskCopies();
             }
-            getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
+            unregisteredOVFDataDao.removeEntity(ovfEntityData.getEntityId(), null);
             unregisteredDisksDao.removeUnregisteredDiskRelatedToVM(ovfEntityData.getEntityId(), null);
         }
         setActionReturnValue(getVmTemplate().getId());
@@ -164,7 +164,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     private void findAndSaveDiskCopies() {
         List<OvfEntityData> ovfEntityDataList =
-                getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(ovfEntityData.getEntityId(), null);
+                unregisteredOVFDataDao.getByEntityIdAndStorageDomain(ovfEntityData.getEntityId(), null);
         List<ImageStorageDomainMap> copiedTemplateDisks = new LinkedList<>();
         for (OvfEntityData ovfEntityDataFetched : ovfEntityDataList) {
             populateDisksCopies(copiedTemplateDisks,

@@ -214,12 +214,12 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     private void removeEntityLeftOver(Guid entityId, String entityName, Guid storageDomainId) {
         List<OvfEntityData> ovfEntityList =
-                getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(entityId, storageDomainId);
+                unregisteredOVFDataDao.getByEntityIdAndStorageDomain(entityId, storageDomainId);
         if (!ovfEntityList.isEmpty()) {
             log.info("Entity '{}' with id '{}', already exists as unregistered entity. override it with the new entity from the engine",
                     entityName,
                     entityId);
-            getUnregisteredOVFDataDao().removeEntity(entityId, storageDomainId);
+            unregisteredOVFDataDao.removeEntity(entityId, storageDomainId);
         }
     }
 
@@ -234,7 +234,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             TransactionSupport.executeInNewTransaction(() -> {
                 for (VM vm : vmsForStorageDomain) {
                     removeEntityLeftOver(vm.getId(), vm.getName(), storageDomainId);
-                    getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
+                    unregisteredOVFDataDao.saveOVFData(new OvfEntityData(
                             vm.getId(),
                             vm.getName(),
                             VmEntityType.VM,
@@ -247,7 +247,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
                 for (VmTemplate vmTemplate : vmTemplatesForStorageDomain) {
                     removeEntityLeftOver(vmTemplate.getId(), vmTemplate.getName(), storageDomainId);
-                    getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
+                    unregisteredOVFDataDao.saveOVFData(new OvfEntityData(
                             vmTemplate.getId(),
                             vmTemplate.getName(),
                             VmEntityType.TEMPLATE,
