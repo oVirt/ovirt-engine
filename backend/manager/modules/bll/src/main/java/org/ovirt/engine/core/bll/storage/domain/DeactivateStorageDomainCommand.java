@@ -227,7 +227,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
         VDS spm = null;
         if (getStoragePool().getSpmVdsId() != null) {
-            spm = getVdsDao().get(getStoragePool().getSpmVdsId());
+            spm = vdsDao.get(getStoragePool().getSpmVdsId());
         }
 
         if (isLastMaster) {
@@ -293,7 +293,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         Set<VDSStatus> vdsStatus = EnumSet.copyOf(StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus);
         vdsStatus.addAll(StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus);
 
-        return getVdsDao().getAllForStoragePoolAndStatuses(getStoragePool().getId(), vdsStatus);
+        return vdsDao.getAllForStoragePoolAndStatuses(getStoragePool().getId(), vdsStatus);
     }
 
     private void deactivateCinderStorageDomain() {

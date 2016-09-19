@@ -78,7 +78,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
     }
 
     private VDSReturnValue restartGlusterd(Guid serverId) {
-        getCustomValues().put(GlusterConstants.VDS_NAME, getVdsDao().get(serverId).getName());
+        getCustomValues().put(GlusterConstants.VDS_NAME, vdsDao.get(serverId).getName());
         GlusterServiceVDSParameters params =
                 new GlusterServiceVDSParameters(serverId,
                         Collections.singletonList("glusterd"),

@@ -287,8 +287,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testDedicatedHostNotExistOrNotSameCluster() {
         prepareVmToPassValidate();
 
-        // this will cause null to return when getting vds from vdsDao
-        doReturn(vdsDao).when(command).getVdsDao();
         doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
 
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
@@ -303,7 +301,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         VDS vds = new VDS();
         vds.setClusterId(group.getId());
-        doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());

@@ -64,7 +64,6 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     private void setUpMocksForUpdate(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
         setupMocks(hookFound, hook);
-        doReturn(vdsDao).when(cmd).getVdsDao();
         when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
     }
 

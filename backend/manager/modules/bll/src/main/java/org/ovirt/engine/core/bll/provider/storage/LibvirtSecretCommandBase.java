@@ -63,7 +63,7 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
     }
 
     protected List<VDS> getAllRunningVdssInPool() {
-        return getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
+        return vdsDao.getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
 
     protected void registerLibvirtSecret() {

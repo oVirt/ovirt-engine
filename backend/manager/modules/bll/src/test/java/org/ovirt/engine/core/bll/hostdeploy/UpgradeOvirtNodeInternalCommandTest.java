@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.hostdeploy;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -55,7 +54,6 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtVintageNode);
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
-        doReturn(vdsDao).when(command).getVdsDao();
     }
 
     private static InstallVdsParameters createParameters() {

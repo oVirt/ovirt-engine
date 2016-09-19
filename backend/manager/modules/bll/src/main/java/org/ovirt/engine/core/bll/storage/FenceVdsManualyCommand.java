@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 
 /**
@@ -54,7 +53,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     @Override
     public void init() {
         super.init();
-        problematicVds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
+        problematicVds = vdsDao.get(getParameters().getVdsId());
     }
 
     @Override

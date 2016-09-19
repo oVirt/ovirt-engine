@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.di.Injector;
 
@@ -204,7 +203,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     public boolean canMaintenanceVds(Guid vdsId, ArrayList<String> reasons) {
         boolean returnValue = true;
         // VDS vds = ResourceManager.Instance.getVds(vdsId);
-        VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+        VDS vds = vdsDao.get(vdsId);
         // we can get here when vds status was set already to Maintenance
         if ((vds.getStatus() != VDSStatus.Maintenance) && (vds.getStatus() != VDSStatus.NonResponsive)
                 && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)

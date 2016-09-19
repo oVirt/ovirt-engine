@@ -97,7 +97,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected List<VDS> getAllRunningVdssInPool() {
-        return getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
+        return vdsDao.getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
 
     protected void updateStoragePoolMasterDomainVersionInDiffTransaction() {
@@ -133,7 +133,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected VDS checkForActiveVds() {
-        List<VDS> hosts = getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(),
+        List<VDS> hosts = vdsDao.getAllForStoragePoolAndStatus(getStoragePool().getId(),
                 VDSStatus.Up);
         if (!hosts.isEmpty()) {
             return hosts.get(new Random().nextInt(hosts.size()));

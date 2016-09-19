@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
@@ -124,12 +123,12 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
         if (alreadyInUpgradeMode && !newCluster.isInUpgradeMode()) {
             // Check if we can safely stop the cluster upgrade
-            final List<VDS> hosts = getVdsDao().getAllForCluster(getClusterId());
+            final List<VDS> hosts = vdsDao.getAllForCluster(getClusterId());
             if (!validate(getUpgradeValidator().isUpgradeDone(hosts))) {
                 return false;
             }
         } else if (!alreadyInUpgradeMode && newCluster.isInUpgradeMode()) {
-            final List<VDS> hosts = getVdsDao().getAllForCluster(getClusterId());
+            final List<VDS> hosts = vdsDao.getAllForCluster(getClusterId());
             final List<VM> vms = vmDao.getAllForCluster(getClusterId());
             populateVMNUMAInfo(vms);
 

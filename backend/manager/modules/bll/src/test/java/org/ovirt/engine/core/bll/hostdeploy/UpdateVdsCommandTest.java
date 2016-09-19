@@ -80,7 +80,6 @@ public class UpdateVdsCommandTest {
         //now return the old vds data
         when(vdsDaoMock.getByName("BAR")).thenReturn(vds);
 
-        doReturn(vdsDaoMock).when(commandMock).getVdsDao();
         when(commandMock.getDbFacade()).thenReturn(mock(DbFacade.class));
         VdsHandler.init();
 

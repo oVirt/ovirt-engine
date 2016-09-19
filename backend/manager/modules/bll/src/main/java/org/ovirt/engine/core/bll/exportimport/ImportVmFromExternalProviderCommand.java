@@ -193,7 +193,7 @@ implements QuotaStorageDependent {
     }
 
     private ValidationResult validateEligibleProxyHostExists() {
-        for (VDS host : getVdsDao().getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up)) {
+        for (VDS host : vdsDao.getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up)) {
             if (isHostInSupportedClusterForProxyHost(host)) {
                 return ValidationResult.VALID;
             }

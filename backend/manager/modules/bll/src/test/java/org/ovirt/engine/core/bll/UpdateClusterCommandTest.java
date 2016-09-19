@@ -600,7 +600,6 @@ public class UpdateClusterCommandTest {
 
         doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
-        doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
         doReturn(clusterFeatureDao).when(cmd).getClusterFeatureDao();

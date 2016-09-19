@@ -348,7 +348,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (result) {
-            allForCluster = getVdsDao().getAllForCluster(oldCluster.getId());
+            allForCluster = vdsDao.getAllForCluster(oldCluster.getId());
         }
         // decreasing of compatibility version is only allowed when no hosts exists, and not beneath the DC version
         if (result && getCluster().getCompatibilityVersion().compareTo(oldCluster.getCompatibilityVersion()) < 0) {

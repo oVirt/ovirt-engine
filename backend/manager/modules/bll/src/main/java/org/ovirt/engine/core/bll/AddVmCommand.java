@@ -424,7 +424,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return true;
         }
         for (Guid candidateHostGuid : dedicatedHostsList) {
-            if (getVdsDao().get(candidateHostGuid) == null) {
+            if (vdsDao.get(candidateHostGuid) == null) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
                 return false;
             }

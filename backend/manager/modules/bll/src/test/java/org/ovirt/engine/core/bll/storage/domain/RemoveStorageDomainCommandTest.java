@@ -78,7 +78,6 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
         doReturn(storageDomain).when(storageDomainDaoMock).get(storageDomainID);
         doReturn(Collections.singletonList(storageDomain)).when(storageDomainDaoMock).getAllForStorageDomain(storageDomainID);
 
-        doReturn(vdsDaoMock).when(command).getVdsDao();
         doReturn(vds).when(vdsDaoMock).get(vdsID);
 
         StorageDomainToPoolRelationValidator domainToPoolValidator = spy(new StorageDomainToPoolRelationValidator(storageDomain.getStorageStaticData(), null));

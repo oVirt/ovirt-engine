@@ -228,7 +228,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      */
     private boolean removeDeprecatedOvirtEntry(final Guid oVirtId) {
 
-        final VDS vds = DbFacade.getInstance().getVdsDao().get(oVirtId);
+        final VDS vds = vdsDao.get(oVirtId);
         if (vds == null || !VdsHandler.isPendingOvirt(vds)) {
             return false;
         }
@@ -371,7 +371,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private boolean clusterHasNonInitializingServers() {
-        for (VDS vds : getVdsDao().getAllForCluster(getClusterId())) {
+        for (VDS vds : vdsDao.getAllForCluster(getClusterId())) {
             if (vds.getStatus() != VDSStatus.Installing &&
                     vds.getStatus() != VDSStatus.InstallingOS &&
                     vds.getStatus() != VDSStatus.PendingApproval &&
@@ -445,7 +445,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient.authenticate();
 
                 String hostUUID = getInstalledVdsIdIfExists(sshclient);
-                if (hostUUID != null && getVdsDao().getAllWithUniqueId(hostUUID).size() != 0) {
+                if (hostUUID != null && vdsDao.getAllWithUniqueId(hostUUID).size() != 0) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
                 }
 

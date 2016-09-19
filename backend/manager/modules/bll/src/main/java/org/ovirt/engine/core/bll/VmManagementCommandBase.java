@@ -89,7 +89,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected VDS getVds(Guid id) {
-        return getVdsDao().get(id);
+        return vdsDao.get(id);
     }
 
     protected boolean validateCustomProperties(VmStatic vmStaticFromParams, List<String> reasons) {

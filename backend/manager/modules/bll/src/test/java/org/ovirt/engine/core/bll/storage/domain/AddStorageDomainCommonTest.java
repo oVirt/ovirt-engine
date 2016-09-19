@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -101,8 +100,6 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         cmd.getParameters().setVdsId(vdsId);
         cmd.setVdsId(vdsId);
         cmd.init();
-
-        doReturn(vdsDao).when(cmd).getVdsDao();
     }
 
     @Test

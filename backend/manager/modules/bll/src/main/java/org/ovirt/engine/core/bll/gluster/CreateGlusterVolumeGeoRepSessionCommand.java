@@ -78,7 +78,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     }
 
     protected VDS getSlaveHost() {
-        return getVdsDao().get(getParameters().getSlaveHostId());
+        return vdsDao.get(getParameters().getSlaveHostId());
     }
 
     private boolean areAllRemoteServersUp() {
@@ -115,7 +115,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         if (!rootSession) {
             VdcReturnValueBase completeMountBrokerSetupOnSlaveInternalAction =
                     getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
-                            new SetUpMountBrokerParameters(getVdsDao().get(slaveHostId).getClusterId(),
+                            new SetUpMountBrokerParameters(vdsDao.get(slaveHostId).getClusterId(),
                                     new HashSet<>(Collections.singletonList(getParameters().getSlaveHostId())),
                                     getParameters().getSlaveVolumeName(),
                                     getParameters().getUserName(),
@@ -127,7 +127,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
                 if (!remoteServerIds.isEmpty()) {
                     VdcReturnValueBase mountBrokerPartialSetupInternalAction =
                             getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
-                                    new SetUpMountBrokerParameters(getVdsDao().get(slaveHostId).getClusterId(),
+                                    new SetUpMountBrokerParameters(vdsDao.get(slaveHostId).getClusterId(),
                                             remoteServerIds,
                                             getParameters().getSlaveVolumeName(),
                                             getParameters().getUserName()));
@@ -153,7 +153,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
                 VDSReturnValue createVdsReturnValue = runVdsCommand(VDSCommandType.CreateGlusterVolumeGeoRepSession,
                         new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
                                 getGlusterVolumeName(),
-                                getVdsDao().get(slaveHostId).getHostName(),
+                                vdsDao.get(slaveHostId).getHostName(),
                                 getParameters().getSlaveVolumeName(),
                                 getParameters().getUserName(),
                                 getParameters().isForce()));
@@ -178,7 +178,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         Set<VDS> remoteServers = new HashSet<>();
         List<GlusterBrickEntity> slaveBricks = slaveVolume.getBricks();
         for (GlusterBrickEntity currentBrick : slaveBricks) {
-            remoteServers.add(getVdsDao().get(currentBrick.getServerId()));
+            remoteServers.add(vdsDao.get(currentBrick.getServerId()));
         }
         return remoteServers;
     }

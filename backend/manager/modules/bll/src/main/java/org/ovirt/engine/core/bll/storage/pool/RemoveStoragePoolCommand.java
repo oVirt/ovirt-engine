@@ -297,7 +297,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 return false;
             }
         } else {
-            List<VDS> poolHosts = getVdsDao().getAllForStoragePool(getParameters().getStoragePoolId());
+            List<VDS> poolHosts = vdsDao.getAllForStoragePool(getParameters().getStoragePoolId());
 
             sharedLocks = new HashMap<>();
             for (VDS host : poolHosts) {

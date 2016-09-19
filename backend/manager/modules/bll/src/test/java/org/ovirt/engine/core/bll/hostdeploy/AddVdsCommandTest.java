@@ -99,7 +99,6 @@ public class AddVdsCommandTest {
         doReturn(glusterEnabled).when(command).isGlusterSupportEnabled();
         doReturn(clusterUtils).when(command).getClusterUtils();
 
-        doReturn(vdsDaoMock).when(command).getVdsDao();
         doReturn(true).when(command).validateCluster();
         doReturn(true).when(command).isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class));
         doReturn(sshClient).when(command).getSSHClient();

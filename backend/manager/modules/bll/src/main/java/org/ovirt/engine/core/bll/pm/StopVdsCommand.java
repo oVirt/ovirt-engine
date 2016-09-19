@@ -135,7 +135,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
     private void stopSpm() {
         // get the host spm status again from the database in order to test it's current state.
-        VdsSpmStatus spmStatus = getDbFacade().getVdsDao().get(getVds().getId()).getSpmStatus();
+        VdsSpmStatus spmStatus = vdsDao.get(getVds().getId()).getSpmStatus();
         // try to stop SPM if action is Restart or Stop and the vds is SPM
         if (spmStatus != VdsSpmStatus.None) {
             runVdsCommand(

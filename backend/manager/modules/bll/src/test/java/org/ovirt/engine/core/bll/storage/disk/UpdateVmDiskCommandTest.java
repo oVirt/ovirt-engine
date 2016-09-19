@@ -696,7 +696,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     protected void mockVds() {
         VDS vds = new VDS();
         command.setVdsId(Guid.Empty);
-        doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(Guid.Empty)).thenReturn(vds);
     }
 

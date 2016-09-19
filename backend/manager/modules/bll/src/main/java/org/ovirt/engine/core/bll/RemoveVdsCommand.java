@@ -155,7 +155,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private boolean canRemoveVds(Guid vdsId, List<String> text) {
         boolean returnValue = true;
         // check if vds id is valid
-        VDS vds = getVdsDao().get(vdsId);
+        VDS vds = vdsDao.get(vdsId);
         if (vds == null) {
             text.add(EngineMessage.VDS_INVALID_SERVER_ID.toString());
             returnValue = false;

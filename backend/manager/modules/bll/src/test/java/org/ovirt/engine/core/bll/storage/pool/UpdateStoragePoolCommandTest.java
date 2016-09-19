@@ -92,7 +92,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
-        doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
 
         // Spy the StoragePoolValidator:

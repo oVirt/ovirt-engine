@@ -513,7 +513,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected void setDestinationVdsId(Guid vdsId) {
-        destinationVds = vdsId != null ? getVdsDao().get(vdsId) : null;
+        destinationVds = vdsId != null ? vdsDao.get(vdsId) : null;
     }
 
     @Override

@@ -206,7 +206,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             if (clusters.size() > 1) {
                 return failValidation(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
             }
-            List<VDS> hosts = getVdsDao().getAllForStoragePool(getStoragePool().getId());
+            List<VDS> hosts = vdsDao.getAllForStoragePool(getStoragePool().getId());
             if (hosts.size() > 1) {
                 return failValidation(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
             }

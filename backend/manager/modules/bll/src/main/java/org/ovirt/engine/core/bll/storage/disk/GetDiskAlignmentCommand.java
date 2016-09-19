@@ -248,7 +248,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
     protected Guid getVdsIdInGroup() {
         if (vdsInPool == null && getCluster() != null) {
-            List<VDS> vdsInPoolList = getVdsDao().getAllForClusterWithStatus(getCluster().getId(), VDSStatus.Up);
+            List<VDS> vdsInPoolList = vdsDao.getAllForClusterWithStatus(getCluster().getId(), VDSStatus.Up);
             if (!vdsInPoolList.isEmpty()) {
                 vdsInPool = vdsInPoolList.get(0).getId();
             }

@@ -237,6 +237,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected ClusterDao clusterDao;
 
+    @Inject
+    protected VdsDao vdsDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -517,7 +520,7 @@ public class AuditLogableBase extends TimeoutBase {
                 vdsId = getVm().getRunOnVds();
             }
             try {
-                vds = getVdsDao().get(getVdsId());
+                vds = vdsDao.get(getVdsId());
             } catch (final RuntimeException e) {
                 log.info("Failed to get vds '{}', error {}", vdsId, e.getMessage());
                 log.debug("Exception", e);
@@ -751,10 +754,6 @@ public class AuditLogableBase extends TimeoutBase {
             glusterVolume = glusterVolumeDao.getById(glusterVolumeId);
         }
         return glusterVolume;
-    }
-
-    public VdsDao getVdsDao() {
-        return getDbFacade().getVdsDao();
     }
 
     public VdsStaticDao getVdsStaticDao() {

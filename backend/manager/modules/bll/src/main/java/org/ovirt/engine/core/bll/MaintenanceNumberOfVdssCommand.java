@@ -179,7 +179,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         List<String> nonMigratableVms = new ArrayList<>();
 
         for (Guid vdsId : getParameters().getVdsIdList()) {
-            VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+            VDS vds = vdsDao.get(vdsId);
             if (vds == null) {
                 log.error("ResourceManager::vdsMaintenance could not find VDS '{}'", vdsId);
                 result = failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
@@ -291,7 +291,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 List<String> problematicClusters = new ArrayList<>();
                 List<String> allHostsWithRunningVms = new ArrayList<>();
                 for (Guid clusterID : clustersAsSet) {
-                    List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForCluster(clusterID);
+                    List<VDS> vdsList = vdsDao.getAllForCluster(clusterID);
                     boolean vdsForMigrationExists =
                             checkIfThereIsVDSToHoldMigratedVMs(getParameters().getVdsIdList(), vdsList);
 

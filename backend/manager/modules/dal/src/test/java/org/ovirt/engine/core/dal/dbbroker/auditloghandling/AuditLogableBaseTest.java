@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -62,6 +60,9 @@ public class AuditLogableBaseTest {
     @Mock
     ClusterDao clusterDao;
 
+    @Mock
+    VdsDao vdsDao;
+
     @Spy
     @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
@@ -71,7 +72,6 @@ public class AuditLogableBaseTest {
         when(vmDao.get(GUID)).thenReturn(new VM());
         when(vmDao.get(GUID3)).thenThrow(new RuntimeException());
 
-        final VdsDao vdsDao = mock(VdsDao.class);
         final VDS vds1 = new VDS();
         vds1.setId(GUID);
         final VDS vds2 = new VDS();
@@ -79,7 +79,6 @@ public class AuditLogableBaseTest {
         when(vdsDao.get(GUID)).thenReturn(vds1);
         when(vdsDao.get(GUID2)).thenReturn(vds2);
         when(vdsDao.get(GUID3)).thenThrow(new RuntimeException());
-        doReturn(vdsDao).when(b).getVdsDao();
 
         final StoragePool p = new StoragePool();
         p.setId(GUID);

@@ -117,7 +117,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private void mockVdsDao() {
         VDS vds = createHost();
         when(vdsDao.get(FENCECD_HOST_ID)).thenReturn(vds);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
     }
 
     private void mockVdsDynamicDao() {

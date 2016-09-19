@@ -53,7 +53,6 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
 
     private void setUpMocksForRemove(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
         setupMocks(hookFound, hook);
-        doReturn(vdsDao).when(cmd).getVdsDao();
         when(vdsDao.getAllForCluster(any(Guid.class))).thenReturn(getServers(status));
     }
 

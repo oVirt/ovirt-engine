@@ -260,7 +260,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
         parameters.setVdsId(HE_VDS_ID);
         parameters.setStorageDomainId(HE_SD_ID);
         // vds
-        doReturn(vdsDao).when(cmd).getVdsDao();
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
         vds.setStoragePoolId(HE_SP_ID);

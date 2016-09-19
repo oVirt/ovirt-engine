@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -217,7 +216,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         int percents = 0;
         boolean result = false;
         if (cluster.getFencingPolicy().isSkipFencingIfConnectivityBroken()) {
-            List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForCluster(cluster.getId());
+            List<VDS> hosts = vdsDao.getAllForCluster(cluster.getId());
             double hostsNumber = hosts.size();
             double hostsWithBrokenConnectivityNumber =
                     hosts.stream().filter(h -> h.getStatus() == VDSStatus.Connecting || h.getStatus() == VDSStatus.NonResponsive).count();

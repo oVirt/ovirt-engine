@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -173,7 +172,6 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
 
     private void createCommand() {
         cmd.init();
-        doReturn(vdsDao).when(cmd).getVdsDao();
     }
 
     private void setIsInternal() {

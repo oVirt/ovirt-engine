@@ -89,7 +89,6 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
 
         doNothing().when(cmd).attemptToActivateDomain();
         doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
-        doReturn(vdsDao).when(cmd).getVdsDao();
 
         StoragePool pool = new StoragePool();
         pool.setId(poolId);

@@ -19,7 +19,7 @@ public class AttachVdsToTagCommand<T extends AttachEntityToTagParameters> extend
         TagsVdsMap map;
         if (getTagId() != null) {
             for (Guid vdsId : getVdsList()) {
-                VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+                VDS vds = vdsDao.get(vdsId);
                 if (DbFacade.getInstance().getTagDao().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) == null) {
                     if (vds != null) {
                         appendCustomCommaSeparatedValue("VdsNames", vds.getName());

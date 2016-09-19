@@ -181,7 +181,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             if (getStoragePool().getSpmVdsId().equals(getVds().getId())) {
                 spm = getVds();
             } else {
-                spm = getVdsDao().get(getStoragePool().getSpmVdsId());
+                spm = vdsDao.get(getStoragePool().getSpmVdsId());
             }
             if (spm != null) {
                 ResetIrsVDSCommandParameters tempVar2 = new ResetIrsVDSCommandParameters(
@@ -219,7 +219,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     @Override
     protected List<VDS> getAllRunningVdssInPool() {
-        return getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
+        return vdsDao.getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
 
     private void connectAndRefreshAllUpHosts(final boolean commandSucceeded) {
