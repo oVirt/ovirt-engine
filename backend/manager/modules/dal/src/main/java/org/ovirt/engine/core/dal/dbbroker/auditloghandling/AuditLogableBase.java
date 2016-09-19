@@ -703,11 +703,11 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public VmAndTemplatesGenerationsDao getVmAndTemplatesGenerationsDao() {
-        return DbFacade.getInstance().getVmAndTemplatesGenerationsDao();
+        return getDbFacade().getVmAndTemplatesGenerationsDao();
     }
 
     public StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
-        return DbFacade.getInstance().getStorageDomainOvfInfoDao();
+        return getDbFacade().getStorageDomainOvfInfoDao();
     }
 
     public VmDynamicDao getVmDynamicDao() {
@@ -747,7 +747,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDao();
+        return getDbFacade().getVmNetworkInterfaceDao();
     }
 
     public VmNetworkStatisticsDao getVmNetworkStatisticsDao() {
