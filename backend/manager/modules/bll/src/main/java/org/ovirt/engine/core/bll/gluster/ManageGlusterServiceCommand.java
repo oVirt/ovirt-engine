@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -40,6 +39,9 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     @Inject
     private GlusterServerServiceDao glusterServerServiceDao;
+
+    @Inject
+    private GlusterServiceDao glusterServiceDao;
 
     private static final Map<String, ManageActionDetail> manageActionDetailsMap = new HashMap<>();
 
@@ -95,10 +97,6 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         return true;
     }
 
-    public GlusterServiceDao getGlusterServiceDao() {
-        return DbFacade.getInstance().getGlusterServiceDao();
-    }
-
     @Override
     protected void executeCommand() {
         if (!Guid.isNullOrEmpty(getParameters().getServerId())) {
@@ -110,7 +108,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     }
 
     private List<String> getServiceList() {
-        List<GlusterService> serviceList = getGlusterServiceDao().getByServiceType(getParameters().getServiceType());
+        List<GlusterService> serviceList = glusterServiceDao.getByServiceType(getParameters().getServiceType());
         List<String> serviceListStr = new ArrayList<>();
         for (GlusterService srvc : serviceList) {
             serviceListStr.add(srvc.getServiceName());
@@ -187,7 +185,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     private void updateService(Guid serverId, List<GlusterServerService> fetchedServerServices) {
         // form the list of service ids
         List<Guid> serviceIds = new ArrayList<>();
-        for (GlusterService srvc : getGlusterServiceDao().getByServiceType(getParameters().getServiceType())) {
+        for (GlusterService srvc : glusterServiceDao.getByServiceType(getParameters().getServiceType())) {
             serviceIds.add(srvc.getId());
         }
 

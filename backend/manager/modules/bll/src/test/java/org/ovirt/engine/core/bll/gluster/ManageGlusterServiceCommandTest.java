@@ -73,7 +73,6 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     private final Guid stoppedServiceId2 = Guid.newGuid();
 
     private void prepareMocks(ManageGlusterServiceCommand command) {
-        doReturn(serviceDao).when(command).getGlusterServiceDao();
         doReturn(glusterUtils).when(command).getGlusterUtils();
         doReturn(getUpServers()).when(glusterUtils).getAllUpServers(any(Guid.class));
     }
