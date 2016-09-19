@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
         EventSubscriptionCommandBase<T> {
@@ -29,8 +28,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         String eventName = getParameters().getEventSubscriber().getEventUpName();
         EventNotificationMethod eventNotificationMethod =
                 getParameters().getEventSubscriber().getEventNotificationMethod();
-        List<EventSubscriber> subscriptions = DbFacade.getInstance()
-                .getEventDao().getAllForSubscriber(subscriberId);
+        List<EventSubscriber> subscriptions = eventDao.getAllForSubscriber(subscriberId);
         if (isAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
             addValidationMessage(EngineMessage.EN_ALREADY_SUBSCRIBED);
             retValue = false;
@@ -89,7 +87,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         if (getParameters().getEventSubscriber().getTagName() == null) {
             getParameters().getEventSubscriber().setTagName("");
         }
-        DbFacade.getInstance().getEventDao().subscribe(getParameters().getEventSubscriber());
+        eventDao.subscribe(getParameters().getEventSubscriber());
         setSucceeded(true);
     }
 }

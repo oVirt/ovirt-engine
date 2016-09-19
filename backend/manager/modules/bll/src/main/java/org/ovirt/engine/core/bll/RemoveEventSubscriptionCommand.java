@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
         EventSubscriptionCommandBase<T> {
@@ -37,7 +36,7 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getEventDao().unsubscribe(getParameters().getEventSubscriber());
+        eventDao.unsubscribe(getParameters().getEventSubscriber());
         setSucceeded(true);
     }
 }

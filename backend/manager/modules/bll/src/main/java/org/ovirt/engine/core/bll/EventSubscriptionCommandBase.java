@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
@@ -19,10 +20,13 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.EventDao;
 
 public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionParametesBase> extends
         CommandBase<T> {
+
+    @Inject
+    protected EventDao eventDao;
 
     public EventSubscriptionCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -99,9 +103,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
                                      EventSubscriber eventSubscriber, DbUser user) {
         boolean retValue = false;
         // check if user is subscribed to the event
-        List<EventSubscriber> list = DbFacade.getInstance()
-                .getEventDao()
-                .getAllForSubscriber(eventSubscriber.getSubscriberId());
+        List<EventSubscriber> list = eventDao.getAllForSubscriber(eventSubscriber.getSubscriberId());
         if (list.isEmpty()) {
             addValidationMessage(EngineMessage.EN_NOT_SUBSCRIBED);
         } else {
