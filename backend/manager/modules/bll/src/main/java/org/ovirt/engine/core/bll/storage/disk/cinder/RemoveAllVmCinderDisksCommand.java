@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -83,8 +82,7 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         List<CinderDisk> imageDisks = getParameters().cinderDisks;
         List<CinderDisk> cinderDisks = new ArrayList<>();
         if (imageDisks == null) {
-            cinderDisks =
-                    ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()));
+            cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskDao.getAllForVm(getVmId()));
         } else {
             for (DiskImage diskImage : imageDisks) {
                 cinderDisks.add((CinderDisk) diskImage);

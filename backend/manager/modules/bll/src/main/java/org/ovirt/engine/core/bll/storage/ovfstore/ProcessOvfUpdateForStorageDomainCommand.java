@@ -117,7 +117,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
         for (StorageDomainOvfInfo storageDomainOvfInfo : storageDomainOvfInfos) {
             if (storageDomainOvfInfo.getStatus() != StorageDomainOvfInfoStatus.DISABLED) {
-                DiskImage ovfDisk = (DiskImage) getDbFacade().getDiskDao().get(storageDomainOvfInfo.getOvfDiskId());
+                DiskImage ovfDisk = (DiskImage) diskDao.get(storageDomainOvfInfo.getOvfDiskId());
                 domainOvfStoresInfoForUpdate.add(new Pair<>(storageDomainOvfInfo, ovfDisk));
             }
         }

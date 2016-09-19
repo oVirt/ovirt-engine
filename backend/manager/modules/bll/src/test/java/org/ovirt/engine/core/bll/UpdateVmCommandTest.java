@@ -732,7 +732,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     private void mockDiskDaoGetAllForVm(List<Disk> disks, boolean onlyPluggedDisks) {
-        doReturn(diskDao).when(command).getDiskDao();
         doReturn(disks).when(diskDao).getAllForVm(vm.getId(), onlyPluggedDisks);
     }
 

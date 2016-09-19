@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +132,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
     @Override
     public CommandCallback getCallback() {
-        return new AddCinderDiskCommandCallback();
+        return Injector.injectMembers(new AddCinderDiskCommandCallback());
     }
 
     @Override

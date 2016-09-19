@@ -56,7 +56,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
@@ -78,9 +77,6 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
-
-    @Inject
-    private DiskDao diskDao;
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
@@ -450,7 +446,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     }
 
     private void initTargetDomains() {
-        templateDisks= diskDao.getAllForVm(getParameters().getVmStaticData().getVmtGuid());
+        templateDisks = diskDao.getAllForVm(getParameters().getVmStaticData().getVmtGuid());
         targetDomainsSize = new HashMap<>();
         diskToProfileMap = new HashMap<>();
         diskToStorageIds = new HashMap<>();

@@ -137,7 +137,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
 
     protected CinderDisk getDisk() {
         if (cinderDisk == null) {
-            cinderDisk = (CinderDisk) getDiskDao().get(getParameters().getDiskId());
+            cinderDisk = (CinderDisk) diskDao.get(getParameters().getDiskId());
         }
         return cinderDisk;
     }

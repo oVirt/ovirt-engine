@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -10,8 +12,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
+import org.ovirt.engine.core.dao.DiskDao;
 
 public class AddCinderDiskCommandCallback extends ConcurrentChildCommandsExecutionCallback {
+
+    @Inject
+    private DiskDao diskDao;
 
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,
@@ -24,7 +30,7 @@ public class AddCinderDiskCommandCallback extends ConcurrentChildCommandsExecuti
                 (AddCinderDiskCommand<AddDiskParameters>) command;
         Guid diskId = getDiskId(addCinderDiskCommand);
         ImageStatus imageStatus = addCinderDiskCommand.getCinderBroker().getDiskStatus(diskId);
-        DiskImage disk = (CinderDisk) command.getDiskDao().get(diskId);
+        DiskImage disk = (CinderDisk) diskDao.get(diskId);
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
             case OK:

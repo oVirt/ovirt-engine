@@ -54,7 +54,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -398,7 +397,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     public boolean validateCinder() {
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()));
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskDao.getAllForVm(getVmId()));
         if (!cinderDisks.isEmpty()) {
             CinderDisksValidator cinderDisksValidator = getCinderDisksValidator(cinderDisks);
             return validate(cinderDisksValidator.validateCinderDiskLimits());

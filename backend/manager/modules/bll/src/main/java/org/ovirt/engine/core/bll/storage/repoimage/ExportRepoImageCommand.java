@@ -202,7 +202,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     protected DiskImage getDiskImage() {
         if (diskImage == null) {
-            Disk disk = getDiskDao().get(getParameters().getImageGroupID());
+            Disk disk = diskDao.get(getParameters().getImageGroupID());
             if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 diskImage = (DiskImage) disk;
             }
@@ -211,7 +211,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     }
 
     private boolean validateDiskImage() {
-        Disk disk = getDiskDao().get(getParameters().getImageGroupID());
+        Disk disk = diskDao.get(getParameters().getImageGroupID());
         if (disk != null && !validate(new DiskValidator(disk).validateUnsupportedDiskStorageType(
                 DiskStorageType.LUN, DiskStorageType.CINDER)) ) {
             return false;

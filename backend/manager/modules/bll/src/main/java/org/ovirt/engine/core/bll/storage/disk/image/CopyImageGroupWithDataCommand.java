@@ -144,7 +144,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
 
     private DiskImage getDiskImage() {
         if (diskImage == null) {
-            diskImage = (DiskImage) getDiskDao().get(getParameters().getImageGroupID());
+            diskImage = (DiskImage) diskDao.get(getParameters().getImageGroupID());
         }
 
         return diskImage;

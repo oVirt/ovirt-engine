@@ -102,7 +102,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
             if (oldVmDevice.getSnapshotId() != null) {
                 disk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getDiskVmElement().getDiskId(), oldVmDevice.getSnapshotId());
             } else {
-                disk = getDiskDao().get(getDiskVmElement().getDiskId());
+                disk = diskDao.get(getDiskVmElement().getDiskId());
             }
         }
     }
@@ -205,7 +205,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
 
     protected Disk getDisk() {
         if (disk == null) {
-            disk = getDiskDao().get(super.getDiskVmElement().getDiskId());
+            disk = diskDao.get(super.getDiskVmElement().getDiskId());
         }
         return disk;
     }

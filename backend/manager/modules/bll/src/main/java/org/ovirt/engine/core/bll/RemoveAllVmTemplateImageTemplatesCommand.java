@@ -34,8 +34,8 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
     @SuppressWarnings("unchecked")
     @Override
     protected void executeCommand() {
-        List<DiskImage> imageTemplates = DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(
-                getVmTemplateId()), ONLY_ACTIVE);
+        List<DiskImage> imageTemplates = DisksFilter.filterImageDisks(diskDao.getAllForVm(getVmTemplateId()),
+                ONLY_ACTIVE);
         for (DiskImage template : imageTemplates) {
             // remove this disk in all domain that were sent
             for (Guid domain : (Collection<Guid>)CollectionUtils.intersection(getParameters().getStorageDomainsList(), template.getStorageIds())) {

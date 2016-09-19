@@ -102,7 +102,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         if (entity.getDiskId() != null) {
             // Make the disk id available for all states below.  If the upload is still
             // initializing, this may be set below in the INITIALIZING block instead.
-            setImage((DiskImage) getDiskDao().get(entity.getDiskId()));
+            setImage((DiskImage) diskDao.get(entity.getDiskId()));
         }
 
         // Check conditions for pausing the upload (ie UI is MIA)
@@ -187,7 +187,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         }
 
         Guid createdId = addDiskRetVal.getActionReturnValue();
-        DiskImage createdDiskImage = (DiskImage) getDiskDao().get(createdId);
+        DiskImage createdDiskImage = (DiskImage) diskDao.get(createdId);
         getParameters().setImageId(createdId);
         persistCommand(getParameters().getParentCommand(), true);
         setImage(createdDiskImage);

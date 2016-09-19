@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -43,9 +42,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         Set<Guid> imagesToBeRemoved = new HashSet<>();
         List<DiskImage> images = getParameters().getImages();
         if (images == null) {
-            images = DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
-                    ONLY_NOT_SHAREABLE,
-                    ONLY_ACTIVE);
+            images = DisksFilter.filterImageDisks(diskDao.getAllForVm(getVmId()), ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         }
         for (DiskImage image : images) {
             if (Boolean.TRUE.equals(image.getActive())) {

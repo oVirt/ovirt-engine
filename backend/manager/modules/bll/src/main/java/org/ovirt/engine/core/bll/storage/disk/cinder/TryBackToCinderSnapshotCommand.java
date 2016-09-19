@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -64,7 +65,7 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
     }
 
     private CinderDisk initializeNewCinderVolumeDisk(Guid newVolumeId) {
-        CinderDisk clonedDiskFromSnapshot = (CinderDisk) getDiskDao().get(getParameters().getContainerId());
+        CinderDisk clonedDiskFromSnapshot = (CinderDisk) diskDao.get(getParameters().getContainerId());
 
         // override volume type and volume format to Unassigned and unassigned for Cinder.
         clonedDiskFromSnapshot.setVolumeType(VolumeType.Unassigned);
@@ -88,7 +89,7 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
     protected CinderDisk getOldActiveDisk() {
         if (oldActiveDisk == null) {
-            oldActiveDisk = (CinderDisk) getDiskDao().get(getParameters().getContainerId());
+            oldActiveDisk = (CinderDisk) diskDao.get(getParameters().getContainerId());
         }
         return oldActiveDisk;
     }
@@ -105,7 +106,7 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
     @Override
     public CommandCallback getCallback() {
-        return new CloneSingleCinderDiskCommandCallback();
+        return Injector.injectMembers(new CloneSingleCinderDiskCommandCallback());
     }
 
     @Override

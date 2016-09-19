@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -13,8 +15,12 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DiskDao;
 
 public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExecutionCallback {
+
+    @Inject
+    private DiskDao diskDao;
 
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,
@@ -70,7 +76,7 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
     }
 
     protected CinderDisk getDisk(ExtendCinderDiskCommand<VmDiskOperationParameterBase> command) {
-        return (CinderDisk) command.getDiskDao().get(getDiskId(command));
+        return (CinderDisk) diskDao.get(getDiskId(command));
     }
 
     @Override

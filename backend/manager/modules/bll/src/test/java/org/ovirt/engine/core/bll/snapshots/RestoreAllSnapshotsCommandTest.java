@@ -164,7 +164,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         DiskImage diskImage = new DiskImage();
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
         diskImageList.add(diskImage);
-        doReturn(diskDao).when(spyCommand).getDiskDao();
         when(diskDao.getAllForVm(vmId)).thenReturn(diskImageList);
     }
 

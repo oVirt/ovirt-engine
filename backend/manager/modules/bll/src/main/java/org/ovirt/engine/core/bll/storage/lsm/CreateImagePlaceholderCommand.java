@@ -64,6 +64,6 @@ public class CreateImagePlaceholderCommand<T extends CreateImagePlaceholderComma
     }
 
     private DiskImage getDiskImage() {
-        return (DiskImage)getDiskDao().get(getParameters().getImageGroup());
+        return (DiskImage) diskDao.get(getParameters().getImageGroup());
     }
 }

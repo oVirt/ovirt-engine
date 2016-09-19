@@ -76,7 +76,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -121,7 +120,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     protected List<DiskImage> getDiskImagesForVm() {
-        List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
+        List<Disk> disks = diskDao.getAllForVm(getVmId());
         List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
         allDisks.addAll(ImagesHandler.getCinderLeafImages(disks, false));
         return allDisks;
@@ -203,7 +202,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     public boolean validateCinder() {
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()));
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskDao.getAllForVm(getVmId()));
         if (!cinderDisks.isEmpty()) {
             CinderDisksValidator cinderDisksValidator = getCinderDisksValidator(cinderDisks);
             return validate(cinderDisksValidator.validateCinderDiskSnapshotsLimits());
@@ -334,7 +333,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private CreateCinderSnapshotParameters buildChildCommandParameters(DiskImage cinderDisk) {
         CreateCinderSnapshotParameters createParams =
-                new CreateCinderSnapshotParameters(((CinderDisk) getDiskDao().get(cinderDisk.getId())).getImageId());
+                new CreateCinderSnapshotParameters(((CinderDisk) diskDao.get(cinderDisk.getId())).getImageId());
         createParams.setVmSnapshotId(newActiveSnapshotId);
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         createParams.setDescription(getParameters().getDescription());
@@ -484,7 +483,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private SnapshotVDSCommandParameters buildLiveSnapshotParameters(Snapshot snapshot) {
-        List<Disk> pluggedDisksForVm = getDiskDao().getAllForVm(getVm().getId(), true);
+        List<Disk> pluggedDisksForVm = diskDao.getAllForVm(getVm().getId(), true);
         List<DiskImage> filteredPluggedDisksForVm = DisksFilter.filterImageDisks(pluggedDisksForVm,
                 ONLY_SNAPABLE, ONLY_ACTIVE);
 

@@ -345,7 +345,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     protected void initializeCommand(Disk disk) {
         doReturn(vmDao).when(command).getVmDao();
-        doReturn(diskDao).when(command).getDiskDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         when(diskDao.get(any(Guid.class))).thenReturn(disk);
 

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -101,7 +102,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
     @Override
     public CommandCallback getCallback() {
-        return new CloneSingleCinderDiskCommandCallback();
+        return Injector.injectMembers(new CloneSingleCinderDiskCommandCallback());
     }
 
     @Override

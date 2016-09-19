@@ -264,7 +264,6 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     public void mockDaos() {
         mockVmDao();
         mockDiskImageDao();
-        mockDiskDao();
     }
 
     private void mockVmDao() {
@@ -273,9 +272,5 @@ public class MoveDisksCommandTest extends BaseCommandTest {
 
     private void mockDiskImageDao() {
         doReturn(diskImageDao).when(command).getDiskImageDao();
-    }
-
-    private void mockDiskDao() {
-        doReturn(diskDao).when(command).getDiskDao();
     }
 }

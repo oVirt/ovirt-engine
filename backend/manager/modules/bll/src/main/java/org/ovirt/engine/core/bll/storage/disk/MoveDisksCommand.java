@@ -81,7 +81,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     private boolean verifyUnsupportedDisks() {
         for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
-            Disk disk = getDiskDao().get(moveDiskParameters.getImageGroupID());
+            Disk disk = diskDao.get(moveDiskParameters.getImageGroupID());
             DiskValidator diskValidator = new DiskValidator(disk);
             if (!validate(diskValidator.validateUnsupportedDiskStorageType(
                     DiskStorageType.LUN, DiskStorageType.CINDER))) {

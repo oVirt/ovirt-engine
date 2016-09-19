@@ -236,7 +236,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private List<DiskImage> getImageTemplates() {
         if (imageTemplates == null) {
-            List<Disk> allImages = DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId());
+            List<Disk> allImages = diskDao.getAllForVm(getVmTemplateId());
             imageTemplates = DisksFilter.filterImageDisks(allImages, ONLY_ACTIVE);
             imageTemplates.addAll(ImagesHandler.filterDisksBasedOnCinder(allImages, true));
         }
@@ -266,7 +266,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         if (getVmTemplate().isBaseTemplate()) {
             shiftBaseTemplateToSuccessor();
         }
-        List<Disk> templateImages = DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId());
+        List<Disk> templateImages = diskDao.getAllForVm(getVmTemplateId());
         final List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateImages);
         final List<DiskImage> diskImages = DisksFilter.filterImageDisks(templateImages, ONLY_ACTIVE);
         // Set VM to lock status immediately, for reducing race condition.

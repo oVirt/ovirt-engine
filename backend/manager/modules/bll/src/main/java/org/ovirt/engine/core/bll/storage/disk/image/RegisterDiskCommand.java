@@ -94,7 +94,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             return false;
         }
 
-        if (getDiskDao().get(getDiskImage().getId()) != null) {
+        if (diskDao.get(getDiskImage().getId()) != null) {
             String diskAlias =
                     ImagesHandler.getDiskAliasWithDefault(getDiskImage(),
                             generateDefaultAliasForRegiteredDisk(Calendar.getInstance()));

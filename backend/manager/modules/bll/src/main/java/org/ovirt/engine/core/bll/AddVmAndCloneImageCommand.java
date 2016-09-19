@@ -142,7 +142,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     }
 
     private List<DiskImage> getDiskImagesToValidate() {
-        List<Disk> disks = getDiskDao().getAllForVm(getSourceVmFromDb().getId());
+        List<Disk> disks = diskDao.getAllForVm(getSourceVmFromDb().getId());
         List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks, true);
         allDisks.addAll(cinderDisks);

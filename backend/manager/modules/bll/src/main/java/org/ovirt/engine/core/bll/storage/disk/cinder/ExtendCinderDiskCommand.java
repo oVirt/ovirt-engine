@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class ExtendCinderDiskCommand<T extends VmDiskOperationParameterBase> ext
 
     @Override
     public CommandCallback getCallback() {
-        return new ExtendCinderDiskCommandCallback();
+        return Injector.injectMembers(new ExtendCinderDiskCommandCallback());
     }
 
     @Override

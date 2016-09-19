@@ -432,7 +432,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private List<DiskImage> getDiskImagesToValidate() {
-        List<Disk> disks = getDiskDao().getAllForVm(getVmId());
+        List<Disk> disks = diskDao.getAllForVm(getVmId());
         List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks);
         allDisks.addAll(cinderDisks);

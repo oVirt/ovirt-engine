@@ -367,7 +367,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         if (shouldPerformMetadataUpdate()) {
             updateMetaDataDescription((DiskImage) getNewDisk());
         }
-        final Disk diskForUpdate = getDiskDao().get(getParameters().getDiskInfo().getId());
+        final Disk diskForUpdate = diskDao.get(getParameters().getDiskInfo().getId());
         final DiskVmElement diskVmElementForUpdate = getDiskVmElementDao().get(new VmDeviceId(getOldDisk().getId(), getVmId()));
 
         applyUserChanges(diskForUpdate, diskVmElementForUpdate);
@@ -820,7 +820,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     protected Disk getOldDisk() {
         if (oldDisk == null && getParameters().getDiskInfo() != null) {
-            oldDisk = getDiskDao().get(getParameters().getDiskInfo().getId());
+            oldDisk = diskDao.get(getParameters().getDiskInfo().getId());
         }
         return oldDisk;
     }

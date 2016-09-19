@@ -24,7 +24,7 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
 
     @Override
     protected boolean validate() {
-        Disk disk = getDbFacade().getDiskDao().get(getParameters().getObjectId());
+        Disk disk = diskDao.get(getParameters().getObjectId());
         if (disk == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             return false;

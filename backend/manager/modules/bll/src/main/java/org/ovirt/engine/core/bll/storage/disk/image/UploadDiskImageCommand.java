@@ -71,7 +71,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
                 getImageActionsParameters(vdsId));
         if (!vdsRetVal.getSucceeded()) {
-            DiskImage image = (DiskImage) getDiskDao().get(getParameters().getImageId());
+            DiskImage image = (DiskImage) diskDao.get(getParameters().getImageId());
             log.warn("Failed to tear down image '{}' for image transfer session: {}",
                     image, vdsRetVal.getVdsError());
 

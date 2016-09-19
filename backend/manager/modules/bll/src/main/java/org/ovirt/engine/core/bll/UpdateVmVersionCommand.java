@@ -149,7 +149,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     }
 
     private Guid getIdOfDiskOperator() {
-        List<Disk> diskIds = getDbFacade().getDiskDao().getAllForVm(getVmId());
+        List<Disk> diskIds = diskDao.getAllForVm(getVmId());
         if (diskIds.isEmpty()) {
             return null;
         }

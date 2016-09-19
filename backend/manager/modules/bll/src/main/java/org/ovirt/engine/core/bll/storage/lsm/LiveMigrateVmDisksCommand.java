@@ -279,7 +279,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     private Disk getDiskImageByDiskId(Guid diskId) {
-        Disk disk = getDiskDao().get(diskId);
+        Disk disk = diskDao.get(diskId);
         if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage)disk;
             if (!diskImagesMap.containsKey(diskImage.getImageId())) {
@@ -391,7 +391,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected boolean checkImagesStatus() {
-        List<DiskImage> disksToCheck = DisksFilter.filterImageDisks(getDiskDao().getAllForVm(getVmId()),
+        List<DiskImage> disksToCheck = DisksFilter.filterImageDisks(diskDao.getAllForVm(getVmId()),
                 ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         return validate(diskImagesValidator.diskImagesNotLocked())
