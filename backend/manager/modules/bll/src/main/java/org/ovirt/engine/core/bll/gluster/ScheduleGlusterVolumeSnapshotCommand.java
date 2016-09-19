@@ -40,7 +40,7 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
             getSchedule().setJobId(jobId);
             // reverting to original execution time in UI populated time zone
             getSchedule().setExecutionTime(originalExecutionTime);
-            getGlusterVolumeSnapshotScheduleDao().save(getSchedule());
+            glusterVolumeSnapshotScheduleDao.save(getSchedule());
         } catch (Exception ex) {
             setSucceeded(false);
             handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_FAILED, ex.getMessage());
@@ -72,7 +72,7 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
         }
 
         GlusterVolumeSnapshotSchedule fetchedSchedule =
-                getGlusterVolumeSnapshotScheduleDao().getByVolumeId(getGlusterVolumeId());
+                glusterVolumeSnapshotScheduleDao.getByVolumeId(getGlusterVolumeId());
         if (fetchedSchedule != null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_SCHEDULED);
         }

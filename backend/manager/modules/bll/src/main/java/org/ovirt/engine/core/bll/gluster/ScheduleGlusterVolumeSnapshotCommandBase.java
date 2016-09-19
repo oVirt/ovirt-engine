@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
 
@@ -22,6 +21,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
     private boolean force;
     @Inject
     private DBSchedulerUtilQuartzImpl schedulerUtil;
+    @Inject
+    protected GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
 
     public ScheduleGlusterVolumeSnapshotCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
@@ -94,10 +95,6 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
                         schedule.getSnapshotNamePrefix(),
                         schedule.getSnapshotDescription(), force },
                 cronExpression, convertedStartDate, convertedEndByDate);
-    }
-
-    protected GlusterVolumeSnapshotScheduleDao getGlusterVolumeSnapshotScheduleDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotScheduleDao();
     }
 
     protected GlusterVolumeSnapshotSchedule getSchedule() {

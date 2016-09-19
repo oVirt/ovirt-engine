@@ -21,7 +21,7 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
     protected void executeCommand() {
         Guid volumeId = getGlusterVolumeId();
 
-        GlusterVolumeSnapshotSchedule fetchedSchedule = getGlusterVolumeSnapshotScheduleDao().getByVolumeId(volumeId);
+        GlusterVolumeSnapshotSchedule fetchedSchedule = glusterVolumeSnapshotScheduleDao.getByVolumeId(volumeId);
         String jobId = fetchedSchedule.getJobId();
 
         // delete the existing job
@@ -38,13 +38,13 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
                 schedule.setJobId(newJobId);
                 // reverting to original execution time in UI populated time zone
                 schedule.setExecutionTime(originalExecutionTime);
-                getGlusterVolumeSnapshotScheduleDao().updateScheduleByVolumeId(volumeId, schedule);
+                glusterVolumeSnapshotScheduleDao.updateScheduleByVolumeId(volumeId, schedule);
             } catch (Exception ex) {
                 setSucceeded(false);
                 handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESCHEDULE_FAILED, ex.getMessage());
             }
         } else {
-            getGlusterVolumeSnapshotScheduleDao().removeByVolumeId(volumeId);
+            glusterVolumeSnapshotScheduleDao.removeByVolumeId(volumeId);
             setSucceeded(true);
         }
     }
@@ -56,7 +56,7 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
         }
 
         GlusterVolumeSnapshotSchedule fetchedSchedule =
-                getGlusterVolumeSnapshotScheduleDao().getByVolumeId(getGlusterVolumeId());
+                glusterVolumeSnapshotScheduleDao.getByVolumeId(getGlusterVolumeId());
         if (fetchedSchedule == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_NOT_SCHEDULED);
         }
