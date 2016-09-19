@@ -449,10 +449,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             ImageStorageDomainMap map = ImagesHandler.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());
             getCompensationContext().snapshotNewEntity(map);
-            if (!getBaseDiskDao().exists(image.getId())) {
+            if (!baseDiskDao.exists(image.getId())) {
                 image.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(image, getVmTemplateName(), count));
                 count++;
-                getBaseDiskDao().save(image);
+                baseDiskDao.save(image);
                 getCompensationContext().snapshotNewEntity(image);
             }
 

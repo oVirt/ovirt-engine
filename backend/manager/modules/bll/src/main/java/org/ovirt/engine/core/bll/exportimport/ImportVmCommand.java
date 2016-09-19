@@ -824,7 +824,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /** Saves the base disk object */
     protected void saveBaseDisk(DiskImage disk) {
-        getBaseDiskDao().save(disk);
+        baseDiskDao.save(disk);
     }
 
     protected void saveDiskVmElement(Guid diskId, Guid vmId, DiskVmElement diskVmElement) {

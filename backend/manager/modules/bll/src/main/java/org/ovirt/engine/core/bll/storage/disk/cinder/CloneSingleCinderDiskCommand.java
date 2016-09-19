@@ -70,7 +70,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
     protected void addCinderDiskTemplateToDB(final CinderDisk cinderDisk) {
         TransactionSupport.executeInNewTransaction(() -> {
-            getBaseDiskDao().save(cinderDisk);
+            baseDiskDao.save(cinderDisk);
             getImageDao().save(cinderDisk.getImage());
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(cinderDisk.getImageId());

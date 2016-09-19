@@ -94,7 +94,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
     protected void endSuccessfully() {
         freeVmSnapshotsWithWait();
         getDbFacade().getVmDeviceDao().remove(new VmDeviceId(getParameters().getRemovedVolume().getId(), null));
-        getBaseDiskDao().remove(getParameters().getRemovedVolume().getId());
+        baseDiskDao.remove(getParameters().getRemovedVolume().getId());
         if (getParameters().getShouldBeLogged()) {
             new AuditLogDirector().log(this, AuditLogType.USER_FINISHED_REMOVE_DISK);
         }

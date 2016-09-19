@@ -464,7 +464,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
         TransactionSupport.executeInNewTransaction(() -> {
             lunHelper.proceedLUNInDb(lun, lun.getLunType());
-            getBaseDiskDao().save(getParameters().getDiskInfo());
+            baseDiskDao.save(getParameters().getDiskInfo());
             getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
             if (getVm() != null) {
                 // The disk VM element has to be added before the VM device since as a part of the VM device creation the

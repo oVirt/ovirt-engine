@@ -46,7 +46,7 @@ public class AllocateImageGroupVolumeCommand<T extends AllocateImageGroupVolumeC
     }
 
     private BaseDisk getDisk() {
-        return getBaseDiskDao().get(getParameters().getImageGroupID());
+        return baseDiskDao.get(getParameters().getImageGroupID());
     }
 }
 

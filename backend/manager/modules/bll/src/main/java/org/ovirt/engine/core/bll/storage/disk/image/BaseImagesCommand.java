@@ -301,8 +301,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      *            The image to take the disk's details from.
      */
     protected boolean saveDiskIfNotExists(DiskImage image) {
-        if (!getBaseDiskDao().exists(image.getId())) {
-            getBaseDiskDao().save(image);
+        if (!baseDiskDao.exists(image.getId())) {
+            baseDiskDao.save(image);
             return true;
         }
         return false;
@@ -416,7 +416,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         List<DiskImage> imagesForDisk =
                 diskImageDao.getAllSnapshotsForImageGroup(snapshot.getId());
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-            getBaseDiskDao().remove(snapshot.getId());
+            baseDiskDao.remove(snapshot.getId());
         }
     }
 

@@ -59,7 +59,7 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     @Override
     protected void endWithFailure() {
         if (getDestinationDiskImage() != null) {
-            DbFacade.getInstance().getBaseDiskDao().remove(getDestinationDiskImage().getId());
+            baseDiskDao.remove(getDestinationDiskImage().getId());
             if (DbFacade.getInstance().getDiskImageDynamicDao().get(getDestinationDiskImage().getImageId()) != null) {
                 DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
             }

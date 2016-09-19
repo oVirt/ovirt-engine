@@ -191,8 +191,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     }
 
     private void removeHostedEngineLunDisk() {
-        List<BaseDisk> disks =
-                getDbFacade().getBaseDiskDao().getDisksByAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
+        List<BaseDisk> disks = baseDiskDao.getDisksByAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
         if (disks != null && !disks.isEmpty()) {
             BaseDisk heDirectLun = disks.get(0);
             VdcReturnValueBase removeDisk = getBackend().runInternalAction(

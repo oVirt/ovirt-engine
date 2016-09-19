@@ -122,7 +122,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         getDestinationDiskImage().setSize(baseImage.getSize());
         getDestinationDiskImage().setActualSizeInBytes(getImageInfoFromVdsm(getDestinationDiskImage()).getActualSizeInBytes());
 
-        getBaseDiskDao().update(topImage);
+        baseDiskDao.update(topImage);
         getImageDao().update(topImage.getImage());
         updateDiskImageDynamic(imageFromVdsm, topImage);
 
@@ -164,11 +164,11 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         topImage.setSize(baseImage.getSize());
         topImage.setActualSizeInBytes(imageFromVdsm.getActualSizeInBytes());
         topImage.setImageStatus(ImageStatus.OK);
-        getBaseDiskDao().update(topImage);
+        baseDiskDao.update(topImage);
         getImageDao().update(topImage.getImage());
         updateDiskImageDynamic(imageFromVdsm, topImage);
 
-        getBaseDiskDao().update(baseImage);
+        baseDiskDao.update(baseImage);
         getImageDao().update(baseImage.getImage());
 
         updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),

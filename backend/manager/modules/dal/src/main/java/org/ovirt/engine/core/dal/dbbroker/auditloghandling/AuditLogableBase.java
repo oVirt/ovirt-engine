@@ -178,6 +178,9 @@ public class AuditLogableBase extends TimeoutBase {
     protected UnregisteredDisksDao unregisteredDisksDao;
 
     @Inject
+    protected BaseDiskDao baseDiskDao;
+
+    @Inject
     protected DiskDao diskDao;
 
     @Inject
@@ -831,10 +834,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
-    }
-
-    public BaseDiskDao getBaseDiskDao() {
-        return getDbFacade().getBaseDiskDao();
     }
 
     public DiskImageDynamicDao getDiskImageDynamicDao() {

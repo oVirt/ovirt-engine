@@ -188,7 +188,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         getDisk().setAlignment(isDiskAligned ? DiskAlignment.Aligned : DiskAlignment.Misaligned);
         getDisk().setLastAlignmentScan(new Date());
 
-        getBaseDiskDao().update(getDisk());
+        baseDiskDao.update(getDisk());
         setSucceeded(true);
 
         releaseExclusiveDiskDbLocks();

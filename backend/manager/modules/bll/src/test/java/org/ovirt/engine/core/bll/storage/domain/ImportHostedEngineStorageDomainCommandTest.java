@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -84,8 +83,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
                 parameters, CommandContext.createContext(parameters.getSessionId()));
     @Mock
     private BackendInternal backend;
-    @Mock
-    private DbFacade dbFacade;
     @Mock
     private VdsDao vdsDao;
     @Mock
@@ -268,9 +265,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
         vds.setId(Guid.Empty);
         vds.setStoragePoolId(HE_SP_ID);
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
-        // base disk dao
-        doReturn(dbFacade).when(cmd).getDbFacade();
-        when(dbFacade.getBaseDiskDao()).thenReturn(baseDiskDao);
         List<BaseDisk> baseDisks = Collections.singletonList(new BaseDisk());
         when(baseDiskDao.getDisksByAlias(anyString())).thenReturn(baseDisks);
         // remove disk

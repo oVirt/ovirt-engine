@@ -377,7 +377,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             public Object runInTransaction() {
                 getVmStaticDao().incrementDbGeneration(getVm().getId());
                 updateDeviceProperties();
-                getBaseDiskDao().update(diskForUpdate);
+                baseDiskDao.update(diskForUpdate);
                 getDiskVmElementDao().update(diskVmElementForUpdate);
                 switch (diskForUpdate.getDiskStorageType()) {
                     case IMAGE:

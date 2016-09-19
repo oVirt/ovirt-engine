@@ -58,7 +58,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
     protected void addCinderDiskToDB(final CinderDisk cinderDisk) {
         TransactionSupport.executeInNewTransaction(() -> {
-            getBaseDiskDao().save(cinderDisk);
+            baseDiskDao.save(cinderDisk);
             getImageDao().save(cinderDisk.getImage());
             getImageStorageDomainMapDao().save(new ImageStorageDomainMap(cinderDisk.getImageId(),
                     cinderDisk.getStorageIds().get(0), cinderDisk.getQuotaId(), cinderDisk.getDiskProfileId()));
