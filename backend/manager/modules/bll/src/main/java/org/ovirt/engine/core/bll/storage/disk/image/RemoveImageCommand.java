@@ -254,7 +254,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     private void removeImageMapping() {
         TransactionSupport.executeInNewTransaction(() -> {
-            getImageStorageDomainMapDao().remove(
+            imageStorageDomainMapDao.remove(
                     new ImageStorageDomainMapId(getParameters().getImageId(),
                             getParameters().getStorageDomainId()));
             ImagesHandler.updateAllDiskImageSnapshotsStatus(getRelevantDiskImage().getId(),

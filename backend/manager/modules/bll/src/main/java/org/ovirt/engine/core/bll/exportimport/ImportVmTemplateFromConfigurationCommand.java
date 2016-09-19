@@ -214,7 +214,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         if (!copiedTemplateDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(() -> {
                 for (ImageStorageDomainMap imageStorageDomainMap : copiedTemplateDisks) {
-                    getImageStorageDomainMapDao().save(imageStorageDomainMap);
+                    imageStorageDomainMapDao.save(imageStorageDomainMap);
                 }
                 return null;
             });

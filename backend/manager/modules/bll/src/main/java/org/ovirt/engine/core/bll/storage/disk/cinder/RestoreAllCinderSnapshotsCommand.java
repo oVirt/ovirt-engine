@@ -143,7 +143,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
     private void removeRedundantVolumesForOrphanedDisks() {
         List<CinderDisk> cinderVolumesToRemove = getParameters().getCinderVolumesToRemove();
         for (CinderDisk cinderVolume : cinderVolumesToRemove) {
-            getDbFacade().getImageStorageDomainMapDao().remove(cinderVolume.getImageId());
+            imageStorageDomainMapDao.remove(cinderVolume.getImageId());
             imageDao.remove(cinderVolume.getImageId());
         }
     }

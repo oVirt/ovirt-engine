@@ -93,7 +93,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
             baseVol.setActive(true);
             imageDao.update(baseVol);
         }
-        getImageStorageDomainMapDao().remove(cinderVolume.getImageId());
+        imageStorageDomainMapDao.remove(cinderVolume.getImageId());
         imageDao.remove(cinderVolume.getImageId());
         diskImageDynamicDao.remove(cinderVolume.getImageId());
         if (updated != null) {

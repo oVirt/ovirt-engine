@@ -47,7 +47,6 @@ import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.CommandEntityDao;
-import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -414,10 +413,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             messageParameter = sharedStatus;
         }
         addValidationMessageVariable("status", messageParameter);
-    }
-
-    protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
-        return getDbFacade().getImageStorageDomainMapDao();
     }
 
     protected IStorageHelper getStorageHelper(StorageDomain storageDomain) {

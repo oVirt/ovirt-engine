@@ -221,9 +221,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     public Object runInTransaction() {
                         for (DiskImage di : diskImageDao
                                 .getAllSnapshotsForImageGroup(getParameters().getImageGroupID())) {
-                            getImageStorageDomainMapDao().remove(new ImageStorageDomainMapId(di.getImageId(),
+                            imageStorageDomainMapDao.remove(new ImageStorageDomainMapId(di.getImageId(),
                                     sourceStorageDomainId));
-                            getImageStorageDomainMapDao().save(new ImageStorageDomainMap(di.getImageId(),
+                            imageStorageDomainMapDao.save(new ImageStorageDomainMap(di.getImageId(),
                                     targetStorageDomainId,
                                     targetQuota,
                                     targetDiskProfile));

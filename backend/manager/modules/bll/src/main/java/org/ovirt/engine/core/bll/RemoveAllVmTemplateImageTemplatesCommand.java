@@ -61,8 +61,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                             vdcReturnValue.getFault().getMessage());
                 }
 
-                DbFacade.getInstance().getImageStorageDomainMapDao().remove(
-                        new ImageStorageDomainMapId(template.getImageId(), domain));
+                imageStorageDomainMapDao.remove(new ImageStorageDomainMapId(template.getImageId(), domain));
             }
 
             DiskImage diskImage = diskImageDao.get(template.getImageId());
@@ -71,7 +70,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .remove(new VmDeviceId(diskImage.getImageId(), getVmTemplateId()));
-                DbFacade.getInstance().getImageStorageDomainMapDao().remove(diskImage.getImageId());
+                imageStorageDomainMapDao.remove(diskImage.getImageId());
                 imageDao.remove(template.getImageId());
             }
         }

@@ -490,7 +490,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             DiskImage oldDisk = (DiskImage) getOldDisk();
             DiskImage newDisk = (DiskImage) getNewDisk();
             if (!Objects.equals(oldDisk.getDiskProfileId(), newDisk.getDiskProfileId())) {
-                getImageStorageDomainMapDao().updateDiskProfileByImageGroupIdAndStorageDomainId(newDisk.getId(),
+                imageStorageDomainMapDao.updateDiskProfileByImageGroupIdAndStorageDomainId(newDisk.getId(),
                         newDisk.getStorageIds().get(0),
                         newDisk.getDiskProfileId());
             }
@@ -511,7 +511,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         if (isInternalManagedDisk()) {
             DiskImage oldDisk = (DiskImage) getOldDisk();
             if (!Objects.equals(oldDisk.getQuotaId(), diskImage.getQuotaId())) {
-                getImageStorageDomainMapDao().updateQuotaForImageAndSnapshots(diskImage.getId(),
+                imageStorageDomainMapDao.updateQuotaForImageAndSnapshots(diskImage.getId(),
                         diskImage.getStorageIds().get(0),
                         diskImage.getQuotaId());
             }

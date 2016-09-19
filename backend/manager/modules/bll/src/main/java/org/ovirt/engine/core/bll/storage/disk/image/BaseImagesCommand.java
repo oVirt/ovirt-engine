@@ -274,7 +274,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DiskImageDynamic diskDynamic = updateDiskImageDynamicIntoDB(image);
         ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(image.getImageId(),
                 image.getStorageIds().get(0), image.getQuotaId(), image.getDiskProfileId());
-        getImageStorageDomainMapDao().save(imageStorageDomainMap);
+        imageStorageDomainMapDao.save(imageStorageDomainMap);
         boolean isDiskAdded = saveDiskIfNotExists(image);
         if (compensationContext != null) {
             compensationContext.snapshotNewEntity(image.getImage());
@@ -411,7 +411,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
 
     protected void removeSnapshot(DiskImage snapshot) {
-        getImageStorageDomainMapDao().remove(snapshot.getImageId());
+        imageStorageDomainMapDao.remove(snapshot.getImageId());
         imageDao.remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =
                 diskImageDao.getAllSnapshotsForImageGroup(snapshot.getId());

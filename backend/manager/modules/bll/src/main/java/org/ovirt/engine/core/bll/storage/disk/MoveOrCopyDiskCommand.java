@@ -337,7 +337,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private void addStorageDomainMapForCopiedTemplateDisk() {
-        getImageStorageDomainMapDao().save
+        imageStorageDomainMapDao.save
                 (new ImageStorageDomainMap(getParameters().getImageId(),
                         getParameters().getStorageDomainId(),
                         getParameters().getQuotaId(),

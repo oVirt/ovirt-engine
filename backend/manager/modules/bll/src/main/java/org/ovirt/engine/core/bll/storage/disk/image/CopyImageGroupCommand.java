@@ -84,7 +84,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (performStorageOperation()) {
             // Add storage domain in db only if there is new entity in DB.
             if (!shouldUpdateStorageDisk() && getParameters().getAddImageDomainMapping()) {
-                getImageStorageDomainMapDao().save
+                imageStorageDomainMapDao.save
                         (new ImageStorageDomainMap(getParameters().getImageId(),
                                 getParameters().getStorageDomainId(),
                                 getParameters().getQuotaId(),
@@ -232,10 +232,10 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                     .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
             setSnapshotForShareableDisk(snapshots);
             for (DiskImage snapshot : snapshots) {
-                getImageStorageDomainMapDao().remove
+                imageStorageDomainMapDao.remove
                         (new ImageStorageDomainMapId(snapshot.getImageId(),
                                 snapshot.getStorageIds().get(0)));
-                getImageStorageDomainMapDao().save
+                imageStorageDomainMapDao.save
                         (new ImageStorageDomainMap(snapshot.getImageId(),
                                 getParameters().getStorageDomainId(),
                                 getParameters().getQuotaId(),
@@ -258,7 +258,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         if (getParameters().getAddImageDomainMapping()) {
             // remove image-storage mapping
-            getImageStorageDomainMapDao().remove
+            imageStorageDomainMapDao.remove
                     (new ImageStorageDomainMapId(getParameters().getImageId(),
                             getParameters().getStorageDomainId()));
         }

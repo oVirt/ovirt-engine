@@ -40,7 +40,7 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
 
     @Override
     protected void executeCommand() {
-        getDbFacade().getImageStorageDomainMapDao().updateQuotaForImageAndSnapshots(getParameters().getObjectId(),
+        imageStorageDomainMapDao.updateQuotaForImageAndSnapshots(getParameters().getObjectId(),
                 getParameters().getContainerId(),
                 getParameters().getQuotaId());
         setSucceeded(true);
