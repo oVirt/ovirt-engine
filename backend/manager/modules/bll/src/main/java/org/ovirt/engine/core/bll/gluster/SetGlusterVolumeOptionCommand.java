@@ -73,10 +73,10 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
 
             optionValueExists = true;
             addCustomValue(GlusterConstants.OPTION_OLD_VALUE, existingOption.getValue());
-            getGlusterOptionDao().updateVolumeOption(existingOption.getId(), option.getValue());
+            glusterOptionDao.updateVolumeOption(existingOption.getId(), option.getValue());
         } else {
             optionValueExists = false;
-            getGlusterOptionDao().save(option);
+            glusterOptionDao.save(option);
         }
     }
 

@@ -73,7 +73,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
      * it will be deleted.
      */
     private void removeOptionInDb(GlusterVolumeOptionEntity option) {
-        getGlusterOptionDao().removeVolumeOption(option.getId());
+        glusterOptionDao.removeVolumeOption(option.getId());
     }
 
 

@@ -24,14 +24,13 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     @Inject
     protected GlusterGeoRepDao glusterGeoRepDao;
 
+    @Inject
+    protected GlusterOptionDao glusterOptionDao;
+
     public GlusterVolumeCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
         setGlusterVolumeId(getParameters().getVolumeId());
 
-    }
-
-    protected GlusterOptionDao getGlusterOptionDao() {
-        return getDbFacade().getGlusterOptionDao();
     }
 
     @Override
