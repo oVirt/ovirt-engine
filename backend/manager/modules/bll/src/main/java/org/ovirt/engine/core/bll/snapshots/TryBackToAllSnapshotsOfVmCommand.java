@@ -11,13 +11,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.UpdateVmCommand;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -43,7 +47,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -54,6 +58,8 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -62,6 +68,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     private Snapshot cachedSnapshot;
     private List<DiskImage> imagesToPreview;
+
+    @Inject
+    private LockManager lockManager;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -120,6 +129,11 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         if (getVm() != null) {
             vmHandler.unlockVm(getVm(), getCompensationContext());
             restoreVmConfigFromSnapshot();
+
+            // disks and configuration is restored, let's set CCV if the snapshot originates in older Cluster version
+            if (!updateClusterCompatibilityVersionToOldCluster(false)) {
+                log.warn("Failed to set the Cluster Compatibility Version to the cluster version the snapshot originates from.");
+            }
         } else {
             setCommandShouldBeLogged(false);
             log.warn("VmCommand::EndVmCommand: Vm is null - not performing endAction on Vm");
@@ -146,10 +160,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void executeVmCommand() {
-        final boolean restoreMemory = getParameters().isRestoreMemory() &&
-                FeatureSupported.isMemorySnapshotSupportedByArchitecture(
-                        getVm().getClusterArch(),
-                        getVm().getCompatibilityVersion());
+        final boolean restoreMemory = isRestoreMemory();
 
         final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();
@@ -233,31 +244,58 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     return params;
                 }
             });
+        } else {
+            // if there are no disks to restore, no compensation context is saved and
+            //    the VM Configuration (incl. clusterCompatibilityVersionOrigin) is already restored at this point.
+            // Otherwise, if disks are being restored, the VM Configuration is restored later in endSuccessfully()
+            updateClusterCompatibilityVersionToOldCluster(true);
         }
 
-        if (restoreMemory && getVm().getCustomCompatibilityVersion() == null &&
-                (getVm().getClusterCompatibilityVersionOrigin() == null || // taken in pre-3.6
-                 getVm().getClusterCompatibilityVersionOrigin().less(getVm().getClusterCompatibilityVersion()))) {
-            // the snapshot was taken before cluster version change, call the UpdateVmCommand
-            // vm_static of the getVm() is just updated by the previewed OVF config, so reload before UpdateVmCommand
-            VM vmFromDb = vmDao.get(getVmId());
-            if (!updateVm(vmFromDb, getVm().getClusterCompatibilityVersionOrigin())) {
-                return;
-            }
-        }
         setSucceeded(true);
     }
 
-    private boolean updateVm(VM vm, Version oldClusterVersion) {
-        VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+    private boolean isRestoreMemory() {
+        return getParameters().isRestoreMemory() &&
+                FeatureSupported.isMemorySnapshotSupportedByArchitecture(
+                        getVm().getClusterArch(), getVm().getCompatibilityVersion());
+    }
 
-        updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+    private boolean updateClusterCompatibilityVersionToOldCluster(boolean disableLock) {
+        Version oldClusterVersion = getVm().getClusterCompatibilityVersionOrigin();
+            // if snapshot is taken in pre-3.6, set to to oldest supported (3.6)
+        oldClusterVersion = oldClusterVersion == null ? Version.v3_6 : oldClusterVersion;
+
+        if (isRestoreMemory() && getVm().getCustomCompatibilityVersion() == null &&
+                oldClusterVersion.less(getVm().getClusterCompatibilityVersion())) {
+            // the snapshot was taken before cluster version change, call the UpdateVmCommand
+
+            // vm_static of the getVm() is just updated by the previewed OVF config, so reload before UpdateVmCommand
+            VmStatic vmFromDb = vmStaticDao.get(getVmId());
+            return updateVm(vmFromDb, oldClusterVersion, disableLock);
+        }
+
+        return true;
+    }
+
+    private boolean updateVm(VmStatic vm, Version oldClusterVersion, boolean disableLock) {
+        VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
         updateParams.setClusterLevelChangeFromVersion(oldClusterVersion);
+
+        CommandContext context;
+        if (disableLock) {
+            updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+            context = cloneContextAndDetachFromParent();
+        } else {
+            // Wait for VM lock
+            EngineLock updateVmLock = createUpdateVmLock();
+            lockManager.acquireLockWait(updateVmLock); // will be released by UpdateVmCommand
+            context = ExecutionHandler.createInternalJobContext(updateVmLock);
+        }
 
         VdcReturnValueBase result = runInternalAction(
                 VdcActionType.UpdateVm,
                 updateParams,
-                cloneContextAndDetachFromParent());
+                context);
 
         if (!result.getSucceeded()) {
             getReturnValue().setFault(result.getFault());
@@ -267,6 +305,11 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return true;
     }
 
+    private EngineLock createUpdateVmLock() {
+        return new EngineLock(
+                UpdateVmCommand.getExclusiveLocksForUpdateVm(getVm()),
+                UpdateVmCommand.getSharedLocksForUpdateVm(getVm()));
+    }
     protected boolean tryBackAllCinderDisks( List<CinderDisk> cinderDisks, Guid newSnapshotId) {
         for (CinderDisk disk : cinderDisks) {
             ImagesContainterParametersBase params = buildCinderChildCommandParameters(disk, newSnapshotId);
