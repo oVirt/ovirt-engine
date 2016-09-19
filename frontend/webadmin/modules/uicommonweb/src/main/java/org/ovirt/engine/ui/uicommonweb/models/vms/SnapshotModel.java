@@ -154,15 +154,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         showMemorySnapshotWarning = value;
     }
 
-    private boolean oldClusterSnapshotWithMemory;
-
-    public boolean isOldClusterSnapshotWithMemory() {
-        return oldClusterSnapshotWithMemory;
-    }
-
-    public void setOldClusterSnapshotWithMemory(boolean value) {
-        oldClusterSnapshotWithMemory = value;
-    }
+    private Version oldClusterVersionOfSnapshotWithMemory;
 
     private boolean showPartialSnapshotWarning;
 
@@ -415,11 +407,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         }
     }
 
-    public boolean isVMWithMemoryCompatible() {
-        return isVMWithMemoryCompatible(getVm());
-    }
-
-    public boolean isVMWithMemoryCompatible(VM vm) {
+    private boolean isVMWithMemoryCompatible(VM vm) {
         if (vm == null || vm.getCustomCompatibilityVersion() != null) {
             return true;
         }
@@ -435,5 +423,24 @@ public class SnapshotModel extends EntityModel<Snapshot> {
                 && recentClusterVersion.getMajor() == originalClusterVersion.getMajor()
                 && recentClusterVersion.getMinor() == originalClusterVersion.getMinor();
 
+    }
+
+    public void setOldClusterVersionOfSnapshotWithMemory() {
+        setOldClusterVersionOfSnapshotWithMemory(getVm());
+    }
+
+    public void setOldClusterVersionOfSnapshotWithMemory(VM vm) {
+        if (!isVMWithMemoryCompatible(vm)) {
+            // message regarding old cluster snapshot will be shown
+            Version originalClusterVersion = vm.getClusterCompatibilityVersionOrigin();
+            originalClusterVersion = (originalClusterVersion == null) ? Version.v3_6 : originalClusterVersion;
+            oldClusterVersionOfSnapshotWithMemory = originalClusterVersion;
+        } else {
+            oldClusterVersionOfSnapshotWithMemory = null;
+        }
+    }
+
+    public Version getOldClusterVersionOfSnapshotWithMemory() {
+        return oldClusterVersionOfSnapshotWithMemory;
     }
 }
