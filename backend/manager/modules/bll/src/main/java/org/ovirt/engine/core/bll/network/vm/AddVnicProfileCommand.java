@@ -47,7 +47,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
     protected void executeCommand() {
         getVnicProfile().setId(Guid.newGuid());
         updateDefaultNetworkFilterIfRequired();
-        getVnicProfileDao().save(getVnicProfile());
+        vnicProfileDao.save(getVnicProfile());
         NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(),
                 getVnicProfile().getId(),
                 getParameters().isPublicUse());

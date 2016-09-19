@@ -167,7 +167,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     public Network getNetwork() {
         if (getParameters().getNic().getVnicProfileId() != null && network == null) {
-            vnicProfile = getDbFacade().getVnicProfileDao().get(getParameters().getNic().getVnicProfileId());
+            vnicProfile = vnicProfileDao.get(getParameters().getNic().getVnicProfileId());
             network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
         }
 

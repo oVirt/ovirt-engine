@@ -41,7 +41,7 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
     @Override
     protected void executeCommand() {
         getOldVnicProfile();
-        getVnicProfileDao().update(getVnicProfile());
+        vnicProfileDao.update(getVnicProfile());
         setSucceeded(true);
     }
 
@@ -84,7 +84,7 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
 
     private VnicProfile getOldVnicProfile() {
         if (oldVnicProfile == null) {
-            oldVnicProfile = getDbFacade().getVnicProfileDao().get(getVnicProfile().getId());
+            oldVnicProfile = vnicProfileDao.get(getVnicProfile().getId());
         }
 
         return oldVnicProfile;

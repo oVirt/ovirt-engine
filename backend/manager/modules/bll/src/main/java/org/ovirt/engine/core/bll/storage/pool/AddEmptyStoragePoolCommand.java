@@ -101,7 +101,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         networkDao.save(net);
         NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
         VnicProfile profile = NetworkHelper.createVnicProfile(net, networkFilterDao);
-        getVnicProfileDao().save(profile);
+        vnicProfileDao.save(profile);
         NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(), profile.getId(), true);
     }
 

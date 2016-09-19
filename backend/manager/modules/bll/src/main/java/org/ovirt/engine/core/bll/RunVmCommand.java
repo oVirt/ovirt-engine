@@ -593,7 +593,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         VmDeviceGeneralType.INTERFACE));
 
         for (VmNic iface : getVm().getInterfaces()) {
-            VnicProfile vnicProfile = getDbFacade().getVnicProfileDao().get(iface.getVnicProfileId());
+            VnicProfile vnicProfile = vnicProfileDao.get(iface.getVnicProfileId());
             Network network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
             if (network != null && network.isExternal() && vmDevice.getIsPlugged()) {

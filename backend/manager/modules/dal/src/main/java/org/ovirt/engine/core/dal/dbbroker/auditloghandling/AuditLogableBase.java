@@ -271,6 +271,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected DiskProfileDao diskProfileDao;
 
+    @Inject
+    protected VnicProfileDao vnicProfileDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -785,10 +788,6 @@ public class AuditLogableBase extends TimeoutBase {
             glusterVolume = glusterVolumeDao.getById(glusterVolumeId);
         }
         return glusterVolume;
-    }
-
-    protected VnicProfileDao getVnicProfileDao() {
-        return getDbFacade().getVnicProfileDao();
     }
 
     public RoleDao getRoleDao() {

@@ -30,10 +30,10 @@ public abstract class NetworkCommon<T extends VdcActionParametersBase> extends C
     }
 
     protected void removeVnicProfiles() {
-        List<VnicProfile> profiles = getVnicProfileDao().getAllForNetwork(getNetwork().getId());
+        List<VnicProfile> profiles = vnicProfileDao.getAllForNetwork(getNetwork().getId());
         for (VnicProfile vnicProfile : profiles) {
             getCompensationContext().snapshotEntity(vnicProfile);
-            getVnicProfileDao().remove(vnicProfile.getId());
+            vnicProfileDao.remove(vnicProfile.getId());
         }
     }
 

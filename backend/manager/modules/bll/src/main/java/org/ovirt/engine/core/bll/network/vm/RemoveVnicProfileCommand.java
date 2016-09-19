@@ -26,7 +26,7 @@ public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends V
 
     @Override
     protected void executeCommand() {
-        getVnicProfileDao().remove(getVnicProfile().getId());
+        vnicProfileDao.remove(getVnicProfile().getId());
         setSucceeded(true);
     }
 

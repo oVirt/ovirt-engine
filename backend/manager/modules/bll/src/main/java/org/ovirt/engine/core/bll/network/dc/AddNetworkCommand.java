@@ -52,7 +52,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             networkDao.save(getNetwork());
 
             if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
-                getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork(), networkFilterDao));
+                vnicProfileDao.save(NetworkHelper.createVnicProfile(getNetwork(), networkFilterDao));
             }
 
             NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), getNetwork().getId());

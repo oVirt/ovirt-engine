@@ -107,10 +107,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
         TransactionSupport.executeInNewTransaction(() -> {
             for (final Network net : networks) {
-                List<VnicProfile> profiles = getDbFacade().getVnicProfileDao().getAllForNetwork(net.getId());
+                List<VnicProfile> profiles = vnicProfileDao.getAllForNetwork(net.getId());
                 for (VnicProfile vnicProfile : profiles) {
                     getCompensationContext().snapshotEntity(vnicProfile);
-                    getDbFacade().getVnicProfileDao().remove(vnicProfile.getId());
+                    vnicProfileDao.remove(vnicProfile.getId());
                 }
                 getCompensationContext().snapshotEntity(net);
                 networkDao.remove(net.getId());

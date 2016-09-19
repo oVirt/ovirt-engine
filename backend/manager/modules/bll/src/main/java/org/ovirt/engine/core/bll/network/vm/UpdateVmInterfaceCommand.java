@@ -349,7 +349,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         private boolean portMirroringEnabled(Guid profileId) {
-            VnicProfile vnicProfile = profileId == null ? null : getVnicProfileDao().get(profileId);
+            VnicProfile vnicProfile = profileId == null ? null : vnicProfileDao.get(profileId);
             return vnicProfile != null && vnicProfile.isPortMirroring();
         }
 
