@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -17,6 +19,9 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 
 public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
+
+    @Inject
+    protected GlusterVolumeSnapshotDao glusterVolumeSnapshotDao;
 
     public GlusterSnapshotCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
@@ -43,10 +48,6 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
                             EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED));
         }
         return null;
-    }
-
-    protected GlusterVolumeSnapshotDao getGlusterVolumeSnapshotDao() {
-        return getDbFacade().getGlusterVolumeSnapshotDao();
     }
 
     protected EngineLock acquireEngineLock(Guid id, LockingGroup group) {

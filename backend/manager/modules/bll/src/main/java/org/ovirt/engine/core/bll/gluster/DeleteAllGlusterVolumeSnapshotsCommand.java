@@ -32,7 +32,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
     @Override
     protected void init() {
         super.init();
-        snapshots = getGlusterVolumeSnapshotDao().getAllByVolumeId(getGlusterVolumeId());
+        snapshots = glusterVolumeSnapshotDao.getAllByVolumeId(getGlusterVolumeId());
         georepSessions = glusterGeoRepDao.getGeoRepSessions(getGlusterVolumeId());
     }
 
@@ -58,7 +58,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
             for (GlusterVolumeSnapshotEntity snapshot : snapshotsList) {
                 guids.add(snapshot.getId());
             }
-            getGlusterVolumeSnapshotDao().removeAll(guids);
+            glusterVolumeSnapshotDao.removeAll(guids);
         }
 
         return true;
@@ -83,7 +83,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
                 }
 
                 List<GlusterVolumeSnapshotEntity> slaveVolumeSnapshots =
-                        getGlusterVolumeSnapshotDao().getAllByVolumeId(slaveVolume.getId());
+                        glusterVolumeSnapshotDao.getAllByVolumeId(slaveVolume.getId());
 
                 try (EngineLock lock = acquireEngineLock(session.getSlaveVolumeId(), LockingGroup.GLUSTER_SNAPSHOT)) {
                     if (!deleteAllGlusterVolumeSnapshots(slaveUpServer.getId(),

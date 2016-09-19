@@ -125,7 +125,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                     slaveVolumeSnapshot.setVolumeId(slaveVolume.getId());
                     slaveVolumeSnapshot.setDescription(snapshot.getDescription());
                     slaveVolumeSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
-                    getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
+                    glusterVolumeSnapshotDao.save(slaveVolumeSnapshot);
 
                     // check if the snapshot soft limit reached now for the volume and alert
                     getGlusterUtils().alertVolumeSnapshotLimitsReached(slaveVolume);
@@ -165,7 +165,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             createdSnapshot.setVolumeId(snapshot.getVolumeId());
             createdSnapshot.setDescription(snapshot.getDescription());
             createdSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
-            getDbFacade().getGlusterVolumeSnapshotDao().save(createdSnapshot);
+            glusterVolumeSnapshotDao.save(createdSnapshot);
             addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, createdSnapshot.getSnapshotName());
             // check if the snapshot soft limit reached now for the volume and alert
             getGlusterUtils().alertVolumeSnapshotLimitsReached(getGlusterVolume());
@@ -212,7 +212,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
         }
 
-        if (getDbFacade().getGlusterVolumeSnapshotDao().getByName(getGlusterVolumeId(), snapshot.getSnapshotName()) != null) {
+        if (glusterVolumeSnapshotDao.getByName(getGlusterVolumeId(), snapshot.getSnapshotName()) != null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SNAPSHOT_ALREADY_EXISTS);
         }
 

@@ -36,7 +36,7 @@ public class DeactivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapsho
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DEACTIVATE_FAILED, retVal.getVdsError().getMessage());
         } else {
-            getGlusterVolumeSnapshotDao().updateSnapshotStatus(getSnapshot().getId(), GlusterSnapshotStatus.DEACTIVATED);
+            glusterVolumeSnapshotDao.updateSnapshotStatus(getSnapshot().getId(), GlusterSnapshotStatus.DEACTIVATED);
         }
     }
 

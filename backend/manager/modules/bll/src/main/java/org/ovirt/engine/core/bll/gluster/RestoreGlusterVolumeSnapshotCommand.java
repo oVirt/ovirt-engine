@@ -121,7 +121,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 setSucceeded(false);
                 return false;
             } else {
-                getGlusterVolumeSnapshotDao().removeByName(volume.getId(), snapshotName);
+                glusterVolumeSnapshotDao.removeByName(volume.getId(), snapshotName);
 
                 // Sync the new bricks of the volume immediately
                 VDS upServer = getGlusterUtils().getRandomUpServer(volume.getClusterId());

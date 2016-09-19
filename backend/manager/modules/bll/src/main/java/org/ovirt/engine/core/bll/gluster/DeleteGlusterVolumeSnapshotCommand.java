@@ -51,7 +51,7 @@ public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCom
             handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DELETE_FAILED, retVal.getVdsError().getMessage());
             return false;
         } else {
-            getGlusterVolumeSnapshotDao().remove(getSnapshot().getId());
+            glusterVolumeSnapshotDao.remove(getSnapshot().getId());
         }
 
         return true;

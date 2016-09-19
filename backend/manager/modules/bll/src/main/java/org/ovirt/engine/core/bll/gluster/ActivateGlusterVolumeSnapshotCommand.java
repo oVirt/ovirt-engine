@@ -37,7 +37,7 @@ public class ActivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotC
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_ACTIVATE_FAILED, retVal.getVdsError().getMessage());
         } else {
-            getGlusterVolumeSnapshotDao().updateSnapshotStatus(getSnapshot().getId(), GlusterSnapshotStatus.ACTIVATED);
+            glusterVolumeSnapshotDao.updateSnapshotStatus(getSnapshot().getId(), GlusterSnapshotStatus.ACTIVATED);
         }
     }
 
