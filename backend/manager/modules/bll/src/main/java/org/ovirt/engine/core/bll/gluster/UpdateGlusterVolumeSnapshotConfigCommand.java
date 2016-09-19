@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -22,13 +24,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotSetConfigVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 
 public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase<UpdateGlusterVolumeSnapshotConfigParameters> {
 
     private boolean updatesSuccessful;
     private List<String> failedCfgs;
+
+    @Inject
+    private GlusterVolumeSnapshotConfigDao glusterVolumeSnapshotConfigDao;
 
     public UpdateGlusterVolumeSnapshotConfigCommand(UpdateGlusterVolumeSnapshotConfigParameters params,
             CommandContext commandContext) {
@@ -80,7 +84,7 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         Guid clusterId = getParameters().getClusterId();
         Guid volumeId = getParameters().getVolumeId();
         List<GlusterVolumeSnapshotConfig> fetchedConfigParams =
-                getGlusterVolumeSnapshotConfigDao().getConfigByClusterId(clusterId);
+                glusterVolumeSnapshotConfigDao.getConfigByClusterId(clusterId);
 
         // segregate the fetched cluster and volume specific config params
         Map<String, GlusterVolumeSnapshotConfig> fetchedClusterConfigParams = new HashMap<>();
@@ -139,12 +143,12 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
                 updatesSuccessful = false;
             } else {
                 if (config.getVolumeId() != null) {
-                    getGlusterVolumeSnapshotConfigDao().updateConfigByVolumeIdAndName(config.getClusterId(),
+                    glusterVolumeSnapshotConfigDao.updateConfigByVolumeIdAndName(config.getClusterId(),
                             config.getVolumeId(),
                             config.getParamName(),
                             config.getParamValue());
                 } else {
-                    getGlusterVolumeSnapshotConfigDao().updateConfigByClusterIdAndName(config.getClusterId(),
+                    glusterVolumeSnapshotConfigDao.updateConfigByClusterIdAndName(config.getClusterId(),
                             config.getParamName(),
                             config.getParamValue());
                 }
@@ -157,10 +161,6 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         }
 
         setSucceeded(true);
-    }
-
-    protected GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotConfigDao();
     }
 
     @Override
