@@ -374,8 +374,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         // less than 2 VMs in host means no positive affinity to worry about
         if (runningVms.size() > 1) {
             List<AffinityGroup> affinityGroups =
-                    getDbFacade().getAffinityGroupDao()
-                            .getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);
+                    affinityGroupDao.getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);
             if (!affinityGroups.isEmpty()) {
                 List<Object> items = new ArrayList<>();
                 for (AffinityGroup affinityGroup : affinityGroups) {

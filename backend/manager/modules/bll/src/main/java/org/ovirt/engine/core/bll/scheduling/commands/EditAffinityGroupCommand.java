@@ -21,7 +21,7 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
         }
         if (!getAffinityGroup().getName().equals(getParameters().getAffinityGroup().getName()) &&
-                getAffinityGroupDao().getByName(getParameters().getAffinityGroup().getName()) != null) {
+                affinityGroupDao.getByName(getParameters().getAffinityGroup().getName()) != null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
         }
         return validateParameters();
@@ -29,7 +29,7 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Override
     protected void executeCommand() {
-        getAffinityGroupDao().update(getParameters().getAffinityGroup());
+        affinityGroupDao.update(getParameters().getAffinityGroup());
         setSucceeded(true);
     }
 

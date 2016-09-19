@@ -86,6 +86,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -317,6 +318,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     @Inject
     protected VmNumaNodeDao vmNumaNodeDao;
+
+    @Inject
+    protected AffinityGroupDao affinityGroupDao;
 
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable

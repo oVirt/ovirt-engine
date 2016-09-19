@@ -22,7 +22,7 @@ public class RemoveAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Override
     protected void executeCommand() {
-        getAffinityGroupDao().remove(getParameters().getAffinityGroupId());
+        affinityGroupDao.remove(getParameters().getAffinityGroupId());
         setSucceeded(true);
     }
 

@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroupCRUDParameters> {
 
@@ -64,7 +62,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
     }
 
     private boolean affinityGroupsWithoutConflict(AffinityGroup affinityGroup) {
-        List<AffinityGroup> affinityGroups = getAffinityGroupDao().getAllAffinityGroupsByClusterId(affinityGroup.getClusterId());
+        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(affinityGroup.getClusterId());
 
         // Replace the existing affinity group by the updated copy
         for(Iterator<AffinityGroup> it = affinityGroups.iterator(); it.hasNext(); ) {
@@ -92,7 +90,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     protected AffinityGroup getAffinityGroup() {
         if (affinityGroup == null) {
-            affinityGroup = getAffinityGroupDao().get(getParameters().getAffinityGroupId());
+            affinityGroup = affinityGroupDao.get(getParameters().getAffinityGroupId());
         }
         return affinityGroup;
     }
@@ -107,10 +105,6 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
     @Override
     public Guid getClusterId() {
         return getAffinityGroup().getClusterId();
-    }
-
-    protected AffinityGroupDao getAffinityGroupDao() {
-        return DbFacade.getInstance().getAffinityGroupDao();
     }
 
     @Override

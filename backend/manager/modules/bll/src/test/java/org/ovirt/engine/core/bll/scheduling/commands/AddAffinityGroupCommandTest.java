@@ -45,7 +45,6 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     @Before
     public void setup() {
-        doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(new Cluster()).when(command).getCluster();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setClusterId(clusterId);

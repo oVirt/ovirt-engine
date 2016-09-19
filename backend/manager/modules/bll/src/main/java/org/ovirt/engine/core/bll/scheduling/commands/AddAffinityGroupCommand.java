@@ -15,7 +15,7 @@ public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Override
     protected boolean validate() {
-        if (getAffinityGroupDao().getByName(getParameters().getAffinityGroup().getName()) != null) {
+        if (affinityGroupDao.getByName(getParameters().getAffinityGroup().getName()) != null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
         }
         return validateParameters();
@@ -29,7 +29,7 @@ public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected void executeCommand() {
         getAffinityGroup().setId(Guid.newGuid());
-        getAffinityGroupDao().save(getAffinityGroup());
+        affinityGroupDao.save(getAffinityGroup());
         getReturnValue().setActionReturnValue(getAffinityGroup().getId());
         setSucceeded(true);
     }
