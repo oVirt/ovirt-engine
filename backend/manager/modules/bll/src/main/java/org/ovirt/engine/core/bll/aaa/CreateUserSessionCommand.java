@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
 
 @NonTransactiveCommandAttribute
@@ -35,9 +34,6 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
 
     @Inject
     private DbUserDao dbUserDao;
-
-    @Inject
-    private DbGroupDao dbGroupDao;
 
     public CreateUserSessionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
