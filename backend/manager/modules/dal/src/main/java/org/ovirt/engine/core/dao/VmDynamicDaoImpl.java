@@ -157,11 +157,11 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("run_on_vds", vm.getRunOnVds())
                 .addValue("status", vm.getStatus())
                 .addValue("vm_host", vm.getVmHost())
-                .addValue("vm_ip", vm.getVmIp())
-                .addValue("vm_fqdn", vm.getVmFQDN())
+                .addValue("vm_ip", vm.getIp())
+                .addValue("vm_fqdn", vm.getFqdn())
                 .addValue("last_start_time", vm.getLastStartTime())
                 .addValue("last_stop_time", vm.getLastStopTime())
-                .addValue("vm_pid", vm.getVmPid())
+                .addValue("vm_pid", vm.getPid())
                 .addValue("acpi_enable", vm.getAcpiEnable())
                 .addValue("session", vm.getSession())
                 .addValue("kvm_enable", vm.getKvmEnable())
@@ -236,11 +236,11 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setStatus(VMStatus.forValue(rs.getInt("status")));
         entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
         entity.setVmHost(rs.getString("vm_host"));
-        entity.setVmIp(rs.getString("vm_ip"));
-        entity.setVmFQDN(rs.getString("vm_fqdn"));
+        entity.setIp(rs.getString("vm_ip"));
+        entity.setFqdn(rs.getString("vm_fqdn"));
         entity.setLastStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_start_time")));
         entity.setLastStopTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_stop_time")));
-        entity.setVmPid((Integer) rs.getObject("vm_pid"));
+        entity.setPid((Integer) rs.getObject("vm_pid"));
         entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
         entity.setSession(SessionState.forValue(rs.getInt("session")));
         entity.setKvmEnable((Boolean) rs.getObject("kvm_enable"));

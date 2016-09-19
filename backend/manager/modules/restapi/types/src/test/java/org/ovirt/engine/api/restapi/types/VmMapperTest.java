@@ -253,7 +253,7 @@ public class VmMapperTest extends
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setStatus(VMStatus.Up);
-        vmDynamic.setVmFQDN("localhost.localdomain");
+        vmDynamic.setFqdn("localhost.localdomain");
         vm.setDynamicData(vmDynamic);
         Vm map = VmMapper.map(vm, (Vm) null);
         assertNotNull(map.getFqdn());

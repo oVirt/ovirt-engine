@@ -1153,8 +1153,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         vmDynamic.setId(getVmId());
         vmDynamic.setStatus(VMStatus.Down);
         vmDynamic.setVmHost("");
-        vmDynamic.setVmIp("");
-        vmDynamic.setVmFQDN("");
+        vmDynamic.setIp("");
+        vmDynamic.setFqdn("");
         vmDynamic.setLastStopTime(new Date());
         getVmDynamicDao().save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);

@@ -176,7 +176,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
                 : ""); //$NON-NLS-1$
 
         setVmId(vm.getId().toString());
-        setFqdn(vm.getVmFQDN());
+        setFqdn(vm.getFqdn());
 
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert()) {

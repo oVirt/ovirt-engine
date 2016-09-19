@@ -108,7 +108,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         AbstractTextColumn<VM> ipColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmIp();
+                return object.getIp();
             }
         };
         ipColumn.makeSortable(VmConditionFieldAutoCompleter.IP);
@@ -117,7 +117,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         AbstractTextColumn<VM> fqdnColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmFQDN();
+                return object.getFqdn();
             }
 
         };

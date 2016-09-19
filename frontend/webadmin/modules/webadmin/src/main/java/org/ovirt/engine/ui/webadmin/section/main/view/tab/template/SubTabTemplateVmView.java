@@ -72,7 +72,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         AbstractTextColumn<VM> ipColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmIp();
+                return object.getIp();
             }
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         AbstractTextColumn<VM> fqdnColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmFQDN();
+                return object.getFqdn();
             }
         };
         getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$

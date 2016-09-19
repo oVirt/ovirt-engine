@@ -571,8 +571,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         vmDynamic.setId(getVmId());
         vmDynamic.setStatus(VMStatus.ImageLocked);
         vmDynamic.setVmHost("");
-        vmDynamic.setVmIp("");
-        vmDynamic.setVmFQDN("");
+        vmDynamic.setIp("");
+        vmDynamic.setFqdn("");
         vmDynamic.setLastStopTime(new Date());
         vmDynamic.setAppList(getParameters().getVm().getAppList());
         return vmDynamic;

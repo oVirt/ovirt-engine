@@ -93,7 +93,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         AbstractTextColumn<VM> ipColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmIp();
+                return object.getIp();
             }
         };
         ipColumn.makeSortable();
@@ -102,7 +102,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         AbstractTextColumn<VM> fqdnColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmFQDN();
+                return object.getFqdn();
             }
         };
         fqdnColumn.makeSortable();

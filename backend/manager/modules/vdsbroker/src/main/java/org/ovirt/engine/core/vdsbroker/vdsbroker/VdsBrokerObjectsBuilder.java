@@ -426,7 +426,7 @@ public class VdsBrokerObjectsBuilder {
             }
         }
         if (xmlRpcStruct.containsKey(VdsProperties.vm_pid)) {
-            vm.setVmPid(assignIntValue(xmlRpcStruct, VdsProperties.vm_pid));
+            vm.setPid(assignIntValue(xmlRpcStruct, VdsProperties.vm_pid));
         }
         if (xmlRpcStruct.containsKey(VdsProperties.kvmEnable)) {
             vm.setKvmEnable(Boolean.parseBoolean((String) xmlRpcStruct.get(VdsProperties.kvmEnable)));
@@ -476,24 +476,24 @@ public class VdsBrokerObjectsBuilder {
             vm.setGuestOs(assignStringValue(xmlRpcStruct, VdsProperties.guest_os));
         }
         if (xmlRpcStruct.containsKey(VdsProperties.VM_FQDN)) {
-            vm.setVmFQDN(assignStringValue(xmlRpcStruct, VdsProperties.VM_FQDN));
-            String fqdn = vm.getVmFQDN().trim();
+            vm.setFqdn(assignStringValue(xmlRpcStruct, VdsProperties.VM_FQDN));
+            String fqdn = vm.getFqdn().trim();
             if ("localhost".equalsIgnoreCase(fqdn) || "localhost.localdomain".equalsIgnoreCase(fqdn)) {
-                vm.setVmFQDN(null);
+                vm.setFqdn(null);
             }
             else {
-                vm.setVmFQDN(fqdn);
+                vm.setFqdn(fqdn);
             }
         }
 
         if (xmlRpcStruct.containsKey(VdsProperties.VM_IP)) {
-            vm.setVmIp(assignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
+            vm.setIp(assignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
         }
-        if (vm.getVmIp() != null) {
-            if (vm.getVmIp().startsWith("127.0.")) {
-                vm.setVmIp(null);
+        if (vm.getIp() != null) {
+            if (vm.getIp().startsWith("127.0.")) {
+                vm.setIp(null);
             } else {
-                vm.setVmIp(vm.getVmIp().trim());
+                vm.setIp(vm.getIp().trim());
             }
         }
 

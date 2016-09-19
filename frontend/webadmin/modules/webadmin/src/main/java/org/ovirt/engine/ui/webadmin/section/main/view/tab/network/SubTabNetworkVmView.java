@@ -138,7 +138,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                    return object.getSecond().getVmIp();
+                    return object.getSecond().getIp();
                 }
             };
 
@@ -146,13 +146,13 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                    return object.getSecond().getVmFQDN();
+                    return object.getSecond().getFqdn();
                 }
 
                 @Override
                 public SafeHtml getTooltip(
                         PairQueryable<VmNetworkInterface, VM> object) {
-                    String tooltipContent = object.getSecond().getVmFQDN();
+                    String tooltipContent = object.getSecond().getFqdn();
                     return SafeHtmlUtils.fromString(tooltipContent);
                 }
             };

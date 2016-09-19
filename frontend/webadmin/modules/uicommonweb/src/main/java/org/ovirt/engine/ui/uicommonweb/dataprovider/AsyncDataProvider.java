@@ -2837,7 +2837,7 @@ public class AsyncDataProvider {
         }
 
         for (VM vm : vms) {
-            boolean guestAgentPresent = !StringHelper.isNullOrEmpty(vm.getVmIp());
+            boolean guestAgentPresent = !StringHelper.isNullOrEmpty(vm.getIp());
             boolean acpiEnabled = Boolean.TRUE.equals(vm.getAcpiEnable());
             if (!(guestAgentPresent || acpiEnabled)) {
                 return false;

@@ -520,27 +520,27 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmDynamic.setStatus(value);
     }
 
-    public String getVmIp() {
-        return this.vmDynamic.getVmIp();
+    public String getIp() {
+        return this.vmDynamic.getIp();
     }
 
-    public void setVmIp(String value) {
-        this.vmDynamic.setVmIp(value);
+    public void setIp(String value) {
+        this.vmDynamic.setIp(value);
     }
 
-    public String getVmFQDN() {
-        return this.vmDynamic.getVmFQDN();
+    public String getFqdn() {
+        return this.vmDynamic.getFqdn();
     }
 
-    public void setVmFQDN(String fqdn) {
-        this.vmDynamic.setVmFQDN(fqdn);
+    public void setFqdn(String fqdn) {
+        this.vmDynamic.setFqdn(fqdn);
     }
 
     public String getVmHost() {
         String vmDomain = (getVmInit() != null) ? getVmInit().getDomain() : null;
         String vmHost = this.vmDynamic.getVmHost();
-        if (!StringHelper.isNullOrEmpty(this.getVmIp())) {
-            this.vmDynamic.setVmHost(getVmIp());
+        if (!StringHelper.isNullOrEmpty(this.getIp())) {
+            this.vmDynamic.setVmHost(getIp());
         } else {
             // If VM's host name isn't available - set as VM's name
             // If no IP address is available - assure that 'vm_host' is FQN by concatenating
@@ -560,12 +560,12 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmDynamic.setVmHost(value);
     }
 
-    public Integer getVmPid() {
-        return this.vmDynamic.getVmPid();
+    public Integer getPid() {
+        return this.vmDynamic.getPid();
     }
 
-    public void setVmPid(Integer value) {
-        this.vmDynamic.setVmPid(value);
+    public void setPid(Integer value) {
+        this.vmDynamic.setPid(value);
     }
 
     public Date getLastStartTime() {

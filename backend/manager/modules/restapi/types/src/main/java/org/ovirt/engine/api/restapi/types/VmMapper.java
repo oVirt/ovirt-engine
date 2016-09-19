@@ -373,9 +373,9 @@ public class VmMapper extends VmBaseMapper {
                 model.setHost(new Host());
                 model.getHost().setId(entity.getRunOnVds().toString());
             }
-            final boolean hasFqdn = entity.getVmFQDN() != null && !entity.getVmFQDN().isEmpty();
+            final boolean hasFqdn = entity.getFqdn() != null && !entity.getFqdn().isEmpty();
             if (hasFqdn) {
-                model.setFqdn(entity.getVmFQDN());
+                model.setFqdn(entity.getFqdn());
             }
             final boolean hasGuestOsVersion = entity.getGuestOsVersion() != null && !entity.getGuestOsVersion().isEmpty();
             if (hasGuestOsVersion) {

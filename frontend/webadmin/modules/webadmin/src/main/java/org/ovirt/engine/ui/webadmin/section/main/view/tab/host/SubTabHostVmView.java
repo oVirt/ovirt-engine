@@ -82,7 +82,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         AbstractTextColumn<VM> ipColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmIp();
+                return object.getIp();
             }
         };
         ipColumn.makeSortable();
@@ -91,7 +91,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         AbstractTextColumn<VM> fqdnColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmFQDN();
+                return object.getFqdn();
             }
         };
         fqdnColumn.makeSortable();

@@ -17,11 +17,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     private Guid id;
     private VMStatus status;
-    private String vmIp;
-    private String vmFQDN;
+    private String ip;
+    private String fqdn;
     @UnchangeableByVdsm
     private String vmHost;
-    private Integer vmPid;
+    private Integer pid;
     @UnchangeableByVdsm
     private Date lastStartTime;
     @UnchangeableByVdsm
@@ -111,11 +111,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 status,
                 utcDiff,
                 vmHost,
-                vmIp,
-                vmFQDN,
+                ip,
+                fqdn,
                 lastStartTime,
                 lastStopTime,
-                vmPid,
+                pid,
                 lastWatchdogEvent,
                 lastWatchdogAction,
                 runOnce,
@@ -170,11 +170,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && status == other.status
                 && Objects.equals(utcDiff, other.utcDiff)
                 && Objects.equals(vmHost, other.vmHost)
-                && Objects.equals(vmIp, other.vmIp)
-                && Objects.equals(vmFQDN, other.vmFQDN)
+                && Objects.equals(ip, other.ip)
+                && Objects.equals(fqdn, other.fqdn)
                 && Objects.equals(lastStartTime, other.lastStartTime)
                 && Objects.equals(lastStopTime, other.lastStopTime)
-                && Objects.equals(vmPid, other.vmPid)
+                && Objects.equals(pid, other.pid)
                 && Objects.equals(lastWatchdogEvent, other.lastWatchdogEvent)
                 && Objects.equals(lastWatchdogAction, other.lastWatchdogAction)
                 && runOnce == other.runOnce
@@ -255,10 +255,10 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     public VmDynamic(VmDynamic template) {
         id = template.getId();
         status = template.getStatus();
-        vmIp = template.getVmIp();
-        vmFQDN = template.getVmFQDN();
+        ip = template.getIp();
+        fqdn = template.getFqdn();
         vmHost = template.getVmHost();
-        vmPid = template.getVmPid();
+        pid = template.getPid();
         lastStartTime = template.getLastStartTime();
         lastStopTime = template.getLastStopTime();
         guestCurUserName = template.getGuestCurrentUserName();
@@ -388,20 +388,20 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         this.vmHost = value;
     }
 
-    public String getVmFQDN() {
-        return this.vmFQDN;
+    public String getFqdn() {
+        return this.fqdn;
     }
 
-    public void setVmFQDN(String fqdn) {
-        this.vmFQDN = fqdn;
+    public void setFqdn(String fqdn) {
+        this.fqdn = fqdn;
     }
 
-    public String getVmIp() {
-        return this.vmIp;
+    public String getIp() {
+        return this.ip;
     }
 
-    public void setVmIp(String value) {
-        this.vmIp = value;
+    public void setIp(String value) {
+        this.ip = value;
     }
 
     public Date getLastStartTime() {
@@ -420,12 +420,12 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         this.lastStopTime = value;
     }
 
-    public Integer getVmPid() {
-        return this.vmPid;
+    public Integer getPid() {
+        return this.pid;
     }
 
-    public void setVmPid(Integer value) {
-        this.vmPid = value;
+    public void setPid(Integer value) {
+        this.pid = value;
     }
 
     public Map<GraphicsType, GraphicsInfo> getGraphicsInfos() {
@@ -698,9 +698,9 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setStatus(vm.getStatus());
         setRunOnVds(vdsId);
         setVmHost(vm.getVmHost());
-        setVmIp(vm.getVmIp());
-        setVmFQDN(vm.getVmFQDN());
-        setVmPid(vm.getVmPid());
+        setIp(vm.getIp());
+        setFqdn(vm.getFqdn());
+        setPid(vm.getPid());
         // update only if vdsm actually provides some value, otherwise engine has more information
         if (vm.getCurrentCd() != null) {
             setCurrentCd(vm.getCurrentCd());

@@ -167,13 +167,13 @@ public final class Cloner {
         vm.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         vm.setId(instance.getId());
         vm.setVmHost(instance.getVmHost());
-        vm.setVmIp(instance.getVmIp());
-        vm.setVmFQDN(instance.getVmFQDN());
+        vm.setIp(instance.getIp());
+        vm.setFqdn(instance.getFqdn());
         vm.setLastStartTime(instance.getLastStartTime());
         vm.setVmMemSizeMb(instance.getVmMemSizeMb());
         vm.setName(instance.getName());
         vm.setVmOs(instance.getVmOsId());
-        vm.setVmPid(instance.getVmPid());
+        vm.setPid(instance.getPid());
         vm.setVmType(instance.getVmType());
         vm.setVmPoolId(instance.getVmPoolId());
         vm.setVmPoolName(instance.getVmPoolName());

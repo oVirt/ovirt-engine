@@ -890,7 +890,7 @@ public class VmAnalyzer {
             List<VmGuestAgentInterface> vmGuestAgentInterfaces,
             int guestAgentNicHash) {
         vmDynamic.setGuestAgentNicsHash(guestAgentNicHash);
-        vmDynamic.setVmIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
+        vmDynamic.setIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
         vmGuestAgentNics = vmGuestAgentInterfaces;
     }
 

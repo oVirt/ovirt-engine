@@ -80,10 +80,10 @@ public class RdpConsoleModel extends ConsoleModel {
             boolean haveFqdn = false;
             if (getUseFqdnIfAvailable()) {
                 getLogger().debug("RDP connection is using FQDN if available"); //$NON-NLS-1$
-                if (!StringHelper.isNullOrEmpty(getEntity().getVmFQDN())) {
+                if (!StringHelper.isNullOrEmpty(getEntity().getFqdn())) {
                     getLogger().debug("RDP connection is using FQDN because it is available"); //$NON-NLS-1$
                     haveFqdn = true;
-                    getrdp().setAddress(getEntity().getVmFQDN());
+                    getrdp().setAddress(getEntity().getFqdn());
                 }
             }
 
