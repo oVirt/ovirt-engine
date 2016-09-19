@@ -72,7 +72,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
         public ValidationResult clusterNetworkNotUsedByTemplates() {
             List<VmTemplate> templatesUsingNetwork = new ArrayList<>();
             for (VmTemplate template : vmTemplateDao.getAllForCluster(networkCluster.getClusterId())) {
-                for (VmNetworkInterface nic : getVmNetworkInterfaceDao().getAllForTemplate(template.getId())) {
+                for (VmNetworkInterface nic : vmNetworkInterfaceDao.getAllForTemplate(template.getId())) {
                     if (network.getName().equals(nic.getNetworkName())) {
                         templatesUsingNetwork.add(template);
                     }

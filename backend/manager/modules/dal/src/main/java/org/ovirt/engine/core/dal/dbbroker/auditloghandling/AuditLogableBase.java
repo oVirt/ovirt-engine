@@ -259,6 +259,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected InterfaceDao interfaceDao;
 
+    @Inject
+    protected VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -580,7 +583,7 @@ public class AuditLogableBase extends TimeoutBase {
                 // TODO: This is done for backwards compatibility with VMDao.getById(Guid)
                 // It should probably be removed, but some research is required
                 if (vm != null) {
-                    vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vmId));
+                    vm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(vmId));
                 }
             } catch (final Exception e) {
                 log.info("Failed to get vm '{}', error {}", vmId, e.getMessage());
@@ -797,10 +800,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public DbGroupDao getAdGroupDao() {
         return getDbFacade().getDbGroupDao();
-    }
-
-    public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return getDbFacade().getVmNetworkInterfaceDao();
     }
 
     public VmNetworkStatisticsDao getVmNetworkStatisticsDao() {

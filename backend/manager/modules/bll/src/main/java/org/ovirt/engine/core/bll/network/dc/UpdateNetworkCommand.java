@@ -44,16 +44,12 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 @NonTransactiveCommandAttribute
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> implements RenamedEntityInfoProvider {
-
-    @Inject
-    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Inject
     private SyncNetworkParametersBuilder syncNetworkParametersBuilder;

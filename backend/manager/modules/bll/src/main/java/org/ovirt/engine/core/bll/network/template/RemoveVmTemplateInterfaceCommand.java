@@ -16,7 +16,7 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
 
     @Override
     protected void executeCommand() {
-        VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterfaceId());
+        VmNetworkInterface iface = vmNetworkInterfaceDao.get(getParameters().getInterfaceId());
         if (iface != null) {
             addCustomValue("InterfaceName", iface.getName());
             addCustomValue("InterfaceType", VmInterfaceType.forValue(iface.getType()).getDescription());

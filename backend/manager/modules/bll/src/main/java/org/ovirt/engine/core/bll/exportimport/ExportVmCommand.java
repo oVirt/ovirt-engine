@@ -286,7 +286,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         if (interfaces != null) {
             // TODO remove this when the API changes
             interfaces.clear();
-            interfaces.addAll(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
+            interfaces.addAll(vmNetworkInterfaceDao.getAllForVm(vm.getId()));
         }
 
         List<Guid> imageGroupIds = new ArrayList<>();
