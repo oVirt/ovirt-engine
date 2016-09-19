@@ -172,12 +172,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         return cluster;
     }
 
-    private Cluster getHCCluster() {
-        Cluster cluster = getCluster();
-        cluster.setVirtService(true);
-        return cluster;
-    }
-
     private VdsStatic getVdsStatic() {
         VdsStatic vds = new VdsStatic();
         vds.setId(serverId);
