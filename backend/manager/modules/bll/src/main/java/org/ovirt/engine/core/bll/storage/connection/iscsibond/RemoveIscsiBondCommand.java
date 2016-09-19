@@ -24,7 +24,7 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
 
     @Override
     protected void executeCommand() {
-        getDbFacade().getIscsiBondDao().remove(getParameters().getIscsiBondId());
+        iscsiBondDao.remove(getParameters().getIscsiBondId());
         setSucceeded(true);
     }
 
@@ -47,7 +47,7 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
     @Override
     protected IscsiBond getIscsiBond() {
         if (iscsiBond == null) {
-            iscsiBond = getDbFacade().getIscsiBondDao().get(getParameters().getIscsiBondId());
+            iscsiBond = iscsiBondDao.get(getParameters().getIscsiBondId());
         }
 
         return iscsiBond;

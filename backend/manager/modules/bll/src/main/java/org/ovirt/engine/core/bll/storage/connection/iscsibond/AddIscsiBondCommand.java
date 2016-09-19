@@ -39,14 +39,14 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
         iscsiBond.setId(Guid.newGuid());
 
         TransactionSupport.executeInNewTransaction(() -> {
-            getDbFacade().getIscsiBondDao().save(iscsiBond);
+            iscsiBondDao.save(iscsiBond);
 
             for (Guid networkId : iscsiBond.getNetworkIds()) {
-                getDbFacade().getIscsiBondDao().addNetworkToIscsiBond(iscsiBond.getId(), networkId);
+                iscsiBondDao.addNetworkToIscsiBond(iscsiBond.getId(), networkId);
             }
 
             for (String connectionId : iscsiBond.getStorageConnectionIds()) {
-                getDbFacade().getIscsiBondDao().addStorageConnectionToIscsiBond(iscsiBond.getId(), connectionId);
+                iscsiBondDao.addStorageConnectionToIscsiBond(iscsiBond.getId(), connectionId);
             }
 
             getReturnValue().setActionReturnValue(iscsiBond.getId());

@@ -56,7 +56,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
 
         TransactionSupport.executeInNewTransaction(() -> {
             if (isNameChanged() || isDescriptionChanged()) {
-                getDbFacade().getIscsiBondDao().update(getIscsiBond());
+                iscsiBondDao.update(getIscsiBond());
             }
 
             removedNetworks = updateNetworksIds();
@@ -92,12 +92,12 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
         for (Guid networkId : getIscsiBond().getNetworkIds()) {
             if (!beforeChangeNetworkIds.remove(networkId)) {
                 addedNetworks.add(networkId);
-                getDbFacade().getIscsiBondDao().addNetworkToIscsiBond(getExistingIscsiBond().getId(), networkId);
+                iscsiBondDao.addNetworkToIscsiBond(getExistingIscsiBond().getId(), networkId);
             }
         }
 
         for (Guid networkId : beforeChangeNetworkIds) {
-            getDbFacade().getIscsiBondDao().removeNetworkFromIscsiBond(getExistingIscsiBond().getId(), networkId);
+            iscsiBondDao.removeNetworkFromIscsiBond(getExistingIscsiBond().getId(), networkId);
         }
         return beforeChangeNetworkIds;
     }
@@ -108,12 +108,12 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
         for (String connectionId : getIscsiBond().getStorageConnectionIds()) {
             if (!beforeChangeConnectionIds.remove(connectionId)) {
                 addedConnections.add(connectionId);
-                getDbFacade().getIscsiBondDao().addStorageConnectionToIscsiBond(getExistingIscsiBond().getId(), connectionId);
+                iscsiBondDao.addStorageConnectionToIscsiBond(getExistingIscsiBond().getId(), connectionId);
             }
         }
 
         for (String connectionId : beforeChangeConnectionIds) {
-            getDbFacade().getIscsiBondDao().removeStorageConnectionFromIscsiBond(getExistingIscsiBond().getId(), connectionId);
+            iscsiBondDao.removeStorageConnectionFromIscsiBond(getExistingIscsiBond().getId(), connectionId);
         }
     }
 
@@ -122,11 +122,10 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
             return existingIscsiBond;
         }
 
-        existingIscsiBond = getDbFacade().getIscsiBondDao().get(getParameters().getIscsiBond().getId());
+        existingIscsiBond = iscsiBondDao.get(getParameters().getIscsiBond().getId());
         if (existingIscsiBond != null) {
-            existingIscsiBond.setNetworkIds(getDbFacade().getIscsiBondDao()
-                    .getNetworkIdsByIscsiBondId(existingIscsiBond.getId()));
-            existingIscsiBond.setStorageConnectionIds(getDbFacade().getIscsiBondDao()
+            existingIscsiBond.setNetworkIds(iscsiBondDao.getNetworkIdsByIscsiBondId(existingIscsiBond.getId()));
+            existingIscsiBond.setStorageConnectionIds(iscsiBondDao
                     .getStorageConnectionIdsByIscsiBondId(existingIscsiBond.getId()));
         }
 

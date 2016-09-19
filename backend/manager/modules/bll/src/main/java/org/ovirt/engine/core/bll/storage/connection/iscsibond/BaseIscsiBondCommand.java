@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
@@ -23,9 +25,13 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    @Inject
+    protected IscsiBondDao iscsiBondDao;
 
     protected boolean encounterConnectionProblems;
 
