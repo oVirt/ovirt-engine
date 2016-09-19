@@ -72,8 +72,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -203,7 +201,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             break;
         }
 
-        if (getDiskLunMapDao().getDiskIdByLunId(lun.getLUNId()) != null) {
+        if (diskLunMapDao.getDiskIdByLunId(lun.getLUNId()) != null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
         }
 
@@ -352,10 +350,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return false;
     }
 
-    protected DiskLunMapDao getDiskLunMapDao() {
-        return DbFacade.getInstance().getDiskLunMapDao();
-    }
-
     /**
      * @return The id of the storage domain where the first encountered VM image disk reside, if the vm doesn't have no
      *         image disks then Guid.Empty will be returned.
@@ -465,7 +459,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         TransactionSupport.executeInNewTransaction(() -> {
             lunHelper.proceedLUNInDb(lun, lun.getLunType());
             baseDiskDao.save(getParameters().getDiskInfo());
-            getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
+            diskLunMapDao.save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
             if (getVm() != null) {
                 // The disk VM element has to be added before the VM device since as a part of the VM device creation the
                 // boot order is determined so the VM device creation depends on the existance of the disk VM element
