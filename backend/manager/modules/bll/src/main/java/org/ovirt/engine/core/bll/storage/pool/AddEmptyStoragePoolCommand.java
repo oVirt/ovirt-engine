@@ -98,7 +98,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         net.setDescription(AddClusterCommand.DefaultNetworkDescription);
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
-        getNetworkDao().save(net);
+        networkDao.save(net);
         NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
         VnicProfile profile = NetworkHelper.createVnicProfile(net, networkFilterDao);
         getVnicProfileDao().save(profile);

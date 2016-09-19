@@ -8,15 +8,11 @@ import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public abstract class NetworkClusterCommandBase<T extends NetworkClusterParameters> extends ClusterCommandBase<T> {
 
     @Inject
     protected InterfaceDao interfaceDao;
-
-    @Inject
-    protected NetworkDao networkDao;
 
     private Network persistedNetwork;
 
@@ -30,7 +26,7 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
 
     protected Network getPersistedNetwork() {
         if (persistedNetwork == null) {
-            persistedNetwork = getNetworkDao().get(getNetworkCluster().getNetworkId());
+            persistedNetwork = networkDao.get(getNetworkCluster().getNetworkId());
         }
         return persistedNetwork;
     }

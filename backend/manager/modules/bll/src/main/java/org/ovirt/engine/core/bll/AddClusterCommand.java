@@ -33,7 +33,6 @@ import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationParameters>
         extends ClusterOperationCommandBase<T> {
@@ -48,9 +47,6 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     @Inject
     protected NetworkClusterDao networkClusterDao;
-
-    @Inject
-    private NetworkDao networkDao;
 
     @Inject
     private ClusterFeatureDao clusterFeatureDao;

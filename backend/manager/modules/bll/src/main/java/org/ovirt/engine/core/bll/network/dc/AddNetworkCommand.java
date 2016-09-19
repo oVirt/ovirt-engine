@@ -49,7 +49,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         getNetwork().setId(Guid.newGuid());
 
         TransactionSupport.executeInNewTransaction(() -> {
-            getNetworkDao().save(getNetwork());
+            networkDao.save(getNetwork());
 
             if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
                 getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork(), networkFilterDao));

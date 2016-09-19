@@ -50,7 +50,6 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         doReturn(mockNetworkClusterDao).when(underTest).getNetworkClusterDao();
-        doReturn(mockNetworkDao).when(underTest).getNetworkDao();
     }
 
     @Test

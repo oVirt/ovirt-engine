@@ -96,7 +96,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     private void removeNetworks() {
-        final List<Network> networks = getNetworkDao().getAllForDataCenter(getStoragePoolId());
+        final List<Network> networks = networkDao.getAllForDataCenter(getStoragePoolId());
         for (Network network : networks) {
             if (network.isExternal()) {
                 for (VmNic nic : getVmNicDao().getAllForNetwork(network.getId())) {
@@ -113,7 +113,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     getDbFacade().getVnicProfileDao().remove(vnicProfile.getId());
                 }
                 getCompensationContext().snapshotEntity(net);
-                getNetworkDao().remove(net.getId());
+                networkDao.remove(net.getId());
             }
             getCompensationContext().stateChanged();
             return null;

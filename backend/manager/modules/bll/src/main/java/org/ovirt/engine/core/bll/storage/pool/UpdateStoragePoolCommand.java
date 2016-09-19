@@ -221,7 +221,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 if (!poolDomains.isEmpty() && !isCompatibilityVersionChangeAllowedForDomains(poolDomains)) {
                     return false;
                 }
-                List<Network> networks = getNetworkDao().getAllForDataCenter(getStoragePoolId());
+                List<Network> networks = networkDao.getAllForDataCenter(getStoragePoolId());
                 for (Network network : networks) {
                     NetworkValidator validator = getNetworkValidator(network);
                     validator.setDataCenter(getStoragePool());

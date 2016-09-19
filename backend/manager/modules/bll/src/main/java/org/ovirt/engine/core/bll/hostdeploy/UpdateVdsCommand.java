@@ -192,8 +192,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         if (oldHost.getStatus() == VDSStatus.Up) {
             List<NetworkCluster> networkClusters = DbFacade.getInstance()
             .getNetworkClusterDao().getAllForCluster(oldHost.getClusterId());
-            List<Network> networks = DbFacade.getInstance().getNetworkDao()
-            .getAllForCluster(oldHost.getClusterId());
+            List<Network> networks = networkDao.getAllForCluster(oldHost.getClusterId());
             for (NetworkCluster item : networkClusters) {
                 for (Network net : networks) {
                     if (net.getId().equals(item.getNetworkId())) {

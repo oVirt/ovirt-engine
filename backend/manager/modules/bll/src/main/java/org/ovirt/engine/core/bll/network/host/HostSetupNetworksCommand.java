@@ -79,7 +79,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -124,9 +123,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private NetworkClusterDao networkClusterDao;
-
-    @Inject
-    private NetworkDao networkDao;
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
@@ -783,7 +779,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private List<Network> getClusterNetworks() {
         if (clusterNetworks == null) {
-            clusterNetworks = getNetworkDao().getAllForCluster(getClusterId());
+            clusterNetworks = networkDao.getAllForCluster(getClusterId());
         }
         return clusterNetworks;
     }

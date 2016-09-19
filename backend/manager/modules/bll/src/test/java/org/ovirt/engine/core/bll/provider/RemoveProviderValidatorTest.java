@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -52,9 +51,7 @@ public class RemoveProviderValidatorTest {
 
     @Before
     public void setUp() throws Exception {
-        validator = spy(new RemoveProviderValidator(vmDao, provider));
-
-        doReturn(networkDao).when(validator).getNetworkDao();
+        validator = spy(new RemoveProviderValidator(vmDao, networkDao, provider));
         when(networkDao.getAllForProvider(any(Guid.class))).thenReturn(networks);
     }
 

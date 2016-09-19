@@ -72,7 +72,7 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
 
     private Network getNetwork() {
         if (network == null) {
-            network = getNetworkDao().get(getVnicProfile().getNetworkId());
+            network = networkDao.get(getVnicProfile().getNetworkId());
         }
 
         return network;

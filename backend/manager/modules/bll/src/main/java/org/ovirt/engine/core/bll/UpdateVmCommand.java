@@ -559,7 +559,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // check if the cluster has changed
         if (!Objects.equals(getVm().getClusterId(), getParameters().getVmStaticData().getClusterId())) {
             List<Network> networks =
-                    getNetworkDao().getAllForCluster(getParameters().getVmStaticData().getClusterId());
+                    networkDao.getAllForCluster(getParameters().getVmStaticData().getClusterId());
             List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmStaticData().getId());
 
             for (final VmNic iface : interfaces) {

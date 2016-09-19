@@ -184,7 +184,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             }
         } else {
             // network id has been set, update the address
-            Network network = getNetworkDao().get(brick.getNetworkId());
+            Network network = networkDao.get(brick.getNetworkId());
             if (network != null) {
                 brick.setNetworkAddress(getGlusterNetworkAddress(server.getId(), network.getName()));
             }
@@ -195,7 +195,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     private Network getGlusterNetwork() {
         if (glusterNetwork == null) {
-            List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getClusterId());
+            List<Network> allNetworksInCluster = networkDao.getAllForCluster(getClusterId());
 
             for (Network network : allNetworksInCluster) {
                 if (network.getCluster().isGluster()) {

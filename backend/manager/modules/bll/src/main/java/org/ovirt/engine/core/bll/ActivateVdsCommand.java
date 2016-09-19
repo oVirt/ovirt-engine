@@ -65,7 +65,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
             if (getSucceeded()) {
                 TransactionSupport.executeInNewTransaction(() -> {
                     // set network to operational / non-operational
-                    List<Network> networks = getNetworkDao().getAllForCluster(vds.getClusterId());
+                    List<Network> networks = networkDao.getAllForCluster(vds.getClusterId());
                     for (Network net : networks) {
                         NetworkClusterHelper.setStatus(vds.getClusterId(), net);
                     }

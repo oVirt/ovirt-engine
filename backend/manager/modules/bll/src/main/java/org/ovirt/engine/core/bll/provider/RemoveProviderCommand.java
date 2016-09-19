@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -67,7 +66,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected boolean validate() {
-        RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, getDeletedProvider());
+        RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, networkDao, getDeletedProvider());
         return validate(validator.providerIsSet()) && validate(validator.providerNetworksNotUsed())
                 && validateRemoveProvider();
     }
@@ -111,15 +110,17 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     protected static class RemoveProviderValidator extends ProviderValidator {
 
         private final VmDao vmDao;
+        private final NetworkDao networkDao;
 
-        public RemoveProviderValidator(VmDao vmDao, Provider<?> provider) {
+        public RemoveProviderValidator(VmDao vmDao, NetworkDao networkDao, Provider<?> provider) {
             super(provider);
             this.vmDao = vmDao;
+            this.networkDao = networkDao;
         }
 
         public ValidationResult providerNetworksNotUsed() {
             List<Network> networksInUse = new ArrayList<>();
-            List<Network> networks = getNetworkDao().getAllForProvider(provider.getId());
+            List<Network> networks = networkDao.getAllForProvider(provider.getId());
 
             for (Network network : networks) {
                 NetworkValidator networkValidator = getValidator(network);
@@ -141,10 +142,6 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
             } else {
                 return EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES;
             }
-        }
-
-        protected NetworkDao getNetworkDao() {
-            return DbFacade.getInstance().getNetworkDao();
         }
 
         protected NetworkValidator getValidator(Network network) {

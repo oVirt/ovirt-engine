@@ -10,13 +10,8 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class RemoveHostNetworkQosCommand extends RemoveQosCommandBase<HostNetworkQos, HostNetworkQosValidator> {
-
-    @Inject
-    private NetworkDao networkDao;
-
     @Inject
     private RefreshNetworksParametersFactory refreshNetworksParametersFactory;
 

@@ -250,6 +250,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected VdsStatisticsDao vdsStatisticsDao;
 
+    @Inject
+    protected NetworkDao networkDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -804,10 +807,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public NetworkClusterDao getNetworkClusterDao() {
         return getDbFacade().getNetworkClusterDao();
-    }
-
-    public NetworkDao getNetworkDao() {
-        return getDbFacade().getNetworkDao();
     }
 
     protected InterfaceDao getInterfaceDao() {

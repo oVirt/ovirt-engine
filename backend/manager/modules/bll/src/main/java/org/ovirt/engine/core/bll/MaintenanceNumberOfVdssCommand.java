@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
@@ -148,7 +147,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             if (!clusters.contains(vds.getClusterId())) {
                 clusters.add(vds.getClusterId());
                 // set network to operational / non-operational
-                List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(vds.getClusterId());
+                List<Network> networks = networkDao.getAllForCluster(vds.getClusterId());
                 for (Network net : networks) {
                     NetworkClusterHelper.setStatus(vds.getClusterId(), net);
                 }

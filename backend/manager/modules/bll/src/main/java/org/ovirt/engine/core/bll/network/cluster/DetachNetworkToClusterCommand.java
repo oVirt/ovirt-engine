@@ -85,7 +85,7 @@ public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParam
 
     private Network getPersistedNetwork() {
         if (persistedNetwork == null) {
-            persistedNetwork = getNetworkDao().get(getNetwork().getId());
+            persistedNetwork = networkDao.get(getNetwork().getId());
         }
 
         return persistedNetwork;

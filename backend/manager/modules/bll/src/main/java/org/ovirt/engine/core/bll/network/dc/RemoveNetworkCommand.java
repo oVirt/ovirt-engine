@@ -36,7 +36,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     protected Network getNetwork() {
         if (network == null) {
-            network = getNetworkDao().get(getParameters().getId());
+            network = networkDao.get(getParameters().getId());
         }
 
         return network;
@@ -58,7 +58,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
             removeVnicProfiles();
             removeFromClusters();
             getCompensationContext().snapshotEntity(getNetwork());
-            getNetworkDao().remove(getNetwork().getId());
+            networkDao.remove(getNetwork().getId());
             getCompensationContext().stateChanged();
             return null;
         });
@@ -103,7 +103,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     @Override
     protected boolean validate() {
-        NetworkValidator validator = new NetworkValidator(vmDao, getNetworkDao().get(getNetwork().getId()));
+        NetworkValidator validator = new NetworkValidator(vmDao, networkDao.get(getNetwork().getId()));
 
         return validate(validator.networkIsSet(getParameters().getId()))
                 && validate(validator.notRemovingManagementNetwork())

@@ -78,7 +78,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
     private void addAuditLogForRemovedNetowrks(Set<Guid> removedNetworks) {
         List<String> networkNames = new ArrayList<>();
         for (Guid networkId : removedNetworks) {
-            Network network = getDbFacade().getNetworkDao().get(networkId);
+            Network network = networkDao.get(networkId);
             networkNames.add(network.getName());
         }
         addCustomValue("NetworkNames", StringUtils.join(networkNames, ","));

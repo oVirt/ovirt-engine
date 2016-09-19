@@ -62,7 +62,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
@@ -82,9 +81,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Inject
     private InterfaceDao interfaceDao;
-
-    @Inject
-    private NetworkDao networkDao;
 
     @Inject
     private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;
@@ -637,7 +633,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 return false;
             }
         } else {
-            managementNetwork = getNetworkDao().get(managementNetworkId);
+            managementNetwork = networkDao.get(managementNetworkId);
             if (managementNetwork == null) {
                 addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
                 return false;

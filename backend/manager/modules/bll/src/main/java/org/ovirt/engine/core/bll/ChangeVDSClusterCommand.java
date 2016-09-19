@@ -59,10 +59,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> extends VdsCommand<T> {
-
-    @Inject
-    private NetworkDao networkDao;
-
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
 
@@ -161,8 +157,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private boolean isSameManagementNetwork() {
-        final Network sourceManagementNetwork = getNetworkDao().getManagementNetwork(getSourceCluster().getId());
-        final Network targetManagementNetwork = getNetworkDao().getManagementNetwork(getTargetCluster().getId());
+        final Network sourceManagementNetwork = networkDao.getManagementNetwork(getSourceCluster().getId());
+        final Network targetManagementNetwork = networkDao.getManagementNetwork(getTargetCluster().getId());
 
         return targetManagementNetwork != null
                 && sourceManagementNetwork.getName().equals(targetManagementNetwork.getName());

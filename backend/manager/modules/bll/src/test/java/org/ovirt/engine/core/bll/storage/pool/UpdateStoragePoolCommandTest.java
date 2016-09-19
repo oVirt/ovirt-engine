@@ -92,8 +92,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
-        doReturn(networkDao).when(cmd).getNetworkDao();
-
         // Spy the StoragePoolValidator:
         poolValidator = spy(new StoragePoolValidator(cmd.getStoragePool()));
         doReturn(ValidationResult.VALID).when(poolValidator).isNotLocalfsWithDefaultCluster();

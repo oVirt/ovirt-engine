@@ -399,7 +399,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Network migrationNetwork = null;
 
         // Find migrationNetworkCluster
-        List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getVm().getClusterId());
+        List<Network> allNetworksInCluster = networkDao.getAllForCluster(getVm().getClusterId());
 
         for (Network tempNetwork : allNetworksInCluster) {
             if (tempNetwork.getCluster().isMigration()) {
