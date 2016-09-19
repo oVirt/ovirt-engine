@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -39,10 +40,18 @@ public class AuditLogableBaseTest {
     protected static final Guid GUID3 = new Guid("11111111-1111-1111-1111-111111111113");
     protected static final String NAME = "testName";
     protected static final String DOMAIN = "testDomain";
+    private static final StorageDomain STORAGE_DOMAIN = new StorageDomain();
+
+    private AuditLogableBase b;
+
+    @Before
+    public void setUp() {
+        b = new TestAuditLogableBase();
+    }
 
     @Test
     public void nGuidCtor() {
-        final AuditLogableBase b = new AuditLogableBase(GUID);
+        b = new AuditLogableBase(GUID);
         final Guid v = b.getVdsId();
         assertEquals(GUID, v);
     }
@@ -50,14 +59,14 @@ public class AuditLogableBaseTest {
     @Test
     public void nGuidCtorNull() {
         final Guid n = null;
-        final AuditLogableBase b = new AuditLogableBase(n);
+        b = new AuditLogableBase(n);
         final Guid g = b.getVdsId();
         assertEquals(Guid.Empty, g);
     }
 
     @Test
     public void nGuidGuidCtor() {
-        final AuditLogableBase b = new AuditLogableBase(GUID, GUID2);
+        b = new AuditLogableBase(GUID, GUID2);
         final Guid g = b.getVdsId();
         assertEquals(GUID, g);
         final Guid gu = b.getVmId();
@@ -66,7 +75,7 @@ public class AuditLogableBaseTest {
 
     @Test
     public void nGuidGuidCtorNullNGuid() {
-        final AuditLogableBase b = new AuditLogableBase(null, GUID2);
+        b = new AuditLogableBase(null, GUID2);
         final Guid g = b.getVdsId();
         assertEquals(Guid.Empty, g);
         final Guid gu = b.getVmId();
@@ -75,7 +84,7 @@ public class AuditLogableBaseTest {
 
     @Test
     public void nGuidGuidCtorNullGuid() {
-        final AuditLogableBase b = new AuditLogableBase(GUID, null);
+        b = new AuditLogableBase(GUID, null);
         final Guid g = b.getVdsId();
         assertEquals(GUID, g);
         final Guid gu = b.getVmId();
@@ -84,7 +93,7 @@ public class AuditLogableBaseTest {
 
     @Test
     public void nGuidGuidCtorNull() {
-        final AuditLogableBase b = new AuditLogableBase(null, null);
+        b = new AuditLogableBase(null, null);
         final Guid g = b.getVdsId();
         assertEquals(Guid.Empty, g);
         final Guid gu = b.getVmId();
@@ -93,14 +102,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getUserIdDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getUserId();
         assertEquals(Guid.Empty, g);
     }
 
     @Test
     public void getUserIdIdSet() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setUserId(GUID);
         final Guid g = b.getUserId();
         assertEquals(GUID, g);
@@ -108,7 +115,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getUserIdVdcUserDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = new DbUser();
         b.setCurrentUser(u);
         final Guid g = b.getUserId();
@@ -117,7 +123,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getUserIdVdcUserId() {
-        final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = new DbUser();
         u.setId(GUID);
         b.setCurrentUser(u);
@@ -127,14 +132,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getUserNameDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String n = b.getUserName();
         assertNull(n);
     }
 
     @Test
     public void getUserNameNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setUserName(null);
         final String n = b.getUserName();
         assertNull(n);
@@ -142,7 +145,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getUserName() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setUserName(NAME);
         final String n = b.getUserName();
         assertEquals(NAME, n);
@@ -150,7 +152,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getUserNameFromUser() {
-        final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = new DbUser();
         u.setLoginName(NAME);
         u.setDomain(DOMAIN);
@@ -161,14 +162,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void currentUserDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = b.getCurrentUser();
         assertNull(u);
     }
 
     @Test
     public void currentUserNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = null;
         b.setCurrentUser(u);
         final DbUser cu = b.getCurrentUser();
@@ -177,7 +176,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void currentUser() {
-        final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = new DbUser();
         b.setCurrentUser(u);
         final DbUser cu = b.getCurrentUser();
@@ -186,14 +184,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmTemplateIdDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getVmTemplateId();
         assertEquals(Guid.Empty, g);
     }
 
     @Test
     public void vmTemplateId() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmTemplateId(GUID);
         final Guid g = b.getVmTemplateId();
         assertEquals(GUID, g);
@@ -201,14 +197,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmTemplateIdRefDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getVmTemplateIdRef();
         assertNull(g);
     }
 
     @Test
     public void vmTemplateIdRef() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmTemplateId(GUID);
         final Guid g = b.getVmTemplateIdRef();
         assertEquals(GUID, g);
@@ -216,7 +210,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmTemplateIdRefWithVm() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = new VM();
         b.setVm(v);
         final Guid g = b.getVmTemplateIdRef();
@@ -225,14 +218,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmTemplateNameDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String n = b.getVmTemplateName();
         assertNull(n);
     }
 
     @Test
     public void vmTemplateName() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmTemplateName(NAME);
         final String nm = b.getVmTemplateName();
         assertEquals(NAME, nm);
@@ -240,7 +231,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmTemplateNameWithVm() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = new VM();
         b.setVm(v);
         final String n = b.getVmTemplateName();
@@ -249,14 +239,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmIdDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid i = b.getVmId();
         assertEquals(Guid.Empty, i);
     }
 
     @Test
     public void vmIdNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmId(null);
         final Guid i = b.getVmId();
         assertEquals(Guid.Empty, i);
@@ -264,7 +252,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmId() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmId(GUID);
         final Guid i = b.getVmId();
         assertEquals(GUID, i);
@@ -272,14 +259,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void snapshotNameDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String s = b.getSnapshotName();
         assertNull(s);
     }
 
     @Test
     public void snapshotNameNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setSnapshotName(null);
         final String s = b.getSnapshotName();
         assertNull(s);
@@ -287,7 +272,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void snapshotNameEmpty() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String e = "";
         b.setSnapshotName(e);
         final String s = b.getSnapshotName();
@@ -296,7 +280,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void snapshotName() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setSnapshotName(NAME);
         final String s = b.getSnapshotName();
         assertEquals(NAME, s);
@@ -304,14 +287,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmIdRefDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getVmIdRef();
         assertEquals(Guid.Empty, g);
     }
 
     @Test
     public void vmIdRefNullVmId() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmId(null);
         final Guid g = b.getVmIdRef();
         assertNull(g);
@@ -319,7 +300,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmIdRefNullVm() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmId(null);
         final VM v = new VM();
         v.setId(GUID);
@@ -330,14 +310,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmNameDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String n = b.getVmName();
         assertNull(n);
     }
 
     @Test
     public void vmNameNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmName(null);
         final String n = b.getVmName();
         assertNull(n);
@@ -345,7 +323,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmNameNullVm() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmName(null);
         final VM v = new VM();
         v.setName(NAME);
@@ -356,7 +333,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vmName() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmName(NAME);
         final String n = b.getVmName();
         assertEquals(NAME, n);
@@ -364,14 +340,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsIdRefDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getVdsIdRef();
         assertNull(g);
     }
 
     @Test
     public void vdsIdRefNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsIdRef(null);
         final Guid g = b.getVdsIdRef();
         assertNull(g);
@@ -379,7 +353,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsIdRef() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsIdRef(GUID);
         final Guid g = b.getVdsIdRef();
         assertEquals(GUID, g);
@@ -387,7 +360,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsIdRefVds() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsIdRef(null);
         final VDS v = new VDS();
         v.setId(GUID);
@@ -398,14 +370,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsIdDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getVdsId();
         assertEquals(Guid.Empty, g);
     }
 
     @Test
     public void vdsIdNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsId(null);
         final Guid g = b.getVdsId();
         assertEquals(Guid.Empty, g);
@@ -413,7 +383,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsId() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsId(GUID);
         final Guid g = b.getVdsId();
         assertEquals(GUID, g);
@@ -421,14 +390,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsNameDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String s = b.getVdsName();
         assertNull(s);
     }
 
     @Test
     public void vdsNameNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsName(null);
         final String s = b.getVdsName();
         assertNull(s);
@@ -436,7 +403,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsName() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsName(NAME);
         final String s = b.getVdsName();
         assertEquals(NAME, s);
@@ -444,7 +410,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void vdsNameVds() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVdsName(null);
         final VDS v = new VDS();
         v.setVdsName(NAME);
@@ -455,14 +420,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storageDomainDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final StorageDomain s = b.getStorageDomain();
         assertNull(s);
     }
 
     @Test
     public void storageDomainNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setStorageDomain(null);
         final StorageDomain s = b.getStorageDomain();
         assertNull(s);
@@ -470,7 +433,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storageDomain() {
-        final AuditLogableBase b = new AuditLogableBase();
         final StorageDomain s = new StorageDomain();
         b.setStorageDomain(s);
         final StorageDomain st = b.getStorageDomain();
@@ -479,16 +441,14 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storageDomainWithId() {
-        final TestAuditLogableBase b = new TestAuditLogableBase();
         b.setStorageDomainId(GUID);
         b.setStoragePoolId(GUID);
         final StorageDomain s = b.getStorageDomain();
-        assertEquals(b.STORAGE_DOMAIN, s);
+        assertEquals(STORAGE_DOMAIN, s);
     }
 
     @Test
     public void storageDomainWithIdNullPool() {
-        final TestAuditLogableBase b = new TestAuditLogableBase();
         b.setStorageDomainId(GUID);
         b.setStoragePoolId(GUID2);
         final StorageDomain s = b.getStorageDomain();
@@ -497,22 +457,19 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storageDomainWithNullId() {
-        final TestAuditLogableBase b = new TestAuditLogableBase();
         b.setStorageDomainId(GUID2);
         final StorageDomain s = b.getStorageDomain();
-        assertEquals(b.STORAGE_DOMAIN, s);
+        assertEquals(STORAGE_DOMAIN, s);
     }
 
     @Test
     public void storageDomainIdDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getStorageDomainId();
         assertNull(g);
     }
 
     @Test
     public void storageDomainIdNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setStorageDomainId(null);
         final Guid g = b.getStorageDomainId();
         assertNull(g);
@@ -520,7 +477,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storageDomainId() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setStorageDomainId(GUID);
         final Guid g = b.getStorageDomainId();
         assertEquals(GUID, g);
@@ -528,7 +484,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storageDomainIdWithStorageDomain() {
-        final AuditLogableBase b = new AuditLogableBase();
         final StorageDomain s = new StorageDomain();
         s.setId(GUID);
         b.setStorageDomain(s);
@@ -538,14 +493,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storageDomainNameDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String s = b.getStorageDomainName();
         assertEquals("", s);
     }
 
     @Test
     public void storageDomainName() {
-        final AuditLogableBase b = new AuditLogableBase();
         final StorageDomain s = new StorageDomain();
         s.setStorageName(NAME);
         b.setStorageDomain(s);
@@ -555,14 +508,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storagePoolDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final StoragePool p = b.getStoragePool();
         assertNull(p);
     }
 
     @Test
     public void storagePoolWithId() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         b.setStoragePoolId(GUID);
         final StoragePool p = b.getStoragePool();
         assertNotNull(p);
@@ -570,7 +521,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storagePool() {
-        final AuditLogableBase b = new AuditLogableBase();
         final StoragePool p = new StoragePool();
         b.setStoragePool(p);
         final StoragePool sp = b.getStoragePool();
@@ -579,14 +529,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storagePoolIdDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid n = b.getStoragePoolId();
         assertNull(n);
     }
 
     @Test
     public void storagePoolIdNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(null);
         final Guid n = b.getStoragePoolId();
         assertNull(n);
@@ -594,7 +542,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storagePoolId() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(GUID);
         final Guid n = b.getStoragePoolId();
         assertEquals(GUID, n);
@@ -602,7 +549,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storagePoolIdWithStoragePool() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(null);
         final StoragePool p = new StoragePool();
         p.setId(GUID);
@@ -613,7 +559,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storagePoolIdWithStorageDomain() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(null);
         b.setStoragePool(null);
         final StorageDomain s = new StorageDomain();
@@ -625,14 +570,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void storagePoolNameDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final String s = b.getStoragePoolName();
         assertEquals("", s);
     }
 
     @Test
     public void storagePoolName() {
-        final AuditLogableBase b = new AuditLogableBase();
         final StoragePool p = new StoragePool();
         p.setName(NAME);
         b.setStoragePool(p);
@@ -642,21 +585,18 @@ public class AuditLogableBaseTest {
 
     @Test
     public void auditLogTypeValue() {
-        final AuditLogableBase b = new AuditLogableBase();
         final AuditLogType t = b.getAuditLogTypeValue();
         assertEquals(AuditLogType.UNASSIGNED, t);
     }
 
     @Test
     public void getVdsDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VDS v = b.getVds();
         assertNull(v);
     }
 
     @Test
     public void getVdsNullAll() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VDS vds = null;
         final VM vm = null;
         final Guid vdsId = null;
@@ -669,7 +609,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVdsNullVdsId() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
         vm.setRunOnVds(GUID3);
@@ -683,7 +622,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVdsNullRun() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
         vm.setRunOnVds(null);
@@ -697,7 +635,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVdsWithVds() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VDS vds = new VDS();
         final VM vm = null;
         final Guid vdsId = null;
@@ -710,7 +647,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVdsWithVdsId() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VM vm = new VM();
         vm.setRunOnVds(GUID2);
         b.setVdsId(GUID);
@@ -721,7 +657,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVdsWithVm() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
         vm.setRunOnVds(GUID2);
@@ -735,7 +670,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVdsSwallowsException() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
         vm.setRunOnVds(GUID2);
@@ -748,14 +682,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VM v = b.getVm();
         assertNull(v);
     }
 
     @Test
     public void getVm() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VM v = new VM();
         b.setVm(v);
         final VM vm = b.getVm();
@@ -764,7 +696,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmNullId() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VM v = null;
         b.setVm(v);
         b.setVmId(null);
@@ -774,7 +705,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmEmptyId() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VM v = null;
         b.setVm(v);
         b.setVmId(Guid.Empty);
@@ -784,7 +714,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmFromId() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = null;
         b.setVm(v);
         b.setVmId(GUID);
@@ -794,7 +723,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmSwallowsExceptions() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = null;
         b.setVm(v);
         b.setVmId(GUID3);
@@ -804,14 +732,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmTemplateDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final VmTemplate t = b.getVmTemplate();
         assertNull(t);
     }
 
     @Test
     public void getVmTemplateNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setVmTemplate(null);
         final VmTemplate t = b.getVmTemplate();
         assertNull(t);
@@ -819,7 +745,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmTemplateWithId() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         b.setVmTemplate(null);
         b.setVmTemplateId(GUID);
         final VmTemplate t = b.getVmTemplate();
@@ -828,7 +753,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getVmTemplateWithVm() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         b.setVmTemplate(null);
         b.setVmTemplateId(null);
         final VM vm = new VM();
@@ -840,14 +764,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterIdDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Guid g = b.getClusterId();
         assertEquals(Guid.Empty, g);
     }
 
     @Test
     public void getClusterId() {
-        final AuditLogableBase b = new AuditLogableBase();
         b.setClusterId(GUID);
         final Guid g = b.getClusterId();
         assertEquals(GUID, g);
@@ -855,7 +777,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterIdCluster() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Cluster gr = new Cluster();
         gr.setId(GUID);
         b.setCluster(gr);
@@ -865,14 +786,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterDefault() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Cluster g = b.getCluster();
         assertNull(g);
     }
 
     @Test
     public void getClusterNotNull() {
-        final AuditLogableBase b = new AuditLogableBase();
         final Cluster g = new Cluster();
         b.setCluster(g);
         final Cluster gr = b.getCluster();
@@ -881,7 +800,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterWithId() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         b.setClusterId(GUID);
         final Cluster g = b.getCluster();
         assertEquals(GUID, g.getId());
@@ -889,7 +807,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterWithVds() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VDS v = new VDS();
         v.setClusterId(GUID);
         b.setVds(v);
@@ -899,7 +816,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterWithVm() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = new VM();
         v.setClusterId(GUID);
         b.setVm(v);
@@ -909,14 +825,12 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterNameDefault() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String n = b.getClusterName();
         assertEquals("", n);
     }
 
     @Test
     public void getClusterNameNullVds() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final Cluster g = null;
         b.setCluster(g);
         final String n = b.getClusterName();
@@ -925,7 +839,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getClusterName() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final Cluster g = new Cluster();
         g.setName(NAME);
         b.setCluster(g);
@@ -935,7 +848,6 @@ public class AuditLogableBaseTest {
 
     @Test(expected = NullPointerException.class)
     public void addCustomValueDoesNotHandleNullKeys() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = null;
         final String value = NAME;
         b.addCustomValue(key, value);
@@ -945,7 +857,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void addCustomValueWillNotReturnANull() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = NAME;
         final String value = null;
         b.addCustomValue(key, value);
@@ -955,7 +866,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void customValue() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = NAME;
         b.addCustomValue(key, value);
@@ -965,7 +875,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getCustomValuesLeaksInternalStructure() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = NAME;
         b.addCustomValue(key, value);
@@ -979,7 +888,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void appendCustomValue() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = NAME;
         final String sep = "_";
@@ -990,30 +898,27 @@ public class AuditLogableBaseTest {
 
     @Test
     public void setCustomValues() {
-        final AuditLogableBase underTest = new TestAuditLogableBase();
         final String key = "foo";
-        doSetCustomValuesTest(underTest, key);
+        doSetCustomValuesTest(b, key);
     }
 
     @Test
     public void setCustomValuesOverridesExistingValues() {
-        final AuditLogableBase underTest = new TestAuditLogableBase();
         final String key = "foo";
-        underTest.appendCustomValue(key, "test value", null);
+        b.appendCustomValue(key, "test value", null);
 
-        doSetCustomValuesTest(underTest, key);
+        doSetCustomValuesTest(b, key);
     }
 
     @Test
     public void setCustomValuesOverridesDoesNotAffectsOtherKeys() {
-        final AuditLogableBase underTest = new TestAuditLogableBase();
         final String key1 = "foo";
         final String key2 = "bar";
-        underTest.appendCustomValue(key2,  "test value 2", null);
+        b.appendCustomValue(key2,  "test value 2", null);
 
-        doSetCustomValuesTest(underTest, key1);
+        doSetCustomValuesTest(b, key1);
 
-        assertThat(underTest.getCustomValue(key2), is("test value 2"));
+        assertThat(b.getCustomValue(key2), is("test value 2"));
     }
 
     private void doSetCustomValuesTest(AuditLogableBase underTest, String key) {
@@ -1031,23 +936,20 @@ public class AuditLogableBaseTest {
 
     @Test
     public void setCustomCommaSeparatedValues() {
-        final AuditLogableBase underTest = new TestAuditLogableBase();
-
         final String key = "foo";
         final String s1 = NAME + 1;
         final String s2 = NAME + 2;
         final List<String> values = Arrays.asList(s1, s2);
         final String sep = ", ";
 
-        underTest.setCustomCommaSeparatedValues(key, values);
-        final String actual = underTest.getCustomValue(key);
+        b.setCustomCommaSeparatedValues(key, values);
+        final String actual = b.getCustomValue(key);
 
         assertEquals(String.format("%s%s%s", s1, sep, s2), actual);
     }
 
     @Test
     public void appendCustomValueAppend() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = NAME;
         final String newVal = "bar";
@@ -1060,7 +962,6 @@ public class AuditLogableBaseTest {
 
     @Test(expected = NullPointerException.class)
     public void appendCustomValueDoesntHandleNullKeys() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = null;
         final String value = NAME;
         final String sep = "_";
@@ -1071,7 +972,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void appendCustomValueAppendsWithNull() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = null;
         final String newVal = "bar";
@@ -1084,7 +984,6 @@ public class AuditLogableBaseTest {
 
     @Test
     public void appendCustomValueUsesNullSeparator() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = NAME;
         final String newVal = "bar";
@@ -1097,21 +996,17 @@ public class AuditLogableBaseTest {
 
     @Test
     public void getCustomValueFromEmptyMap() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String s = b.getCustomValue(NAME);
         assertEquals("", s);
     }
 
     @Test
     public void key() {
-        final AuditLogableBase b = new TestAuditLogableBase();
         final String s = b.getKey();
         assertEquals(AuditLogType.UNASSIGNED.toString(), s);
     }
 
     protected static class TestAuditLogableBase extends AuditLogableBase {
-        public final StorageDomain STORAGE_DOMAIN = new StorageDomain();
-
         @Override
         public VmTemplateDao getVmTemplateDao() {
             final VmTemplateDao vt = mock(VmTemplateDao.class);
