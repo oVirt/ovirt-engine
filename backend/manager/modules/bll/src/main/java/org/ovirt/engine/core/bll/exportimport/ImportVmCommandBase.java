@@ -580,7 +580,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private void addVmStatistics() {
         VmStatistics stats = new VmStatistics(getVmId());
-        getVmStatisticsDao().save(stats);
+        vmStatisticsDao.save(stats);
         getCompensationContext().snapshotNewEntity(stats);
         getCompensationContext().stateChanged();
     }

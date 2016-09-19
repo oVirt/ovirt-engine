@@ -1162,7 +1162,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     void addVmStatistics() {
         VmStatistics stats = new VmStatistics(getVmId());
-        getVmStatisticsDao().save(stats);
+        vmStatisticsDao.save(stats);
         getCompensationContext().snapshotNewEntity(stats);
     }
 
