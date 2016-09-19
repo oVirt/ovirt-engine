@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation=true)
@@ -82,7 +81,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                     mapToRemove.getStoragePoolId()));
             // when detaching SD for data center, we should remove any attachment to qos, which is part of the old
             // data center
-            DbFacade.getInstance().getDiskProfileDao().nullifyQosForStorageDomain(getStorageDomain().getId());
+            diskProfileDao.nullifyQosForStorageDomain(getStorageDomain().getId());
             getCompensationContext().stateChanged();
             return null;
         });

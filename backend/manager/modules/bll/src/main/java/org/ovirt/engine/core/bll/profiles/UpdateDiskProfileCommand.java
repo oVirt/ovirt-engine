@@ -33,7 +33,7 @@ public class UpdateDiskProfileCommand extends UpdateProfileCommandBase<DiskProfi
 
     @Override
     protected ProfilesDao<DiskProfile> getProfileDao() {
-        return getDiskProfileDao();
+        return diskProfileDao;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class UpdateDiskProfileCommand extends UpdateProfileCommandBase<DiskProfi
     @Override
     protected void executeCommand() {
         // Chcek if qos has changed
-        Guid oldQos = getDiskProfileDao().get(getProfileId()).getQosId();
+        Guid oldQos = diskProfileDao.get(getProfileId()).getQosId();
         Guid newQos = getProfile().getQosId();
 
         super.executeCommand();

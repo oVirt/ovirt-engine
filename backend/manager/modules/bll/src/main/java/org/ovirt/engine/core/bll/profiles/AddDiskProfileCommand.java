@@ -28,7 +28,7 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
 
     @Override
     protected ProfilesDao<DiskProfile> getProfileDao() {
-        return getDiskProfileDao();
+        return diskProfileDao;
     }
 
     @Override

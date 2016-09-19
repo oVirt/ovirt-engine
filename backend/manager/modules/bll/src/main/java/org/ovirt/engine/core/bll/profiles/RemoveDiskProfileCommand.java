@@ -25,7 +25,7 @@ public class RemoveDiskProfileCommand extends RemoveProfileCommandBase<DiskProfi
 
     @Override
     protected ProfilesDao<DiskProfile> getProfileDao() {
-        return getDiskProfileDao();
+        return diskProfileDao;
     }
 
     @Override

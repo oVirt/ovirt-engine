@@ -144,7 +144,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                     returnValue.getExceptionString());
                         }
                     }
-                    if (getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
+                    if (diskProfileDao.getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
                         createDefaultDiskProfile();
                     }
                 }
