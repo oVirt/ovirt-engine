@@ -138,26 +138,6 @@ class Plugin(plugin.PluginBase):
                 _(
                     'Cannot upgrade the Engine database schema due to wrong '
                     'ownership of some database entities.\n'
-                    'Please execute: {command}\n'
-                    'Using the password of the "postgres" user.'
-                ).format(
-                    command=(
-                        '{cmd} '
-                        '-s {server} '
-                        '-p {port} '
-                        '-d {db} '
-                        '-f postgres '
-                        '-t {user}'
-                    ).format(
-                        cmd=(
-                            oenginecons.FileLocations.
-                            OVIRT_ENGINE_DB_CHANGE_OWNER
-                        ),
-                        server=self.environment[oenginecons.EngineDBEnv.HOST],
-                        port=self.environment[oenginecons.EngineDBEnv.PORT],
-                        db=self.environment[oenginecons.EngineDBEnv.DATABASE],
-                        user=self.environment[oenginecons.EngineDBEnv.USER],
-                    ),
                 )
             )
 

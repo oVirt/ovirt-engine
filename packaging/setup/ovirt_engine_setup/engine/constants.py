@@ -120,11 +120,6 @@ class FileLocations(object):
         'unlock_entity.sh'
     )
 
-    OVIRT_ENGINE_DB_CHANGE_OWNER = os.path.join(
-        OVIRT_ENGINE_DB_UTILS_DIR,
-        'changedbowner.sh'
-    )
-
     OVIRT_ENGINE_CRYPTO_TOOL = os.path.join(
         OVIRT_ENGINE_BINDIR,
         'ovirt-engine-crypto-tool.sh',
