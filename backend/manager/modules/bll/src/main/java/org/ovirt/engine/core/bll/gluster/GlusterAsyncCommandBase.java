@@ -90,7 +90,7 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
     protected void endStepJob(JobExecutionStatus status, Map<String, String> stepMessageMap, boolean exitStatus) {
         GlusterAsyncTask asyncTask = getGlusterVolume().getAsyncTask();
         // Gluster Task will be associated with only one step ( REBALANCING_VOLUME or REMOVING_BRICK)
-        Step step = getStepDao().getStepsByExternalId(asyncTask.getTaskId()).get(0);
+        Step step = stepDao.getStepsByExternalId(asyncTask.getTaskId()).get(0);
         step.setStatus(status);
         step.setEndTime(new Date());
         step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(), stepMessageMap));

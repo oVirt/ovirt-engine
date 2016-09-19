@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -74,7 +73,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     @Before
     public void setupMock() throws Exception {
-        doReturn(stepDaoMock).when(command).getStepDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));
         when(stepDaoMock.get(stepId)).thenReturn(makeExternalTestStep(jobId, stepId));

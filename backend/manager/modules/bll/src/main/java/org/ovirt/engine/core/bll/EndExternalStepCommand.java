@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StepDao;
 
 public class EndExternalStepCommand <T extends EndExternalStepParameters> extends CommandBase<T> {
     /**
@@ -31,7 +29,7 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
     @Override
     protected boolean validate() {
         boolean retValue = true;
-        step = getStepDao().get(getParameters().getId());
+        step = stepDao.get(getParameters().getId());
         if (step == null) {
             retValue = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_NO_STEP);
@@ -72,10 +70,5 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));
         return permissionList;
-    }
-
-    @Override
-    public StepDao getStepDao() {
-        return DbFacade.getInstance().getStepDao();
     }
 }

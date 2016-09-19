@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.AddStepParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.dao.StepDao;
 
 public abstract class AddStepCommand<T extends AddStepParameters> extends CommandBase<T> {
 
@@ -20,9 +19,6 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
 
     @Inject
     private JobRepository jobRepository;
-
-    @Inject
-    private StepDao stepDao;
 
     protected AddStepCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -33,7 +29,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         boolean retValue=true;
         job = jobDao.get(getParameters().getParentId());
         if (job == null) {
-            parentStep = getStepDao().get(getParameters().getParentId());
+            parentStep = stepDao.get(getParameters().getParentId());
         }
         if (job == null && parentStep == null) {
             retValue=false;
@@ -68,10 +64,4 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
                 setSucceeded(true);
         }
     }
-
-    @Override
-    public StepDao getStepDao() {
-        return stepDao;
-    }
-
 }
