@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister;
 
@@ -29,9 +28,6 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
-
-    @Inject
-    private InterfaceDao interfaceDao;
 
     public AttachNetworkToClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

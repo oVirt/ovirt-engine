@@ -130,8 +130,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(interfaceDao).when(cmd).getInterfaceDao();
-
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2, 2)).when(volumeDao).getById(volumeId2);

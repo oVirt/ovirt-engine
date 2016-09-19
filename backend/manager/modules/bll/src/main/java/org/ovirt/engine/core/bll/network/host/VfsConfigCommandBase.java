@@ -9,16 +9,12 @@ import org.ovirt.engine.core.common.action.VfsConfigBaseParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> extends VdsCommand<T> {
 
     private VdsNetworkInterface nic;
     private HostNicVfsConfig oldVfsConfig;
     private VfsConfigValidator vfsConfigValidator;
-
-    @Inject
-    private InterfaceDao interfaceDao;
 
     @Inject
     private HostNicVfsConfigDao hostNicVfsConfigDao;
@@ -35,11 +31,6 @@ public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> ex
     @Override
     protected boolean validate() {
         return validate(getVfsConfigValidator().nicExists()) && validate(getVfsConfigValidator().nicSriovEnabled());
-    }
-
-    @Override
-    protected InterfaceDao getInterfaceDao() {
-        return interfaceDao;
     }
 
     protected HostNicVfsConfigDao getVfsConfigDao() {
@@ -62,7 +53,7 @@ public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> ex
 
     public VdsNetworkInterface getNic() {
         if (nic == null) {
-            nic = getInterfaceDao().get(getVfsConfig().getNicId());
+            nic = interfaceDao.get(getVfsConfig().getNicId());
         }
         return nic;
     }

@@ -63,9 +63,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     private NetworkAttachmentDao networkAttachmentDao;
 
     @Inject
-    private InterfaceDao interfaceDao;
-
-    @Inject
     private ChangeClusterParametersBuilder changeClusterParametersBuilder;
 
     private StoragePool targetStoragePool;
@@ -176,7 +173,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private List<VdsNetworkInterface> getHostNics() {
         if (hostNics == null) {
-            hostNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
+            hostNics = interfaceDao.getAllInterfacesForVds(getVdsId());
         }
 
         return hostNics;

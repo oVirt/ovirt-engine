@@ -98,8 +98,6 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(interfaceDao).when(cmd).getInterfaceDao();
-
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getCluster(true)).when(clusterDao).get(any(Guid.class));

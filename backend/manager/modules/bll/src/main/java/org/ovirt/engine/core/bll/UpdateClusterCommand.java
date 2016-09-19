@@ -61,7 +61,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
@@ -78,9 +77,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Inject
     @MomPolicyUpdate
     private Event<Cluster> momPolicyUpdatedEvent;
-
-    @Inject
-    private InterfaceDao interfaceDao;
 
     @Inject
     private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;

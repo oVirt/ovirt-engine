@@ -76,7 +76,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -126,9 +125,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
-
-    @Inject
-    private InterfaceDao interfaceDao;
 
     @Inject
     private IpConfigurationCompleter ipConfigurationCompleter;
@@ -513,7 +509,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private List<VdsNetworkInterface> getExistingNics() {
         if (existingNics == null) {
-            existingNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
+            existingNics = interfaceDao.getAllInterfacesForVds(getVdsId());
 
             NetworkCommonUtils.fillBondSlaves(existingNics);
 

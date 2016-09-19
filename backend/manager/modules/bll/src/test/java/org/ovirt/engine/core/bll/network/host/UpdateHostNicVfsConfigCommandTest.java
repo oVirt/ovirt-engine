@@ -54,7 +54,6 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
         command = spy(new UpdateHostNicVfsConfigCommand(param, null));
         doReturn(validator).when(command).getVfsConfigValidator();
         doReturn(vfsConfigDao).when(command).getVfsConfigDao();
-        doReturn(interfaceDao).when(command).getInterfaceDao();
     }
 
     @Test

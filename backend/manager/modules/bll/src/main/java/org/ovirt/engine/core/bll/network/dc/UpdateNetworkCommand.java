@@ -113,7 +113,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         final NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
-        final UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork(), vmDao);
+        final UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork(), vmDao, interfaceDao);
         return validate(validatorNew.dataCenterExists())
                 && validate(validatorNew.stpForVmNetworkOnly())
                 && validate(validatorNew.mtuValid())
@@ -183,10 +183,14 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     protected static class UpdateNetworkValidator extends NetworkValidator {
 
+        private final InterfaceDao interfaceDao;
+
         public UpdateNetworkValidator(
                 Network network,
-                VmDao vmDao) {
+                VmDao vmDao,
+                InterfaceDao interfaceDao) {
             super(vmDao, network);
+            this.interfaceDao = interfaceDao;
         }
 
         public ValidationResult notRenamingLabel(String newLabel) {
@@ -195,8 +199,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 return ValidationResult.VALID;
             }
 
-            List<VdsNetworkInterface> nics =
-                    getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(network.getId());
+            List<VdsNetworkInterface> nics = interfaceDao.getVdsInterfacesByNetworkId(network.getId());
             for (VdsNetworkInterface nic : nics) {
                 VdsNetworkInterface labeledNic = nic;
                 if (NetworkCommonUtils.isVlan(nic)) {
@@ -212,8 +215,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         private VdsNetworkInterface getBaseInterface(VdsNetworkInterface vlan) {
-            List<VdsNetworkInterface> hostNics =
-                    getDbFacade().getInterfaceDao().getAllInterfacesForVds(vlan.getVdsId());
+            List<VdsNetworkInterface> hostNics = interfaceDao.getAllInterfacesForVds(vlan.getVdsId());
 
             for (VdsNetworkInterface hostNic : hostNics) {
                 if (NetworkUtils.interfaceBasedOn(vlan, hostNic.getName())) {

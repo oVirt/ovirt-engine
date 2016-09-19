@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
@@ -342,18 +341,13 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private boolean networkAttachedToVds(String networkName, Guid vdsId) {
-        List<VdsNetworkInterface> listOfInterfaces = getInterfaceDao().getAllInterfacesForVds(vdsId);
+        List<VdsNetworkInterface> listOfInterfaces = interfaceDao.getAllInterfacesForVds(vdsId);
         for (VdsNetworkInterface vdsNetworkInterface : listOfInterfaces) {
             if (networkName.equals(vdsNetworkInterface.getNetworkName())) {
                 return true;
             }
         }
         return false;
-    }
-
-    @Override
-    protected InterfaceDao getInterfaceDao() {
-        return getDbFacade().getInterfaceDao();
     }
 
     private boolean hotPlugVmNicRequired(VMStatus vmStatus) {

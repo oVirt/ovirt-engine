@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 /**
  * Base class for all Gluster commands
@@ -208,8 +207,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     private String getGlusterNetworkAddress(Guid hostId, String glusterNetworkName) {
-        final List<VdsNetworkInterface> nics =
-                getInterfaceDao().getAllInterfacesForVds(hostId);
+        final List<VdsNetworkInterface> nics = interfaceDao.getAllInterfacesForVds(hostId);
 
         for (VdsNetworkInterface nic : nics) {
             if (glusterNetworkName.equals(nic.getNetworkName())) {
@@ -291,10 +289,5 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             }
         }
         return true;
-    }
-
-    @Override
-    protected InterfaceDao getInterfaceDao() {
-        return getDbFacade().getInterfaceDao();
     }
 }

@@ -68,7 +68,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     private List<VdsNetworkInterface> getHostInterfaces() {
         if (hostNics == null) {
-            hostNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
+            hostNics = interfaceDao.getAllInterfacesForVds(getVdsId());
         }
 
         return hostNics;
@@ -81,7 +81,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     private VdsNetworkInterface getNic() {
         if (nic == null) {
-            nic = getDbFacade().getInterfaceDao().get(getParameters().getNicId());
+            nic = interfaceDao.get(getParameters().getNicId());
         }
 
         return nic;

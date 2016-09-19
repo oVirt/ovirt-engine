@@ -69,7 +69,7 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
 
     private VdsNetworkInterface getNic() {
         if (nic == null) {
-            nic = getDbFacade().getInterfaceDao().get(getParameters().getNicId());
+            nic = interfaceDao.get(getParameters().getNicId());
         }
 
         return nic;

@@ -1,18 +1,12 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.ClusterCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public abstract class NetworkClusterCommandBase<T extends NetworkClusterParameters> extends ClusterCommandBase<T> {
-
-    @Inject
-    protected InterfaceDao interfaceDao;
 
     private Network persistedNetwork;
 

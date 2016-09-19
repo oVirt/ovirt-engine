@@ -304,7 +304,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      *         report its speed)
      */
     private Integer getLinkSpeedBandwidth(Guid hostId) {
-        return getInterfaceDao().getActiveMigrationNetworkInterfaceForHost(hostId)
+        return interfaceDao.getActiveMigrationNetworkInterfaceForHost(hostId)
                 .map(NetworkInterface::getSpeed)
                 .map(speed -> speed > 0 ? speed : null)
                 .orElse(null);
@@ -447,8 +447,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private String getMigrationNetworkAddress(Guid hostId,
             String migrationNetworkName,
             Function<VdsNetworkInterface, String> ipAddressGetter) {
-        final List<VdsNetworkInterface> nics =
-                getDbFacade().getInterfaceDao().getAllInterfacesForVds(hostId);
+        final List<VdsNetworkInterface> nics = interfaceDao.getAllInterfacesForVds(hostId);
 
         for (VdsNetworkInterface nic : nics) {
             if (migrationNetworkName.equals(nic.getNetworkName()) && migrationInterfaceUp(nic, nics)) {

@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateNetworkValidatorTest {
@@ -36,12 +37,14 @@ public class UpdateNetworkValidatorTest {
     private Cluster cluster;
     @Mock
     private VmNetworkInterface vNic;
+    @Mock
+    private InterfaceDao interfaceDao;
 
     private UpdateNetworkValidator validator;
 
     @Before
     public void setup() {
-        validator = new UpdateNetworkValidator(network, vmDao);
+        validator = new UpdateNetworkValidator(network, vmDao, interfaceDao);
     }
 
     private Network mockExternalNetwork() {
