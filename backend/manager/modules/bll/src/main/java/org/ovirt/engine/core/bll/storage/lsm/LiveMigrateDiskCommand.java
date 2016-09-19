@@ -252,12 +252,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                             image.getImageId()));
 
             DiskImage imageFromIRS = (DiskImage) ret.getReturnValue();
-            DiskImageDynamic diskImageDynamic = getDiskImageDynamicDao().get(image.getImageId());
+            DiskImageDynamic diskImageDynamic = diskImageDynamicDao.get(image.getImageId());
 
             // Update image's actual size in DB
             if (imageFromIRS != null && diskImageDynamic != null) {
                 diskImageDynamic.setActualSize(imageFromIRS.getActualSizeInBytes());
-                getDiskImageDynamicDao().update(diskImageDynamic);
+                diskImageDynamicDao.update(diskImageDynamic);
             }
         }
     }

@@ -5,7 +5,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * This command responsible to creating new snapshot. Usually it will be called
@@ -60,8 +59,8 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     protected void endWithFailure() {
         if (getDestinationDiskImage() != null) {
             baseDiskDao.remove(getDestinationDiskImage().getId());
-            if (DbFacade.getInstance().getDiskImageDynamicDao().get(getDestinationDiskImage().getImageId()) != null) {
-                DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
+            if (diskImageDynamicDao.get(getDestinationDiskImage().getImageId()) != null) {
+                diskImageDynamicDao.remove(getDestinationDiskImage().getImageId());
             }
         }
 

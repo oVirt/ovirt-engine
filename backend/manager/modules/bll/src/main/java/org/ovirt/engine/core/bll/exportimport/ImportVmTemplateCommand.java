@@ -459,7 +459,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(image.getImageId());
             diskDynamic.setActualSize(image.getActualSizeInBytes());
-            getDiskImageDynamicDao().save(diskDynamic);
+            diskImageDynamicDao.save(diskDynamic);
 
             DiskVmElement dve = DiskVmElement.copyOf(image.getDiskVmElementForVm(sourceTemplateId),
                     image.getId(), getVmTemplateId());

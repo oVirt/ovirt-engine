@@ -65,7 +65,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(cinderDisk.getImageId());
-            getDiskImageDynamicDao().save(diskDynamic);
+            diskImageDynamicDao.save(diskDynamic);
 
             if (getVm() != null) {
                 addDiskVmElementForDisk(getDiskVmElement());

@@ -148,7 +148,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     () -> {
-                        getDiskImageDynamicDao().remove(diskImage.getImageId());
+                        diskImageDynamicDao.remove(diskImage.getImageId());
                         Guid imageTemplate = diskImage.getImageTemplateId();
                         Guid currentGuid = diskImage.getImageId();
                         // next 'while' statement removes snapshots from DB only (the

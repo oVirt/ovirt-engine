@@ -852,7 +852,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(disk.getImageId());
         diskDynamic.setActualSize(disk.getActualSizeInBytes());
-        getDiskImageDynamicDao().save(diskDynamic);
+        diskImageDynamicDao.save(diskDynamic);
     }
 
     /**

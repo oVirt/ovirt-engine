@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -159,7 +158,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             if (getParameters().isShouldRemainIllegalOnFailedExecution()) {
                 setImageStatus(ImageStatus.ILLEGAL, getDestinationDiskImage());
             } else {
-                DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
+                diskImageDynamicDao.remove(getDestinationDiskImage().getImageId());
                 super.endWithFailure();
             }
         }
