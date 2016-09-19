@@ -439,7 +439,8 @@ EXCLUDED_FILES_ON_RESTORE="etc/ovirt-engine/engine-config/engine-config.properti
 etc/ovirt-engine-setup.conf.d/*packaging*
 etc/ovirt-engine-reports
 var/lib/ovirt-engine-reports
-etc/httpd/conf.d/z-ovirt-engine-reports-proxy.conf"
+etc/httpd/conf.d/z-ovirt-engine-reports-proxy.conf
+etc/ovirt-engine/engine.conf.d/10-setup-reports-access.conf"
 
 source_d defaults
 
