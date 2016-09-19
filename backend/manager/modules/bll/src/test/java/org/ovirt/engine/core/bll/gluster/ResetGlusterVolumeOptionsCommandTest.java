@@ -5,19 +5,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
-import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public class ResetGlusterVolumeOptionsCommandTest extends BaseCommandTest {
-
-    @Mock
-    GlusterVolumeDao volumeDao;
-
     /**
      * The command under test.
      */
@@ -31,7 +25,6 @@ public class ResetGlusterVolumeOptionsCommandTest extends BaseCommandTest {
     }
 
     private void prepareMocks(ResetGlusterVolumeOptionsCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
     }
 
