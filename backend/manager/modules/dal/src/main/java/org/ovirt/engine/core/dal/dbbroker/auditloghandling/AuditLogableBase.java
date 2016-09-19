@@ -221,6 +221,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected VmDeviceDao vmDeviceDao;
 
+    @Inject
+    protected VmIconDao vmIconDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -837,10 +840,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public CpuProfileDao getCpuProfileDao() {
         return getDbFacade().getCpuProfileDao();
-    }
-
-    public VmIconDao getVmIconDao() {
-        return getDbFacade().getVmIconDao();
     }
 
     public TagDao getTagDao() {
