@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -300,7 +299,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         vmDevice.setAddress(address);
         getCompensationContext().snapshotEntity(vmDevice);
         getCompensationContext().stateChanged();
-        getVmDeviceDao().update(vmDevice);
+        vmDeviceDao.update(vmDevice);
     }
 
     protected EngineLock lockVmDiskHotPlugWithWait() {

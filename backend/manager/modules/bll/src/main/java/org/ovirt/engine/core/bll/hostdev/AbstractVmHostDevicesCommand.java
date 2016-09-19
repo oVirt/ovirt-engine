@@ -114,7 +114,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     }
 
     protected Map<String, VmHostDevice> getExistingVmHostDevicesByName() {
-        List<VmDevice> existingDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
+        List<VmDevice> existingDevices = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
         List<VmHostDevice> result = new ArrayList<>();
         for (VmDevice device : existingDevices) {
             result.add(new VmHostDevice(device));

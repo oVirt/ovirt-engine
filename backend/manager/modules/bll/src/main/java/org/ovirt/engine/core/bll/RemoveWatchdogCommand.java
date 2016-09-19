@@ -16,7 +16,7 @@ public class RemoveWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
     protected void executeCommand() {
         // there can be only one, but this way it is easier
         for (VmDevice watchdog : getWatchdogs()) {
-            getVmDeviceDao().remove(watchdog.getId());
+            vmDeviceDao.remove(watchdog.getId());
         }
         setSucceeded(true);
     }

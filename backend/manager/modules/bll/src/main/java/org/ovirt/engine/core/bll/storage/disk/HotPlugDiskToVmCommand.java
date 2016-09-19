@@ -97,7 +97,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
         if (getDiskVmElement() == null) {
             return;
         }
-        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(getDiskVmElement().getDiskId(), getVmId()));
+        oldVmDevice = vmDeviceDao.get(new VmDeviceId(getDiskVmElement().getDiskId(), getVmId()));
         if (oldVmDevice != null) {
             if (oldVmDevice.getSnapshotId() != null) {
                 disk = diskImageDao.getDiskSnapshotForVmSnapshot(getDiskVmElement().getDiskId(), oldVmDevice.getSnapshotId());
@@ -153,9 +153,9 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     }
 
     protected void updateDeviceProperties() {
-        VmDevice device = getVmDeviceDao().get(oldVmDevice.getId());
+        VmDevice device = vmDeviceDao.get(oldVmDevice.getId());
         device.setIsPlugged(true);
-        getVmDeviceDao().updateHotPlugDisk(device);
+        vmDeviceDao.updateHotPlugDisk(device);
     }
 
     private void updateBootOrder() {

@@ -291,7 +291,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected Map<Guid, VmDevice> getVmInterfaceDevices() {
-        List<VmDevice> vmInterfaceDevicesList = getVmDeviceDao().getVmDeviceByVmIdAndType(vmInterfacesSourceId, VmDeviceGeneralType.INTERFACE);
+        List<VmDevice> vmInterfaceDevicesList = vmDeviceDao.getVmDeviceByVmIdAndType(vmInterfacesSourceId, VmDeviceGeneralType.INTERFACE);
         Map<Guid, VmDevice> vmInterfaceDevices = new HashMap<>();
         for (VmDevice device : vmInterfaceDevicesList) {
             vmInterfaceDevices.put(device.getDeviceId(), device);
@@ -1043,7 +1043,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      */
     private void copyDiskDevicesFromTemplate() {
         List<VmDevice> disks =
-                getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmDisksSource.getId(),
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmDisksSource.getId(),
                         VmDeviceGeneralType.DISK,
                         VmDeviceType.DISK.getName());
         getVmDeviceUtils().copyDiskDevices(

@@ -20,7 +20,7 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
                 getWatchdogs();
         VmDevice watchdogDevice = watchdogs.get(0); // there must be only one
         watchdogDevice.setSpecParams(getSpecParams());
-        getVmDeviceDao().update(watchdogDevice);
+        vmDeviceDao.update(watchdogDevice);
         setSucceeded(true);
     }
 

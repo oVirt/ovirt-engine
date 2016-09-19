@@ -91,7 +91,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             }
 
             if (mustChangeAddress(oldIface.getType(), getInterface().getType())) {
-                getVmDeviceDao().clearDeviceAddress(getInterface().getId());
+                vmDeviceDao.clearDeviceAddress(getInterface().getId());
             }
 
             getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
@@ -152,7 +152,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             getCompensationContext().snapshotEntity(oldVmDevice);
             oldVmDevice.setDevice(getInterface().isPassthrough() ? VmDeviceType.HOST_DEVICE.getName()
                     : VmDeviceType.BRIDGE.getName());
-            getVmDeviceDao().update(oldVmDevice);
+            vmDeviceDao.update(oldVmDevice);
         }
     }
 
@@ -171,7 +171,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(getInterface().getId(), getVmId()));
+        oldVmDevice = vmDeviceDao.get(new VmDeviceId(getInterface().getId(), getVmId()));
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
         oldIface = interfaces.stream().filter(i -> i.getId().equals(getInterface().getId())).findFirst().orElse(null);
 

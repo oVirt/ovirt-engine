@@ -50,8 +50,8 @@ public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHost
             }
         }
 
-        getVmDeviceDao().saveAllInBatch(devicesToAdd);
-        getVmDeviceDao().updateAllInBatch(devicesToUpdate);
+        vmDeviceDao.saveAllInBatch(devicesToAdd);
+        vmDeviceDao.updateAllInBatch(devicesToUpdate);
 
         setSucceeded(true);
     }

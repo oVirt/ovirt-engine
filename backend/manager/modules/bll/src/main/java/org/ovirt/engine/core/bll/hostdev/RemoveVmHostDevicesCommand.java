@@ -66,8 +66,8 @@ public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmH
             }
         }
 
-        getVmDeviceDao().removeAllInBatch(devicesToRemove);
-        getVmDeviceDao().updateAllInBatch(devicesToUpdate);
+        vmDeviceDao.removeAllInBatch(devicesToRemove);
+        vmDeviceDao.updateAllInBatch(devicesToUpdate);
 
         setSucceeded(true);
     }

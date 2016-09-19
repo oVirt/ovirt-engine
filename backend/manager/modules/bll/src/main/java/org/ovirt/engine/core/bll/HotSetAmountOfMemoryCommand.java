@@ -66,7 +66,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 return failValidation(EngineMessage.HOT_PLUG_MEMORY_IS_NOT_SUPPORTED);
             }
             // check max slots
-            List<VmDevice> memDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.MEMORY);
+            List<VmDevice> memDevices = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.MEMORY);
             if (memDevices.size() == Config.<Integer>getValue(ConfigValues.MaxMemorySlots)) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_MORE_MEMORY_SLOTS,
                         "$maxMemSlots " + Config.getValue(ConfigValues.MaxMemorySlots).toString());

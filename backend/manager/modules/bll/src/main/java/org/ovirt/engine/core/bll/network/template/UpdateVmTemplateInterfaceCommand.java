@@ -33,12 +33,12 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     protected void executeCommand() {
         getVmNicDao().update(getParameters().getInterface());
         VmDevice vmDevice =
-                getDbFacade().getVmDeviceDao().get(new VmDeviceId(getParameters().getInterface().getId(),
+                vmDeviceDao.get(new VmDeviceId(getParameters().getInterface().getId(),
                         getParameters().getVmTemplateId()));
         vmDevice.setIsPlugged(getParameters().getInterface().isPlugged());
         vmDevice.setDevice(getParameters().getInterface().isPassthrough() ? VmDeviceType.HOST_DEVICE.getName()
                 : VmDeviceType.BRIDGE.getName());
-        getDbFacade().getVmDeviceDao().update(vmDevice);
+        vmDeviceDao.update(vmDevice);
         setSucceeded(true);
     }
 

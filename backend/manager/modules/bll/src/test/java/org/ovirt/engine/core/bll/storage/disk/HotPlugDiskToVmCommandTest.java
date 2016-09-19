@@ -296,7 +296,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId());
         vmDevice.setIsPlugged(plugged);
-        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         when(vmDeviceDao.get(any(VmDeviceId.class))).thenReturn(vmDevice);
     }
 

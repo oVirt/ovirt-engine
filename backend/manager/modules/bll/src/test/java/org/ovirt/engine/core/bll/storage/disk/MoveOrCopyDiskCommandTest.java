@@ -152,7 +152,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         mockGetVmsListForDisk();
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
-        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
 
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
@@ -166,7 +165,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
-        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         assertFalse(command.validate());
         assertTrue(command.getReturnValue().getValidationMessages().contains(
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.toString()));

@@ -589,7 +589,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         Map<VmDeviceId, VmDevice> nicDevices =
-                Entities.businessEntitiesById(getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(),
+                Entities.businessEntitiesById(vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(),
                         VmDeviceGeneralType.INTERFACE));
 
         for (VmNic iface : getVm().getInterfaces()) {
@@ -773,8 +773,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * This methods sets graphics infos of a VM to correspond to graphics devices set in DB
      */
     protected void updateGraphicsInfos() {
-        for (VmDevice vmDevice : getVmDeviceDao()
-                .getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.GRAPHICS)) {
+        for (VmDevice vmDevice : vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.GRAPHICS)) {
             getVm().getGraphicsInfos().put(GraphicsType.fromString(vmDevice.getDevice()), new GraphicsInfo());
         }
     }
@@ -795,7 +794,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected VmPayload getVmPayloadByDeviceType(VmDeviceType deviceType) {
-        List<VmDevice> vmDevices = getVmDeviceDao()
+        List<VmDevice> vmDevices = vmDeviceDao
                 .getVmDeviceByVmIdTypeAndDevice(getVm().getId(),
                         VmDeviceGeneralType.DISK,
                         deviceType.getName());
@@ -1029,7 +1028,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     boolean checkRngDeviceClusterCompatibility() {
         List<VmDevice> rngDevs =
-                getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO.getName());
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO.getName());
 
         if (!rngDevs.isEmpty()) {
             VmRngDevice rngDev = new VmRngDevice(rngDevs.get(0));

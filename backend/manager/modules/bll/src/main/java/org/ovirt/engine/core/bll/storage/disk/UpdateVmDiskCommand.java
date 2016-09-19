@@ -418,21 +418,21 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             private void updateDeviceProperties() {
                 if (updateReadOnlyRequested()) {
                     vmDeviceForVm.setIsReadOnly(getNewDisk().getReadOnly());
-                    getVmDeviceDao().update(vmDeviceForVm);
+                    vmDeviceDao.update(vmDeviceForVm);
                 }
 
                 if ((getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface()) ||
                         ((getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot()) && (
                                 getDiskVmElement().getDiskInterface() == DiskInterface.IDE))) {
                     vmDeviceForVm.setAddress("");
-                    getVmDeviceDao().clearDeviceAddress(getOldDisk().getId());
+                    vmDeviceDao.clearDeviceAddress(getOldDisk().getId());
                 }
             }
 
             private void updateLunProperties(LunDisk lunDisk) {
                 if (updateIsUsingScsiReservationRequested(lunDisk)) {
                     vmDeviceForVm.setUsingScsiReservation(lunDisk.isUsingScsiReservation());
-                    getVmDeviceDao().update(vmDeviceForVm);
+                    vmDeviceDao.update(vmDeviceForVm);
                 }
             }
         });

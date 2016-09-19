@@ -39,7 +39,7 @@ public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
             idsToRemove.add(dev.getId());
         }
 
-        getDbFacade().getVmDeviceDao().removeAll(idsToRemove);
+        vmDeviceDao.removeAll(idsToRemove);
         setSucceeded(true);
     }
 }

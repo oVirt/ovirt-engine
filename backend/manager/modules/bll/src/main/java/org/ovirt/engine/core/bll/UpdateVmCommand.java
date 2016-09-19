@@ -83,7 +83,6 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -246,7 +245,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void updateVmHostDevices() {
         if (isDedicatedVmForVdsChanged()) {
             log.info("Pinned host changed for VM: {}. Dropping configured host devices.", getVm().getName());
-            getVmDeviceDao().removeVmDevicesByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
+            vmDeviceDao.removeVmDevicesByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
         }
     }
 
@@ -315,7 +314,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             log.info("Emulated machine changed for VM: {} ({}). Clearing device addresses.",
                     getVm().getName(),
                     getVm().getId());
-            getVmDeviceDao().clearAllDeviceAddressesByVmId(getVmId());
+            vmDeviceDao.clearAllDeviceAddressesByVmId(getVmId());
 
             VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(System.nanoTime());
             change.updateVm(getVmId(), VmDevicesMonitoring.EMPTY_HASH);
@@ -527,11 +526,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected void updateVmPayload() {
-        VmDeviceDao dao = getVmDeviceDao();
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null || getParameters().isClearPayload()) {
-            List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.DISK);
+            List<VmDevice> disks = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.DISK);
             VmDevice oldPayload = null;
             for (VmDevice disk : disks) {
                 if (VmPayload.isPayload(disk.getSpecParams())) {
@@ -543,7 +541,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (oldPayload != null) {
                 List<VmDeviceId> devs = new ArrayList<>();
                 devs.add(oldPayload.getId());
-                dao.removeAll(devs);
+                vmDeviceDao.removeAll(devs);
             }
 
             if (!getParameters().isClearPayload()) {

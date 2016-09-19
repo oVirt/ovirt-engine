@@ -116,7 +116,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (getDisk().getVmEntityType() != null && getDisk().getVmEntityType().isVmType()) {
             for (VM vm : getVmsForDiskId()) {
                 if (vm.getStatus() != VMStatus.Down && !vm.isHostedEngine()) {
-                    VmDevice vmDevice = getVmDeviceDao().get(new VmDeviceId(getDisk().getId(), vm.getId()));
+                    VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(getDisk().getId(), vm.getId()));
                     if (vmDevice.getIsPlugged()) {
                         addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                         return false;

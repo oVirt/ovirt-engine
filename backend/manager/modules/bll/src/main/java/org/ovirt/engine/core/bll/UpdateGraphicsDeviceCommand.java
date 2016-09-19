@@ -13,7 +13,7 @@ public class UpdateGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<G
     @Override
     protected void executeCommand() {
         VmDevice graphicsDev = getParameters().getDev();
-        getVmDeviceDao().update(graphicsDev);
+        vmDeviceDao.update(graphicsDev);
         setSucceeded(true);
         setActionReturnValue(graphicsDev.getId().getDeviceId());
     }

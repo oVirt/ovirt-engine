@@ -360,7 +360,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     private void mockVmDevice(VmDevice vmDevice) {
         when(vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Collections.singletonList(vmDevice));
-        doReturn(vmDeviceDao).when(dbFacade).getVmDeviceDao();
     }
 
     @Test
@@ -417,7 +416,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockDiskDaoGetAllForVm(Collections.emptyList(), true);
         mockVmValidator();
 
-        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         doReturn(true).when(command).areUpdatedFieldsLegal();
 
         command.initEffectiveCompatibilityVersion();

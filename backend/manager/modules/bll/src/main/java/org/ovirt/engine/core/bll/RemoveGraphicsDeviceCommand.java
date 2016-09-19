@@ -15,7 +15,7 @@ public class RemoveGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<G
     @Override
     protected void executeCommand() {
         VmDevice graphicsDev = getParameters().getDev();
-        getVmDeviceDao().remove(graphicsDev.getId());
+        vmDeviceDao.remove(graphicsDev.getId());
         setSucceeded(true);
     }
 

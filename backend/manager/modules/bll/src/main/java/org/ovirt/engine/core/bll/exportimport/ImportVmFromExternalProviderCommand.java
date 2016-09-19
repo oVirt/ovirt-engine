@@ -347,7 +347,7 @@ implements QuotaStorageDependent {
                     device.getId().setVmId(getVmId());
                 }
             }
-            getVmDeviceDao().saveAll(getVm().getStaticData().getManagedDeviceMap().values());
+            vmDeviceDao.saveAll(getVm().getStaticData().getManagedDeviceMap().values());
         }
     }
 

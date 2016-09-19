@@ -131,7 +131,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return false;
         }
 
-        if (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
+        if (vmDeviceDao.exists(new VmDeviceId(disk.getId(), getVmId()))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
 
@@ -187,7 +187,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         final VmDevice vmDevice = createVmDevice();
-        getVmDeviceDao().save(vmDevice);
+        vmDeviceDao.save(vmDevice);
 
         DiskVmElement diskVmElement = getDiskVmElement();
         diskVmElement.getId().setDeviceId(disk.getId());

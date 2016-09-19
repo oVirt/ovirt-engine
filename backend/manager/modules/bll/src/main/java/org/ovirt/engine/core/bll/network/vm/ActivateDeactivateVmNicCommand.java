@@ -138,7 +138,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             }
         }
 
-        vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNic().getId(), getParameters().getVmId()));
+        vmDevice = vmDeviceDao.get(new VmDeviceId(getParameters().getNic().getId(), getParameters().getVmId()));
         if (vmDevice == null) {
             addValidationMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
             return false;
@@ -276,7 +276,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             return false;
         }
         Map<String, String> addressMapToHotplug = XmlRpcStringUtils.string2Map(deviceAddress);
-        List<VmDevice> allVmDevices = getVmDeviceDao().getVmDeviceByVmId(getVm().getId());
+        List<VmDevice> allVmDevices = vmDeviceDao.getVmDeviceByVmId(getVm().getId());
         for (VmDevice vmDevice : allVmDevices) {
             if (!vmDeviceToHotplug.getId().equals(vmDevice.getId())){
                 Map<String, String> deviceAddressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
@@ -313,7 +313,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private TransactionMethod<Void> updateDevice() {
         return () -> {
             vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG);
-            getVmDeviceDao().update(vmDevice);
+            vmDeviceDao.update(vmDevice);
             getVmDeviceUtils().updateBootOrder(getVm().getId());
             return null;
         };

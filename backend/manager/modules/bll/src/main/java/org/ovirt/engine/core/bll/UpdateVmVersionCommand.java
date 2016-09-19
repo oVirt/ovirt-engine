@@ -217,9 +217,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     }
 
     private void loadVmPayload(AddVmParameters addVmParams) {
-        List<VmDevice> vmDevices = getVmDeviceDao()
-                .getVmDeviceByVmIdAndType(getVmTemplateId(),
-                        VmDeviceGeneralType.DISK);
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(getVmTemplateId(), VmDeviceGeneralType.DISK);
         for (VmDevice vmDevice : vmDevices) {
             if (VmPayload.isPayload(vmDevice.getSpecParams())) {
                 addVmParams.setVmPayload(new VmPayload(vmDevice));
@@ -229,13 +227,12 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     }
 
     private boolean deviceExists(VmDeviceGeneralType generalType, VmDeviceType deviceType) {
-        return !getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
+        return !vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 getVmTemplateId(), generalType, deviceType.getName()).isEmpty();
     }
 
     private boolean deviceExists(VmDeviceGeneralType generalType) {
-        return !getVmDeviceDao().getVmDeviceByVmIdAndType(
-                getVmTemplateId(), generalType).isEmpty();
+        return !vmDeviceDao.getVmDeviceByVmIdAndType(getVmTemplateId(), generalType).isEmpty();
     }
 
     @Override

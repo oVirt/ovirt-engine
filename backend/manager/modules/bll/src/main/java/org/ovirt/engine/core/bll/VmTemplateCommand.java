@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> extends CommandBase<T> {
@@ -122,7 +121,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     protected void removeNetwork() {
         List<VmNic> list = getVmNicDao().getAllForTemplate(getVmTemplateId());
         for (VmNic iface : list) {
-            DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
+            vmDeviceDao.remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
             getVmNicDao().remove(iface.getId());
         }
     }

@@ -26,7 +26,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
         watchdogDevice.setType(VmDeviceGeneralType.WATCHDOG);
         watchdogDevice.setAddress(StringUtils.EMPTY);
         watchdogDevice.setSpecParams(getSpecParams());
-        getVmDeviceDao().save(watchdogDevice);
+        vmDeviceDao.save(watchdogDevice);
         setSucceeded(true);
         setActionReturnValue(watchdogDevice.getId().getDeviceId());
     }
@@ -50,8 +50,6 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
     }
 
     private List<VmDevice> getVmWatchdogDevices() {
-        return getVmDeviceDao().getVmDeviceByVmIdAndType(
-                getParameters().getId(),
-                VmDeviceGeneralType.WATCHDOG);
+        return vmDeviceDao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.WATCHDOG);
     }
 }

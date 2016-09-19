@@ -25,7 +25,7 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
         if (graphicsDev.getDeviceId() == null) {
             graphicsDev.setDeviceId(Guid.newGuid());
         }
-        getVmDeviceDao().save(graphicsDev);
+        vmDeviceDao.save(graphicsDev);
         setSucceeded(true);
         setActionReturnValue(graphicsDev.getId().getDeviceId());
     }

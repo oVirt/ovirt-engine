@@ -198,15 +198,12 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
      */
     private void removeStatelessVmUnmanagedDevices() {
         if (getVm().isStateless() || isRunOnce()) {
-            final List<VmDevice> vmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .getUnmanagedDevicesByVmId(getVmId());
+            final List<VmDevice> vmDevices = vmDeviceDao.getUnmanagedDevicesByVmId(getVmId());
 
             for (VmDevice device : vmDevices) {
                 // do not remove device if appears in white list
                 if (!VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
-                    DbFacade.getInstance().getVmDeviceDao().remove(device.getId());
+                    vmDeviceDao.remove(device.getId());
                 }
             }
         }
@@ -219,17 +216,11 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
      */
     private boolean isRunOnce() {
         List<VmDevice> cdList =
-                DbFacade.getInstance()
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(getVmId(),
-                                VmDeviceGeneralType.DISK,
-                                VmDeviceType.CDROM.getName());
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                        getVmId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName());
         List<VmDevice> floppyList =
-                DbFacade.getInstance()
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(getVmId(),
-                                VmDeviceGeneralType.DISK,
-                                VmDeviceType.FLOPPY.getName());
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                        getVmId(), VmDeviceGeneralType.DISK, VmDeviceType.FLOPPY.getName());
 
         return cdList.size() > 1 || floppyList.size() > 1;
     }

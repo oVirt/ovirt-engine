@@ -24,8 +24,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
     }
 
     protected List<VmDevice> getWatchdogs() {
-        return getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(),
-                VmDeviceGeneralType.WATCHDOG);
+        return vmDeviceDao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.WATCHDOG);
     }
 
     @Override

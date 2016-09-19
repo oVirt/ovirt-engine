@@ -52,8 +52,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
             vmStaticDao.incrementDbGeneration(getParameters().getVmId());
             getVmNicDao().remove(getParameters().getInterfaceId());
             getDbFacade().getVmNetworkStatisticsDao().remove(getParameters().getInterfaceId());
-            getDbFacade().getVmDeviceDao().remove(new VmDeviceId(getParameters().getInterfaceId(),
-                    getParameters().getVmId()));
+            vmDeviceDao.remove(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()));
             setSucceeded(true);
             return null;
         });
@@ -75,7 +74,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
         VmDynamic vm = vmDynamicDao.get(getParameters().getVmId());
         if (vm.getStatus() != VMStatus.Down && vm.getStatus() != VMStatus.ImageLocked
-                && getDbFacade().getVmDeviceDao()
+                && vmDeviceDao
                         .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))
                         .getIsPlugged()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);

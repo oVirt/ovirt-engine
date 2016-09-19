@@ -44,7 +44,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             return false;
         }
 
-        vmDevice = getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
+        vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), getVmId()));
         if (vmDevice == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
         }
@@ -83,7 +83,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         if (diskShouldBeUnPlugged()) {
             performPlugCommand(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }
-        getVmDeviceDao().remove(vmDevice.getId());
+        vmDeviceDao.remove(vmDevice.getId());
         diskVmElementDao.remove(vmDevice.getId());
 
         if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {

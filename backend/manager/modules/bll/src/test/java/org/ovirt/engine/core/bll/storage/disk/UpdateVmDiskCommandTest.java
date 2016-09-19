@@ -489,7 +489,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     protected void initializeCommand(VM vm) {
         mockGetForDisk(vm);
         mockGetVmsListForDisk(vm);
-        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         doNothing().when(command).reloadDisks();
         doNothing().when(command).updateBootOrder();
         doReturn(quotaManager).when(command).getQuotaManager();

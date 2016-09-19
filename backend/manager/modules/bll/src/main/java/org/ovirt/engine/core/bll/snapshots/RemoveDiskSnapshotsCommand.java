@@ -521,7 +521,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     protected boolean isDiskPlugged() {
-        List<VmDevice> devices = getVmDeviceDao().getVmDevicesByDeviceId(getImageGroupId(), getVmId());
+        List<VmDevice> devices = vmDeviceDao.getVmDevicesByDeviceId(getImageGroupId(), getVmId());
         return !devices.isEmpty() && devices.get(0).getIsPlugged();
     }
 

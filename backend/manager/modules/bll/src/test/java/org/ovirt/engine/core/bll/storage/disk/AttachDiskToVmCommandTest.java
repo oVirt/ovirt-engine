@@ -96,7 +96,6 @@ public class AttachDiskToVmCommandTest {
         doReturn(true).when(command).checkDiskUsedAsOvfStore(diskValidator);
         doReturn(false).when(command).isOperationPerformedOnDiskSnapshot();
 
-        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         mockStoragePoolIsoMap();
     }
 

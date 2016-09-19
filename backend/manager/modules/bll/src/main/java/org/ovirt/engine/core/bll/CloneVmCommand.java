@@ -235,7 +235,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         getParameters().setNewVmGuid(getVmId());
         getParameters().setVm(vmToClone);
 
-        List<VmDevice> devices = getVmDeviceDao().getVmDeviceByVmId(oldVmId);
+        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(oldVmId);
         getParameters().setSoundDeviceEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.SOUND));
         getParameters().setConsoleEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONSOLE));
         getParameters().setVirtioScsiEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));

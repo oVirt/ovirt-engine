@@ -39,7 +39,7 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
         if (rngDevice.getDeviceId() == null) {
             rngDevice.setDeviceId(Guid.newGuid());
         }
-        getDbFacade().getVmDeviceDao().save(rngDevice);
+        vmDeviceDao.save(rngDevice);
         setActionReturnValue(rngDevice.getDeviceId());
         setSucceeded(true);
     }

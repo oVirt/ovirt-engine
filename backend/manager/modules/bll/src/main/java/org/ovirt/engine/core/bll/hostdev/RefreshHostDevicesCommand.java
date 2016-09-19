@@ -120,7 +120,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
                 handleHostNicVfsConfigUpdate();
 
-                getVmDeviceDao().removeAllInBatch(removedVmDevices);
+                vmDeviceDao.removeAllInBatch(removedVmDevices);
 
                 return null;
             });

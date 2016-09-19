@@ -74,7 +74,6 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
 
         doReturn(disk).when(cmd).getDisk();
-        doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
     }
 
     protected void setupDisk() {

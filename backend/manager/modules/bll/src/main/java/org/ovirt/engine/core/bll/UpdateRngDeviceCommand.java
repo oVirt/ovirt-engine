@@ -36,7 +36,7 @@ public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
     @Override
     protected void executeCommand() {
         VmDevice rngDevice = getParameters().getRngDevice();
-        getDbFacade().getVmDeviceDao().update(rngDevice);
+        vmDeviceDao.update(rngDevice);
         setSucceeded(true);
     }
 }

@@ -55,7 +55,7 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         }
 
         cachedRngDevices = new ArrayList<>();
-        List<VmDevice> rngDevs = getVmDeviceDao().getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG);
+        List<VmDevice> rngDevs = vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG);
         if (rngDevs != null) {
             cachedRngDevices.addAll(rngDevs);
         }

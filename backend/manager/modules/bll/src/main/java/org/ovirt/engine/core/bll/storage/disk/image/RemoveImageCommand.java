@@ -171,7 +171,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         }
 
                         baseDiskDao.remove(diskImage.getId());
-                        getVmDeviceDao().remove(new VmDeviceId(diskImage.getId(), null));
+                        vmDeviceDao.remove(new VmDeviceId(diskImage.getId(), null));
 
                         for (Snapshot s : updatedSnapshots) {
                             snapshotDao.update(s);
