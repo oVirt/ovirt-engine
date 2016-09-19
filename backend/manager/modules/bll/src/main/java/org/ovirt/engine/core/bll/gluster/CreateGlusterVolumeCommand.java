@@ -118,8 +118,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     private boolean volumeNameExists(String volumeName) {
-        GlusterVolumeEntity volumeEntity = getGlusterVolumeDao().getByName(getClusterId(), volumeName);
-        return (volumeEntity == null) ? false : true;
+        return getGlusterVolumeDao().getByName(getClusterId(), volumeName) != null;
     }
 
     /*
