@@ -577,12 +577,9 @@ public class UpdateClusterCommandTest {
 
     private void createCommand(final Cluster group) {
         setValidCpuVersionMap();
-        final ManagementNetworkOnClusterOperationParameters param;
-        if (managementNetworkId == null) {
-            param = new ManagementNetworkOnClusterOperationParameters(group);
-        } else {
-            param = new ManagementNetworkOnClusterOperationParameters(group, managementNetworkId);
-        }
+        final ManagementNetworkOnClusterOperationParameters param =
+                new ManagementNetworkOnClusterOperationParameters(group, managementNetworkId);
+
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         cmd = spy(new UpdateClusterCommand<ManagementNetworkOnClusterOperationParameters>(param, null) {
             @Override
