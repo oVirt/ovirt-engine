@@ -3,13 +3,15 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -53,20 +55,24 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private ReplaceGlusterVolumeBrickCommand cmd;
+    @Spy
+    @InjectMocks
+    private ReplaceGlusterVolumeBrickCommand cmd =
+            new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(), null);
 
-    private void prepareMocks(ReplaceGlusterVolumeBrickCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
-        doReturn(networkDao).when(command).getNetworkDao();
-        doReturn(interfaceDao).when(command).getInterfaceDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(vdsStaticDao).when(cmd).getVdsStaticDao();
+        doReturn(networkDao).when(cmd).getNetworkDao();
+        doReturn(interfaceDao).when(cmd ).getInterfaceDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
         doReturn(getReplicatedVolume(volumeId3, 2)).when(volumeDao).getById(volumeId3);
         doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getCluster()).when(command).getCluster();
+        doReturn(getCluster()).when(cmd).getCluster();
     }
 
     private Cluster getCluster() {
@@ -136,50 +142,40 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
         return bricks;
     }
 
-    private ReplaceGlusterVolumeBrickCommand createTestCommand1(Guid volumeId) {
-        return new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(volumeId,
-                getBricks(volumeId, "distrib", 1).get(0),
-                getBricks(volumeId, "new", 1).get(0)), null);
-    }
-
-    private ReplaceGlusterVolumeBrickCommand createTestCommand2(Guid volumeId) {
-        return new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(volumeId,
-                null,
-                getBricks(volumeId, "", 1).get(0)), null);
+    private void setVolumeId(Guid volumeId) {
+        cmd.setGlusterVolumeId(volumeId);
+        cmd.getParameters().setExistingBrick(getBricks(volumeId, "distrib", 1).get(0));
+        cmd.getParameters().setNewBrick(getBricks(volumeId, "new", 1).get(0));
     }
 
     @Test
     public void validateSucceedsOnUpVolume() {
-        cmd = spy(createTestCommand1(volumeId1));
-        prepareMocks(cmd);
+        setVolumeId(volumeId1);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailesOnDownVolume() {
-        cmd = spy(createTestCommand1(volumeId2));
-        prepareMocks(cmd);
+        setVolumeId(volumeId2);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnInvalidBrick() {
-        cmd = spy(createTestCommand1(volumeId3));
-        prepareMocks(cmd);
+        setVolumeId(volumeId3);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand1(null));
-        prepareMocks(cmd);
+        setVolumeId(null);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNoBrick() {
-        cmd = spy(createTestCommand2(volumeId4));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId4);
+        cmd.getParameters().setNewBrick(getBricks(volumeId4, "", 1).get(0));
         assertFalse(cmd.validate());
     }
 

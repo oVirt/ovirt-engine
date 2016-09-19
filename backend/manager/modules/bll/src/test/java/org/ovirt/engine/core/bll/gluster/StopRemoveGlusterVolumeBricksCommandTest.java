@@ -13,11 +13,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -25,7 +27,6 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksPara
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -43,14 +44,23 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     /**
      * The command under test.
      */
-    private StopRemoveGlusterVolumeBricksCommand cmd;
+    @Spy
+    @InjectMocks
+    private StopRemoveGlusterVolumeBricksCommand cmd =
+            new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(), null);
 
-    private void prepareMocks(StopRemoveGlusterVolumeBricksCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        GlusterBrickValidator brickValidator = spy(command.getBrickValidator());
+    private void setVolumeId(Guid volumeId) {
+        cmd.setGlusterVolumeId(volumeId);
+        cmd.getParameters().setBricks(getBricks(volumeId));
+    }
+
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        GlusterBrickValidator brickValidator = spy(cmd.getBrickValidator());
         doReturn(brickDao).when(brickValidator).getGlusterBrickDao();
-        doReturn(brickValidator).when(command).getBrickValidator();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+        doReturn(brickValidator).when(cmd).getBrickValidator();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVolumeWithRemoveBricksTask(volumeWithRemoveBricksTask)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTask);
         doReturn(getBricks(volumeWithoutRemoveBricksTask)).when(brickDao)
@@ -60,8 +70,8 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         doReturn(getVolume(volumeWithoutAsyncTask)).when(volumeDao).getById(volumeWithoutAsyncTask);
         doReturn(getVolumeWithoutRemoveBricksTask(volumeWithoutRemoveBricksTask)).when(volumeDao)
                 .getById(volumeWithoutRemoveBricksTask);
-        doReturn(cluster).when(command).getCluster();
-        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
+        doReturn(cluster).when(cmd).getCluster();
+        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
     private Object getVolumeWithRemoveBricksTaskCompleted(Guid volumeId) {
@@ -99,10 +109,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
 
     @Test
     public void testExecuteCommand() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask)), null));
-        prepareMocks(cmd);
+        setVolumeId(volumeWithRemoveBricksTask);
         mockBackend(true, null);
         assertTrue(cmd.validate());
         cmd.executeCommand();
@@ -114,10 +121,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask)), null));
-        prepareMocks(cmd);
+        setVolumeId(volumeWithRemoveBricksTask);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksStopFailed);
         assertTrue(cmd.validate());
         cmd.executeCommand();
@@ -129,74 +133,52 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
 
     @Test
     public void validateSucceedsOnVolumeWithRemoveBricksTask() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask)), null));
-
-        prepareMocks(cmd);
+        setVolumeId(volumeWithRemoveBricksTask);
         assertTrue(cmd.validate());
     }
 
     // This happens in retain bricks scenario, where user can call stop remove brick after migrating the data
     @Test
     public void validateSucceedsOnVolumeWithRemoveBricksTaskCompleted() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskCompleted,
-                        getBricks(volumeWithRemoveBricksTaskCompleted)), null));
-        prepareMocks(cmd);
+        setVolumeId(volumeWithRemoveBricksTaskCompleted);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnVolumeWithoutAsyncTask() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutAsyncTask,
-                        getBricks(volumeWithoutAsyncTask)), null));
-        prepareMocks(cmd);
+        setVolumeId(volumeWithoutAsyncTask);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnVolumeWithoutRemoveBricksTask() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
-                        getBricks(volumeWithoutRemoveBricksTask)), null));
-        prepareMocks(cmd);
+        setVolumeId(volumeWithoutRemoveBricksTask);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(null,
-                        getBricks(volumeWithRemoveBricksTaskCompleted)), null));
-        prepareMocks(cmd);
+        cmd.getParameters().setBricks(getBricks(volumeWithRemoveBricksTaskCompleted));
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsWithEmptyBricksList() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
-                        new ArrayList<>()), null));
-        prepareMocks(cmd);
+        cmd.getParameters().setBricks(Collections.emptyList());
+        assertFalse(cmd.validate());
+    }
+
+    @Test
+    public void validateFailsWithInvalidNoOfBricks() {
+        cmd.setGlusterVolumeId(volumeWithRemoveBricksTask);
+        cmd.getParameters().setBricks(getInvalidNoOfBricks(volumeWithRemoveBricksTask));
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsWithInvalidBricks() {
-        List<GlusterBrickEntity> paramBricks1 = getInvalidNoOfBricks(volumeWithRemoveBricksTask);
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        paramBricks1), null));
-        prepareMocks(cmd);
-        assertFalse(cmd.validate());
-
-        List<GlusterBrickEntity> paramBricks2 = getInvalidBricks(volumeWithRemoveBricksTask);
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        paramBricks2), null));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithRemoveBricksTask);
+        cmd.getParameters().setBricks(getInvalidBricks(volumeWithRemoveBricksTask));
         assertFalse(cmd.validate());
     }
 }

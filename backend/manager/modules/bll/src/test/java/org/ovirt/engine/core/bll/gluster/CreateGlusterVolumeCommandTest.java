@@ -3,13 +3,15 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
@@ -56,11 +58,18 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     private static final Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
 
-    private CreateGlusterVolumeCommand cmd;
+    @Spy
+    @InjectMocks
+    private CreateGlusterVolumeCommand cmd = createTestCommand(getVolume(2, false));
 
     private CreateGlusterVolumeCommand createTestCommand(GlusterVolumeEntity volumeEntity) {
         CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(volumeEntity);
         return new CreateGlusterVolumeCommand(parameters, null);
+    }
+
+    private void setVolume(GlusterVolumeEntity volumeEntity) {
+        cmd.getParameters().setVolume(volumeEntity);
+        cmd.setGlusterVolumeId(volumeEntity.getId());
     }
 
     private VDS getVds(VDSStatus status) {
@@ -87,15 +96,16 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         return cluster;
     }
 
-    private void prepareMocks(CreateGlusterVolumeCommand command) {
-        doReturn(clusterDao).when(command).getClusterDao();
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
-        doReturn(brickDao).when(command).getGlusterBrickDao();
-        doReturn(networkDao).when(command).getNetworkDao();
-        doReturn(interfaceDao).when(command).getInterfaceDao();
+    @Before
+    public void prepareMocks() {
+        doReturn(clusterDao).when(cmd).getClusterDao();
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(vdsStaticDao).when(cmd).getVdsStaticDao();
+        doReturn(brickDao).when(cmd).getGlusterBrickDao();
+        doReturn(networkDao).when(cmd).getNetworkDao();
+        doReturn(interfaceDao).when(cmd).getInterfaceDao();
 
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getCluster(true)).when(clusterDao).get(any(Guid.class));
     }
@@ -131,46 +141,32 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(createTestCommand(getVolume(2, false)));
-        prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsWithClusterDoesNotSupportGluster() {
-        cmd = spy(createTestCommand(getVolume(2, false)));
-        prepareMocks(cmd);
         doReturn(getCluster(false)).when(clusterDao).get(any(Guid.class));
-
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
     }
 
     @Test
     public void validateFailsWithDuplicateVolumeName() {
-        cmd = spy(createTestCommand(getVolume(2, false)));
-        prepareMocks(cmd);
         doReturn(getVolume(2, false)).when(volumeDao).getByName(clusterId, "vol1");
-
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
     }
 
     @Test
     public void validateFailsWithEmptyBricks() {
-        cmd = spy(createTestCommand(getVolume(0, false)));
-        prepareMocks(cmd);
-
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+        setVolume(getVolume(0, false));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
     }
 
     @Test
     public void validateFailsWithDuplicateBricks() {
-        cmd = spy(createTestCommand(getVolume(2, true)));
-        prepareMocks(cmd);
-
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
+        setVolume(getVolume(2, true));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
     }
 }

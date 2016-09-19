@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -16,9 +14,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -33,7 +32,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-
 public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
 
     private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
@@ -46,7 +44,10 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private RefreshGlusterVolumeDetailsCommand cmd;
+    @Spy
+    @InjectMocks
+    private RefreshGlusterVolumeDetailsCommand cmd =
+            new RefreshGlusterVolumeDetailsCommand(new GlusterVolumeParameters(), null);
 
     @Mock
     private ClusterDao clusterDao;
@@ -55,16 +56,12 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     private GlusterSyncJob syncJob;
 
     @Before
-    public void init() {
-        injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
-    }
-
-    private void prepareMocks(RefreshGlusterVolumeDetailsCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
-        doReturn(syncJob).when(command).getSyncJobInstance();
+        doReturn(syncJob).when(cmd).getSyncJobInstance();
         doNothing().when(syncJob).refreshVolumeDetails(any(VDS.class), any(GlusterVolumeEntity.class));
 
     }
@@ -118,35 +115,27 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
         return server;
     }
 
-    private RefreshGlusterVolumeDetailsCommand createTestCommand(Guid volumeId) {
-        return new RefreshGlusterVolumeDetailsCommand(new GlusterVolumeParameters(volumeId), null);
-    }
-
     @Test
     public void validateFailesOnDownVolume() {
-        cmd = spy(createTestCommand(volumeId2));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId2);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand(null));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(null);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateSucceedsOnUpVolume() {
-        cmd = spy(createTestCommand(volumeId1));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId1);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void executeCommand() {
-        cmd = spy(createTestCommand(volumeId1));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId1);
         cmd.executeCommand();
         assertEquals(AuditLogType.GLUSTER_VOLUME_DETAILS_REFRESH, cmd.getAuditLogTypeValue());
         verify(syncJob, times(1)).refreshVolumeDetails(any(VDS.class), any(GlusterVolumeEntity.class));

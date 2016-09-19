@@ -7,15 +7,17 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -60,11 +62,14 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private StartRemoveGlusterVolumeBricksCommand cmd;
+    @Spy
+    @InjectMocks
+    private StartRemoveGlusterVolumeBricksCommand cmd =
+            new StartRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(), null);
 
-    private StartRemoveGlusterVolumeBricksCommand createTestCommand(Guid volumeId) {
-        return new StartRemoveGlusterVolumeBricksCommand(
-                new GlusterVolumeRemoveBricksParameters(volumeId, getBricks(volumeId, 1), 0), null);
+    private void setVolumeId(Guid volumeId) {
+        cmd.setGlusterVolumeId(volumeId);
+        cmd.getParameters().setBricks(getBricks(volumeId, 1));
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
@@ -80,13 +85,14 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         return bricks;
     }
 
-    private void prepareMocks(StartRemoveGlusterVolumeBricksCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
-        doReturn(cluster).when(command).getCluster();
-        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
+        doReturn(cluster).when(cmd).getCluster();
+        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
     private VDS getVds(VDSStatus status) {
@@ -142,8 +148,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommand() {
-        cmd = spy(createTestCommand(volumeId2));
-        prepareMocks(cmd);
+        setVolumeId(volumeId2);
         mockBackend(true, null);
         assertTrue(cmd.validate());
         cmd.executeCommand();
@@ -156,8 +161,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(createTestCommand(volumeId2));
-        prepareMocks(cmd);
+        setVolumeId(volumeId2);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksStartFailed);
         assertTrue(cmd.validate());
         cmd.executeCommand();
@@ -167,22 +171,18 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(createTestCommand(volumeId2));
-        prepareMocks(cmd);
+        setVolumeId(volumeId2);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(createTestCommand(volumeId1));
-        prepareMocks(cmd);
+        setVolumeId(volumeId1);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand(null));
-        prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 }

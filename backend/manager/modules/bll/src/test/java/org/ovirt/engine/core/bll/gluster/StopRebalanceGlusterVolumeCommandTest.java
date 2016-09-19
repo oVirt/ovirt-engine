@@ -10,15 +10,17 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -65,19 +67,23 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private StopRebalanceGlusterVolumeCommand cmd;
+    @Spy
+    @InjectMocks
+    private StopRebalanceGlusterVolumeCommand cmd =
+            new StopRebalanceGlusterVolumeCommand(new GlusterVolumeRebalanceParameters(), null);
 
-    private void prepareMocks(StopRebalanceGlusterVolumeCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVolumeWithRebalanceTask(volumeWithRebalanceTask)).when(volumeDao).getById(volumeWithRebalanceTask);
         doReturn(getVolumeWithRebalanceTaskCompleted(volumeWithRebalanceTaskCompleted)).when(volumeDao)
                 .getById(volumeWithRebalanceTaskCompleted);
         doReturn(getVolume(volumeWithoutAsyncTask)).when(volumeDao).getById(volumeWithoutAsyncTask);
         doReturn(getvolumeWithoutRebalanceTask(volumeWithoutRebalanceTask)).when(volumeDao)
                 .getById(volumeWithoutRebalanceTask);
-        doReturn(cluster).when(command).getCluster();
-        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
+        doReturn(cluster).when(cmd).getCluster();
+        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
     private Object getvolumeWithoutRebalanceTask(Guid volumeId) {
@@ -158,16 +164,9 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StopRebalanceGlusterVolume), any(GlusterVolumeVDSParameters.class))).thenReturn(vdsReturnValue);
     }
 
-    private StopRebalanceGlusterVolumeCommand createTestCommand(Guid volumeId) {
-        return new StopRebalanceGlusterVolumeCommand(new GlusterVolumeRebalanceParameters(volumeId,
-                false,
-                false), null);
-    }
-
     @Test
     public void executeCommand() {
-        cmd = spy(createTestCommand(volumeWithRebalanceTask));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithRebalanceTask);
         mockBackend(true, JobExecutionStatus.ABORTED, false, null);
         assertTrue(cmd.validate());
         cmd.executeCommand();
@@ -179,8 +178,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommandWithRebalanceCompleteInNode() {
-        cmd = spy(createTestCommand(volumeWithRebalanceTask));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithRebalanceTask);
         mockBackend(true, JobExecutionStatus.FINISHED, true, null);
         assertTrue(cmd.validate());
         cmd.executeCommand();
@@ -192,8 +190,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(createTestCommand(volumeWithRebalanceTask));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithRebalanceTask);
         mockBackend(false, JobExecutionStatus.FAILED, false, EngineError.GlusterVolumeRebalanceStopFailed);
         assertTrue(cmd.validate());
         cmd.executeCommand();
@@ -207,37 +204,30 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceedsOnVolumeWithRebalanceTask() {
-        cmd = spy(createTestCommand(volumeWithRebalanceTask));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithRebalanceTask);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnVolumeWithoutAsyncTask() {
-        cmd = spy(createTestCommand(volumeWithoutAsyncTask));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithoutAsyncTask);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnVolumeWithoutRebalanceTask() {
-        cmd = spy(createTestCommand(volumeWithoutRebalanceTask));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithoutRebalanceTask);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailesOnVolumeWithRebalanceTaskCompleted() {
-        cmd = spy(createTestCommand(volumeWithRebalanceTaskCompleted));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeWithRebalanceTaskCompleted);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand(null));
-        prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
-
 }

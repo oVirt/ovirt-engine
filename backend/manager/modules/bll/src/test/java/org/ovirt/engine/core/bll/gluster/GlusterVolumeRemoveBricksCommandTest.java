@@ -3,13 +3,15 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -37,11 +39,14 @@ public class GlusterVolumeRemoveBricksCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private GlusterVolumeRemoveBricksCommand cmd;
+    @Spy
+    @InjectMocks
+    private GlusterVolumeRemoveBricksCommand cmd =
+            new GlusterVolumeRemoveBricksCommand(new GlusterVolumeRemoveBricksParameters(), null);
 
-    private GlusterVolumeRemoveBricksCommand createTestCommand(Guid volumeId) {
-        return new GlusterVolumeRemoveBricksCommand
-                (new GlusterVolumeRemoveBricksParameters(volumeId, getBricks(volumeId, 1), 0), null);
+    private void setVolumeId(Guid volumeId) {
+        cmd.setGlusterVolumeId(volumeId);
+        cmd.getParameters().setBricks(getBricks(volumeId, 1));
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
@@ -57,9 +62,10 @@ public class GlusterVolumeRemoveBricksCommandTest extends BaseCommandTest {
         return bricks;
     }
 
-    private void prepareMocks(GlusterVolumeRemoveBricksCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
     }
@@ -101,22 +107,19 @@ public class GlusterVolumeRemoveBricksCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(createTestCommand(volumeId2));
-        prepareMocks(cmd);
+        setVolumeId(volumeId2);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(createTestCommand(volumeId1));
-        prepareMocks(cmd);
+        setVolumeId(volumeId1);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand(null));
-        prepareMocks(cmd);
+        setVolumeId(null);
         assertFalse(cmd.validate());
     }
 }

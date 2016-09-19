@@ -3,10 +3,12 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -31,11 +33,15 @@ public class DeleteGlusterVolumeCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private DeleteGlusterVolumeCommand cmd;
+    @Spy
+    @InjectMocks
+    private DeleteGlusterVolumeCommand cmd =
+            new DeleteGlusterVolumeCommand(new GlusterVolumeActionParameters(null, false), null);
 
-    private void prepareMocks(DeleteGlusterVolumeCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getGlusterVolume(stoppedVolumeId)).when(volumeDao).getById(stoppedVolumeId);
         doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);
     }
@@ -64,22 +70,18 @@ public class DeleteGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new DeleteGlusterVolumeCommand(new GlusterVolumeActionParameters(stoppedVolumeId, false), null));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(stoppedVolumeId);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(new DeleteGlusterVolumeCommand(new GlusterVolumeActionParameters(startedVolumeId, false), null));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(startedVolumeId);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new DeleteGlusterVolumeCommand(new GlusterVolumeActionParameters(null, false), null));
-        prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 

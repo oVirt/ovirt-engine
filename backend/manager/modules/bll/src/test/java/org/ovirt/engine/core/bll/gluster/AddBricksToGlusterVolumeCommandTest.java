@@ -4,13 +4,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -75,18 +77,21 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private AddBricksToGlusterVolumeCommand cmd;
+    @Spy
+    @InjectMocks
+    private AddBricksToGlusterVolumeCommand cmd =
+            new AddBricksToGlusterVolumeCommand(new GlusterVolumeBricksActionParameters(), null);
 
-    private AddBricksToGlusterVolumeCommand createTestCommand(Guid volumeId,
+    private void initTestCommand(Guid volumeId,
             List<GlusterBrickEntity> bricks,
             int replicaCount,
             int stripeCount,
             boolean force) {
-        return new AddBricksToGlusterVolumeCommand(new GlusterVolumeBricksActionParameters(volumeId,
-                bricks,
-                replicaCount,
-                stripeCount,
-                force), null);
+        cmd.setGlusterVolumeId(volumeId);
+        cmd.getParameters().setBricks(bricks);
+        cmd.getParameters().setReplicaCount(replicaCount);
+        cmd.getParameters().setStripeCount(stripeCount);
+        cmd.getParameters().setForce(force);
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
@@ -123,19 +128,20 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         return vds;
     }
 
-    private void prepareMocks(AddBricksToGlusterVolumeCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
-        doReturn(brickDao).when(command).getGlusterBrickDao();
-        doReturn(networkDao).when(command).getNetworkDao();
-        doReturn(interfaceDao).when(command).getInterfaceDao();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(vdsStaticDao).when(cmd).getVdsStaticDao();
+        doReturn(brickDao).when(cmd).getGlusterBrickDao();
+        doReturn(networkDao).when(cmd).getNetworkDao();
+        doReturn(interfaceDao).when(cmd).getInterfaceDao();
 
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2, 2)).when(volumeDao).getById(volumeId2);
         doReturn(getBrick(volumeId1, serverId, BRICK_DIRECTORY)).when(brickDao).getBrickByServerIdAndDirectory(serverId, BRICK_DIRECTORY);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getCluster()).when(command).getCluster();
+        doReturn(getCluster()).when(cmd).getCluster();
     }
 
     private void prepareInterfaceMocks() {
@@ -209,37 +215,32 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1), 2, 0, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeId2, getBricks(volumeId2, 1), 2, 0, false);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsWithDuplicateBricks() {
-        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0, false);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsDiffInterface() {
-        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false);
         prepareInterfaceMocks();
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnSameServer() {
-        cmd = spy(createTestCommand(volumeIdRepl, getBricks(volumeIdRepl, 3, true), 3, 0, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeIdRepl, getBricks(volumeIdRepl, 3, true), 3, 0, false);
         GlusterVolumeEntity vol = getMultiBrickVolume(volumeIdRepl, 3);
         vol.setVolumeType(GlusterVolumeType.REPLICATE);
         vol.setReplicaCount(3);
@@ -249,8 +250,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsOnSameServerIncreasingReplica() {
-        cmd = spy(createTestCommand(volumeIdRepl, getBricks(volumeIdRepl, 2, true), 3, 0, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeIdRepl, getBricks(volumeIdRepl, 2, true), 3, 0, false);
         GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         vol.setReplicaCount(2);
@@ -263,8 +263,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         List<GlusterBrickEntity> bricks = new ArrayList<>();
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick1"));
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick2"));
-        cmd = spy(createTestCommand(volumeIdRepl, bricks, 3, 0, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeIdRepl, bricks, 3, 0, false);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(any(Guid.class));
         GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
@@ -278,8 +277,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         List<GlusterBrickEntity> bricks = new ArrayList<>();
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick1"));
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick2"));
-        cmd = spy(createTestCommand(volumeIdRepl, bricks, 2, 0, false));
-        prepareMocks(cmd);
+        initTestCommand(volumeIdRepl, bricks, 2, 0, false);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(any(Guid.class));
         GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
@@ -290,9 +288,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand(null, null, 0, 0, false));
-        prepareMocks(cmd);
+        initTestCommand(null, null, 0, 0, false);
         assertFalse(cmd.validate());
     }
-
 }

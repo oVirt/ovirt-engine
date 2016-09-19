@@ -3,13 +3,15 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -40,16 +42,20 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private StartRebalanceGlusterVolumeCommand cmd;
+    @Spy
+    @InjectMocks
+    private StartRebalanceGlusterVolumeCommand cmd =
+            new StartRebalanceGlusterVolumeCommand(new GlusterVolumeRebalanceParameters(), null);
 
-    private void prepareMocks(StartRebalanceGlusterVolumeCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
         doReturn(getReplicatedVolume(volumeId3, 2)).when(volumeDao).getById(volumeId3);
         doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
-        doReturn(cluster).when(command).getCluster();
+        doReturn(cluster).when(cmd).getCluster();
     }
 
     private VDS getVds(VDSStatus status) {
@@ -102,44 +108,32 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         return bricks;
     }
 
-    private StartRebalanceGlusterVolumeCommand createTestCommand(Guid volumeId) {
-        return new StartRebalanceGlusterVolumeCommand(new GlusterVolumeRebalanceParameters(volumeId,
-                false,
-                false), null);
-    }
-
     @Test
     public void validateSucceedsOnUpVolume() {
-        cmd = spy(createTestCommand(volumeId1));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId1);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateSucceedsOnDistributedVolume() {
-        cmd = spy(createTestCommand(volumeId4));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId4);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailesOnDownVolume() {
-        cmd = spy(createTestCommand(volumeId2));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId2);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNoDistribution() {
-        cmd = spy(createTestCommand(volumeId3));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(volumeId3);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(createTestCommand(null));
-        prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 }

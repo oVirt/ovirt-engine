@@ -3,10 +3,12 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -28,11 +30,15 @@ public class StartGlusterVolumeProfileCommandTest extends BaseCommandTest {
     private static final Guid STOPPED_VOLUME_ID = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
-    private StartGlusterVolumeProfileCommand cmd;
+    @Spy
+    @InjectMocks
+    private StartGlusterVolumeProfileCommand cmd =
+            new StartGlusterVolumeProfileCommand(new GlusterVolumeParameters(), null);
 
-    private void prepareMocks(StartGlusterVolumeProfileCommand command) {
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Before
+    public void prepareMocks() {
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getGlusterVolume(STOPPED_VOLUME_ID)).when(volumeDao).getById(STOPPED_VOLUME_ID);
         doReturn(getGlusterVolume(STARTED_VOLUME_ID)).when(volumeDao).getById(STARTED_VOLUME_ID);
     }
@@ -60,23 +66,18 @@ public class StartGlusterVolumeProfileCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceedsOnStoppedVolume() {
-        cmd = spy(new StartGlusterVolumeProfileCommand(new GlusterVolumeParameters(STOPPED_VOLUME_ID), null));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(STOPPED_VOLUME_ID);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateSucceedsOnStartedVolume() {
-        cmd = spy(new StartGlusterVolumeProfileCommand(new GlusterVolumeParameters(STARTED_VOLUME_ID), null));
-        prepareMocks(cmd);
+        cmd.setGlusterVolumeId(STARTED_VOLUME_ID);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new StartGlusterVolumeProfileCommand(new GlusterVolumeParameters(null), null));
-        prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
-
 }
