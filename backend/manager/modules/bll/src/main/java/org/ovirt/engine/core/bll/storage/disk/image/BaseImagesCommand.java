@@ -196,7 +196,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
         DiskImage oldImage = diskImageDao.getSnapshotById(oldImageId);
         oldImage.setActive(active);
-        getImageDao().update(oldImage.getImage());
+        imageDao.update(oldImage.getImage());
     }
 
     /**
@@ -270,7 +270,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext, boolean active) {
         image.setActive(active);
-        getImageDao().save(image.getImage());
+        imageDao.save(image.getImage());
         DiskImageDynamic diskDynamic = updateDiskImageDynamicIntoDB(image);
         ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(image.getImageId(),
                 image.getStorageIds().get(0), image.getQuotaId(), image.getDiskProfileId());
@@ -378,7 +378,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 if (!getParameters().isLeaveLocked()) {
                     getDestinationDiskImage().setImageStatus(ImageStatus.OK);
                 }
-                getImageDao().update(getDestinationDiskImage().getImage());
+                imageDao.update(getDestinationDiskImage().getImage());
             }
         }
 
@@ -412,7 +412,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void removeSnapshot(DiskImage snapshot) {
         getImageStorageDomainMapDao().remove(snapshot.getImageId());
-        getImageDao().remove(snapshot.getImageId());
+        imageDao.remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =
                 diskImageDao.getAllSnapshotsForImageGroup(snapshot.getId());
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {

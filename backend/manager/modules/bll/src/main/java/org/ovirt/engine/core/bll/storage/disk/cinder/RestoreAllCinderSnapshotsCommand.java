@@ -94,7 +94,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             // Needed for stateless snapshot
             diskFromSnapshot.setVmSnapshotId(vmSnapshotId);
         }
-        getImageDao().update(diskFromSnapshot.getImage());
+        imageDao.update(diskFromSnapshot.getImage());
     }
 
     private ImagesContainterParametersBase getRestoreFromSnapshotParams(CinderDisk cinderDisk) {
@@ -144,7 +144,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
         List<CinderDisk> cinderVolumesToRemove = getParameters().getCinderVolumesToRemove();
         for (CinderDisk cinderVolume : cinderVolumesToRemove) {
             getDbFacade().getImageStorageDomainMapDao().remove(cinderVolume.getImageId());
-            getImageDao().remove(cinderVolume.getImageId());
+            imageDao.remove(cinderVolume.getImageId());
         }
     }
 

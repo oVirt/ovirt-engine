@@ -88,7 +88,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
         if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {
             // clears snapshot ID
-            getImageDao().updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
+            imageDao.updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
         }
 
         // update cached image

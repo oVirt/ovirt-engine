@@ -115,7 +115,7 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
         ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         if (!getParameters().isLeaveLocked()) {
             getDestinationDiskImage().setImageStatus(ImageStatus.OK);
-            getImageDao().update(getDestinationDiskImage().getImage());
+            imageDao.update(getDestinationDiskImage().getImage());
         }
         setSucceeded(true);
     }

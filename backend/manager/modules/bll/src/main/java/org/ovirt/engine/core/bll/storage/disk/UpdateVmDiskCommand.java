@@ -386,7 +386,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                         if (unlockImage && diskImage.getImageStatus() == ImageStatus.LOCKED) {
                             diskImage.setImageStatus(ImageStatus.OK);
                         }
-                        getImageDao().update(diskImage.getImage());
+                        imageDao.update(diskImage.getImage());
                         updateQuota(diskImage);
                         updateDiskProfile();
                         break;
@@ -398,7 +398,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                         if (unlockImage && cinderDisk.getImageStatus() == ImageStatus.LOCKED) {
                             cinderDisk.setImageStatus(ImageStatus.OK);
                         }
-                        getImageDao().update(cinderDisk.getImage());
+                        imageDao.update(cinderDisk.getImage());
                         updateQuota(cinderDisk);
                         break;
                     case LUN:

@@ -452,7 +452,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private void updateSnapshotIdForSkipRestoreImages(List<DiskImage> skipRestoreImages, Guid snapshotId) {
         for (DiskImage image : skipRestoreImages) {
-            getImageDao().updateImageVmSnapshotId(image.getImageId(), snapshotId);
+            imageDao.updateImageVmSnapshotId(image.getImageId(), snapshotId);
         }
     }
 

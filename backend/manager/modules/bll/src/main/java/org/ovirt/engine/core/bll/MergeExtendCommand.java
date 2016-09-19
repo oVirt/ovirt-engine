@@ -97,7 +97,7 @@ public class MergeExtendCommand<T extends MergeParameters>
         long sizeInBytes = getParameters().getTopImage().getSize();
         log.info("Updating size of image {} to {}", diskImage, sizeInBytes);
 
-        getDbFacade().getImageDao().updateImageSize(diskImage, sizeInBytes);
+        imageDao.updateImageSize(diskImage, sizeInBytes);
     }
 
     @Override

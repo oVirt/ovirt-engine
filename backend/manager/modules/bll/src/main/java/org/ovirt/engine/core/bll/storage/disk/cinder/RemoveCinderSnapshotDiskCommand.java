@@ -54,9 +54,9 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
             if (!orderedCinderSnapshots.isEmpty()) {
                 DiskImage volumeBasedOnsnapshot = orderedCinderSnapshots.get(0);
                 volumeBasedOnsnapshot.setParentId(curr.getParentId());
-                getImageDao().update(volumeBasedOnsnapshot.getImage());
+                imageDao.update(volumeBasedOnsnapshot.getImage());
             }
-            getImageDao().remove(curr.getImageId());
+            imageDao.remove(curr.getImageId());
         }
         setSucceeded(true);
     }
@@ -73,7 +73,7 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
                 if (!getParameters().isLeaveLocked()) {
                     DiskImage diskImage = getImage();
                     if (diskImage != null) {
-                        getImageDao().updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
+                        imageDao.updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
                     }
                     unLockImage();
                 }

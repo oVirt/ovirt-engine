@@ -350,7 +350,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
             // Fast-forward non-included disks to active snapshot
             for (DiskImage diskImage : diskImagesToUpdate) {
-                getImageDao().updateImageVmSnapshotId(diskImage.getImageId(), newActiveSnapshotId);
+                imageDao.updateImageVmSnapshotId(diskImage.getImageId(), newActiveSnapshotId);
             }
         }
     }

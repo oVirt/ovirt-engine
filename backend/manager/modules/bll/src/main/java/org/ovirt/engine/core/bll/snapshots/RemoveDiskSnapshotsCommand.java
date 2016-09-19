@@ -421,7 +421,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             List<DiskImage> images = getAllImagesForDisk();
             for (DiskImage image : images) {
                 if (image.getImageStatus() == ImageStatus.LOCKED) {
-                    getImageDao().updateStatus(image.getImageId(), ImageStatus.OK);
+                    imageDao.updateStatus(image.getImageId(), ImageStatus.OK);
                 }
             }
         } else {

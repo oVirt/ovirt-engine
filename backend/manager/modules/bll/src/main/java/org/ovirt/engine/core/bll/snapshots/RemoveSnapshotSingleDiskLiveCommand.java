@@ -160,7 +160,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     }
 
     private RemoveSnapshotSingleDiskLiveStep getInitialMergeStepForImage(Guid imageId) {
-        Image image = getImageDao().get(imageId);
+        Image image = imageDao.get(imageId);
         if (image.getStatus() == ImageStatus.ILLEGAL
                 && image.getParentId().equals(Guid.Empty)) {
             List<DiskImage> children = diskImageDao.getAllSnapshotsForParent(imageId);
@@ -239,7 +239,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         DiskImage curr = getDestinationDiskImage();
         while (!curr.getImageId().equals(getDiskImage().getImageId())) {
             curr = diskImageDao.getSnapshotById(curr.getParentId());
-            getImageDao().updateStatus(curr.getImageId(), ImageStatus.ILLEGAL);
+            imageDao.updateStatus(curr.getImageId(), ImageStatus.ILLEGAL);
         }
     }
 

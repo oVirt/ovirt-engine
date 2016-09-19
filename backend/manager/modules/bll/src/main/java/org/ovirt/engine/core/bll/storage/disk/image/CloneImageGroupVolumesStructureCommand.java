@@ -92,7 +92,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     }
 
     private Guid determineSourceImageGroup(DiskImage image) {
-        return image.getImageTemplateId() != Guid.Empty ? getImageDao().get(image.getImageTemplateId()).getId() :
+        return image.getImageTemplateId() != Guid.Empty ? imageDao.get(image.getImageTemplateId()).getId() :
                 getParameters().getImageGroupID();
 
     }

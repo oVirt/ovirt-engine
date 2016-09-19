@@ -139,7 +139,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         getDiskImage().setLastModified(new Date());
         getDiskImage().setActive(false);
         getDiskImage().setVolumeClassification(VolumeClassification.Snapshot);
-        getImageDao().update(getDiskImage().getImage());
+        imageDao.update(getDiskImage().getImage());
         getCompensationContext().stateChanged();
     }
 
@@ -160,7 +160,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                         previousSnapshot.setLastModified(getParameters().getOldLastModifiedValue());
                     }
 
-                    getImageDao().update(previousSnapshot.getImage());
+                    imageDao.update(previousSnapshot.getImage());
                 }
             }
         }

@@ -89,12 +89,12 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
     protected void removeDiskFromDb(final CinderDisk cinderVolume, Snapshot updated) {
         if (cinderVolume.getActive()) {
             // Get the base volume and set it as active, so the disk will not disappear from the disks view.
-            Image baseVol = getImageDao().get(cinderVolume.getId());
+            Image baseVol = imageDao.get(cinderVolume.getId());
             baseVol.setActive(true);
-            getImageDao().update(baseVol);
+            imageDao.update(baseVol);
         }
         getImageStorageDomainMapDao().remove(cinderVolume.getImageId());
-        getImageDao().remove(cinderVolume.getImageId());
+        imageDao.remove(cinderVolume.getImageId());
         diskImageDynamicDao.remove(cinderVolume.getImageId());
         if (updated != null) {
             getSnapshotDao().update(updated);

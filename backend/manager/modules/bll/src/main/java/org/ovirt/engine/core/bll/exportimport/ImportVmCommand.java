@@ -839,7 +839,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /** Updates an image of a disk */
     protected void updateImage(DiskImage disk) {
-        getImageDao().update(disk.getImage());
+        imageDao.update(disk.getImage());
     }
 
     /**

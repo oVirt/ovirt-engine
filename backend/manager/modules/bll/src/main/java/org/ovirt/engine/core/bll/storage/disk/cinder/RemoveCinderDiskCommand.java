@@ -64,7 +64,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         CinderDisk parentVolume = (CinderDisk) diskImageDao.getSnapshotById(disk.getId());
         initCinderDiskVolumesParametersList(parentVolume);
         if (!removeCinderVolume(0, getDisk().getStorageIds().get(0))) {
-            getImageDao().updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
+            imageDao.updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
             setSucceeded(false);
             return;
         }
@@ -107,7 +107,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         int removedVolumeIndex = getParameters().getRemovedVolumeIndex();
         final CinderDisk cinderVolume =
                 getParameters().getChildCommandsParameters().get(removedVolumeIndex).getRemovedVolume();
-        getImageDao().updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
+        imageDao.updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
         addCustomValue("imageId", cinderVolume.getImageId().toString());
         new AuditLogDirector().log(this, AuditLogType.USER_FINISHED_FAILED_REMOVE_CINDER_DISK);
         setSucceeded(true);

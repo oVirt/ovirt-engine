@@ -72,7 +72,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                         .getVmDeviceDao()
                         .remove(new VmDeviceId(diskImage.getImageId(), getVmTemplateId()));
                 DbFacade.getInstance().getImageStorageDomainMapDao().remove(diskImage.getImageId());
-                DbFacade.getInstance().getImageDao().remove(template.getImageId());
+                imageDao.remove(template.getImageId());
             }
         }
         setSucceeded(true);

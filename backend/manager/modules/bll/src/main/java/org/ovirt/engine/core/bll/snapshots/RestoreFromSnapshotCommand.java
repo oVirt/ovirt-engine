@@ -38,7 +38,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         if (removeImages()) {
             if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
                 getImage().setActive(true);
-                getImageDao().update(getImage().getImage());
+                imageDao.update(getImage().getImage());
             }
 
             setSucceeded(true);

@@ -37,7 +37,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
 
         // Update the volume with active=false, so removeDiskFromDb will not set active volume on the first volume.
         cinderSnapshotToRemove.setActive(false);
-        getImageDao().update(cinderSnapshotToRemove.getImage());
+        imageDao.update(cinderSnapshotToRemove.getImage());
         removeDescendentSnapshots(cinderSnapshotToRemove);
         removeCinderVolume(cinderSnapshotToRemove.getStorageIds().get(0), 0);
     }

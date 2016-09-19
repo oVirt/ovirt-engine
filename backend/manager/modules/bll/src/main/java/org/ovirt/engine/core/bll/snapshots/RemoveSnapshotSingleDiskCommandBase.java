@@ -101,13 +101,13 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             }
             for (Guid imageId : imagesToUpdate) {
                 if (removeImages) {
-                    getImageDao().remove(imageId);
+                    imageDao.remove(imageId);
                 } else {
                     // The (illegal && no-parent && no-children) status indicates an orphaned image.
-                    Image image = getImageDao().get(imageId);
+                    Image image = imageDao.get(imageId);
                     image.setStatus(ImageStatus.ILLEGAL);
                     image.setParentId(Guid.Empty);
-                    getImageDao().update(image);
+                    imageDao.update(image);
                 }
             }
             return null;
@@ -123,7 +123,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         getDestinationDiskImage().setActualSizeInBytes(getImageInfoFromVdsm(getDestinationDiskImage()).getActualSizeInBytes());
 
         baseDiskDao.update(topImage);
-        getImageDao().update(topImage.getImage());
+        imageDao.update(topImage.getImage());
         updateDiskImageDynamic(imageFromVdsm, topImage);
 
         updateVmConfigurationForImageChange(getDestinationDiskImage().getImage().getSnapshotId(),
@@ -140,7 +140,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         if (!children.isEmpty()) {
             DiskImage childImage = children.get(0);
             childImage.setParentId(baseImage.getImageId());
-            getImageDao().update(childImage.getImage());
+            imageDao.update(childImage.getImage());
         }
 
         Image oldTopImage = topImage.getImage();
@@ -165,11 +165,11 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         topImage.setActualSizeInBytes(imageFromVdsm.getActualSizeInBytes());
         topImage.setImageStatus(ImageStatus.OK);
         baseDiskDao.update(topImage);
-        getImageDao().update(topImage.getImage());
+        imageDao.update(topImage.getImage());
         updateDiskImageDynamic(imageFromVdsm, topImage);
 
         baseDiskDao.update(baseImage);
-        getImageDao().update(baseImage.getImage());
+        imageDao.update(baseImage.getImage());
 
         updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),
                 baseImage.getImageId(), topImage);

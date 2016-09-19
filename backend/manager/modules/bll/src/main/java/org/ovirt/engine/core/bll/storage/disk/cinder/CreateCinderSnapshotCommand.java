@@ -79,7 +79,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         if (isStatelessSnapshot()) {
             getDiskImage().setActive(Boolean.FALSE);
         }
-        getImageDao().update(getDiskImage().getImage());
+        imageDao.update(getDiskImage().getImage());
         getCompensationContext().stateChanged();
     }
 
@@ -111,7 +111,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
     protected void endSuccessfully() {
         if (!getParameters().isLeaveLocked()) {
             getDestinationDiskImage().setImageStatus(ImageStatus.OK);
-            getImageDao().update(getDestinationDiskImage().getImage());
+            imageDao.update(getDestinationDiskImage().getImage());
         }
         setSucceeded(true);
     }
@@ -171,7 +171,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         if (getParameters().getOldLastModifiedValue() != null) {
             previousSnapshot.setLastModified(getParameters().getOldLastModifiedValue());
         }
-        getImageDao().update(previousSnapshot.getImage());
+        imageDao.update(previousSnapshot.getImage());
     }
 
     private boolean isImageSnapshot(DiskImage destinationImage) {

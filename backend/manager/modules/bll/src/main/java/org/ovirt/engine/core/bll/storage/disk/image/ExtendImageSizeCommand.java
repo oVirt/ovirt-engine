@@ -84,7 +84,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         DiskImage diskImage = getImageInfo();
         if (diskImage != null && getImage().getSize() != diskImage.getSize()) {
             getReturnValue().setActionReturnValue(diskImage.getSize());
-            getImageDao().updateImageSize(diskImage.getImageId(), diskImage.getSize());
+            imageDao.updateImageSize(diskImage.getImageId(), diskImage.getSize());
             updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_SUCCESS, diskImage.getSizeInGigabytes());
         }
 
@@ -197,7 +197,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         DiskImage diskImage = getImageInfo();
         if (diskImage != null && getImage().getSize() != diskImage.getSize()) {
             getReturnValue().setActionReturnValue(diskImage.getSize());
-            getImageDao().updateImageSize(diskImage.getImageId(), diskImage.getSize());
+            imageDao.updateImageSize(diskImage.getImageId(), diskImage.getSize());
         }
 
         updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, getParameters().getNewSizeInGB());

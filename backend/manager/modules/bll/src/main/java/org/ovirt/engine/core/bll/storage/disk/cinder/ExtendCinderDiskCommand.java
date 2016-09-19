@@ -39,7 +39,7 @@ public class ExtendCinderDiskCommand<T extends VmDiskOperationParameterBase> ext
 
     protected void performDiskUpdate() {
         CinderDisk cinderDisk = (CinderDisk) getNewDisk();
-        getImageDao().updateImageSize(cinderDisk.getImageId(), cinderDisk.getSize());
+        imageDao.updateImageSize(cinderDisk.getImageId(), cinderDisk.getSize());
         performDiskUpdate(true);
     }
 

@@ -110,7 +110,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                 if (!getParameters().isLeaveLocked()) {
                     DiskImage diskImage = getDestinationDiskImage();
                     if (diskImage != null) {
-                        getImageDao().updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
+                        imageDao.updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
                     }
                     unLockImage();
                 }
