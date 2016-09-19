@@ -47,7 +47,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         getStoragePool().setId(Guid.newGuid());
         getStoragePool().setStatus(StoragePoolStatus.Uninitialized);
 
-        getStoragePoolDao().save(getStoragePool());
+        storagePoolDao.save(getStoragePool());
     }
 
     @Override

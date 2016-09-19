@@ -514,7 +514,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
         }
         if (result && getCluster().getStoragePoolId() != null) {
-            StoragePool storagePool = getStoragePoolDao().get(getCluster().getStoragePoolId());
+            StoragePool storagePool = storagePoolDao.get(getCluster().getStoragePoolId());
             if (oldCluster.getStoragePoolId() == null && storagePool.isLocal()) {
                 // we allow only one cluster in localfs data center
                 if (!getClusterDao().getAllForStoragePool(getCluster().getStoragePoolId()).isEmpty()) {

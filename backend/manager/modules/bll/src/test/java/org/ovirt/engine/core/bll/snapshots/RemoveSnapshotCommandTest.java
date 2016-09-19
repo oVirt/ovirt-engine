@@ -72,7 +72,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();

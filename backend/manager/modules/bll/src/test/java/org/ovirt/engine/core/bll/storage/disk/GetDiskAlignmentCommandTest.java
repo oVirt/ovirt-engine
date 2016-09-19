@@ -115,7 +115,6 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         doReturn(disk).when(cmd).getDisk();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(vmDao).when(cmd).getVmDao();
-        doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
     }
 

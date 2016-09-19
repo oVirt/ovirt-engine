@@ -137,7 +137,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
-        StoragePool sp = getStoragePoolDao().get(getStoragePoolId());
+        StoragePool sp = storagePoolDao.get(getStoragePoolId());
         if (!validate(new StoragePoolValidator(sp).isUp())) {
             return false;
         }

@@ -103,7 +103,6 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         cmd.init();
 
         doReturn(vdsDao).when(cmd).getVdsDao();
-        doReturn(spDao).when(cmd).getStoragePoolDao();
     }
 
     @Test

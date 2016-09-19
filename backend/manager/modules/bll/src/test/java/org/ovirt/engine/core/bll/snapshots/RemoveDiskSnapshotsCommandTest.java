@@ -67,7 +67,6 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
         doReturn(snapshotsValidator).when(cmd).getSnapshotsValidator();
         doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();

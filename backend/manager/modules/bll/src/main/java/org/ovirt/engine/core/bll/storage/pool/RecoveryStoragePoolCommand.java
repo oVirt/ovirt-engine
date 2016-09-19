@@ -122,8 +122,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                         boolean reconstructVerbExecuted = (returnVal.getActionReturnValue() != null) ?
                                 (Boolean) returnVal.getActionReturnValue() : false;
 
-                        getStoragePoolDao().updateStatus(getStoragePool().getId(),
-                                StoragePoolStatus.NonResponsive);
+                        storagePoolDao.updateStatus(getStoragePool().getId(), StoragePoolStatus.NonResponsive);
 
                         if (!reconstructVerbExecuted) {
                             getStoragePoolIsoMapDao().remove(domainPoolMap.getId());

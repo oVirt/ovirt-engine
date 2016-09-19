@@ -67,7 +67,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
         command.setStoragePool(getStoragePool());
 
         doReturn(vdsDao).when(command).getVdsDao();
-        doReturn(storagePoolDao).when(command).getStoragePoolDao();
 
         doReturn(false).when(command).isStorageWithSameNameExists();
 
@@ -75,7 +74,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
         doNothing().when(command).updateStorageDomainDynamicFromIrs();
 
         when(command.getVdsDao().getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(getHosts());
-        when(command.getStoragePoolDao().get(any(Guid.class))).thenReturn(getStoragePool());
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(getStoragePool());
     }
 
     @Test

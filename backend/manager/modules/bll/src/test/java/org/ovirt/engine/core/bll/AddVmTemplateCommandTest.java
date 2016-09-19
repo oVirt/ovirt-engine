@@ -294,7 +294,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         StoragePool storagePool = new StoragePool();
         storagePool.setId(vm.getStoragePoolId());
         storagePool.setStatus(StoragePoolStatus.Up);
-        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         when(storagePoolDao.get(vm.getStoragePoolId())).thenReturn(storagePool);
     }
 

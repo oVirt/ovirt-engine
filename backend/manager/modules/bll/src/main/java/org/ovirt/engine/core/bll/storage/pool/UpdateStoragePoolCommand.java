@@ -77,7 +77,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     protected void executeCommand() {
         updateQuotaCache();
         copyUnchangedStoragePoolProperties(getStoragePool(), oldStoragePool);
-        getStoragePoolDao().updatePartial(getStoragePool());
+        storagePoolDao.updatePartial(getStoragePool());
 
         updateStoragePoolFormatType();
         updateAllClustersMacPool();
@@ -118,7 +118,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
         TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
                 () -> {
-                    getStoragePoolDao().updatePartial(storagePool);
+                    storagePoolDao.updatePartial(storagePool);
                     updateMemberDomainsFormat(targetFormat);
                     getVmStaticDao().incrementDbGenerationForAllInStoragePool(storagePool.getId());
                     return null;
@@ -345,7 +345,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private StoragePool getOldStoragePool() {
         if (oldStoragePool == null) {
-            oldStoragePool = getStoragePoolDao().get(getStoragePool().getId());
+            oldStoragePool = storagePoolDao.get(getStoragePool().getId());
         }
 
         return oldStoragePool;

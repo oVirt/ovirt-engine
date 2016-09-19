@@ -47,7 +47,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
         storagePool = cmd.getParameters().getStoragePool();
         cmd.init();
 
-        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
 
         doReturn(storagePoolIsoMapDao).when(cmd).getStoragePoolIsoMapDao();

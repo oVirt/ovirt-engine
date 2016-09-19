@@ -603,7 +603,6 @@ public class UpdateClusterCommandTest {
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
-        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(networkDao).when(cmd).getNetworkDao();

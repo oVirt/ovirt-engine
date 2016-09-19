@@ -71,6 +71,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainStaticDao storageDomainStaticDao;
 
+    @Mock
+    private StoragePoolDao storagePoolDao;
+
     @Spy
     @InjectMocks
     private ImportVmTemplateCommand command =
@@ -192,13 +195,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     private void mockStoragePool() {
-        final StoragePoolDao dao = mock(StoragePoolDao.class);
-
         final StoragePool pool = new StoragePool();
         pool.setId(command.getParameters().getStoragePoolId());
-        when(dao.get(any(Guid.class))).thenReturn(pool);
-
-        doReturn(dao).when(command).getStoragePoolDao();
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
     }
 
     private void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat, VolumeType volumeType) {

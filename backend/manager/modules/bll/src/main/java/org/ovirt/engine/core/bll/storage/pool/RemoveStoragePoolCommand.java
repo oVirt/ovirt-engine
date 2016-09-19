@@ -88,7 +88,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     private void removeDataCenter() {
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntity(getStoragePool());
-            getStoragePoolDao().remove(getStoragePool().getId());
+            storagePoolDao.remove(getStoragePool().getId());
             getCompensationContext().stateChanged();
 
             return null;

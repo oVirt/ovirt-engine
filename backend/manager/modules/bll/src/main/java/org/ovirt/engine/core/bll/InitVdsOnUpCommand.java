@@ -184,10 +184,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private void processStoragePoolStatus() {
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
-            StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getStoragePoolId());
+            StoragePool pool = storagePoolDao.get(getVds().getStoragePoolId());
             if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
                 pool.setStatus(StoragePoolStatus.NonResponsive);
-                DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(), pool.getStatus());
+                storagePoolDao.updateStatus(pool.getId(), pool.getStatus());
                 StoragePoolStatusHandler.poolStatusChanged(pool.getId(), pool.getStatus());
             }
         }
@@ -244,7 +244,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private EventResult runConnectHostToPoolEvent(final Guid storagePoolId, final VDS vds) {
         EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
-        StoragePool storagePool = getStoragePoolDao().get(storagePoolId);
+        StoragePool storagePool = storagePoolDao.get(storagePoolId);
         StorageDomain masterDomain = storageDomainDao.getStorageDomains(storagePoolId, StorageDomainType.Master).get(0);
         List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDao().getAllForStoragePool(storagePoolId);
         boolean masterDomainInactiveOrUnknown = masterDomain.getStatus() == StorageDomainStatus.Inactive

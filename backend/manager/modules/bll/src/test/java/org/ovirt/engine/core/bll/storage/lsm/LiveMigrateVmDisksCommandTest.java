@@ -371,7 +371,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     private void mockDaos() {
         mockVmDao();
         mockDiskImageDao();
-        mockStoragePoolDao();
         mockValidators();
     }
 
@@ -381,10 +380,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     private void mockDiskImageDao() {
         doReturn(diskImageDao).when(command).getDiskImageDao();
-    }
-
-    private void mockStoragePoolDao() {
-        doReturn(storagePoolDao).when(command).getStoragePoolDao();
     }
 
     private void mockValidators() {

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
 public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameters> extends
@@ -24,7 +23,7 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
     protected void executeCommand() {
         getStoragePool().setStatus(getParameters().getStatus());
         setVdsIdRef(getStoragePool().getSpmVdsId());
-        DbFacade.getInstance().getStoragePoolDao().updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
+        storagePoolDao.updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
         if (getParameters().getStatus() == StoragePoolStatus.NonResponsive
                 || getParameters().getStatus() == StoragePoolStatus.NotOperational) {
             StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(getStoragePool().getId(),

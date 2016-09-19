@@ -78,7 +78,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         Guid poolId = getParameters().getStoragePoolId();
         Guid storageDomainId = getParameters().getStorageDomainId();
         if (poolId == null || poolId.equals(Guid.Empty)) {
-            List<StoragePool> pool = getStoragePoolDao().getAllForStorageDomain(storageDomainId);
+            List<StoragePool> pool = storagePoolDao.getAllForStorageDomain(storageDomainId);
             if (!pool.isEmpty()) {
                 getParameters().setStoragePoolId(pool.get(0).getId());
             }

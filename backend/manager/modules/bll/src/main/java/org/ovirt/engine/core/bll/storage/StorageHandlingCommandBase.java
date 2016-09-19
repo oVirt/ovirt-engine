@@ -108,7 +108,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected void updateStoragePoolMasterDomainVersionInDiffTransaction() {
         executeInScope(TransactionScopeOption.Suppress, () -> {
-            int master_domain_version = getStoragePoolDao().increaseStoragePoolMasterVersion(getStoragePool().getId());
+            int master_domain_version = storagePoolDao.increaseStoragePoolMasterVersion(getStoragePool().getId());
             getStoragePool().setMasterDomainVersion(master_domain_version);
             return null;
         });
@@ -314,7 +314,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (newStatus != getStoragePool().getStatus()) {
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setStatus(newStatus);
-            StoragePool poolFromDb = getStoragePoolDao().get(getStoragePool().getId());
+            StoragePool poolFromDb = storagePoolDao.get(getStoragePool().getId());
             if ((getStoragePool().getSpmVdsId() == null && poolFromDb.getSpmVdsId() != null)
                     || (getStoragePool().getSpmVdsId() != null && !getStoragePool().getSpmVdsId().equals(
                             poolFromDb.getSpmVdsId()))) {
@@ -325,7 +325,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             }
 
             executeInScope(TransactionScopeOption.Required, () -> {
-                getStoragePoolDao().update(getStoragePool());
+                storagePoolDao.update(getStoragePool());
                 return null;
             });
             StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());

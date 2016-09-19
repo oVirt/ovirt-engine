@@ -82,7 +82,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     @Override
     protected boolean validate() {
         boolean returnValue = canRemoveVds(getVdsId(), getReturnValue().getValidationMessages());
-        StoragePool storagePool = getStoragePoolDao().getForVds(getParameters().getVdsId());
+        StoragePool storagePool = storagePoolDao.getForVds(getParameters().getVdsId());
 
         if (returnValue && storagePool != null && storagePool.isLocal()) {
             if (!storageDomainDao.getAllForStoragePool(storagePool.getId()).isEmpty()) {

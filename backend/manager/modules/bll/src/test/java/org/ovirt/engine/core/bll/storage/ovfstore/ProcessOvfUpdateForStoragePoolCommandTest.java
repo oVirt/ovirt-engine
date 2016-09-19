@@ -129,7 +129,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initMembers();
 
         //init daos
-        doReturn(storagePoolDao).when(command).getStoragePoolDao();
         doReturn(vmAndTemplatesGenerationsDao).when(command).getVmAndTemplatesGenerationsDao();
         doReturn(vmDao).when(command).getVmDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();

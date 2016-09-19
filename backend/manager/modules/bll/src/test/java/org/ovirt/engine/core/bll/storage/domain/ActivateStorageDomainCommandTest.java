@@ -173,7 +173,6 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
 
     private void createCommand() {
         cmd.init();
-        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
     }
 

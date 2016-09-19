@@ -182,7 +182,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         sp.setId(spId);
         sp.setStatus(StoragePoolStatus.Up);
         when(storagePoolDao.get(spId)).thenReturn(sp);
-        doReturn(storagePoolDao).when(spyCommand).getStoragePoolDao();
     }
 
     private void mockSnapshotValidator() {

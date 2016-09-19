@@ -34,7 +34,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             return false;
         }
 
-        StoragePool storagePool = getStoragePoolDao().getForVds(getParameters().getVdsId());
+        StoragePool storagePool = storagePoolDao.getForVds(getParameters().getVdsId());
 
         if (storagePool == null) {
             return failValidation(EngineMessage.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);

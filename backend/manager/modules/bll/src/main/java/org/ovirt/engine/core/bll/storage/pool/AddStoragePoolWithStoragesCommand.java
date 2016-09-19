@@ -76,7 +76,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             TransactionSupport.executeInNewTransaction(() -> {
                 getStoragePool().setStatus(StoragePoolStatus.Maintenance);
                 getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
-                DbFacade.getInstance().getStoragePoolDao().update(getStoragePool());
+                storagePoolDao.update(getStoragePool());
                 getCompensationContext().stateChanged();
                 StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(),
                         getStoragePool().getStatus());

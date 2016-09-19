@@ -215,7 +215,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StoragePool targetStoragePool = getStoragePool();
 
         if (targetStoragePool == null) {
-            targetStoragePool = getStoragePoolDao().get(getVds().getStoragePoolId());
+            targetStoragePool = storagePoolDao.get(getVds().getStoragePoolId());
         }
         return targetStoragePool;
     }

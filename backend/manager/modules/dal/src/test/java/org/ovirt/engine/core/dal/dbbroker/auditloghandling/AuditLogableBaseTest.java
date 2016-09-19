@@ -50,6 +50,9 @@ public class AuditLogableBaseTest {
     @Mock
     StorageDomainDao storageDomainDao;
 
+    @Mock
+    StoragePoolDao storagePoolDao;
+
     @Spy
     @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
@@ -71,11 +74,9 @@ public class AuditLogableBaseTest {
         when(vdsDao.get(GUID3)).thenThrow(new RuntimeException());
         doReturn(vdsDao).when(b).getVdsDao();
 
-        final StoragePoolDao storagePoolDao = mock(StoragePoolDao.class);
         final StoragePool p = new StoragePool();
         p.setId(GUID);
         when(storagePoolDao.get(GUID)).thenReturn(p);
-        doReturn(storagePoolDao).when(b).getStoragePoolDao();
 
         final StorageDomain domain = new StorageDomain();
         domain.setStatus(StorageDomainStatus.Active);

@@ -272,7 +272,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveVmImageDisk() {
         if (!listVms.isEmpty()) {
             Guid storagePoolId = listVms.get(0).getStoragePoolId();
-            StoragePool sp = getStoragePoolDao().get(storagePoolId);
+            StoragePool sp = storagePoolDao.get(storagePoolId);
             if (!validate(new StoragePoolValidator(sp).isUp())) {
                 return false;
             }

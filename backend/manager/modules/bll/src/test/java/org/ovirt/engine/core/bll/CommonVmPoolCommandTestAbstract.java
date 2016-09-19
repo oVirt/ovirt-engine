@@ -182,7 +182,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private void mockStoragePoolDao() {
-        doReturn(storagePoolDao).when(command).getStoragePoolDao();
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
     }
 
