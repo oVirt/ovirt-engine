@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.ClassRule;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -34,7 +36,8 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 
 
-public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends GlusterHookParameters>> extends BaseCommandTest {
+public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends GlusterHookParameters>>
+        extends BaseCommandTest {
 
     protected static final Guid[] GUIDS = {new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"),
                                              new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"),
@@ -62,16 +65,21 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     @Mock
     private ClusterUtils clusterUtils;
 
-    public void setupMocks(T cmd) {
-        setupMocks(cmd, true);
+    protected abstract T createCommand();
+
+    @Spy
+    @InjectMocks
+    protected T cmd = createCommand();
+
+    public void setupMocks() {
+        setupMocks(true);
     }
 
-    public void setupMocks(T cmd, boolean hookFound) {
-        setupMocks(cmd, hookFound, getHookEntity());
+    public void setupMocks(boolean hookFound) {
+        setupMocks(hookFound, getHookEntity());
     }
 
-    public void setupMocks(T cmd, boolean hookFound, GlusterHookEntity hookEntity) {
-
+    public void setupMocks(boolean hookFound, GlusterHookEntity hookEntity) {
         when(glusterUtils.getAllUpServers(CLUSTER_ID)).thenReturn(getGlusterServers());
         doReturn(glusterUtils).when(cmd).getGlusterUtils();
         doReturn(clusterUtils).when(cmd).getClusterUtils();
@@ -86,11 +94,11 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
         doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
-    protected void mockBackendStatusChange(T cmd, boolean succeeded) {
-        mockBackendStatusChange(cmd, succeeded, EngineError.GlusterHookEnableFailed);
+    protected void mockBackendStatusChange(boolean succeeded) {
+        mockBackendStatusChange(succeeded, EngineError.GlusterHookEnableFailed);
     }
 
-    protected void mockBackendStatusChange(T cmd, boolean succeeded, EngineError errorCode) {
+    protected void mockBackendStatusChange(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();

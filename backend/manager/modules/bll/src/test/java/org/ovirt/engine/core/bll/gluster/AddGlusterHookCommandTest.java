@@ -7,7 +7,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,15 +36,15 @@ import org.ovirt.engine.core.dao.VdsDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGlusterHookCommand<GlusterHookManageParameters>> {
-    /**
-     * The command under test.
-     */
-    private AddGlusterHookCommand<GlusterHookManageParameters> cmd;
-
     @Mock
     private VdsDao vdsDao;
 
     private static final Guid SERVER_ID = Guid.newGuid();
+
+    @Override
+    protected AddGlusterHookCommand<GlusterHookManageParameters> createCommand() {
+        return new AddGlusterHookCommand<>(new GlusterHookManageParameters(HOOK_ID), null);
+    }
 
     private void setUpMocksForAdd() {
         setUpMocksForAdd(true);
@@ -74,7 +73,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     }
 
     private void setUpMocksForAdd(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
-        setupMocks(cmd, hookFound, hook);
+        setupMocks(hookFound, hook);
         doReturn(vdsDao).when(cmd).getVdsDao();
         when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
     }
@@ -93,7 +92,6 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     @Test
     public void executeCommand() {
-        cmd = spy(new AddGlusterHookCommand<>(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForAdd();
         mockBackend(true, null);
         cmd.executeCommand();
@@ -105,7 +103,6 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(new AddGlusterHookCommand<>(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForAdd();
         mockBackend(false, EngineError.GlusterHookAddFailed);
         cmd.executeCommand();
@@ -116,14 +113,13 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new AddGlusterHookCommand<>(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForAdd();
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNullHookId() {
-        cmd = spy(new AddGlusterHookCommand<>(new GlusterHookManageParameters(null), null));
+        cmd.getParameters().setHookId(null);
         setUpMocksForAdd();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
@@ -131,7 +127,6 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     @Test
     public void validateFailsOnNoHook() {
-        cmd = spy(new AddGlusterHookCommand<>(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForAdd(false);
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
@@ -139,7 +134,6 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     @Test
     public void validateFailsOnNoConflictServers() {
-        cmd = spy(new AddGlusterHookCommand<>(new GlusterHookManageParameters(HOOK_ID), null));
         GlusterHookEntity hook = getHookEntity();
         setUpMocksForAdd(true, hook);
         assertFalse(cmd.validate());
@@ -148,10 +142,8 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     @Test
     public void validateFailsOnServerNotUp() {
-        cmd = spy(new AddGlusterHookCommand<>(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForAdd(VDSStatus.Down);
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
     }
-
 }

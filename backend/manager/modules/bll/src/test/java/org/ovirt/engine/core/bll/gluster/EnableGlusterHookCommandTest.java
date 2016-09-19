@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,49 +13,44 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableGlusterHookCommand<GlusterHookParameters>> {
-    /**
-     * The command under test.
-     */
-
-    EnableGlusterHookCommand<GlusterHookParameters> cmd;
+    @Override
+    protected EnableGlusterHookCommand<GlusterHookParameters> createCommand() {
+        return new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null);
+    }
 
     @Test
     public void executeCommand() {
-        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
-        setupMocks(cmd);
-        mockBackendStatusChange(cmd, true);
+        setupMocks();
+        mockBackendStatusChange(true);
         cmd.executeCommand();
         assertEquals(AuditLogType.GLUSTER_HOOK_ENABLE, cmd.getAuditLogTypeValue());
     }
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
-        setupMocks(cmd);
-        mockBackendStatusChange(cmd, false);
+        setupMocks();
+        mockBackendStatusChange(false);
         cmd.executeCommand();
         assertEquals(AuditLogType.GLUSTER_HOOK_ENABLE_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
-        setupMocks(cmd);
+        setupMocks();
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNullHookId() {
-        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(null), null));
-        setupMocks(cmd);
+        cmd.getParameters().setHookId(null);
+        setupMocks();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
     }
 
     @Test
     public void validateFailsOnNoHook() {
-        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
-        setupMocks(cmd, false);
+        setupMocks(false);
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
     }
