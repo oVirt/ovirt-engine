@@ -116,7 +116,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
 
             activeDataDomainsIds.add(domain.getId());
             Integer ovfStoresCountForDomain = Config.<Integer> getValue(ConfigValues.StorageDomainOvfStoreCount);
-            List<StorageDomainOvfInfo> storageDomainOvfInfos = getStorageDomainOvfInfoDao().getAllForDomain(domain.getId());
+            List<StorageDomainOvfInfo> storageDomainOvfInfos = storageDomainOvfInfoDao.getAllForDomain(domain.getId());
 
             if (storageDomainOvfInfos.size() < ovfStoresCountForDomain) {
                 proccessedDomains.add(domain.getId());
@@ -167,9 +167,9 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     }
 
     protected void markDomainsWithOvfsForOvfUpdate(Collection<Guid> ovfIds) {
-        List<Guid> relevantDomains = getStorageDomainOvfInfoDao().loadStorageDomainIdsForOvfIds(ovfIds);
+        List<Guid> relevantDomains = storageDomainOvfInfoDao.loadStorageDomainIdsForOvfIds(ovfIds);
         proccessedDomains.addAll(relevantDomains);
-        getStorageDomainOvfInfoDao().updateOvfUpdatedInfo(proccessedDomains, StorageDomainOvfInfoStatus.OUTDATED, StorageDomainOvfInfoStatus.DISABLED);
+        storageDomainOvfInfoDao.updateOvfUpdatedInfo(proccessedDomains, StorageDomainOvfInfoStatus.OUTDATED, StorageDomainOvfInfoStatus.DISABLED);
     }
 
     /**

@@ -97,7 +97,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
     private void addStorageDomainOvfInfoToDb(Guid diskId) {
         StorageDomainOvfInfo storageDomainOvfInfo =
                 new StorageDomainOvfInfo(getStorageDomainId(), null, diskId, StorageDomainOvfInfoStatus.DISABLED, null);
-        getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
+        storageDomainOvfInfoDao.save(storageDomainOvfInfo);
     }
 
     private void logFailure() {
@@ -123,7 +123,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
     protected void endSuccessfully() {
         Guid createdDiskId = (Guid) getActionReturnValue();
         endChildCommand(true);
-        StorageDomainOvfInfo storageDomainOvfInfoDb = getStorageDomainOvfInfoDao().get(createdDiskId);
+        StorageDomainOvfInfo storageDomainOvfInfoDb = storageDomainOvfInfoDao.get(createdDiskId);
 
         if (storageDomainOvfInfoDb == null
                 || storageDomainOvfInfoDb.getStatus() != StorageDomainOvfInfoStatus.DISABLED) {
@@ -131,7 +131,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         }
 
         storageDomainOvfInfoDb.setStatus(StorageDomainOvfInfoStatus.OUTDATED);
-        getStorageDomainOvfInfoDao().update(storageDomainOvfInfoDb);
+        storageDomainOvfInfoDao.update(storageDomainOvfInfoDb);
         setSucceeded(true);
     }
 

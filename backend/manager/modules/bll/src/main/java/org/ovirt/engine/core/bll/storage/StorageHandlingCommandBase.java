@@ -373,7 +373,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                         ovfDisk.getId(),
                         StorageDomainOvfInfoStatus.OUTDATED,
                         null);
-        getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
+        storageDomainOvfInfoDao.save(storageDomainOvfInfo);
     }
 
     protected void updateStorageDomainFormatIfNeeded(StorageDomain domain) {

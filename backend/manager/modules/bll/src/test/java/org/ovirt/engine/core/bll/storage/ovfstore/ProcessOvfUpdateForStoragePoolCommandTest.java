@@ -134,7 +134,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(vmTemplateDao).when(command).getVmTemplateDao();
-        doReturn(storageDomainOvfInfoDao).when(command).getStorageDomainOvfInfoDao();
 
         // mock ovf data updater methods
         doNothing().when(ovfUpdateProcessHelper).loadTemplateData(any(VmTemplate.class));

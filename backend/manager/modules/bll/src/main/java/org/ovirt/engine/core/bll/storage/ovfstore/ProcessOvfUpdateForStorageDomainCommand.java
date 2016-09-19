@@ -111,7 +111,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
     private void populateStorageDomainOvfData() {
         List<StorageDomainOvfInfo> storageDomainOvfInfos =
-                getDbFacade().getStorageDomainOvfInfoDao().getAllForDomain(getStorageDomainId());
+                storageDomainOvfInfoDao.getAllForDomain(getStorageDomainId());
         ovfDiskCount = storageDomainOvfInfos.size();
         Collections.sort(storageDomainOvfInfos, OVF_INFO_COMPARATOR);
 
@@ -296,7 +296,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                     volumeId,
                     generateOvfStoreDescription(storageDomainOvfInfo.getLastUpdated(), false, null));
 
-            getStorageDomainOvfInfoDao().update(storageDomainOvfInfo);
+            storageDomainOvfInfoDao.update(storageDomainOvfInfo);
 
             ByteArrayInputStream byteArrayInputStream =
                     new ByteArrayInputStream(ovfData);
@@ -318,7 +318,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                 storageDomainOvfInfo.setLastUpdated(updateDate);
                 setOvfVolumeDescription(storagePoolId, storageDomainId,
                         diskId, volumeId, getPostUpdateOvfStoreDescription(size));
-                getStorageDomainOvfInfoDao().update(storageDomainOvfInfo);
+                storageDomainOvfInfoDao.update(storageDomainOvfInfo);
                 return true;
             }
         } catch (EngineException e) {
