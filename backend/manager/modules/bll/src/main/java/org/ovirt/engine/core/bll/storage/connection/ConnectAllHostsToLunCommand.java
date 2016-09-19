@@ -79,7 +79,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             LUNs lun = lunsMap.get(lunId);
             if (lun == null) {
                 //fail
-                handleFailure(spmVds, getDbFacade().getLunDao().get(lunId));
+                handleFailure(spmVds, lunDao.get(lunId));
                 return;
             }
 
@@ -189,7 +189,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
 
         for (Map.Entry<String, Boolean> deviceVisibility : res.entrySet()) {
             if (!Boolean.TRUE.equals(deviceVisibility.getValue())) {
-                handleFailure(vds, getDbFacade().getLunDao().get(deviceVisibility.getKey()));
+                handleFailure(vds, lunDao.get(deviceVisibility.getKey()));
                 return false;
             }
         }

@@ -60,7 +60,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
            List<String> domainNames = new ArrayList<>();
            List<String> diskNames = new ArrayList<>();
            // go to luns to storage connections map table, get it from there
-           List<LUNs> luns = getLunDao().getAllForStorageServerConnection(connectionId);
+           List<LUNs> luns = lunDao.getAllForStorageServerConnection(connectionId);
            if (!luns.isEmpty()) {
                 String volumeGroupId = null;
                 for(LUNs lun : luns) {

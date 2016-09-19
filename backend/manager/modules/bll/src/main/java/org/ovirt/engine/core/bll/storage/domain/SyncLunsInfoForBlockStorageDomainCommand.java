@@ -34,12 +34,12 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
     protected final Consumer<List<LUNs>> updateExistingLuns = luns -> {
-        getLunDao().updateAll(luns);
+        lunDao.updateAll(luns);
         log.info("Updated LUNs information, IDs '{}'.", getLunsIdsList(luns));
     };
 
     protected final Consumer<List<LUNs>> saveNewLuns = luns -> {
-        getLunDao().saveAll(luns);
+        lunDao.saveAll(luns);
         log.info("New LUNs discovered, IDs '{}'", getLunsIdsList(luns));
     };
 
@@ -58,7 +58,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     protected void executeCommand() {
         final List<LUNs> lunsFromVgInfo = (List<LUNs>) runVdsCommand(VDSCommandType.GetVGInfo,
                 new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getStorage())).getReturnValue();
-        final List<LUNs> lunsFromDb = getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage());
+        final List<LUNs> lunsFromDb = lunDao.getAllForVolumeGroup(getStorageDomain().getStorage());
 
         Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
         boolean dbShouldBeUpdated =
@@ -99,7 +99,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     private void cleanupLunsFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
         for (LUNs lunFromDb : lunsFromDb) {
             if (!isDummyLun(lunFromDb) && !containsLun(lunsFromVgInfo, lunFromDb)) {
-                getLunDao().remove(lunFromDb.getLUNId());
+                lunDao.remove(lunFromDb.getLUNId());
                 log.info("Removed LUN ID '{}'", lunFromDb.getLUNId());
             }
         }

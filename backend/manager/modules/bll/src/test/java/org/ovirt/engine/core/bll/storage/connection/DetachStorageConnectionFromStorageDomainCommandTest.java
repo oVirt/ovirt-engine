@@ -57,7 +57,6 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
         domain.setStorageType(StorageType.ISCSI);
         domain.setStorage(Guid.newGuid().toString());
         doReturn(domain).when(command).getStorageDomain();
-        doReturn(lunDao).when(command).getLunDao();
     }
 
     @Test

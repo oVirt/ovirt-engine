@@ -71,8 +71,6 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
         when(sdsDao.get(sdId)).thenReturn(sdStatic);
 
-        doReturn(lunsDao).when(cmd).getLunDao();
-
         LUNs lun1 = new LUNs();
         lun1.setLUNId("1");
         lun1.setStorageDomainId(sdId);

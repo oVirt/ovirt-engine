@@ -111,7 +111,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected List<LUNs> getLuns() {
         if (luns.isEmpty()) {
-            luns = getLunDao().getAllForStorageServerConnection(getConnection().getId());
+            luns = lunDao.getAllForStorageServerConnection(getConnection().getId());
         }
         return luns;
     }

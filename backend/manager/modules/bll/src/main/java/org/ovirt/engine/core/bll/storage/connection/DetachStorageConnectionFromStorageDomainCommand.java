@@ -44,13 +44,13 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
     @Override
     protected void executeCommand() {
         String connectionId = getParameters().getStorageConnectionId();
-        List<LUNs> lunsForConnection = getLunDao().getAllForStorageServerConnection(connectionId);
-        List<LUNs> lunsForVG = getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage());
+        List<LUNs> lunsForConnection = lunDao.getAllForStorageServerConnection(connectionId);
+        List<LUNs> lunsForVG = lunDao.getAllForVolumeGroup(getStorageDomain().getStorage());
         Collection<LUNs> lunsToRemove = (Collection<LUNs>) CollectionUtils.intersection(lunsForConnection, lunsForVG);
 
         for (LUNs lun : lunsToRemove) {
-            if (getLunDao().get(lun.getLUNId()) != null) {
-                getLunDao().remove(lun.getLUNId());
+            if (lunDao.get(lun.getLUNId()) != null) {
+                lunDao.remove(lun.getLUNId());
             }
         }
 

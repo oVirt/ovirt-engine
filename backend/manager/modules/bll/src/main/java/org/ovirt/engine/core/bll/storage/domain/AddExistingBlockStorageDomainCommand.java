@@ -70,7 +70,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     }
 
     protected List<LUNs> getAllLuns() {
-        return getDbFacade().getLunDao().getAll();
+        return lunDao.getAll();
     }
 
     @Override

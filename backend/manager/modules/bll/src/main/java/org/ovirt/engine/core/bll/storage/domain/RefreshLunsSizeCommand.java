@@ -69,7 +69,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
     private boolean checkLunsInStorageDomain(List<String> lunIds) {
         // Get LUNs from DB
-        getParameters().setLunsList(new ArrayList<>(getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage())));
+        getParameters().setLunsList(new ArrayList<>(lunDao.getAllForVolumeGroup(getStorageDomain().getStorage())));
         Set<String> lunsSet = new HashSet<>(lunIds);
 
         for (LUNs lun : getParameters().getLunsList()) {
@@ -180,7 +180,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         TransactionSupport.executeInNewTransaction(() -> {
             CompensationContext context = getCompensationContext();
             context.snapshotEntities(getParameters().getLunsList());
-            getLunDao().updateAllInBatch(lunsToUpdateInDb);
+            lunDao.updateAllInBatch(lunsToUpdateInDb);
             context.stateChanged();
             return null;
         });

@@ -58,8 +58,8 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
 
         List<StorageServerConnections> connectionsForDomain;
 
-        if (getLunDao().get(dummyLun.getLUNId()) == null) {
-            getLunDao().save(dummyLun);
+        if (lunDao.get(dummyLun.getLUNId()) == null) {
+            lunDao.save(dummyLun);
 
             // Save connection maps when creating the dummy lun for the first time
             connectionsForDomain = storageServerConnectionDao.getAllForDomain(getStorageDomainId());

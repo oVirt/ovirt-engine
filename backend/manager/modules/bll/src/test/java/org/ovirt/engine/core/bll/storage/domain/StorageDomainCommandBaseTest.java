@@ -149,7 +149,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         lun2.setLUNId(GUIDS[1].toString());
         lun2.setStorageDomainId(Guid.newGuid());
 
-        doReturn(lunDao).when(cmd).getLunDao();
         when(lunDao.getAll()).thenReturn(Arrays.asList(lun1, lun2));
         List<String> specifiedLunIds = Collections.singletonList(GUIDS[0].toString());
 

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -58,11 +57,6 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
 
     private RemoveStorageServerConnectionCommand<StorageServerConnectionParametersBase> prepareCommand() {
         return new RemoveStorageServerConnectionCommand<>(parameters, null);
-    }
-
-    @Before
-    public void prepareMocks() {
-        doReturn(lunDao).when(command).getLunDao();
     }
 
     private static StorageServerConnections createNFSConnection(String connection,
