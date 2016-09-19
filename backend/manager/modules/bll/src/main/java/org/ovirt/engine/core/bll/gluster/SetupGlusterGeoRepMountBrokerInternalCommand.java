@@ -34,7 +34,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
     }
 
     protected GlusterVolumeEntity getSlaveVolume() {
-        return getGlusterVolumeDao().getByName(getParameters().getId(), getParameters().getRemoteVolumeName());
+        return glusterVolumeDao.getByName(getParameters().getId(), getParameters().getRemoteVolumeName());
     }
 
     @Override

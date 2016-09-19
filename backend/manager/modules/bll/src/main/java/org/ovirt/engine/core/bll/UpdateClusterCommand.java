@@ -547,7 +547,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             result = false;
         }
         if (result && !getCluster().supportsGlusterService()) {
-            List<GlusterVolumeEntity> volumes = getGlusterVolumeDao().getByClusterId(getCluster().getId());
+            List<GlusterVolumeEntity> volumes = glusterVolumeDao.getByClusterId(getCluster().getId());
             if (volumes != null && volumes.size() > 0) {
                 addValidationMessage(EngineMessage.CLUSTER_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
                 result = false;

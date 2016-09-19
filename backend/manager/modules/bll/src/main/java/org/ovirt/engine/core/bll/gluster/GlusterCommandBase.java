@@ -235,7 +235,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
                 addValidationMessageVariable("brick", brick.getQualifiedName());
                 addValidationMessageVariable("volumeName",
-                        getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName());
+                        glusterVolumeDao.getById(existingBrick.getVolumeId()).getName());
                 return false;
             }
         }

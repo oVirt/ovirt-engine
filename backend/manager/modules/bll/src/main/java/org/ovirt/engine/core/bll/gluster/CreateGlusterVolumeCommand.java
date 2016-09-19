@@ -118,7 +118,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     private boolean volumeNameExists(String volumeName) {
-        return getGlusterVolumeDao().getByName(getClusterId(), volumeName) != null;
+        return glusterVolumeDao.getByName(getClusterId(), volumeName) != null;
     }
 
     /*
@@ -333,7 +333,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         // volume fetched from VDSM doesn't contain cluster id as
         // GlusterFS is not aware of multiple clusters
         createdVolume.setClusterId(getClusterId());
-        getGlusterVolumeDao().save(createdVolume);
+        glusterVolumeDao.save(createdVolume);
     }
 
     @Override

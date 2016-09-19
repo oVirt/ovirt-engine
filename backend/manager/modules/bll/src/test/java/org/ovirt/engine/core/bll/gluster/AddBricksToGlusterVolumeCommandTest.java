@@ -130,7 +130,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(vdsStaticDao).when(cmd).getVdsStaticDao();
         doReturn(brickDao).when(cmd).getGlusterBrickDao();
         doReturn(networkDao).when(cmd).getNetworkDao();

@@ -82,7 +82,7 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
         getDbUtils().removeBricksFromVolumeInDb(volume,
                 getParameters().getBricks(),
                 getParameters().getReplicaCount());
-        getGlusterVolumeDao().updateVolumeTask(volume.getId(), null);
+        glusterVolumeDao.updateVolumeTask(volume.getId(), null);
         releaseVolumeLock();
         getReturnValue().setActionReturnValue(returnValue.getReturnValue());
     }

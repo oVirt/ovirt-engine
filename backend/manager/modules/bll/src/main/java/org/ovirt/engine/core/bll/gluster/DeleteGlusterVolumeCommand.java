@@ -83,6 +83,6 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
     }
 
     private void updateVolumeStatusInDb(Guid volumeId) {
-        getGlusterVolumeDao().remove(volumeId);
+        glusterVolumeDao.remove(volumeId);
     }
 }

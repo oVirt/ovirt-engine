@@ -127,6 +127,11 @@ public class AuditLogableBase extends TimeoutBase {
     private Guid brickId;
     private String brickPath;
 
+    // DAOs for injection
+
+    @Inject
+    protected GlusterVolumeDao glusterVolumeDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -641,13 +646,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected GlusterVolumeEntity getGlusterVolume() {
         if (glusterVolume == null && glusterVolumeId != null) {
-            glusterVolume = getGlusterVolumeDao().getById(glusterVolumeId);
+            glusterVolume = glusterVolumeDao.getById(glusterVolumeId);
         }
         return glusterVolume;
-    }
-
-    public GlusterVolumeDao getGlusterVolumeDao() {
-        return getDbFacade().getGlusterVolumeDao();
     }
 
     public GlusterHooksDao getGlusterHooksDao() {

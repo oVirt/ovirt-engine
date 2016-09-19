@@ -37,7 +37,6 @@ public abstract class GeoRepSessionCommandTest<T extends GeoRepSessionCommandBas
     @Before
     public void prepareMocks() {
         doReturn(geoRepDao).when(cmd).getGlusterGeoRepDao();
-        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getGeoRepSession(geoRepSessionId)).when(geoRepDao).getById(geoRepSessionId);
         doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);

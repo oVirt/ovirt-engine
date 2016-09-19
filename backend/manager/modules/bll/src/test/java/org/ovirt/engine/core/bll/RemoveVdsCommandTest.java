@@ -108,7 +108,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         doReturn(vdsDynamicDao).when(command).getVdsDynamicDao();
         doReturn(glusterBrickDao).when(command).getGlusterBrickDao();
         doReturn(clusterDao).when(command).getClusterDao();
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(hooksDao).when(command).getGlusterHooksDao();
         doReturn(cluster).when(clusterDao).get(any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();

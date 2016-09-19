@@ -74,8 +74,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     }
 
     protected GlusterVolumeEntity getSlaveVolume() {
-        return getGlusterVolumeDao().getByName(slaveHost.getClusterId(),
-                getParameters().getSlaveVolumeName());
+        return glusterVolumeDao.getByName(slaveHost.getClusterId(), getParameters().getSlaveVolumeName());
     }
 
     protected VDS getSlaveHost() {

@@ -83,7 +83,7 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
     }
 
     private void updateVolumeWithTaskID(GlusterAsyncTask rebalanceAsyncTask) {
-        getGlusterVolumeDao().updateVolumeTask(getGlusterVolumeId(), rebalanceAsyncTask.getTaskId());
+        glusterVolumeDao.updateVolumeTask(getGlusterVolumeId(), rebalanceAsyncTask.getTaskId());
     }
 
     @Override

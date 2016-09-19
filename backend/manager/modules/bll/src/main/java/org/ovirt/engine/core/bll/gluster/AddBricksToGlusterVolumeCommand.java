@@ -175,7 +175,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                      * If the assumption that current volume is master, is invalid, which will be known here, update
                      * master volume correctly.
                      */
-                    masterVolume = getGlusterVolumeDao().getById(currentSession.getMasterVolumeId());
+                    masterVolume = glusterVolumeDao.getById(currentSession.getMasterVolumeId());
                 }
                 if (succeeded) {
                     succeeded =
@@ -215,7 +215,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
     private Set<Guid> getSlaveNodesSet(GlusterGeoRepSession currentSession) {
         Set<Guid> slaveNodesSet = new HashSet<>();
-        GlusterVolumeEntity sessionSlaveVolume = getGlusterVolumeDao().getById(currentSession.getSlaveVolumeId());
+        GlusterVolumeEntity sessionSlaveVolume = glusterVolumeDao.getById(currentSession.getSlaveVolumeId());
         for (GlusterBrickEntity currentSlaveBrick : sessionSlaveVolume.getBricks()) {
             slaveNodesSet.add(currentSlaveBrick.getServerId());
         }
@@ -354,7 +354,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         }
         //TODO: check for DISTRIBUTED_STRIPED_REPLICATE and STRIPED_REPLICATE
 
-        getGlusterVolumeDao().updateGlusterVolume(volume);
+        glusterVolumeDao.updateGlusterVolume(volume);
     }
 
     private boolean isReplicaCountIncreased(int replicaCount) {

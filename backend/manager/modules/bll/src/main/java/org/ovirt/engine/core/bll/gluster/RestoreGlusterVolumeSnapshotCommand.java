@@ -94,7 +94,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     private boolean stopSlaveVolumes(List<GlusterGeoRepSession> geoRepSessions) {
         for (GlusterGeoRepSession session : geoRepSessions) {
-            GlusterVolumeEntity slaveVolume = getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+            GlusterVolumeEntity slaveVolume = glusterVolumeDao.getById(session.getSlaveVolumeId());
             if (slaveVolume == null) {
                 // continue with other sessions and try to stop
                 continue;
@@ -153,7 +153,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     private boolean restoreSlaveVolumesToSnapshot(List<GlusterGeoRepSession> geoRepSessions) {
         for (GlusterGeoRepSession session : geoRepSessions) {
-            GlusterVolumeEntity slaveVolume = getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+            GlusterVolumeEntity slaveVolume = glusterVolumeDao.getById(session.getSlaveVolumeId());
             if (slaveVolume == null) {
                 // continue with other sessions and try to pause
                 continue;
@@ -193,7 +193,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     private boolean startSlaveVolumes(List<GlusterGeoRepSession> geoRepSessions) {
         for (GlusterGeoRepSession session : geoRepSessions) {
-            GlusterVolumeEntity slaveVolume = getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+            GlusterVolumeEntity slaveVolume = glusterVolumeDao.getById(session.getSlaveVolumeId());
             if (slaveVolume == null) {
                 // continue with other sessions and try to stop
                 continue;
@@ -211,7 +211,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     private boolean resumeGeoRepSessions(List<GlusterGeoRepSession> geoRepSessions) {
         for (GlusterGeoRepSession session : geoRepSessions) {
-            GlusterVolumeEntity slaveVolume = getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+            GlusterVolumeEntity slaveVolume = glusterVolumeDao.getById(session.getSlaveVolumeId());
             if (slaveVolume == null) {
                 // continue with other sessions and try to pause
                 continue;

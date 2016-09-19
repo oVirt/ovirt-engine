@@ -61,7 +61,6 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
 
     @Before
     public void prepareMocks() {
-        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
         GlusterBrickValidator brickValidator = spy(cmd.getBrickValidator());
         doReturn(brickValidator).when(cmd).getBrickValidator();
         doReturn(brickDao).when(brickValidator).getGlusterBrickDao();

@@ -68,8 +68,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
     public void executeCommand() {
         if (georepSessions != null) {
             for (GlusterGeoRepSession session : georepSessions) {
-                GlusterVolumeEntity slaveVolume =
-                        getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+                GlusterVolumeEntity slaveVolume = glusterVolumeDao.getById(session.getSlaveVolumeId());
                 if (slaveVolume == null) {
                     // continue with other sessions and try to pause
                     continue;

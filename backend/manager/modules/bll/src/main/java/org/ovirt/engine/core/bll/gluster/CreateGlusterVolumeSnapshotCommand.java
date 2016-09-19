@@ -68,8 +68,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
     private boolean pauseAndCreateSnapshotForGeoRepSessions() {
         if (georepSessions != null && georepSessions.size() > 0) {
             for (GlusterGeoRepSession session : georepSessions) {
-                final GlusterVolumeEntity slaveVolume =
-                        getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+                final GlusterVolumeEntity slaveVolume = glusterVolumeDao.getById(session.getSlaveVolumeId());
 
                 if (slaveVolume == null) {
                     // Continue to other geo-rep sessions and pause them for snapshot purpose

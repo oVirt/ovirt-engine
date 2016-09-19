@@ -56,7 +56,6 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
 
     @Before
     public void prepareMocks() {
-        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
         GlusterBrickValidator brickValidator = spy(cmd.getBrickValidator());
         doReturn(brickDao).when(brickValidator).getGlusterBrickDao();
         doReturn(brickValidator).when(cmd).getBrickValidator();

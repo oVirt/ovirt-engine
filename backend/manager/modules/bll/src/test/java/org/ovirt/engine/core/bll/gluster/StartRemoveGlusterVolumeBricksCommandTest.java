@@ -87,7 +87,6 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);

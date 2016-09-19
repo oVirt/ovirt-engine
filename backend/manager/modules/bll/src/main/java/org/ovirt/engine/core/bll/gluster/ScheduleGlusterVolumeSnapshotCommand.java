@@ -49,8 +49,7 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
 
     private boolean checkAndDisableCliScheduler() {
         GlusterVolumeEntity metaVolume =
-                getGlusterVolumeDao().getByName(getClusterId(),
-                        Config.getValue(ConfigValues.GlusterMetaVolumeName));
+                glusterVolumeDao.getByName(getClusterId(), Config.getValue(ConfigValues.GlusterMetaVolumeName));
         Cluster cluster = getCluster();
         if (metaVolume != null && cluster.isGlusterCliBasedSchedulingOn()) {
             VdcReturnValueBase returnValue =
@@ -79,8 +78,7 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
         }
 
         if (!getParameters().getForce()) {
-            if (getGlusterVolumeDao().getByName(getClusterId(),
-                    Config.getValue(ConfigValues.GlusterMetaVolumeName)) != null
+            if (glusterVolumeDao.getByName(getClusterId(), Config.getValue(ConfigValues.GlusterMetaVolumeName)) != null
                     && getCluster().isGlusterCliBasedSchedulingOn()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED);
             }

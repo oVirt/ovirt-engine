@@ -37,7 +37,6 @@ public class StopGlusterVolumeProfileCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getGlusterVolume(STOPPED_VOLUME_ID)).when(volumeDao).getById(STOPPED_VOLUME_ID);
         doReturn(getGlusterVolume(STARTED_VOLUME_ID)).when(volumeDao).getById(STARTED_VOLUME_ID);

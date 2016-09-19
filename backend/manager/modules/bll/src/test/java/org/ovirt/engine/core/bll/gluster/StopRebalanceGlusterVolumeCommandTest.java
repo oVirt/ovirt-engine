@@ -74,7 +74,6 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVolumeWithRebalanceTask(volumeWithRebalanceTask)).when(volumeDao).getById(volumeWithRebalanceTask);
         doReturn(getVolumeWithRebalanceTaskCompleted(volumeWithRebalanceTaskCompleted)).when(volumeDao)

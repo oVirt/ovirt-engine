@@ -189,7 +189,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void removeGlusterVolumesFromDb() {
-        getGlusterVolumeDao().removeByClusterId(getClusterId());
+        glusterVolumeDao.removeByClusterId(getClusterId());
     }
 
     private void removeGlusterHooksFromDb() {
