@@ -22,4 +22,8 @@ public class RemoveVdsParameters extends VdsActionParameters {
     public boolean isForceAction() {
         return forceAction;
     }
+
+    public void setForceAction(boolean forceAction) {
+        this.forceAction = forceAction;
+    }
 }

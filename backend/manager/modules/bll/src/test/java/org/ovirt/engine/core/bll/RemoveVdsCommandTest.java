@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,8 +16,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -81,9 +81,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @Mock
-    private BackendInternal backend;
-
-    @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
@@ -95,16 +92,16 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private RemoveVdsCommand<RemoveVdsParameters> command;
+    @Spy
+    @InjectMocks
+    private RemoveVdsCommand<RemoveVdsParameters> command =
+            new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null);
 
     private Guid clusterId;
 
     @Before
     public void setUp() {
         clusterId = Guid.newGuid();
-    }
-
-    private void prepareMocks() {
         doReturn(vdsDao).when(command).getVdsDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
@@ -116,8 +113,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         doReturn(cluster).when(clusterDao).get(any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
         doReturn(glusterUtils).when(command).getGlusterUtils();
-        doReturn(backend).when(command).getBackend();
-        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(vdsStatisticsDao).when(command).getVdsStatisticsDao();
         when(glusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
@@ -140,8 +135,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
-        prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
@@ -153,8 +146,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsWhenGlusterHostHasVolumes() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
-        prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
@@ -168,8 +159,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true), null));
-        prepareMocks();
+        command.getParameters().setForceAction(true);
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockHasMultipleClusters(true);
         mockIsGlusterEnabled(true);
@@ -181,8 +171,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceedsWithForceOption() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true), null));
-        prepareMocks();
+        command.getParameters().setForceAction(true);
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
@@ -194,8 +183,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsWhenVMsPinnedToHost() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
-        prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
 
@@ -218,9 +205,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void removeWhenMultipleHosts() {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
-        prepareMocks();
-
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockIsGlusterEnabled(true);
@@ -235,9 +219,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void removeLastHost() {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
-        prepareMocks();
-
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockIsGlusterEnabled(true);
