@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,40 +11,40 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionPar
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StopGeoRepSessionCommandTest extends GeoRepSessionCommandTest {
+public class StopGeoRepSessionCommandTest extends GeoRepSessionCommandTest<StopGeoRepSessionCommand> {
 
-    /**
-     * The command under test.
-     */
-    private StopGeoRepSessionCommand cmd;
+    @Override
+    protected StopGeoRepSessionCommand createCommand() {
+        return new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(), null);
+    }
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(startedVolumeId, geoRepSessionId), null));
-        prepareMocks(cmd);
+        cmd.getParameters().setVolumeId(startedVolumeId);
+        cmd.setGlusterVolumeId(startedVolumeId);
+        cmd.getParameters().setGeoRepSessionId(geoRepSessionId);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId), null));
-        prepareMocks(cmd);
+        cmd.getParameters().setVolumeId(stoppedVolumeId);
+        cmd.setGlusterVolumeId(stoppedVolumeId);
+        cmd.getParameters().setGeoRepSessionId(geoRepSessionId);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsIfStopped() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId), null));
-        prepareMocks(cmd);
+        cmd.getParameters().setVolumeId(stoppedVolumeId);
+        cmd.setGlusterVolumeId(stoppedVolumeId);
+        cmd.getParameters().setGeoRepSessionId(geoRepSessionId);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.STOPPED)).when(geoRepDao).getById(geoRepSessionId);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(null, null), null));
-        prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
-
 }

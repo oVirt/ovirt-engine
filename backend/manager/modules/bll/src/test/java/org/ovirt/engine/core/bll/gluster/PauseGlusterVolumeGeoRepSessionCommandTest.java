@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +13,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCommandTest {
+public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCommandTest<PauseGlusterVolumeGeoRepSessionCommand> {
 
-    private PauseGlusterVolumeGeoRepSessionCommand cmd;
+    @Override
+    protected PauseGlusterVolumeGeoRepSessionCommand createCommand() {
+        return new PauseGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(), null);
+    }
 
     protected GlusterGeoRepSession getGeoRepSession(Guid gSessionId, GeoRepSessionStatus status, Guid masterVolumeID) {
         GlusterGeoRepSession session = super.getGeoRepSession(gSessionId, status);
@@ -26,25 +28,19 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
 
     @Test
     public void validateSucceeds() {
-        GlusterVolumeGeoRepSessionParameters param = new GlusterVolumeGeoRepSessionParameters();
-        param.setForce(false);
-        param.setGeoRepSessionId(geoRepSessionId);
-        param.setVolumeId(startedVolumeId);
-        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(param, null));
+        cmd.getParameters().setVolumeId(startedVolumeId);
+        cmd.setGlusterVolumeId(startedVolumeId);
+        cmd.getParameters().setGeoRepSessionId(geoRepSessionId);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.ACTIVE, startedVolumeId)).when(geoRepDao)
-                .getById(geoRepSessionId);
-        prepareMocks(cmd);
+.getById(geoRepSessionId);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        GlusterVolumeGeoRepSessionParameters param = new GlusterVolumeGeoRepSessionParameters();
-        param.setForce(false);
-        param.setVolumeId(startedVolumeId);
-        param.setGeoRepSessionId(geoRepSessionId);
-        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(param, null));
-        prepareMocks(cmd);
+        cmd.getParameters().setVolumeId(startedVolumeId);
+        cmd.setGlusterVolumeId(startedVolumeId);
+        cmd.getParameters().setGeoRepSessionId(geoRepSessionId);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.PASSIVE, startedVolumeId)).when(geoRepDao)
                 .getById(geoRepSessionId);
         assertFalse(cmd.validate());
@@ -52,8 +48,6 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(), null));
-        prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 }

@@ -2,7 +2,10 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.Mockito.doReturn;
 
+import org.junit.Before;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -14,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-public class GeoRepSessionCommandTest extends BaseCommandTest {
+public abstract class GeoRepSessionCommandTest<T extends GeoRepSessionCommandBase<?>> extends BaseCommandTest {
 
     @Mock
     GlusterGeoRepDao geoRepDao;
@@ -25,10 +28,17 @@ public class GeoRepSessionCommandTest extends BaseCommandTest {
     protected final Guid geoRepSessionId = new Guid("bbcb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
-    protected <T extends GeoRepSessionCommandBase> void prepareMocks(T command) {
-        doReturn(geoRepDao).when(command).getGlusterGeoRepDao();
-        doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+    @Spy
+    @InjectMocks
+    T cmd = createCommand();
+
+    protected abstract T createCommand();
+
+    @Before
+    public void prepareMocks() {
+        doReturn(geoRepDao).when(cmd).getGlusterGeoRepDao();
+        doReturn(volumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getGeoRepSession(geoRepSessionId)).when(geoRepDao).getById(geoRepSessionId);
         doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);
         doReturn(getGlusterVolume(stoppedVolumeId)).when(volumeDao).getById(stoppedVolumeId);
@@ -62,5 +72,4 @@ public class GeoRepSessionCommandTest extends BaseCommandTest {
         volumeEntity.setClusterId(CLUSTER_ID);
         return volumeEntity;
     }
-
 }
