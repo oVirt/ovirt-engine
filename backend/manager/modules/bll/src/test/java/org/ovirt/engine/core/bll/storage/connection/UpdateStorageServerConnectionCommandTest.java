@@ -41,7 +41,6 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,9 +57,6 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     private StorageServerConnections oldNFSConnection = null;
     private StorageServerConnections oldPosixConnection = null;
-
-    @Mock
-    private StorageServerConnectionDao storageConnDao;
 
     @Mock
     private StorageDomainDynamicDao storageDomainDynamicDao;
@@ -100,7 +96,6 @@ public class UpdateStorageServerConnectionCommandTest extends
     }
 
     private void prepareMocks() {
-        doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
         doReturn(lunDao).when(command).getLunDao();

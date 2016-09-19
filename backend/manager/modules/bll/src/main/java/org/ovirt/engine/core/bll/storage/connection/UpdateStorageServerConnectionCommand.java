@@ -68,7 +68,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         // Check if connection exists by id, otherwise there's nothing to update
         String connectionId = newConnectionDetails.getId();
 
-        StorageServerConnections oldConnection = getStorageConnDao().get(connectionId);
+        StorageServerConnections oldConnection = storageServerConnectionDao.get(connectionId);
 
         if (oldConnection == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
@@ -213,7 +213,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 }
             }
         }
-        getStorageConnDao().update(getParameters().getStorageServerConnection());
+        storageServerConnectionDao.update(getParameters().getStorageServerConnection());
         if (isDomainUpdateRequired) {
             for (StorageDomain domain : domains) {
                 for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {

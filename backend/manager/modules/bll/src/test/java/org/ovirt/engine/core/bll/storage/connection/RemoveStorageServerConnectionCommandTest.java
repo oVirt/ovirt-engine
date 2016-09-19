@@ -63,7 +63,6 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     @Before
     public void prepareMocks() {
         doReturn(lunDao).when(command).getLunDao();
-        doReturn(storageServerConnectionDao).when(command).getStorageServerConnectionDao();
     }
 
     private static StorageServerConnections createNFSConnection(String connection,

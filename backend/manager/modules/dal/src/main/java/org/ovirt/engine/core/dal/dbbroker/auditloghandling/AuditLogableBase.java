@@ -148,6 +148,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected StorageDomainDynamicDao storageDomainDynamicDao;
 
+    @Inject
+    protected StorageServerConnectionDao storageServerConnectionDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -828,10 +831,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public LunDao getLunDao() {
         return getDbFacade().getLunDao();
-    }
-
-    public StorageServerConnectionDao getStorageServerConnectionDao() {
-        return getDbFacade().getStorageServerConnectionDao();
     }
 
     public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {

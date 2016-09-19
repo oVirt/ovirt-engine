@@ -40,7 +40,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         if (StringUtils.isEmpty(connectionId) ) {
            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
         }
-        StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
+        StorageServerConnections connection = storageServerConnectionDao.get(connectionId);
         if(connection == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
@@ -106,7 +106,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected void executeCommand() {
         String connectionId = getConnection().getId();
-        getStorageServerConnectionDao().remove(connectionId);
+        storageServerConnectionDao.remove(connectionId);
         log.info("Removing connection '{}' from database ", connectionId);
         if (Guid.isNullOrEmpty(getParameters().getVdsId())) {
             log.info("No vdsId passed - hosts will not be disconnected.");

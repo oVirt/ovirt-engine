@@ -56,7 +56,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
         if (getVds().isOvirtVintageNode()) {
 
             StorageServerConnections conn =
-                    getStorageServerConnectionDao().get(getParameters().getStorageDomain().getStorage());
+                    storageServerConnectionDao.get(getParameters().getStorageDomain().getStorage());
 
             String rhevhLocalFSPath = Config.getValue(ConfigValues.RhevhLocalFSPath);
             if (!conn.getConnection().equals(rhevhLocalFSPath)) {

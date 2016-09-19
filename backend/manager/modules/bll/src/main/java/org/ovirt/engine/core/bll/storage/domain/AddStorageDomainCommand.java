@@ -139,7 +139,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected Pair<Boolean, Integer> connectStorage() {
         String connectionId = getStorageDomain().getStorage();
-        StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
+        StorageServerConnections connection = storageServerConnectionDao.get(connectionId);
         Map<String, String> result = (Map<String, String>) runVdsCommand(
                         VDSCommandType.ConnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,

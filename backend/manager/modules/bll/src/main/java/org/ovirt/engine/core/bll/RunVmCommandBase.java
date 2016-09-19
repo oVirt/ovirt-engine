@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
@@ -252,9 +251,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values(), true);
         for (LunDisk lunDisk : lunDisks) {
             LUNs lun = lunDisk.getLun();
-            lun.setLunConnections(new ArrayList<>(DbFacade.getInstance()
-                    .getStorageServerConnectionDao()
-                    .getAllForLun(lun.getLUNId())));
+            lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));
 
             if (!lun.getLunConnections().isEmpty()
                     && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getStorageType())

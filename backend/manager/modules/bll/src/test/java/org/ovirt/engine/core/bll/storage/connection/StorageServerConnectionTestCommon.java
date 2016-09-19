@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -15,9 +16,13 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public abstract class StorageServerConnectionTestCommon
         <T extends ConnectStorageToVdsCommand<StorageServerConnectionParametersBase>> extends BaseCommandTest {
+
+    @Mock
+    StorageServerConnectionDao storageConnDao;
 
     protected StorageServerConnectionParametersBase parameters;
 
@@ -150,7 +155,7 @@ public abstract class StorageServerConnectionTestCommon
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         doReturn(ValidationResult.VALID).when(command).validateMountOptions();
-        when(command.getStorageConnDao().get(newPosixConnection.getId())).thenReturn(newPosixConnection);
+        when(storageConnDao.get(newPosixConnection.getId())).thenReturn(newPosixConnection);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 

@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -57,8 +56,6 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
 
     @Inject
     private StoragePoolDao storagePoolDao;
-    @Inject
-    private StorageServerConnectionDao storageServerConnectionDao;
     @Inject
     private HostedEngineHelper hostedEngineHelper;
     private StorageDomain heStorageDomain;

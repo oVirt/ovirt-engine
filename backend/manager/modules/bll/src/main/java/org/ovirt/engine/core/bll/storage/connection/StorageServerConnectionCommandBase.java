@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public abstract class StorageServerConnectionCommandBase<T extends StorageServerConnectionParametersBase> extends
         CommandBase<T> {
@@ -42,10 +41,6 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
                 getActionType().getActionGroup()));
     }
 
-    protected StorageServerConnectionDao getStorageConnDao() {
-        return getDbFacade().getStorageServerConnectionDao();
-    }
-
     protected List<StorageDomain> getStorageDomainsByConnId(String connectionId) {
         return storageDomainDao.getAllByConnectionId(Guid.createGuidFromString(connectionId));
     }
@@ -67,13 +62,13 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         List<StorageServerConnections> connections = null;
         if (connection.getStorageType() == StorageType.LOCALFS) {
             List<StorageServerConnections> connectionsForPool = storagePoolId == null ? Collections.emptyList() :
-                    getStorageConnDao().getAllConnectableStorageSeverConnection(storagePoolId);
-            List<StorageServerConnections> connectionsForPath = getStorageConnDao().getAllForStorage(connection.getConnection());
+                    storageServerConnectionDao.getAllConnectableStorageSeverConnection(storagePoolId);
+            List<StorageServerConnections> connectionsForPath = storageServerConnectionDao.getAllForStorage(connection.getConnection());
             connections = (List<StorageServerConnections>) CollectionUtils.intersection(connectionsForPool, connectionsForPath);
         }
         else if (connection.getStorageType().isFileDomain()) {
             String connectionField = connection.getConnection();
-            connections = getStorageConnDao().getAllForStorage(connectionField);
+            connections = storageServerConnectionDao.getAllForStorage(connectionField);
         }
         else {
             StorageServerConnections sameConnection = findConnectionWithSameDetails(connection);

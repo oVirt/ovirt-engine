@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
@@ -47,8 +46,7 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
                 EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Unknown);
 
         connections =
-                DbFacade.getInstance()
-                        .getStorageServerConnectionDao()
+                storageServerConnectionDao
                         .getStorageConnectionsByStorageTypeAndStatus(getStoragePool().getId(),
                                 null,
                                 statuses);

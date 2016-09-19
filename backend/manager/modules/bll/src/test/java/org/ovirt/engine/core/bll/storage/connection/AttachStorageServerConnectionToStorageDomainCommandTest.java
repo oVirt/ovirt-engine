@@ -68,7 +68,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
         validator = mock(StorageConnectionValidator.class);
         doReturn(validator).when(command).createStorageConnectionValidator();
         doReturn(lunDao).when(command).getLunDao();
-        doReturn(connectionDao).when(command).getStorageServerConnectionDao();
         doReturn(lunMapDao).when(command).getStorageServerConnectionLunMapDao();
         domain = new StorageDomain();
         domain.setId(command.getParameters().getStorageDomainId());

@@ -81,7 +81,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
             // Update lun connections map
             for (StorageServerConnections connection : lunFromVgInfo.getLunConnections()) {
                 StorageServerConnections connectionFromDb =
-                        getStorageServerConnectionDao().getForIqn(connection.getIqn());
+                        storageServerConnectionDao.getForIqn(connection.getIqn());
                 if (connectionFromDb == null) {
                     // Shouldn't happen
                     continue;

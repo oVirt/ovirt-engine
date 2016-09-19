@@ -57,11 +57,11 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     }
 
     protected StorageServerConnections getConnectionFromDbById(String connectionId) {
-        return getStorageConnDao().get(connectionId);
+        return storageServerConnectionDao.get(connectionId);
     }
 
     protected void saveConnection(StorageServerConnections connection) {
-        getDbFacade().getStorageServerConnectionDao().save(connection);
+        storageServerConnectionDao.save(connection);
     }
 
     @Override

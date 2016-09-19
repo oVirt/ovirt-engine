@@ -13,7 +13,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -23,14 +22,10 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddStorageServerConnectionCommandTest extends
         StorageServerConnectionTestCommon<AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>> {
-
-    @Mock
-    StorageServerConnectionDao storageConnDao;
 
     @Override
     protected AddStorageServerConnectionCommand<StorageServerConnectionParametersBase> createCommand() {
@@ -41,7 +36,6 @@ public class AddStorageServerConnectionCommandTest extends
 
     @Before
     public void prepareMocks() {
-        doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
     }
 

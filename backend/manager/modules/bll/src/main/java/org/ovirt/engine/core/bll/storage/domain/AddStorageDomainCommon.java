@@ -26,7 +26,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
 
     protected boolean checkStorageConnection(String storageDomainConnection) {
         List<StorageDomain> domains = null;
-        StorageServerConnections connection = getStorageServerConnectionDao().get(storageDomainConnection);
+        StorageServerConnections connection = storageServerConnectionDao.get(storageDomainConnection);
         if (connection == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }

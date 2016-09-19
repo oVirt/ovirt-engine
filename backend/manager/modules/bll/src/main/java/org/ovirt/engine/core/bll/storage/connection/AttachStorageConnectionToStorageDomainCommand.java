@@ -42,7 +42,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
 
     protected StorageConnectionValidator createStorageConnectionValidator() {
         String connectionId = getParameters().getStorageConnectionId();
-        StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
+        StorageServerConnections connection = storageServerConnectionDao.get(connectionId);
 
         return new StorageConnectionValidator(connection);
     }
@@ -62,7 +62,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
             getLunDao().save(dummyLun);
 
             // Save connection maps when creating the dummy lun for the first time
-            connectionsForDomain = getStorageServerConnectionDao().getAllForDomain(getStorageDomainId());
+            connectionsForDomain = storageServerConnectionDao.getAllForDomain(getStorageDomainId());
             for (StorageServerConnections connection : connectionsForDomain) {
                 saveConnection(new LUNStorageServerConnectionMap(dummyLun.getLUNId(), connection.getId()));
             }
