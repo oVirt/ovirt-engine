@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -34,7 +33,6 @@ public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
         role.setId(params.getRoleId());
 
         when(roleDaoMock.get(params.getRoleId())).thenReturn(role);
-        doReturn(roleGroupMapDaoMock).when(command).getRoleGroupMapDao();
     }
 
     protected RolesParameterBase generateParameters() {

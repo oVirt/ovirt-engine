@@ -283,6 +283,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected RoleDao roleDao;
 
+    @Inject
+    protected RoleGroupMapDao roleGroupMapDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -797,10 +800,6 @@ public class AuditLogableBase extends TimeoutBase {
             glusterVolume = glusterVolumeDao.getById(glusterVolumeId);
         }
         return glusterVolume;
-    }
-
-    public RoleGroupMapDao getRoleGroupMapDao() {
-        return getDbFacade().getRoleGroupMapDao();
     }
 
     public DbUserDao getDbUserDao() {
