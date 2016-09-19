@@ -234,7 +234,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     public void versionDecreaseWithHost() {
-        createCommandWithOlderVersion(true, false);
+        createCommandWithOlderVersion();
         setupCpu();
         vdsExist();
         validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_CLUSTER_WITH_HOSTS_COMPATIBILITY_VERSION);
@@ -242,7 +242,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     public void versionDecreaseNoHostsOrNetwork() {
-        createCommandWithOlderVersion(true, false);
+        createCommandWithOlderVersion();
         setupCpu();
         StoragePoolDao storagePoolDao2 = mock(StoragePoolDao.class);
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
@@ -252,7 +252,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     public void versionDecreaseLowerVersionThanDC() {
-        createCommandWithOlderVersion(true, false);
+        createCommandWithOlderVersion();
         StoragePoolDao storagePoolDao2 = mock(StoragePoolDao.class);
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
         doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
@@ -531,9 +531,8 @@ public class UpdateClusterCommandTest {
         createCommand(createNewCluster());
     }
 
-    private void createCommandWithOlderVersion(boolean supportsVirtService, boolean supportsGlusterService) {
+    private void createCommandWithOlderVersion() {
         createCommand(createClusterWithOlderVersion(true, false));
-
     }
 
     private void createCommandWithInvalidVersion() {
