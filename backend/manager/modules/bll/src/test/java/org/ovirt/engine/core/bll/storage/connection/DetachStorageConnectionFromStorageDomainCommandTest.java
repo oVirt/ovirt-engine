@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -120,8 +119,6 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
         when(lunDao.getAllForVolumeGroup(domain.getStorage())).thenReturn(lunsForVG);
         when(lunDao.get(lun1.getLUNId())).thenReturn(lun1);
         when(lunDao.get(lun2.getLUNId())).thenReturn(lun2);
-        doNothing().when(lunDao).remove(lun1.getLUNId());
-        doNothing().when(lunDao).remove(lun2.getLUNId());
         command.executeCommand();
         verify(lunDao, times(1)).remove(lun1.getLUNId());
         verify(lunDao, times(1)).remove(lun2.getLUNId());

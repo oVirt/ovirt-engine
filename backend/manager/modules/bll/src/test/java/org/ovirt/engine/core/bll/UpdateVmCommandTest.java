@@ -655,7 +655,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         Quota quota = new Quota();
         quota.setId(quotaId);
 
-        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
         when(quotaDao.getById(quotaId)).thenReturn(quota);
         doReturn(quotaDao).when(command).getQuotaDao();
 
@@ -676,7 +675,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         prepareVmToPassValidate();
         vmStatic.setQuotaId(Guid.newGuid());
 
-        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
         doReturn(quotaDao).when(command).getQuotaDao();
 
         assertFalse(command.validateQuota(vmStatic.getQuotaId()));

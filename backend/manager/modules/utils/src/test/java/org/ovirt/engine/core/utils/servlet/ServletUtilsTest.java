@@ -281,7 +281,6 @@ public class ServletUtilsTest {
        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
        ServletOutputStream responseOut = mock(ServletOutputStream.class);
        when(mockResponse.getOutputStream()).thenReturn(responseOut);
-       when(mockRequest.getHeader("If-None-Match")).thenReturn(null);
        File file = createTempPng();
        ServletUtils.sendFile(mockRequest, mockResponse, file, null);
        verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));

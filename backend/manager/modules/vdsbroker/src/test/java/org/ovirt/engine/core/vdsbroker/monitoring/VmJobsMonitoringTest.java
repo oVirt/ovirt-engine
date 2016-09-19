@@ -88,9 +88,6 @@ public class VmJobsMonitoringTest {
         when(job3FromVdsm.getVmId()).thenReturn(VM_ID_2);
         when(job5FromVdsm.getVmId()).thenReturn(VM_ID_2);
 
-        doNothing().when(vmJobDao).save(any());
-        doNothing().when(vmJobDao).updateAllInBatch(any());
-        doNothing().when(vmJobDao).removeAllInBatch(any());
         when(vmJobDao.getAll()).thenReturn(Arrays.asList(job1FromDb, job4FromDb, job2FromDb, job3FromDb));
         doReturn(vmJobDao).when(vmJobsMonitoring).getVmJobDao();
         doReturn(Collections.emptyList()).when(vmJobsMonitoring).getIdsOfDownVms();

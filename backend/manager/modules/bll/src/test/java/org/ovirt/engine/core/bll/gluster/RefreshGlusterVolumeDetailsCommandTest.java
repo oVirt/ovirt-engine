@@ -67,7 +67,6 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
-        doReturn(null).when(volumeDao).getById(null);
         doReturn(syncJob).when(command).getSyncJobInstance();
         doNothing().when(syncJob).refreshVolumeDetails(any(VDS.class), any(GlusterVolumeEntity.class));
 

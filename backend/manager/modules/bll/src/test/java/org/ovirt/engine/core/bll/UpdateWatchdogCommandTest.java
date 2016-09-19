@@ -53,7 +53,6 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         params.setAction(VmWatchdogAction.PAUSE);
         params.setModel(vmWatchdogType);
         final VmDao vmDaoMock = mock(VmDao.class);
-        when(vmDaoMock.get(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"))).thenReturn(null);
         UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null) {
             @Override
             public VmDao getVmDao() {

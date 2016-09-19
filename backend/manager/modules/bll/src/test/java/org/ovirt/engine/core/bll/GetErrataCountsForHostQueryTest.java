@@ -60,7 +60,6 @@ public class GetErrataCountsForHostQueryTest
 
     @Test
     public void hostDoesNotExist() {
-        when(vdsStaticDao.get(any(Guid.class))).thenReturn(null);
         getQuery().executeQueryCommand();
 
         assertFalse(getQuery().getQueryReturnValue().getSucceeded());

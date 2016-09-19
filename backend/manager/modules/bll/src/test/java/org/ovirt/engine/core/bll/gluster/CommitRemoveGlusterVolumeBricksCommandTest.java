@@ -67,7 +67,6 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
                 .getById(volumeWithoutRemoveBricksTask);
         doReturn(getVolumeWithRemoveBricksTaskNull(volumeWithRemoveBricksTaskNull)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTaskNull);
-        doReturn(null).when(volumeDao).getById(null);
         doReturn(cluster).when(command).getCluster();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }

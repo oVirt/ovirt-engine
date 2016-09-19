@@ -47,7 +47,6 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private void setupMock() throws AuthenticationException, IOException {
         vdsStaticDao = mock(VdsStaticDao.class);
         doReturn(vdsStaticDao).when(getQuery()).getVdsStaticDao();
-        doReturn(null).when(vdsStaticDao).getByHostName(NEW_SERVER);
         doReturn(getVdsStatic()).when(vdsStaticDao).getByHostName(EXISTING_SERVER);
 
         GlusterUtil glusterUtil = mock(GlusterUtil.class);

@@ -90,7 +90,6 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
 
     @Test
     public void noCluster() {
-        simulateClusterDoesNotExist();
         assertValidateFailure(EngineMessage.VDS_CLUSTER_IS_NOT_VALID.toString());
     }
 
@@ -111,16 +110,8 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
         dbFacadeReturnCluster();
     }
 
-    private void simulateClusterDoesNotExist() {
-        dbFacadeReturnNoCluster();
-    }
-
     private void simulateClusterWasRemoved() {
         dbFacadeThrowOnNetworkClusterSave();
-    }
-
-    private void dbFacadeReturnNoCluster() {
-        when(mockClusterDao.get(any(Guid.class))).thenReturn(null);
     }
 
     private void dbFacadeReturnCluster() {

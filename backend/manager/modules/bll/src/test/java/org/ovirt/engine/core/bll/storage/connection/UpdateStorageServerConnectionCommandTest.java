@@ -176,7 +176,6 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 NfsVersion.V4,
                 300,
                 0);
-        when(storageConnDao.get(newNFSConnection.getId())).thenReturn(null);
         parameters.setStorageServerConnection(newNFSConnection);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
@@ -538,8 +537,6 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         returnValueConnectSuccess.setReturnValue(domain);
         doReturn(returnValueConnectSuccess).when(command).getStatsForDomain(domain);
         doReturn(true).when(command).connectToStorage();
-        doNothing().when(storageConnDao).update(newNFSConnection);
-        doNothing().when(storageDomainDynamicDao).update(domainDynamic);
         List<StorageDomain> domains = new ArrayList<>();
         domains.add(domain);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getId());
@@ -564,7 +561,6 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         doReturn(false).when(command).doDomainsUseConnection(newNFSConnection);
         doReturn(false).when(command).doLunsUseConnection();
         returnValueConnectSuccess.setSucceeded(true);
-        doNothing().when(storageConnDao).update(newNFSConnection);
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
         verify(command, never()).connectToStorage();

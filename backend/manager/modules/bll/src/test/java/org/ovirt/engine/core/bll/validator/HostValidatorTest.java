@@ -136,7 +136,6 @@ public class HostValidatorTest {
 
     @Test
     public void nameNotUsed() {
-        when(hostDao.getByName(any(String.class))).thenReturn(null);
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
@@ -195,7 +194,6 @@ public class HostValidatorTest {
 
     @Test
     public void hostAttachedToLocalStorageWithoutDataCenter() {
-        when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(null);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
         validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 

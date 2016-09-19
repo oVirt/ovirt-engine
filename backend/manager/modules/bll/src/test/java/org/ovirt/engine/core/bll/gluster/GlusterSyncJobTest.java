@@ -413,18 +413,7 @@ public class GlusterSyncJobTest {
         doReturn(existingServers).when(vdsDao).getAllForCluster(CLUSTER_ID);
         doReturn(existingDistVol).when(volumeDao).getById(EXISTING_VOL_DIST_ID);
         doReturn(existingReplVol).when(volumeDao).getById(EXISTING_VOL_REPL_ID);
-        doReturn(null).when(volumeDao).getById(NEW_VOL_ID);
-        doNothing().when(volumeDao).save(newVolume);
-        doNothing().when(brickDao).removeAll(argThat(containsRemovedBricks()));
-        doNothing().when(brickDao).save(argThat(isAddedBrick()));
-        doNothing().when(optionDao).updateVolumeOption(argThat(isUpdatedOptionId()), eq(OPTION_VALUE_ON));
-        doNothing().when(optionDao).save(argThat(isNewOption()));
-        doNothing().when(optionDao).removeAll(argThat(areRemovedOptions()));
         doReturn(existingVolumes).when(volumeDao).getByClusterId(CLUSTER_ID);
-        doNothing().when(volumeDao).removeAll(argThat(areRemovedVolumes()));
-        doNothing().when(brickDao).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
-        doNothing().when(optionDao).saveAll(argThat(areAddedOptions()));
-        doNothing().when(clusterDao).update(any(Cluster.class));
     }
 
     private ArgumentMatcher<Collection<Guid>> areRemovedVolumes() {
@@ -475,19 +464,6 @@ public class GlusterSyncJobTest {
         };
     }
 
-    private ArgumentMatcher<Guid> isUpdatedOptionId() {
-        return new ArgumentMatcher<Guid>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Guid)) {
-                    return false;
-                }
-                return argument.equals(existingReplVol.getOption(OPTION_NFS_DISABLE).getId());
-            }
-        };
-    }
-
     private ArgumentMatcher<Collection<Guid>> containsRemovedBricks() {
         return new ArgumentMatcher<Collection<Guid>>() {
 
@@ -499,19 +475,6 @@ public class GlusterSyncJobTest {
                 @SuppressWarnings("unchecked")
                 ArrayList<Guid> ids = (ArrayList<Guid>) argument;
                 return ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids);
-            }
-        };
-    }
-
-    private ArgumentMatcher<GlusterVolumeOptionEntity> isNewOption() {
-        return new ArgumentMatcher<GlusterVolumeOptionEntity>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof GlusterVolumeOptionEntity)) {
-                    return false;
-                }
-                return ((GlusterVolumeOptionEntity) argument).getKey().equals(OPTION_AUTH_REJECT);
             }
         };
     }

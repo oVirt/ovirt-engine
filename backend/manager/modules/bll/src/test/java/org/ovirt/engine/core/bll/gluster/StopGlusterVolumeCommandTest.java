@@ -38,7 +38,6 @@ public class StopGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getGlusterVolume(stoppedVolumeId)).when(volumeDao).getById(stoppedVolumeId);
         doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);
-        doReturn(null).when(volumeDao).getById(null);
     }
 
     private VDS getVds(VDSStatus status) {

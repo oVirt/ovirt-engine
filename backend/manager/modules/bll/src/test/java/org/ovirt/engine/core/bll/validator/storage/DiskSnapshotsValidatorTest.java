@@ -113,10 +113,6 @@ public class DiskSnapshotsValidatorTest {
     public void diskSnapshotsCanBePreviewed() {
         Snapshot activeSnapshot = getActiveSnapshot();
         when(snapshotDao.get(any(Guid.class))).thenReturn(activeSnapshot);
-
-        when(diskImageDao.get(disk1.getImageId())).thenReturn(null);
-        when(diskImageDao.get(disk2.getImageId())).thenReturn(null);
-
         assertThat(validator.canDiskSnapshotsBePreviewed(activeSnapshot.getId()), isValid());
     }
 

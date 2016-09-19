@@ -208,7 +208,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNetworkName(network.getName());
 
         NetworkClusterId networkClusterId = new NetworkClusterId(host.getClusterId(), network.getId());
-        when(networkClusterDaoMock.get(eq(networkClusterId))).thenReturn(null);
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
         EngineMessage engineMessage = EngineMessage.NETWORK_OF_GIVEN_NAME_NOT_EXISTS_IN_CLUSTER;

@@ -85,12 +85,10 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
         doReturn(stepDaoMock).when(commandMock).getStepDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));
-        when(jobDaoMock.get(nonExistingJobId)).thenReturn(null);
         when(stepDaoMock.get(stepId)).thenReturn(makeExternalTestStep(jobId, stepId));
         when(stepDaoMock.get(nonExternalStepId)).thenReturn(makeNonExternalTestStep(nonExternalJobId, nonExternalStepId));
         when(stepDaoMock.get(nonExtistingJobstepId)).thenReturn(makeExternalTestStep(nonExistingJobId, nonExtistingJobstepId));
         when(stepDaoMock.get(nonExternalJobstepId)).thenReturn(makeExternalTestStep(nonExternalJobId, nonExternalJobstepId));
-        when(stepDaoMock.get(nonExistingStepId)).thenReturn(null);
     }
 
     @Test

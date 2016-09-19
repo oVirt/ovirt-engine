@@ -109,7 +109,6 @@ public class AddVdsCommandTest {
         when(commandMock.getClusterDao()).thenReturn(groupDaoMock);
         when(commandMock.getClusterUtils()).thenReturn(clusterUtils);
 
-        when(vdsDaoMock.get(vdsId)).thenReturn(null);
         when(commandMock.getVdsDao()).thenReturn(vdsDaoMock);
         when(commandMock.validateCluster()).thenReturn(true);
         when(commandMock.isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class))).thenReturn(true);

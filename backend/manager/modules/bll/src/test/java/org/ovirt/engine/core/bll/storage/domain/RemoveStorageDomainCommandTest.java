@@ -87,7 +87,6 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateNonExistingStorageDomain() {
-        doReturn(null).when(storageDomainDaoMock).get(storageDomain.getId());
         doReturn(Collections.emptyList()).when(storageDomainDaoMock).getAllForStorageDomain(storageDomain.getId());
         ValidateTestUtils.runAndAssertValidateFailure(
                 "validate shouldn't be possible for a non-existent storage domain",

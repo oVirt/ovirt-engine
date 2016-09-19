@@ -49,7 +49,6 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
         doReturn(getReplicatedVolume(volumeId3, 2)).when(volumeDao).getById(volumeId3);
         doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
-        doReturn(null).when(volumeDao).getById(null);
         doReturn(cluster).when(command).getCluster();
     }
 

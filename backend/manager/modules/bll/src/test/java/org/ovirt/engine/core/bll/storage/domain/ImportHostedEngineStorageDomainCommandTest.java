@@ -136,7 +136,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
     @Test
     public void failsInNotImportedAndNotExists() throws Exception {
-        when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         mockGetExistingDomain(false);
 
         cmd.init();
@@ -152,7 +151,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
     @Test
     public void storageTypeUnsupported() {
-        when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = mockGetExistingDomain(true);
         sd.setStorageType(StorageType.CINDER);
         sd.setId(HE_SD_ID);
@@ -170,7 +168,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
     @Test
     public void validatePass() {
-        when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = mockGetExistingDomain(true);
         int i = new Random().nextInt(SUPPORTED_DOMAIN_TYPES.length);
         sd.setStorageType(SUPPORTED_DOMAIN_TYPES[i]);
@@ -182,7 +179,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
     @Test
     public void callConcreteAddSD() {
-        when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = mockGetExistingDomain(true);
         sd.setStorageType(StorageType.NFS);
         sd.setId(HE_SD_ID);
@@ -203,7 +199,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
     @Test
     public void callConcreteAddBlockSD() {
-        when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = mockGetExistingDomain(true);
         sd.setId(HE_SD_ID);
         sd.setStorageType(StorageType.ISCSI);

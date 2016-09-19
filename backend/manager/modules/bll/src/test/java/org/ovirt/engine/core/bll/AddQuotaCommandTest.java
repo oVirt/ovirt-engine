@@ -65,9 +65,6 @@ public class AddQuotaCommandTest extends BaseCommandTest {
         QuotaCRUDParameters param = new QuotaCRUDParameters(mockGeneralStorageQuota());
         command = spy(new AddQuotaCommand(param, null));
         doReturn(quotaDao).when(command).getQuotaDao();
-
-        doReturn(null).when(quotaDao).getQuotaByQuotaName(any(String.class), any(Guid.class));
-
         return command;
     }
 

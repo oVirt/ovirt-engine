@@ -74,8 +74,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateImageNotFound() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
-        when(diskImageDao.get(any(Guid.class))).thenReturn(null);
-        when(diskImageDao.getSnapshotById(any(Guid.class))).thenReturn(null);
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
                 .getValidationMessages()

@@ -134,7 +134,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2, 2)).when(volumeDao).getById(volumeId2);
         doReturn(getBrick(volumeId1, serverId, BRICK_DIRECTORY)).when(brickDao).getBrickByServerIdAndDirectory(serverId, BRICK_DIRECTORY);
-        doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getCluster()).when(command).getCluster();
     }

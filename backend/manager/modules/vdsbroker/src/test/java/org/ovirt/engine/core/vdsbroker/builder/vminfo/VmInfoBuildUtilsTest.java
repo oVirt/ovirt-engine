@@ -85,7 +85,6 @@ public class VmInfoBuildUtilsTest {
 
     @Test
     public void testNoStorageQuotaAssigned() {
-        when(storageQosDao.getQosByDiskProfileId(diskImage.getDiskProfileId())).thenReturn(null);
         underTest.handleIoTune(vmDevice, underTest.loadStorageQos(diskImage));
         assertNull(vmDevice.getSpecParams());
     }

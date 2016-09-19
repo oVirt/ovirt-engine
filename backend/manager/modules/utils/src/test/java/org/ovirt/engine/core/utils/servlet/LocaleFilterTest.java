@@ -80,7 +80,6 @@ public class LocaleFilterTest {
 
     @Test
     public void testDoFilterFromCookieNull() throws IOException, ServletException {
-        when(mockRequest.getCookies()).thenReturn(null);
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
         //Verify that it defaulted to the US locale

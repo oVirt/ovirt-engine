@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -112,7 +110,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     }
 
     private void mockAuditLogDao() {
-        doNothing().when(auditLogDao).save(any(AuditLog.class));
         when(dbFacade.getAuditLogDao()).thenReturn(auditLogDao);
     }
 

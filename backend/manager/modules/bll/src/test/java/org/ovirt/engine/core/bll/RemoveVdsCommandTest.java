@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -31,8 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -228,7 +225,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockVdsDynamic();
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(true);
-        mockForExecute();
         command.executeCommand();
         assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
         verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
@@ -246,22 +242,12 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockVdsDynamic();
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);
-        mockForExecute();
         command.executeCommand();
         assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
         verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
         verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
         verify(volumeDao, times(1)).removeByClusterId(any(Guid.class));
         verify(hooksDao, times(1)).removeAllInCluster(any(Guid.class));
-    }
-
-    private void mockForExecute() {
-        doReturn(null).when(vdsBrokerFrontend).runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
-        doNothing().when(vdsStaticDao).remove(any(Guid.class));
-        doNothing().when(vdsStatisticsDao).remove(any(Guid.class));
-        doNothing().when(vdsDynamicDao).remove(any(Guid.class));
-        doNothing().when(volumeDao).removeByClusterId(any(Guid.class));
-        doNothing().when(hooksDao).removeAllInCluster(any(Guid.class));
     }
 
     /**

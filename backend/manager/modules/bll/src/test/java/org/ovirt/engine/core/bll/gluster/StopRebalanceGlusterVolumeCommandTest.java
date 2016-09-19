@@ -76,7 +76,6 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getVolume(volumeWithoutAsyncTask)).when(volumeDao).getById(volumeWithoutAsyncTask);
         doReturn(getvolumeWithoutRebalanceTask(volumeWithoutRebalanceTask)).when(volumeDao)
                 .getById(volumeWithoutRebalanceTask);
-        doReturn(null).when(volumeDao).getById(null);
         doReturn(cluster).when(command).getCluster();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }

@@ -227,19 +227,15 @@ public class CommandBaseTest extends BaseCommandTest {
 
         }
         RenameCommand command = mock(RenameCommand.class);
-        when(command.getEntityOldName()).thenReturn(null);
-        when(command.getEntityNewName()).thenReturn(null);
         doCallRealMethod().when(command).logRenamedEntity();
         command.logRenamedEntity();
         when(command.getEntityOldName()).thenReturn("foo");
         when(command.getEntityNewName()).thenReturn("bar");
         when(command.getCurrentUser()).thenReturn(mock(DbUser.class));
         command.logRenamedEntity();
-        when(command.getEntityOldName()).thenReturn(null);
         when(command.getEntityNewName()).thenReturn("bar");
         command.logRenamedEntity();
         when(command.getEntityOldName()).thenReturn("foo");
-        when(command.getEntityNewName()).thenReturn(null);
         command.logRenamedEntity();
     }
 

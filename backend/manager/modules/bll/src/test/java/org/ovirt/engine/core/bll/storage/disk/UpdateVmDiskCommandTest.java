@@ -533,7 +533,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(diskVmElementDao).when(command).getDiskVmElementDao();
         doNothing().when(command).reloadDisks();
         doNothing().when(command).updateBootOrder();
-        doNothing().when(vmStaticDao).incrementDbGeneration(any(Guid.class));
         doReturn(quotaManager).when(command).getQuotaManager();
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?

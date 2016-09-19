@@ -53,7 +53,6 @@ public class StorageServerConnectionExtensionValidatorTest {
 
     @Test
     public void testIsConnectionDoesNotExistForHostAndTargetSucceeds() {
-        when(storageServerConnectionExtensionDao.getByHostIdAndTarget(conn.getHostId(), conn.getIqn())).thenReturn(null);
         assertTrue(validator.isConnectionDoesNotExistForHostAndTarget(conn).isValid());
     }
 

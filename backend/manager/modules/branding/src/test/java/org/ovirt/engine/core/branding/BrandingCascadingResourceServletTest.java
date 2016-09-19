@@ -84,7 +84,6 @@ public class BrandingCascadingResourceServletTest {
                 new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
                 .toURI().getPath()));
-        when(mockBrandingManager.getCascadingResource("favicon")).thenReturn(null); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }

@@ -199,7 +199,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     private void mockNullVm() {
-        when(vmDao.get(command.getParameters().getVmId())).thenReturn(null);
         createVirtIODisk();
     }
 

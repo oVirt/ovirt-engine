@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -119,7 +118,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
        LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUNId(), connection.getId());
-       when(lunMapDao.get(map_id)).thenReturn(null);
        //dummy lun already exists, thus no need to save
        verify(lunDao, never()).save(dummyLun);
        verify(lunMapDao, never()).save(new LUNStorageServerConnectionMap());
@@ -131,8 +129,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
     public void executeCommandFirstDummyLun() {
        LUNs dummyLun = new LUNs();
        dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
-       when(lunDao.get(dummyLun.getLUNId())).thenReturn(null);
-       doNothing().when(lunDao).save(dummyLun);
        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
        StorageServerConnections connection = new StorageServerConnections();
        connection.setId(Guid.newGuid().toString());
@@ -142,9 +138,7 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
        LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUNId(), connection.getId());
-       when(lunMapDao.get(map_id)).thenReturn(null);
        LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
-       doNothing().when(lunMapDao).save(map);
        command.executeCommand();
        CommandAssertUtils.checkSucceeded(command, true);
     }

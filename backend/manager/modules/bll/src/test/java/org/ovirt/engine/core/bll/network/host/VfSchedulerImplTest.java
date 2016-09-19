@@ -188,8 +188,6 @@ public class VfSchedulerImplTest {
         updateVfsConfig(hostNicVfsConfig2, vnic2, 1, false, allNicsValid, false, allNicsValid);
 
         when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)), isNull(List.class))).thenReturn(vf);
-        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)),
-                eq(Collections.singletonList(vf.getDeviceName())))).thenReturn(null);
 
         mockVfsConfigsOnHost(Arrays.asList(hostNicVfsConfig1, hostNicVfsConfig2));
 

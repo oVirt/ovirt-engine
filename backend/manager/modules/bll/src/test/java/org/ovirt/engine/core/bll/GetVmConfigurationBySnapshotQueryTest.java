@@ -86,7 +86,6 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     public void testNonExistingSnapshotQuery() throws Exception {
         GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(Guid.newGuid());
-        when(snapshotDaoMock.get(any(Guid.class))).thenReturn(null);
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         VM returnedVm = returnValue.getReturnValue();
         assertNull("Return value from non existent query should be null", returnedVm);

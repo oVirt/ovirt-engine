@@ -844,7 +844,6 @@ public class AddVmCommandTest extends BaseCommandTest {
 
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(10);
 
-        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
         when(quotaDao.getById(quotaId)).thenReturn(quota);
         doReturn(quotaDao).when(cmd).getQuotaDao();
 
@@ -862,7 +861,6 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void testNonExistingQuota() {
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(10);
 
-        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
         doReturn(quotaDao).when(cmd).getQuotaDao();
 
         Guid quotaId = Guid.newGuid();

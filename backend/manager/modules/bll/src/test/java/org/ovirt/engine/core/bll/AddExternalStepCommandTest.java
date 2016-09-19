@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -61,8 +60,6 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
         doReturn(stepDaoMock).when(commandMock).getStepDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));
-        when(jobDaoMock.get(nonExistingJobId)).thenReturn(null);
-        when(stepDaoMock.get(any(Guid.class))).thenReturn(null);
     }
 
     @Test

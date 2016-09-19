@@ -249,7 +249,6 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     @Test(expected = RuntimeException.class)
     public void testQueryForInvalidVolumeId() {
         doReturn(Guid.Empty).when(getQueryParameters()).getVolumeId();
-        doReturn(null).when(volumeDao).getById(Guid.Empty);
 
         getQuery().executeQueryCommand();
     }

@@ -75,8 +75,6 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         doReturn(glusterUtils).when(command).getGlusterUtils();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         doReturn(getUpServers()).when(glusterUtils).getAllUpServers(any(Guid.class));
-        doReturn(null).when(serverServiceDao).getByServerIdAndServiceType(null, null);
-        doReturn(null).when(serviceDao).getByServiceType(null);
     }
 
     private List<VDS> getUpServers() {

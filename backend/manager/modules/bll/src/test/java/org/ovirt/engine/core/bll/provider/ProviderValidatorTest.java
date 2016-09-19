@@ -50,7 +50,6 @@ public class ProviderValidatorTest {
 
     @Test
     public void nameAvailable() throws Exception {
-        when(providerDao.getByName(provider.getName())).thenReturn(null);
         assertThat(validator.nameAvailable(), isValid());
     }
 

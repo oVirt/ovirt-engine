@@ -136,19 +136,12 @@ public class GlusterSnapshotSyncJobTest {
     public void testSyncSnapshotConfigs() {
         doReturn(getClusterSnapMaxLimit()).when(snapshotConfigDao)
                 .getConfigByClusterIdAndName(CLUSTER_ID_1, PARAM_SNAP_MAX_LIMIT);
-        doReturn(null).when(snapshotConfigDao).getConfigByClusterIdAndName(CLUSTER_ID_1,
-                PARAM_SNAP_MAX_SOFT_LIMIT);
-        doReturn(null).when(snapshotConfigDao).getConfigByClusterIdAndName(CLUSTER_ID_1,
-                PARAM_AUTO_DELETE);
         doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1)).when(volumeDao).getByName(CLUSTER_ID_1,
                 VOLUME_NAME_1);
         doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_2, VOLUME_NAME_2)).when(volumeDao).getByName(CLUSTER_ID_1,
                 VOLUME_NAME_2);
         doReturn(getVolumeSnapMaxLimit()).when(snapshotConfigDao)
                 .getConfigByVolumeIdAndName(CLUSTER_ID_1, VOLUME_ID_1, PARAM_SNAP_MAX_LIMIT);
-        doReturn(null).when(snapshotConfigDao).getConfigByVolumeIdAndName(CLUSTER_ID_1,
-                VOLUME_ID_2,
-                PARAM_SNAP_MAX_LIMIT);
         doReturn(getSnapshotConfigVDSReturnValue()).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotConfigInfo),
                         argThat(snapshotInfoParam()));

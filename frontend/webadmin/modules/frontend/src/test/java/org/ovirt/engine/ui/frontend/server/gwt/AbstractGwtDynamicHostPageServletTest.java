@@ -159,7 +159,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
             NoSuchAlgorithmException {
         String md5sum = "md5sum"; //$NON-NLS-1$
         doReturn(md5sum).when(testServlet).getMd5Sum(mockRequest);
-        when(mockRequest.getHeader(GwtDynamicHostPageServlet.IF_NONE_MATCH_HEADER)).thenReturn(null);
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).addHeader(GwtDynamicHostPageServlet.ETAG_HEADER, md5sum);
     }

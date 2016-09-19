@@ -45,7 +45,6 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
         when(commandMock.getParameters()).thenReturn(parameters);
         doReturn(jobDaoMock).when(commandMock).getJobDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeTestJob(jobId));
-        when(jobDaoMock.get(nonExistingJobId)).thenReturn(null);
     }
 
     @Test

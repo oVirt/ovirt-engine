@@ -607,7 +607,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
     }
@@ -806,7 +805,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         parameters.setDiskInfo(disk);
         parameters.getDiskVmElement().setDiskInterface(DiskInterface.IDE);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         VM vm = mockVm();
 
         mockMaxPciSlots();
@@ -830,7 +828,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         parameters.setDiskInfo(disk);
         parameters.getDiskVmElement().setDiskInterface(DiskInterface.VirtIO);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         VM vm = mockVm();
         mockMaxPciSlots();
 
@@ -1032,7 +1029,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockEntities(storageId);
 
         QuotaDao quotaDaoMock = mock(QuotaDao.class);
-        when(quotaDaoMock.getById(any(Guid.class))).thenReturn(null);
         when(quotaDaoMock.getById(quota.getId())).thenReturn(quota);
         doReturn(quotaDaoMock).when(command).getQuotaDao();
 
@@ -1056,7 +1052,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockEntities(storageId);
 
         QuotaDao quotaDaoMock = mock(QuotaDao.class);
-        when(quotaDaoMock.getById(any(Guid.class))).thenReturn(null);
         doReturn(quotaDaoMock).when(command).getQuotaDao();
 
         doCallRealMethod().when(command).validateQuota();

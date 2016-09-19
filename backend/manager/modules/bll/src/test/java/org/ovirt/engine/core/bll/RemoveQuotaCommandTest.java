@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -54,7 +53,6 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
         mockQuotaDao();
         mockVmDao();
         mockStoragePoolDao();
-        mockInjections();
     }
 
     private void mockVmDao() {
@@ -80,10 +78,6 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
 
     private void mockStoragePoolDao() {
         when(storagePoolDao.get(any(Guid.class))).thenReturn(mockStoragePool());
-    }
-
-    private void mockInjections() {
-        doNothing().when(quotaManager).removeQuotaFromCache(any(Guid.class), any(Guid.class));
     }
 
     @Test

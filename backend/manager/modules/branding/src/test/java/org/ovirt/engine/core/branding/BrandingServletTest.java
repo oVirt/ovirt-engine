@@ -55,7 +55,6 @@ public class BrandingServletTest {
 
     @Test
     public void testDoGetNotFoundInvalidPath() throws IOException, ServletException {
-        when(mockRequest.getPathInfo()).thenReturn(null); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }

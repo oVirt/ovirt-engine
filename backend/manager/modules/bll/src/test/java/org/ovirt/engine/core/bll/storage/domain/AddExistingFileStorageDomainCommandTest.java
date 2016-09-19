@@ -81,8 +81,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testAddExistingSuccessfully() {
-        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
-
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
@@ -103,8 +101,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testNonExistingStorageDomain() {
-        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
-
         doReturn(null).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
@@ -114,8 +110,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testSwitchStorageDomainType() {
-        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
-
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));

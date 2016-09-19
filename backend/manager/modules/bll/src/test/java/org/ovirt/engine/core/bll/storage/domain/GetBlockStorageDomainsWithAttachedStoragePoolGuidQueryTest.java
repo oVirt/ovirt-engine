@@ -154,10 +154,6 @@ public class GetBlockStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
 
-        // Create parameters
-        StorageDomainsAndStoragePoolIdQueryParameters paramsMock = getQueryParameters();
-        when(paramsMock.getStorageDomainList()).thenReturn(null);
-
         // Run 'HSMGetStorageDomainInfo' command
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);

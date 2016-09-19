@@ -68,7 +68,6 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         prepareMocks();
         doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(vds).when(command).getSlaveHost();
         assertTrue(command.validate());
     }
@@ -99,7 +98,6 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(null).when(command).getSlaveVolume();
         doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(vds).when(command).getSlaveHost();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         assertFalse(command.validate());
     }
 
@@ -135,7 +133,6 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(vds).when(command).getUpServer();
         doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(null).when(command).getSlaveHost();
         assertFalse(command.validate());
     }

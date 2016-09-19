@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -132,7 +131,6 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     @Test
     public void checkRemoveNotExistingConnection() {
         parameters.setStorageServerConnection(NFSConnection);
-        when(storageServerConnectionDao.get(NFSConnection.getId())).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
@@ -227,7 +225,6 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     @Test
     public void checkExecuteCommandWithVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
-        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getId());
         doReturn(true).when(command).disconnectStorage();
         command.executeCommand();
     }
@@ -236,7 +233,6 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkExecuteCommandWithEmptyVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
         parameters.setVdsId(Guid.Empty);
-        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getId());
         // Test will fail if we try to disconnect
         command.executeCommand();
         verify(command, never()).disconnectStorage();
@@ -246,7 +242,6 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkExecuteCommandWithNullVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
         parameters.setVdsId(null);
-        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getId());
         // Test will fail if we try to disconnect
         command.executeCommand();
         verify(command, never()).disconnectStorage();

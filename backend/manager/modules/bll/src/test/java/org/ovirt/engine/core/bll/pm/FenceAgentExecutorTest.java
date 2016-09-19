@@ -177,8 +177,6 @@ public class FenceAgentExecutorTest {
             VDS secondProxyHost = new VDS();
             secondProxyHost.setId(SECOND_PROXY_HOST_ID);
             when(proxyLocator.findProxyHost(true, PROXY_HOST_ID)).thenReturn(secondProxyHost);
-        } else {
-            when(proxyLocator.findProxyHost(true, PROXY_HOST_ID)).thenReturn(null);
         }
     }
 

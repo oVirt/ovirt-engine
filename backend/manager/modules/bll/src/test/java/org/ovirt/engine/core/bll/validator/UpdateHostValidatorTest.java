@@ -136,7 +136,6 @@ public class UpdateHostValidatorTest {
     public void nameNotUsed() {
         when(oldHost.getName()).thenReturn(generateRandomName());
         when(host.getName()).thenReturn(generateRandomName());
-        when(hostDao.getByName(any(String.class))).thenReturn(null);
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
@@ -325,7 +324,6 @@ public class UpdateHostValidatorTest {
     @Test
     public void hostProviderDoesNotExist() {
         when(host.getHostProviderId()).thenReturn(Guid.newGuid());
-        when(providerDao.get(any(Guid.class))).thenReturn(null);
         when(dbFacade.getProviderDao()).thenReturn(providerDao);
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 

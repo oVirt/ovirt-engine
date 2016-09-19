@@ -44,7 +44,6 @@ public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<Serve
 
     @Test
     public void testExecuteQueryCommnadFails() {
-        when(getQueryParameters().getServer()).thenReturn(null);
         getQuery().executeQueryCommand();
         String serverFingerprint = getQuery().getQueryReturnValue().getReturnValue();
 

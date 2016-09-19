@@ -63,7 +63,6 @@ public class GlusterVolumeRemoveBricksCommandTest extends BaseCommandTest {
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
-        doReturn(null).when(volumeDao).getById(null);
     }
 
     private VDS getVds(VDSStatus status) {

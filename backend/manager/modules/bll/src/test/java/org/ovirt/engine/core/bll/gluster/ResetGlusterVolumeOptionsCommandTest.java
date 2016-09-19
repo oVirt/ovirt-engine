@@ -33,7 +33,6 @@ public class ResetGlusterVolumeOptionsCommandTest extends BaseCommandTest {
     private void prepareMocks(ResetGlusterVolumeOptionsCommand command) {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
-        doReturn(null).when(volumeDao).getById(null);
     }
 
     private VDS getVds(VDSStatus status) {

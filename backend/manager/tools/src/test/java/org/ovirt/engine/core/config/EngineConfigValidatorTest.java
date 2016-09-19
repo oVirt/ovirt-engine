@@ -34,7 +34,6 @@ public class EngineConfigValidatorTest {
     @Test(expected = IllegalArgumentException.class)
     public void testSetValidatorWithOutKey() {
         EngineConfigMap engineConfigMap = mock(EngineConfigMap.class);
-        when(engineConfigMap.getKey()).thenReturn(null);
         when(engineConfigMap.getValue()).thenReturn("valueToSet");
         ConfigActionType setAction = ConfigActionType.ACTION_SET;
         setAction.validate(engineConfigMap);
@@ -44,7 +43,6 @@ public class EngineConfigValidatorTest {
     public void testSetValidatorWithOutValue() {
         EngineConfigMap engineConfigMap = mock(EngineConfigMap.class);
         when(engineConfigMap.getKey()).thenReturn("keyToSet");
-        when(engineConfigMap.getValue()).thenReturn(null);
         ConfigActionType setAction = ConfigActionType.ACTION_SET;
         setAction.validate(engineConfigMap);
     }
@@ -52,7 +50,6 @@ public class EngineConfigValidatorTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetValidatorWithOutKey() {
         EngineConfigMap engineConfigMap = mock(EngineConfigMap.class);
-        when(engineConfigMap.getKey()).thenReturn(null);
         ConfigActionType setAction = ConfigActionType.ACTION_GET;
         setAction.validate(engineConfigMap);
     }

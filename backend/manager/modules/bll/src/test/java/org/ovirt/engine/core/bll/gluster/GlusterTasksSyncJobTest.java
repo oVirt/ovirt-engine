@@ -125,7 +125,6 @@ public class GlusterTasksSyncJobTest {
         doReturn(logUtil).when(tasksSyncJob).getGlusterLogUtil();
         doNothing().when(taskUtils).releaseLock(any(Guid.class));
         doNothing().when(taskUtils).endStepJob(any(Step.class));
-        doReturn(null).when(provider).getMonitoredTaskIDsInDB();
         doNothing().when(taskUtils).logEventMessage(any(GlusterAsyncTask.class), any(JobExecutionStatus.class), any(Cluster.class));
         doNothing().when(logUtil).logAuditMessage(any(Guid.class),
                 any(GlusterVolumeEntity.class),
@@ -160,7 +159,6 @@ public class GlusterTasksSyncJobTest {
     public void cleanOrphanTasksWhenNoVolume() {
         doReturn(new HashMap<>()).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         doReturn(Collections.singletonList(TASK_GUIDS[2])).when(provider).getMonitoredTaskIDsInDB();
-        doReturn(null).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[2]);
         doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
 
         tasksSyncJob.updateGlusterAsyncTasks();
@@ -169,7 +167,6 @@ public class GlusterTasksSyncJobTest {
 
     @Test
     public void testUpdateWhenNoTasks() {
-        doReturn(null).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         tasksSyncJob.updateGlusterAsyncTasks();
         verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[0], null);
         verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[1], null);

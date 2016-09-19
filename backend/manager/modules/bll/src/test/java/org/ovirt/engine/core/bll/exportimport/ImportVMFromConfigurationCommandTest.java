@@ -260,7 +260,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(clusterId).when(cluster).getId();
         doReturn(storagePoolId).when(cluster).getStoragePoolId();
         doReturn(ArchitectureType.x86_64).when(cluster).getArchitecture();
-        doReturn(null).when(cluster).getCompatibilityVersion();
     }
 
     private void mockStoragePool() {

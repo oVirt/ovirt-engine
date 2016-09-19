@@ -36,7 +36,6 @@ public class GeoRepSessionCommandTest extends BaseCommandTest {
         doReturn(getGeoRepSession(geoRepSessionId)).when(geoRepDao).getById(geoRepSessionId);
         doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);
         doReturn(getGlusterVolume(stoppedVolumeId)).when(volumeDao).getById(stoppedVolumeId);
-        doReturn(null).when(geoRepDao).getById(null);
     }
 
     private VDS getVds(VDSStatus status) {
