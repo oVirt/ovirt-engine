@@ -30,7 +30,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     protected boolean validate() {
-        AuditLog event = getAuditLogDao().get(getParameters().getAuditLogId());
+        AuditLog event = auditLogDao.get(getParameters().getAuditLogId());
 
         if (event == null) {
             return failValidation(EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
@@ -41,8 +41,8 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     protected void executeCommand() {
-        AuditLog auditLog = getAuditLogDao().get(getParameters().getAuditLogId());
-        getAuditLogDao().remove(getParameters().getAuditLogId());
+        AuditLog auditLog = auditLogDao.get(getParameters().getAuditLogId());
+        auditLogDao.remove(getParameters().getAuditLogId());
         setAuditLogDetails(auditLog);
         // clean cache manager entry (if exists)
         evict(auditLogDirector.composeSystemObjectId(this, auditLog.getLogType()));
@@ -60,7 +60,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        AuditLog event = getAuditLogDao().get(getParameters().getAuditLogId());
+        AuditLog event = auditLogDao.get(getParameters().getAuditLogId());
         if (AuditLogSeverity.ALERT.equals(event.getSeverity())) {
             return Collections.singletonList(new PermissionSubject(Guid.SYSTEM,
                     VdcObjectType.System,

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class ClearAllAuditLogEventsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
 
@@ -25,7 +24,7 @@ public class ClearAllAuditLogEventsCommand<T extends VdcActionParametersBase> ex
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getAuditLogDao().clearAllEvents();
+        auditLogDao.clearAllEvents();
         setSucceeded(true);
     }
 

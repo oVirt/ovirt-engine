@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * Send a Stop followed by Start action to a power management device.
@@ -90,9 +89,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     protected boolean isQuietTimeFromLastActionPassed() {
         // Check Quiet time between PM operations, this is done only if command is not internal.
         int secondsLeftToNextPmOp = isInternalExecution() ? 0 :
-                DbFacade.getInstance()
-                        .getAuditLogDao()
-                        .getTimeToWaitForNextPmOp(getVds().getName(), AuditLogType.USER_VDS_RESTART.name());
+                auditLogDao.getTimeToWaitForNextPmOp(getVds().getName(), AuditLogType.USER_VDS_RESTART.name());
         if (secondsLeftToNextPmOp > 0) {
             addValidationMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
             addValidationMessageVariable("seconds", secondsLeftToNextPmOp);

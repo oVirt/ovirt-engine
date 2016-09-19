@@ -32,7 +32,6 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(auditLogDao).when(command).getAuditLogDao();
         doReturn(getEventWithOvirtOrigin()).when(auditLogDao).get(EVENT_ID_2);
         doReturn(getEventWithExternalOrigin()).when(auditLogDao).get(EVENT_ID_3);
     }

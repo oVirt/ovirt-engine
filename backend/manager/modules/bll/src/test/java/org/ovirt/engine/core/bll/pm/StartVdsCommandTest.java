@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDao;
@@ -60,7 +59,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private HostFenceActionExecutor executor;
     private FenceAgent agent1;
     private FenceAgent agent2;
-    private DbFacade dbFacade;
     @Mock
     private VdsDao vdsDao;
     @Mock
@@ -86,7 +84,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
 
     @Before
     public void setup() {
-        dbFacade = DbFacade.getInstance();
         initAgents();
         mockDbFacades();
         initCommand();
@@ -95,7 +92,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private void mockDbFacades() {
         mockClusterDao();
         mockVmDao();
-        mockAuditLogDao();
         mockVdsDao();
         mockVdsDynamicDao();
     }
@@ -108,10 +104,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
 
     private void mockVmDao() {
         when(vmDao.getAllRunningForVds(eq(FENCECD_HOST_ID))).thenReturn(new LinkedList<>());
-    }
-
-    private void mockAuditLogDao() {
-        when(dbFacade.getAuditLogDao()).thenReturn(auditLogDao);
     }
 
     private void mockVdsDao() {

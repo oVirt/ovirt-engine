@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
@@ -70,9 +69,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                         ?
                         0
                         :
-                        DbFacade.getInstance()
-                                .getAuditLogDao()
-                                .getTimeToWaitForNextPmOp(getVds().getName(), getRequestedAuditEvent());
+                        auditLogDao.getTimeToWaitForNextPmOp(getVds().getName(), getRequestedAuditEvent());
         if (secondsLeftToNextPmOp > 0) {
             addValidationMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
             addValidationMessageVariable("seconds", secondsLeftToNextPmOp);

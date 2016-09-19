@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.AddExternalEventParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
@@ -53,7 +52,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
                 AlertDirector.alert(event, AuditLogType.EXTERNAL_ALERT, auditLogDirector, message);
                 break;
         }
-        AuditLog auditLog = DbFacade.getInstance().getAuditLogDao().getByOriginAndCustomEventId(getParameters().getEvent().getOrigin(), getParameters().getEvent().getCustomEventId());
+        AuditLog auditLog = auditLogDao.getByOriginAndCustomEventId(getParameters().getEvent().getOrigin(), getParameters().getEvent().getCustomEventId());
         if (auditLog != null) {
             setActionReturnValue(auditLog.getAuditLogId());
             setSucceeded(true);
