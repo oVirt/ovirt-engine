@@ -701,6 +701,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setVmHost(vm.getVmHost());
         setVmIp(vm.getVmIp());
         setVmFQDN(vm.getVmFQDN());
+        setVmPid(vm.getVmPid());
         // update only if vdsm actually provides some value, otherwise engine has more information
         if (vm.getCurrentCd() != null) {
             setCurrentCd(vm.getCurrentCd());

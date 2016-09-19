@@ -425,6 +425,9 @@ public class VdsBrokerObjectsBuilder {
                 log.error("Illegal vm session '{}'.", session);
             }
         }
+        if (xmlRpcStruct.containsKey(VdsProperties.vm_pid)) {
+            vm.setVmPid(assignIntValue(xmlRpcStruct, VdsProperties.vm_pid));
+        }
         if (xmlRpcStruct.containsKey(VdsProperties.kvmEnable)) {
             vm.setKvmEnable(Boolean.parseBoolean((String) xmlRpcStruct.get(VdsProperties.kvmEnable)));
         }
