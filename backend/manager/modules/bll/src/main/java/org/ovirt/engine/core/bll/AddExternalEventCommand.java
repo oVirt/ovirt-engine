@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -15,12 +13,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
     private static final String OVIRT="oVirt";
-
-    @Inject VdsDynamicDao hostDao;
 
     public AddExternalEventCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -65,7 +60,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
         }
         // Update host external status if set
         if (hasHostExternalStatus()) {
-            hostDao.updateExternalStatus(getParameters().getEvent().getVdsId(), getParameters().getExternalStatus());
+            vdsDynamicDao.updateExternalStatus(getParameters().getEvent().getVdsId(), getParameters().getExternalStatus());
         }
         // update storage domain external status if set
         if (hasStorageDomainExternalStatus()) {

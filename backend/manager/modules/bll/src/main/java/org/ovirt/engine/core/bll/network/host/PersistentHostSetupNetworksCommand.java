@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -13,13 +11,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 @NonTransactiveCommandAttribute
 public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNetworksParameters> extends VdsCommand<T> {
-
-    @Inject
-    private VdsDynamicDao vdsDynamicDao;
 
     public PersistentHostSetupNetworksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

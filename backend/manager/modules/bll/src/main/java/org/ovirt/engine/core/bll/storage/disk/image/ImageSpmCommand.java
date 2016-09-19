@@ -51,7 +51,7 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SPM_CHANGED);
         }
 
-        VdsDynamic vdsDynamic = getVdsDynamicDao().get(getPoolSpmId());
+        VdsDynamic vdsDynamic = vdsDynamicDao.get(getPoolSpmId());
         if (vdsDynamic == null || vdsDynamic.getStatus() != VDSStatus.Up) {
             addValidationMessage(EngineMessage.VAR__HOST_STATUS__UP);
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);

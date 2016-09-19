@@ -156,7 +156,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     protected void setStatus(VDSStatus status) {
         // we need to load current status from db
-        VdsDynamic currentHost = getDbFacade().getVdsDynamicDao().get(getVds().getId());
+        VdsDynamic currentHost = vdsDynamicDao.get(getVds().getId());
         if (currentHost != null && currentHost.getStatus() != status) {
             setVdsStatus(status);
         }

@@ -21,7 +21,7 @@ public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends 
                 runVdsCommand(VDSCommandType.SetSafeNetworkConfig,
                         new VdsIdVDSCommandParametersBase(getParameters().getVdsId()));
 
-        getDbFacade().getVdsDynamicDao().updateNetConfigDirty(getParameters().getVdsId(), false);
+        vdsDynamicDao.updateNetConfigDirty(getParameters().getVdsId(), false);
         setSucceeded(retVal.getSucceeded());
     }
 

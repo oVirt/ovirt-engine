@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -120,7 +119,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         /* Host is UP, re-set the policy controlled power management flag */
         getVds().setPowerManagementControlledByPolicy(true);
-        DbFacade.getInstance().getVdsDynamicDao().updateVdsDynamicPowerManagementPolicyFlag(
+        vdsDynamicDao.updateVdsDynamicPowerManagementPolicyFlag(
                 getVds().getId(),
                 getVds().isPowerManagementControlledByPolicy());
 

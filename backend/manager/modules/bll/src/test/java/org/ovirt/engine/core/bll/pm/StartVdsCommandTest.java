@@ -124,7 +124,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         currentVds.setId(FENCECD_HOST_ID);
         currentVds.setStatus(VDSStatus.NonResponsive);
         when(vdsDynamicDao.get(FENCECD_HOST_ID)).thenReturn(currentVds);
-        when(dbFacade.getVdsDynamicDao()).thenReturn(vdsDynamicDao);
     }
 
     private void initAgents() {

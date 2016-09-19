@@ -158,9 +158,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         // clear the automatic PM flag unless instructed otherwise
         if (!getParameters().getKeepPolicyPMEnabled()) {
             for (Guid vdsId : getParameters().getVdsIdList()) {
-                getDbFacade().getVdsDynamicDao().updateVdsDynamicPowerManagementPolicyFlag(
-                        vdsId,
-                        false);
+                vdsDynamicDao.updateVdsDynamicPowerManagementPolicyFlag(vdsId, false);
             }
         }
 

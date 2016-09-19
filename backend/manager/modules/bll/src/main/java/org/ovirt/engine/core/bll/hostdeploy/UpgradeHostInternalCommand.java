@@ -27,13 +27,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 @NonTransactiveCommandAttribute
 public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends VdsCommand<T> {
-
-    @Inject
-    private VdsDynamicDao hostDao;
 
     @Inject
     private HostedEngineHelper hostedEngineHelper;
@@ -108,9 +104,9 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
     }
 
     public void updateHostStatusAfterSuccessfulUpgrade() {
-        VdsDynamic dynamicHostData = hostDao.get(getVdsId());
+        VdsDynamic dynamicHostData = vdsDynamicDao.get(getVdsId());
         dynamicHostData.setUpdateAvailable(false);
-        hostDao.update(dynamicHostData);
+        vdsDynamicDao.update(dynamicHostData);
 
         if (getVds().getVdsType() == VDSType.VDS) {
             reestablishConnectionIfNeeded();

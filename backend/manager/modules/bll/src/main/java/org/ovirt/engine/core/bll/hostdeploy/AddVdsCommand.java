@@ -289,7 +289,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         else if (Config.<Boolean> getValue(ConfigValues.InstallVds)) {
             vdsDynamic.setStatus(VDSStatus.Installing);
         }
-        DbFacade.getInstance().getVdsDynamicDao().save(vdsDynamic);
+        vdsDynamicDao.save(vdsDynamic);
         getCompensationContext().snapshotNewEntity(vdsDynamic);
     }
 

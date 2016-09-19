@@ -54,7 +54,7 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
             // clear the automatic PM flag unless instructed otherwise
             if (!getParameters().getKeepPolicyPMEnabled()) {
                 getVds().setPowerManagementControlledByPolicy(false);
-                getDbFacade().getVdsDynamicDao().updateVdsDynamicPowerManagementPolicyFlag(
+                vdsDynamicDao.updateVdsDynamicPowerManagementPolicyFlag(
                         getVdsId(),
                         getVds().getDynamicData().isPowerManagementControlledByPolicy());
             }

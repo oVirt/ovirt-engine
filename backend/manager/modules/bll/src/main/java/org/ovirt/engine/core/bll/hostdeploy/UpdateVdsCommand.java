@@ -275,7 +275,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private void checkKdumpIntegrationStatus() {
         VdsStatic vdsSt = getParameters().getVdsStaticData();
         if (vdsSt.isPmEnabled() && vdsSt.isPmKdumpDetection()) {
-            VdsDynamic vdsDyn = getDbFacade().getVdsDynamicDao().get(vdsSt.getId());
+            VdsDynamic vdsDyn = vdsDynamicDao.get(vdsSt.getId());
             if (vdsDyn != null && vdsDyn.getKdumpStatus() != KdumpStatus.ENABLED) {
                 auditLogDirector.log(
                         new AuditLogableBase(vdsSt.getId()),
