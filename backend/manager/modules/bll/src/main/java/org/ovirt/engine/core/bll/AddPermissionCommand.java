@@ -160,14 +160,14 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         final Permission paramPermission = parameters.getPermission();
 
         Permission permission =
-                getPermissionDao().getForRoleAndAdElementAndObject(paramPermission.getRoleId(), principalId,
+                permissionDao.getForRoleAndAdElementAndObject(paramPermission.getRoleId(), principalId,
                         paramPermission.getObjectId());
 
         if (permission == null) {
             paramPermission.setAdElementId(principalId);
 
             TransactionSupport.executeInNewTransaction(() -> {
-                getPermissionDao().save(paramPermission);
+                permissionDao.save(paramPermission);
                 getCompensationContext().snapshotNewEntity(paramPermission);
                 getCompensationContext().stateChanged();
                 return null;

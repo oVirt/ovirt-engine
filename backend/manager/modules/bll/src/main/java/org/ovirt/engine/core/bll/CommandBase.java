@@ -950,8 +950,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             final Guid object,
             final VdcObjectType type) {
         // Grant if there is matching permission in the database:
-        final Guid permId =
-                getDbFacade().getPermissionDao().getEntityPermissions(userId, actionGroup, object, type);
+        final Guid permId = permissionDao.getEntityPermissions(userId, actionGroup, object, type);
         if (permId != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Found permission '{}' for user when running '{}', on '{}' with id '{}'",
@@ -1007,7 +1006,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                     type.name());
         }
         final Guid permId =
-                getPermissionDao().getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
+                permissionDao.getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
         if (permId != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Found permission '{}' for user when running '{}', on '{}' with id '{}'",

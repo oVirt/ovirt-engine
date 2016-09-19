@@ -154,7 +154,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             return null;
         }
 
-        List<Permission> perms = getPermissionDao().getAllForRoleAndObject(PredefinedRoles.DISK_OPERATOR.getId(), diskIds.iterator().next().getId());
+        List<Permission> perms = permissionDao.getAllForRoleAndObject(PredefinedRoles.DISK_OPERATOR.getId(), diskIds.iterator().next().getId());
         if (perms.isEmpty()) {
             return null;
         }

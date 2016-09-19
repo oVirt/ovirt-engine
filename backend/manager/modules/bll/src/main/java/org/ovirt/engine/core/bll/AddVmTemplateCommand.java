@@ -88,7 +88,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
@@ -1028,9 +1027,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return;
         }
 
-        PermissionDao dao = getDbFacade().getPermissionDao();
-
-        List<Permission> vmPermissions = dao.getAllForEntity(getVmId(), getEngineSessionSeqId(), false);
+        List<Permission> vmPermissions = permissionDao.getAllForEntity(getVmId(), getEngineSessionSeqId(), false);
 
         for (Permission vmPermission : vmPermissions) {
             permissionsToAdd.addPermission(vmPermission.getAdElementId(), vmPermission.getRoleId(),

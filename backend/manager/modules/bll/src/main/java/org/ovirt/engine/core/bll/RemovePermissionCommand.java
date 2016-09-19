@@ -36,7 +36,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     @Override
     protected boolean validate() {
         boolean returnValue = true;
-        Permission p = getPermissionDao().get(getParameters().getPermission().getId());
+        Permission p = permissionDao.get(getParameters().getPermission().getId());
         if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
             getReturnValue().getValidationMessages()
                     .add(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
@@ -69,7 +69,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
             }
         }
 
-        getPermissionDao().remove(perms.getId());
+        permissionDao.remove(perms.getId());
         getDbUserDao().updateLastAdminCheckStatus(userId);
         setSucceeded(true);
     }

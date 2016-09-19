@@ -105,7 +105,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -1465,9 +1464,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
-        PermissionDao dao = getPermissionDao();
-
-        List<Permission> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getEngineSessionSeqId(), false);
+        List<Permission> templatePermissions =
+                permissionDao.getAllForEntity(getVmTemplateId(), getEngineSessionSeqId(), false);
 
         for (Permission templatePermission : templatePermissions) {
             boolean templateOwnerRole = templatePermission.getRoleId().equals(PredefinedRoles.TEMPLATE_OWNER.getId());

@@ -277,6 +277,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected CpuProfileDao cpuProfileDao;
 
+    @Inject
+    protected PermissionDao permissionDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -799,10 +802,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public RoleGroupMapDao getRoleGroupMapDao() {
         return getDbFacade().getRoleGroupMapDao();
-    }
-
-    public PermissionDao getPermissionDao() {
-        return getDbFacade().getPermissionDao();
     }
 
     public DbUserDao getDbUserDao() {

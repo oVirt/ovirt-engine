@@ -293,13 +293,13 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
     protected void detachUserFromVmFromPool() {
         if (!Guid.Empty.equals(getAdUserId())) {
-            Permission perm = getPermissionDao()
+            Permission perm = permissionDao
                     .getForRoleAndAdElementAndObject(
                             PredefinedRoles.ENGINE_USER.getId(),
                             getAdUserId(),
                             getVmId());
             if (perm != null) {
-                getPermissionDao().remove(perm.getId());
+                permissionDao.remove(perm.getId());
             }
         }
     }

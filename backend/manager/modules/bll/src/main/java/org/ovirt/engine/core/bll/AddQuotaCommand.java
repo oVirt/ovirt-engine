@@ -112,9 +112,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     private void copyQuotaPermissions() {
         UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
         List<Permission> vmPermissions =
-                getDbFacade().getPermissionDao().getAllForEntity(getParameters().getQuotaId(),
-                        getEngineSessionSeqId(),
-                        false);
+                permissionDao.getAllForEntity(getParameters().getQuotaId(), getEngineSessionSeqId(), false);
         for (Permission vmPermission : vmPermissions) {
             permissionsToAdd.addPermission(vmPermission.getAdElementId(), vmPermission.getRoleId(),
                     getQuotaId(), vmPermission.getObjectType());

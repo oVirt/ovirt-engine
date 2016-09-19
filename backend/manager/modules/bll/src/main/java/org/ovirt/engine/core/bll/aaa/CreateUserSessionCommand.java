@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
-import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
 
 @NonTransactiveCommandAttribute
@@ -43,9 +42,6 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
 
     @Inject
     private RoleDao roleDao;
-
-    @Inject
-    private PermissionDao permissionDao;
 
     public CreateUserSessionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @DisableInPrepareMode
 public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolParameters> extends
@@ -31,14 +30,11 @@ public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolP
     }
 
     protected void detachVmFromUser() {
-        Permission perm = DbFacade
-                .getInstance()
-                .getPermissionDao()
-                .getForRoleAndAdElementAndObject(
+        Permission perm = permissionDao.getForRoleAndAdElementAndObject(
                         PredefinedRoles.ENGINE_USER.getId(),
                         getAdUserId(), getParameters().getVmId());
         if (perm != null) {
-            DbFacade.getInstance().getPermissionDao().remove(perm.getId());
+            permissionDao.remove(perm.getId());
             if (getParameters().getIsRestoreStateless()) {
                 VM vm = vmDao.get(getParameters().getVmId());
                 if (vm != null) {
