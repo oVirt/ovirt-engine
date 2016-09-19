@@ -41,7 +41,7 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
     @Override
     protected void executeCommand() {
         // cache role for logging
-        getRoleDao().remove(getRole().getId());
+        roleDao.remove(getRole().getId());
         setSucceeded(true);
     }
 }

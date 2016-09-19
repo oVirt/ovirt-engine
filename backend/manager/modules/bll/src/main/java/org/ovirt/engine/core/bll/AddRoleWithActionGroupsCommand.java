@@ -41,7 +41,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
             addValidationMessage(EngineMessage.ACTION_LIST_CANNOT_BE_EMPTY);
             return false;
         }
-        if (getRoleDao().getByName(getRoleName()) != null) {
+        if (roleDao.getByName(getRoleName()) != null) {
             addValidationMessage(EngineMessage.VAR__ACTION__ADD);
             addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
@@ -68,7 +68,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
     protected void executeCommand() {
         prepareRoleForCommand();
         TransactionSupport.executeInNewTransaction(() -> {
-            getRoleDao().save(getRole());
+            roleDao.save(getRole());
             getCompensationContext().snapshotNewEntity(getRole());
             getCompensationContext().stateChanged();
             return null;

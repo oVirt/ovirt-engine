@@ -48,14 +48,14 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         Guid roleId = perm.getRoleId();
         String roleName = perm.getRoleName();
         if (!Guid.isNullOrEmpty(roleId)) {
-            role = getRoleDao().get(roleId);
+            role = roleDao.get(roleId);
             if (role != null) {
                 roleName = role.getName();
                 perm.setRoleName(roleName);
             }
         }
         else if (roleName != null) {
-            role = getRoleDao().getByName(roleName);
+            role = roleDao.getByName(roleName);
             if (role != null) {
                 roleId = role.getId();
                 perm.setRoleId(roleId);
@@ -186,7 +186,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
     private void updateAdminStatus(Permission perm) {
         // if the role of the permission is of type admin update the user
         // lastAdminCheckStatus to true
-        Role role = getRoleDao().get(perm.getRoleId());
+        Role role = roleDao.get(perm.getRoleId());
         if (role.getType() == RoleType.ADMIN) {
             MultiLevelAdministrationHandler.setIsAdminGUIFlag(perm.getAdElementId(), true);
         }

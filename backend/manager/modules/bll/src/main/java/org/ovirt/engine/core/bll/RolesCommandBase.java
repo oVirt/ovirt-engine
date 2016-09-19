@@ -29,7 +29,7 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
 
     protected Role getRole() {
         if (_role == null) {
-            _role = getRoleDao().get(getParameters().getRoleId());
+            _role = roleDao.get(getParameters().getRoleId());
         }
         return _role;
     }

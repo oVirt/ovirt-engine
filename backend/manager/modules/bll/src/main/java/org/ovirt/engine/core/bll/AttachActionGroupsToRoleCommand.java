@@ -77,7 +77,7 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
             // The role should be updated only if it didn't allow viewing children in the first place
             if (!role.allowsViewingChildren()) {
                 role.setAllowsViewingChildren(true);
-                getRoleDao().update(role);
+                roleDao.update(role);
             }
         }
 

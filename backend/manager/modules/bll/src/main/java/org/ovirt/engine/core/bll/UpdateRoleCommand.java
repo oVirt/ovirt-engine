@@ -21,7 +21,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
     @Override
     protected boolean validate() {
         boolean returnValue = true;
-        Role oldRole = getRoleDao().get(getRole().getId());
+        Role oldRole = roleDao.get(getRole().getId());
         if (oldRole == null) {
             addValidationMessage(EngineMessage.ERROR_CANNOT_UPDATE_ROLE_ID);
             returnValue = false;
@@ -30,7 +30,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
                 returnValue = false;
                 addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
             } else if (!StringUtils.equals(getRole().getName(), oldRole.getName())
-                    && getRoleDao().getByName(getRole().getName()) != null) {
+                    && roleDao.getByName(getRole().getName()) != null) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 returnValue = false;
             } // changing role type isn't allowed
@@ -49,7 +49,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
 
     @Override
     protected void executeCommand() {
-        getRoleDao().update(getRole());
+        roleDao.update(getRole());
         setSucceeded(true);
     }
 }

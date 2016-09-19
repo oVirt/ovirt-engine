@@ -69,7 +69,7 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
 
             if (!shouldAllowViewingChildren) {
                 role.setAllowsViewingChildren(false);
-                getRoleDao().update(role);
+                roleDao.update(role);
             }
         }
 

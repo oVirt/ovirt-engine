@@ -33,7 +33,6 @@ public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
         role = new Role();
         role.setId(params.getRoleId());
 
-        doReturn(roleDaoMock).when(command).getRoleDao();
         when(roleDaoMock.get(params.getRoleId())).thenReturn(role);
         doReturn(roleGroupMapDaoMock).when(command).getRoleGroupMapDao();
     }
