@@ -69,7 +69,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         TransactionSupport.executeInNewTransaction(() -> {
             networkDao.update(getNetwork());
 
-            for (NetworkCluster clusterAttachment : getNetworkClusterDao().getAllForNetwork(getNetwork().getId())) {
+            for (NetworkCluster clusterAttachment : networkClusterDao.getAllForNetwork(getNetwork().getId())) {
                 NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
             }
 

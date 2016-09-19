@@ -77,7 +77,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
-import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -119,9 +118,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private ManagementNetworkUtil managementNetworkUtil;
 
     private List<Network> modifiedNetworks;
-
-    @Inject
-    private NetworkClusterDao networkClusterDao;
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;

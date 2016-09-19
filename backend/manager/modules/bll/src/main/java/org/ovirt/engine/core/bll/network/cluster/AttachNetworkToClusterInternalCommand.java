@@ -82,7 +82,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
     }
 
     private boolean networkExists() {
-        return getNetworkClusterDao().get(getNetworkCluster().getId()) != null;
+        return networkClusterDao.get(getNetworkCluster().getId()) != null;
     }
 
     private boolean clusterExists() {
@@ -98,7 +98,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
     }
 
     private void attachNetwork(Guid clusterId, NetworkCluster networkCluster, Network network) {
-        getNetworkClusterDao().save(new NetworkCluster(clusterId, network.getId(),
+        networkClusterDao.save(new NetworkCluster(clusterId, network.getId(),
                 NetworkStatus.OPERATIONAL,
                 false,
                 networkCluster.isRequired(),
@@ -119,7 +119,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
 
         if (network.getCluster().isDisplay()) {
             final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
-                    getNetworkClusterDao(),
+                    networkClusterDao,
                     vmDao,
                     networkCluster,
                     network.getName(),
@@ -128,11 +128,11 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
                 displayNetworkClusterHelper.warnOnActiveVm();
             }
 
-            getNetworkClusterDao().setNetworkExclusivelyAsDisplay(clusterId, network.getId());
+            networkClusterDao.setNetworkExclusivelyAsDisplay(clusterId, network.getId());
         }
 
         if (network.getCluster().isMigration()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsMigration(clusterId, network.getId());
+            networkClusterDao.setNetworkExclusivelyAsMigration(clusterId, network.getId());
         }
 
         NetworkClusterHelper.setStatus(clusterId, network);

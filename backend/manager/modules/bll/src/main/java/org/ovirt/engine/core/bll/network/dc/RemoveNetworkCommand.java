@@ -77,7 +77,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     }
 
     private void removeFromClusters() {
-        for (NetworkCluster networkCluster : getNetworkClusterDao().getAllForNetwork(getNetwork().getId())) {
+        for (NetworkCluster networkCluster : networkClusterDao.getAllForNetwork(getNetwork().getId())) {
             NetworkClusterHelper helper = new NetworkClusterHelper(networkCluster);
             helper.removeNetworkAndReassignRoles();
         }

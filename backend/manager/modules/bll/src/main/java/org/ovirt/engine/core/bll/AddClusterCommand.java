@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
 public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationParameters>
         extends ClusterOperationCommandBase<T> {
@@ -43,9 +42,6 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
-
-    @Inject
-    protected NetworkClusterDao networkClusterDao;
 
     @Inject
     private ClusterFeatureDao clusterFeatureDao;

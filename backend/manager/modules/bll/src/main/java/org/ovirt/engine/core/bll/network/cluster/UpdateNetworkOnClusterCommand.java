@@ -33,7 +33,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     private NetworkCluster getOldNetworkCluster() {
         if (oldNetworkCluster == null) {
-            oldNetworkCluster = getNetworkClusterDao().get(getNetworkCluster().getId());
+            oldNetworkCluster = networkClusterDao.get(getNetworkCluster().getId());
         }
 
         return oldNetworkCluster;
@@ -48,7 +48,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     @Override
     protected void executeCommand() {
         final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
-                getNetworkClusterDao(),
+                networkClusterDao,
                 vmDao,
                 getNetworkCluster(),
                 getNetworkName(),
@@ -57,29 +57,29 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
             displayNetworkClusterHelper.warnOnActiveVm();
         }
 
-        getNetworkClusterDao().update(getNetworkCluster());
+        networkClusterDao.update(getNetworkCluster());
 
         final Network managementNetwork;
 
         if (getNetworkCluster().isManagement() && !getOldNetworkCluster().isManagement()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsManagement(getClusterId(), getPersistedNetwork().getId());
+            networkClusterDao.setNetworkExclusivelyAsManagement(getClusterId(), getPersistedNetwork().getId());
             managementNetwork = getPersistedNetwork();
         } else {
             managementNetwork = managementNetworkUtil.getManagementNetwork(getClusterId());
         }
 
         if (getNetworkCluster().isDisplay() != getOldNetworkCluster().isDisplay()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsDisplay(getClusterId(),
+            networkClusterDao.setNetworkExclusivelyAsDisplay(getClusterId(),
                     getNetworkCluster().isDisplay() ? getPersistedNetwork().getId() : managementNetwork.getId());
         }
 
         if (getNetworkCluster().isMigration() != getOldNetworkCluster().isMigration()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsMigration(getClusterId(),
+            networkClusterDao.setNetworkExclusivelyAsMigration(getClusterId(),
                     getNetworkCluster().isMigration() ? getPersistedNetwork().getId() : managementNetwork.getId());
         }
 
         if (getNetworkCluster().isGluster() != getOldNetworkCluster().isGluster()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsGluster(getClusterId(),
+            networkClusterDao.setNetworkExclusivelyAsGluster(getClusterId(),
                     getNetworkCluster().isGluster() ? getPersistedNetwork().getId() : null);
         }
 

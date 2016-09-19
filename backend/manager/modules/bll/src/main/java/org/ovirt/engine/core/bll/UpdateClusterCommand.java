@@ -192,7 +192,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 }
             }
 
-            getNetworkClusterDao().save(managementNetworkCluster);
+            networkClusterDao.save(managementNetworkCluster);
         }
 
         alertIfFencingDisabled();

@@ -254,6 +254,9 @@ public class AuditLogableBase extends TimeoutBase {
     protected NetworkDao networkDao;
 
     @Inject
+    protected NetworkClusterDao networkClusterDao;
+
+    @Inject
     protected InterfaceDao interfaceDao;
 
     /**
@@ -806,10 +809,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmNicDao getVmNicDao() {
         return getDbFacade().getVmNicDao();
-    }
-
-    public NetworkClusterDao getNetworkClusterDao() {
-        return getDbFacade().getNetworkClusterDao();
     }
 
     public AsyncTaskDao getAsyncTaskDao() {
