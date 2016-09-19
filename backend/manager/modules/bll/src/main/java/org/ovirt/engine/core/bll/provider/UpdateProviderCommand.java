@@ -37,7 +37,7 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
 
     private Provider<?> getOldProvider() {
         if (oldProvider == null) {
-            oldProvider = getProviderDao().get(getProvider().getId());
+            oldProvider = providerDao.get(getProvider().getId());
         }
 
         return oldProvider;
@@ -67,7 +67,7 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected void executeCommand() {
-        getProviderDao().update(getProvider());
+        providerDao.update(getProvider());
 
         ProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(getProvider());
         if (providerProxy != null) {

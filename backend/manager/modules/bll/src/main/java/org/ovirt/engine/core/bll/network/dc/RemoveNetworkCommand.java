@@ -44,7 +44,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     private Provider<?> getProvider() {
         if (provider == null) {
-            provider = getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
+            provider = providerDao.get(getNetwork().getProvidedBy().getProviderId());
         }
 
         return provider;

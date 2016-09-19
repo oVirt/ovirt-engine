@@ -83,7 +83,6 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
@@ -93,8 +92,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private static final Base64 BASE_64 = new Base64(0, null);
 
-    @Inject
-    private ProviderDao providerDao;
     @Inject
     private VmSlaPolicyUtils vmSlaPolicyUtils;
     @Inject

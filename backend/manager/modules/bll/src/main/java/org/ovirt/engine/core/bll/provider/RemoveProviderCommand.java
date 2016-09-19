@@ -38,7 +38,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     private Provider<?> getDeletedProvider() {
         if (deletedProvider == null) {
-            deletedProvider = getProviderDao().get(getParameters().getProvider().getId());
+            deletedProvider = providerDao.get(getParameters().getProvider().getId());
         }
 
         return deletedProvider;
@@ -79,7 +79,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
             getProviderProxy().onRemoval();
         }
 
-        getProviderDao().remove(providerId);
+        providerDao.remove(providerId);
         setSucceeded(true);
     }
 

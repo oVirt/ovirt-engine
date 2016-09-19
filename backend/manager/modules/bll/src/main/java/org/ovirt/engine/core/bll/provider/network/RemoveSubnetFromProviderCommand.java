@@ -30,7 +30,7 @@ public class RemoveSubnetFromProviderCommand<T extends ExternalSubnetParameters>
 
     private Provider<?> getProvider() {
         if (provider == null) {
-            provider = getDbFacade().getProviderDao().get(getSubnet().getExternalNetwork().getProviderId());
+            provider = providerDao.get(getSubnet().getExternalNetwork().getProviderId());
         }
 
         return provider;

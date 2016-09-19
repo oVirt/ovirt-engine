@@ -28,7 +28,7 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
     }
 
     private Provider<?> getProvider() {
-        return getDbFacade().getProviderDao().get(getParameters().getProviderId());
+        return providerDao.get(getParameters().getProviderId());
     }
 
     private ProviderNetwork getExternalNetwork() {

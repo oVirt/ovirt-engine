@@ -597,7 +597,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             Network network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
             if (network != null && network.isExternal() && vmDevice.getIsPlugged()) {
-                Provider<?> provider = getDbFacade().getProviderDao().get(network.getProvidedBy().getProviderId());
+                Provider<?> provider = providerDao.get(network.getProvidedBy().getProviderId());
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
                 Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface, getVds());
 

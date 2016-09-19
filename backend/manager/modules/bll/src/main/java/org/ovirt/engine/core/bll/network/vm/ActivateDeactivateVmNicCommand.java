@@ -302,7 +302,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private NetworkProviderProxy getProviderProxy() {
         if (providerProxy == null) {
-            Provider<?> provider = getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
+            Provider<?> provider = providerDao.get(getNetwork().getProvidedBy().getProviderId());
             providerProxy = ProviderProxyFactory.getInstance().create(provider);
         }
 

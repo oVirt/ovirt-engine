@@ -88,7 +88,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     private boolean externalNetworkValid(AddNetworkValidator validator) {
         ProviderValidator providerValidator =
-                new ProviderValidator(getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId()));
+                new ProviderValidator(providerDao.get(getNetwork().getProvidedBy().getProviderId()));
         return validate(providerValidator.providerIsSet())
                 && validate(validator.externalNetworkNewInDataCenter())
                 && validate(validator.externalNetworkIsVmNetwork())

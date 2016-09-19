@@ -59,7 +59,7 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
     @Override
     protected void executeCommand() {
         getProvider().setId(Guid.newGuid());
-        getDbFacade().getProviderDao().save(getProvider());
+        providerDao.save(getProvider());
 
         ProviderProxy providerProxy = getProviderProxy();
         if (providerProxy != null) {

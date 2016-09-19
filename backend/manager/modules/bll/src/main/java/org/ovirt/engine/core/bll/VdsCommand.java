@@ -310,7 +310,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected boolean validateNetworkProviderProperties(Guid providerId, String networkMappings) {
-        NetworkProviderValidator validator = new NetworkProviderValidator(getProviderDao().get(providerId));
+        NetworkProviderValidator validator = new NetworkProviderValidator(providerDao.get(providerId));
         return validate(validator.providerIsSet())
                 && validate(validator.providerTypeValid())
                 && validate(validator.networkMappingsProvided(networkMappings))

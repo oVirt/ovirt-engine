@@ -106,7 +106,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private Provider<?> getHostProvider() {
-        return getProviderDao().get(getParameters().getVdsStaticData().getHostProviderId());
+        return providerDao.get(getParameters().getVdsStaticData().getHostProviderId());
     }
 
     @Override
