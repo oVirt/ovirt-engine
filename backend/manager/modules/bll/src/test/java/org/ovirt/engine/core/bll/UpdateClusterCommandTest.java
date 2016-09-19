@@ -581,12 +581,7 @@ public class UpdateClusterCommandTest {
                 new ManagementNetworkOnClusterOperationParameters(group, managementNetworkId);
 
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        cmd = spy(new UpdateClusterCommand<ManagementNetworkOnClusterOperationParameters>(param, null) {
-            @Override
-            protected void initUser() {
-                // Stub for testing
-            }
-        });
+        cmd = spy(new UpdateClusterCommand<>(param, null));
 
         doReturn(0).when(cmd).compareCpuLevels(any(Cluster.class));
 
