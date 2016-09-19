@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsVmMapParameters;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class UpdateTagsVmMapDefaultDisplayTypeCommand<T extends TagsVmMapParameters> extends TagsCommandBase<T> {
 
@@ -16,7 +15,7 @@ public class UpdateTagsVmMapDefaultDisplayTypeCommand<T extends TagsVmMapParamet
     @Override
     protected boolean validate() {
         TagsVmMap tagsVmMap;
-        tagsVmMap = DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getParameters().getTagsVmMap().getTagId(),
+        tagsVmMap = tagDao.getTagVmByTagIdAndByVmId(getParameters().getTagsVmMap().getTagId(),
                 getParameters().getTagsVmMap().getVmId());
         if (tagsVmMap == null) {
             addValidationMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_NOT_EXISTS);
@@ -27,7 +26,7 @@ public class UpdateTagsVmMapDefaultDisplayTypeCommand<T extends TagsVmMapParamet
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getTagDao().updateDefaultDisplayForVmTag(getParameters().getTagsVmMap());
+        tagDao.updateDefaultDisplayForVmTag(getParameters().getTagsVmMap());
         setSucceeded(true);
     }
 

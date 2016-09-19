@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AttachUserGroupToTagCommand<T extends AttachEntityToTagParameters> extends UserGroupTagMapBase<T> {
 
@@ -19,9 +18,9 @@ public class AttachUserGroupToTagCommand<T extends AttachEntityToTagParameters> 
         if (getTagId() != null) {
             for (Guid groupGuid : getGroupList()) {
                 DbGroup group = dbGroupDao.get(groupGuid);
-                if (DbFacade.getInstance().getTagDao().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) == null) {
+                if (tagDao.getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) == null) {
                     TagsUserGroupMap map = new TagsUserGroupMap(groupGuid, getTagId());
-                    DbFacade.getInstance().getTagDao().attachUserGroupToTag(map);
+                    tagDao.attachUserGroupToTag(map);
                     noActionDone = false;
                     if (group != null) {
                         appendCustomCommaSeparatedValue("AttachGroupsNames", group.getName());

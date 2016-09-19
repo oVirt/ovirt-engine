@@ -129,7 +129,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      */
     protected boolean validateTag(String tagName) {
         boolean retValue = true;
-        Tags tag = DbFacade.getInstance().getTagDao().getByName(tagName);
+        Tags tag = tagDao.getByName(tagName);
         if (tag == null) {
 
             addValidationMessage(EngineMessage.EN_UNKNOWN_TAG_NAME);

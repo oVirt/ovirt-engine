@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AttachVdsToTagCommand<T extends AttachEntityToTagParameters> extends VdsTagMapBase<T> {
 
@@ -20,12 +19,12 @@ public class AttachVdsToTagCommand<T extends AttachEntityToTagParameters> extend
         if (getTagId() != null) {
             for (Guid vdsId : getVdsList()) {
                 VDS vds = vdsDao.get(vdsId);
-                if (DbFacade.getInstance().getTagDao().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) == null) {
+                if (tagDao.getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) == null) {
                     if (vds != null) {
                         appendCustomCommaSeparatedValue("VdsNames", vds.getName());
                     }
                     map = new TagsVdsMap(getTagId(), vdsId);
-                    DbFacade.getInstance().getTagDao().attachVdsToTag(map);
+                    tagDao.attachVdsToTag(map);
                     noActionDone = false;
                 } else {
                     if (vds != null) {

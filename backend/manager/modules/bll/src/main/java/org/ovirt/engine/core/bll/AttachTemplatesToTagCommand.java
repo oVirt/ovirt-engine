@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.TagsTemplateMap;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AttachTemplatesToTagCommand<T extends AttachEntityToTagParameters> extends TemplatesTagMapBase<T> {
 
@@ -28,10 +27,10 @@ public class AttachTemplatesToTagCommand<T extends AttachEntityToTagParameters> 
         for (Guid templateGuid : getTemplatesList()) {
             VmTemplate template = vmTemplateDao.get(templateGuid);
             if (template != null) {
-                if (DbFacade.getInstance().getTagDao().getTagTemplateByTagIdAndByTemplateId(getTagId(), templateGuid) == null) {
+                if (tagDao.getTagTemplateByTagIdAndByTemplateId(getTagId(), templateGuid) == null) {
                     appendCustomCommaSeparatedValue("TemplatesNames", template.getName());
                     TagsTemplateMap map = new TagsTemplateMap(getTagId(), templateGuid);
-                    DbFacade.getInstance().getTagDao().attachTemplateToTag(map);
+                    tagDao.attachTemplateToTag(map);
                     noActionDone = false;
                 } else {
                     appendCustomCommaSeparatedValue("TemplatesNamesExists", template.getName());

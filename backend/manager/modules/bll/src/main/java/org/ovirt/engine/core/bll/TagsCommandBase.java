@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class TagsCommandBase<T extends TagsActionParametersBase> extends CommandBase<T> {
     private Tags tag = null;
@@ -18,7 +17,7 @@ public abstract class TagsCommandBase<T extends TagsActionParametersBase> extend
 
     protected Tags getTag() {
         if (tag == null && getTagId() != null) {
-            tag = DbFacade.getInstance().getTagDao().get(getTagId());
+            tag = tagDao.get(getTagId());
         }
         return tag;
     }

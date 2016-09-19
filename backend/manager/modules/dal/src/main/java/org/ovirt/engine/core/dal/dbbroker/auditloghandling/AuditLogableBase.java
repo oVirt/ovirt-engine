@@ -292,6 +292,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected DbUserDao dbUserDao;
 
+    @Inject
+    protected TagDao tagDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -825,10 +828,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public AuditLogDao getAuditLogDao() {
         return getDbFacade().getAuditLogDao();
-    }
-
-    public TagDao getTagDao() {
-        return getDbFacade().getTagDao();
     }
 
     public DbFacade getDbFacade() {

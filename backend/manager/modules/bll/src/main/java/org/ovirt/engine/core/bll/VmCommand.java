@@ -163,9 +163,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmUsers() {
-        List<TagsVmMap> all = getTagDao().getTagVmMapByVmIdAndDefaultTag(getVmId());
+        List<TagsVmMap> all = tagDao.getTagVmMapByVmIdAndDefaultTag(getVmId());
         for (TagsVmMap tagVm : all) {
-            getTagDao().detachVmFromTag(tagVm.getTagId(), getVmId());
+            tagDao.detachVmFromTag(tagVm.getTagId(), getVmId());
         }
     }
 

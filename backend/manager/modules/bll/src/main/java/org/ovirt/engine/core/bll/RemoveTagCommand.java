@@ -7,15 +7,11 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.TagDao;
 
 public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCommandBase<T> {
 
     @Inject
     private TagsDirector tagsDirector;
-
-    @Inject
-    private TagDao tagDao;
 
     public RemoveTagCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

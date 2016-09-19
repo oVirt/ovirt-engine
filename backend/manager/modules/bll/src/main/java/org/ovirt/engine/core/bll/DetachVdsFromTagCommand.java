@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DetachVdsFromTagCommand<T extends AttachEntityToTagParameters> extends VdsTagMapBase<T> {
 
@@ -16,12 +15,12 @@ public class DetachVdsFromTagCommand<T extends AttachEntityToTagParameters> exte
     @Override
     protected void executeCommand() {
         for (Guid vdsId : getVdsList()) {
-            if (getTagId() != null && DbFacade.getInstance().getTagDao().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) != null) {
+            if (getTagId() != null && tagDao.getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) != null) {
                 VDS vds = vdsDao.get(vdsId);
                 if (vds != null) {
                     appendCustomCommaSeparatedValue("VdsNames", vds.getName());
                 }
-                DbFacade.getInstance().getTagDao().detachVdsFromTag(getTagId(), vdsId);
+                tagDao.detachVdsFromTag(getTagId(), vdsId);
                 setSucceeded(true);
             }
         }

@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DetachUserFromTagCommand<T extends AttachEntityToTagParameters> extends UserTagMapBase<T> {
 
@@ -18,11 +17,11 @@ public class DetachUserFromTagCommand<T extends AttachEntityToTagParameters> ext
         if (getTagId() != null) {
             for (Guid userGuid : getUserList()) {
                 DbUser user = dbUserDao.get(userGuid);
-                if (DbFacade.getInstance().getTagDao().getTagUserByTagIdAndByuserId(getTagId(), userGuid) != null) {
+                if (tagDao.getTagUserByTagIdAndByuserId(getTagId(), userGuid) != null) {
                     if (user != null) {
                         appendCustomCommaSeparatedValue("DetachUsersNames", user.getLoginName());
                     }
-                    DbFacade.getInstance().getTagDao().detachUserFromTag(getTagId(), userGuid);
+                    tagDao.detachUserFromTag(getTagId(), userGuid);
                     noActionDone = false;
                     setSucceeded(true);
                 }
