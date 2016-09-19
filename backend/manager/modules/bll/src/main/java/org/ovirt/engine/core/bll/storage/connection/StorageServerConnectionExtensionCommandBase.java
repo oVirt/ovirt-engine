@@ -41,7 +41,7 @@ public abstract class StorageServerConnectionExtensionCommandBase<T extends VdcA
     }
 
     protected StorageServerConnectionExtension getConnectionExtension(Guid connectionExtensionId) {
-        return getStorageServerConnectionExtensionDao().get(connectionExtensionId);
+        return storageServerConnectionExtensionDao.get(connectionExtensionId);
     }
 
     protected Map<String, Pair<String, String>> createIdAndHostTargetLockMap(StorageServerConnectionExtension connExt) {

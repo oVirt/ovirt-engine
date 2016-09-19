@@ -37,7 +37,7 @@ public class AddStorageServerConnectionExtensionCommand<T extends StorageServerC
 
     @Override
     protected void executeCommand() {
-        getStorageServerConnectionExtensionDao().save(getParameters().getStorageServerConnectionExtension());
+        storageServerConnectionExtensionDao.save(getParameters().getStorageServerConnectionExtension());
         getReturnValue().setActionReturnValue(getParameters().getStorageServerConnectionExtension().getId());
         getReturnValue().setSucceeded(true);
     }

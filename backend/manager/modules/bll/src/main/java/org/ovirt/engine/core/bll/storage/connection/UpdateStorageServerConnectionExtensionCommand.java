@@ -32,7 +32,7 @@ public class UpdateStorageServerConnectionExtensionCommand <T extends StorageSer
 
     @Override
     protected void executeCommand() {
-        getDbFacade().getStorageServerConnectionExtensionDao().update(getParameters().getStorageServerConnectionExtension());
+        storageServerConnectionExtensionDao.update(getParameters().getStorageServerConnectionExtension());
         getReturnValue().setSucceeded(true);
     }
 

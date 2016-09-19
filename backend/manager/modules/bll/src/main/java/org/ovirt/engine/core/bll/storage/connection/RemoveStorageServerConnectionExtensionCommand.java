@@ -35,7 +35,7 @@ public class RemoveStorageServerConnectionExtensionCommand<T extends IdParameter
 
     @Override
     protected void executeCommand() {
-        getDbFacade().getStorageServerConnectionExtensionDao().remove(getParameters().getId());
+        storageServerConnectionExtensionDao.remove(getParameters().getId());
         getReturnValue().setSucceeded(true);
     }
 

@@ -151,6 +151,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected StorageServerConnectionDao storageServerConnectionDao;
 
+    @Inject
+    protected StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -672,10 +675,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public StoragePoolDao getStoragePoolDao() {
         return getDbFacade().getStoragePoolDao();
-    }
-
-    public StorageServerConnectionExtensionDao getStorageServerConnectionExtensionDao() {
-        return getDbFacade().getStorageServerConnectionExtensionDao();
     }
 
     public VdsDao getVdsDao() {
