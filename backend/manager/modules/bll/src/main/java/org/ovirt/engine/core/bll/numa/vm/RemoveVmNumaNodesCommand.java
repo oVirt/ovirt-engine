@@ -44,7 +44,7 @@ public class RemoveVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
             for (VmNumaNode node : vmNumaNodes) {
                 guids.add(node.getId());
             }
-            getVmNumaNodeDao().massRemoveNumaNodeByNumaNodeId(guids);
+            vmNumaNodeDao.massRemoveNumaNodeByNumaNodeId(guids);
             succeeded = true;
         } finally {
             setSucceeded(succeeded);

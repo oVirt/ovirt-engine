@@ -33,7 +33,7 @@ public class SetVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
     @Override
     protected void executeCommand() {
         if (!oldNumaNodeIds.isEmpty()) {
-            getVmNumaNodeDao().massRemoveNumaNodeByNumaNodeId(oldNumaNodeIds);
+            vmNumaNodeDao.massRemoveNumaNodeByNumaNodeId(oldNumaNodeIds);
         }
 
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
@@ -58,7 +58,7 @@ public class SetVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
             }
             nodes.add(vmNumaNode);
         }
-        getVmNumaNodeDao().massSaveNumaNode(nodes, null, getVm().getId());
+        vmNumaNodeDao.massSaveNumaNode(nodes, null, getVm().getId());
 
         setSucceeded(true);
     }

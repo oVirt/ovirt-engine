@@ -57,7 +57,7 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
             }
             nodes.add(vmNumaNode);
         }
-        getVmNumaNodeDao().massUpdateNumaNode(nodes);
+        vmNumaNodeDao.massUpdateNumaNode(nodes);
 
         setSucceeded(true);
     }

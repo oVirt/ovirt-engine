@@ -607,7 +607,6 @@ public class UpdateClusterCommandTest {
         doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any(VDS.class));
 
         // cluster upgrade
-        doReturn(vmNumaNodeDao).when(cmd).getVmNumaNodeDao();
         doReturn(inClusterUpgradeValidator).when(cmd).getUpgradeValidator();
         doReturn(new ClusterPolicy()).when(schedulingManager).getClusterPolicy(any(Guid.class));
         final ClusterPolicy clusterPolicy = new ClusterPolicy();

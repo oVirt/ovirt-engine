@@ -49,7 +49,7 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
             }
             nodes.add(vmNumaNode);
         }
-        getVmNumaNodeDao().massSaveNumaNode(nodes, null, getVm().getId());
+        vmNumaNodeDao.massSaveNumaNode(nodes, null, getVm().getId());
 
         // Used for restful API for reture first NUMA node GUID
         setActionReturnValue(nodes.get(0).getId());

@@ -139,8 +139,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // we always need to verify new or existing numa nodes with the updated VM configuration
         if (!getParameters().isUpdateNuma()) {
-            getParameters().getVm().setvNumaNodeList(getDbFacade().getVmNumaNodeDao().getAllVmNumaNodeByVmId
-                    (getParameters().getVmId()));
+            getParameters().getVm().setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(getParameters().getVmId()));
         }
     }
 

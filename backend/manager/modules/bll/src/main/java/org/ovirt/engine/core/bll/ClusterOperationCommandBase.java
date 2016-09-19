@@ -32,8 +32,6 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
-
 public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
         ClusterCommandBase<T> {
 
@@ -45,9 +43,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     @Inject
     private InClusterUpgradeValidator upgradeValidator;
-
-    @Inject
-    private VmNumaNodeDao vmNumaNodeDao;
 
     protected ClusterOperationCommandBase(Guid commandId) {
         super(commandId);
@@ -169,7 +164,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     private void populateVMNUMAInfo(final List<VM> vms) {
         // Populate numa nodes with a mass update
         final Map<Guid, List<VmNumaNode>> numaNodes =
-                getVmNumaNodeDao().getVmNumaNodeInfoByClusterIdAsMap(getClusterId());
+                vmNumaNodeDao.getVmNumaNodeInfoByClusterIdAsMap(getClusterId());
         for (final VM vm : vms) {
             if (numaNodes.containsKey(vm.getId())) {
                 vm.setvNumaNodeList(numaNodes.get(vm.getId()));
@@ -220,10 +215,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
         }
-    }
-
-    protected VmNumaNodeDao getVmNumaNodeDao() {
-        return vmNumaNodeDao;
     }
 
     protected SchedulingManager getSchedulingManager() {

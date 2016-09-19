@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationParameters> extends VmCommand<T> {
 
@@ -33,10 +32,6 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         return getDbFacade().getVdsNumaNodeDao();
     }
 
-    protected VmNumaNodeDao getVmNumaNodeDao() {
-        return getDbFacade().getVmNumaNodeDao();
-    }
-
     @Override
     protected final void init() {
         super.init();
@@ -47,7 +42,7 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
             setVm(getParameters().getVm());
         }
         if (getVm() != null) {
-            setVmNumaNodesForValidation(getVmNumaNodeDao().getAllVmNumaNodeByVmId(getVm().getId()));
+            setVmNumaNodesForValidation(vmNumaNodeDao.getAllVmNumaNodeByVmId(getVm().getId()));
             doInit();
         }
     }
