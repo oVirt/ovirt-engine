@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -145,11 +144,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void removeVdsStatisticsFromDb() {
-        getVdsStatisticsDao().remove(getVdsId());
-    }
-
-    protected VdsStatisticsDao getVdsStatisticsDao() {
-        return getDbFacade().getVdsStatisticsDao();
+        vdsStatisticsDao.remove(getVdsId());
     }
 
     private boolean canRemoveVds(Guid vdsId, List<String> text) {

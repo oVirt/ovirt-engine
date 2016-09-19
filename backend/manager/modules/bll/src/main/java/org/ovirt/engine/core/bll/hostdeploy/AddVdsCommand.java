@@ -296,7 +296,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private void addVdsStatisticsToDb() {
         VdsStatistics vdsStatistics = new VdsStatistics();
         vdsStatistics.setId(getParameters().getVdsStaticData().getId());
-        DbFacade.getInstance().getVdsStatisticsDao().save(vdsStatistics);
+        vdsStatisticsDao.save(vdsStatistics);
         getCompensationContext().snapshotNewEntity(vdsStatistics);
     }
 
