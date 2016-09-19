@@ -37,7 +37,7 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
 
     protected GlusterHookEntity getGlusterHook() {
         if (entity == null) {
-            entity = getGlusterHooksDao().getById(getParameters().getHookId(), true);
+            entity = glusterHooksDao.getById(getParameters().getHookId(), true);
         }
         return entity;
     }
@@ -53,7 +53,7 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
             return false;
         }
 
-        if (getGlusterHooksDao().getById(getParameters().getHookId()) == null) {
+        if (glusterHooksDao.getById(getParameters().getHookId()) == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST);
             return false;
         }
@@ -66,22 +66,22 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     }
 
     protected void updateServerHookStatusInDb(Guid hookId, Guid serverId, GlusterHookStatus status) {
-        getGlusterHooksDao().updateGlusterServerHookStatus(hookId, serverId, status);
+        glusterHooksDao.updateGlusterServerHookStatus(hookId, serverId, status);
     }
 
     protected void updateHookInDb(GlusterHookEntity hook) {
-        getGlusterHooksDao().updateGlusterHook(hook);
+        glusterHooksDao.updateGlusterHook(hook);
     }
 
     protected void addServerHookInDb(GlusterServerHook serverHook) {
-        getGlusterHooksDao().saveGlusterServerHook(serverHook);
+        glusterHooksDao.saveGlusterServerHook(serverHook);
     }
 
     protected void updateGlusterHook(GlusterHookEntity entity) {
         if (entity.getConflictStatus() == 0) {
-            getGlusterHooksDao().removeGlusterServerHooks(entity.getId());
+            glusterHooksDao.removeGlusterServerHooks(entity.getId());
         }
-        getGlusterHooksDao().updateGlusterHook(entity);
+        glusterHooksDao.updateGlusterHook(entity);
 
     }
 

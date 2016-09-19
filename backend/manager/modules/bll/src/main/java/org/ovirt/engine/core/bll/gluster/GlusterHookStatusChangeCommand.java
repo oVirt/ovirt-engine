@@ -113,7 +113,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
             updateHookInDb(entity);
             if (entity.getConflictStatus() == 0) {
                 //all conflicts have been resolved, remove server hooks
-                getGlusterHooksDao().removeGlusterServerHooks(entity.getId());
+                glusterHooksDao.removeGlusterServerHooks(entity.getId());
             }
         }
 

@@ -103,7 +103,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
             hookContentType = entity.getContentType();
         } else {
             //use a server's copy
-            GlusterServerHook sourceServerHook = getGlusterHooksDao().getGlusterServerHook(entity.getId(), getParameters().getSourceServerId());
+            GlusterServerHook sourceServerHook = glusterHooksDao.getGlusterServerHook(entity.getId(), getParameters().getSourceServerId());
             VDSReturnValue retValue = runVdsCommand(VDSCommandType.GetGlusterHookContent,
                                         new GlusterHookVDSParameters(getParameters().getSourceServerId(),
                                                 entity.getGlusterCommand(),

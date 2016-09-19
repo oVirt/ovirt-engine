@@ -87,7 +87,6 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
             when(hooksDao.getById(HOOK_ID)).thenReturn(hookEntity);
             when(hooksDao.getById(HOOK_ID, true)).thenReturn(hookEntity);
         }
-        doReturn(hooksDao).when(cmd).getGlusterHooksDao();
         when(clusterDao.get(CLUSTER_ID)).thenReturn(getCluster());
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(getGlusterServers().get(0)).when(cmd).getUpServer();

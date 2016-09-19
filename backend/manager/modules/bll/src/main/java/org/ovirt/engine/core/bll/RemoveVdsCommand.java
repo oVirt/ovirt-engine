@@ -193,7 +193,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void removeGlusterHooksFromDb() {
-        getGlusterHooksDao().removeAllInCluster(getClusterId());
+        glusterHooksDao.removeAllInCluster(getClusterId());
     }
 
     public GlusterUtil getGlusterUtils() {

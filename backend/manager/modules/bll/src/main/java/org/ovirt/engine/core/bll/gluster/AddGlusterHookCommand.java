@@ -122,7 +122,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
                     errors.add(retValue.getVdsError().getMessage());
                 } else {
                     //hook added successfully, so remove from gluster server hooks table
-                    getGlusterHooksDao().removeGlusterServerHook(pairResult.getFirst().getHookId(),
+                    glusterHooksDao.removeGlusterServerHook(pairResult.getFirst().getHookId(),
                             pairResult.getFirst().getServerId());
                 }
             }

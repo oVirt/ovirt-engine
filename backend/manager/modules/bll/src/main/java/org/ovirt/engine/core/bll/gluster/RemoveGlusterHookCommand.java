@@ -116,7 +116,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
         if (getSucceeded()) {
             entity.removeMissingConflict();
-            getGlusterHooksDao().remove(entity.getId());
+            glusterHooksDao.remove(entity.getId());
         }
 
     }
