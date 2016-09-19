@@ -66,6 +66,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmIconDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -223,6 +224,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     @Inject
     protected VmTemplateDao vmTemplateDao;
+
+    @Inject
+    protected VmPoolDao vmPoolDao;
 
     @Inject
     protected VmDeviceDao vmDeviceDao;

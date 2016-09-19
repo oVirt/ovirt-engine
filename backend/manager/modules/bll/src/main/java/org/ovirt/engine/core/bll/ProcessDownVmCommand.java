@@ -35,8 +35,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmPoolDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +67,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
     private VmPool getVmPoolCached() {
         if (vmPoolCached == null && getVm().getVmPoolId() != null) {
-            vmPoolCached = getVmPoolDao().get(getVm().getVmPoolId());
+            vmPoolCached = vmPoolDao.get(getVm().getVmPoolId());
         }
         return vmPoolCached;
     }
@@ -182,10 +180,6 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         }
 
         return false;
-    }
-
-    private VmPoolDao getVmPoolDao() {
-        return DbFacade.getInstance().getVmPoolDao();
     }
 
     @Override

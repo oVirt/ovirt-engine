@@ -1222,7 +1222,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
-        final VmPool vmPool = getDbFacade().getVmPoolDao().get(getVm().getVmPoolId());
+        final VmPool vmPool = vmPoolDao.get(getVm().getVmPoolId());
         return vmPool.getVmPoolType().equals(VmPoolType.MANUAL);
     }
 

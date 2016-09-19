@@ -50,7 +50,7 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
                 addValidationMessage(EngineMessage.VMT_CANNOT_REMOVE_CLUSTER_VMTS_DETECTED);
                 returnValue = false;
             }
-            if ((list = DbFacade.getInstance().getVmPoolDao().getAll()).size() > 0) {
+            if ((list = vmPoolDao.getAll()).size() > 0) {
                 for (VmPool pool : list) {
                     if (pool.getClusterId().equals(getCluster().getId())) {
                         addValidationMessage(EngineMessage.CLUSTER_CANNOT_REMOVE_HAS_VM_POOLS);

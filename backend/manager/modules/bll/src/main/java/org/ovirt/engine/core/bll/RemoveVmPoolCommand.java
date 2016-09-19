@@ -122,14 +122,14 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     private void setPoolBeingDestroyed() {
-        getVmPoolDao().setBeingDestroyed(getVmPoolId(), true);
+        vmPoolDao.setBeingDestroyed(getVmPoolId(), true);
     }
 
     private void setPrestartedToZero() {
         VmPool vmPool = getVmPool();
         if (vmPool.getPrestartedVms() > 0) {
             vmPool.setPrestartedVms(0);
-            getVmPoolDao().update(vmPool);
+            vmPoolDao.update(vmPool);
         }
     }
 
@@ -196,12 +196,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     private boolean canRemoveVmPool(Guid vmPoolId) {
-        return getVmPoolDao().getVmPoolsMapByVmPoolId(vmPoolId).isEmpty();
+        return vmPoolDao.getVmPoolsMapByVmPoolId(vmPoolId).isEmpty();
     }
 
     private boolean removeVmPool() {
         if (getVmPoolId() != null && canRemoveVmPool(getVmPoolId())) {
-            getVmPoolDao().remove(getVmPoolId());
+            vmPoolDao.remove(getVmPoolId());
             return true;
         } else {
             if (getVmPoolId() == null) {

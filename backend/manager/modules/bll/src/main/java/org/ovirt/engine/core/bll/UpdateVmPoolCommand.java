@@ -49,7 +49,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
 
     @Override
     protected void createOrUpdateVmPool() {
-        getVmPoolDao().update(getVmPool());
+        vmPoolDao.update(getVmPool());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
             return false;
         }
 
-        oldPool = getVmPoolDao().get(getVmPool().getVmPoolId());
+        oldPool = vmPoolDao.get(getVmPool().getVmPoolId());
         if (oldPool == null) {
             return failValidation(EngineMessage.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
         }

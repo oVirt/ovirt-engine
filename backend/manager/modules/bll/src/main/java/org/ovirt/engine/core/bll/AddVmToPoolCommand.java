@@ -31,7 +31,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
         }
 
         if (getParameters().getVmPoolId() != null) {
-            VmPool pool = getVmPoolDao().get(getParameters().getVmPoolId());
+            VmPool pool = vmPoolDao.get(getParameters().getVmPoolId());
             if (pool != null && !pool.getClusterId().equals(getVm().getClusterId())) {
                 return failValidation(EngineMessage.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER);
             }
@@ -42,7 +42,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
 
     @Override
     protected void executeCommand() {
-        getVmPoolDao().addVmToPool(new VmPoolMap(getVmId(), getVmPoolId()));
+        vmPoolDao.addVmToPool(new VmPoolMap(getVmId(), getVmPoolId()));
         setSucceeded(true);
     }
 

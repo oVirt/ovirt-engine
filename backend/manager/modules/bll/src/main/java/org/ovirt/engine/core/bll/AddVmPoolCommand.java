@@ -81,12 +81,12 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
 
     @Override
     protected void createOrUpdateVmPool() {
-        getVmPoolDao().save(getVmPool());
+        vmPoolDao.save(getVmPool());
     }
 
     @Override
     protected void onNoVmsAdded() {
-        getVmPoolDao().remove(getVmPool().getVmPoolId());
+        vmPoolDao.remove(getVmPool().getVmPoolId());
     }
 
     @Override

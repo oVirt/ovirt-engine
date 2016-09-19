@@ -42,10 +42,10 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     @Override
     protected void executeCommand() {
         if (getVmPoolId() != null) {
-            getVmPoolDao().removeVmFromVmPool(getVmId());
+            vmPoolDao.removeVmFromVmPool(getVmId());
 
             if (getParameters().isUpdatePrestartedVms()) {
-                getVmPoolDao().boundVmPoolPrestartedVms(getVmPoolId());
+                vmPoolDao.boundVmPoolPrestartedVms(getVmPoolId());
             }
 
             setSucceeded(true);

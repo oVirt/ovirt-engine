@@ -355,7 +355,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
-        VmPool pool = getVmPoolDao().getByName(getParameters().getVmPool().getName());
+        VmPool pool = vmPoolDao.getByName(getParameters().getVmPool().getName());
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPool || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {

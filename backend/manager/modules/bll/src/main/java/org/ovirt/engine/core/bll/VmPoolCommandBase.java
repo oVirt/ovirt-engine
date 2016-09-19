@@ -3,25 +3,20 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmPoolDao;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
 
     private VmPool vmPool;
-    @Inject
-    private VmPoolDao vmPoolDao;
 
     protected VmPool getVmPool() {
         if (vmPool == null && getVmPoolId() != null) {
-            vmPool = getVmPoolDao().get(getVmPoolId());
+            vmPool = vmPoolDao.get(getVmPoolId());
         }
         return vmPool;
     }
@@ -45,10 +40,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     @Override
     protected String getDescription() {
         return getVmPoolName();
-    }
-
-    protected VmPoolDao getVmPoolDao() {
-        return vmPoolDao;
     }
 
     /**
