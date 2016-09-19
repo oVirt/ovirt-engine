@@ -308,6 +308,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected StepDao stepDao;
 
+    @Inject
+    protected StepSubjectEntityDao subjectEntityDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -826,10 +829,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public AsyncTaskDao getAsyncTaskDao() {
         return getDbFacade().getAsyncTaskDao();
-    }
-
-    public StepSubjectEntityDao getStepSubjectEntityDao() {
-        return getDbFacade().getStepSubjectEntityDao();
     }
 
     public DbFacade getDbFacade() {

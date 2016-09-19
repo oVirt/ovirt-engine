@@ -1418,7 +1418,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             if (taskStep != null) {
                 getExecutionContext().setStep(taskStep);
                 persistCommandIfNeeded();
-                getStepSubjectEntityDao().saveAll(getCommandStepSubjectEntities());
+                subjectEntityDao.saveAll(getCommandStepSubjectEntities());
             }
         }
     }
