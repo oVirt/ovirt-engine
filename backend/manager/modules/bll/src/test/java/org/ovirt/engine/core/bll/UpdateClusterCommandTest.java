@@ -84,19 +84,14 @@ public class UpdateClusterCommandTest {
     private static final Guid VM_ID2 = new Guid("87296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid VM_ID3 = new Guid("67296e00-0cad-4e5a-9299-008a7b6f4355");
 
-    private static final Map<String, String> migrationMap = Collections.unmodifiableMap(
-            new HashMap<String, String>() {{
-                put("undefined", "true");
-                put("x86_64", "true");
-                put("ppc64", "false");
-            }});
+    private static final Map<String, String> migrationMap = new HashMap<>();
+    static {
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86_64", "true");
+        migrationMap.put("ppc64", "false");
+    }
 
-    private static final Set<Version> versions = Collections.unmodifiableSet(
-            new HashSet<Version>() {{
-                add(VERSION_1_0);
-                add(VERSION_1_1);
-                add(VERSION_1_2);
-            }});
+    private static final Set<Version> versions = new HashSet<>(Arrays.asList(VERSION_1_0, VERSION_1_1, VERSION_1_2));
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
