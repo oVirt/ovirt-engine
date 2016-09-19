@@ -311,7 +311,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
 
         if (StringUtils.isEmpty(vm.getVmtName())) {
-            VmTemplate t = getVmTemplateDao().get(vm.getVmtGuid());
+            VmTemplate t = vmTemplateDao.get(vm.getVmtGuid());
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);

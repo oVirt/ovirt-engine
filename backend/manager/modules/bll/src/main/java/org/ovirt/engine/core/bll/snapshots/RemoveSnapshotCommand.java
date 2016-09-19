@@ -438,7 +438,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateImageNotInTemplate() {
-        return getVmTemplateDao().get(getRepresentativeSourceImageId()) == null;
+        return vmTemplateDao.get(getRepresentativeSourceImageId()) == null;
     }
 
     private boolean hasImages() {

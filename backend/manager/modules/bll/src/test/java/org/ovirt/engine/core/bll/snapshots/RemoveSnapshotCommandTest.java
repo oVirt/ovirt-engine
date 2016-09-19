@@ -72,7 +72,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         mockVm();
         VmValidator vmValidator = spy(new VmValidator(cmd.getVm()));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(anyBoolean());

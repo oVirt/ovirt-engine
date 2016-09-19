@@ -87,7 +87,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -575,7 +574,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private VmTemplate getBaseTemplate() {
         if (cachedBaseTemplate == null) {
-            cachedBaseTemplate = getVmTemplateDao().get(getParameters().getBaseTemplateId());
+            cachedBaseTemplate = vmTemplateDao.get(getParameters().getBaseTemplateId());
         }
         return cachedBaseTemplate;
     }
@@ -757,7 +756,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getCustomCompatibilityVersion(),
                         getParameters().getMasterVm().getMigrationPolicyId()));
         updateVmIcons();
-        DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
+        vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
         // Load Vm Init from DB and set it to the template
@@ -959,7 +958,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (CommandCoordinatorUtil.getCommandExecutionStatus(getParameters().getCommandId()) == CommandExecutionStatus.EXECUTED) {
             // if template exist in db remove it
             if (getVmTemplate() != null) {
-                DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
+                vmTemplateDao.remove(getVmTemplateId());
                 removeNetwork();
             }
         }

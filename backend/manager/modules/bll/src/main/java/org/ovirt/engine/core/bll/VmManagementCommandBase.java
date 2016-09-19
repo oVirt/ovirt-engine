@@ -75,7 +75,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected InstanceType getInstanceType() {
         if (instanceType == null && getInstanceTypeId() != null) {
-            instanceType = getVmTemplateDao().getInstanceType(getInstanceTypeId());
+            instanceType = vmTemplateDao.getInstanceType(getInstanceTypeId());
         }
         return instanceType;
     }

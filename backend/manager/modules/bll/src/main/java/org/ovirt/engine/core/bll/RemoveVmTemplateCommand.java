@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -179,7 +178,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
      */
     private boolean tryLockSubVersionIfExists() {
         final List<VmTemplate> templateSubVersions =
-                getVmTemplateDao().getTemplateVersionsForBaseTemplate(getVmTemplateId());
+                vmTemplateDao.getTemplateVersionsForBaseTemplate(getVmTemplateId());
         if (templateSubVersions.isEmpty()) {
             return true;
         }
@@ -190,7 +189,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         if (!acquireBaseTemplateSuccessorLock()) {
             return false;
         }
-        if (getVmTemplateDao().get(baseTemplateSuccessor.getId()) == null) {
+        if (vmTemplateDao.get(baseTemplateSuccessor.getId()) == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED,
                     String.format("$subVersionId %s", baseTemplateSuccessor.getId().toString()));
         }
@@ -287,7 +286,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private void shiftBaseTemplateToSuccessor() {
         try {
-            getVmTemplateDao().shiftBaseTemplate(getVmTemplateId());
+            vmTemplateDao.shiftBaseTemplate(getVmTemplateId());
         } finally {
             freeSubTemplateLock();
         }
@@ -336,7 +335,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private void removeTemplateFromDb() {
         removeNetwork();
-        DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplate().getId());
+        vmTemplateDao.remove(getVmTemplate().getId());
         vmIconDao.removeIfUnused(getVmTemplate().getSmallIconId());
         vmIconDao.removeIfUnused(getVmTemplate().getLargeIconId());
     }

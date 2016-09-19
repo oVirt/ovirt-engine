@@ -161,7 +161,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
 
             if (parameters.getVmStaticData().isUseLatestVersion()) {
-                VmTemplate latest = getVmTemplateDao().getTemplateWithLatestVersionInChain(templateIdToUse);
+                VmTemplate latest = vmTemplateDao.getTemplateWithLatestVersionInChain(templateIdToUse);
 
                 if (latest != null) {
                     // if not using original template, need to override storage mappings
@@ -256,7 +256,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected ImageType getImageType() {
         if (imageType == null && imageTypeId != null) {
-            imageType = getVmTemplateDao().getImageType(imageTypeId);
+            imageType = vmTemplateDao.getImageType(imageTypeId);
         }
         return imageType;
     }

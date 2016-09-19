@@ -172,9 +172,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             }
         }
 
-        List<VmTemplate> templatesRelatedToDomain = getVmTemplateDao().getAllForStorageDomain(storageDomain.getId());
+        List<VmTemplate> templatesRelatedToDomain = vmTemplateDao.getAllForStorageDomain(storageDomain.getId());
         List<VmTemplate> vmTemplatesWithDisksOnMultipleStorageDomain =
-                getVmTemplateDao().getAllTemplatesWithDisksOnOtherStorageDomain(storageDomain.getId());
+                vmTemplateDao.getAllTemplatesWithDisksOnOtherStorageDomain(storageDomain.getId());
         templatesRelatedToDomain.removeAll(vmTemplatesWithDisksOnMultipleStorageDomain);
 
         entitiesDeleteProtected.addAll(templatesRelatedToDomain.stream().filter(VmBase::isDeleteProtected).map(VmTemplate::getName).collect(Collectors.toList()));
@@ -201,7 +201,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected void detachStorageDomainWithEntities(StorageDomain storageDomain) {
         // Check if we have entities related to the Storage Domain.
         List<VM> vmsForStorageDomain = vmDao.getAllForStorageDomain(storageDomain.getId());
-        List<VmTemplate> vmTemplatesForStorageDomain = getVmTemplateDao().getAllForStorageDomain(storageDomain.getId());
+        List<VmTemplate> vmTemplatesForStorageDomain = vmTemplateDao.getAllForStorageDomain(storageDomain.getId());
         List<DiskImage> disksForStorageDomain = diskImageDao.getAllForStorageDomain(storageDomain.getId());
         removeEntitiesFromStorageDomain(vmsForStorageDomain, vmTemplatesForStorageDomain, disksForStorageDomain, storageDomain.getId());
     }

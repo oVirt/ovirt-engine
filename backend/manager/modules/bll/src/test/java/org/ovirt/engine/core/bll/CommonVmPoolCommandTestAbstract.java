@@ -186,7 +186,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private void mockVMTemplateDao() {
-        doReturn(vmTemplateDao).when(command).getVmTemplateDao();
         when(vmTemplateDao.get(vmTemplateId)).thenReturn(vmTemplate);
     }
 

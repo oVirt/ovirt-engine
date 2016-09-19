@@ -160,7 +160,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     }
 
     protected void mockDaos() {
-        doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
     }
 

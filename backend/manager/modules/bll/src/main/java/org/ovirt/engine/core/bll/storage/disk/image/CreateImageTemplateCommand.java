@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * This command responsible to create new Image Template from image.
@@ -146,8 +145,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     @Override
     protected void endWithFailure() {
         unLockImage();
-        setVmTemplate(DbFacade.getInstance().getVmTemplateDao()
-                .get(getVmTemplateId()));
+        setVmTemplate(vmTemplateDao.get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
             revertTasks();
         }

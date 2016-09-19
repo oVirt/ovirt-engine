@@ -45,7 +45,7 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         } else {
             blankTemplate = VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(vmId);
 
-            VmTemplate template = getVmTemplateDao().get(vmId);
+            VmTemplate template = vmTemplateDao.get(vmId);
             templateType = template.getTemplateType();
             cachedEntity = template;
         }

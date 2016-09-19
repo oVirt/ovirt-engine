@@ -47,7 +47,6 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
@@ -66,7 +65,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVmTemplate(parameters.getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
         setClusterId(getVmTemplate().getClusterId());
-        oldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
+        oldTemplate =  vmTemplateDao.get(getVmTemplate().getId());
 
         if (getCluster() != null) {
             setStoragePoolId(getCluster().getStoragePoolId() != null ? getCluster().getStoragePoolId()
@@ -365,7 +364,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private void updateVmTemplate() {
         VmHandler.updateVmInitToDB(getVmTemplate());
-        DbFacade.getInstance().getVmTemplateDao().update(getVmTemplate());
+        vmTemplateDao.update(getVmTemplate());
         // also update the smartcard device
         getVmDeviceUtils().updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
         // update audio device

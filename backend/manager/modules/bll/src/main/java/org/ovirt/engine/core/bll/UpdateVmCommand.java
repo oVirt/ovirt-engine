@@ -617,7 +617,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // check if VM was changed to use latest
         if (vmFromDB.isUseLatestVersion() != vmFromParams.isUseLatestVersion() && vmFromParams.isUseLatestVersion()) {
             // check if a version change is actually required or just let the local command to update this field
-            vmFromParams.setVmtGuid(getVmTemplateDao().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()).getId());
+            vmFromParams.setVmtGuid(vmTemplateDao.getTemplateWithLatestVersionInChain(getVm().getVmtGuid()).getId());
         }
 
         // It is not allowed to edit hosted engine VM until it is imported to the engine properly
@@ -627,8 +627,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // pool VMs are allowed to change template id, this verifies that the change is only between template versions.
         if (!vmFromDB.getVmtGuid().equals(vmFromParams.getVmtGuid())) {
-            VmTemplate origTemplate = getVmTemplateDao().get(vmFromDB.getVmtGuid());
-            VmTemplate newTemplate = getVmTemplateDao().get(vmFromParams.getVmtGuid());
+            VmTemplate origTemplate = vmTemplateDao.get(vmFromDB.getVmtGuid());
+            VmTemplate newTemplate = vmTemplateDao.get(vmFromParams.getVmtGuid());
             if (newTemplate == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             } else if (origTemplate != null && !origTemplate.getBaseTemplateId().equals(newTemplate.getBaseTemplateId())) {

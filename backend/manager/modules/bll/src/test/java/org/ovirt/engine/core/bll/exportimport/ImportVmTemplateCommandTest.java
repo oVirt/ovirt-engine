@@ -10,7 +10,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -73,6 +72,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @Mock
     private StoragePoolDao storagePoolDao;
+
+    @Mock
+    private VmTemplateDao vmTemplateDao;
 
     @Spy
     @InjectMocks
@@ -168,7 +170,6 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         doReturn(true).when(command).validateNoDuplicateDiskImages(any(Iterable.class));
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType);
         mockStorageDomainStatic(storageType);
-        doReturn(mock(VmTemplateDao.class)).when(command).getVmTemplateDao();
         mockStoragePool();
         mockStorageDomains();
         doReturn(true).when(command).setAndValidateDiskProfiles();

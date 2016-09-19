@@ -26,7 +26,7 @@ public class AttachTemplatesToTagCommand<T extends AttachEntityToTagParameters> 
     @Override
     protected void executeCommand() {
         for (Guid templateGuid : getTemplatesList()) {
-            VmTemplate template = DbFacade.getInstance().getVmTemplateDao().get(templateGuid);
+            VmTemplate template = vmTemplateDao.get(templateGuid);
             if (template != null) {
                 if (DbFacade.getInstance().getTagDao().getTagTemplateByTagIdAndByTemplateId(getTagId(), templateGuid) == null) {
                     appendCustomCommaSeparatedValue("TemplatesNames", template.getName());

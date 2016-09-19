@@ -29,12 +29,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> extends CommandBase<T> {
-
-    @Inject
-    private VmTemplateDao vmTemplateDao;
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;

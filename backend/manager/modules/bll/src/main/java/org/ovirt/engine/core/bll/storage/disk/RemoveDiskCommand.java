@@ -197,7 +197,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void setVmTemplateIdParameter() {
         Map<Boolean, VmTemplate> templateMap =
                 // Disk image is the only disk type that can be part of the template disks.
-                getVmTemplateDao().getAllForImage(getDiskImage().getImageId());
+                vmTemplateDao.getAllForImage(getDiskImage().getImageId());
 
         if (!templateMap.isEmpty()) {
             setVmTemplateId(templateMap.values().iterator().next().getId());

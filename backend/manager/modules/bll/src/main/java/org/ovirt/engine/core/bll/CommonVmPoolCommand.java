@@ -143,7 +143,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
         // if set to use latest version, get it from db and use it as template
         if (getParameters().getVmStaticData().isUseLatestVersion()) {
-            VmTemplate latest = getVmTemplateDao().getTemplateWithLatestVersionInChain(templateIdToUse);
+            VmTemplate latest = vmTemplateDao.getTemplateWithLatestVersionInChain(templateIdToUse);
 
             if (latest != null) {
                 // if not using original template, need to override storage mappings

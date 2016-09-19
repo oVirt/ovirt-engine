@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportExportParameters> extends
@@ -80,7 +79,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         if (retVal) {
             // we fectch from db and not using VmTmplate property becase
             // VmTemplate is the one from export domain and not from database
-            VmTemplate tmpl = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplateId());
+            VmTemplate tmpl = vmTemplateDao.get(getVmTemplateId());
             if (tmpl != null) {
                 retVal = tmpl.getStatus() != VmTemplateStatus.Locked;
                 if (!retVal) {

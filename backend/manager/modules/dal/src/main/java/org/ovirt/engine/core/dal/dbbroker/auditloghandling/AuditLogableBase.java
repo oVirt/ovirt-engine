@@ -219,6 +219,9 @@ public class AuditLogableBase extends TimeoutBase {
     protected VmStatisticsDao vmStatisticsDao;
 
     @Inject
+    protected VmTemplateDao vmTemplateDao;
+
+    @Inject
     protected VmDeviceDao vmDeviceDao;
 
     @Inject
@@ -561,10 +564,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmTemplate getVmTemplate() {
         if (vmTemplate == null && (vmTemplateId != null || getVm() != null)) {
-
-            vmTemplate = getVmTemplateDao()
-                    .get(vmTemplateId != null ? getVmTemplateId() : getVm()
-                            .getVmtGuid());
+            vmTemplate = vmTemplateDao.get(vmTemplateId != null ? getVmTemplateId() : getVm().getVmtGuid());
         }
         return vmTemplate;
     }
@@ -753,10 +753,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VdsDynamicDao getVdsDynamicDao() {
         return getDbFacade().getVdsDynamicDao();
-    }
-
-    public VmTemplateDao getVmTemplateDao() {
-        return getDbFacade().getVmTemplateDao();
     }
 
     public VmAndTemplatesGenerationsDao getVmAndTemplatesGenerationsDao() {

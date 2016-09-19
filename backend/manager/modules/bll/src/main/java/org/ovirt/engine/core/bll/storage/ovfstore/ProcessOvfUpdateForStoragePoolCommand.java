@@ -197,7 +197,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
      */
     protected Map<Guid, KeyValuePairCompat<String, List<Guid>>> populateTemplatesMetadataForOvfUpdate(List<Guid> idsToProcess) {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata = new HashMap<>();
-        List<VmTemplate> templates = getVmTemplateDao().getVmTemplatesByIds(idsToProcess);
+        List<VmTemplate> templates = vmTemplateDao.getVmTemplatesByIds(idsToProcess);
 
         for (VmTemplate template : templates) {
             if (VmTemplateStatus.Locked != template.getStatus()) {

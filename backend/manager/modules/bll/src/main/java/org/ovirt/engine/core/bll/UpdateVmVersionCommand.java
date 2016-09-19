@@ -57,9 +57,9 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
         if (getVm() != null) {
             if (parameters.getNewTemplateVersion() != null) {
-                setVmTemplate(getVmTemplateDao().get(parameters.getNewTemplateVersion()));
+                setVmTemplate(vmTemplateDao.get(parameters.getNewTemplateVersion()));
             } else {
-                setVmTemplate(getVmTemplateDao().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
+                setVmTemplate(vmTemplateDao.getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
             }
         }
     }

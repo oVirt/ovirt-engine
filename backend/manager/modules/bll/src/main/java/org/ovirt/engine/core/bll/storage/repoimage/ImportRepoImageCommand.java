@@ -202,7 +202,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     private Guid createTemplate() {
 
-        VmTemplate blankTemplate = getVmTemplateDao().get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+        VmTemplate blankTemplate = vmTemplateDao.get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         VmStatic masterVm = new VmStatic(blankTemplate);
         OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 

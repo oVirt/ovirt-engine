@@ -462,7 +462,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         if (getVm().getOriginalTemplateGuid() != null && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getOriginalTemplateGuid())) {
             // no need to check this for blank
-            VmTemplate originalTemplate = getVmTemplateDao().get(getVm().getOriginalTemplateGuid());
+            VmTemplate originalTemplate = vmTemplateDao.get(getVm().getOriginalTemplateGuid());
             if (originalTemplate != null) {
                 // in case the original template name has been changed in the meantime
                 getVm().getStaticData().setOriginalTemplateName(originalTemplate.getName());

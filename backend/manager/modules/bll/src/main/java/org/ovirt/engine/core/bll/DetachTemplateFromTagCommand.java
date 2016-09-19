@@ -26,7 +26,7 @@ public class DetachTemplateFromTagCommand<T extends AttachEntityToTagParameters>
     protected void executeCommand() {
         for (Guid templateGuid : getTemplatesList()) {
             if (DbFacade.getInstance().getTagDao().getTagTemplateByTagIdAndByTemplateId(getTagId(), templateGuid) != null) {
-                VmTemplate template = DbFacade.getInstance().getVmTemplateDao().get(templateGuid);
+                VmTemplate template = vmTemplateDao.get(templateGuid);
                 if (template != null) {
                     appendCustomCommaSeparatedValue("TemplatesNames", template.getName());
                     DbFacade.getInstance().getTagDao().detachTemplateFromTag(getTagId(), templateGuid);

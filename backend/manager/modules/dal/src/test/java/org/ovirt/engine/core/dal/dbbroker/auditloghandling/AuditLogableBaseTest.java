@@ -56,6 +56,9 @@ public class AuditLogableBaseTest {
     @Mock
     VmDao vmDao;
 
+    @Mock
+    VmTemplateDao vmTemplateDao;
+
     @Spy
     @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
@@ -90,13 +93,11 @@ public class AuditLogableBaseTest {
         when(storageDomainDao.getForStoragePool(GUID, GUID)).thenReturn(domain);
         when(storageDomainDao.getAllForStorageDomain(GUID2)).thenReturn(storageDomainList);
 
-        final VmTemplateDao vmTemplateDao = mock(VmTemplateDao.class);
         final VmTemplate t = new VmTemplate();
         t.setId(GUID);
         t.setName(NAME);
         when(vmTemplateDao.get(Guid.Empty)).thenReturn(t);
         when(vmTemplateDao.get(GUID)).thenReturn(new VmTemplate());
-        doReturn(vmTemplateDao).when(b).getVmTemplateDao();
 
         final ClusterDao clusterDao = mock(ClusterDao.class);
         final Cluster g = new Cluster();

@@ -63,7 +63,6 @@ import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -79,9 +78,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Inject
     VmNicMacsUtils vmNicMacsUtils;
-
-    @Inject
-    private VmTemplateDao vmTemplateDao;
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;
@@ -202,8 +198,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             initImportClonedTemplate();
         }
 
-        VmTemplate duplicateTemplate = getVmTemplateDao()
-                .get(getParameters().getVmTemplate().getId());
+        VmTemplate duplicateTemplate = vmTemplateDao.get(getParameters().getVmTemplate().getId());
         // check that the template does not exists in the target domain
         if (duplicateTemplate != null) {
             return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS,
@@ -229,7 +224,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         // if this is a template version, check base template exist
         if (!getVmTemplate().isBaseTemplate()) {
-            VmTemplate baseTemplate = getVmTemplateDao().get(getVmTemplate().getBaseTemplateId());
+            VmTemplate baseTemplate = vmTemplateDao.get(getVmTemplate().getBaseTemplateId());
             if (baseTemplate == null) {
                 return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
             }
@@ -441,7 +436,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setStatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
         VmHandler.updateImportedVmUsbPolicy(getVmTemplate());
-        getVmTemplateDao().save(getVmTemplate());
+        vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;
         for (DiskImage image : getImages()) {
@@ -535,7 +530,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected void endWithFailure() {
         removeNetwork();
         endActionOnAllImageGroups();
-        getVmTemplateDao().remove(getVmTemplateId());
+        vmTemplateDao.remove(getVmTemplateId());
         setSucceeded(true);
     }
 
