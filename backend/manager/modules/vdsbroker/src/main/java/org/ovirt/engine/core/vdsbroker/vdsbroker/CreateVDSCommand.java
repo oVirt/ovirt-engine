@@ -29,29 +29,11 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     @Override
     protected void executeVdsBrokerCommand() {
         buildVmData();
-        logCommandInfo();
+        log.info("VM {}", createInfo);
         vmReturn = getBroker().create(createInfo);
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
                 vmReturn.vm, getVds());
-    }
-
-    /**
-     * Logs the command info.
-     */
-    private void logCommandInfo() {
-        final char EQUAL = '=';
-        final String SEP = ",";
-        StringBuilder info = new StringBuilder();
-        String sep = "";
-        for (Map.Entry<String, Object> createInfoEntry : createInfo.entrySet()) {
-            info.append(sep);
-            info.append(createInfoEntry.getKey());
-            info.append(EQUAL);
-            info.append(createInfoEntry.getValue());
-            sep = SEP;
-        }
-        log.info("{} {}", getClass().getName(), info);
     }
 
     private VmInfoBuilder createBuilder() {
