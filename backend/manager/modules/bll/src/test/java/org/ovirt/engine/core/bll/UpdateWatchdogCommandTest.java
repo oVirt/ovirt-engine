@@ -14,7 +14,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -35,12 +40,33 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
 
     private static final Set<VmWatchdogType> WATCHDOG_MODELS = Collections.singleton(VmWatchdogType.i6300esb);
 
+    @Mock
+    private VmDao vmDaoMock;
+
+    @Mock
+    private VmDeviceDao vmDeviceDaoMock;
+
+    @Spy
+    @InjectMocks
+    private UpdateWatchdogCommand command = new UpdateWatchdogCommand(new WatchdogParameters(), null);
+
+    @BeforeClass
+    public static void setUpOsRepository() {
+        OsRepository osRepository = mock(OsRepository.class);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        when(osRepository.getVmWatchdogTypes(any(Integer.class), any(Version.class))).thenReturn(WATCHDOG_MODELS);
+    }
+
+    @Before
+    public void setUp() {
+        doReturn(vmDaoMock).when(command).getVmDao();
+        doReturn(vmDeviceDaoMock).when(command).getVmDeviceDao();
+    }
+
     @Test
     public void getSpecParams() {
-        WatchdogParameters params = new WatchdogParameters();
-        params.setAction(VmWatchdogAction.RESET);
-        params.setModel(vmWatchdogType);
-        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null);
+        command.getParameters().setAction(VmWatchdogAction.RESET);
+        command.getParameters().setModel(vmWatchdogType);
         HashMap<String, Object> specParams = command.getSpecParams();
         assertNotNull(specParams);
         assertEquals("i6300esb", specParams.get("model"));
@@ -49,37 +75,23 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateNoVM() {
-        WatchdogParameters params = new WatchdogParameters();
-        params.setId(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"));
-        params.setAction(VmWatchdogAction.PAUSE);
-        params.setModel(vmWatchdogType);
-        final VmDao vmDaoMock = mock(VmDao.class);
-        UpdateWatchdogCommand command = spy(new UpdateWatchdogCommand(params, null));
-        doReturn(vmDaoMock).when(command).getVmDao();
+        command.getParameters().setId(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"));
+        command.getParameters().setAction(VmWatchdogAction.PAUSE);
+        command.getParameters().setModel(vmWatchdogType);
         assertFalse(command.validate());
     }
 
     @Test
     public void testValidate() {
-        WatchdogParameters params = new WatchdogParameters();
         Guid vmGuid = new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db");
-        params.setId(vmGuid);
-        params.setAction(VmWatchdogAction.PAUSE);
-        params.setModel(vmWatchdogType);
-        final VmDao vmDaoMock = mock(VmDao.class);
+        command.getParameters().setId(vmGuid);
+        command.getParameters().setAction(VmWatchdogAction.PAUSE);
+        command.getParameters().setModel(vmWatchdogType);
         when(vmDaoMock.get(vmGuid)).thenReturn(new VM());
-        final VmDeviceDao deviceDao = mock(VmDeviceDao.class);
-        when(deviceDao.getVmDeviceByVmIdAndType(vmGuid, VmDeviceGeneralType.WATCHDOG)).thenReturn(Collections.singletonList(new VmDevice()));
-        UpdateWatchdogCommand command = spy(new UpdateWatchdogCommand(params, null));
-        doReturn(vmDaoMock).when(command).getVmDao();
-        doReturn(deviceDao).when(command).getVmDeviceDao();
-        OsRepository osRepository = mock(OsRepository.class);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        when(osRepository.getVmWatchdogTypes(any(Integer.class), any(Version.class))).thenReturn(WATCHDOG_MODELS);
+        when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmGuid, VmDeviceGeneralType.WATCHDOG)).thenReturn(Collections.singletonList(new VmDevice()));
         VmWatchdog vmWatchdog = spy(new VmWatchdog());
         when(vmWatchdog.getModel()).thenReturn(vmWatchdogType);
 
         assertTrue(command.validate());
     }
-
 }
