@@ -5,16 +5,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -31,8 +34,8 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AuditLogableBaseTest {
 
     protected static final Guid GUID = new Guid("11111111-1111-1111-1111-111111111111");
@@ -42,11 +45,58 @@ public class AuditLogableBaseTest {
     protected static final String DOMAIN = "testDomain";
     private static final StorageDomain STORAGE_DOMAIN = new StorageDomain();
 
-    private AuditLogableBase b;
+    @Spy
+    private AuditLogableBase b = new AuditLogableBase();
 
     @Before
     public void setUp() {
-        b = new TestAuditLogableBase();
+        final VmDao vmDao = mock(VmDao.class);
+        when(vmDao.get(GUID)).thenReturn(new VM());
+        when(vmDao.get(GUID3)).thenThrow(new RuntimeException());
+        doReturn(vmDao).when(b).getVmDao();
+
+        final VdsDao vdsDao = mock(VdsDao.class);
+        final VDS vds1 = new VDS();
+        vds1.setId(GUID);
+        final VDS vds2 = new VDS();
+        vds2.setId(GUID2);
+        when(vdsDao.get(GUID)).thenReturn(vds1);
+        when(vdsDao.get(GUID2)).thenReturn(vds2);
+        when(vdsDao.get(GUID3)).thenThrow(new RuntimeException());
+        doReturn(vdsDao).when(b).getVdsDao();
+
+        final StoragePoolDao storagePoolDao = mock(StoragePoolDao.class);
+        final StoragePool p = new StoragePool();
+        p.setId(GUID);
+        when(storagePoolDao.get(GUID)).thenReturn(p);
+        doReturn(storagePoolDao).when(b).getStoragePoolDao();
+
+        final StorageDomainDao storageDomainDao = mock(StorageDomainDao.class);
+        final StorageDomain domain = new StorageDomain();
+        domain.setStatus(StorageDomainStatus.Active);
+
+        final StorageDomain sd1 = new StorageDomain();
+        sd1.setStatus(StorageDomainStatus.Inactive);
+        final StorageDomain sd2 = new StorageDomain();
+        sd2.setStatus(null);
+        final List<StorageDomain> storageDomainList = Arrays.asList(sd1, sd2, domain);
+        when(storageDomainDao.getForStoragePool(GUID, GUID)).thenReturn(domain);
+        when(storageDomainDao.getAllForStorageDomain(GUID2)).thenReturn(storageDomainList);
+        doReturn(storageDomainDao).when(b).getStorageDomainDao();
+
+        final VmTemplateDao vmTemplateDao = mock(VmTemplateDao.class);
+        final VmTemplate t = new VmTemplate();
+        t.setId(GUID);
+        t.setName(NAME);
+        when(vmTemplateDao.get(Guid.Empty)).thenReturn(t);
+        when(vmTemplateDao.get(GUID)).thenReturn(new VmTemplate());
+        doReturn(vmTemplateDao).when(b).getVmTemplateDao();
+
+        final ClusterDao clusterDao = mock(ClusterDao.class);
+        final Cluster g = new Cluster();
+        g.setClusterId(GUID);
+        when(clusterDao.get(GUID)).thenReturn(g);
+        doReturn(clusterDao).when(b).getClusterDao();
     }
 
     @Test
@@ -1004,84 +1054,5 @@ public class AuditLogableBaseTest {
     public void key() {
         final String s = b.getKey();
         assertEquals(AuditLogType.UNASSIGNED.toString(), s);
-    }
-
-    protected static class TestAuditLogableBase extends AuditLogableBase {
-        @Override
-        public VmTemplateDao getVmTemplateDao() {
-            final VmTemplateDao vt = mock(VmTemplateDao.class);
-            final VmTemplate t = new VmTemplate();
-            t.setId(GUID);
-            t.setName(NAME);
-            when(vt.get(Guid.Empty)).thenReturn(t);
-            when(vt.get(GUID)).thenReturn(new VmTemplate());
-            return vt;
-        }
-
-        @Override
-        public VmDao getVmDao() {
-            final VmDao v = mock(VmDao.class);
-            when(v.get(GUID)).thenReturn(new VM());
-            when(v.get(GUID3)).thenThrow(new RuntimeException());
-            return v;
-        }
-
-        @Override
-        public StorageDomainDao getStorageDomainDao() {
-            final StorageDomainDao d = mock(StorageDomainDao.class);
-            when(d.getForStoragePool(GUID, GUID)).thenReturn(STORAGE_DOMAIN);
-            when(d.getAllForStorageDomain(GUID2)).thenReturn(getStorageDomainList());
-            return d;
-        }
-
-        @Override
-        public StoragePoolDao getStoragePoolDao() {
-            final StoragePoolDao s = mock(StoragePoolDao.class);
-            final StoragePool p = new StoragePool();
-            p.setId(GUID);
-            when(s.get(GUID)).thenReturn(p);
-            when(s.get(GUID2)).thenReturn(null);
-            return s;
-        }
-
-        @Override
-        public VdsDao getVdsDao() {
-            final VdsDao v = mock(VdsDao.class);
-            final VDS vds1 = new VDS();
-            vds1.setId(GUID);
-            final VDS vds2 = new VDS();
-            vds2.setId(GUID2);
-            when(v.get(GUID)).thenReturn(vds1);
-            when(v.get(GUID2)).thenReturn(vds2);
-            when(v.get(GUID3)).thenThrow(new RuntimeException());
-            return v;
-        }
-
-        @Override
-        public ClusterDao getClusterDao() {
-            final ClusterDao v = mock(ClusterDao.class);
-            final Cluster g = new Cluster();
-            g.setClusterId(GUID);
-            when(v.get(GUID)).thenReturn(g);
-            return v;
-        }
-
-        @Override
-        public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-            return mock(VmNetworkInterfaceDao.class);
-        }
-
-        private List<StorageDomain> getStorageDomainList() {
-            final List<StorageDomain> l = new ArrayList<>();
-            final StorageDomain s = new StorageDomain();
-            s.setStatus(StorageDomainStatus.Inactive);
-            l.add(s);
-            final StorageDomain s2 = new StorageDomain();
-            s2.setStatus(null);
-            l.add(s2);
-            STORAGE_DOMAIN.setStatus(StorageDomainStatus.Active);
-            l.add(STORAGE_DOMAIN);
-            return l;
-        }
     }
 }
