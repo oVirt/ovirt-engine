@@ -174,6 +174,9 @@ public class AuditLogableBase extends TimeoutBase {
     protected StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
     @Inject
+    protected VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;
+
+    @Inject
     protected UnregisteredOVFDataDao unregisteredOVFDataDao;
 
     @Inject
@@ -753,10 +756,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VdsDynamicDao getVdsDynamicDao() {
         return getDbFacade().getVdsDynamicDao();
-    }
-
-    public VmAndTemplatesGenerationsDao getVmAndTemplatesGenerationsDao() {
-        return getDbFacade().getVmAndTemplatesGenerationsDao();
     }
 
     protected VnicProfileDao getVnicProfileDao() {

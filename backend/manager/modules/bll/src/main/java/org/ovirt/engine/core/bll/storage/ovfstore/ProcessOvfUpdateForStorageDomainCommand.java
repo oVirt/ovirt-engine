@@ -172,8 +172,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                 List<Guid> idsToProcess = vmAndTemplatesIds.subList(i, i + size);
                 i += size;
 
-                List<Pair<Guid, String>> ovfs =
-                        getVmAndTemplatesGenerationsDao().loadOvfDataForIds(idsToProcess);
+                List<Pair<Guid, String>> ovfs = vmAndTemplatesGenerationsDao.loadOvfDataForIds(idsToProcess);
                 if (!ovfs.isEmpty()) {
                     processedIds.addAll(buildFilesForOvfs(ovfs, inMemoryTar));
                 }

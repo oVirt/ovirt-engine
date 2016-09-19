@@ -138,7 +138,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
      */
     protected void updateOvfForVmsOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
-        List<Guid> vmsIdsForUpdate = getVmAndTemplatesGenerationsDao().getVmsIdsForOvfUpdate(poolId);
+        List<Guid> vmsIdsForUpdate = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(poolId);
         int i = 0;
         while (i < vmsIdsForUpdate.size()) {
             int size = Math.min(itemsCountPerUpdate, vmsIdsForUpdate.size() - i);
@@ -160,10 +160,10 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
      */
     protected void removeOvfForTemplatesAndVmsOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
-        removedOvfIdsInfo = getVmAndTemplatesGenerationsDao().getIdsForOvfDeletion(poolId);
+        removedOvfIdsInfo = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(poolId);
 
         markDomainsWithOvfsForOvfUpdate(removedOvfIdsInfo);
-        getVmAndTemplatesGenerationsDao().deleteOvfGenerations(removedOvfIdsInfo);
+        vmAndTemplatesGenerationsDao.deleteOvfGenerations(removedOvfIdsInfo);
     }
 
     protected void markDomainsWithOvfsForOvfUpdate(Collection<Guid> ovfIds) {
@@ -186,7 +186,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
             List<Guid> guidsForUpdate = proccessedIdsInfo.subList(i, i + sizeToUpdate);
             List<Long> ovfGenerationsForUpdate = proccessedOvfGenerationsInfo.subList(i, i + sizeToUpdate);
             List<String> ovfConfigurationsInfo = proccessedOvfConfigurationsInfo.subList(i, i + sizeToUpdate);
-            getVmAndTemplatesGenerationsDao().updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate, ovfConfigurationsInfo);
+            vmAndTemplatesGenerationsDao.updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate, ovfConfigurationsInfo);
             i += sizeToUpdate;
             initProcessedInfoLists();
         }
@@ -238,8 +238,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
      */
     protected void updateOvfForTemplatesOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
-        List<Guid> templateIdsForUpdate =
-                getVmAndTemplatesGenerationsDao().getVmTemplatesIdsForOvfUpdate(poolId);
+        List<Guid> templateIdsForUpdate = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(poolId);
         int i = 0;
         while (i < templateIdsForUpdate.size()) {
             int size = Math.min(templateIdsForUpdate.size() - i, itemsCountPerUpdate);
