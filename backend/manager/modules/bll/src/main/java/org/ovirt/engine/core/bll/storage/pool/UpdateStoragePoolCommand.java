@@ -38,7 +38,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -48,9 +47,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
-
-    @Inject
-    private ClusterDao clusterDao;
 
     @Inject
     private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;
@@ -206,7 +202,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_LOCAL);
         }
         if (!getOldStoragePool().isLocal() && getStoragePool().isLocal()) {
-            List<Cluster> clusters = getClusterDao().getAllForStoragePool(getStoragePool().getId());
+            List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePool().getId());
             if (clusters.size() > 1) {
                 return failValidation(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
             }
@@ -271,7 +267,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected boolean checkAllClustersLevel() {
         boolean returnValue = true;
-        List<Cluster> clusters = getClusterDao().getAllForStoragePool(getStoragePool().getId());
+        List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePool().getId());
         List<String> lowLevelClusters = new ArrayList<>();
         for (Cluster cluster : clusters) {
             if (getStoragePool().getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0) {

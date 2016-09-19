@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -55,9 +54,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
-
-    @Inject
-    private ClusterDao clusterDao;
 
     @Inject
     private SyncNetworkParametersBuilder syncNetworkParametersBuilder;

@@ -210,7 +210,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     }
 
     protected boolean isClusterUnique(String clusterName) {
-        ClusterDao clusterDao = getClusterDao();
         List<Cluster> clusters = clusterDao.getByName(clusterName, true);
         return clusters == null || clusters.isEmpty();
     }

@@ -36,7 +36,7 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
     @Override
     public Cluster getCluster() {
         if (cluster == null) {
-            cluster = getClusterDao().get(getParameters().getClusterId());
+            cluster = clusterDao.get(getParameters().getClusterId());
         }
         return cluster;
     }

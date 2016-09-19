@@ -101,7 +101,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     }
 
     private void mockClusterDao() {
-        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         Cluster cluster = new Cluster();
         cluster.setId(FENCECD_HOST_CLUSTER_ID);
         when(clusterDao.get(FENCECD_HOST_CLUSTER_ID)).thenReturn(cluster);

@@ -20,7 +20,7 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getClusterDao().remove(getCluster().getId());
+        clusterDao.remove(getCluster().getId());
         setSucceeded(true);
     }
 

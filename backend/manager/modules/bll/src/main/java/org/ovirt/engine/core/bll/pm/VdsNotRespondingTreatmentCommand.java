@@ -73,7 +73,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     private boolean shouldFencingBeSkipped(VDS vds) {
         // check if fencing in cluster is enabled
-        Cluster cluster = getDbFacade().getClusterDao().get(vds.getClusterId());
+        Cluster cluster = clusterDao.get(vds.getClusterId());
         if (cluster != null && !cluster.getFencingPolicy().isFencingEnabled()) {
             AuditLogableBase alb = new AuditLogableBase(vds.getId());
             alb.setRepeatable(true);
@@ -159,9 +159,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             }
 
             // load cluster fencing policy
-            FencingPolicy fencingPolicy = getDbFacade().getClusterDao().get(
-                    getVds().getClusterId()
-            ).getFencingPolicy();
+            FencingPolicy fencingPolicy = clusterDao.get(getVds().getClusterId()).getFencingPolicy();
             getParameters().setFencingPolicy(fencingPolicy);
 
             waitUntilSkipFencingIfSDActiveAllowed(fencingPolicy.isSkipFencingIfSDActive());
@@ -215,7 +213,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     private boolean isConnectivityBrokenThresholdReached(VDS vds) {
-        Cluster cluster = DbFacade.getInstance().getClusterDao().get(vds.getClusterId());
+        Cluster cluster = clusterDao.get(vds.getClusterId());
         int percents = 0;
         boolean result = false;
         if (cluster.getFencingPolicy().isSkipFencingIfConnectivityBroken()) {

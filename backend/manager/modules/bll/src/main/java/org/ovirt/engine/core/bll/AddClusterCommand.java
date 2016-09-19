@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -46,9 +45,6 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
-
-    @Inject
-    protected ClusterDao clusterDao;
 
     @Inject
     protected NetworkClusterDao networkClusterDao;
@@ -83,7 +79,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         checkMaxMemoryOverCommitValue();
         cluster.setDetectEmulatedMachine(true);
         cluster.setMacPoolId(calculateMacPoolIdToUse());
-        getClusterDao().save(cluster);
+        clusterDao.save(cluster);
 
         alertIfFencingDisabled();
 

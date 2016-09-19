@@ -116,7 +116,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
         doNothing().when(cmd).separateCustomProperties(any(VmStatic.class));
         doReturn(getDisksList(vm.getStoragePoolId())).when(cmd).getVmDisksFromDB();
-        doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
 
         cmd.init();

@@ -166,7 +166,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
      */
     protected boolean validateVdsCluster() {
-        Cluster cluster = getClusterDao().get(getClusterId());
+        Cluster cluster = clusterDao.get(getClusterId());
         return cluster == null ?
                 failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID)
                 : cluster.getArchitecture() != getVm().getClusterArch() ?

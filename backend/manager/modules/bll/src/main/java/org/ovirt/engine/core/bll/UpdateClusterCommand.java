@@ -104,7 +104,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Override
     protected void init() {
         updateMigrateOnError();
-        oldCluster = getClusterDao().get(getCluster().getId());
+        oldCluster = clusterDao.get(getCluster().getId());
         if (oldCluster != null && !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
             vmsLockedForUpdate = filterVmsInClusterNeedUpdate();
         }
@@ -181,7 +181,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != getPrevCluster().isKsmMergeAcrossNumaNodes()) ||
                 (getCluster().isEnableKsm() != getPrevCluster().isEnableKsm());
 
-        getClusterDao().update(getParameters().getCluster());
+        clusterDao.update(getParameters().getCluster());
         addOrUpdateAddtionalClusterFeatures();
         if (!oldCluster.supportsGlusterService() && getCluster().supportsGlusterService()) {
             //update gluster parameters on all hosts
@@ -517,7 +517,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             StoragePool storagePool = storagePoolDao.get(getCluster().getStoragePoolId());
             if (oldCluster.getStoragePoolId() == null && storagePool.isLocal()) {
                 // we allow only one cluster in localfs data center
-                if (!getClusterDao().getAllForStoragePool(getCluster().getStoragePoolId()).isEmpty()) {
+                if (!clusterDao.getAllForStoragePool(getCluster().getStoragePoolId()).isEmpty()) {
                     getReturnValue()
                             .getValidationMessages()
                             .add(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE

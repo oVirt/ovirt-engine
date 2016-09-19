@@ -204,7 +204,7 @@ implements QuotaStorageDependent {
     }
 
     private boolean isHostInSupportedClusterForProxyHost(VDS host) {
-        return getClusterDao().get(host.getClusterId()).getArchitecture() != ArchitectureType.ppc64;
+        return clusterDao.get(host.getClusterId()).getArchitecture() != ArchitectureType.ppc64;
     }
 
     @Override

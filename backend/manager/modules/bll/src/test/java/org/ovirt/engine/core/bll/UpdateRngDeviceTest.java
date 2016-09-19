@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +55,6 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
         when(clusterMock.get(clusterId)).thenReturn(cluster);
 
-        doReturn(clusterMock).when(cmd).getClusterDao();
         cmd.init();
 
         return cmd;

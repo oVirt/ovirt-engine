@@ -385,7 +385,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         newGroup.setId(Guid.newGuid());
         newGroup.setCompatibilityVersion(Version.v3_6);
         vmStatic.setClusterId(newGroup.getId());
-        doReturn(clusterDao).when(command).getClusterDao();
 
         assertFalse("validate should have failed with can't change cluster.", command.validate());
         assertValidateMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);

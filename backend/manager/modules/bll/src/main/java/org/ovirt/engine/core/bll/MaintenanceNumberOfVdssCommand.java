@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
@@ -51,9 +50,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<>();
     private final List<PermissionSubject> inspectedEntitiesMap;
     private Map<String, Pair<String, String>> sharedLockMap;
-
-    @Inject
-    protected ClusterDao clusterDao;
 
     @Inject
     private GlusterHostValidator glusterHostValidator;
@@ -191,7 +187,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             }
             //TODO make a more efficient call but normally the command just loads one cluster anyway
             if (!clusters.containsKey(vds.getClusterId())){
-                final Cluster cluster = DbFacade.getInstance().getClusterDao().get(vds.getClusterId());
+                final Cluster cluster = clusterDao.get(vds.getClusterId());
                 clusters.put(cluster.getId(), cluster);
             }
             if (!vdssToMaintenance.containsKey(vdsId)) {
@@ -482,7 +478,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     private void addClusterDetails(Guid clusterID, List<String> clustersWithRunningVms) {
         if (clusterID != null && !clusterID.equals(Guid.Empty)) {
-            Cluster cluster = DbFacade.getInstance().getClusterDao().getWithRunningVms(clusterID);
+            Cluster cluster = clusterDao.getWithRunningVms(clusterID);
             if (cluster != null) {
                 clustersWithRunningVms.add(cluster.getName());
             }

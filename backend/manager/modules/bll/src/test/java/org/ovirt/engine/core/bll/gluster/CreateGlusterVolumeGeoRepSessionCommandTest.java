@@ -78,7 +78,6 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(volume).when(volumeDao).getById(masterVolumeId);
         doReturn(GlusterStatus.UP).when(volume).getStatus();
         doReturn(cluster).when(command).getCluster();
-        doReturn(clusterDao).when(command).getClusterDao();
         doReturn(vdsDao).when(command).getVdsDao();
         doReturn(geoRepDao).when(command).getGeoRepDao();
         doReturn(vds).when(command).getUpServer();

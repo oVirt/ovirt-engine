@@ -153,14 +153,9 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         cmd.setStoragePoolId(STORAGE_POOL_ID);
         cmd.setStoragePool(storagePool);
 
-        mockDaos();
         mockOtherDependencies();
 
         doNothing().when(cmd).initTemplateDisks();
-    }
-
-    protected void mockDaos() {
-        doReturn(clusterDao).when(cmd).getClusterDao();
     }
 
     protected void mockOtherDependencies() {

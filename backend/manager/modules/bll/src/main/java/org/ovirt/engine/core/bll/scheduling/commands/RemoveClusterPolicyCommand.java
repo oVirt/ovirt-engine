@@ -21,7 +21,7 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
         if (!checkRemoveEditValidations()) {
             return false;
         }
-        if (getClusterDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId()).size() > 0) {
+        if (clusterDao.getClustersByClusterPolicyId(getParameters().getClusterPolicyId()).size() > 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE,
                     String.format("$clusters %1$s", clustersListIntoTokenizedString()));
         }
@@ -30,7 +30,7 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
     private String clustersListIntoTokenizedString() {
         List<Cluster> attachedClustersList =
-                getClusterDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId());
+                clusterDao.getClustersByClusterPolicyId(getParameters().getClusterPolicyId());
         List<String> clusterNamesList = new LinkedList<>();
         for (Cluster cluster : attachedClustersList) {
             clusterNamesList.add(cluster.getName());

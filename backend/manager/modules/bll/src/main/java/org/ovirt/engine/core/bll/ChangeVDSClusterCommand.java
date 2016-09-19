@@ -410,7 +410,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private Cluster getTargetCluster() {
         if (targetCluster == null) {
-            targetCluster = DbFacade.getInstance().getClusterDao().get(getParameters().getClusterId());
+            targetCluster = clusterDao.get(getParameters().getClusterId());
         }
         return targetCluster;
     }

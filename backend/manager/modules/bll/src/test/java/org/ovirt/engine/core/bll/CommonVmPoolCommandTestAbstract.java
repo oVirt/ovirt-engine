@@ -190,7 +190,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private void mockClusterDao() {
-        doReturn(clusterDao).when(command).getClusterDao();
         when(clusterDao.get(clusterId)).thenReturn(cluster);
     }
 

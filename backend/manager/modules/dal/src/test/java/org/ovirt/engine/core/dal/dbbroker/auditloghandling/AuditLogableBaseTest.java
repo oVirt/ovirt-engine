@@ -59,6 +59,9 @@ public class AuditLogableBaseTest {
     @Mock
     VmTemplateDao vmTemplateDao;
 
+    @Mock
+    ClusterDao clusterDao;
+
     @Spy
     @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
@@ -99,11 +102,9 @@ public class AuditLogableBaseTest {
         when(vmTemplateDao.get(Guid.Empty)).thenReturn(t);
         when(vmTemplateDao.get(GUID)).thenReturn(new VmTemplate());
 
-        final ClusterDao clusterDao = mock(ClusterDao.class);
         final Cluster g = new Cluster();
         g.setClusterId(GUID);
         when(clusterDao.get(GUID)).thenReturn(g);
-        doReturn(clusterDao).when(b).getClusterDao();
     }
 
     @Test

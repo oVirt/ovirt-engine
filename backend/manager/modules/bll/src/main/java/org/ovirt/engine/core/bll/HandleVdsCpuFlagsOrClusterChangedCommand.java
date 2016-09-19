@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @NonTransactiveCommandAttribute
@@ -46,7 +45,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
     protected void executeCommand() {
         String clusterCpuName = getVds().getClusterCpuName();
 
-        Cluster grp = DbFacade.getInstance().getClusterDao().get(getVds().getClusterId());
+        Cluster grp = clusterDao.get(getVds().getClusterId());
 
         ServerCpu sc = getCpuFlagsManagerHandler().findMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
                 .getClusterCompatibilityVersion());

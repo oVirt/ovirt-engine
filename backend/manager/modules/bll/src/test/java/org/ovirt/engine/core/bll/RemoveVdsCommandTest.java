@@ -104,7 +104,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         clusterId = Guid.newGuid();
         doReturn(vdsDao).when(command).getVdsDao();
         doReturn(vdsDynamicDao).when(command).getVdsDynamicDao();
-        doReturn(clusterDao).when(command).getClusterDao();
         doReturn(cluster).when(clusterDao).get(any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
         doReturn(glusterUtils).when(command).getGlusterUtils();

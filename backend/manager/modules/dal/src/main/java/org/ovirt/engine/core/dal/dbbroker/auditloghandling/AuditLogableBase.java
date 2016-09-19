@@ -234,6 +234,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected VmIconDao vmIconDao;
 
+    @Inject
+    protected ClusterDao clusterDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -598,16 +601,16 @@ public class AuditLogableBase extends TimeoutBase {
     public Cluster getCluster() {
         if (cluster == null) {
             if (clusterId != null) {
-                cluster = getClusterDao().get(clusterId);
+                cluster = clusterDao.get(clusterId);
             } else if (getVds() != null) {
                 clusterId = getVds().getClusterId();
-                cluster = getClusterDao().get(clusterId);
+                cluster = clusterDao.get(clusterId);
             } else if (getVm() != null) {
                 clusterId = getVm().getClusterId();
-                cluster = getClusterDao().get(clusterId);
+                cluster = clusterDao.get(clusterId);
             } else if (getVmTemplate() != null) {
                 clusterId = getVmTemplate().getClusterId();
-                cluster = getClusterDao().get(clusterId);
+                cluster = clusterDao.get(clusterId);
             }
         }
         return cluster;
@@ -764,10 +767,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected VnicProfileDao getVnicProfileDao() {
         return getDbFacade().getVnicProfileDao();
-    }
-
-    public ClusterDao getClusterDao() {
-        return getDbFacade().getClusterDao();
     }
 
     public RoleDao getRoleDao() {

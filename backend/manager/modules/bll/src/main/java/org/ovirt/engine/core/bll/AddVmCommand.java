@@ -1055,7 +1055,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
-        Cluster cluster = getClusterDao().get(clusterId);
+        Cluster cluster = clusterDao.get(clusterId);
         boolean legalClusterId = cluster != null;
         if (!legalClusterId) {
             reasons.add(EngineError.VM_INVALID_SERVER_CLUSTER_ID.toString());

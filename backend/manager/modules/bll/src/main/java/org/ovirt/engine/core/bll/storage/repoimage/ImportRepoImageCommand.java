@@ -235,7 +235,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     }
 
     public Cluster getCluster(Guid clusterId) {
-        return getClusterDao().get(clusterId);
+        return clusterDao.get(clusterId);
     }
 
     private void attachDiskToTemplate(Guid templateId) {
