@@ -463,7 +463,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
             DiskVmElement dve = DiskVmElement.copyOf(image.getDiskVmElementForVm(sourceTemplateId),
                     image.getId(), getVmTemplateId());
-            getDiskVmElementDao().save(dve);
+            diskVmElementDao.save(dve);
 
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }

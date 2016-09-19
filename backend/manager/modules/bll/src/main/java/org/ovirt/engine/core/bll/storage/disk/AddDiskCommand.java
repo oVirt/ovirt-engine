@@ -487,7 +487,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected DiskVmElement addDiskVmElementForDisk(DiskVmElement diskVmElement) {
-        getDiskVmElementDao().save(diskVmElement);
+        diskVmElementDao.save(diskVmElement);
         return diskVmElement;
     }
 

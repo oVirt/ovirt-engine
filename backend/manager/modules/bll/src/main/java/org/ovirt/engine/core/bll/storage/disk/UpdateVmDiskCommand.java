@@ -368,7 +368,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             updateMetaDataDescription((DiskImage) getNewDisk());
         }
         final Disk diskForUpdate = diskDao.get(getParameters().getDiskInfo().getId());
-        final DiskVmElement diskVmElementForUpdate = getDiskVmElementDao().get(new VmDeviceId(getOldDisk().getId(), getVmId()));
+        final DiskVmElement diskVmElementForUpdate = diskVmElementDao.get(new VmDeviceId(getOldDisk().getId(), getVmId()));
 
         applyUserChanges(diskForUpdate, diskVmElementForUpdate);
 
@@ -378,7 +378,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 getVmStaticDao().incrementDbGeneration(getVm().getId());
                 updateDeviceProperties();
                 baseDiskDao.update(diskForUpdate);
-                getDiskVmElementDao().update(diskVmElementForUpdate);
+                diskVmElementDao.update(diskVmElementForUpdate);
                 switch (diskForUpdate.getDiskStorageType()) {
                     case IMAGE:
                         DiskImage diskImage = (DiskImage) diskForUpdate;
@@ -827,7 +827,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     protected DiskVmElement getOldDiskVmElement() {
         if (oldDiskVmElement == null) {
-            oldDiskVmElement = getDiskVmElementDao().get(new VmDeviceId(getOldDisk().getId(), getVmId()));
+            oldDiskVmElement = diskVmElementDao.get(new VmDeviceId(getOldDisk().getId(), getVmId()));
         }
         return oldDiskVmElement;
     }

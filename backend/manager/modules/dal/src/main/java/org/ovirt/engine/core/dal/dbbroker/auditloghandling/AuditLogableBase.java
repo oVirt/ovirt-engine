@@ -200,6 +200,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected DiskLunMapDao diskLunMapDao;
 
+    @Inject
+    protected DiskVmElementDao diskVmElementDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -840,10 +843,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmIconDao getVmIconDao() {
         return getDbFacade().getVmIconDao();
-    }
-
-    public DiskVmElementDao getDiskVmElementDao() {
-        return getDbFacade().getDiskVmElementDao();
     }
 
     public VmDeviceDao getVmDeviceDao() {

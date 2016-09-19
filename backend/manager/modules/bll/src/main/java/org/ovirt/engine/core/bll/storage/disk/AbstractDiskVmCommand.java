@@ -115,7 +115,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isDiskPassPciAndIdeLimit() {
         List<VmNic> vmInterfaces = getVmNicDao().getAllForVm(getVmId());
-        List<DiskVmElement> diskVmElements = getDiskVmElementDao().getAllForVm(getVmId());
+        List<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(getVmId());
 
         diskVmElements.add(getDiskVmElement());
 

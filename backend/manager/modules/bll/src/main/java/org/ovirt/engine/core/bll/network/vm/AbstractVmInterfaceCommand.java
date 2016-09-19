@@ -84,7 +84,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected boolean pciAndIdeWithinLimit(VM vm, List<VmNic> allInterfaces) {
-        List<DiskVmElement> diskVmElements = getDiskVmElementDao().getAllForVm(getVmId());
+        List<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(getVmId());
 
         return validate(VmValidator.checkPciAndIdeLimit(vm.getOs(),
                 vm.getCompatibilityVersion(),

@@ -84,7 +84,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             performPlugCommand(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }
         getVmDeviceDao().remove(vmDevice.getId());
-        getDiskVmElementDao().remove(vmDevice.getId());
+        diskVmElementDao.remove(vmDevice.getId());
 
         if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {
             // clears snapshot ID
@@ -120,7 +120,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         // When detaching a disk from running VMs a hot unplug is needed, in that case we need the interface info from
         // the DB, since the parameters pass only the VM and disk ID we need to load the rest of the data from the DB
         if (dveFromDb == null) {
-            dveFromDb = getDiskVmElementDao().get(super.getDiskVmElement().getId());
+            dveFromDb = diskVmElementDao.get(super.getDiskVmElement().getId());
         }
         return dveFromDb;
     }

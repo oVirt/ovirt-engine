@@ -233,7 +233,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue) {
 
             List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
-            List<DiskVmElement> diskVmElements = getDiskVmElementDao().getAllForVm(getVmTemplateId());
+            List<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(getVmTemplateId());
 
             if (!validate(VmValidator.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
                     getVmTemplate().getCompatibilityVersion(),

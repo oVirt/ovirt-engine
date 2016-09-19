@@ -922,7 +922,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected boolean isValidPciAndIdeLimit(VM vmFromParams) {
-        List<DiskVmElement> diskVmElements = getDbFacade().getDiskVmElementDao().getAllForVm(getVmId());
+        List<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(getVmId());
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
 
         return validate(VmValidator.checkPciAndIdeLimit(

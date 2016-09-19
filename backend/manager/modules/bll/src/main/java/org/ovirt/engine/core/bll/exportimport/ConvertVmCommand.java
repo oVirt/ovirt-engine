@@ -263,7 +263,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private void updateBootDiskFlag(VM vm) {
         vm.getStaticData().getImages().stream().filter(disk -> disk.getDiskVmElementForVm(vm.getId()).isBoot())
-                .forEach(disk -> getDiskVmElementDao().update(disk.getDiskVmElementForVm(vm.getId())));
+                .forEach(disk -> diskVmElementDao.update(disk.getDiskVmElementForVm(vm.getId())));
     }
 
     private void addImportedDevices(VM vm) {
@@ -279,7 +279,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private void saveDiskVmElements(VM vm) {
         for (DiskImage disk : vm.getStaticData().getImages()) {
-            getDiskVmElementDao().save(disk.getDiskVmElementForVm(vm.getId()));
+            diskVmElementDao.save(disk.getDiskVmElementForVm(vm.getId()));
         }
     }
 

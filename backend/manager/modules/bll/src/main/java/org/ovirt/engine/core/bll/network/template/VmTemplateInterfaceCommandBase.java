@@ -82,6 +82,6 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     }
 
     protected List<DiskVmElement> getTemplateDiskVmElements() {
-        return getDiskVmElementDao().getAllForVm(getVmTemplateId());
+        return diskVmElementDao.getAllForVm(getVmTemplateId());
     }
 }

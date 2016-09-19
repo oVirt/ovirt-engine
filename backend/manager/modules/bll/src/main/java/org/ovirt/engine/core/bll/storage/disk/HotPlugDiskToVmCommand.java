@@ -215,7 +215,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     @Override
     protected DiskVmElement getDiskVmElement() {
         if (diskVmElement == null && getDisk() != null) {
-            diskVmElement = getDiskVmElementDao().get(new VmDeviceId(getDisk().getId(), getVmId()));
+            diskVmElement = diskVmElementDao.get(new VmDeviceId(getDisk().getId(), getVmId()));
         }
         return diskVmElement;
     }

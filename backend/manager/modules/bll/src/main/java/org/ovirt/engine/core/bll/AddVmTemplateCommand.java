@@ -854,10 +854,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
 
     private void addTemplateDiskVmElement(Guid newDiskId, Guid oldDiskId) {
-        DiskVmElement oldDve = getDiskVmElementDao().get(new VmDeviceId(oldDiskId, getVmId()));
+        DiskVmElement oldDve = diskVmElementDao.get(new VmDeviceId(oldDiskId, getVmId()));
         DiskVmElement newDve = DiskVmElement.copyOf(oldDve);
         newDve.setId(new VmDeviceId(newDiskId, getVmTemplateId()));
-        getDiskVmElementDao().save(newDve);
+        diskVmElementDao.save(newDve);
     }
 
     private Guid getVmIdFromImageParameters(){

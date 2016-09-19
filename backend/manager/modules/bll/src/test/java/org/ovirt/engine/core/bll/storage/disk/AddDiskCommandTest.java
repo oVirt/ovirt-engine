@@ -359,7 +359,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Before
     public void initializeMocks() {
         doReturn(vmNicDao).when(command).getVmNicDao();
-        doReturn(diskVmElementDao).when(command).getDiskVmElementDao();
         doReturn(vmDao).when(command).getVmDao();
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();

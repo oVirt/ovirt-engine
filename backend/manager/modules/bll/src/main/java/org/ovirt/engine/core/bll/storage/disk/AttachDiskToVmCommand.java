@@ -191,7 +191,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
         DiskVmElement diskVmElement = getDiskVmElement();
         diskVmElement.getId().setDeviceId(disk.getId());
-        getDiskVmElementDao().save(diskVmElement);
+        diskVmElementDao.save(diskVmElement);
 
         // When performing hot plug for VirtIO-SCSI or SPAPR_VSCSI the address map calculation needs this info to be populated
         disk.setDiskVmElements(Collections.singletonList(diskVmElement));

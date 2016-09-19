@@ -303,7 +303,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected List<DiskVmElement> getDiskVmElements() {
         if (diskVmElements == null) {
-            diskVmElements = getDiskVmElementDao().getAllForVm(vmDisksSource.getId());
+            diskVmElements = diskVmElementDao.getAllForVm(vmDisksSource.getId());
         }
 
         return diskVmElements;
@@ -1223,7 +1223,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void createAndSaveNewDiskVmElement(Guid newDiskImageId, Guid newVmId, DiskVmElement oldDve) {
         DiskVmElement newDve = DiskVmElement.copyOf(oldDve, newDiskImageId, newVmId);
-        getDiskVmElementDao().save(newDve);
+        diskVmElementDao.save(newDve);
     }
 
     protected void addVmCinderDisks(Collection<DiskImage> templateDisks) {
