@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.JobDao;
 
 public abstract class AddJobCommand<T extends AddJobParameters> extends CommandBase<T> {
 
@@ -21,9 +20,6 @@ public abstract class AddJobCommand<T extends AddJobParameters> extends CommandB
 
     @Inject
     private JobRepository jobRepository;
-
-    @Inject
-    private JobDao jobDao;
 
     @Override
     protected boolean validate() {

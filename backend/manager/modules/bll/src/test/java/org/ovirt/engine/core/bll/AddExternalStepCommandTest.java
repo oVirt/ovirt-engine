@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
@@ -26,6 +27,7 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
     private StepDao stepDaoMock;
 
     @Spy
+    @InjectMocks
     private AddExternalStepCommand<AddExternalStepParameters> command =
             new AddExternalStepCommand<>(new AddExternalStepParameters(jobId, "step 1", StepEnum.VALIDATING), null);
 
@@ -47,7 +49,6 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
 
     @Before
     public void setupMock() throws Exception {
-        doReturn(jobDaoMock).when(command).getJobDao();
         doReturn(stepDaoMock).when(command).getStepDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));

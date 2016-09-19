@@ -10,8 +10,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.JobDao;
 
 public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends CommandBase<T>{
 
@@ -25,7 +23,7 @@ public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends
     protected boolean validate() {
         boolean retValue = true;
         if (getParameters().getJobId() != null) {
-            job = getJobDao().get(getParameters().getJobId());
+            job = jobDao.get(getParameters().getJobId());
             if (job == null) {
                 retValue = false;
                 addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);
@@ -48,9 +46,9 @@ public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends
 
     @Override
     protected void executeCommand() {
-        job = getJobDao().get(getParameters().getJobId());
+        job = jobDao.get(getParameters().getJobId());
         job.setAutoCleared(true);
-        getJobDao().update(job);
+        jobDao.update(job);
         setSucceeded(true);
     }
 
@@ -61,9 +59,5 @@ public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));
         return permissionList;
-    }
-
-    public JobDao getJobDao() {
-        return DbFacade.getInstance().getJobDao();
     }
 }

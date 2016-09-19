@@ -74,7 +74,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     @Before
     public void setupMock() throws Exception {
-        doReturn(jobDaoMock).when(command).getJobDao();
         doReturn(stepDaoMock).when(command).getStepDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.StepDao;
 
 public class EndExternalStepCommand <T extends EndExternalStepParameters> extends CommandBase<T> {
@@ -42,7 +41,7 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
             addValidationMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
         }
         else {
-            job = getJobDao().get(step.getJobId());
+            job = jobDao.get(step.getJobId());
             if (job == null) {
                 retValue = false;
                 addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);
@@ -73,10 +72,6 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));
         return permissionList;
-    }
-
-    public JobDao getJobDao() {
-        return DbFacade.getInstance().getJobDao();
     }
 
     @Override

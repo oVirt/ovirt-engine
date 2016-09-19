@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -38,7 +37,6 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
 
     @Before
     public void setupMock() throws Exception {
-        doReturn(jobDaoMock).when(command).getJobDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeTestJob(jobId));
     }
 
