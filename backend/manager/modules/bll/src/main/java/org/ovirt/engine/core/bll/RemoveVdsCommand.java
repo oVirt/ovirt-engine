@@ -137,7 +137,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void removeVdsStaticFromDb() {
-        getVdsStaticDao().remove(getVdsId());
+        vdsStaticDao.remove(getVdsId());
     }
 
     private void removeVdsDynamicFromDb() {

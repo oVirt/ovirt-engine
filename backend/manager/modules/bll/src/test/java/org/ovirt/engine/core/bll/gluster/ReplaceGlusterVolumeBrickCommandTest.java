@@ -62,7 +62,6 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
 
     @Before
     public void prepareMocks() {
-        doReturn(vdsStaticDao).when(cmd).getVdsStaticDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
         doReturn(interfaceDao).when(cmd ).getInterfaceDao();
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();

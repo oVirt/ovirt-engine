@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -114,7 +113,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         targetStoragePool = storagePoolDao.getForCluster(getTargetCluster().getId());
         if (targetStoragePool != null && targetStoragePool.isLocal()) {
-            if (!DbFacade.getInstance().getVdsStaticDao().getAllForCluster(getParameters().getClusterId()).isEmpty()) {
+            if (!vdsStaticDao.getAllForCluster(getParameters().getClusterId()).isEmpty()) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
                 return false;
             }
@@ -224,7 +223,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             VdsStatic staticData = getVds().getStaticData();
             getCompensationContext().snapshotEntity(staticData);
             staticData.setClusterId(targetClusterId);
-            DbFacade.getInstance().getVdsStaticDao().update(staticData);
+            vdsStaticDao.update(staticData);
             getCompensationContext().stateChanged();
             // remove the server from resource manager and add it back
             initializeVds();

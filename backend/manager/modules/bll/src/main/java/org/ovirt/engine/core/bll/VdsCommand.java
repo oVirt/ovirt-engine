@@ -89,7 +89,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         if (host.getProtocol() == VdsProtocol.XML && host.getHostOs() != null) {
             VdsStatic hostStaticData = host.getStaticData();
             hostStaticData.setProtocol(VdsProtocol.STOMP);
-            getVdsStaticDao().update(hostStaticData);
+            vdsStaticDao.update(hostStaticData);
             resourceManager.reestablishConnection(getVdsId());
         }
     }

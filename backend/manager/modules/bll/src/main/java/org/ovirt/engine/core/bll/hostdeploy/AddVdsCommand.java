@@ -269,7 +269,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private void addVdsStaticToDb() {
         getParameters().getVdsStaticData().setServerSslEnabled(
                 Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
-        DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
+        vdsStaticDao.save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
         setVdsIdRef(getParameters().getVdsStaticData().getId());
         addFenceAgents();

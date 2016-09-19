@@ -204,7 +204,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
     private void markCurrentCmdlineAsStored() {
         final VdsStatic vdsStatic = getVds().getStaticData();
-        getVdsStaticDao().updateLastStoredKernelCmdline(vdsStatic.getId(), vdsStatic.getCurrentKernelCmdline());
+        vdsStaticDao.updateLastStoredKernelCmdline(vdsStatic.getId(), vdsStatic.getCurrentKernelCmdline());
     }
 
     private void configureManagementNetwork() {

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveClusterCommand<T extends ClusterParametersBase> extends ClusterCommandBase<T> {
 
@@ -37,8 +36,7 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
                 returnValue = false;
             }
 
-            if (DbFacade.getInstance().getVdsStaticDao()
-                    .getAllForCluster(getCluster().getId()).size() != 0) {
+            if (vdsStaticDao.getAllForCluster(getCluster().getId()).size() != 0) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_CLUSTER_VDS_DETECTED);
                 returnValue = false;
             }

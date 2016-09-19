@@ -166,7 +166,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     protected boolean updateBrickServerAndInterfaceName(GlusterBrickEntity brick, boolean addValidationMessage) {
-        VdsStatic server = getVdsStaticDao().get(brick.getServerId());
+        VdsStatic server = vdsStaticDao.get(brick.getServerId());
         if (server == null || !server.getClusterId().equals(getClusterId())) {
             if (addValidationMessage) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);

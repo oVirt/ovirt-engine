@@ -218,7 +218,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             @Override
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(getVds().getStaticData());
-                DbFacade.getInstance().getVdsStaticDao().update(getParameters().getVdsStaticData());
+                vdsStaticDao.update(getParameters().getVdsStaticData());
                 updateFenceAgents();// TODO: what compensation needed for fencing?
                 getCompensationContext().stateChanged();
                 return null;
