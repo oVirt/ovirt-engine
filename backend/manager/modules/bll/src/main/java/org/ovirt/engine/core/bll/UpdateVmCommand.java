@@ -176,7 +176,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
-        getVmStaticDao().incrementDbGeneration(getVm().getId());
+        vmStaticDao.incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
         newVmStatic.setQuotaId(getQuotaId());

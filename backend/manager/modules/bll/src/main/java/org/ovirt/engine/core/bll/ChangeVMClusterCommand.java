@@ -94,7 +94,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         // Set cpu profile from the new cluster
         cpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserId());
 
-        getVmStaticDao().update(vm.getStaticData());
+        vmStaticDao.update(vm.getStaticData());
 
         // change vm cluster should remove the vm from all associated affinity groups
         List<AffinityGroup> allAffinityGroupsByVmId =

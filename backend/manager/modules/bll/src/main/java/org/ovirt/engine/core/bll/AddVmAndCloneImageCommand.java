@@ -298,7 +298,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         super.executeVmCommand();
         setVm(null);
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        getVmStaticDao().update(getVm().getStaticData());
+        vmStaticDao.update(getVm().getStaticData());
     }
 
     @Override

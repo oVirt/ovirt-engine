@@ -598,7 +598,6 @@ public class UpdateClusterCommandTest {
 
         doReturn(0).when(cmd).compareCpuLevels(any(Cluster.class));
 
-        doReturn(vmStaticDao).when(cmd).getVmStaticDao();
         doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();

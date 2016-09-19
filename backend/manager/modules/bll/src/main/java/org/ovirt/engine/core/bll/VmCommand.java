@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
@@ -55,9 +54,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
-    @Inject
-    protected VmStaticDao vmStaticDao;
 
     @Inject
     private QuotaDao quotaDao;
@@ -142,7 +138,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmStatic(boolean removePermissions) {
-        getVmStaticDao().remove(getVmId(), removePermissions);
+        vmStaticDao.remove(getVmId(), removePermissions);
     }
 
     protected List<VmNic> getInterfaces() {
@@ -175,7 +171,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected void endVmCommand() {
         if (getVm() != null) {
-            getVmStaticDao().incrementDbGeneration(getVm().getId());
+            vmStaticDao.incrementDbGeneration(getVm().getId());
         }
         endActionOnDisks();
         unlockVm();

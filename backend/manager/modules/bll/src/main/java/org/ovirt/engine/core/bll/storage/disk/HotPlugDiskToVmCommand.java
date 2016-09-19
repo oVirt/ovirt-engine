@@ -148,7 +148,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
             updateBootOrder();
         }
 
-        getVmStaticDao().incrementDbGeneration(getVm().getId());
+        vmStaticDao.incrementDbGeneration(getVm().getId());
         setSucceeded(true);
     }
 

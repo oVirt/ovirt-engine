@@ -144,7 +144,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     }
 
     private boolean isHostedEngineVm(Guid vmId, String vmNameOnHost) {
-        VmStatic dbVm = getVmStaticDao().get(vmId);
+        VmStatic dbVm = vmStaticDao.get(vmId);
         return dbVm == null ?
                 Objects.equals(vmNameOnHost, Config.<String>getValue(ConfigValues.HostedEngineVmName))
                 : dbVm.getOrigin() == OriginType.HOSTED_ENGINE;

@@ -304,7 +304,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getVmTemplate().getCompatibilityVersion());
         }
 
-        getVmStaticDao().incrementDbGeneration(getVmTemplate().getId());
+        vmStaticDao.incrementDbGeneration(getVmTemplate().getId());
         updateOriginalTemplateNameOnDerivedVms();
         List<Guid> oldIconIds = Collections.emptyList();
         if (isTemplate()) {

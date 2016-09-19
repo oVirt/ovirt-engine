@@ -7,8 +7,6 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
@@ -29,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -39,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
@@ -60,16 +58,11 @@ public class AddUnmanagedVmsCommandTest {
     HostedEngineImporter hostedEngineImporter;
 
     @Mock
-    DbFacade dbFacade;
+    VmStaticDao vmStaticDao;
 
+    @Spy
     @InjectMocks
-    AddUnmanagedVmsCommand addUnamangedVmsCommand =
-            spy(new AddUnmanagedVmsCommand(new AddUnmanagedVmsParameters(), null) {
-                @Override public DbFacade getDbFacade() {
-                    return dbFacade;
-                }
-            });
-
+    AddUnmanagedVmsCommand addUnamangedVmsCommand =  new AddUnmanagedVmsCommand(new AddUnmanagedVmsParameters(), null);
 
     private static Map<String, Object> external_vm;
 
@@ -87,7 +80,6 @@ public class AddUnmanagedVmsCommandTest {
         doNothing().when(addUnamangedVmsCommand).addDevices(any(Map.class), anyLong());
         doNothing().when(addUnamangedVmsCommand).importHostedEngineVm(any(VM.class));
         doReturn(hostedEngineImporter).when(hostedEngineImporterProvider).get();
-        doReturn(mock(VmStaticDao.class)).when(dbFacade).getVmStaticDao();
     }
 
     private static Map<String, Object> loadVm(String resourcePath) throws IOException {

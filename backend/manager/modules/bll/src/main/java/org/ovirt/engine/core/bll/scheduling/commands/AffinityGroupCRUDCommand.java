@@ -45,7 +45,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
             VmStatic vmStatic = null;
             Set<Guid> vmSet = new HashSet<>();
             for (Guid vmId : getParameters().getAffinityGroup().getEntityIds()) {
-                vmStatic = getVmStaticDao().get(vmId);
+                vmStatic = vmStaticDao.get(vmId);
                 if (vmStatic == null) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
                 }

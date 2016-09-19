@@ -1033,7 +1033,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             removeVmNetworkInterfaces();
             getVmDynamicDao().remove(getVmId());
             getVmStatisticsDao().remove(getVmId());
-            getVmStaticDao().remove(getVmId());
+            vmStaticDao.remove(getVmId());
             setSucceeded(true);
         } else {
             setVm(getParameters().getVm()); // Setting VM from params, for logging purposes

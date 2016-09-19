@@ -369,7 +369,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void incrementVmsGeneration() {
         List<VM> listVms = getVmsForDiskId();
         for (VM vm : listVms) {
-            getVmStaticDao().incrementDbGeneration(vm.getId());
+            vmStaticDao.incrementDbGeneration(vm.getId());
         }
     }
 

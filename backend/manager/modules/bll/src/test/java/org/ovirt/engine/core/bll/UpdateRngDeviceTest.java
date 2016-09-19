@@ -56,7 +56,6 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
         when(clusterMock.get(clusterId)).thenReturn(cluster);
 
-        doReturn(vmDaoMock).when(cmd).getVmStaticDao();
         doReturn(clusterMock).when(cmd).getClusterDao();
         doReturn(vmDeviceDaoMock).when(cmd).getVmDeviceDao();
         cmd.init();

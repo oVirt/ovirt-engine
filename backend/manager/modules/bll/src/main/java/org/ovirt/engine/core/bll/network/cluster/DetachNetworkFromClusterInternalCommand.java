@@ -65,7 +65,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
 
         public ValidationResult clusterNetworkNotUsedByVms() {
             return new PluralMessages(EngineMessage.VAR__ENTITIES__VM, EngineMessage.VAR__ENTITIES__VMS)
-                .getNetworkInUse(getEntitiesNames(getVmStaticDao().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
+                .getNetworkInUse(getEntitiesNames(vmStaticDao.getAllByGroupAndNetworkName(networkCluster.getClusterId(),
                     network.getName())));
         }
 

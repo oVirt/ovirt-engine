@@ -115,7 +115,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void endSuccessfully() {
-        getVmStaticDao().incrementDbGeneration(getVm().getId());
+        vmStaticDao.incrementDbGeneration(getVm().getId());
         endActionOnDisks();
 
         if (getVm() != null) {
@@ -184,7 +184,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             if (!filteredImages.isEmpty()) {
                 getCompensationContext().stateChanged();
             } else {
-                getVmStaticDao().incrementDbGeneration(getVm().getId());
+                vmStaticDao.incrementDbGeneration(getVm().getId());
                 restoreVmConfigFromSnapshot();
             }
             return null;

@@ -149,7 +149,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     protected List<String> getVmsWithAttachedISO() {
-        List<VmStatic> vms = getVmStaticDao().getAllByStoragePoolId(getStorageDomain().getStoragePoolId());
+        List<VmStatic> vms = vmStaticDao.getAllByStoragePoolId(getStorageDomain().getStoragePoolId());
         List<String> vmNames = new LinkedList<>();
         for (VmStatic vmStatic : vms) {
             VmDynamic vmDynamic = getVmDynamicDao().get(vmStatic.getId());

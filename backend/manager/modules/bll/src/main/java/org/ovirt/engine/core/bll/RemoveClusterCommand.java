@@ -42,8 +42,7 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
                 addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_CLUSTER_VDS_DETECTED);
                 returnValue = false;
             }
-            if (DbFacade.getInstance().getVmStaticDao()
-                    .getAllByCluster(getCluster().getId()).size() != 0) {
+            if (vmStaticDao.getAllByCluster(getCluster().getId()).size() != 0) {
                 addValidationMessage(EngineMessage.VM_CANNOT_REMOVE_CLUSTER_VMS_DETECTED);
                 returnValue = false;
             }

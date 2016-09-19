@@ -209,6 +209,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected VmDao vmDao;
 
+    @Inject
+    protected VmStaticDao vmStaticDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -742,10 +745,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmTemplateDao getVmTemplateDao() {
         return getDbFacade().getVmTemplateDao();
-    }
-
-    public VmStaticDao getVmStaticDao() {
-        return getDbFacade().getVmStaticDao();
     }
 
     public VmAndTemplatesGenerationsDao getVmAndTemplatesGenerationsDao() {

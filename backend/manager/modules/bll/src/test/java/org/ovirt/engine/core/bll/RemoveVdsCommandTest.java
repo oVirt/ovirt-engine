@@ -103,7 +103,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     public void setUp() {
         clusterId = Guid.newGuid();
         doReturn(vdsDao).when(command).getVdsDao();
-        doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(vdsDynamicDao).when(command).getVdsDynamicDao();
         doReturn(clusterDao).when(command).getClusterDao();
         doReturn(cluster).when(clusterDao).get(any(Guid.class));

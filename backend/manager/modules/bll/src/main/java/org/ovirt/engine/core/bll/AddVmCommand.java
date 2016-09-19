@@ -672,7 +672,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (getVmId() != null && getVmStaticDao().get(getVmId()) != null) {
+        if (getVmId() != null && vmStaticDao.get(getVmId()) != null) {
             return failValidation(EngineMessage.VM_ID_EXISTS);
         }
 
@@ -1139,7 +1139,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         updateOriginalTemplate(vmStatic);
 
-        getVmStaticDao().save(vmStatic);
+        vmStaticDao.save(vmStatic);
         getCompensationContext().snapshotNewEntity(vmStatic);
     }
 

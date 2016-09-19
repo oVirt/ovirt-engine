@@ -120,7 +120,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     }
 
     protected void incrementDbGeneration() {
-        getVmStaticDao().incrementDbGeneration(getVmTemplate().getId());
+        vmStaticDao.incrementDbGeneration(getVmTemplate().getId());
     }
 
     @Override

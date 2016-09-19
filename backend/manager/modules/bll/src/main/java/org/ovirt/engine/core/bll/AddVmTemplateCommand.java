@@ -870,7 +870,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setVmId(getVmIdFromImageParameters());
         isVmInDb = getVm() != null;
 
-        getVmStaticDao().incrementDbGeneration(getVmTemplateId());
+        vmStaticDao.incrementDbGeneration(getVmTemplateId());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().endAction(p.getCommandType(),
                     p,

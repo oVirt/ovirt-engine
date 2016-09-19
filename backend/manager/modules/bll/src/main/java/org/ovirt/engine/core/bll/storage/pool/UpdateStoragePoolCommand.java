@@ -116,7 +116,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 () -> {
                     storagePoolDao.updatePartial(storagePool);
                     updateMemberDomainsFormat(targetFormat);
-                    getVmStaticDao().incrementDbGenerationForAllInStoragePool(storagePool.getId());
+                    vmStaticDao.incrementDbGenerationForAllInStoragePool(storagePool.getId());
                     return null;
                 });
 

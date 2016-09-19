@@ -147,7 +147,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
      */
     protected boolean validateNoDuplicateVm() {
-        VmStatic duplicateVm = getVmStaticDao().get(getVm().getId());
+        VmStatic duplicateVm = vmStaticDao.get(getVm().getId());
         return duplicateVm == null ? true :
             failValidation(EngineMessage.VM_CANNOT_IMPORT_VM_EXISTS, String.format("$VmName %1$s", duplicateVm.getName()));
     }
@@ -472,7 +472,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (getParameters().getCopyCollapse()) {
             getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         }
-        getVmStaticDao().save(getVm().getStaticData());
+        vmStaticDao.save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());
     }
 

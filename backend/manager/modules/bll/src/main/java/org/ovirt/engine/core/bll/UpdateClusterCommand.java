@@ -111,7 +111,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     protected List<VmStatic> filterVmsInClusterNeedUpdate() {
-        return getVmStaticDao().getAllByCluster(getCluster().getId()).stream()
+        return vmStaticDao.getAllByCluster(getCluster().getId()).stream()
                 .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
                 .filter(vm -> vm.getCustomCompatibilityVersion() == null) // no need for VM device update
                 .sorted()

@@ -158,7 +158,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 log.error("Error to restore Cinder volumes snapshots");
             }
         } else {
-            getVmStaticDao().incrementDbGeneration(getVm().getId());
+            vmStaticDao.incrementDbGeneration(getVm().getId());
             snapshotDao.updateStatus(getSnapshot().getId(), SnapshotStatus.OK);
             unlockVm();
         }

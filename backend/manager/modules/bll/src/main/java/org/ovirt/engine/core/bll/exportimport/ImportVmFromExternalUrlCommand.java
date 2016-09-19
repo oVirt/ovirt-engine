@@ -124,7 +124,7 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
             prm.setForceOverride(true);
             prm.setCopyCollapse(true);
-            boolean existsInTheSystem = getVmStaticDao().get(vm.getId()) != null;
+            boolean existsInTheSystem = vmStaticDao.get(vm.getId()) != null;
             prm.setImportAsNewEntity(existsInTheSystem);
 
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {

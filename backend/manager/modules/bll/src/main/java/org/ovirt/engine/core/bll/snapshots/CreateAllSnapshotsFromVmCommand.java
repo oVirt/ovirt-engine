@@ -222,7 +222,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void incrementVmGeneration() {
-        getVmStaticDao().incrementDbGeneration(getVm().getId());
+        vmStaticDao.incrementDbGeneration(getVm().getId());
     }
 
     @Override

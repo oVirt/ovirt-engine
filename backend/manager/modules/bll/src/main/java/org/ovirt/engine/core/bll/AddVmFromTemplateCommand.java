@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 /**
@@ -71,7 +70,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         super.executeVmCommand();
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
-        DbFacade.getInstance().getVmStaticDao().update(getVm().getStaticData());
+        vmStaticDao.update(getVm().getStaticData());
         // if there are no tasks, we can end the command right away.
         if (getTaskIdList().isEmpty()) {
             endSuccessfully();

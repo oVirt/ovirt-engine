@@ -205,7 +205,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
                 boolean verifyDisksNotLocked = verifyImagesStatus(template.getDiskList());
                 if (verifyDisksNotLocked) {
                     ovfUpdateProcessHelper.loadTemplateData(template);
-                    Long currentDbGeneration = getVmStaticDao().getDbGeneration(template.getId());
+                    Long currentDbGeneration = vmStaticDao.getDbGeneration(template.getId());
                     // currentDbGeneration can be null in case that the template was deleted during the run of OvfDataUpdater.
                     if (currentDbGeneration != null && template.getDbGeneration() == currentDbGeneration) {
                         proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForTemplate(template, vmsAndTemplateMetadata));
@@ -301,7 +301,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
                 }
 
                 ovfUpdateProcessHelper.loadVmData(vm);
-                Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
+                Long currentDbGeneration = vmStaticDao.getDbGeneration(vm.getId());
                 if (currentDbGeneration == null) {
                     log.warn("currentDbGeneration of VM (name: '{}', id: '{}') is null, probably because the VM was deleted during the run of OvfDataUpdater.",
                             vm.getName(),

@@ -183,7 +183,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     @Override
     protected void executeVmCommand() {
         if (!isOperationPerformedOnDiskSnapshot()) {
-            getVmStaticDao().incrementDbGeneration(getVm().getId());
+            vmStaticDao.incrementDbGeneration(getVm().getId());
         }
 
         final VmDevice vmDevice = createVmDevice();

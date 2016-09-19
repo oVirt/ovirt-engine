@@ -215,7 +215,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                         false,
                         false);
 
-        vmAndTemplatesIds.addAll(getVmStaticDao().getVmAndTemplatesIdsWithoutAttachedImageDisks(getParameters().getStoragePoolId(), false));
+        vmAndTemplatesIds.addAll(vmStaticDao.getVmAndTemplatesIdsWithoutAttachedImageDisks(getParameters().getStoragePoolId(), false));
 
         byte[] bytes = buildOvfInfoFileByteArray(vmAndTemplatesIds);
 

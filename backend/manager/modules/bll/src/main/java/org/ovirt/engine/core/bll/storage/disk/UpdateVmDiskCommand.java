@@ -375,7 +375,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
-                getVmStaticDao().incrementDbGeneration(getVm().getId());
+                vmStaticDao.incrementDbGeneration(getVm().getId());
                 updateDeviceProperties();
                 baseDiskDao.update(diskForUpdate);
                 diskVmElementDao.update(diskVmElementForUpdate);

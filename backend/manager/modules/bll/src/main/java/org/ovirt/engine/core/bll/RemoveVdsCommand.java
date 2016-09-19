@@ -166,7 +166,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             text.add(EngineMessage.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM.toString());
             returnValue = false;
         } else {
-            List<String> vmNamesPinnedToHost = getVmStaticDao().getAllNamesPinnedToHost(vdsId);
+            List<String> vmNamesPinnedToHost = vmStaticDao.getAllNamesPinnedToHost(vdsId);
             if (!vmNamesPinnedToHost.isEmpty()) {
                 text.add(EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS.toString());
                 text.add(String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));
