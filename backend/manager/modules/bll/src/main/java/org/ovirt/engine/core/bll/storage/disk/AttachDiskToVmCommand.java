@@ -240,7 +240,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     }
 
     private void updateDiskVmSnapshotId() {
-        Guid snapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+        Guid snapshotId = snapshotDao.getId(getVmId(), SnapshotType.ACTIVE);
         if (disk.getDiskStorageType().isInternal()) {
             DiskImage diskImage = (DiskImage) disk;
             imageDao.updateImageVmSnapshotId(diskImage.getImageId(),
@@ -293,7 +293,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     }
 
     protected Snapshot getSnapshot() {
-        return getSnapshotDao().get(getParameters().getSnapshotId());
+        return snapshotDao.get(getParameters().getSnapshotId());
     }
 
     @Override

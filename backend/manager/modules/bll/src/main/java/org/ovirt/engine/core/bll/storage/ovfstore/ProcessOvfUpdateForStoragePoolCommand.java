@@ -295,7 +295,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
                 if (!verifyImagesStatus(vmImages)) {
                     continue;
                 }
-                vm.setSnapshots(getSnapshotDao().getAllWithConfiguration(vm.getId()));
+                vm.setSnapshots(snapshotDao.getAllWithConfiguration(vm.getId()));
                 if (!verifySnapshotsStatus(vm.getSnapshots())) {
                     continue;
                 }

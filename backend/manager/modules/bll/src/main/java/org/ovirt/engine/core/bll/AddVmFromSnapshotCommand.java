@@ -134,7 +134,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     protected Snapshot getSnapshot() {
         if (snapshot == null) {
-            snapshot = getSnapshotDao().get(sourceSnapshotId);
+            snapshot = snapshotDao.get(sourceSnapshotId);
             if (snapshot != null) {
                 setSnapshotName(snapshot.getDescription());
             }
@@ -207,7 +207,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     protected void lockEntities() {
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntityStatus(getSnapshot());
-            getSnapshotDao().updateStatus(sourceSnapshotId, SnapshotStatus.LOCKED);
+            snapshotDao.updateStatus(sourceSnapshotId, SnapshotStatus.LOCKED);
             lockVmWithCompensationIfNeeded();
             getCompensationContext().stateChanged();
             return null;
@@ -226,7 +226,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     @Override
     protected void unlockEntities() {
         // Assumption - this is last DB change of command, no need for compensation here
-        getSnapshotDao().updateStatus(sourceSnapshotId, SnapshotStatus.OK);
+        snapshotDao.updateStatus(sourceSnapshotId, SnapshotStatus.OK);
         getVmDynamicDao().updateStatus(getVmId(), VMStatus.Down);
     }
 

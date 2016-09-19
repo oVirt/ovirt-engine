@@ -182,9 +182,9 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             lockVmSnapshotsWithWait(getVm());
 
             TransactionSupport.executeInNewTransaction(() -> {
-                Snapshot s = getSnapshotDao().get(snapshotId);
+                Snapshot s = snapshotDao.get(snapshotId);
                 s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage);
-                getSnapshotDao().update(s);
+                snapshotDao.update(s);
                 return null;
             });
         } finally {
@@ -199,9 +199,9 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             lockVmSnapshotsWithWait(getVm());
 
             TransactionSupport.executeInNewTransaction(() -> {
-                Snapshot s = getSnapshotDao().get(snapshotId);
+                Snapshot s = snapshotDao.get(snapshotId);
                 s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId);
-                getSnapshotDao().update(s);
+                snapshotDao.update(s);
                 return null;
             });
         } finally {
@@ -220,7 +220,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
     }
 
     private String getSnapshotDescriptionById(Guid snapshotId) {
-        Snapshot snapshot = getSnapshotDao().get(snapshotId);
+        Snapshot snapshot = snapshotDao.get(snapshotId);
         return snapshot != null ? snapshot.getDescription() : StringUtils.EMPTY;
     }
 }

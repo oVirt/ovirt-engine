@@ -239,12 +239,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private Guid updateActiveSnapshotId() {
-        final Snapshot activeSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+        final Snapshot activeSnapshot = snapshotDao.get(getVmId(), SnapshotType.ACTIVE);
         final Guid activeSnapshotId = activeSnapshot.getId();
 
         TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
             getCompensationContext().snapshotEntity(activeSnapshot);
-            getSnapshotDao().updateId(activeSnapshotId, newActiveSnapshotId);
+            snapshotDao.updateId(activeSnapshotId, newActiveSnapshotId);
             activeSnapshot.setId(newActiveSnapshotId);
             getCompensationContext().snapshotNewEntity(activeSnapshot);
             getCompensationContext().stateChanged();
@@ -382,7 +382,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void endVmCommand() {
-        Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+        Snapshot createdSnapshot = snapshotDao.get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
         // if the snapshot was not created in the DB
         // the command should also be handled as a failure
         boolean taskGroupSucceeded = createdSnapshot != null && getParameters().getTaskGroupSuccess();
@@ -390,7 +390,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         boolean liveSnapshotSucceeded = false;
 
         if (taskGroupSucceeded) {
-            getSnapshotDao().updateStatus(createdSnapshot.getId(), SnapshotStatus.OK);
+            snapshotDao.updateStatus(createdSnapshot.getId(), SnapshotStatus.OK);
 
             if (liveSnapshotRequired) {
                 liveSnapshotSucceeded = performLiveSnapshot(createdSnapshot);
@@ -399,7 +399,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 // they are not going to be in use since no live snapshot is created
                 if (snapshotWithMemory(createdSnapshot)) {
                     logMemorySavingFailed();
-                    getSnapshotDao().removeMemoryFromSnapshot(createdSnapshot.getId());
+                    snapshotDao.removeMemoryFromSnapshot(createdSnapshot.getId());
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
             }
@@ -596,8 +596,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      */
     protected void revertToActiveSnapshot(Guid createdSnapshotId) {
         if (createdSnapshotId != null) {
-            getSnapshotDao().remove(createdSnapshotId);
-            getSnapshotDao().updateId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
+            snapshotDao.remove(createdSnapshotId);
+            snapshotDao.updateId(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
         }
         setSucceeded(false);
     }

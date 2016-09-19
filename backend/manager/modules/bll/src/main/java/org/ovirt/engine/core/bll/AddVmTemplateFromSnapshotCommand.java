@@ -176,7 +176,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     protected void lockSnapshot() {
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntityStatus(getSnapshot());
-            getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
+            snapshotDao.updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
             getCompensationContext().stateChanged();
             return null;
         });
@@ -184,12 +184,12 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
 
     protected void unlockSnapshot() {
         // Assumption - this is last DB change of command, no need for compensation here
-        getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.OK);
+        snapshotDao.updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.OK);
     }
 
     private Snapshot getSnapshot() {
         if (cachedSnapshot == null) {
-            cachedSnapshot = getSnapshotDao().get(getParameters().getSourceSnapshotId());
+            cachedSnapshot = snapshotDao.get(getParameters().getSourceSnapshotId());
         }
         return cachedSnapshot;
     }

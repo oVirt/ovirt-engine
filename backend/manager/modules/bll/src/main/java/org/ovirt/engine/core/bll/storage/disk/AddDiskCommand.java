@@ -586,7 +586,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setQuotaId(getQuotaId());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         if (getVm() != null) {
-            parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+            parameters.setVmSnapshotId(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
             parameters.setDiskVmElement(getParameters().getDiskVmElement());
         }
         return parameters;
@@ -597,7 +597,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      */
     private void setVmSnapshotIdForDisk(AddImageFromScratchParameters parameters) {
         if (getParameters().getDiskInfo().isAllowSnapshot()) {
-            parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+            parameters.setVmSnapshotId(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
         }
     }
 

@@ -383,13 +383,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 getParameters().setTaskGroupSuccess(false);
             } else {
                 Snapshot snapshotWithoutImage = null;
-                Snapshot snapshot = getSnapshotDao().get(cinderDisks.get(0).getSnapshotId());
+                Snapshot snapshot = snapshotDao.get(cinderDisks.get(0).getSnapshotId());
                 lockVmSnapshotsWithWait(getVm());
                 for (CinderDisk cinderDisk : cinderDisks) {
                     snapshotWithoutImage = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
                             snapshot, cinderDisk.getImageId());
                 }
-                getSnapshotDao().update(snapshotWithoutImage);
+                snapshotDao.update(snapshotWithoutImage);
                 if (getSnapshotsEngineLock() != null) {
                     getLockManager().releaseLock(getSnapshotsEngineLock());
                 }
@@ -449,7 +449,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         if (getParameters().getSnapshotNames() == null) {
             getParameters().setSnapshotNames(new LinkedList<>());
             for (DiskImage image : getImages()) {
-                Snapshot snapshot = getSnapshotDao().get(image.getSnapshotId());
+                Snapshot snapshot = snapshotDao.get(image.getSnapshotId());
                 if (snapshot != null) {
                     getParameters().getSnapshotNames().add(snapshot.getDescription());
                 }

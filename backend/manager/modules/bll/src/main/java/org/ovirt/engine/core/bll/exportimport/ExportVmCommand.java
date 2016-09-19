@@ -230,13 +230,13 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     private Collection<Snapshot> getSnapshotsToBeExportedWithMemory() {
         if (getParameters().getCopyCollapse()) {
-            Snapshot activeSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+            Snapshot activeSnapshot = snapshotDao.get(getVmId(), SnapshotType.ACTIVE);
             return !activeSnapshot.getMemoryVolume().isEmpty() ?
                     Collections.singleton(activeSnapshot) : Collections.emptyList();
         }
         else {
             Map<String, Snapshot> memory2snapshot = new HashMap<>();
-            for (Snapshot snapshot : getSnapshotDao().getAll(getVmId())) {
+            for (Snapshot snapshot : snapshotDao.getAll(getVmId())) {
                 memory2snapshot.put(snapshot.getMemoryVolume(), snapshot);
             }
             memory2snapshot.remove(StringUtils.EMPTY);
@@ -548,7 +548,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private void endCopyCollapseOperations(VM vm) {
         vm.setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         vm.setVmtName(null);
-        Snapshot activeSnapshot = getSnapshotDao().get(getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
+        Snapshot activeSnapshot = snapshotDao.get(snapshotDao.getId(vm.getId(), SnapshotType.ACTIVE));
         vm.setSnapshots(Collections.singletonList(activeSnapshot));
 
         try {
@@ -563,7 +563,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     }
 
     private void updateSnapshotOvf(VM vm) {
-        vm.setSnapshots(getSnapshotDao().getAllWithConfiguration(getVm().getId()));
+        vm.setSnapshots(snapshotDao.getAllWithConfiguration(getVm().getId()));
         updateVmInSpm();
     }
 

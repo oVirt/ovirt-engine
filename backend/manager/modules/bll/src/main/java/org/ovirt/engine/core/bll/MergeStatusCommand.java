@@ -75,7 +75,7 @@ public class MergeStatusCommand<T extends MergeParameters>
             // In this case, we will not allow PULL merge but rather ask the user to check if the parent
             // snapshot contains illegal volume(s). If so, that snapshot must be deleted before deleting
             // other snapshots
-            addCustomValue("SnapshotName", getSnapshotDao().get(getParameters().getBaseImage().getSnapshotId()).getDescription());
+            addCustomValue("SnapshotName", snapshotDao.get(getParameters().getBaseImage().getSnapshotId()).getDescription());
             addCustomValue("BaseVolumeId", getParameters().getBaseImage().getImageId().toString());
             auditLog(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_BASE_IMAGE_NOT_FOUND);
             setCommandStatus(CommandStatus.FAILED);

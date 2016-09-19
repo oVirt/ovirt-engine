@@ -813,7 +813,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         if (oldDisk.isShareable() != newDisk.isShareable() && oldDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage oldDiskImage = (DiskImage) oldDisk;
             Guid vmSnapshotId = isUpdatedToShareable(oldDisk, newDisk) ? null :
-                    getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+                    snapshotDao.getId(getVmId(), SnapshotType.ACTIVE);
             oldDiskImage.setVmSnapshotId(vmSnapshotId);
         }
     }

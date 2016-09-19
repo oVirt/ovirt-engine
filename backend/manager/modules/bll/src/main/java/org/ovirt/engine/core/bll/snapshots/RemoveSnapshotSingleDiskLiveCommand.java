@@ -208,7 +208,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     }
 
     private DiskImage getActiveDiskImage() {
-        Guid snapshotId = getSnapshotDao().getId(getVmId(), Snapshot.SnapshotType.ACTIVE);
+        Guid snapshotId = snapshotDao.getId(getVmId(), Snapshot.SnapshotType.ACTIVE);
         return diskImageDao.getDiskSnapshotForVmSnapshot(getDiskImage().getId(), snapshotId);
     }
 

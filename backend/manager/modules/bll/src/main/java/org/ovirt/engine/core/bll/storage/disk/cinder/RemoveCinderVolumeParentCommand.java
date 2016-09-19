@@ -97,7 +97,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         imageDao.remove(cinderVolume.getImageId());
         diskImageDynamicDao.remove(cinderVolume.getImageId());
         if (updated != null) {
-            getSnapshotDao().update(updated);
+            snapshotDao.update(updated);
         }
     }
 
@@ -105,7 +105,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         Guid vmSnapshotId = lastCinderVolume.getVmSnapshotId();
         Snapshot updated = null;
         if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {
-            Snapshot snapshot = getSnapshotDao().get(vmSnapshotId);
+            Snapshot snapshot = snapshotDao.get(vmSnapshotId);
             if (snapshot != null) {
                 updated = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
                         lastCinderVolume.getImageId());

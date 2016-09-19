@@ -52,7 +52,6 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
         when(snapshotDao.get(cmd.getParameters().getDstSnapshotId())).thenReturn(snapshot);
 
         doNothing().when(cmd).updateVmDisksFromDb();
-        doReturn(snapshotDao).when(cmd).getSnapshotDao();
         doReturn(vmDao).when(cmd).getVmDao();
     }
 

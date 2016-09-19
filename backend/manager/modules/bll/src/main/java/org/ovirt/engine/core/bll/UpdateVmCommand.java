@@ -325,9 +325,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void createNextRunSnapshot() {
         // first remove existing snapshot
-        Snapshot runSnap = getSnapshotDao().get(getVmId(), Snapshot.SnapshotType.NEXT_RUN);
+        Snapshot runSnap = snapshotDao.get(getVmId(), Snapshot.SnapshotType.NEXT_RUN);
         if (runSnap != null) {
-            getSnapshotDao().remove(runSnap.getId());
+            snapshotDao.remove(runSnap.getId());
         }
 
         VM vm = new VM();

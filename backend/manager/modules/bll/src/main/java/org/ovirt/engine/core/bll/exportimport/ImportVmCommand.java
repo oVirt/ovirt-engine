@@ -898,10 +898,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 updateMemoryDisks(snapshot);
             }
 
-            if (getSnapshotDao().exists(getVm().getId(), snapshot.getId())) {
-                getSnapshotDao().update(snapshot);
+            if (snapshotDao.exists(getVm().getId(), snapshot.getId())) {
+                snapshotDao.update(snapshot);
             } else {
-                getSnapshotDao().save(snapshot);
+                snapshotDao.save(snapshot);
             }
         }
     }
@@ -963,8 +963,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      *            The disk containing the snapshot's information.
      */
     protected void saveSnapshotIfNotExists(Guid snapshotId, DiskImage disk) {
-        if (!getSnapshotDao().exists(getVm().getId(), snapshotId)) {
-            getSnapshotDao().save(
+        if (!snapshotDao.exists(getVm().getId(), snapshotId)) {
+            snapshotDao.save(
                     new Snapshot(snapshotId,
                             SnapshotStatus.OK,
                             getVm().getId(),
@@ -983,7 +983,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      *            The snapshot to update.
      */
     protected void updateActiveSnapshot(Guid snapshotId) {
-        getSnapshotDao().update(
+        snapshotDao.update(
                 new Snapshot(snapshotId,
                         SnapshotStatus.OK,
                         getVm().getId(),

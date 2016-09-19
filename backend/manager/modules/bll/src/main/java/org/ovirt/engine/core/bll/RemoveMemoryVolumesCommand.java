@@ -45,7 +45,7 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
     }
 
     private boolean isMemoryRemovable() {
-        return getSnapshotDao().getNumOfSnapshotsByMemory(getParameters().getMemoryVolumes()) == 1
+        return snapshotDao.getNumOfSnapshotsByMemory(getParameters().getMemoryVolumes()) == 1
                 || getParameters().isForceRemove();
     }
 

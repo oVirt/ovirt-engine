@@ -49,7 +49,7 @@ public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolP
     }
 
     private void restoreVmFromBaseSnapshot(VM vm) {
-        if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
+        if (snapshotDao.exists(vm.getId(), SnapshotType.STATELESS)) {
             log.info("Deleting snapshots for stateless vm '{}'", vm.getId());
             VmOperationParameterBase restoreParams = new VmOperationParameterBase(vm.getId());
 

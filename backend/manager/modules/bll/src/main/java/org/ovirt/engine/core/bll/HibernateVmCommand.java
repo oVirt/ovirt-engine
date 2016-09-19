@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HibernateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,8 +184,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         // check if vm has stateless images in db in case vm was run once as stateless
         // (then isStateless is false)
-        if (getVm().isStateless() ||
-                DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
+        if (getVm().isStateless() || snapshotDao.exists(getVmId(), SnapshotType.STATELESS)) {
             return failValidation(EngineMessage.VM_CANNOT_SUSPEND_STATELESS_VM);
         }
 
@@ -230,8 +228,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         try {
             runVdsCommand(VDSCommandType.Hibernate,
                     new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
-            getSnapshotDao().updateHibernationMemory(getVmId(),
-                    dumpDisk.getId(), metadataDisk.getId(), hiberVol);
+            snapshotDao.updateHibernationMemory(getVmId(), dumpDisk.getId(), metadataDisk.getId(), hiberVol);
         } catch (EngineException e) {
             hibernateVdsProblematic = true;
             endWithFailure();
@@ -266,7 +263,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     protected void endWithFailure() {
         endActionOnDisks();
-        getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
+        snapshotDao.removeMemoryFromActiveSnapshot(getVmId());
         revertTasks();
         setSucceeded(true);
     }

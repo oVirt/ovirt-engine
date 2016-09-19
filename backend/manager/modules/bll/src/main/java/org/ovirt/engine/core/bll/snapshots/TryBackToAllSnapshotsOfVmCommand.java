@@ -103,9 +103,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected void endWithFailure() {
         Snapshot previouslyActiveSnapshot =
-                getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW, SnapshotStatus.LOCKED);
-        getSnapshotDao().remove(previouslyActiveSnapshot.getId());
-        getSnapshotDao().remove(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+                snapshotDao.get(getVmId(), SnapshotType.PREVIEW, SnapshotStatus.LOCKED);
+        snapshotDao.remove(previouslyActiveSnapshot.getId());
+        snapshotDao.remove(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
 
         getSnapshotsManager().addActiveSnapshot(previouslyActiveSnapshot.getId(), getVm(),
                 previouslyActiveSnapshot.getMemoryVolume(), getCompensationContext());
@@ -130,15 +130,15 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     private void restoreVmConfigFromSnapshot() {
-        getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.IN_PREVIEW);
-        getSnapshotDao().updateStatus(getSnapshotDao().getId(getVm().getId(),
+        snapshotDao.updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.IN_PREVIEW);
+        snapshotDao.updateStatus(snapshotDao.getId(getVm().getId(),
                 SnapshotType.PREVIEW,
                 SnapshotStatus.LOCKED),
                 SnapshotStatus.OK);
 
         getSnapshotsManager().attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 getDstSnapshot(),
-                getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
+                snapshotDao.getId(getVm().getId(), SnapshotType.ACTIVE),
                 getImagesToPreview(),
                 getCompensationContext(),
                 getCurrentUser(),
@@ -155,7 +155,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();
 
-        final Snapshot previousActiveSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+        final Snapshot previousActiveSnapshot = snapshotDao.get(getVmId(), SnapshotType.ACTIVE);
         final Guid previousActiveSnapshotId = previousActiveSnapshot.getId();
 
         final List<DiskImage> images = getImagesToPreview();
@@ -166,7 +166,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         final List<CinderDisk> cinderDisks = new ArrayList<>();
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntity(previousActiveSnapshot);
-            getSnapshotDao().remove(previousActiveSnapshotId);
+            snapshotDao.remove(previousActiveSnapshotId);
             getSnapshotsManager().addSnapshot(previousActiveSnapshotId,
                     "Active VM before the preview",
                     SnapshotType.PREVIEW,
@@ -411,7 +411,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     private Snapshot getDstSnapshot() {
         if (cachedSnapshot == null) {
-            cachedSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+            cachedSnapshot = snapshotDao.get(getParameters().getDstSnapshotId());
         }
         return cachedSnapshot;
     }

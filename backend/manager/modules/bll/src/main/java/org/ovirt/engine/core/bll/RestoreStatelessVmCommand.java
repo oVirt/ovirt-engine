@@ -113,7 +113,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
     }
 
     private Guid getVmSnapshotIdForType(SnapshotType type) {
-        return getSnapshotDao().getId(getVmId(), type);
+        return snapshotDao.getId(getVmId(), type);
     }
 
     private List<DiskImage> getDiskSnapshotsForVmSnapshot(Guid snapshotId) {

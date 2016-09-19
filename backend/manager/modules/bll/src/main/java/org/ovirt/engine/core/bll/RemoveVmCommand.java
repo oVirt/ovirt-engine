@@ -156,8 +156,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private void removeMemoryVolumes() {
-        Set<String> memoryStates =
-                MemoryUtils.getMemoryVolumesFromSnapshots(getDbFacade().getSnapshotDao().getAll(getVmId()));
+        Set<String> memoryStates = MemoryUtils.getMemoryVolumesFromSnapshots(snapshotDao.getAll(getVmId()));
         for (String memoryState : memoryStates) {
             VdcReturnValueBase retVal = runInternalAction(
                     VdcActionType.RemoveMemoryVolumes,

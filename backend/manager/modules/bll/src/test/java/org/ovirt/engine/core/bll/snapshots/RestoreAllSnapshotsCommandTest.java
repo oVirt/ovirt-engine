@@ -147,7 +147,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         mockStorageDomainDao();
         mockStoragePoolDao();
         mockDynamicVmDao();
-        doReturn(snapshotDao).when(spyCommand).getSnapshotDao();
     }
 
     private void mockDynamicVmDao() {

@@ -76,7 +76,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private void initializeObjectState() {
         if (StringUtils.isEmpty(getSnapshotName())) {
-            Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+            Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
             if (snapshot != null) {
                 setSnapshotName(snapshot.getDescription());
                 getParameters().setUseCinderCommandCallback(
@@ -114,7 +114,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             throw new EngineException(EngineError.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
         }
 
-        final Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+        final Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
 
         boolean snapshotHasImages = hasImages();
         boolean removeSnapshotMemory = isMemoryVolumeRemoveable(snapshot.getMemoryVolume());
@@ -122,7 +122,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         // If the VM hasn't got any images and memory - simply remove the snapshot.
         // No need for locking, VDSM tasks, and all that jazz.
         if (!snapshotHasImages && !removeSnapshotMemory) {
-            getSnapshotDao().remove(getParameters().getSnapshotId());
+            snapshotDao.remove(getParameters().getSnapshotId());
             setSucceeded(true);
             return;
         }
@@ -157,8 +157,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      * volumes should be removed only if the only snapshot that points to them is removed
      */
     protected boolean isMemoryVolumeRemoveable(String memoryVolume) {
-        return !memoryVolume.isEmpty() &&
-                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
+        return !memoryVolume.isEmpty() && snapshotDao.getNumOfSnapshotsByMemory(memoryVolume) == 1;
     }
 
     private void removeMemory(final Snapshot snapshot, boolean useTaskManager) {
@@ -231,8 +230,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private void lockSnapshot(final Snapshot snapshot) {
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntityStatus(snapshot);
-            getSnapshotDao().updateStatus(
-                    getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
+            snapshotDao.updateStatus(getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
             getCompensationContext().stateChanged();
             return null;
         });
@@ -267,10 +265,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected void endVmCommand() {
         initializeObjectState();
         if (getParameters().getTaskGroupSuccess()) {
-            getSnapshotDao().remove(getParameters().getSnapshotId());
+            snapshotDao.remove(getParameters().getSnapshotId());
         } else {
             List<String> failedToRemoveDisks = new ArrayList<>();
-            Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+            Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
 
             for (VdcActionParametersBase parameters : getParameters().getImagesParameters()) {
                 ImagesContainterParametersBase imagesParams = parameters instanceof ImagesContainterParametersBase ?
@@ -298,14 +296,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // Note: on failure, we can treat memory volume deletion as deleting an image
             // and remove it from the snapshot entity (rollback isn't applicable).
             snapshot.setMemoryVolume("");
-            getSnapshotDao().update(snapshot);
+            snapshotDao.update(snapshot);
 
             if (!failedToRemoveDisks.isEmpty()) {
                 addCustomValue("DiskAliases", StringUtils.join(failedToRemoveDisks, ", "));
                 auditLogDirector.log(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_PARTIAL_SNAPSHOT);
             }
 
-            getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.OK);
+            snapshotDao.updateStatus(getParameters().getSnapshotId(), SnapshotStatus.OK);
         }
 
         super.endVmCommand();
@@ -414,7 +412,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateSnapshotType() {
-        Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+        Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
         return validate(createSnapshotValidator().isRegularSnapshot(snapshot));
     }
 

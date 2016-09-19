@@ -240,9 +240,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private void applyNextRunConfiguration() {
         // Remove snpashot first, in case other update is in progress, it will block this one with exclusive lock
         // and any newer update should be preffered to this one.
-        Snapshot runSnap = getSnapshotDao().get(getVmId(), SnapshotType.NEXT_RUN);
+        Snapshot runSnap = snapshotDao.get(getVmId(), SnapshotType.NEXT_RUN);
         if (runSnap != null) {
-            getSnapshotDao().remove(runSnap.getId());
+            snapshotDao.remove(runSnap.getId());
             Date originalCreationDate = getVm().getVmCreationDate();
             snapshotsManager.updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
             // override creation date because the value in the config is the creation date of the config, not the vm
@@ -315,8 +315,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     private void removeVmStatelessImages() {
-        if (getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)
-                && getVmPoolType() != VmPoolType.MANUAL) {
+        if (snapshotDao.exists(getVmId(), SnapshotType.STATELESS) && getVmPoolType() != VmPoolType.MANUAL) {
             log.info("Deleting snapshot for stateless vm '{}'", getVmId());
             runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),

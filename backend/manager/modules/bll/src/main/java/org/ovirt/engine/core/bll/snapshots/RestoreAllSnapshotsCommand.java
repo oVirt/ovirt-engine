@@ -159,7 +159,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             }
         } else {
             getVmStaticDao().incrementDbGeneration(getVm().getId());
-            getSnapshotDao().updateStatus(getSnapshot().getId(), SnapshotStatus.OK);
+            snapshotDao.updateStatus(getSnapshot().getId(), SnapshotStatus.OK);
             unlockVm();
         }
 
@@ -229,13 +229,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         if (snapshot == null) {
             switch (getParameters().getSnapshotAction()) {
             case UNDO:
-                snapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
+                snapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
                 break;
             case COMMIT:
-                snapshot = getSnapshotDao().get(getVmId(), SnapshotStatus.IN_PREVIEW);
+                snapshot = snapshotDao.get(getVmId(), SnapshotStatus.IN_PREVIEW);
                 break;
             case RESTORE_STATELESS:
-                snapshot = getSnapshotDao().get(getVmId(), SnapshotType.STATELESS);
+                snapshot = snapshotDao.get(getVmId(), SnapshotType.STATELESS);
                 break;
             default:
                 log.error("The Snapshot Action '{}' is not valid", getParameters().getSnapshotAction());
@@ -252,19 +252,19 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     protected void removeSnapshotsFromDB() {
         for (Guid snapshotId : snapshotsToRemove) {
-            Snapshot snap = getSnapshotDao().get(snapshotId);
+            Snapshot snap = snapshotDao.get(snapshotId);
             // Cinder volumes might not have correlated snapshot.
             if (snap != null) {
-                String memoryVolume = getSnapshotDao().get(snapshotId).getMemoryVolume();
+                String memoryVolume = snapshotDao.get(snapshotId).getMemoryVolume();
                 if (!memoryVolume.isEmpty() &&
-                        getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
+                        snapshotDao.getNumOfSnapshotsByMemory(memoryVolume) == 1) {
                     boolean succeed = removeMemoryDisks(memoryVolume);
                     if (!succeed) {
                         log.error("Failed to remove memory '{}' of snapshot '{}'",
                                 memoryVolume, snapshotId);
                     }
                 }
-                getSnapshotDao().remove(snapshotId);
+                snapshotDao.remove(snapshotId);
             }
         }
     }
@@ -382,10 +382,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * Additionally, remove all obsolete snapshots (The one after stateless, or the preview chain which was not chosen).
      */
     protected void restoreSnapshotAndRemoveObsoleteSnapshots(Snapshot targetSnapshot) {
-        Guid activeSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+        Guid activeSnapshotId = snapshotDao.getId(getVmId(), SnapshotType.ACTIVE);
         List<DiskImage> imagesFromActiveSnapshot = diskImageDao.getAllSnapshotsForVmSnapshot(activeSnapshotId);
 
-        Snapshot previewedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
+        Snapshot previewedSnapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
         if (previewedSnapshot != null) {
             VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(
                     previewedSnapshot.getVmConfiguration(), previewedSnapshot.getVmId(), previewedSnapshot.getId());
@@ -396,8 +396,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         switch (targetSnapshot.getType()) {
         case PREVIEW:
-            getSnapshotDao().updateStatus(
-                    getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW),
+            snapshotDao.updateStatus(
+                    snapshotDao.getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW),
                     SnapshotStatus.OK);
 
             getParameters().setImages((List<DiskImage>) CollectionUtils.union(imagesFromPreviewSnapshot, intersection));
@@ -464,7 +464,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      *            The snapshot to restore to.
      */
     private void restoreConfiguration(Snapshot targetSnapshot) {
-        removedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+        removedSnapshot = snapshotDao.get(getVmId(), SnapshotType.ACTIVE);
         snapshotsToRemove.add(removedSnapshot.getId());
         getSnapshotsManager().removeAllIllegalDisks(removedSnapshot.getId(), getVmId());
 
@@ -475,7 +475,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 getCompensationContext(),
                 getCurrentUser(),
                 new VmInterfaceManager(getMacPool()));
-        getSnapshotDao().remove(targetSnapshot.getId());
+        snapshotDao.remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
         getSnapshotsManager().addActiveSnapshot(targetSnapshot.getId(),
                 getVm(),
@@ -490,17 +490,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * The traversal between snapshots is done according to the {@link DiskImage} level.
      */
     protected void prepareToDeletePreviewBranch(List<DiskImage> imagesFromActiveSnapshot) {
-        removedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
+        removedSnapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
         Guid previewedSnapshotId =
-                getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
-        getSnapshotDao().updateStatus(previewedSnapshotId, SnapshotStatus.OK);
+                snapshotDao.getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
+        snapshotDao.updateStatus(previewedSnapshotId, SnapshotStatus.OK);
         snapshotsToRemove.add(removedSnapshot.getId());
         List<DiskImage> images = diskImageDao.getAllSnapshotsForVmSnapshot(removedSnapshot.getId());
         for (DiskImage image : images) {
             if (image.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage parentImage = diskImageDao.getSnapshotById(image.getParentId());
                 Guid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
-                Snapshot candidateSnapToRemove = getSnapshotDao().get(snapshotToRemove);
+                Snapshot candidateSnapToRemove = snapshotDao.get(snapshotToRemove);
 
                 while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)
                         && isSnapshotEligibleToBeDeleted(candidateSnapToRemove)) {
@@ -521,7 +521,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             List<Guid> redundantSnapshotIdsToDelete = CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(
                     image.getId(), criticalSnapshotsChain);
             snapshotsToRemove.addAll(redundantSnapshotIdsToDelete.stream()
-                    .filter(snapIdToDelete -> isSnapshotEligibleToBeDeleted(getSnapshotDao().get(snapIdToDelete)))
+                    .filter(snapIdToDelete -> isSnapshotEligibleToBeDeleted(snapshotDao.get(snapIdToDelete)))
                     .collect(Collectors.toList()));
         }
     }

@@ -174,7 +174,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         getVmDeviceDao().remove(new VmDeviceId(diskImage.getId(), null));
 
                         for (Snapshot s : updatedSnapshots) {
-                            getSnapshotDao().update(s);
+                            snapshotDao.update(s);
                         }
 
                         return null;
@@ -229,7 +229,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         for (DiskImage snapshotDisk : snapshotDisks) {
             Guid vmSnapshotId = snapshotDisk.getVmSnapshotId();
             if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {
-                Snapshot snapshot = getSnapshotDao().get(vmSnapshotId);
+                Snapshot snapshot = snapshotDao.get(vmSnapshotId);
                 Snapshot updated =
                         ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
                                 snapshotDisk.getImageId());

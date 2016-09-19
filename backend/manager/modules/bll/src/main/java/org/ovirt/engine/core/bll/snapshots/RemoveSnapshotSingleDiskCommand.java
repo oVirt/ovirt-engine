@@ -91,10 +91,10 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
         if (getParameters().getVmSnapshotId() != null) {
             lockVmSnapshotsWithWait(getVm());
-            Snapshot snapshot = getSnapshotDao().get(getParameters().getVmSnapshotId());
+            Snapshot snapshot = snapshotDao.get(getParameters().getVmSnapshotId());
             Snapshot snapshotWithoutImage =
                     ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId());
-            getSnapshotDao().update(snapshotWithoutImage);
+            snapshotDao.update(snapshotWithoutImage);
             if (getSnapshotsEngineLock() != null) {
                 getLockManager().releaseLock(getSnapshotsEngineLock());
             }

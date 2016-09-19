@@ -165,7 +165,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
         doReturn(vmStaticDao).when(cmd).getVmStaticDao();
-        doReturn(snapshotDao).when(cmd).getSnapshotDao();
     }
 
     protected void mockOtherDependencies() {

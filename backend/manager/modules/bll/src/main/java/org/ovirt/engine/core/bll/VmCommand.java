@@ -388,7 +388,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected Snapshot getActiveSnapshot() {
-        return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
+        return snapshotDao.get(getVm().getId(), SnapshotType.ACTIVE);
     }
 
     /** Helper method for failing validate on invalid VM status */
@@ -398,7 +398,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected void unlockSnapshot(Guid snapshotId) {
         // if we got here, the target snapshot exists for sure
-        getSnapshotDao().updateStatus(snapshotId, Snapshot.SnapshotStatus.OK);
+        snapshotDao.updateStatus(snapshotId, Snapshot.SnapshotStatus.OK);
     }
 
     protected VmDeviceUtils getVmDeviceUtils() {

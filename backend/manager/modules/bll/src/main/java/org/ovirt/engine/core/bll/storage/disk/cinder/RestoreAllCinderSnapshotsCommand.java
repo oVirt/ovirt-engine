@@ -39,7 +39,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
 
             // In case we want to undo the previewed snapshot.
             if (getParameters().getSnapshot().getType() == Snapshot.SnapshotType.STATELESS) {
-                Guid activeSnapshotId = getSnapshotDao().get(
+                Guid activeSnapshotId = snapshotDao.get(
                         getParameters().getVmId(), Snapshot.SnapshotType.ACTIVE).getId();
                 updateCinderDiskSnapshot(cinderDisk.getId(), activeSnapshotId, cinderDisk.getVmSnapshotId());
             } else if (getParameters().getSnapshot().getType() != Snapshot.SnapshotType.REGULAR) {
