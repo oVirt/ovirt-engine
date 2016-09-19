@@ -115,6 +115,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainDao storageDomainDao;
     @Mock
+    private QuotaDao quotaDao;
+    @Mock
     private DiskValidator diskValidator;
 
     @Mock
@@ -613,7 +615,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         Quota quota = new Quota();
         quota.setId(Guid.newGuid());
 
-        QuotaDao quotaDao = mock(QuotaDao.class);
         when(quotaDao.getById(any(Guid.class))).thenReturn(null);
         when(quotaDao.getById(quota.getId())).thenReturn(quota);
 
@@ -626,7 +627,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         command.setStoragePoolId(pool.getId());
         quota.setStoragePoolId(pool.getId());
 
-        doReturn(quotaDao).when(command).getQuotaDao();
         doCallRealMethod().when(command).validateQuota();
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
@@ -642,7 +642,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(Guid.newGuid());
         initializeCommand();
 
-        doReturn(quotaDao).when(command).getQuotaDao();
         doCallRealMethod().when(command).validateQuota();
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);

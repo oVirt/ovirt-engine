@@ -649,7 +649,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         quota.setId(quotaId);
 
         when(quotaDao.getById(quotaId)).thenReturn(quota);
-        doReturn(quotaDao).when(command).getQuotaDao();
 
         StoragePool storagePool = new StoragePool();
         storagePool.setId(Guid.newGuid());
@@ -667,8 +666,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testNonExistingQuota() {
         prepareVmToPassValidate();
         vmStatic.setQuotaId(Guid.newGuid());
-
-        doReturn(quotaDao).when(command).getQuotaDao();
 
         assertFalse(command.validateQuota(vmStatic.getQuotaId()));
         ValidateTestUtils.assertValidationMessages("", command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);

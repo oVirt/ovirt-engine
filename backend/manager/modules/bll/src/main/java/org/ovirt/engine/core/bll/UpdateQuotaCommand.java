@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.QuotaDao;
 
 public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
@@ -46,8 +45,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
     protected void executeCommand() {
         removeQuotaFromCache();
         setQuotaParameter();
-        QuotaDao dao = getQuotaDao();
-        dao.update(getParameters().getQuota());
+        quotaDao.update(getParameters().getQuota());
         getReturnValue().setSucceeded(true);
         afterUpdate();
     }

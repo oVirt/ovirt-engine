@@ -113,6 +113,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private VdsDao vdsDao;
 
     @Mock
+    private QuotaDao quotaDao;
+
+    @Mock
     private OsRepository osRepository;
 
     @Mock
@@ -970,9 +973,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         mockEntities(storageId);
 
-        QuotaDao quotaDaoMock = mock(QuotaDao.class);
-        when(quotaDaoMock.getById(quota.getId())).thenReturn(quota);
-        doReturn(quotaDaoMock).when(command).getQuotaDao();
+        when(quotaDao.getById(quota.getId())).thenReturn(quota);
 
         doCallRealMethod().when(command).validateQuota();
 
@@ -992,9 +993,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         command.getParameters().setStorageDomainId(storageId);
 
         mockEntities(storageId);
-
-        QuotaDao quotaDaoMock = mock(QuotaDao.class);
-        doReturn(quotaDaoMock).when(command).getQuotaDao();
 
         doCallRealMethod().when(command).validateQuota();
 

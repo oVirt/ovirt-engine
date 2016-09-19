@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,7 +49,6 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
         quota = setUpQuota(QUOTA_ID);
         when(quotaDao.getById(QUOTA_ID)).thenReturn(quota);
 
-        doReturn(quotaDao).when(command).getQuotaDao();
         doNothing().when(command).removeQuotaFromCache();
         doNothing().when(command).afterUpdate();
     }

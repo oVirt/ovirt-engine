@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
@@ -12,13 +10,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDao;
 
 public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> {
-
-    @Inject
-    private QuotaDao quotaDao;
-
     private Quota quota;
 
     public QuotaCRUDCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
@@ -28,7 +21,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     public Quota getQuota() {
         if (quota == null) {
-            setQuota(getQuotaDao().getById(getParameters().getQuotaId()));
+            setQuota(quotaDao.getById(getParameters().getQuotaId()));
         }
         return quota;
     }
@@ -56,7 +49,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     }
 
     public boolean validateQuotaNameIsUnique(Quota quota) {
-        Quota quotaByName = getQuotaDao().getQuotaByQuotaName(quota.getQuotaName(), quota.getStoragePoolId());
+        Quota quotaByName = quotaDao.getQuotaByQuotaName(quota.getQuotaName(), quota.getStoragePoolId());
 
         // Check if there is no quota with the same name that already exists.
         if ((quotaByName != null) && !quotaByName.getId().equals(quota.getId())) {
@@ -113,10 +106,6 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-    }
-
-    protected QuotaDao getQuotaDao() {
-        return quotaDao;
     }
 
     public String getQuotaName() {

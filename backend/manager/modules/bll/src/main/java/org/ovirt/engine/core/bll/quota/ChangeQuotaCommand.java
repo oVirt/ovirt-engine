@@ -30,7 +30,7 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         }
-        if (getDbFacade().getQuotaDao().getById(getQuotaId()) == null) {
+        if (quotaDao.getById(getQuotaId()) == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }

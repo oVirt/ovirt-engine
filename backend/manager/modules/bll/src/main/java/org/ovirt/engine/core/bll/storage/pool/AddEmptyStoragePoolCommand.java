@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
@@ -35,9 +34,6 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     @Inject
     private NetworkFilterDao networkFilterDao;
-
-    @Inject
-    private QuotaDao quotaDao;
 
     public AddEmptyStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

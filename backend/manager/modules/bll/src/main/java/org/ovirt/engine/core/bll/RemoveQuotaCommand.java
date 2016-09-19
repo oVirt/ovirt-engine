@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -13,13 +11,8 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dao.QuotaDao;
 
 public class RemoveQuotaCommand extends CommandBase<IdParameters> {
-
-    @Inject
-    private QuotaDao quotaDao;
-
     private Quota quota;
 
     public RemoveQuotaCommand(IdParameters parameters, CommandContext cmdContext) {
@@ -46,7 +39,7 @@ public class RemoveQuotaCommand extends CommandBase<IdParameters> {
        }
 
         // If the quota is in use by ether VM or image - return false
-        if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && getQuotaDao().isQuotaInUse(quota)) {
+        if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && quotaDao.isQuotaInUse(quota)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
             return false;
         }
@@ -57,7 +50,7 @@ public class RemoveQuotaCommand extends CommandBase<IdParameters> {
 
     @Override
     protected void executeCommand() {
-        getQuotaDao().remove(getParameters().getId());
+        quotaDao.remove(getParameters().getId());
         getQuotaManager().removeQuotaFromCache(getQuota().getStoragePoolId(), getParameters().getId());
         getReturnValue().setSucceeded(true);
     }
@@ -81,16 +74,12 @@ public class RemoveQuotaCommand extends CommandBase<IdParameters> {
 
     public Quota getQuota() {
         if (quota == null) {
-            setQuota(getQuotaDao().getById(getParameters().getId()));
+            setQuota(quotaDao.getById(getParameters().getId()));
         }
         return quota;
     }
 
     public void setQuota(Quota quota) {
         this.quota = quota;
-    }
-
-    public QuotaDao getQuotaDao() {
-        return quotaDao;
     }
 }

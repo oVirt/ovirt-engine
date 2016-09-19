@@ -43,6 +43,7 @@ import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.RoleGroupMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -325,6 +326,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     @Inject
     protected FenceAgentDao fenceAgentDao;
+
+    @Inject
+    protected QuotaDao quotaDao;
 
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable

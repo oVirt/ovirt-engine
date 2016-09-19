@@ -37,7 +37,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     }
 
     private Void executeAddQutoa() {
-        getQuotaDao().save(getQuota());
+        quotaDao.save(getQuota());
         if (getParameters().isCopyPermissions()) {
             copyQuotaPermissions();
         }

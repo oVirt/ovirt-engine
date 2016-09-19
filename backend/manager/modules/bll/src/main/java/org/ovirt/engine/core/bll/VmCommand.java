@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
@@ -54,9 +53,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
-    @Inject
-    private QuotaDao quotaDao;
 
     @Inject
     private SnapshotsManager snapshotsManager;
@@ -405,17 +401,13 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return snapshotsManager;
     }
 
-    public QuotaDao getQuotaDao() {
-        return quotaDao;
-    }
-
     protected boolean validateQuota(Guid quotaId) {
         if (quotaId == null || Guid.Empty.equals(quotaId)) {
             // QuotaManager will use default quota if the id is null or empty
             return true;
         }
 
-        Quota quota = getQuotaDao().getById(quotaId);
+        Quota quota = quotaDao.getById(quotaId);
         if (quota == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
         }

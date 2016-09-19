@@ -191,7 +191,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         quota.setId(quotaId);
 
         when(quotaDao.getById(quotaId)).thenReturn(quota);
-        doReturn(quotaDao).when(cmd).getQuotaDao();
 
         quota.setStoragePoolId(storagePool.getId());
 
@@ -203,8 +202,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testNonExistingQuota() {
-        doReturn(quotaDao).when(cmd).getQuotaDao();
-
         Guid quotaId = Guid.newGuid();
         cmd.getParameters().getVm().setQuotaId(quotaId);
 
