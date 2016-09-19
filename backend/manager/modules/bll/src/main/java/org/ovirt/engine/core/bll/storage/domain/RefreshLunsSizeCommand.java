@@ -219,7 +219,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         executeInNewTransaction(() -> {
             CompensationContext context = getCompensationContext();
             context.snapshotEntity(getStorageDomain().getStorageDynamicData());
-            getDbFacade().getStorageDomainDynamicDao().update(storageDomainToUpdate.getStorageDynamicData());
+            storageDomainDynamicDao.update(storageDomainToUpdate.getStorageDynamicData());
             getCompensationContext().stateChanged();
             return null;
         });

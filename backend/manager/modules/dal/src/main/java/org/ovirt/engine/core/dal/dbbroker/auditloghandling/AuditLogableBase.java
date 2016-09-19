@@ -45,6 +45,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StepSubjectEntityDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -143,6 +144,9 @@ public class AuditLogableBase extends TimeoutBase {
 
     @Inject
     protected StorageDomainStaticDao storageDomainStaticDao;
+
+    @Inject
+    protected StorageDomainDynamicDao storageDomainDynamicDao;
 
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable

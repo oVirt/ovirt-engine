@@ -101,7 +101,6 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     private void prepareMocks() {
         doReturn(storageConnDao).when(command).getStorageConnDao();
-        doReturn(storageDomainDynamicDao).when(command).getStorageDomainDynamicDao();
         doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
         doReturn(lunDao).when(command).getLunDao();

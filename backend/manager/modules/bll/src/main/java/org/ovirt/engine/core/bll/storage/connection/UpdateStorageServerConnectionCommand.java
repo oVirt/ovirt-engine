@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -266,7 +265,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             for (StorageDomain domainToUpdate : storageDomainsToUpdate) {
                     CompensationContext context = getCompensationContext();
                     context.snapshotEntity(domainToUpdate.getStorageDynamicData());
-                    getStorageDomainDynamicDao().update(domainToUpdate.getStorageDynamicData());
+                    storageDomainDynamicDao.update(domainToUpdate.getStorageDynamicData());
                     getCompensationContext().stateChanged();
             }
             return null;
@@ -314,10 +313,6 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 new StorageServerConnectionManagementVDSParameters(vdsmId, storagePoolId, storageType,
                         new ArrayList<>(Arrays.asList(storageServerConnection)));
         return newConnectionParametersForVdsm;
-    }
-
-    protected StorageDomainDynamicDao getStorageDomainDynamicDao() {
-        return getDbFacade().getStorageDomainDynamicDao();
     }
 
     @Override

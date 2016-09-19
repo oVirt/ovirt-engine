@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class AddStorageDomainCommand<T extends StorageDomainManagementParameter> extends
@@ -96,7 +95,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             StorageDomainDynamic newStorageDynamic =
                     new StorageDomainDynamic(null, getStorageDomain().getId(), null);
             getReturnValue().setActionReturnValue(getStorageDomain().getId());
-            DbFacade.getInstance().getStorageDomainDynamicDao().save(newStorageDynamic);
+            storageDomainDynamicDao.save(newStorageDynamic);
             getCompensationContext().snapshotNewEntity(newStorageDynamic);
             getCompensationContext().stateChanged();
             return null;
@@ -114,7 +113,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                         .getReturnValue();
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntity(getStorageDomain().getStorageDynamicData());
-            DbFacade.getInstance().getStorageDomainDynamicDao().update(sd.getStorageDynamicData());
+            storageDomainDynamicDao.update(sd.getStorageDynamicData());
             getCompensationContext().stateChanged();
             return null;
         });
