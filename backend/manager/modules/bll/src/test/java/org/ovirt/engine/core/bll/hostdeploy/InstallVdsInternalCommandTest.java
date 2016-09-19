@@ -3,14 +3,15 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
@@ -41,18 +42,17 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
     @Mock
     private VdsDao vdsDao;
 
-    private InstallVdsInternalCommand<InstallVdsParameters> createCommand(InstallVdsParameters params) {
-        InstallVdsInternalCommand<InstallVdsParameters> command =
-                spy(new InstallVdsInternalCommand<>(params, null));
-        doReturn(vdsDao).when(command).getVdsDao();
-        return command;
-    }
+    @Spy
+    @InjectMocks
+    private InstallVdsInternalCommand<InstallVdsParameters> command =
+            new InstallVdsInternalCommand<>(createParameters(), null);
 
     @Before
     public void mockVdsDao() {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtVintageNode);
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        doReturn(vdsDao).when(command).getVdsDao();
     }
 
     private static InstallVdsParameters createParameters() {
@@ -71,16 +71,12 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
     @Test
     public void validateSucceeds() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
-        InstallVdsParameters param = createParameters();
-        InstallVdsInternalCommand<InstallVdsParameters> command = createCommand(param);
         assertTrue(command.validate());
     }
 
     @Test
     public void validateFailsIfHostDoesNotExists() {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
-        InstallVdsParameters param = createParameters();
-        InstallVdsInternalCommand<InstallVdsParameters> command = createCommand(param);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 
