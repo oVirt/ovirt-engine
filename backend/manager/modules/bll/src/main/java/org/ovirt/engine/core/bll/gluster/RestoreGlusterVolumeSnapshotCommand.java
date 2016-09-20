@@ -172,7 +172,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
         return true;
     }
 
-    private boolean startVolume(Guid clusterId, Guid volumeId) {
+    private boolean startVolume(Guid volumeId) {
         VdcReturnValueBase retVal =
                 runInternalAction(VdcActionType.StartGlusterVolume, new GlusterVolumeActionParameters(volumeId,
                         true));
@@ -195,7 +195,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
             }
 
             try (EngineLock lock = acquireEngineLock(slaveVolume.getClusterId(), LockingGroup.GLUSTER)) {
-                if (!startVolume(slaveVolume.getClusterId(), slaveVolume.getId())) {
+                if (!startVolume(slaveVolume.getId())) {
                     return false;
                 }
             }
@@ -300,7 +300,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
         }
 
         // Start the master volume
-        if (!startVolume(getGlusterVolume().getClusterId(), getGlusterVolumeId())) {
+        if (!startVolume(getGlusterVolumeId())) {
             return;
         }
 
