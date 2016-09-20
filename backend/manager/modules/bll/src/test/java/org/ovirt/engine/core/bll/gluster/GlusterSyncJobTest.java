@@ -378,11 +378,7 @@ public class GlusterSyncJobTest {
         inOrder.verify(brickDao, times(2)).save(argThat(isAddedBrick()));
 
         // add new options
-        Map<String, GlusterVolumeOptionEntity> newOptions = new HashMap<>();
-        newOptions.put(OPTION_AUTH_REJECT, existingReplVol.getOption(OPTION_AUTH_REJECT));
-        List<GlusterVolumeOptionEntity> list1 = new ArrayList<>(newOptions.values());
-        Collections.sort(list1);
-        inOrder.verify(optionDao, times(1)).saveAll(list1);
+        inOrder.verify(optionDao, times(1)).saveAll(argThat(areAddedOptions()));
 
         // update modified options
         Map<String, GlusterVolumeOptionEntity> existingOptions = new HashMap<>();
