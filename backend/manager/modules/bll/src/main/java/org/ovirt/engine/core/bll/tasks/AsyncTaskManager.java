@@ -428,9 +428,19 @@ public final class AsyncTaskManager {
                     AsyncTaskStatus cachedAsyncTaskStatus = asyncTasksForPoolMap
                             .get(task.getVdsmTaskId());
 
+                    log.debug("Updating task of command {} with id '{}' to status '{}'.",
+                            task.getParameters().getDbAsyncTask().getActionType(),
+                            task.getCommandId(),
+                            cachedAsyncTaskStatus);
+
                     // task found in VDSM.
                     task.updateTask(cachedAsyncTaskStatus);
                 }
+            } else {
+                log.debug("Not updating task of command {} with id '{}' and status '{}'.",
+                        task.getParameters().getDbAsyncTask().getActionType(),
+                        task.getCommandId(),
+                        task.getLastTaskStatus());
             }
         }
 
