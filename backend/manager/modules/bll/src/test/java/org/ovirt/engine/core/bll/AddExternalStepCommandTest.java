@@ -2,12 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -17,7 +17,6 @@ import org.ovirt.engine.core.dao.StepDao;
 
 public class AddExternalStepCommandTest extends BaseCommandTest {
 
-    private AddExternalStepParameters parameters;
     private static final Guid jobId = Guid.newGuid();
     private static final Guid nonExternalJobId = Guid.newGuid();
     private static final Guid nonExistingJobId = Guid.newGuid();
@@ -26,13 +25,9 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
     @Mock
     private StepDao stepDaoMock;
 
-    @Mock
-    private AddExternalStepCommand<AddExternalStepParameters> commandMock;
-
-    @Before
-    public void createParameters() {
-        parameters = new AddExternalStepParameters(jobId, "step 1", StepEnum.VALIDATING);
-    }
+    @Spy
+    private AddExternalStepCommand<AddExternalStepParameters> command =
+            new AddExternalStepCommand<>(new AddExternalStepParameters(jobId, "step 1", StepEnum.VALIDATING), null);
 
     private Job makeExternalTestJob(Guid jobId) {
         Job job = new Job();
@@ -50,47 +45,41 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
         return job;
     }
 
-    private void setupMock() throws Exception {
-        commandMock = spy(new AddExternalStepCommand<>(parameters, null));
-        when(commandMock.getParameters()).thenReturn(parameters);
-        doReturn(jobDaoMock).when(commandMock).getJobDao();
-        doReturn(stepDaoMock).when(commandMock).getStepDao();
+    @Before
+    public void setupMock() throws Exception {
+        doReturn(jobDaoMock).when(command).getJobDao();
+        doReturn(stepDaoMock).when(command).getStepDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));
     }
 
     @Test
     public void validateOkSucceeds() throws Exception {
-        setupMock();
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
     public void validateEmptyDescriptionFails() throws Exception {
-        setupMock();
-        parameters.setDescription("");
-        assertTrue(! commandMock.validate());
+        command.getParameters().setDescription("");
+        assertTrue(! command.validate());
     }
 
     @Test
     public void validateBlankDescriptionFails() throws Exception {
-        setupMock();
-        parameters.setDescription("      ");
-        assertTrue(! commandMock.validate());
+        command.getParameters().setDescription("      ");
+        assertTrue(! command.validate());
     }
 
     @Test
     public void validateNonExistingJobFails() throws Exception {
-        setupMock();
-        parameters.setParentId(nonExistingJobId);
-        assertTrue(! commandMock.validate());
+        command.getParameters().setParentId(nonExistingJobId);
+        assertTrue(! command.validate());
     }
 
     @Test
     public void validateNonExternalJobFails() throws Exception {
-        setupMock();
-        parameters.setParentId(nonExternalJobId);
-        parameters.setStepId(null);
-        assertTrue(! commandMock.validate());
+        command.getParameters().setParentId(nonExternalJobId);
+        command.getParameters().setStepId(null);
+        assertTrue(! command.validate());
     }
 }
