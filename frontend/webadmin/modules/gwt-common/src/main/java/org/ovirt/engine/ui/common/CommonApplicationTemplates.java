@@ -175,4 +175,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("Enables or disables reallocation of PCI bridge resources. Some firmware does not correctly handle SR-IOV devices, disallowing VF creation. Dynamic reallocation attempts to solve this problem. Does not help on unsupported hardware.")
     SafeHtml kernelCmdlinePciReallocInfoIcon();
+
+    @Template("Depends on cluster version: <code>/dev/urandom</code> for 4.1 and higher, <code>/dev/random</code> for 4.0 and lower.")
+    SafeHtml vmUrandomInfoIcon();
 }

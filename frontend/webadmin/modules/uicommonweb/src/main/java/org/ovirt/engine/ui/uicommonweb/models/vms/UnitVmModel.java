@@ -328,7 +328,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getIsRngEnabled().setIsChangeable(false);
             getRngPeriod().setIsChangeable(false);
             getRngBytes().setIsChangeable(false);
-            getRngSourceRandom().setIsChangeable(false);
+            getRngSourceUrandom().setIsChangeable(false);
             getRngSourceHwrng().setIsChangeable(false);
 
             // ==Custom Properties Tab==
@@ -699,16 +699,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public void setRngDevice(VmRngDevice dev) {
         maybeSetEntity(rngBytes, dev.getBytes() == null ? null : dev.getBytes());
         maybeSetEntity(rngPeriod, dev.getPeriod() == null ? null : dev.getPeriod());
-        maybeSetEntity(rngSourceRandom, dev.getSource() == VmRngDevice.Source.RANDOM);
+        maybeSetEntity(rngSourceUrandom, dev.getSource() == VmRngDevice.Source.RANDOM);
         maybeSetEntity(rngSourceHwrng, dev.getSource() == VmRngDevice.Source.HWRNG);
 
         // post check - at least one source must be selected
         // if, for example, instance type has forbidden source checked, maybeSetEntity doesn't select any source, which
         // is invalid
-        if (!Boolean.TRUE.equals(rngSourceRandom.getEntity()) && !Boolean.TRUE.equals(rngSourceHwrng.getEntity())) {
+        if (!Boolean.TRUE.equals(rngSourceUrandom.getEntity()) && !Boolean.TRUE.equals(rngSourceHwrng.getEntity())) {
             getBehavior().deactivateInstanceTypeManager();
 
-            EntityModel[] entityModels = {rngSourceRandom, rngSourceHwrng};
+            EntityModel[] entityModels = { rngSourceUrandom, rngSourceHwrng };
             for (EntityModel entityModel : entityModels) {
                 if (entityModel.getIsAvailable() && entityModel.getIsChangable()) {
                     entityModel.setEntity(Boolean.TRUE); // select first available
@@ -730,7 +730,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         VmRngDevice dev = new VmRngDevice();
         dev.setBytes(rngBytes.getEntity());
         dev.setPeriod(rngPeriod.getEntity());
-        dev.setSource(Boolean.TRUE.equals(rngSourceRandom.getEntity()) ? VmRngDevice.Source.RANDOM : VmRngDevice.Source.HWRNG);
+        dev.setSource(Boolean.TRUE.equals(rngSourceUrandom.getEntity())
+                ? getBehavior().getUrandomOrRandomRngSource()
+                : VmRngDevice.Source.HWRNG);
         return dev;
     }
 
@@ -760,17 +762,21 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.rngSourceHwrng = rngSourceHwrng;
     }
 
-    public EntityModel<Boolean> getRngSourceRandom() {
-        return rngSourceRandom;
+    public EntityModel<Boolean> getRngSourceUrandom() {
+        return rngSourceUrandom;
     }
 
-    public void setRngSourceRandom(NotChangableForVmInPoolEntityModel<Boolean> rngSourceRandom) {
-        this.rngSourceRandom = rngSourceRandom;
+    public void setRngSourceUrandom(NotChangableForVmInPoolEntityModel<Boolean> rngSourceUrandom) {
+        this.rngSourceUrandom = rngSourceUrandom;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> rngBytes;
 
-    private NotChangableForVmInPoolEntityModel<Boolean> rngSourceRandom;
+    /**
+     * Serves for both `/dev/urandom` (effective cluster level 4.1 and newer)
+     *             and `/dev/random`  (effective cluster level 4.0 and older).
+     */
+    private NotChangableForVmInPoolEntityModel<Boolean> rngSourceUrandom;
     private NotChangableForVmInPoolEntityModel<Boolean> rngSourceHwrng;
 
     private NotChangableForVmInPoolEntityModel<Boolean> isRngEnabled;
@@ -1491,7 +1497,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIsRngEnabled().getEntityChangedEvent().addListener(this);
         setRngBytes(new NotChangableForVmInPoolEntityModel<Integer>());
         setRngPeriod(new NotChangableForVmInPoolEntityModel<Integer>());
-        setRngSourceRandom(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setRngSourceUrandom(new NotChangableForVmInPoolEntityModel<Boolean>());
         setRngSourceHwrng(new NotChangableForVmInPoolEntityModel<Boolean>());
 
         // by default not available - only for new VM
@@ -1873,7 +1879,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getBehavior().enableSinglePCI(false);
 
         isRngEnabled.setEntity(false);
-        rngSourceRandom.setEntity(true);
+        rngSourceUrandom.setEntity(true);
 
         getHostCpu().setEntity(false);
         getMigrationMode().setIsChangeable(true);

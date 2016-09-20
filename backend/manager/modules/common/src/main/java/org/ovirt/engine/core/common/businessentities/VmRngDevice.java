@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,15 +25,23 @@ public class VmRngDevice extends VmDevice implements Serializable {
 
     private static Logger log = LoggerFactory.getLogger(VmRngDevice.class);
 
-    /**
-     * Enum representing source for RNG device backend.
-     * It can be either
-     *  - "RANDOM" - /dev/random device is used as a backend, or
-     *  - "HWRNG" - /dev/hwrng device (usually specialized HW generator) is used as a backend.
-     */
+    /** Enum representing source for RNG device backend. */
     public enum Source {
+        /** /dev/random device is used as a backend; used before {@link #FIRST_URANDOM_VERSION} */
         RANDOM,
+        /** /dev/urandom used since {@link #FIRST_URANDOM_VERSION} as replacement of {@link #RANDOM} */
+        URANDOM,
+        /** /dev/hwrng device (usually specialized HW generator) is used as a backend. */
         HWRNG;
+
+        public static final Version FIRST_URANDOM_VERSION = Version.v4_1;
+
+        public static Source getUrandomOrRandomFor(Version version) {
+            if (version.greaterOrEquals(FIRST_URANDOM_VERSION)) {
+                return URANDOM;
+            }
+            return RANDOM;
+        }
     }
 
     public static Set<Source> csvToSourcesSet(String csvSources) {

@@ -176,14 +176,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             model.getRngBytes().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
         }
 
-        model.getRngSourceRandom().setIsChangeable(randomSourceAvailable);
+        model.getRngSourceUrandom().setIsChangeable(randomSourceAvailable);
         if (!randomSourceAvailable) {
-            model.getRngSourceRandom().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.RANDOM.toString()));
+            model.getRngSourceUrandom().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(
+                    VmRngDevice.Source.getUrandomOrRandomFor(getModel().getSelectedCluster().getCompatibilityVersion())
+                            .toString().toLowerCase()));
         }
 
         model.getRngSourceHwrng().setIsChangeable(hwrngSourceAvailable);
         if (!hwrngSourceAvailable) {
-            model.getRngSourceHwrng().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.HWRNG.toString()));
+            model.getRngSourceHwrng().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(
+                    VmRngDevice.Source.HWRNG.toString().toLowerCase()));
         }
     }
 
@@ -1587,6 +1590,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public IValidation getNameAllowedCharactersIValidation() {
         return new I18NNameValidation();
+    }
+
+    public VmRngDevice.Source getUrandomOrRandomRngSource() {
+        return VmRngDevice.Source.getUrandomOrRandomFor(getModel().getSelectedCluster().getCompatibilityVersion());
     }
 
     protected abstract class UpdateTemplateWithVersionListener implements IEventListener<EventArgs> {

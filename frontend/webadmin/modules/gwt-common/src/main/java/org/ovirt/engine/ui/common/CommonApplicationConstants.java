@@ -1379,7 +1379,11 @@ public interface CommonApplicationConstants extends Constants {
 
     String rngSourceRandom();
 
+    String rngSourceUrandom();
+
     String rngSourceHwrng();
+
+    String rngSourceUrandomOrRandom();
 
     String rngDeviceTab();
 

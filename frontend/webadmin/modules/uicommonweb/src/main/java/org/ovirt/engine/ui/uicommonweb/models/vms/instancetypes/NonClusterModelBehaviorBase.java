@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
@@ -88,4 +89,8 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
         return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
     }
 
+    @Override
+    public VmRngDevice.Source getUrandomOrRandomRngSource() {
+        return VmRngDevice.Source.URANDOM;
+    }
 }

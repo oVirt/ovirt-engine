@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
@@ -104,11 +105,13 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
@@ -564,10 +567,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("rngBytesEditor")
     public IntegerEntityModelTextBoxEditor rngBytesEditor;
 
+    /**
+     * @see UnitVmModel#rngSourceUrandom
+     */
     @UiField(provided = true)
-    @Path(value = "rngSourceRandom.entity")
+    @Path(value = "rngSourceUrandom.entity")
     @WithElementId("rngSourceRandom")
-    public EntityModelRadioButtonEditor rngSourceRandom;
+    public EntityModelRadioButtonEditor rngSourceUrandom;
 
     @UiField(provided = true)
     @Path(value = "rngSourceHwrng.entity")
@@ -917,6 +923,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final UIMessages uiMessages = ConstantsManager.getInstance().getMessages();
 
     private final Map<TabName, DialogTab> tabMap = new HashMap<>();
 
@@ -965,7 +972,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isRngEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         rngPeriodEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         rngBytesEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        rngSourceRandom = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
+        rngSourceUrandom = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
         rngSourceHwrng = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
 
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -1662,6 +1669,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
                 customCpu.setNullReplacementString(getDefaultCpuTypeLabel());
+                updateUrandomLabel(object);
             }
         });
 
@@ -1673,6 +1681,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 }
             }
         });
+    }
+
+    private void updateUrandomLabel(UnitVmModel model) {
+        final Cluster cluster = model.getSelectedCluster();
+        if (cluster == null) {
+            return;
+        }
+        final String urandomSourceLabel = cluster.getCompatibilityVersion().greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
+                ? constants.rngSourceUrandom()
+                : constants.rngSourceRandom();
+        rngSourceUrandom.setLabel(urandomSourceLabel);
     }
 
     private String getDefaultEmulatedMachineLabel() {
@@ -1752,10 +1771,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        rngSourceRandom.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+        rngSourceUrandom.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                vm.getRngSourceRandom().setEntity(true);
+                vm.getRngSourceUrandom().setEntity(true);
                 vm.getRngSourceHwrng().setEntity(false);
             }
         });
@@ -1764,7 +1783,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
                 vm.getRngSourceHwrng().setEntity(true);
-                vm.getRngSourceRandom().setEntity(false);
+                vm.getRngSourceUrandom().setEntity(false);
             }
         });
 
@@ -1990,7 +2009,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isRngEnabledEditor.setTabIndex(nextTabIndex++);
         rngPeriodEditor.setTabIndex(nextTabIndex++);
         rngBytesEditor.setTabIndex(nextTabIndex++);
-        rngSourceRandom.setTabIndex(nextTabIndex++);
+        rngSourceUrandom.setTabIndex(nextTabIndex++);
         rngSourceHwrng.setTabIndex(nextTabIndex++);
 
         // ==Custom Properties Tab==
