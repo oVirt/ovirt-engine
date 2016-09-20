@@ -62,10 +62,6 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     @Mock
     private ClusterUtils clusterUtils;
 
-    public GlusterHookCommandTest() {
-        super();
-    }
-
     public void setupMocks(T cmd) {
         setupMocks(cmd, true);
     }
