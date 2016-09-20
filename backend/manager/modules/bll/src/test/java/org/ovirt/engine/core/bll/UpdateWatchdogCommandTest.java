@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -53,13 +54,8 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         params.setAction(VmWatchdogAction.PAUSE);
         params.setModel(vmWatchdogType);
         final VmDao vmDaoMock = mock(VmDao.class);
-        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null) {
-            @Override
-            public VmDao getVmDao() {
-                return vmDaoMock;
-            }
-        };
-
+        UpdateWatchdogCommand command = spy(new UpdateWatchdogCommand(params, null));
+        doReturn(vmDaoMock).when(command).getVmDao();
         assertFalse(command.validate());
     }
 
@@ -74,18 +70,9 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         when(vmDaoMock.get(vmGuid)).thenReturn(new VM());
         final VmDeviceDao deviceDao = mock(VmDeviceDao.class);
         when(deviceDao.getVmDeviceByVmIdAndType(vmGuid, VmDeviceGeneralType.WATCHDOG)).thenReturn(Collections.singletonList(new VmDevice()));
-        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null) {
-            @Override
-            public VmDao getVmDao() {
-                return vmDaoMock;
-            }
-
-            @Override
-            public VmDeviceDao getVmDeviceDao() {
-                return deviceDao;
-            }
-        };
-
+        UpdateWatchdogCommand command = spy(new UpdateWatchdogCommand(params, null));
+        doReturn(vmDaoMock).when(command).getVmDao();
+        doReturn(deviceDao).when(command).getVmDeviceDao();
         OsRepository osRepository = mock(OsRepository.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         when(osRepository.getVmWatchdogTypes(any(Integer.class), any(Version.class))).thenReturn(WATCHDOG_MODELS);
