@@ -146,7 +146,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
         return true;
     }
 
-    private boolean restoreSlaveVolumesToSnapshot(List<GlusterGeoRepSession> geoRepSessions, String snapshotName) {
+    private boolean restoreSlaveVolumesToSnapshot(List<GlusterGeoRepSession> geoRepSessions) {
         for (GlusterGeoRepSession session : geoRepSessions) {
             GlusterVolumeEntity slaveVolume = getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
             if (slaveVolume == null) {
@@ -262,7 +262,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 }
 
                 // Restore the slave volumes to said the snapshot
-                if (!restoreSlaveVolumesToSnapshot(georepSessions, getParameters().getSnapshotName())) {
+                if (!restoreSlaveVolumesToSnapshot(georepSessions)) {
                     return false;
                 }
             }
