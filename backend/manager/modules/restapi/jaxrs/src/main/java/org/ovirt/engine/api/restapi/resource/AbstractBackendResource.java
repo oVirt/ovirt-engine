@@ -3,7 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -424,7 +426,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
      * "diskattachments", "graphicsconsoles", "hostdevices", "katelloerrata"...]
      */
     protected String[] getSubCollections() {
-        Class<?>[] interfaces = getClass().getInterfaces();
+        Set<Class<?>> interfaces = getInterfaces();
         List<String> subCollections = new ArrayList<>();
         for (Class<?> clazz : interfaces) {
             ServiceTreeNode node = getRequiredNode(clazz);
@@ -432,7 +434,23 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
                 addSubCollections(node, subCollections);
             }
         }
-        return (String[])subCollections.toArray(new String[0]);
+        return subCollections.toArray(new String[0]);
+    }
+
+    /**
+     * Returns the set of service interfaces implemented by this resource. This needs to make a recursive search in
+     * order to find the interfaces implemented directly and also the interfaces implemented by base classes.
+     */
+    private Set<Class<?>> getInterfaces() {
+        Set<Class<?>> result = new HashSet<>();
+        for (Class<?> clazz = getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+            for (Class<?> iface : clazz.getInterfaces()) {
+                if (iface.getName().endsWith("Resource")) {
+                    result.add(iface);
+                }
+            }
+        }
+        return result;
     }
 
     /**
