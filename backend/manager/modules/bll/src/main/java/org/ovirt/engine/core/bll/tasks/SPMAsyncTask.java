@@ -223,6 +223,12 @@ public class SPMAsyncTask implements SPMTask {
      * Cleared Failed , and log appropriate message.
      */
     private void handleEndedTask() {
+        AsyncTask asyncTask = getParameters().getDbAsyncTask();
+
+        log.debug("Task of command {} with id '{}' has ended.",
+                asyncTask.getActionType(),
+                getCommandId());
+
         // If task state is different from Ended change it to Ended and set the
         // last access time to now.
         if (getState() != AsyncTaskState.Ended) {
@@ -230,33 +236,47 @@ public class SPMAsyncTask implements SPMTask {
             setLastStatusAccessTime();
         }
 
-        AsyncTask asyncTask = getParameters().getDbAsyncTask();
         CommandEntity rootCmdEntity = coco.getCommandEntity(asyncTask.getRootCommandId());
         // if the task's root command has failed
         if (rootCmdEntity != null && !rootCmdEntity.isExecuted()) {
             // mark it as a task of a partially completed command
             // Will result in failure of the command
             setPartiallyCompletedCommandTask(true);
+            log.debug("Marking task of command {} with id '{}' as partially completed.",
+                    asyncTask.getActionType(),
+                    getCommandId());
         }
 
         // Fail zombie task and task that belongs to a partially submitted command
         if (isZombieTask() || isPartiallyCompletedCommandTask()) {
+            log.debug("Task of command {} with id '{}' is a zombie or is partially completed, executing failure logic.",
+                    asyncTask.getActionType(),
+                    getCommandId());
             getParameters().getDbAsyncTask().getTaskParameters().setTaskGroupSuccess(false);
             ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
         }
 
         if (hasTaskEndedSuccessfully()) {
+            log.debug("Task of command {} with id '{}' has succeeded, executing success logic.",
+                    asyncTask.getActionType(),
+                    getCommandId());
             ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
             onTaskEndSuccess();
         }
 
         else if (hasTaskEndedInFailure()) {
+            log.debug("Task of command {} with id '{}' has failed, executing failure logic.",
+                    asyncTask.getActionType(),
+                    getCommandId());
             ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
         }
 
         else if (!doesTaskExist()) {
+            log.debug("Task of command {} with id '{}' does not exist, executing cleanup logic.",
+                    asyncTask.getActionType(),
+                    getCommandId());
             ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.UNKNOWN);
             onTaskDoesNotExist();
         }
