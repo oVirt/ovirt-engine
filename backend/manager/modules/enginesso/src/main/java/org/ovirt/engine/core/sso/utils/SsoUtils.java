@@ -61,6 +61,10 @@ public class SsoUtils {
             SsoSession ssoSession = getSsoSession(request);
             URLBuilder redirectUrl = new URLBuilder(getRedirectUrl(request).toString())
                     .addParameter("code", ssoSession.getAuthorizationCode());
+            String appUrl = ssoSession.getAppUrl();
+            if (StringUtils.isNotEmpty(appUrl)) {
+                redirectUrl.addParameter("app_url", appUrl);
+            }
             response.sendRedirect(redirectUrl.build());
             log.debug("Redirecting back to module: {}", redirectUrl);
         } catch (Exception ex) {
@@ -307,6 +311,7 @@ public class SsoUtils {
                 null : (SsoSession) request.getSession().getAttribute(SsoConstants.OVIRT_SSO_SESSION);
         if ((ssoSession == null || StringUtils.isEmpty(ssoSession.getClientId())) && mustExist) {
             ssoSession = ssoSession == null ? new SsoSession() : ssoSession;
+            ssoSession.setAppUrl(getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, ""));
             ssoSession.setClientId(getClientId(request));
             ssoSession.setScope(getScopeRequestParameter(request, ""));
             ssoSession.setRedirectUri(getParameter(request, SsoConstants.HTTP_PARAM_REDIRECT_URI));

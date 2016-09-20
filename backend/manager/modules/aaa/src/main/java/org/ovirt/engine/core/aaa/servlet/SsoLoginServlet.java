@@ -34,21 +34,28 @@ public class SsoLoginServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("Entered SsoLoginServlet");
+
         String scope = String.format("ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=%s",
                 EngineLocalConfig.getInstance().getProperty(authSequencePriorityPropertyName));
-        request.getSession(true).setAttribute("app_url", request.getParameter("app_url"));
+
         String redirectUri = String.format("%s://%s:%s%s",
                 request.getScheme(),
                 FiltersHelper.getRedirectUriServerName(request.getServerName()),
                 request.getServerPort(),
                 postActionUrl);
 
-        response.sendRedirect(new URLBuilder(FiltersHelper.getEngineSsoUrl(request), "/oauth/authorize")
+        String url = new URLBuilder(FiltersHelper.getEngineSsoUrl(request), "/oauth/authorize")
                 .addParameter("client_id", EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_CLIENT_ID"))
                 .addParameter("response_type", "code")
+                .addParameter("app_url", request.getParameter("app_url"))
                 .addParameter("engine_url", FiltersHelper.getEngineUrl(request))
                 .addParameter("redirect_uri", redirectUri)
-                .addParameter("scope", scope).build());
+                .addParameter("scope", scope).build();
+
+        log.debug("Redirecting to '{}'", url);
+
+        response.sendRedirect(url);
     }
 
 }

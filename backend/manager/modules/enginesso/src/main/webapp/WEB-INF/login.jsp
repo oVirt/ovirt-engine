@@ -36,7 +36,7 @@
                 </c:if>
 
                 <c:if test="${ssoSession.reauthenticate == true}">
-                    <c:redirect url="/oauth/authorize?client_id=${ssoSession.clientId}&response_type=code&scope=${ssoSession.scope}&redirect_uri=${ssoSession.redirectUri}?" />
+                    <c:redirect url="/oauth/authorize?client_id=${ssoSession.clientId}&response_type=code&scope=${ssoSession.scope}&app_url=${ssoSession.appUrl}&redirect_uri=${ssoSession.redirectUri}?" />
                 </c:if>
                 <c:set target="${ssoSession}" property="reauthenticate" value="true" />
 
