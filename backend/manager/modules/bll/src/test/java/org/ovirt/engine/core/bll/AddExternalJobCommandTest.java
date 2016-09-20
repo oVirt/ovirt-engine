@@ -1,49 +1,28 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AddExternalJobCommandTest {
-
-    private AddExternalJobParameters parameters;
-    @Mock
-    private AddExternalJobCommand<AddExternalJobParameters> commandMock;
-
-    @Before
-    public void createParameters() {
-        parameters = new AddExternalJobParameters("test");
-    }
-
-    private void setupMock() throws Exception {
-        when(commandMock.validate()).thenCallRealMethod();
-        when(commandMock.getParameters()).thenReturn(parameters);
-    }
+    private AddExternalJobCommand<AddExternalJobParameters> command =
+            new AddExternalJobCommand<>(new AddExternalJobParameters("test"), null);
 
     @Test
     public void validateDescriptionOkSucceeds() throws Exception {
-        setupMock();
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
     public void validateEmptyDescriptionFails() throws Exception {
-        setupMock();
-        parameters.setDescription("");
-        assertTrue(! commandMock.validate());
+        command.getParameters().setDescription("");
+        assertTrue(! command.validate());
     }
 
     @Test
     public void validateBlankDescriptionFails() throws Exception {
-        parameters.setDescription("      ");
-        setupMock();
-        assertTrue(! commandMock.validate());
+        command.getParameters().setDescription("      ");
+        assertTrue(! command.validate());
     }
 }
