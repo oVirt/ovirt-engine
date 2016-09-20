@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -8,6 +10,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends GetVmByVmIdQuery<P> {
+
+    @Inject
+    protected SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     public GetVmNextRunConfigurationQuery(P parameters) {
         super(parameters);
@@ -19,7 +24,6 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = getSnapshotVmConfigurationHelper();
         Snapshot snapshot = getSnapshotDao().get(getParameters().getId(), Snapshot.SnapshotType.NEXT_RUN, getUserID(), getParameters().isFiltered());
 
         if (snapshot != null) {
@@ -40,10 +44,6 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
 
     protected SnapshotDao getSnapshotDao() {
         return getDbFacade().getSnapshotDao();
-    }
-
-    protected SnapshotVmConfigurationHelper getSnapshotVmConfigurationHelper() {
-        return new SnapshotVmConfigurationHelper();
     }
 
 }
