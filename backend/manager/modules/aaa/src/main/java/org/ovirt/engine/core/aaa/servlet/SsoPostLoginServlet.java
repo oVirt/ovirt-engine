@@ -46,6 +46,7 @@ public class SsoPostLoginServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("Entered SsoPostLoginServlet");
         String username = null;
         String profile = null;
         InitialContext ctx = null;
@@ -59,6 +60,8 @@ public class SsoPostLoginServlet extends HttpServlet {
             if (StringUtils.isEmpty(code)){
                 throw new RuntimeException("No authorization code found in request");
             }
+            String appUrl = request.getParameter("app_url");
+            log.debug("Received app_url '{}'", appUrl);
             Map<String, Object> jsonResponse = FiltersHelper.getPayloadForAuthCode(
                     code,
                     "ovirt-app-admin ovirt-app-portal ovirt-app-api",
@@ -95,7 +98,8 @@ public class SsoPostLoginServlet extends HttpServlet {
                     httpSession.setAttribute(
                             FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE,
                             true);
-                    response.sendRedirect((String) httpSession.getAttribute("app_url"));
+                    log.debug("Redirecting to '{}'", appUrl);
+                    response.sendRedirect(appUrl);
                 }
             } catch (RuntimeException ex) {
                 throw ex;

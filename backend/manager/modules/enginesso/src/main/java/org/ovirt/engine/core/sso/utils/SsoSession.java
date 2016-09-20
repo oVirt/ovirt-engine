@@ -19,6 +19,7 @@ public class SsoSession implements Serializable {
     private Status status = Status.unauthenticated;
     private String clientId;
     private boolean active;
+    private String appUrl;
     private String authorizationCode;
     private String accessToken;
     private int validTo;
@@ -96,6 +97,14 @@ public class SsoSession implements Serializable {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getAppUrl() {
+        return appUrl;
+    }
+
+    public void setAppUrl(String appUrl) {
+        this.appUrl = appUrl;
     }
 
     public int getValidTo() {
