@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -58,8 +57,6 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     @Before
     public void init() {
         injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
-        injectorRule.bind(AuditLogDirector.class, mock(AuditLogDirector.class));
-        syncJob = spy(GlusterSyncJob.getInstance());
     }
 
     private void prepareMocks(RefreshGlusterVolumeDetailsCommand command) {
