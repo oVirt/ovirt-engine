@@ -42,7 +42,6 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
                                              new Guid("2001751e-549b-4e7a-aff6-32d36856c125")};
     protected static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     protected static final Guid HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
-    protected static final Guid HOOK_ID2 = new Guid("d222f73-fa22-4a42-93f0-d5e4c069a43e");
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
