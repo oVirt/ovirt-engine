@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,7 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -89,8 +91,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainValidator storageDomainValidator;
 
-    @Mock
-    protected OsRepository osRepository;
+    protected static OsRepository osRepository;
 
     @Mock
     private VmDeviceUtils vmDeviceUtils;
@@ -98,12 +99,18 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    protected HotPlugDiskToVmCommand<VmDiskOperationParameterBase> command;
+    @Spy
+    @InjectMocks
+    protected HotPlugDiskToVmCommand<VmDiskOperationParameterBase> command = createCommand();
+
+    @BeforeClass
+    public static void setUpClass() {
+        osRepository = mock(OsRepository.class);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+    }
 
     @Before
     public void setUp() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        command = spy(createCommand());
         mockVds();
         mockVmDevice(false);
 
