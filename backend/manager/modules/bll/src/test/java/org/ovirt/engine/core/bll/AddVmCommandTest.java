@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,28 +31,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -65,9 +56,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -89,13 +78,12 @@ public class AddVmCommandTest extends BaseCommandTest {
     private static final int NUM_DISKS_STORAGE_DOMAIN_1 = 3;
     private static final int NUM_DISKS_STORAGE_DOMAIN_2 = 3;
     private static final int REQUIRED_DISK_SIZE_GB = 10;
-    private static final int AVAILABLE_SPACE_GB = 11;
+    protected static final int AVAILABLE_SPACE_GB = 11;
     private static final int USED_SPACE_GB = 4;
-    private static final int MAX_PCI_SLOTS = 26;
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
-    private static final String CPU_ID = "0";
+    protected static final String CPU_ID = "0";
     private VmTemplate vmTemplate;
-    private Cluster cluster;
+    protected Cluster cluster;
     private StoragePool storagePool;
     protected StorageDomainValidator storageDomainValidator;
 
@@ -118,7 +106,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
-    private MacPoolPerCluster macPoolPerCluster;
+    MacPoolPerCluster macPoolPerCluster;
 
     @Mock
     StorageDomainDao sdDao;
@@ -174,47 +162,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         VmHandler.init();
     }
 
-    @Test
-    public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
-        VM vm = createVm();
-        AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
-
-        mockStorageDomainDaoGetForStoragePool();
-        mockClusterDaoReturnCluster();
-        mockVmTemplateDaoReturnVmTemplate();
-        mockVerifyAddVM(cmd);
-        mockMaxPciSlots();
-
-        mockOsRepository();
-        mockOsRepositoryGraphics(0, Version.v4_0, new Pair<>(GraphicsType.SPICE, DisplayType.qxl));
-        mockGraphicsDevices(vm.getId());
-
-        mockStorageDomainDaoGetAllStoragesForPool(AVAILABLE_SPACE_GB);
-        mockUninterestingMethods(cmd);
-        mockGetAllSnapshots(cmd);
-        doReturn(createStoragePool()).when(cmd).getStoragePool();
-
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
-    }
-
-    private void mockGraphicsDevices(Guid vmId) {
-        VmDevice graphicsDevice = new GraphicsDevice(VmDeviceType.SPICE);
-        graphicsDevice.setDeviceId(Guid.Empty);
-        graphicsDevice.setVmId(vmId);
-
-        when(deviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS)).thenReturn(Collections.singletonList(graphicsDevice));
-    }
-
-    private void mockOsRepositoryGraphics(int osId, Version ver, Pair<GraphicsType, DisplayType> supportedGraphicsAndDisplay) {
-        Map<Version, List<Pair<GraphicsType, DisplayType>>> value = new HashMap<>();
-        value.put(ver, Collections.singletonList(supportedGraphicsAndDisplay));
-
-        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> g = new HashMap<>();
-        g.put(osId, value);
-        when(osRepository.getGraphicsAndDisplays()).thenReturn(g);
-    }
-
     protected void mockCpuFlagsManagerHandler() {
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
@@ -236,65 +183,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain(domainSizeGB))));
-    }
-
-    @Test
-    public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
-        final int domainSizeGB = 15;
-        final Guid sourceSnapshotId = Guid.newGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
-        cmd.getVm().setName("vm1");
-        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
-    }
-
-    @Test
-    public void canAddCloneVmFromSnapshotNoConfiguration() {
-        final int domainSizeGB = 15;
-        final Guid sourceSnapshotId = Guid.newGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
-        cmd.getVm().setName("vm1");
-        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        SnapshotsValidator sv = spy(new SnapshotsValidator());
-        doReturn(ValidationResult.VALID).when(sv).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(sv).when(cmd).createSnapshotsValidator();
-        when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
-    }
-
-    @Test
-    public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
-        VM vm = createVm();
-        AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
-        cluster = createCluster();
-        vm.setClusterId(cluster.getId());
-
-        mockStorageDomainDaoGetForStoragePool();
-        mockVmTemplateDaoReturnVmTemplate();
-        mockVerifyAddVM(cmd);
-        mockMaxPciSlots();
-        mockStorageDomainDaoGetAllStoragesForPool(20);
-        mockUninterestingMethods(cmd);
-        mockDisplayTypes(vm.getOs());
-        mockGraphicsDevices(vm.getId());
-        doReturn(true).when(cmd).checkCpuSockets();
-
-        doReturn(cluster).when(cmd).getCluster();
-        doReturn(createStoragePool()).when(cmd).getStoragePool();
-        cmd.getParameters().setVirtioScsiEnabled(true);
-        when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(true);
-        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
-        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Collections.singletonList("VirtIO")));
-        mockGetAllSnapshots(cmd);
-
-        cmd.initEffectiveCompatibilityVersion();
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
 
     @Test
@@ -341,77 +229,10 @@ public class AddVmCommandTest extends BaseCommandTest {
         assertFalse(command.validateSpaceRequirements());
     }
 
-    @Test
-    public void testUnsupportedCpus() {
-        // prepare a command to pass validate
-        VM vm = createVm();
-        vm.setVmOs(OsRepository.DEFAULT_X86_OS);
-        cluster = createCluster();
-        vm.setClusterId(cluster.getId());
-        when(clusterDao.get(cluster.getId())).thenReturn(cluster);
-
-        AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
-
-        mockStorageDomainDaoGetForStoragePool();
-        mockVmTemplateDaoReturnVmTemplate();
-        mockVerifyAddVM(cmd);
-        mockMaxPciSlots();
-        mockStorageDomainDaoGetAllStoragesForPool(20);
-        mockDisplayTypes(vm.getOs());
-        mockUninterestingMethods(cmd);
-        mockGetAllSnapshots(cmd);
-        when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
-        doReturn(createStoragePool()).when(cmd).getStoragePool();
-
-        // prepare the mock values
-        Map<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
-        Set<String> value = new HashSet<>();
-        value.add(CPU_ID);
-        unsupported.put(new Pair<>(vm.getVmOsId(), cluster.getCompatibilityVersion()), value);
-
-        when(osRepository.isCpuSupported(vm.getVmOsId(), cluster.getCompatibilityVersion(), CPU_ID)).thenReturn(false);
-        when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
-
-        ValidateTestUtils.runAndAssertValidateFailure(
-                cmd,
-                EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
-    }
-
-
-    private void mockDisplayTypes(int osId) {
-        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<>());
-        displayTypeMap.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
-        when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
-    }
-
     protected void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {
         mockUninterestingMethods(cmd);
         doReturn(true).when(cmd).checkCpuSockets();
         doReturn(null).when(cmd).getVmFromConfiguration();
-    }
-
-    private void mockMaxPciSlots() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
-    }
-
-    protected AddVmFromTemplateCommand<AddVmParameters> createVmFromTemplateCommand(VM vm) {
-        AddVmParameters param = new AddVmParameters();
-        param.setVm(vm);
-        AddVmFromTemplateCommand<AddVmParameters> concrete = new AddVmFromTemplateCommand<>(param, null);
-        AddVmFromTemplateCommand<AddVmParameters> result = spy(concrete);
-        doReturn(true).when(result).checkNumberOfMonitors();
-        doReturn(createVmTemplate()).when(result).getVmTemplate();
-        doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
-        doNothing().when(result).initTemplateDisks();
-        mockDaos(result);
-        mockBackend(result);
-        mockVmDeviceUtils(result);
-        initCommandMethods(result);
-        result.macPoolPerCluster = this.macPoolPerCluster;
-        result.init();
-        return result;
     }
 
     private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,
@@ -458,7 +279,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         return cmd;
     }
 
-    private static <T extends AddVmParameters> void initCommandMethods(AddVmCommand<T> cmd) {
+    protected static <T extends AddVmParameters> void initCommandMethods(AddVmCommand<T> cmd) {
         doReturn(Guid.newGuid()).when(cmd).getStoragePoolId();
         doReturn(true).when(cmd).canAddVm(anyListOf(String.class), anyString(), any(Guid.class), anyInt());
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
@@ -471,21 +292,20 @@ public class AddVmCommandTest extends BaseCommandTest {
         return createVm();
     }
 
-    private void mockBackend(AddVmCommand<?> cmd) {
+    protected void mockBackend(AddVmCommand<?> cmd) {
         doReturn(backend).when(cmd).getBackend();
     }
 
-    private void mockDaos(AddVmCommand<?> cmd) {
+    protected void mockDaos(AddVmCommand<?> cmd) {
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(sdDao).when(cmd).getStorageDomainDao();
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(deviceDao).when(cmd).getVmDeviceDao();
         doReturn(vmStaticDao).when(cmd).getVmStaticDao();
-
     }
 
-    private void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {
+    protected void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {
         when(sdDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
     }
 
@@ -497,23 +317,11 @@ public class AddVmCommandTest extends BaseCommandTest {
         }).when(sdDao).get(any(Guid.class));
     }
 
-    private void mockStorageDomainDaoGetAllStoragesForPool(int domainSpaceGB) {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(createStorageDomain(domainSpaceGB)));
-    }
-
-    private void mockStorageDomainDaoGetForStoragePool() {
-        mockStorageDomainDaoGetForStoragePool(AVAILABLE_SPACE_GB);
-    }
-
-    private void mockVmTemplateDaoReturnVmTemplate() {
+    protected void mockVmTemplateDaoReturnVmTemplate() {
         when(vmTemplateDao.get(any(Guid.class))).thenReturn(createVmTemplate());
     }
 
-    private void mockClusterDaoReturnCluster() {
-        when(clusterDao.get(any(Guid.class))).thenReturn(createCluster());
-    }
-
-    private VmTemplate createVmTemplate() {
+    protected VmTemplate createVmTemplate() {
         if (vmTemplate == null) {
             vmTemplate = new VmTemplate();
             vmTemplate.setStoragePoolId(STORAGE_POOL_ID);
@@ -527,7 +335,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         return vmTemplate;
     }
 
-    private Cluster createCluster() {
+    protected Cluster createCluster() {
         if (cluster == null) {
             cluster = new Cluster();
             cluster.setClusterId(Guid.newGuid());
@@ -551,7 +359,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         return cluster;
     }
 
-    private StoragePool createStoragePool() {
+    protected StoragePool createStoragePool() {
         if (storagePool == null) {
             storagePool = new StoragePool();
             storagePool.setId(STORAGE_POOL_ID);
@@ -559,7 +367,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         }
         return storagePool;
     }
-
 
     private static DiskImage createDiskImageTemplate() {
         DiskImage i = new DiskImage();
@@ -588,10 +395,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         sd.setUsedDiskSize(USED_SPACE_GB);
         sd.setId(STORAGE_DOMAIN_ID_1);
         return sd;
-    }
-
-    private static void mockVerifyAddVM(AddVmCommand<?> cmd) {
-        doReturn(true).when(cmd).verifyAddVM(anyListOf(String.class), anyInt());
     }
 
     protected static VM createVm() {
@@ -625,7 +428,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         return cmd;
     }
 
-    private void mockVmDeviceUtils(AddVmCommand<AddVmParameters> cmd) {
+    protected void mockVmDeviceUtils(AddVmCommand<AddVmParameters> cmd) {
         doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
     }
 
@@ -667,17 +470,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         return disksList;
     }
 
-    private void mockGetAllSnapshots(AddVmFromTemplateCommand<AddVmParameters> command) {
-        doAnswer(invocation -> {
-            Object[] args = invocation.getArguments();
-            DiskImage arg = (DiskImage) args[0];
-            return createDiskSnapshot(arg.getId(), 3);
-        }).when(command).getAllImageSnapshots(any(DiskImage.class));
-    }
-
-
-
-    private <T extends AddVmParameters> void mockUninterestingMethods(AddVmCommand<T> spy) {
+    protected<T extends AddVmParameters> void mockUninterestingMethods(AddVmCommand<T> spy) {
         doReturn(true).when(spy).isVmNameValidLength(any(VM.class));
         doReturn(false).when(spy).isVmWithSameNameExists(anyString(), any(Guid.class));
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
