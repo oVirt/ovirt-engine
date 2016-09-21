@@ -7,7 +7,6 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,7 +15,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -84,7 +85,10 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     /**
      * The command under test
      */
-    protected LiveMigrateVmDisksCommand<LiveMigrateVmDisksParameters> command;
+    @Spy
+    @InjectMocks
+    protected LiveMigrateVmDisksCommand<LiveMigrateVmDisksParameters> command =
+            new LiveMigrateVmDisksCommand<>(new LiveMigrateVmDisksParameters(new ArrayList<>(), vmId), null);
 
     @Before
     public void setupCommand() {
@@ -94,8 +98,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     private void initSpyCommand() {
-        command = spy(new LiveMigrateVmDisksCommand<>(new LiveMigrateVmDisksParameters(new ArrayList<>(), vmId), null));
-
         doReturn(true).when(command).validateSpaceRequirements();
         doReturn(true).when(command).checkImagesStatus();
         doReturn(true).when(command).setAndValidateDiskProfiles();
