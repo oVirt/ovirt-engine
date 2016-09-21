@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -15,7 +14,9 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -81,17 +82,18 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid());
-    DeactivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd;
+
+    @Spy
+    @InjectMocks
+    DeactivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd =
+            new DeactivateStorageDomainCommand<>(params, CommandContext.createContext(params.getSessionId()));
 
     @Before
     public void setup() {
         map = new StoragePoolIsoMap();
-
-        cmd = spy(new DeactivateStorageDomainCommand<>(params, CommandContext.createContext(params.getSessionId())));
         cmd.init();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
-        doReturn(eventQueue).when(cmd).getEventQueue();
     }
 
     @Test
@@ -100,12 +102,10 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(isoMapDao).when(cmd).getStoragePoolIsoMapDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(asyncTaskDao).when(cmd).getAsyncTaskDao();
-        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
         when(storagePoolDao.get(any(Guid.class))).thenReturn(new StoragePool());
         when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
 
-        doReturn(backendInternal).when(cmd).getBackend();
         doReturn(Collections.emptyList()).when(cmd).getAllRunningVdssInPool();
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
