@@ -7,6 +7,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -398,31 +399,13 @@ public class AddVmCommandTest extends BaseCommandTest {
         AddVmParameters param = new AddVmParameters();
         param.setVm(vm);
         AddVmFromTemplateCommand<AddVmParameters> concrete =
-                new AddVmFromTemplateCommand<AddVmParameters>(param, CommandContext.createContext(param.getSessionId())) {
-                    @Override
-                    protected void initUser() {
-                        // Stub for testing
-                    }
-
-                    @Override
-                    protected void initTemplateDisks() {
-                        // Stub for testing
-                    }
-
-                    @Override
-                    protected void initStoragePoolId() {
-                        // Stub for testing
-                    }
-
-                    @Override
-                    public VmTemplate getVmTemplate() {
-                        return createVmTemplate();
-                    }
-                };
+                new AddVmFromTemplateCommand<>(param, CommandContext.createContext(param.getSessionId()));
         AddVmFromTemplateCommand<AddVmParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
         doReturn(createVmTemplate()).when(result).getVmTemplate();
         doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
+        doNothing().when(result).initTemplateDisks();
+        doNothing().when(result).initUser();
         mockDaos(result);
         mockBackend(result);
         mockVmDeviceUtils(result);
@@ -438,30 +421,10 @@ public class AddVmCommandTest extends BaseCommandTest {
         param.setVm(vm);
         param.setSourceSnapshotId(sourceSnapshotId);
         param.setStorageDomainId(Guid.newGuid());
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param, null) {
-                    @Override
-                    protected void initUser() {
-                        // Stub for testing
-                    }
-
-                    @Override
-                    protected void initTemplateDisks() {
-                        // Stub for testing
-                    }
-
-                    @Override
-                    protected void initStoragePoolId() {
-                        // Stub for testing
-                    }
-
-                    @Override
-                    public VmTemplate getVmTemplate() {
-                        return createVmTemplate();
-                    }
-                };
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = new AddVmFromSnapshotCommand<>(param, null);
         cmd = spy(cmd);
         doReturn(vm).when(cmd).getVm();
+        doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         mockDaos(cmd);
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         mockBackend(cmd);
@@ -655,33 +618,15 @@ public class AddVmCommandTest extends BaseCommandTest {
     private AddVmCommand<AddVmParameters> createCommand(VM vm) {
         AddVmParameters param = new AddVmParameters(vm);
         AddVmCommand<AddVmParameters> cmd =
-                new AddVmCommand<AddVmParameters>(param, CommandContext.createContext(param.getSessionId())) {
-
-            @Override
-            protected void initUser() {
-                // Stub for testing
-            }
-
-            @Override
-            protected void initTemplateDisks() {
-                // Stub for testing
-            }
-
-            @Override
-            protected void initStoragePoolId() {
-                // stub for testing
-            }
-
-            @Override
-            public VmTemplate getVmTemplate() {
-                return createVmTemplate();
-            }
-        };
+                new AddVmCommand<>(param, CommandContext.createContext(param.getSessionId()));
         cmd = spy(cmd);
         mockDaos(cmd);
         mockBackend(cmd);
         mockVmDeviceUtils(cmd);
         doReturn(new Cluster()).when(cmd).getCluster();
+        doReturn(createVmTemplate()).when(cmd).getVmTemplate();
+        doNothing().when(cmd).initTemplateDisks();
+        doNothing().when(cmd).initUser();
         generateStorageToDisksMap(cmd);
         initDestSDs(cmd);
         storageDomainValidator = mock(StorageDomainValidator.class);
