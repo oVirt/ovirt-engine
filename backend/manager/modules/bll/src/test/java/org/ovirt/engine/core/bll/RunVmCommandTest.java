@@ -33,7 +33,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -331,12 +330,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        initMockitoAnnotations();
         createCommand();
-    }
-
-    public void initMockitoAnnotations() {
-        MockitoAnnotations.initMocks(this);
     }
 
     public void createCommand() {
