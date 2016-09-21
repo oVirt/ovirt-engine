@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -15,7 +14,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
@@ -51,17 +52,10 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     /**
      * The command under test
      */
-    protected MoveDisksCommand<MoveDisksParameters> command;
-
-    @Before
-    public void setupCommand() {
-        initSpyCommand();
-        mockDaos();
-    }
-
-    private void initSpyCommand() {
-        command = spy(new MoveDisksCommand<>(new MoveDisksParameters(new ArrayList<>()), null));
-    }
+    @Spy
+    @InjectMocks
+    protected MoveDisksCommand<MoveDisksParameters> command =
+            new MoveDisksCommand<>(new MoveDisksParameters(new ArrayList<>()), null);
 
     private List<MoveDiskParameters> createMoveDisksParameters() {
         return Collections.singletonList(new MoveDiskParameters(diskImageId, srcStorageId, dstStorageId));
@@ -266,7 +260,8 @@ public class MoveDisksCommandTest extends BaseCommandTest {
 
     /** Mock Daos */
 
-    private void mockDaos() {
+    @Before
+    public void mockDaos() {
         mockVmDao();
         mockDiskImageDao();
         mockDiskDao();
