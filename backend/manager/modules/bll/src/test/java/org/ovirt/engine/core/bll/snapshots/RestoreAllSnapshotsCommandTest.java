@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,7 +12,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -67,7 +68,17 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     private Guid storageDomainId = Guid.newGuid();
     private Guid spId = Guid.newGuid();
     private Snapshot mockSnapshot;
-    private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand;
+
+    @Spy
+    @InjectMocks
+    private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand = createCommand();
+
+    private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> createCommand() {
+        RestoreAllSnapshotsParameters parameters = new RestoreAllSnapshotsParameters(vmId, SnapshotActionEnum.COMMIT);
+        List<DiskImage> diskImageList = createDiskImageList();
+        parameters.setImages(diskImageList);
+        return new RestoreAllSnapshotsCommand<>(parameters, null);
+    }
 
     @Before
     public void setupCommand() {
@@ -122,12 +133,8 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     }
 
     private void initSpyCommand() {
-        RestoreAllSnapshotsParameters parameters = new RestoreAllSnapshotsParameters(vmId, SnapshotActionEnum.COMMIT);
-        List<DiskImage> diskImageList = createDiskImageList();
-        parameters.setImages(diskImageList);
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsWithinThresholds();
-        spyCommand = spy(new RestoreAllSnapshotsCommand<>(parameters, null));
         doReturn(true).when(spyCommand).performImagesChecks();
         doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();
         doReturn(vmValidator).when(spyCommand).createVmValidator(any(VM.class));
