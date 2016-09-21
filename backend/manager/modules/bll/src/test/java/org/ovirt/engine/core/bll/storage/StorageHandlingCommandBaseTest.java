@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -12,7 +11,9 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,7 +26,10 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
-    private StorageHandlingCommandBase<StoragePoolManagementParameter> cmd;
+    @Spy
+    @InjectMocks
+    private StorageHandlingCommandBase<StoragePoolManagementParameter> cmd =
+            new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(createStoragePool()));
 
     @Mock
     private StoragePoolDao storagePoolDao;
@@ -40,20 +44,14 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        storagePool = createStoragePool();
-
-        initCommand();
+        storagePool = cmd.getParameters().getStoragePool();
+        cmd.init();
 
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
 
         doReturn(storagePoolIsoMapDao).when(cmd).getStoragePoolIsoMapDao();
         when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.emptyList());
-    }
-
-    public void initCommand() {
-        cmd = spy(new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(storagePool)));
-        cmd.init();
     }
 
     @Test
