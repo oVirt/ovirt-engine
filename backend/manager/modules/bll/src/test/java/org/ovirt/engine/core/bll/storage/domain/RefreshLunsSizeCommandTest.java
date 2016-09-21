@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -11,7 +10,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -33,10 +34,15 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     private static final String STORAGE = "STORAGE";
-    private Guid sdId;
+    private Guid sdId = Guid.newGuid();
     private StorageDomain sd;
     private Guid spId;
-    private RefreshLunsSizeCommand<ExtendSANStorageDomainParameters> cmd;
+
+    @Spy
+    @InjectMocks
+    private RefreshLunsSizeCommand<ExtendSANStorageDomainParameters> cmd =
+            new RefreshLunsSizeCommand<>(
+                    new ExtendSANStorageDomainParameters(sdId, new ArrayList<>(Arrays.asList("1", "2"))), null);
 
     @Mock
     private StorageDomainStaticDao sdsDao;
@@ -46,7 +52,6 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        sdId = Guid.newGuid();
         StorageDomainStatic sdStatic = createStorageDomain();
         spId = Guid.newGuid();
 
@@ -61,8 +66,6 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         sp.setIsLocal(false);
         sp.setCompatibilityVersion(Version.v3_6);
 
-        cmd = spy(new RefreshLunsSizeCommand<>
-                (new ExtendSANStorageDomainParameters(sdId, new ArrayList<>(Arrays.asList("1", "2"))), null));
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
         doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();
