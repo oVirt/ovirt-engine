@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -16,7 +15,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -29,8 +30,12 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
 public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
 
-    private AddExistingBlockStorageDomainCommand<StorageDomainManagementParameter> command;
-    private StorageDomainManagementParameter parameters;
+    private StorageDomainManagementParameter parameters = new StorageDomainManagementParameter(getStorageDomain());
+
+    @Spy
+    @InjectMocks
+    private AddExistingBlockStorageDomainCommand<StorageDomainManagementParameter> command =
+            new AddExistingBlockStorageDomainCommand<>(parameters, null);
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -43,8 +48,6 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        parameters = new StorageDomainManagementParameter(getStorageDomain());
-        command = spy(new AddExistingBlockStorageDomainCommand<>(parameters, null));
         doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
 
         doNothing().when(command).addStorageDomainInDb();
