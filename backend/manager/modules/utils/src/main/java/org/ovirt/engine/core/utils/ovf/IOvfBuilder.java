@@ -22,4 +22,12 @@ public interface IOvfBuilder {
     void buildVirtualSystem();
 
     String getStringRepresentation();
+
+    default IOvfBuilder build() {
+        buildReference();
+        buildNetwork();
+        buildDisk();
+        buildVirtualSystem();
+        return this;
+    }
 }

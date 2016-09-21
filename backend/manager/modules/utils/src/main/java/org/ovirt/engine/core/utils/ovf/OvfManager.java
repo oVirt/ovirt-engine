@@ -24,17 +24,11 @@ public class OvfManager {
             OvfVmIconDefaultsProvider.class);
 
     public String exportVm(VM vm, List<DiskImage> images, Version version) {
-        OvfWriter ovf = new OvfVmWriter(vm, images, version);
-        buildOvf(ovf);
-
-        return ovf.getStringRepresentation();
+        return new OvfVmWriter(vm, images, version).build().getStringRepresentation();
     }
 
     public String exportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
-        OvfWriter ovf = new OvfTemplateWriter(vmTemplate, images, version);
-        buildOvf(ovf);
-
-        return ovf.getStringRepresentation();
+        return new OvfTemplateWriter(vmTemplate, images, version).build().getStringRepresentation();
     }
 
     public void importVm(String ovfstring,
@@ -46,7 +40,7 @@ public class OvfManager {
         OvfReader ovf = null;
         try {
             ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, interfaces);
-            buildOvf(ovf);
+            ovf.build();
             initIcons(vm.getStaticData());
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
@@ -66,7 +60,7 @@ public class OvfManager {
         OvfReader ovf = null;
         try {
             ovf = new OvfTemplateReader(new XmlDocument(ovfstring), vmTemplate, images, interfaces);
-            buildOvf(ovf);
+            ovf.build();
             initIcons(vmTemplate);
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
@@ -109,12 +103,5 @@ public class OvfManager {
 
     public boolean isOvfTemplate(String ovfstring) throws OvfReaderException {
         return new OvfParser(ovfstring).isTemplate();
-    }
-
-    private void buildOvf(IOvfBuilder builder) {
-        builder.buildReference();
-        builder.buildNetwork();
-        builder.buildDisk();
-        builder.buildVirtualSystem();
     }
 }
