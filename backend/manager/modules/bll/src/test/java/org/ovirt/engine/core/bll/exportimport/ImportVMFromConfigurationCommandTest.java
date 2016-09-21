@@ -24,6 +24,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -55,8 +56,8 @@ import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
 public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
-    private Guid vmId;
-    private Guid storageDomainId;
+    private Guid vmId = Guid.newGuid();
+    private static final Guid storageDomainId = new Guid("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
     private Guid storagePoolId;
     private Guid clusterId;
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
@@ -65,7 +66,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private Cluster cluster;
     private StoragePool storagePool;
 
-    private ImportVmFromConfigurationCommand<ImportVmParameters> cmd;
+    @Spy
+    @InjectMocks
+    private ImportVmFromConfigurationCommand<ImportVmParameters> cmd =
+            new ImportVmFromConfigurationCommand<>(createParametersWhenImagesExistOnTargetStorageDomain(), null);
+
     private ImportValidator validator;
 
     @ClassRule
@@ -101,15 +106,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() throws IOException {
-        vmId = Guid.newGuid();
-        storageDomainId = Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
         storagePoolId = Guid.newGuid();
         clusterId = Guid.newGuid();
 
-        ImportVmParameters parameters = createParametersWhenImagesExistOnTargetStorageDomain();
-        cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters,
-                macPoolPerCluster,
-                externalVmMacsFinder));
         doReturn(unregisteredOVFDataDao).when(cmd).getUnregisteredOVFDataDao();
         doReturn(cluster).when(cmd).getCluster();
         doReturn(Collections.emptyList()).when(cmd).getImages();
@@ -197,7 +196,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     private void initCommand(OvfEntityData resultOvfEntityData) {
         initUnregisteredOVFData(resultOvfEntityData);
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
         doReturn(mock(MacPool.class)).when(cmd).getMacPool();
         validator = spy(new ImportValidator(cmd.getParameters()));
         doReturn(validator).when(cmd).getImportValidator();
@@ -241,17 +239,5 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStoragePoolId(storagePoolId);
         return sd;
-    }
-
-    private class ImportVmParametersImportVmFromConfigurationCommandStub extends ImportVmFromConfigurationCommand<ImportVmParameters> {
-
-        public ImportVmParametersImportVmFromConfigurationCommandStub(ImportVmParameters parameters,
-                MacPoolPerCluster macPoolPerCluster,
-                ExternalVmMacsFinder externalVmMacsFinder) {
-
-            super(parameters, null);
-            this.macPoolPerCluster = macPoolPerCluster;
-            this.externalVmMacsFinder = externalVmMacsFinder;
-        }
     }
 }
