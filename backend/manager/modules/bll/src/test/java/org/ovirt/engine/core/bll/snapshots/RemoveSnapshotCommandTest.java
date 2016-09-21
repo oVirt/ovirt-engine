@@ -18,7 +18,9 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -44,7 +46,10 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     /** The command to test */
-    private RemoveSnapshotCommand<RemoveSnapshotParameters> cmd;
+    @Spy
+    @InjectMocks
+    private RemoveSnapshotCommand<RemoveSnapshotParameters> cmd =
+            new RemoveSnapshotCommand<>(new RemoveSnapshotParameters(Guid.newGuid(), Guid.newGuid()), null);
 
     @Mock
     private VmTemplateDao vmTemplateDao;
@@ -67,11 +72,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        Guid vmGuid = Guid.newGuid();
-        Guid snapGuid = Guid.newGuid();
-
-        RemoveSnapshotParameters params = new RemoveSnapshotParameters(snapGuid, vmGuid);
-        cmd = spy(new RemoveSnapshotCommand<>(params, null));
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
