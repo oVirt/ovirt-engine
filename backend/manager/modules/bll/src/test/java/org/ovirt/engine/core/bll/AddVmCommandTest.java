@@ -30,7 +30,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -229,7 +228,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         List<String> reasons = new ArrayList<>();
         final int domainSizeGB = 20;
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB);
-        cmd.postConstruct();
+        cmd.init();
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain(domainSizeGB))));
@@ -398,20 +397,18 @@ public class AddVmCommandTest extends BaseCommandTest {
     protected AddVmFromTemplateCommand<AddVmParameters> createVmFromTemplateCommand(VM vm) {
         AddVmParameters param = new AddVmParameters();
         param.setVm(vm);
-        AddVmFromTemplateCommand<AddVmParameters> concrete =
-                new AddVmFromTemplateCommand<>(param, CommandContext.createContext(param.getSessionId()));
+        AddVmFromTemplateCommand<AddVmParameters> concrete = new AddVmFromTemplateCommand<>(param, null);
         AddVmFromTemplateCommand<AddVmParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
         doReturn(createVmTemplate()).when(result).getVmTemplate();
         doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
         doNothing().when(result).initTemplateDisks();
-        doNothing().when(result).initUser();
         mockDaos(result);
         mockBackend(result);
         mockVmDeviceUtils(result);
         initCommandMethods(result);
         result.macPoolPerCluster = this.macPoolPerCluster;
-        result.postConstruct();
+        result.init();
         return result;
     }
 
@@ -617,8 +614,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     private AddVmCommand<AddVmParameters> createCommand(VM vm) {
         AddVmParameters param = new AddVmParameters(vm);
-        AddVmCommand<AddVmParameters> cmd =
-                new AddVmCommand<>(param, CommandContext.createContext(param.getSessionId()));
+        AddVmCommand<AddVmParameters> cmd = new AddVmCommand<>(param, null);
         cmd = spy(cmd);
         mockDaos(cmd);
         mockBackend(cmd);
@@ -626,7 +622,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(new Cluster()).when(cmd).getCluster();
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         doNothing().when(cmd).initTemplateDisks();
-        doNothing().when(cmd).initUser();
         generateStorageToDisksMap(cmd);
         initDestSDs(cmd);
         storageDomainValidator = mock(StorageDomainValidator.class);
