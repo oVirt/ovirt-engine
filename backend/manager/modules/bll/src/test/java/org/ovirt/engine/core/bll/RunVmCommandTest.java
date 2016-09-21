@@ -14,7 +14,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -32,7 +31,9 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -80,15 +81,14 @@ public class RunVmCommandTest extends BaseCommandTest {
             );
 
     @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
-    @Rule
     public VmHandlerRule vmHandlerRule = new VmHandlerRule();
 
     /**
      * The command under test.
      */
-    private RunVmCommand<RunVmParams> command;
+    @Spy
+    @InjectMocks
+    private RunVmCommand<RunVmParams> command = new RunVmCommand<>(new RunVmParams(Guid.newGuid()), null);
 
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
@@ -123,8 +123,6 @@ public class RunVmCommandTest extends BaseCommandTest {
     public static final String CPU_ID = "mock-cpu-id";
 
     public void mockBackend() {
-        doReturn(backend).when(command).getBackend();
-
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(true);
         when(vdsBrokerFrontend.runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
@@ -320,7 +318,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         doReturn(new Cluster()).when(command).getCluster();
-        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
         doNothing().when(command).updateCurrentCd(any(String.class));
         doReturn(snapshotDAO).when(command).getSnapshotDao();
@@ -330,19 +327,12 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        createCommand();
-    }
-
-    public void createCommand() {
         mockCpuFlagsManagerHandler();
         when(osRepository.isWindows(anyInt())).thenReturn(false);
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         updateVmHandler();
 
-        RunVmParams param = new RunVmParams(Guid.newGuid());
-        command = spy(new RunVmCommand<>(param, null));
-        mockIsoDomainListSynchronizer();
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();
         doNothing().when(command).initParametersForPassthroughVnics();
@@ -351,17 +341,12 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     private void mockCpuFlagsManagerHandler() {
-        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
     }
 
     private void updateVmHandler() {
         vmHandlerRule.updateCpuFlagsManagerHandler(cpuFlagsManagerHandler);
         vmHandlerRule.updateOsRepository(osRepository);
-    }
-
-    private void mockIsoDomainListSynchronizer() {
-        doReturn(isoDomainListSynchronizer).when(command).getIsoDomainListSynchronizer();
     }
 
     @Test
