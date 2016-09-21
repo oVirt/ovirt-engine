@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 
@@ -22,7 +21,7 @@ public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
         AddVmPoolParameters param =
                 new AddVmPoolParameters(vmPools, testVm, VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
-        return spy(new AddVmPoolCommand<>(param, CommandContext.createContext(param.getSessionId())));
+        return spy(new AddVmPoolCommand<>(param, null));
     }
 
     @Test

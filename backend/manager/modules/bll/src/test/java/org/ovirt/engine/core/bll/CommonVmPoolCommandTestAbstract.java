@@ -167,12 +167,11 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         setUpCommand();
         mockVds();
         mockDbDao();
-        command.postConstruct();
+        command.init();
     }
 
     protected void setUpCommand() {
         command = createCommand();
-        doNothing().when(command).initUser();
         doNothing().when(command).initTemplate();
         doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
         doReturn(true).when(command).verifyAddVm();

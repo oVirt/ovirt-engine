@@ -5,7 +5,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 
 public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
@@ -15,7 +14,7 @@ public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
         AddVmPoolParameters param = new AddVmPoolParameters(vmPools, testVm,
                 VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
-        return spy(new UpdateVmPoolCommand<>(param, CommandContext.createContext(param.getSessionId())));
+        return spy(new UpdateVmPoolCommand<>(param, null));
     }
 
     @Test
