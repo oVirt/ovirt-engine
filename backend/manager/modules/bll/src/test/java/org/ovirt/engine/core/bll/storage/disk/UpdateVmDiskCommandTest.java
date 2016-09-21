@@ -14,7 +14,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,7 +28,9 @@ import java.util.Map;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -143,18 +144,21 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private UpdateVmDiskCommand<VmDiskOperationParameterBase> command;
+    @Spy
+    @InjectMocks
+    private UpdateVmDiskCommand<VmDiskOperationParameterBase> command =
+            new UpdateVmDiskCommand<>(createParameters(), CommandContext.createContext(""));
 
     @Test
     public void validateFailedVMNotFound() throws Exception {
-        initializeCommand(createParameters());
+        initializeCommand();
         mockNullVm();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
     public void validateFailedVMHasNotDisk() throws Exception {
-        initializeCommand(createParameters());
+        initializeCommand();
         createNullDisk();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST)).
                 when(diskValidator).isDiskExists();
@@ -163,14 +167,13 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailedShareableDiskVolumeFormatUnsupported() throws Exception {
-        VmDiskOperationParameterBase parameters = createParameters();
         DiskImage disk = createShareableDisk(VolumeFormat.COW);
         StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.NFS);
-        parameters.setDiskInfo(disk);
+        command.getParameters().setDiskInfo(disk);
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
-        initializeCommand(parameters);
+        initializeCommand();
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
@@ -179,9 +182,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateFailedUpdateReadOnly() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-        VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setReadOnly(true);
-        initializeCommand(parameters, Collections.singletonList(createVm(VMStatus.Up)));
+        command.getParameters().getDiskInfo().setReadOnly(true);
+        initializeCommand(Collections.singletonList(createVm(VMStatus.Up)));
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
@@ -189,17 +191,16 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateFailedROVmAttachedToPool() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-        VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setReadOnly(true);
+        command.getParameters().getDiskInfo().setReadOnly(true);
         VM vm = createVm(VMStatus.Down);
         vm.setVmPoolId(Guid.newGuid());
-        initializeCommand(parameters, Collections.singletonList(vm));
+        initializeCommand(Collections.singletonList(vm));
 
         VmDevice vmDevice = stubVmDevice(diskImageGuid, vmId); // Default RO is false
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
 
         vmDevice.setIsReadOnly(true);
-        parameters.getDiskInfo().setReadOnly(false);
+        command.getParameters().getDiskInfo().setReadOnly(false);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
     }
@@ -210,31 +211,29 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         oldDisk.setWipeAfterDelete(true);
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
 
-        VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setWipeAfterDelete(false);
+        command.getParameters().getDiskInfo().setWipeAfterDelete(false);
         VM vm = createVm(VMStatus.Down);
         vm.setVmPoolId(Guid.newGuid());
-        initializeCommand(parameters, Collections.singletonList(vm));
+        initializeCommand(Collections.singletonList(vm));
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
 
         oldDisk.setWipeAfterDelete(false);
-        parameters.getDiskInfo().setWipeAfterDelete(true);
+        command.getParameters().getDiskInfo().setWipeAfterDelete(true);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
     }
 
     @Test
     public void validateFailedShareableDiskOnGlusterDomain() throws Exception {
-        VmDiskOperationParameterBase parameters = createParameters();
         DiskImage disk = createShareableDisk(VolumeFormat.RAW);
         StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.GLUSTERFS);
-        parameters.setDiskInfo(disk);
+        command.getParameters().setDiskInfo(disk);
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
-        initializeCommand(parameters);
+        initializeCommand();
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
@@ -243,11 +242,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void nullifiedSnapshotOnUpdateDiskToShareable() {
-        VmDiskOperationParameterBase parameters = createParameters();
         DiskImage disk = createShareableDisk(VolumeFormat.RAW);
-        parameters.setDiskInfo(disk);
         StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.NFS);
-        parameters.setDiskInfo(disk);
+        command.getParameters().setDiskInfo(disk);
 
         DiskImage oldDisk = createDiskImage();
         oldDisk.setVmSnapshotId(Guid.newGuid());
@@ -255,7 +252,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
 
-        initializeCommand(parameters);
+        initializeCommand();
         mockVdsCommandSetVolumeDescription();
         mockInterfaceList();
 
@@ -275,8 +272,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     private void validateMakeDiskBootable(boolean boot) {
-        VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskVmElement().setBoot(true);
+        command.getParameters().getDiskVmElement().setBoot(true);
 
         DiskImage otherDisk = new DiskImage();
         otherDisk.setId(Guid.newGuid());
@@ -285,7 +281,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
                 thenReturn(boot ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE) : ValidationResult.VALID);
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
-        initializeCommand(parameters);
+        initializeCommand();
 
         mockInterfaceList();
 
@@ -307,10 +303,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskImage disk = createDiskImage();
         disk.setReadOnly(false);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
-        VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setReadOnly(false);
-        parameters.getDiskInfo().setWipeAfterDelete(true);
-        initializeCommand(parameters, Collections.singletonList(createVm(status)));
+        command.getParameters().getDiskInfo().setReadOnly(false);
+        command.getParameters().getDiskInfo().setWipeAfterDelete(true);
+        initializeCommand(Collections.singletonList(createVm(status)));
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -329,31 +324,29 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskImage disk = createDiskImage();
         disk.setReadOnly(false);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
-        VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setReadOnly(false);
+        command.getParameters().getDiskInfo().setReadOnly(false);
         disk.setDescription(RandomUtils.instance().nextString(10));
-        initializeCommand(parameters, Collections.singletonList(createVm(status)));
+        initializeCommand(Collections.singletonList(createVm(status)));
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void clearAddressOnInterfaceChange() {
-        final VmDiskOperationParameterBase parameters = createParameters();
         // update new disk interface so it will be different than the old one
-        parameters.getDiskVmElement().setDiskInterface(DiskInterface.VirtIO);
+        command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.VirtIO);
 
         DiskImage diskFromDb = createDiskImage();
         doReturn(diskFromDb).when(diskDao).get(diskImageGuid);
 
-        initializeCommand(parameters);
+        initializeCommand();
 
         DiskVmElement dve = new DiskVmElement(diskImageGuid, vmId);
         dve.setDiskInterface(DiskInterface.IDE);
         doReturn(dve).when(command).getOldDiskVmElement();
 
         mockVdsCommandSetVolumeDescription();
-        assertNotSame(dve.getDiskInterface(), parameters.getDiskVmElement().getDiskInterface());
+        assertNotSame(dve.getDiskInterface(), command.getParameters().getDiskVmElement().getDiskInterface());
         command.executeVmCommand();
 
         // verify that device address was cleared exactly once
@@ -367,11 +360,10 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Test
     public void testUpdateReadOnlyPropertyOnChange() {
         // Disk should be updated as Read Only
-        final VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setReadOnly(true);
+        command.getParameters().getDiskInfo().setReadOnly(true);
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-        initializeCommand(parameters);
+        initializeCommand();
         stubVmDevice(diskImageGuid, vmId);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
@@ -383,10 +375,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testUpdateDiskInterfaceUnsupported() {
-        final VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskVmElement().setDiskInterface(DiskInterface.IDE);
+        command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.IDE);
 
-        initializeCommand(parameters);
+        initializeCommand();
         mockVdsCommandSetVolumeDescription();
 
         DiskVmElement dve = new DiskVmElement(diskImageGuid, vmId);
@@ -396,17 +387,16 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskVmElementValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(command.getDiskValidator(parameters.getDiskInfo())).thenReturn(diskValidator);
+        when(command.getDiskValidator(command.getParameters().getDiskInfo())).thenReturn(diskValidator);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
     @Test
     public void testDoNotUpdateDeviceWhenReadOnlyIsNotChanged() {
-        final VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setReadOnly(false);
+        command.getParameters().getDiskInfo().setReadOnly(false);
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-        initializeCommand(parameters);
+        initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
 
@@ -417,7 +407,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testFailInterfaceCanUpdateReadOnly() {
-        initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
+        initializeCommand();
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                 when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
@@ -427,7 +417,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testSucceedInterfaceCanUpdateReadOnly() {
-        initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
+        initializeCommand();
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(ValidationResult.VALID).when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
 
@@ -445,7 +435,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
 
-        initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), updatedDisk));
+        initializeCommand();
 
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED)).
                 when(diskValidator).isDiskUsedAsOvfStore();
@@ -459,9 +449,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskImage oldDisk = createDiskImage();
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
 
-        VmDiskOperationParameterBase parameters = createParameters();
-        ((DiskImage) parameters.getDiskInfo()).setSize(oldDisk.getSize() * 2);
-        initializeCommand(parameters);
+        ((DiskImage) command.getParameters().getDiskInfo()).setSize(oldDisk.getSize() * 2);
+        initializeCommand();
 
         assertTrue(command.validateCanResizeDisk());
     }
@@ -470,9 +459,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void testFaultyResize() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
-        VmDiskOperationParameterBase parameters = createParameters();
-        ((DiskImage) parameters.getDiskInfo()).setSize(parameters.getDiskInfo().getSize() / 2);
-        initializeCommand(parameters);
+        ((DiskImage) command.getParameters().getDiskInfo()).setSize(command.getParameters().getDiskInfo().getSize() / 2);
+        initializeCommand();
 
         assertFalse(command.validateCanResizeDisk());
         ValidateTestUtils.assertValidationMessages
@@ -486,9 +474,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
 
-        VmDiskOperationParameterBase parameters = createParameters();
-        ((DiskImage) parameters.getDiskInfo()).setSize(parameters.getDiskInfo().getSize() * 2);
-        initializeCommand(parameters);
+        ((DiskImage) command.getParameters().getDiskInfo()).setSize(command.getParameters().getDiskInfo().getSize() * 2);
+        initializeCommand();
 
         DiskImage oldDisk = createDiskImage();
         doReturn(oldDisk).when(command).getOldDisk();
@@ -501,12 +488,11 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
                 ("wrong failure", command, EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
     }
 
-    private void initializeCommand(VmDiskOperationParameterBase params) {
-        initializeCommand(params, Collections.singletonList(createVmStatusDown()));
+    private void initializeCommand() {
+        initializeCommand(Collections.singletonList(createVmStatusDown()));
     }
 
-    protected void initializeCommand(VmDiskOperationParameterBase params, List<VM> vms) {
-        command = spy(new UpdateVmDiskCommand<>(params, CommandContext.createContext(params.getSessionId())));
+    protected void initializeCommand(List<VM> vms) {
         mockGetForDisk(vms);
         mockGetVmsListForDisk(vms);
         doReturn(snapshotDao).when(command).getSnapshotDao();
@@ -563,35 +549,30 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testDiskAliasAdnDescriptionMetaDataShouldNotBeUpdated() {
-        // Disk should be updated as Read Only
-        final VmDiskOperationParameterBase parameters = createParameters();
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
-        initializeCommand(parameters);
+        initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
     }
 
     @Test
     public void testUpdateLockedDisk() {
-        final VmDiskOperationParameterBase parameters = createParameters();
         DiskImage disk = createDiskImage();
         disk.setImageStatus(ImageStatus.LOCKED);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
 
-        initializeCommand(parameters);
+        initializeCommand();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     @Test
     public void testDiskAliasAdnDescriptionMetaDataShouldBeUpdated() {
-        // Disk should be updated as Read Only
-        final VmDiskOperationParameterBase parameters = createParameters();
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
-        parameters.getDiskInfo().setDiskAlias("New Disk Alias");
-        parameters.getDiskInfo().setDiskDescription("New Disk Description");
-        initializeCommand(parameters);
+        command.getParameters().getDiskInfo().setDiskAlias("New Disk Alias");
+        command.getParameters().getDiskInfo().setDiskDescription("New Disk Description");
+        initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
         verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
@@ -599,12 +580,10 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testOnlyDiskAliasChangedMetaDataShouldBeUpdated() {
-        // Disk should be updated as Read Only
-        final VmDiskOperationParameterBase parameters = createParameters();
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
-        parameters.getDiskInfo().setDiskAlias("New Disk Alias");
-        initializeCommand(parameters);
+        command.getParameters().getDiskInfo().setDiskAlias("New Disk Alias");
+        initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
         verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
@@ -612,13 +591,10 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testOnlyDescriptionsChangedMetaDataShouldBeUpdated() {
-        // Disk should be updated as Read Only
-        final VmDiskOperationParameterBase parameters = createParameters();
-
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
-        parameters.getDiskInfo().setDiskDescription("New Disk Description");
-        initializeCommand(parameters);
+        command.getParameters().getDiskInfo().setDiskDescription("New Disk Description");
+        initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
         verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
@@ -638,11 +614,12 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         newDiskImage.setSize(SizeConverter.convert(5, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
-        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(new DiskVmElement(newDiskImage.getId(), vmId), newDiskImage);
+        command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
+        command.getParameters().setDiskInfo(newDiskImage);
         long diskExtendingDiffInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
-        initializeCommand(parameters);
+        initializeCommand();
 
         QuotaStorageConsumptionParameter consumptionParameter =
                 (QuotaStorageConsumptionParameter) command.getQuotaStorageConsumptionParameters().get(0);
@@ -660,9 +637,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskDao.get(any(Guid.class))).thenReturn(createDiskImage());
 
-        VmDiskOperationParameterBase params = createParameters();
-        ((DiskImage) params.getDiskInfo()).setQuotaId(quota.getId());
-        initializeCommand(params);
+        ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(quota.getId());
+        initializeCommand();
 
         StoragePool pool = mockStoragePool();
         command.setStoragePoolId(pool.getId());
@@ -681,9 +657,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskDao.get(any(Guid.class))).thenReturn(createDiskImage());
 
-        VmDiskOperationParameterBase params = createParameters();
-        ((DiskImage) params.getDiskInfo()).setQuotaId(Guid.newGuid());
-        initializeCommand(params);
+        ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(Guid.newGuid());
+        initializeCommand();
 
         doReturn(quotaDao).when(command).getQuotaDao();
         doCallRealMethod().when(command).validateQuota();
