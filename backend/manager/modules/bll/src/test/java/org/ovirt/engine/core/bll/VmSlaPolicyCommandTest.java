@@ -10,14 +10,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -55,16 +56,16 @@ public class VmSlaPolicyCommandTest {
 
     private DiskImage diskImage;
 
-    private VmSlaPolicyParameters parameters;
-    private VmSlaPolicyCommand<VmSlaPolicyParameters> command;
+    private VmSlaPolicyParameters parameters = new VmSlaPolicyParameters(VM_ID);
+
+    @Spy
+    @InjectMocks
+    private VmSlaPolicyCommand<VmSlaPolicyParameters> command = new VmSlaPolicyCommand<>(parameters, null);
 
     private Function<UpdateVmPolicyVDSParams, Boolean> vdsFunction;
 
     @Before
     public void setUp() {
-        parameters = new VmSlaPolicyParameters(VM_ID);
-        command = spy(new VmSlaPolicyCommand<>(parameters, null));
-
         doReturn(vmDao).when(command).getVmDao();
         doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
 
