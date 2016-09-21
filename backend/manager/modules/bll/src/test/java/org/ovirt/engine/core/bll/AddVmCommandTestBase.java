@@ -76,9 +76,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     protected static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final int NUM_DISKS_STORAGE_DOMAIN_1 = 3;
     private static final int NUM_DISKS_STORAGE_DOMAIN_2 = 3;
-    protected static final int REQUIRED_DISK_SIZE_GB = 10;
-    protected static final int AVAILABLE_SPACE_GB = 11;
-    protected static final int USED_SPACE_GB = 4;
     protected static final String CPU_ID = "0";
 
     static CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -195,16 +192,14 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     private static List<DiskImage> generateDisksList(int size) {
         List<DiskImage> disksList = new ArrayList<>();
         for (int i = 0; i < size; ++i) {
-            DiskImage diskImage = createDiskImage(REQUIRED_DISK_SIZE_GB);
+            DiskImage diskImage = createDiskImage();
             disksList.add(diskImage);
         }
         return disksList;
     }
 
-    protected static DiskImage createDiskImage(int size) {
+    protected static DiskImage createDiskImage() {
         DiskImage diskImage = new DiskImage();
-        diskImage.setSizeInGigabytes(size);
-        diskImage.setActualSize(size);
         diskImage.setId(Guid.newGuid());
         diskImage.setImageId(Guid.newGuid());
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID_1)));
@@ -254,7 +249,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         DiskImage image = createDiskImageTemplate();
         vmTemplate.getDiskTemplateMap().put(image.getImageId(), image);
         HashMap<Guid, DiskImage> diskImageMap = new HashMap<>();
-        DiskImage diskImage = createDiskImage(REQUIRED_DISK_SIZE_GB);
+        DiskImage diskImage = createDiskImage();
         diskImageMap.put(diskImage.getId(), diskImage);
         vmTemplate.setDiskImageMap(diskImageMap);
     }
@@ -276,8 +271,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     private static DiskImage createDiskImageTemplate() {
         DiskImage i = new DiskImage();
-        i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
-        i.setActualSizeInBytes(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
         i.setImageId(Guid.newGuid());
         i.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID_1)));
         return i;
@@ -287,39 +280,37 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         doReturn(true).when(cmd).canAddVm(anyListOf(String.class), anyString(), any(Guid.class), anyInt());
     }
 
-    protected void initializeMock(final int domainSizeGB) {
+    protected void initializeMock() {
         mockVmTemplateDaoReturnVmTemplate();
-        mockStorageDomainDaoGetForStoragePool(domainSizeGB);
-        mockStorageDomainDaoGetAllForStoragePool(domainSizeGB);
-        mockStorageDomainDaoGet(domainSizeGB);
+        mockStorageDomainDaoGetForStoragePool();
+        mockStorageDomainDaoGetAllForStoragePool();
+        mockStorageDomainDaoGet();
     }
 
     protected void mockVmTemplateDaoReturnVmTemplate() {
         when(vmTemplateDao.get(any(Guid.class))).thenReturn(vmTemplate);
     }
 
-    protected void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {
-        when(sdDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
+    protected void mockStorageDomainDaoGetForStoragePool() {
+        when(sdDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(createStorageDomain());
     }
 
-    protected void mockStorageDomainDaoGetAllForStoragePool(int domainSpaceGB) {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(createStorageDomain(domainSpaceGB)));
+    protected void mockStorageDomainDaoGetAllForStoragePool() {
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(createStorageDomain()));
     }
 
-    private void mockStorageDomainDaoGet(final int domainSpaceGB) {
+    private void mockStorageDomainDaoGet() {
         doAnswer(invocation -> {
-            StorageDomain result = createStorageDomain(domainSpaceGB);
+            StorageDomain result = createStorageDomain();
             result.setId((Guid) invocation.getArguments()[0]);
             return result;
         }).when(sdDao).get(any(Guid.class));
     }
 
-    protected StorageDomain createStorageDomain(int availableSpace) {
+    protected StorageDomain createStorageDomain() {
         StorageDomain sd = new StorageDomain();
         sd.setStorageDomainType(StorageDomainType.Master);
         sd.setStatus(StorageDomainStatus.Active);
-        sd.setAvailableDiskSize(availableSpace);
-        sd.setUsedDiskSize(USED_SPACE_GB);
         sd.setId(STORAGE_DOMAIN_ID_1);
         return sd;
     }

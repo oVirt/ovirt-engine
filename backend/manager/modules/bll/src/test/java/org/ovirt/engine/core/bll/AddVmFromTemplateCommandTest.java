@@ -103,7 +103,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockOsRepositoryGraphics(0, Version.v4_0, new Pair<>(GraphicsType.SPICE, DisplayType.qxl));
         mockGraphicsDevices(vm.getId());
 
-        mockStorageDomainDaoGetAllForStoragePool(AVAILABLE_SPACE_GB);
+        mockStorageDomainDaoGetAllForStoragePool();
         mockUninterestingMethods();
         mockGetAllSnapshots();
 
@@ -120,7 +120,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockStorageDomainDaoGetForStoragePool();
         mockVerifyAddVM();
         mockMaxPciSlots();
-        mockStorageDomainDaoGetAllForStoragePool(20);
+        mockStorageDomainDaoGetAllForStoragePool();
         mockUninterestingMethods();
         mockDisplayTypes(vm.getOs());
         mockGraphicsDevices(vm.getId());
@@ -147,7 +147,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockStorageDomainDaoGetForStoragePool();
         mockVerifyAddVM();
         mockMaxPciSlots();
-        mockStorageDomainDaoGetAllForStoragePool(20);
+        mockStorageDomainDaoGetAllForStoragePool();
         mockDisplayTypes(vm.getOs());
         mockUninterestingMethods();
         mockGetAllSnapshots();
@@ -167,10 +167,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
-    }
-
-    private void mockStorageDomainDaoGetForStoragePool() {
-        mockStorageDomainDaoGetForStoragePool(AVAILABLE_SPACE_GB);
     }
 
     private void mockVerifyAddVM() {

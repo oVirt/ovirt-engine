@@ -56,12 +56,11 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Test
     public void canAddVm() {
         List<String> reasons = new ArrayList<>();
-        final int domainSizeGB = 20;
         initCommandMethods();
         cmd.init();
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
-        assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain(domainSizeGB))));
+        assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain())));
     }
 
     @Test
@@ -121,13 +120,13 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testBeanValidations() {
-        initializeMock(1);
+        initializeMock();
         assertTrue(cmd.validateInputs());
     }
 
     @Test
     public void testPatternBasedNameFails() {
-        initializeMock(1);
+        initializeMock();
         cmd.getParameters().getVm().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
     }

@@ -119,7 +119,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
-        initializeMock(15);
+        initializeMock();
         cmd.getVm().setName("vm1");
         mockUninterestingMethods();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
@@ -127,7 +127,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void canAddCloneVmFromSnapshotNoConfiguration() {
-        initializeMock(15);
+        initializeMock();
         cmd.getVm().setName("vm1");
         mockUninterestingMethods();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
