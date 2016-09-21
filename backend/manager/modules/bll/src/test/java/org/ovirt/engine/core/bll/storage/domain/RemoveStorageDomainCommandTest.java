@@ -12,7 +12,9 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -41,7 +43,10 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
-    private RemoveStorageDomainCommand<RemoveStorageDomainParameters> command;
+    @Spy
+    @InjectMocks
+    private RemoveStorageDomainCommand<RemoveStorageDomainParameters> command =
+            new RemoveStorageDomainCommand<>(new RemoveStorageDomainParameters(Guid.newGuid()), null);
 
     @Mock
     private StorageDomainDao storageDomainDaoMock;
@@ -56,7 +61,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        Guid storageDomainID = Guid.newGuid();
+        Guid storageDomainID = command.getStorageDomainId();
         storageDomain = new StorageDomain();
         storageDomain.setId(storageDomainID);
         storageDomain.setStatus(StorageDomainStatus.Maintenance);
@@ -65,12 +70,9 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setId(vdsID);
 
-        RemoveStorageDomainParameters params = new RemoveStorageDomainParameters();
-        params.setVdsId(vdsID);
-        params.setStorageDomainId(storageDomainID);
-        params.setDoFormat(true);
-
-        command = spy(new RemoveStorageDomainCommand<>(params, null));
+        command.setVdsId(vdsID);
+        command.getParameters().setVdsId(vdsID);
+        command.getParameters().setDoFormat(true);
         command.init();
 
         doReturn(storageDomainDaoMock).when(command).getStorageDomainDao();
