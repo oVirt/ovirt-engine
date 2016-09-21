@@ -3,12 +3,13 @@ package org.ovirt.engine.core.bll.snapshots;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
@@ -23,7 +24,11 @@ import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link TryBackToAllSnapshotsOfVmCommand} class. */
 public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
-    private TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters> cmd;
+    @Spy
+    @InjectMocks
+    private TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters> cmd =
+            new TryBackToAllSnapshotsOfVmCommand<>(
+                    new TryBackToAllSnapshotsOfVmParameters(Guid.newGuid(), Guid.newGuid()), null);
 
     @Mock
     private SnapshotDao snapshotDao;
@@ -32,26 +37,20 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
     private VmDao vmDao;
 
     private VM vm;
-    Guid vmId;
 
     @Before
     public void setUp() {
         injectorRule.bind(MacPoolPerCluster.class, mock(MacPoolPerCluster.class));
 
-        vmId = Guid.newGuid();
         vm = new VM();
-        vm.setId(vmId);
-        when(vmDao.get(vmId)).thenReturn(vm);
+        vm.setId(cmd.getParameters().getVmId());
+        when(vmDao.get(cmd.getParameters().getVmId())).thenReturn(vm);
 
-        Guid snapshotId = Guid.newGuid();
         Snapshot snapshot = new Snapshot();
-        snapshot.setId(snapshotId);
-        snapshot.setVmId(vmId);
-        when(snapshotDao.get(snapshotId)).thenReturn(snapshot);
+        snapshot.setId(cmd.getParameters().getDstSnapshotId());
+        snapshot.setVmId(cmd.getParameters().getVmId());
+        when(snapshotDao.get(cmd.getParameters().getDstSnapshotId())).thenReturn(snapshot);
 
-        TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(vmId, snapshotId);
-
-        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params, null));
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         doReturn(vmDao).when(cmd).getVmDao();
@@ -65,8 +64,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateWithEmptySnapshotGuid() {
-        TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(vmId, Guid.Empty);
-        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params, null));
+        cmd.getParameters().setDstSnapshotId(Guid.Empty);
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         ValidateTestUtils.runAndAssertValidateFailure(cmd,

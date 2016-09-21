@@ -38,6 +38,10 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
         return dstSnapshotId;
     }
 
+    public void setDstSnapshotId(Guid dstSnapshotId) {
+        this.dstSnapshotId = dstSnapshotId;
+    }
+
     public boolean isRestoreMemory() {
         return restoreMemory;
     }
