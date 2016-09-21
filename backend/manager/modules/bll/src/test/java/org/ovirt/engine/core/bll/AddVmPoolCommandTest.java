@@ -4,13 +4,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
 
     @Mock

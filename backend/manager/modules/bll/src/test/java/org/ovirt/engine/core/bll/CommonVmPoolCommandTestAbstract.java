@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
@@ -162,7 +161,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     @Before
     public void setupMocks() {
-        MockitoAnnotations.initMocks(this);
         mockGlobalParameters();
         setUpCommand();
         mockVds();
