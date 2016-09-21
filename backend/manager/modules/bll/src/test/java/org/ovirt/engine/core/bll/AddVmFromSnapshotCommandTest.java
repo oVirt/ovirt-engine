@@ -6,162 +6,141 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
+public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>> {
 
-    /**
-     * The command under test.
-     */
-    protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> command;
+    private static final Guid SOURCE_SNAPSHOT_ID = Guid.newGuid();
 
+    @Spy
     private SnapshotsValidator snapshotsValidator;
 
     @Override
+    protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createCommand() {
+        initVM();
+        AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
+        param.setVm(vm);
+        param.setSourceSnapshotId(SOURCE_SNAPSHOT_ID);
+        param.setStorageDomainId(Guid.newGuid());
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = new AddVmFromSnapshotCommand<>(param, null);
+
+        cmd.setVm(vm);
+        cmd.setVmId(vm.getId());
+
+        return cmd;
+    }
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        generateStorageToDisksMap();
+        initDestSDs();
+        doReturn(snapshotsValidator).when(cmd).createSnapshotsValidator();
+    }
+
     @Test
     public void validateSpaceAndThreshold() {
-        initCommand();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
-        doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         mockGetAllSnapshots();
-        assertTrue(command.validateSpaceRequirements());
+        assertTrue(cmd.validateSpaceRequirements());
         verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForClonedDisks(anyList());
         verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
     }
 
-    @Override
     @Test
     public void validateSpaceNotEnough() throws Exception {
-        initCommand();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
-        doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         mockGetAllSnapshots();
-        assertFalse(command.validateSpaceRequirements());
+        assertFalse(cmd.validateSpaceRequirements());
         //The following is mocked to fail, should happen only once.
         verify(storageDomainValidator).hasSpaceForClonedDisks(anyList());
         verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
     }
 
-    @Override
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
-        initCommand();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
-        assertFalse(command.validateSpaceRequirements());
+        assertFalse(cmd.validateSpaceRequirements());
     }
 
     @Test
     public void testCannotDisableVirtioScsiCanDisableIDE() {
-        initCommand();
-        command.getParameters().setVirtioScsiEnabled(false);
+        cmd.getParameters().setVirtioScsiEnabled(false);
 
-        doReturn(snapshotsValidator).when(command).createSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).snapshotExists(any(Snapshot.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
 
         VM vm = new VM();
         Snapshot snapshot = new Snapshot();
-        doReturn(vm).when(command).getVmFromConfiguration();
-        doReturn(snapshot).when(command).getSnapshot();
+        doReturn(vm).when(cmd).getVmFromConfiguration();
+        doReturn(snapshot).when(cmd).getSnapshot();
 
         DiskImage disk = new DiskImage();
         disk.setPlugged(true);
         DiskVmElement dve = new DiskVmElement(disk.getId(), vm.getId());
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setDiskVmElements(Collections.singletonList(dve));
-        doReturn(Collections.singletonList(disk)).when(command).getAdjustedDiskImagesFromConfiguration();
+        doReturn(Collections.singletonList(disk)).when(cmd).getAdjustedDiskImagesFromConfiguration();
 
         VmValidator vmValidator = spy(new VmValidator(vm));
-        doReturn(vmValidator).when(command).createVmValidator(vm);
+        doReturn(vmValidator).when(cmd).createVmValidator(vm);
 
-        assertFalse(command.checkCanDisableVirtIoScsi());
+        assertFalse(cmd.checkCanDisableVirtIoScsi());
         ValidateTestUtils.assertValidationMessages("Validation should prevent disabling of virtIO-scsi.",
-                command,
+                cmd,
                 EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
 
         dve.setDiskInterface(DiskInterface.IDE);
-        assertTrue(command.checkCanDisableVirtIoScsi());
+        assertTrue(cmd.checkCanDisableVirtIoScsi());
     }
 
     @Test
     public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
-        final int domainSizeGB = 15;
-        final Guid sourceSnapshotId = Guid.newGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
+        initializeMock(15);
         cmd.getVm().setName("vm1");
-        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+        mockUninterestingMethods();
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
     public void canAddCloneVmFromSnapshotNoConfiguration() {
-        final int domainSizeGB = 15;
-        final Guid sourceSnapshotId = Guid.newGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
+        initializeMock(15);
         cmd.getVm().setName("vm1");
-        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        SnapshotsValidator sv = spy(new SnapshotsValidator());
-        doReturn(ValidationResult.VALID).when(sv).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(sv).when(cmd).createSnapshotsValidator();
-        when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
+        mockUninterestingMethods();
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
+        when(snapshotDao.get(SOURCE_SNAPSHOT_ID)).thenReturn(new Snapshot());
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
     }
 
-    private void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {
-        mockUninterestingMethods(cmd);
+    @Override
+    protected void mockUninterestingMethods() {
+        super.mockUninterestingMethods();
         doReturn(true).when(cmd).checkCpuSockets();
         doReturn(null).when(cmd).getVmFromConfiguration();
-    }
-
-    @Override
-    protected List<DiskImage> createDiskSnapshot(Guid diskId, int numOfImages) {
-        List<DiskImage> disksList = new ArrayList<>();
-        for (int i = 0; i < numOfImages; ++i) {
-            DiskImage diskImage = new DiskImage();
-            diskImage.setActive(false);
-            diskImage.setId(diskId);
-            diskImage.setImageId(Guid.newGuid());
-            diskImage.setParentId(Guid.newGuid());
-            diskImage.setImageStatus(ImageStatus.OK);
-            disksList.add(diskImage);
-        }
-        return disksList;
     }
 
     private void mockGetAllSnapshots() {
@@ -169,44 +148,6 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
             Object[] args = invocation.getArguments();
             DiskImage arg = (DiskImage) args[0];
             return createDiskSnapshot(arg.getId(), 3);
-        }).when(command).getAllImageSnapshots(any(DiskImage.class));
-    }
-
-    private void initCommand() {
-        final Guid sourceSnapshotId = Guid.newGuid();
-        command = setupCanAddVmFromSnapshotTests(0, sourceSnapshotId);
-        generateStorageToDisksMap(command);
-        initDestSDs(command);
-        storageDomainValidator = mock(StorageDomainValidator.class);
-        snapshotsValidator = mock(SnapshotsValidator.class);
-    }
-
-    private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,
-                                                                                              Guid sourceSnapshotId) {
-        AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
-        param.setVm(vm);
-        param.setSourceSnapshotId(sourceSnapshotId);
-        param.setStorageDomainId(Guid.newGuid());
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = new AddVmFromSnapshotCommand<>(param, null);
-        cmd = spy(cmd);
-        doReturn(vm).when(cmd).getVm();
-        doReturn(createVmTemplate()).when(cmd).getVmTemplate();
-        mockDaos(cmd);
-        doReturn(snapshotDao).when(cmd).getSnapshotDao();
-        mockBackend(cmd);
-        return cmd;
-    }
-
-    protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> setupCanAddVmFromSnapshotTests
-            (final int domainSizeGB, Guid sourceSnapshotId) {
-        VM vm = initializeMock(domainSizeGB);
-        initializeVmDaoMock(vm);
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm, sourceSnapshotId);
-        initCommandMethods(cmd);
-        return cmd;
-    }
-
-    private void initializeVmDaoMock(VM vm) {
-        when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        }).when(cmd).getAllImageSnapshots(any(DiskImage.class));
     }
 }

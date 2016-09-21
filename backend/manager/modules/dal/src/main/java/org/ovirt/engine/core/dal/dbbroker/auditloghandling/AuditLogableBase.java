@@ -221,7 +221,7 @@ public class AuditLogableBase extends TimeoutBase {
         return vmTemplateName;
     }
 
-    protected void setVmTemplateName(final String value) {
+    public void setVmTemplateName(final String value) {
         vmTemplateName = value;
     }
 
@@ -472,7 +472,7 @@ public class AuditLogableBase extends TimeoutBase {
         return vmTemplate;
     }
 
-    protected void setVmTemplate(final VmTemplate value) {
+    public void setVmTemplate(final VmTemplate value) {
         vmTemplate = value;
     }
 

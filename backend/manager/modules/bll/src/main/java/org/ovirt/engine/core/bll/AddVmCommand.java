@@ -1597,7 +1597,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      * This method override vm values with the instance type values
      * in case instance type is selected for this vm
      */
-    private void updateVmObject() {
+    protected void updateVmObject() {
         updateParametersVmFromInstanceType();
 
         // set vm interface source id to be the instance type, vm interface are taken from it
