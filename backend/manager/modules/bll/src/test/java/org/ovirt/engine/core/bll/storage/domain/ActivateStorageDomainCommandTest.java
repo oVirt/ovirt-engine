@@ -3,13 +3,14 @@ package org.ovirt.engine.core.bll.storage.domain;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -33,7 +34,10 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     @Mock
     private VdsDao vdsDao;
 
-    private ActivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd;
+    @Spy
+    @InjectMocks
+    private ActivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd =
+            new ActivateStorageDomainCommand<>(new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid()), null);
 
     @Test
     public void internalLockedAllowed() {
@@ -168,10 +172,6 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     private void createCommand() {
-        StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase();
-        params.setStorageDomainId(Guid.newGuid());
-        params.setStoragePoolId(Guid.newGuid());
-        cmd = spy(new ActivateStorageDomainCommand<>(params, null));
         cmd.init();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
