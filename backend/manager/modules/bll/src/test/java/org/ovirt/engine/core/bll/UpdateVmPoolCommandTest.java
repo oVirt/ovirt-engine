@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
@@ -13,7 +12,7 @@ public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
     protected UpdateVmPoolCommand<AddVmPoolParameters> createCommand() {
         AddVmPoolParameters param = new AddVmPoolParameters(vmPools, testVm, VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
-        return spy(new UpdateVmPoolCommand<>(param, null));
+        return new UpdateVmPoolCommand<>(param, null);
     }
 
     @Test

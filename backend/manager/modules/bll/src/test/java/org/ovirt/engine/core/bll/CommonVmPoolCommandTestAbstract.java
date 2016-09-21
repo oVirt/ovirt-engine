@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -69,12 +70,12 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid vmTemplateId = Guid.newGuid();
     protected Guid vmPoolId = Guid.newGuid();
-    private Cluster cluster;
-    protected VM testVm;
-    protected VmPool vmPools;
+    private Cluster cluster = mockCluster();
+    protected VM testVm = mockVm();
+    protected VmPool vmPools = mockVmPools();
     protected static int VM_COUNT = 5;
-    protected VmTemplate vmTemplate;
-    protected StoragePool storagePool;
+    protected VmTemplate vmTemplate = mockVmTemplate();
+    protected StoragePool storagePool = mockStoragePool();
     protected List<StorageDomain> storageDomainsList;
 
     @Mock
@@ -104,7 +105,8 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     /**
      * The command under test.
      */
-    protected CommonVmPoolCommand<AddVmPoolParameters> command;
+    @Spy
+    protected CommonVmPoolCommand<AddVmPoolParameters> command = createCommand();
 
     protected abstract CommonVmPoolCommand<AddVmPoolParameters> createCommand();
 
@@ -145,7 +147,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     @Before
     public void setupMocks() {
-        mockGlobalParameters();
         setUpCommand();
         mockVds();
         mockDbDao();
@@ -153,7 +154,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     protected void setUpCommand() {
-        command = createCommand();
         doNothing().when(command).initTemplate();
         doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
         doReturn(true).when(command).verifyAddVm();
@@ -165,13 +165,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         mockGetStorageDomainList(100, 100);
     }
 
-    private void mockGlobalParameters() {
-        testVm = mockVm();
-        vmPools = mockVmPools();
-        cluster = mockCluster();
-        vmTemplate = mockVmTemplate();
-        storagePool = mockStoragePool();
-    }
 
     protected void mockGetStorageDomainList
             (int availableDiskSizeFirstDomain, int availableDiskSizeSecondDomain) {
