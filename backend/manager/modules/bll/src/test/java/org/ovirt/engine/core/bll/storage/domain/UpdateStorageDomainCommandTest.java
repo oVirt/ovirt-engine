@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -12,7 +11,9 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -34,10 +35,14 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
  * A test case for the {@link UpdateStorageDomainCommand} class.
  */
 public class UpdateStorageDomainCommandTest extends BaseCommandTest {
-    private Guid sdId;
+    private Guid sdId = Guid.newGuid();
     private StorageDomain sd;
     private StoragePool sp;
-    private UpdateStorageDomainCommand<StorageDomainManagementParameter> cmd;
+
+    @Spy
+    @InjectMocks
+    private UpdateStorageDomainCommand<StorageDomainManagementParameter> cmd =
+            new UpdateStorageDomainCommand<>(new StorageDomainManagementParameter(createStorageDomain()), null);
 
     private static final int STORAGE_DOMAIN_NAME_LENGTH_LIMIT = 100;
 
@@ -50,13 +55,12 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        sdId = Guid.newGuid();
         StorageDomainStatic oldSdStatic = createStorageDomain();
-        StorageDomainStatic newSdStatic = createStorageDomain();
         Guid spId = Guid.newGuid();
 
         sd = new StorageDomain();
-        sd.setStorageStaticData(newSdStatic);
+        sd.setId(sdId);
+        sd.setStorageStaticData(cmd.getParameters().getStorageDomain());
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStoragePoolId(spId);
 
@@ -65,7 +69,6 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
         sp.setStatus(StoragePoolStatus.Up);
         sp.setIsLocal(false);
 
-        cmd = spy(new UpdateStorageDomainCommand<>(new StorageDomainManagementParameter(newSdStatic), null));
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
         doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();
