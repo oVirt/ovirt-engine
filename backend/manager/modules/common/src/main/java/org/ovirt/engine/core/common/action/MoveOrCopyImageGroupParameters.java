@@ -97,7 +97,7 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         return operation;
     }
 
-    private void setOperation(ImageOperation value) {
+    public void setOperation(ImageOperation value) {
         operation = value;
     }
 

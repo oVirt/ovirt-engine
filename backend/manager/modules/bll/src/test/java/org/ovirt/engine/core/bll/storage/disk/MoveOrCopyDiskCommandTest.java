@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,7 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -67,11 +68,18 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    protected MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> command;
+    @Spy
+    @InjectMocks
+    protected MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> command =
+            new MoveOrCopyDiskCommand<>(new MoveOrCopyImageGroupParameters(diskImageGuid,
+                    srcStorageId,
+                    destStorageId,
+                    ImageOperation.Move),
+                    null);
 
     @Test
     public void validateImageNotFound() throws Exception {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
@@ -80,7 +88,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateWrongDiskImageTypeTemplate() throws Exception {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initTemplateDiskImage();
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
@@ -90,7 +98,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void moveShareableDiskToGlusterDomain() {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(true);
@@ -103,7 +111,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void moveShareableDisk() {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         initVmDiskImage(true);
@@ -113,7 +121,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void moveDiskToGluster() {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(false);
@@ -124,7 +132,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateSameSourceAndDest() throws Exception {
         destStorageId = srcStorageId;
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
+        command.getParameters().setStorageDomainId(destStorageId);
+        command.setStorageDomainId(destStorageId);
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         initSrcStorageDomain();
@@ -136,7 +146,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateVmIsNotDown() throws Exception {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initSnapshotValidator();
         initVmDiskImage(false);
         mockGetVmsListForDisk();
@@ -152,7 +162,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateDiskIsLocked() throws Exception {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
@@ -164,7 +174,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateDiskIsOvfStore() throws Exception {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initVmDiskImage(false);
         command.getImage().setContentType(DiskContentType.OVF_STORE);
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -173,7 +183,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateTemplateImageIsLocked() throws Exception {
-        initializeCommand(ImageOperation.Copy, new DiskImage());
+        initializeCommand(new DiskImage());
+        command.getParameters().setOperation(ImageOperation.Copy);
+        command.init();
         initTemplateDiskImage();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(new VmTemplate()).when(command).getTemplateForImage();
@@ -186,7 +198,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateNotEnoughSpace() throws Exception {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initVmForSpace();
         initVmDiskImage(false);
         initSrcStorageDomain();
@@ -197,7 +209,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateEnoughSpace() throws Exception {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
@@ -209,7 +221,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void successVmInPreviewForAttachedSnapshot() {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
@@ -221,7 +233,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateVmInPreview() {
-        initializeCommand(ImageOperation.Move, new DiskImage());
+        initializeCommand(new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
@@ -233,21 +245,23 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailureOnMovingLunDisk() {
-        initializeCommand(ImageOperation.Move, new LunDisk());
+        initializeCommand(new LunDisk());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
     public void validateFailureOnCopyingLunDisk() {
-        initializeCommand(ImageOperation.Copy, new LunDisk());
+        initializeCommand(new LunDisk());
+        command.getParameters().setOperation(ImageOperation.Copy);
+        command.init();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
     public void validateFailureOnMovingVmLunDisk() {
-        initializeCommand(ImageOperation.Move, new LunDisk());
+        initializeCommand(new LunDisk());
         vmDevice.setSnapshotId(Guid.newGuid());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
@@ -255,14 +269,16 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailureOnMovingCinderDisk() {
-        initializeCommand(ImageOperation.Move, new CinderDisk());
+        initializeCommand(new CinderDisk());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
     public void validateFailureOnCopyingCinderDisk() {
-        initializeCommand(ImageOperation.Copy, new CinderDisk());
+        initializeCommand(new CinderDisk());
+        command.getParameters().setOperation(ImageOperation.Copy);
+        command.init();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
@@ -327,14 +343,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(destDomain).when(command).getStorageDomain();
     }
 
-    @SuppressWarnings("unchecked")
-    protected void initializeCommand(ImageOperation operation, Disk disk) {
-        command = spy(new MoveOrCopyDiskCommand<>(new MoveOrCopyImageGroupParameters(diskImageGuid,
-                srcStorageId,
-                destStorageId,
-                operation), null));
-
-
+    protected void initializeCommand(Disk disk) {
         doReturn(vmDao).when(command).getVmDao();
         doReturn(diskDao).when(command).getDiskDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
