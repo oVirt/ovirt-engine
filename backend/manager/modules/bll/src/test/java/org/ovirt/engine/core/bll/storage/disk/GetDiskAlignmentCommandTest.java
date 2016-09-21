@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -9,7 +8,9 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
@@ -56,19 +57,21 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
     @Mock
     private ClusterDao clusterDao;
 
-    private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd;
-
-    private Guid diskId;
+    private Guid diskId = Guid.newGuid();
     private Guid groupId;
     private DiskImage disk;
     private VM vm;
     private StoragePool storagePool;
     private StorageDomain storageDomain;
 
+    @Spy
+    @InjectMocks
+    private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd =
+            new GetDiskAlignmentCommand<>(new GetDiskAlignmentParameters(diskId), null);
+
     @Before
     public void setUp() {
         Guid vmId = Guid.newGuid();
-        diskId = Guid.newGuid();
         Guid poolId = Guid.newGuid();
         Guid storageDomainId = Guid.newGuid();
         groupId = Guid.newGuid();
@@ -108,8 +111,6 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         when(spDao.get(poolId)).thenReturn(storagePool);
         when(clusterDao.get(groupId)).thenReturn(cluster);
         when(storageDomainStaticDao.get(storageDomainId)).thenReturn(storageDomain.getStorageStaticData());
-
-        cmd = spy(new GetDiskAlignmentCommand<>(new GetDiskAlignmentParameters(diskId), null));
 
         doReturn(disk).when(cmd).getDisk();
         doReturn(vdsDao).when(cmd).getVdsDao();
