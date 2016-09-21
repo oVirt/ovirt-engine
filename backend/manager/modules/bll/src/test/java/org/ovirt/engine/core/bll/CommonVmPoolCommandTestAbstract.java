@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anySetOf;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -24,7 +23,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -42,15 +40,10 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -83,15 +76,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     protected VmTemplate vmTemplate;
     protected StoragePool storagePool;
     protected List<StorageDomain> storageDomainsList;
-
-    @Mock
-    protected VDSBrokerFrontend vdsBrokerFrontend;
-
-    @Mock
-    protected BackendInternal backend;
-
-    @Mock
-    protected DbFacade dbFacada;
 
     @Mock
     protected ClusterDao clusterDao;
@@ -179,7 +163,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     private void mockVds() {
         mockGetStorageDomainList(100, 100);
-        mockGetImagesList();
     }
 
     private void mockGlobalParameters() {
@@ -188,13 +171,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         cluster = mockCluster();
         vmTemplate = mockVmTemplate();
         storagePool = mockStoragePool();
-    }
-
-    private void mockGetImagesList() {
-        VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setReturnValue(new ArrayList<Guid>());
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GetImagesList), any(VDSParametersBase.class)))
-                .thenReturn(returnValue);
     }
 
     protected void mockGetStorageDomainList
@@ -221,7 +197,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private void mockVmNetworkInterfaceDao() {
-        when(dbFacada.getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDao);
         when(vmNetworkInterfaceDao.getAllForTemplate(vmTemplateId)).thenReturn(Collections.emptyList());
     }
 
