@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,8 +45,16 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UpdateStorageServerConnectionCommandTest extends StorageServerConnectionTestCommon {
-    private UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
+public class UpdateStorageServerConnectionCommandTest extends
+        StorageServerConnectionTestCommon<UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>> {
+
+    @Override
+    protected UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase> createCommand() {
+        parameters = new StorageServerConnectionParametersBase();
+        parameters.setVdsId(Guid.newGuid());
+
+        return new UpdateStorageServerConnectionCommand<>(parameters, null);
+    }
 
     private StorageServerConnections oldNFSConnection = null;
     private StorageServerConnections oldPosixConnection = null;
@@ -72,7 +79,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
 
 
     @Before
-    public void prepareParams() {
+    public void prepareMembers() {
 
         oldNFSConnection =
                 createNFSConnection(
@@ -89,17 +96,13 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         "nfs",
                         "timeo=30");
 
-        prepareCommand();
+        prepareMocks();
     }
 
-    private void prepareCommand() {
-        parameters = new StorageServerConnectionParametersBase();
-        parameters.setVdsId(Guid.newGuid());
-
-        command = spy(new UpdateStorageServerConnectionCommand<>(parameters, null));
+    private void prepareMocks() {
         doReturn(storageConnDao).when(command).getStorageConnDao();
-        doReturn(storageDomainDynamicDao).when((UpdateStorageServerConnectionCommand) command).getStorageDomainDynamicDao();
-        doReturn(storagePoolIsoMapDao).when((UpdateStorageServerConnectionCommand) command).getStoragePoolIsoMapDao();
+        doReturn(storageDomainDynamicDao).when(command).getStorageDomainDynamicDao();
+        doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
         doReturn(lunDao).when(command).getLunDao();
         doReturn(vmDao).when(command).getVmDao();
@@ -701,11 +704,6 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
 
     private void initDomainListForConnection(String connId, StorageDomain... domains) {
         doReturn(Arrays.asList(domains)).when(command).getStorageDomainsByConnId(connId);
-    }
-
-    @Override
-    protected ConnectStorageToVdsCommand getCommand() {
-        return command;
     }
 
     @Override

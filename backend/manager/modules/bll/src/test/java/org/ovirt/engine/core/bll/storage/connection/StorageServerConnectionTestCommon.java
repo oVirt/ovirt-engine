@@ -4,6 +4,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -14,9 +16,16 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class StorageServerConnectionTestCommon extends BaseCommandTest {
+public abstract class StorageServerConnectionTestCommon
+        <T extends ConnectStorageToVdsCommand<StorageServerConnectionParametersBase>> extends BaseCommandTest {
 
     protected StorageServerConnectionParametersBase parameters;
+
+    @Spy
+    @InjectMocks
+    protected T command = createCommand();
+
+    protected abstract T createCommand();
 
     private Guid getConnectionId() {
         return createConnectionWithId() ? Guid.newGuid() : null;
@@ -77,8 +86,7 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                 createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "3650", "user1", "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        ValidateTestUtils.runAndAssertValidateFailure(getCommand(),
-                EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
     }
 
     @Test
@@ -87,7 +95,7 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                 createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "", "user1", "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        ValidateTestUtils.runAndAssertValidateFailure(getCommand(),
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
@@ -97,7 +105,7 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                 createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "-3650", "user1", "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        ValidateTestUtils.runAndAssertValidateFailure(getCommand(),
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
@@ -107,7 +115,7 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                 createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "abc", "user1", "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        ValidateTestUtils.runAndAssertValidateFailure(getCommand(),
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
@@ -119,7 +127,7 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                         null,
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
-        ValidateTestUtils.runAndAssertValidateFailure(getCommand(),
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
     }
 
@@ -130,8 +138,8 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                         StorageType.NFS, "nfs", "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(new ValidationResult(EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY)).when(getCommand()).validateMountOptions();
-        ValidateTestUtils.runAndAssertValidateFailure(getCommand(), EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY);
+        doReturn(new ValidationResult(EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY)).when(command).validateMountOptions();
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY);
     }
 
     @Test
@@ -141,11 +149,10 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                         StorageType.NFS, "nfs", "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(ValidationResult.VALID).when(getCommand()).validateMountOptions();
-        when(getCommand().getStorageConnDao().get(newPosixConnection.getId())).thenReturn(newPosixConnection);
-        ValidateTestUtils.runAndAssertValidateSuccess(getCommand());
+        doReturn(ValidationResult.VALID).when(command).validateMountOptions();
+        when(command.getStorageConnDao().get(newPosixConnection.getId())).thenReturn(newPosixConnection);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
-    protected abstract ConnectStorageToVdsCommand getCommand();
     protected abstract boolean createConnectionWithId();
 }

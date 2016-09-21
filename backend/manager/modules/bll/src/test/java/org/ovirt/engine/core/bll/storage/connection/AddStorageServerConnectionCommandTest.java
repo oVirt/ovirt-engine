@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -27,17 +26,21 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddStorageServerConnectionCommandTest extends StorageServerConnectionTestCommon {
-    private AddStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
+public class AddStorageServerConnectionCommandTest extends
+        StorageServerConnectionTestCommon<AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>> {
 
     @Mock
     StorageServerConnectionDao storageConnDao;
 
-    @Before
-    public void prepareParams() {
+    @Override
+    protected AddStorageServerConnectionCommand<StorageServerConnectionParametersBase> createCommand() {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
-        command = spy(new AddStorageServerConnectionCommand<>(parameters, null));
+        return new AddStorageServerConnectionCommand<>(parameters, null);
+    }
+
+    @Before
+    public void prepareMocks() {
         doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
     }
@@ -221,11 +224,6 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
 
         boolean isExists = command.isConnWithSameDetailsExists(newLocalConnection, newLocalConnectionStoragePoolId);
         assertFalse(isExists);
-    }
-
-    @Override
-    protected ConnectStorageToVdsCommand getCommand() {
-        return command;
     }
 
     @Override
