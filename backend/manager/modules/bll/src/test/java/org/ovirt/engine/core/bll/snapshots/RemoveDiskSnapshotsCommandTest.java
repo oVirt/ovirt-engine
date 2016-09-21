@@ -12,7 +12,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -31,8 +33,9 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /** A test case for the {@link RemoveDiskSnapshotsCommand} class. */
 public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
-
-    private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> cmd;
+    @Spy
+    @InjectMocks
+    private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> cmd = createCommand();
 
     @Mock
     private DiskImageDao diskImageDao;
@@ -53,15 +56,17 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
     private static final Guid IMAGE_ID_1 = Guid.newGuid();
     private static final Guid IMAGE_ID_2 = Guid.newGuid();
 
-    @Before
-    public void setUp() {
+    private static RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> createCommand() {
         RemoveDiskSnapshotsParameters params = new RemoveDiskSnapshotsParameters(
                 new ArrayList<>(Arrays.asList(IMAGE_ID_1, IMAGE_ID_2)));
         Guid vmGuid = Guid.newGuid();
         params.setContainerId(vmGuid);
 
-        cmd = spy(new RemoveDiskSnapshotsCommand<>(params, null));
+        return new RemoveDiskSnapshotsCommand<>(params, null);
+    }
 
+    @Before
+    public void setUp() {
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
         doReturn(snapshotsValidator).when(cmd).getSnapshotsValidator();
