@@ -27,15 +27,12 @@ import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
-import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -139,34 +136,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
 
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
-    }
-
-    @Test
-    public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
-        final int domainSizeGB = 15;
-        final Guid sourceSnapshotId = Guid.newGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
-        cmd.getVm().setName("vm1");
-        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
-    }
-
-    @Test
-    public void canAddCloneVmFromSnapshotNoConfiguration() {
-        final int domainSizeGB = 15;
-        final Guid sourceSnapshotId = Guid.newGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
-        cmd.getVm().setName("vm1");
-        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        SnapshotsValidator sv = spy(new SnapshotsValidator());
-        doReturn(ValidationResult.VALID).when(sv).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(sv).when(cmd).createSnapshotsValidator();
-        when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
     }
 
     @Test

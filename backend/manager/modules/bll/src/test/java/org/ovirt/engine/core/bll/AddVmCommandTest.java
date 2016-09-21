@@ -33,7 +33,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
-import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -229,41 +228,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         assertFalse(command.validateSpaceRequirements());
     }
 
-    protected void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {
-        mockUninterestingMethods(cmd);
-        doReturn(true).when(cmd).checkCpuSockets();
-        doReturn(null).when(cmd).getVmFromConfiguration();
-    }
-
-    private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,
-            Guid sourceSnapshotId) {
-        AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
-        param.setVm(vm);
-        param.setSourceSnapshotId(sourceSnapshotId);
-        param.setStorageDomainId(Guid.newGuid());
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = new AddVmFromSnapshotCommand<>(param, null);
-        cmd = spy(cmd);
-        doReturn(vm).when(cmd).getVm();
-        doReturn(createVmTemplate()).when(cmd).getVmTemplate();
-        mockDaos(cmd);
-        doReturn(snapshotDao).when(cmd).getSnapshotDao();
-        mockBackend(cmd);
-        return cmd;
-    }
-
-    protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> setupCanAddVmFromSnapshotTests
-            (final int domainSizeGB, Guid sourceSnapshotId) {
-        VM vm = initializeMock(domainSizeGB);
-        initializeVmDaoMock(vm);
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm, sourceSnapshotId);
-        initCommandMethods(cmd);
-        return cmd;
-    }
-
-    private void initializeVmDaoMock(VM vm) {
-        when(vmDao.get(any(Guid.class))).thenReturn(vm);
-    }
-
     private void initializeVmStaticDaoMock(VM vm) {
         when(vmStaticDao.get(any(Guid.class))).thenReturn(vm.getStaticData());
     }
@@ -285,7 +249,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
     }
 
-    private VM initializeMock(final int domainSizeGB) {
+    protected VM initializeMock(final int domainSizeGB) {
         mockVmTemplateDaoReturnVmTemplate();
         mockStorageDomainDaoGetForStoragePool(domainSizeGB);
         mockStorageDomainDaoGet(domainSizeGB);

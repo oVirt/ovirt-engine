@@ -11,6 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,6 +115,40 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         assertTrue(command.checkCanDisableVirtIoScsi());
     }
 
+    @Test
+    public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
+        final int domainSizeGB = 15;
+        final Guid sourceSnapshotId = Guid.newGuid();
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
+                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
+        cmd.getVm().setName("vm1");
+        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
+        ValidateTestUtils.runAndAssertValidateFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+    }
+
+    @Test
+    public void canAddCloneVmFromSnapshotNoConfiguration() {
+        final int domainSizeGB = 15;
+        final Guid sourceSnapshotId = Guid.newGuid();
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
+                setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
+        cmd.getVm().setName("vm1");
+        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
+        SnapshotsValidator sv = spy(new SnapshotsValidator());
+        doReturn(ValidationResult.VALID).when(sv).vmNotDuringSnapshot(any(Guid.class));
+        doReturn(sv).when(cmd).createSnapshotsValidator();
+        when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
+        ValidateTestUtils.runAndAssertValidateFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
+    }
+
+    private void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {
+        mockUninterestingMethods(cmd);
+        doReturn(true).when(cmd).checkCpuSockets();
+        doReturn(null).when(cmd).getVmFromConfiguration();
+    }
+
     @Override
     protected List<DiskImage> createDiskSnapshot(Guid diskId, int numOfImages) {
         List<DiskImage> disksList = new ArrayList<>();
@@ -144,5 +179,34 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         initDestSDs(command);
         storageDomainValidator = mock(StorageDomainValidator.class);
         snapshotsValidator = mock(SnapshotsValidator.class);
+    }
+
+    private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,
+                                                                                              Guid sourceSnapshotId) {
+        AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
+        param.setVm(vm);
+        param.setSourceSnapshotId(sourceSnapshotId);
+        param.setStorageDomainId(Guid.newGuid());
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = new AddVmFromSnapshotCommand<>(param, null);
+        cmd = spy(cmd);
+        doReturn(vm).when(cmd).getVm();
+        doReturn(createVmTemplate()).when(cmd).getVmTemplate();
+        mockDaos(cmd);
+        doReturn(snapshotDao).when(cmd).getSnapshotDao();
+        mockBackend(cmd);
+        return cmd;
+    }
+
+    protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> setupCanAddVmFromSnapshotTests
+            (final int domainSizeGB, Guid sourceSnapshotId) {
+        VM vm = initializeMock(domainSizeGB);
+        initializeVmDaoMock(vm);
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm, sourceSnapshotId);
+        initCommandMethods(cmd);
+        return cmd;
+    }
+
+    private void initializeVmDaoMock(VM vm) {
+        when(vmDao.get(any(Guid.class))).thenReturn(vm);
     }
 }
