@@ -8,14 +8,15 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -69,20 +70,22 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
     private VDS vds;
     private StoragePoolIsoMap map;
 
+    @Spy
+    @InjectMocks
+    private AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters> cmd =
+            new AttachStorageDomainToPoolCommand<>(
+                    new AttachStorageDomainToPoolParameters(Guid.newGuid(), Guid.newGuid()),
+                    CommandContext.createContext(""));
+
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     @Test
     public void statusSetInMap() {
-        Guid storageDomainId = Guid.newGuid();
-        Guid poolId = Guid.newGuid();
-        AttachStorageDomainToPoolParameters params =
-                new AttachStorageDomainToPoolParameters(storageDomainId, poolId);
-        AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters> cmd =
-                spy(new AttachStorageDomainToPoolCommand<>(
-                        params, CommandContext.createContext(params.getSessionId())));
-
         cmd.init();
+
+        Guid storageDomainId = cmd.getStorageDomainId();
+        Guid poolId = cmd.getStoragePoolId();
 
         doNothing().when(cmd).attemptToActivateDomain();
         doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
@@ -92,7 +95,6 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
-        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
 
         StoragePool pool = new StoragePool();
         pool.setId(poolId);
@@ -103,7 +105,6 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         when(diskImageDao.getAllForStorageDomain(any(Guid.class))).thenReturn(Collections.emptyList());
         when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
         doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
-        doReturn(backendInternal).when(cmd).getBackend();
         VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
         vdcReturnValue.setSucceeded(true);
         when(backendInternal.runInternalAction(any(VdcActionType.class),
