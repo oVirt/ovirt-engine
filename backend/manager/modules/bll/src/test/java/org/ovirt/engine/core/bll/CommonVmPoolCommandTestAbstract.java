@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -171,6 +172,8 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     protected void setUpCommand() {
         command = createCommand();
+        doNothing().when(command).initUser();
+        doNothing().when(command).initTemplate();
         doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
         doReturn(true).when(command).verifyAddVm();
         doReturn(true).when(command).setAndValidateDiskProfiles();

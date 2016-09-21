@@ -22,19 +22,7 @@ public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
         AddVmPoolParameters param =
                 new AddVmPoolParameters(vmPools, testVm, VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
-        AddVmPoolCommand<AddVmPoolParameters> command =
-                spy(new AddVmPoolCommand<AddVmPoolParameters>(
-                        param, CommandContext.createContext(param.getSessionId())) {
-                    @Override
-                    protected void initUser() {
-                    }
-
-                    @Override
-                    protected void initTemplate() {
-                        // do nothing - is done here and not with mockito since it's called in the ctor
-                    }
-                });
-        return command;
+        return spy(new AddVmPoolCommand<>(param, CommandContext.createContext(param.getSessionId())));
     }
 
     @Test
