@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -10,7 +9,9 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -46,9 +47,14 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
     @Mock
     private DiskImageDao diskImageDao;
 
-    private RemoveDiskCommand<RemoveDiskParameters> cmd;
+    private Guid diskId = Guid.newGuid();
     private Disk disk;
     private VM vm;
+
+    @Spy
+    @InjectMocks
+    private RemoveDiskCommand<RemoveDiskParameters> cmd =
+            new RemoveDiskCommand<>(new RemoveDiskParameters(diskId), null);
 
     @Before
     public void setUp() {
@@ -59,24 +65,21 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         vm = new VM();
         vm.setId(vmId);
 
-        VmDeviceId vmDeviceId = new VmDeviceId(disk.getId(), vmId);
+        VmDeviceId vmDeviceId = new VmDeviceId(diskId, vmId);
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
         vmDevice.setIsPlugged(true);
 
-        when(vmDao.getVmsListForDisk(disk.getId(), Boolean.TRUE)).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getVmsListForDisk(diskId, Boolean.TRUE)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
 
-        RemoveDiskParameters params = new RemoveDiskParameters(disk.getId());
-
-        cmd = spy(new RemoveDiskCommand<>(params, null));
         doReturn(disk).when(cmd).getDisk();
         doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
         doReturn(vmDao).when(cmd).getVmDao();
     }
 
     protected void setupDisk() {
-        disk.setId(Guid.newGuid());
+        disk.setId(diskId);
         disk.setVmEntityType(VmEntityType.VM);
     }
 
