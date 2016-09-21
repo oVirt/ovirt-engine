@@ -11,8 +11,7 @@ public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
 
     @Override
     protected UpdateVmPoolCommand<AddVmPoolParameters> createCommand() {
-        AddVmPoolParameters param = new AddVmPoolParameters(vmPools, testVm,
-                VM_COUNT);
+        AddVmPoolParameters param = new AddVmPoolParameters(vmPools, testVm, VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
         return spy(new UpdateVmPoolCommand<>(param, null));
     }
