@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -12,8 +11,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -36,11 +38,16 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
     @Mock
     private DiskImageDao diskImageDaoMock;
 
-    private ScanStorageForUnregisteredDisksCommand<StorageDomainParametersBase> cmd;
+    @Spy
+    @InjectMocks
+    private ScanStorageForUnregisteredDisksCommand<StorageDomainParametersBase> cmd =
+            new ScanStorageForUnregisteredDisksCommand<>
+                    (new StorageDomainParametersBase(Guid.newGuid(), Guid.newGuid()), null);
 
     private DiskImage diskImageForTest = new DiskImage();
     private Guid storageId = Guid.newGuid();
 
+    @Before
     public void mockCommand() throws IOException, OvfReaderException {
         mockCommandParameters();
         setUpCommandEntities();
@@ -71,8 +78,6 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
 
     @Test
     public void testExecuteGetAllEntitiesCommand() throws OvfReaderException, IOException {
-        createCommand();
-        mockCommand();
         cmd.executeCommand();
         assertTrue("return value should be true", cmd.getReturnValue().getSucceeded());
     }
@@ -102,12 +107,5 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
         when(unregisteredOVFDataDaoMock.getAllForStorageDomainByEntityType(storageId, null)).thenReturn(allEntities);
         doNothing().when(cmd).removeUnregisteredDisks();
         doNothing().when(cmd).saveUnregisterDisk(anyObject());
-    }
-
-    private void createCommand() {
-        StorageDomainParametersBase params = new StorageDomainParametersBase();
-        params.setStorageDomainId(Guid.newGuid());
-        params.setStoragePoolId(Guid.newGuid());
-        cmd = spy(new ScanStorageForUnregisteredDisksCommand<>(params, null));
     }
 }
