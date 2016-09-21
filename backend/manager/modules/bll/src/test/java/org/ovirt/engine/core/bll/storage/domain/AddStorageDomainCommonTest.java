@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -11,7 +10,9 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -38,7 +39,10 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 public class AddStorageDomainCommonTest extends BaseCommandTest {
 
-    private AddStorageDomainCommon<StorageDomainManagementParameter> cmd;
+    @Spy
+    @InjectMocks
+    private AddStorageDomainCommon<StorageDomainManagementParameter> cmd =
+            new AddStorageDomainCommon<>(new StorageDomainManagementParameter(), null);
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -92,11 +96,12 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
 
         when(sscDao.get(connId.toString())).thenReturn(conn);
 
-        StorageDomainManagementParameter params = new StorageDomainManagementParameter(sd);
-        params.setVdsId(vdsId);
-
-        cmd = spy(new AddStorageDomainCommon<>(params, null));
+        cmd.getParameters().setStorageDomainId(sd.getId());
+        cmd.getParameters().setStorageDomain(sd);
+        cmd.getParameters().setVdsId(vdsId);
+        cmd.setVdsId(vdsId);
         cmd.init();
+
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(sdDao).when(cmd).getStorageDomainDao();
         doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();

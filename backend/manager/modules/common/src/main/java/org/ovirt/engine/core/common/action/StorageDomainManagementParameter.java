@@ -14,7 +14,7 @@ public class StorageDomainManagementParameter extends StorageDomainParametersBas
         return privateStorageDomain;
     }
 
-    private void setStorageDomain(StorageDomainStatic value) {
+    public void setStorageDomain(StorageDomainStatic value) {
         privateStorageDomain = value;
     }
 
