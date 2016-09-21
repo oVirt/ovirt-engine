@@ -15,6 +15,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +108,11 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
+            mockConfig(ConfigValues.IsMigrationSupported, Version.v4_0, migrationMap),
+            mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
+    );
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
@@ -178,7 +183,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockClusterDaoReturnCluster();
         mockVmTemplateDaoReturnVmTemplate();
         mockVerifyAddVM(cmd);
-        mockConfig();
         mockMaxPciSlots();
 
         mockOsRepository();
@@ -272,7 +276,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockStorageDomainDaoGetForStoragePool();
         mockVmTemplateDaoReturnVmTemplate();
         mockVerifyAddVM(cmd);
-        mockConfig();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
         mockUninterestingMethods(cmd);
@@ -352,7 +355,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockStorageDomainDaoGetForStoragePool();
         mockVmTemplateDaoReturnVmTemplate();
         mockVerifyAddVM(cmd);
-        mockConfig();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
         mockDisplayTypes(vm.getOs());
@@ -466,7 +468,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockVmTemplateDaoReturnVmTemplate();
         mockStorageDomainDaoGetForStoragePool(domainSizeGB);
         mockStorageDomainDaoGet(domainSizeGB);
-        mockConfig();
         return createVm();
     }
 
@@ -591,12 +592,6 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     private static void mockVerifyAddVM(AddVmCommand<?> cmd) {
         doReturn(true).when(cmd).verifyAddVM(anyListOf(String.class), anyInt());
-    }
-
-    private void mockConfig() {
-        mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")));
-        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, Version.v4_0, migrationMap);
-        mcr.mockConfigValue(ConfigValues.MaxIoThreadsPerVm, 127);
     }
 
     protected static VM createVm() {
@@ -755,7 +750,6 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testBlockUseHostCpuWithPPCArch() {
-        mockConfig();
         AddVmCommand<AddVmParameters> cmd = setupCanAddPpcTest();
         cmd.setEffectiveCompatibilityVersion(Version.v4_0);
         doReturn(Collections.emptyList()).when(cmd).getImagesToCheckDestinationStorageDomains();
