@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -98,7 +99,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
     @InjectMocks
-    private VmDeviceUtils vmDeviceUtils;
+    private static VmDeviceUtils vmDeviceUtils;
 
     @Spy
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
@@ -115,6 +116,10 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.StorageDomainOvfStoreCount, 1)
     );
 
+    @BeforeClass
+    public static void setUpClass() {
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
+    }
 
     @Before
     public void setUp() {
