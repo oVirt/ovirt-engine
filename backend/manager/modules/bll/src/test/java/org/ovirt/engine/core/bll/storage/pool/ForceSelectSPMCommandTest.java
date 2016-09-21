@@ -1,14 +1,15 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
@@ -25,13 +26,16 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 /** A test case for the {@link ForceSelectSPMCommand} command */
-
 public class ForceSelectSPMCommandTest extends BaseCommandTest {
 
     private Guid vdsId = Guid.newGuid();
     private Guid storagePoolId = Guid.newGuid();
 
-    private ForceSelectSPMCommand<ForceSelectSPMParameters> command;
+    @Spy
+    @InjectMocks
+    private ForceSelectSPMCommand<ForceSelectSPMParameters> command =
+            new ForceSelectSPMCommand<>(new ForceSelectSPMParameters(vdsId), null);
+
     private VDS vds;
     private StoragePool storagePool;
 
@@ -129,8 +133,6 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
     }
 
     private void mockCommand() {
-        ForceSelectSPMParameters params = new ForceSelectSPMParameters(vdsId);
-        command = spy(new ForceSelectSPMCommand<>(params, null));
         doReturn(vdsDaoMock).when(command).getVdsDao();
         doReturn(storagePoolDaoMock).when(command).getStoragePoolDao();
         doReturn(asyncTaskDaoMock).when(command).getAsyncTaskDao();
