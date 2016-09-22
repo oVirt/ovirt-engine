@@ -2,10 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -13,7 +14,10 @@ import org.ovirt.engine.core.dao.AuditLogDao;
 
 public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
 
-    RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters> command;
+    @Spy
+    @InjectMocks
+    RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters> command =
+            new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(), null);
 
     @Mock
     private AuditLogDao auditLogDao;
@@ -47,8 +51,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsOnNonExistingEvent() {
-        command =
-                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_1), null));
+        command.getParameters().setAuditLogId(EVENT_ID_1);
         prepareMocks(command);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
@@ -56,8 +59,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        command =
-                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_3), null));
+        command.getParameters().setAuditLogId(EVENT_ID_3);
         prepareMocks(command);
         assertTrue(command.validate());
     }
