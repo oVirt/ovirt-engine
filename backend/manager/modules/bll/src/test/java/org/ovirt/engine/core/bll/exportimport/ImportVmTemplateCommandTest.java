@@ -74,7 +74,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     public void insufficientDiskSpace() {
         // The following is enough since the validation is mocked out anyway. Just want to make sure the flow in CDA is correct.
         // Full test for the scenarios is done in the inherited class.
-        final ImportVmTemplateCommand command = setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
+        setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
         doReturn(false).when(command).validateSpaceRequirements(anyList());
         assertFalse(command.validate());
     }
@@ -118,8 +118,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateUniqueTemplateNameInDC() {
-        ImportVmTemplateCommand command =
-                setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
+        setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
         doReturn(true).when(command).isVmTemplateWithSameNameExist();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
@@ -129,16 +128,16 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     private void assertValidVolumeInfoCombination(VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
-        ValidateTestUtils.runAndAssertValidateSuccess(
-                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType));
+        setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     private void assertInvalidVolumeInfoCombination(VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
+        setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType);
         ValidateTestUtils.runAndAssertValidateFailure(
-                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType),
-                EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }
 
     /**
@@ -150,30 +149,25 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
      *            The volume type of the "imported" image.
      * @param storageType
      *            The target domain's storage type.
-     * @return The command which can be called to test the given combination.
      */
-    private ImportVmTemplateCommand setupVolumeFormatAndTypeTest(
-            VolumeFormat volumeFormat,
-            VolumeType volumeType,
-            StorageType storageType) {
+    private void setupVolumeFormatAndTypeTest(
+            VolumeFormat volumeFormat, VolumeType volumeType, StorageType storageType) {
         when(vmNicMacsUtils.validateMacAddress(any())).thenReturn(ValidationResult.VALID);
 
         doReturn(false).when(command).isVmTemplateWithSameNameExist();
         doReturn(true).when(command).isClusterCompatible();
         doReturn(true).when(command).validateNoDuplicateDiskImages(any(Iterable.class));
-        mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
-        mockStorageDomainStatic(command, storageType);
+        mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType);
+        mockStorageDomainStatic(storageType);
         doReturn(mock(VmTemplateDao.class)).when(command).getVmTemplateDao();
-        mockStoragePool(command);
-        mockStorageDomains(command);
+        mockStoragePool();
+        mockStorageDomains();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).setAndValidateCpuProfile();
         doReturn(true).when(command).validateSpaceRequirements(anyList());
-
-        return command;
     }
 
-    private static void mockStorageDomains(ImportVmTemplateCommand command) {
+    private void mockStorageDomains() {
         final ImportVmTemplateParameters parameters = command.getParameters();
         final StorageDomainDao dao = mock(StorageDomainDao.class);
 
@@ -194,7 +188,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         doReturn(dao).when(command).getStorageDomainDao();
     }
 
-    private static void mockStoragePool(ImportVmTemplateCommand command) {
+    private void mockStoragePool() {
         final StoragePoolDao dao = mock(StoragePoolDao.class);
 
         final StoragePool pool = new StoragePool();
@@ -204,9 +198,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         doReturn(dao).when(command).getStoragePoolDao();
     }
 
-    private static void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat,
-            VolumeType volumeType,
-            ImportVmTemplateCommand command) {
+    private void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat, VolumeType volumeType) {
         final VdcQueryReturnValue result = new VdcQueryReturnValue();
         Map<VmTemplate, List<DiskImage>> resultMap = new HashMap<>();
 
@@ -223,9 +215,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
                 any(VdcQueryParametersBase.class), any(EngineContext.class))).thenReturn(result);
     }
 
-    private static void mockStorageDomainStatic(
-            ImportVmTemplateCommand command,
-            StorageType storageType) {
+    private void mockStorageDomainStatic(StorageType storageType) {
         final StorageDomainStaticDao dao = mock(StorageDomainStaticDao.class);
 
         final StorageDomainStatic domain = new StorageDomainStatic();
