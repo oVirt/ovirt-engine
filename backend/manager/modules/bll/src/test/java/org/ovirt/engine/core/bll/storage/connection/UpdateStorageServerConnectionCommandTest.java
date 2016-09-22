@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,14 +45,9 @@ import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateStorageServerConnectionCommandTest extends StorageServerConnectionTestCommon {
-
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
-
     private UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
 
     private StorageServerConnections oldNFSConnection = null;
