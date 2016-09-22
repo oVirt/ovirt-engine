@@ -349,7 +349,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     private void initializeCommand(Guid storageId, VolumeType volumeType) {
         AddDiskParameters parameters = createParameters();
-        parameters.setStorageDomainId(storageId);
         if (volumeType == VolumeType.Preallocated) {
             parameters.setDiskInfo(createPreallocDiskImage());
         } else if (volumeType == VolumeType.Sparse) {
