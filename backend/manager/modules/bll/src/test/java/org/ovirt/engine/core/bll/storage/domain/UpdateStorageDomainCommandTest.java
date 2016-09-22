@@ -37,8 +37,6 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     private Guid sdId;
     private StorageDomain sd;
     private StoragePool sp;
-    private StorageDomainStatic oldSdStatic;
-    private StorageDomainStatic newSdStatic;
     private UpdateStorageDomainCommand<StorageDomainManagementParameter> cmd;
 
     private static final int STORAGE_DOMAIN_NAME_LENGTH_LIMIT = 100;
@@ -53,8 +51,8 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         sdId = Guid.newGuid();
-        oldSdStatic = createStorageDomain();
-        newSdStatic = createStorageDomain();
+        StorageDomainStatic oldSdStatic = createStorageDomain();
+        StorageDomainStatic newSdStatic = createStorageDomain();
         Guid spId = Guid.newGuid();
 
         sd = new StorageDomain();
