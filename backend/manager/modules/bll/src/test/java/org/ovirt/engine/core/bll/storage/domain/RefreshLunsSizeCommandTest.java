@@ -34,12 +34,8 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     private static final String STORAGE = "STORAGE";
     private Guid sdId;
     private StorageDomain sd;
-    private StoragePool sp;
-    private StorageDomainStatic sdStatic;
     private Guid spId;
     private RefreshLunsSizeCommand<ExtendSANStorageDomainParameters> cmd;
-    private List<String> lunIdList;
-    private List<LUNs> lunsFromDb;
 
     @Mock
     private StorageDomainStaticDao sdsDao;
@@ -50,7 +46,7 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         sdId = Guid.newGuid();
-        sdStatic = createStorageDomain();
+        StorageDomainStatic sdStatic = createStorageDomain();
         spId = Guid.newGuid();
 
         sd = new StorageDomain();
@@ -58,13 +54,13 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStoragePoolId(spId);
 
-        sp = new StoragePool();
+        StoragePool sp = new StoragePool();
         sp.setId(spId);
         sp.setStatus(StoragePoolStatus.Up);
         sp.setIsLocal(false);
         sp.setCompatibilityVersion(Version.v3_6);
 
-        lunIdList = new ArrayList<>();
+        List<String> lunIdList = new ArrayList<>();
         lunIdList.add("1");
         lunIdList.add("2");
 
@@ -77,7 +73,7 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
         doReturn(lunsDao).when(cmd).getLunDao();
 
-        lunsFromDb = new ArrayList<>();
+        List<LUNs> lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("1");
         lun1.setStorageDomainId(sdId);
