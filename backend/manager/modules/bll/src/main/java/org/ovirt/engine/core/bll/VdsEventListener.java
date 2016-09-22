@@ -342,7 +342,10 @@ public class VdsEventListener implements IVdsEventListener {
                         CommandContext ctx = new CommandContext(new EngineContext());
                         ctx.getExecutionContext().setMonitored(true);
                         backend.runInternalMultipleActions(VdcActionType.MigrateVmToServer,
-                                new ArrayList<>(createMigrateVmToServerParametersList(vmsToMigrate, vds)),
+                                new ArrayList<>(createMigrateVmToServerParametersList(
+                                        vmsToMigrate,
+                                        vds,
+                                        null)),
                                 ctx);
                     }
                 } catch (RuntimeException e) {
@@ -365,13 +368,14 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate,
-            final VDS vds) {
+            final VDS vds,
+            String reason) {
         return vmsToMigrate.stream().map(
                 vm -> {
                     MigrateVmToServerParameters parameters =
-                            new MigrateVmToServerParameters(false,
-                                    vm.getId(),
-                                    vds.getId());
+                            new MigrateVmToServerParameters(false, vm.getId(), vds.getId());
+
+                    parameters.setReason(reason);
                     parameters.setShouldBeLogged(false);
                     return parameters;
                 }).collect(Collectors.toList());

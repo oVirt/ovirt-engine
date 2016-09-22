@@ -489,6 +489,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private AuditLogType getAuditLogForMigrationStarted() {
+        addCustomValue("OptionalReason", getParameters().getReason());
         return isInternalExecution() ?
                 AuditLogType.VM_MIGRATION_START_SYSTEM_INITIATED
                 : AuditLogType.VM_MIGRATION_START;

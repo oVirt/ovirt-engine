@@ -969,7 +969,8 @@ public class SchedulingManager implements BackendService {
 
             if (balanceResult.isPresent() && balanceResult.get().isValid()) {
                 migrationHandler.migrateVM(balanceResult.get().getCandidateHosts(),
-                        balanceResult.get().getVmToMigrate());
+                        balanceResult.get().getVmToMigrate(),
+                        AuditLogDirector.getMessage(AuditLogType.MIGRATION_REASON_LOAD_BALANCING));
             }
         }
     }

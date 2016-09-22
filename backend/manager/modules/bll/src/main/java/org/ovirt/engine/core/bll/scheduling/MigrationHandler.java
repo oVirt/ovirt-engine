@@ -8,5 +8,5 @@ public interface MigrationHandler {
     /**
      * delegate for migrating a vm to a set of hosts provided by the scheduler
      */
-    void migrateVM(List<Guid> initialHosts, Guid vmToMigrate);
+    void migrateVM(List<Guid> initialHosts, Guid vmToMigrate, String reason);
 }

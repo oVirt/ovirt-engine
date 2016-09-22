@@ -19,6 +19,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     // Total time for migration (including retries)
     protected Date totalMigrationTime;
     private Guid targetClusterId;
+    private String reason;
 
     public MigrateVmParameters() {
     }
@@ -37,6 +38,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     public MigrateVmParameters(InternalMigrateVmParameters internalMigrateVmParameters) {
         this(false, internalMigrateVmParameters.getVmId());
 
+        setReason(internalMigrateVmParameters.getReason());
         setTransactionScopeOption(internalMigrateVmParameters.getTransactionScopeOption());
         setCorrelationId(internalMigrateVmParameters.getCorrelationId());
         setParentCommand(internalMigrateVmParameters.getParentCommand());
@@ -47,7 +49,8 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         return Objects.hash(
                 getVmId(),
                 forceMigrationForNonMigratableVm,
-                targetClusterId
+                targetClusterId,
+                reason
         );
     }
 
@@ -64,7 +67,8 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         MigrateVmParameters other = (MigrateVmParameters) obj;
         return Objects.equals(getVmId(), other.getVmId())
                 && forceMigrationForNonMigratableVm == other.forceMigrationForNonMigratableVm
-                && Objects.equals(targetClusterId, other.targetClusterId);
+                && Objects.equals(targetClusterId, other.targetClusterId)
+                && Objects.equals(reason, other.reason);
     }
 
     public boolean isForceMigrationForNonMigratableVm() {
@@ -104,5 +108,13 @@ public class MigrateVmParameters extends VmOperationParameterBase {
 
     public void setTargetClusterId(Guid targetClusterId) {
         this.targetClusterId = targetClusterId;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

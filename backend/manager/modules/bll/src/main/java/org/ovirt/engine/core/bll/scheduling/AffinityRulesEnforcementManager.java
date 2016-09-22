@@ -92,6 +92,10 @@ public class AffinityRulesEnforcementManager implements BackendService {
 
     protected void migrateVM(final VM vmToMigrate) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate.getId());
+
+        parameters.setReason(AuditLogDirector.getMessage(
+                AuditLogType.MIGRATION_REASON_AFFINITY_ENFORCEMENT));
+
         backend.runInternalAction(VdcActionType.MigrateVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());

@@ -1333,7 +1333,12 @@ public enum AuditLogType {
 
     // DC status
     SYSTEM_CHANGE_STORAGE_POOL_STATUS_UP_REPORTING_HOSTS(10810, AuditLogSeverity.NORMAL),
-    SYSTEM_CHANGE_STORAGE_POOL_STATUS_NON_RESPONSIVE_NO_REPORTING_HOSTS(10811, AuditLogSeverity.ALERT);
+    SYSTEM_CHANGE_STORAGE_POOL_STATUS_NON_RESPONSIVE_NO_REPORTING_HOSTS(10811, AuditLogSeverity.ALERT),
+
+    // Migration reasons
+    MIGRATION_REASON_AFFINITY_ENFORCEMENT(12000),
+    MIGRATION_REASON_LOAD_BALANCING(12001),
+    MIGRATION_REASON_HOST_IN_MAINTENANCE(12002);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.
