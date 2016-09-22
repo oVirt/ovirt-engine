@@ -545,8 +545,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         DiskImage image = new DiskImage();
         DiskVmElement dve = new DiskVmElement(null, vmId);
         dve.setDiskInterface(DiskInterface.IDE);
-        AddDiskParameters parameters = new AddDiskParameters(dve, image);
-        return parameters;
+        return new AddDiskParameters(dve, image);
     }
 
     private static DiskImage createSparseDiskImage() {
@@ -857,7 +856,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
-        VM vm = mockVm();
+        mockVm();
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
@@ -881,7 +880,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
-        VM vm = mockVm();
+        mockVm();
         mockMaxPciSlots();
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -917,7 +916,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
 
-        VM vm = mockVm();
+        mockVm();
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
