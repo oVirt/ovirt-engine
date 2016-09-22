@@ -66,7 +66,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     public MoveOrCopyDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        defineVmTemplate();
     }
 
     @Override
@@ -84,7 +83,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return lockProperties.withScope(Scope.Command);
     }
 
-    protected void defineVmTemplate() {
+    @Override
+    public void init() {
+        super.init();
         if (getParameters().getOperation() == ImageOperation.Copy) {
             setVmTemplate(getTemplateForImage());
         }

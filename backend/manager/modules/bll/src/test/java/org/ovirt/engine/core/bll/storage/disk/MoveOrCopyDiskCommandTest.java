@@ -178,7 +178,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(new VmTemplate()).when(command).getTemplateForImage();
 
-        command.defineVmTemplate();
+        command.init();
         assertFalse(command.validate());
         assertTrue(command.getReturnValue().getValidationMessages().contains(
                 EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
@@ -329,10 +329,10 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @SuppressWarnings("unchecked")
     protected void initializeCommand(ImageOperation operation, Disk disk) {
-        command = spy(new MoveOrCopyDiskCommandDummy(new MoveOrCopyImageGroupParameters(diskImageGuid,
+        command = spy(new MoveOrCopyDiskCommand<>(new MoveOrCopyImageGroupParameters(diskImageGuid,
                 srcStorageId,
                 destStorageId,
-                operation)));
+                operation), null));
 
 
         doReturn(vmDao).when(command).getVmDao();
@@ -369,20 +369,5 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         diskImage.setVmEntityType(VmEntityType.VM);
         diskImage.setShareable(isShareable);
         when(diskImageDao.get(any(Guid.class))).thenReturn(diskImage);
-    }
-
-    /**
-     * The following class is created in order to allow to use a mock diskImageDao in constructor
-     */
-    private class MoveOrCopyDiskCommandDummy extends MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> {
-
-        public MoveOrCopyDiskCommandDummy(MoveOrCopyImageGroupParameters parameters) {
-            super(parameters, null);
-        }
-
-        @Override
-        protected VmTemplate getTemplateForImage() {
-            return null;
-        }
     }
 }
