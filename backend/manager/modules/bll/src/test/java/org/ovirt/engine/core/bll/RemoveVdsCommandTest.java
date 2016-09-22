@@ -273,9 +273,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     /**
      * Mock that whether the VDS configured with gluster volume. This will return the given volume count
-     *
-     * @param volumeCount
-     *              The volume count on the VDS
      */
     private void mockHasVolumeOnServer(boolean isBricksRequired) {
         List<GlusterBrickEntity> bricks = new ArrayList<>();
