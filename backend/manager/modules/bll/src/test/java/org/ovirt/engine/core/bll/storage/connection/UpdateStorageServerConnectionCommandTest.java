@@ -389,14 +389,12 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getId())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
-        List<StorageDomain> domains = new ArrayList<>();
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(iscsiConnection.getConnection());
         domain1.setStatus(StorageDomainStatus.Active);
         domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
-        domains.add(domain1);
         when(storageDomainDao.get(storageDomainId)).thenReturn(domain1);
         when(storagePoolIsoMapDao.getAllForStorage(storageDomainId)).
                 thenReturn(Collections.singletonList
@@ -421,14 +419,12 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getId())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
-        List<StorageDomain> domains = new ArrayList<>();
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(iscsiConnection.getConnection());
         domain1.setStatus(StorageDomainStatus.Unknown);
         domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Unattached);
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
-        domains.add(domain1);
         when(storageDomainDao.get(storageDomainId)).thenReturn(domain1);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -658,8 +654,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         0);
 
        List<StorageServerConnections> connections = new ArrayList<>();
-       StorageServerConnections connection1 = newNFSConnection;
-       connections.add(connection1);
+        connections.add(newNFSConnection);
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
        boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
