@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -53,6 +54,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
@@ -77,6 +79,9 @@ public class OvfManagerTest {
     @Mock
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
+    @Mock
+    private ClusterDao clusterDao;
+
     @ClassRule
     public static MockConfigRule mockConfigRule =
             new MockConfigRule(
@@ -93,6 +98,8 @@ public class OvfManagerTest {
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     private OvfManager manager;
 
@@ -100,6 +107,7 @@ public class OvfManagerTest {
     public void setUp() throws Exception {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
+        injectorRule.bind(ClusterDao.class, clusterDao);
         manager = new OvfManager();
         final HashMap<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");

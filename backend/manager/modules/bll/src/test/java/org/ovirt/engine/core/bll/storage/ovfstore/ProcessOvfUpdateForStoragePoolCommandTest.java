@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -94,6 +95,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
+    @Mock
+    private ClusterDao clusterDao;
+
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
     private StoragePool pool1;
@@ -113,6 +117,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
+        injectorRule.bind(ClusterDao.class, clusterDao);
         command = Mockito.spy(new ProcessOvfUpdateForStoragePoolCommand<>(
                 new ProcessOvfUpdateForStoragePoolParameters(), null));
         ovfUpdateProcessHelper = Mockito.spy(new OvfUpdateProcessHelper());
