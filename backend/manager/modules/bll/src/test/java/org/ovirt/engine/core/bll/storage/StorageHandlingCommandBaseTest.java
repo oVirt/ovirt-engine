@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
@@ -30,9 +29,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     @Mock
     private StoragePoolDao storagePoolDao;
-
-    @Mock
-    private StorageDomainDao storageDomainDao;
 
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
@@ -50,9 +46,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
-
-        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
-        when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(Collections.emptyList());
 
         doReturn(storagePoolIsoMapDao).when(cmd).getStoragePoolIsoMapDao();
         when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.emptyList());
