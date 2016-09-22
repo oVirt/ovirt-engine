@@ -806,6 +806,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
             Guid imageId = vdcReturnValueBase.getActionReturnValue();
             diskImageMap.put(cinderDisk.getId(), imageId);
+            addTemplateDiskVmElement(imageId, cinderDisk.getId());
         }
         srcDeviceIdToTargetDeviceIdMapping.putAll(diskImageMap);
         return true;
@@ -843,14 +844,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
         DiskImage newImage = retValue.getActionReturnValue();
         srcDeviceIdToTargetDeviceIdMapping.put(diskImage.getId(), newImage.getId());
-        addTemplateDiskVmElement(newImage, diskImage);
+        addTemplateDiskVmElement(newImage.getId(), diskImage.getId());
     }
 
 
-    private void addTemplateDiskVmElement(DiskImage newDisk, DiskImage oldDisk) {
-        DiskVmElement oldDve = getDiskVmElementDao().get(new VmDeviceId(oldDisk.getId(), getVmId()));
+    private void addTemplateDiskVmElement(Guid newDiskId, Guid oldDiskId) {
+        DiskVmElement oldDve = getDiskVmElementDao().get(new VmDeviceId(oldDiskId, getVmId()));
         DiskVmElement newDve = DiskVmElement.copyOf(oldDve);
-        newDve.setId(new VmDeviceId(newDisk.getId(), getVmTemplateId()));
+        newDve.setId(new VmDeviceId(newDiskId, getVmTemplateId()));
         getDiskVmElementDao().save(newDve);
     }
 
