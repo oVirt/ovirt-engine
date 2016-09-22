@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,7 +12,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -34,8 +35,6 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
-    private DetachStorageConnectionFromStorageDomainCommand<AttachDetachStorageConnectionParameters> command = null;
-
     private StorageConnectionValidator validator = null;
 
     private StorageDomain domain = null;
@@ -43,17 +42,18 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
     Guid connectionId = Guid.newGuid();
     Guid domainId = Guid.newGuid();
 
+    @Spy
+    @InjectMocks
+    private DetachStorageConnectionFromStorageDomainCommand<AttachDetachStorageConnectionParameters> command =
+            new DetachStorageConnectionFromStorageDomainCommand<>(
+                    new AttachDetachStorageConnectionParameters(domainId, connectionId.toString()), null);
+
     @Mock
     LunDao lunDao;
 
     @Before
     public void init() {
-
-        AttachDetachStorageConnectionParameters parameters = new AttachDetachStorageConnectionParameters();
-        parameters.setStorageConnectionId(connectionId.toString());
-        parameters.setStorageDomainId(domainId);
         validator = mock(StorageConnectionValidator.class);
-        command = spy(new DetachStorageConnectionFromStorageDomainCommand<>(parameters, null));
         doReturn(validator).when(command).createStorageConnectionValidator();
         domain = new StorageDomain();
         domain.setId(domainId);
