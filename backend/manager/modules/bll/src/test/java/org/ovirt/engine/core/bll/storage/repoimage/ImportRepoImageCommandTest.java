@@ -2,12 +2,13 @@ package org.ovirt.engine.core.bll.storage.repoimage;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -21,25 +22,23 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 
-    protected ImportRepoImageCommand<ImportRepoImageParameters> cmd;
+    @Spy
+    @InjectMocks
+    protected ImportRepoImageCommand<ImportRepoImageParameters> cmd =
+            new ImportRepoImageCommand<>(new ImportRepoImageParameters(), null);
 
     @Override
     @Before
     public void setUp() {
         super.setUp();
 
-        ImportRepoImageParameters importParameters = new ImportRepoImageParameters();
-
-        importParameters.setSourceRepoImageId(getRepoImageId());
-        importParameters.setSourceStorageDomainId(getRepoStorageDomainId());
-        importParameters.setStoragePoolId(getStoragePoolId());
-        importParameters.setStorageDomainId(getStorageDomainId());
-
-        cmd = spy(new ImportRepoImageCommand<>(importParameters, null));
+        cmd.getParameters().setSourceRepoImageId(getRepoImageId());
+        cmd.getParameters().setSourceStorageDomainId(getRepoStorageDomainId());
+        cmd.getParameters().setStoragePoolId(getStoragePoolId());
+        cmd.getParameters().setStorageDomainId(getStorageDomainId());
 
         doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDao();
         doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDao();
-        doReturn(getProviderProxy()).when(cmd).getProviderProxy();
         doReturn(true).when(cmd).validateSpaceRequirements(any(DiskImage.class));
     }
 
