@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -17,6 +16,7 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -55,8 +55,9 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     @Mock
     private HostedEngineHelper hostedEngineHelper;
 
+    @Spy
     @InjectMocks
-    public StorageDomainCommandBase<StorageDomainParametersBase> cmd = spy(new TestStorageCommandBase(new StorageDomainParametersBase()));
+    public StorageDomainCommandBase<StorageDomainParametersBase> cmd = new TestStorageCommandBase(new StorageDomainParametersBase());
 
     @Test
     public void statusMatches() {
