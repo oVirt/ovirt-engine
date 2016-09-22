@@ -122,6 +122,8 @@
                 <argument>--jaxrs-package=^services\.(.*)$=org.ovirt.engine.api.resource.$1</argument>
                 <argument>--jaxrs-package=org.ovirt.engine.api.resource</argument>
                 <argument>--docs=${project.basedir}/target/generated-adoc</argument>
+                <argument>--adoc-attribute=product-name:${product.name}</argument>
+                <argument>--adoc-attribute=engine-name:${engine.name}</argument>
               </arguments>
               <includePluginDependencies>true</includePluginDependencies>
               <includeProjectDependencies>false</includeProjectDependencies>

@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Ssh;
+import org.ovirt.engine.api.model.SshAuthenticationMethod;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3SSH;
 
@@ -33,7 +34,7 @@ public class V3SSHInAdapter implements V3Adapter<V3SSH, Ssh> {
             to.setActions(adaptIn(from.getActions()));
         }
         if (from.isSetAuthenticationMethod()) {
-            to.setAuthenticationMethod(from.getAuthenticationMethod());
+            to.setAuthenticationMethod(SshAuthenticationMethod.fromValue(from.getAuthenticationMethod()));
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());

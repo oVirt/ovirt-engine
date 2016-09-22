@@ -12,7 +12,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.AutoNumaStatus;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Cluster;
@@ -46,6 +45,7 @@ import org.ovirt.engine.api.model.SeLinuxMode;
 import org.ovirt.engine.api.model.Spm;
 import org.ovirt.engine.api.model.SpmStatus;
 import org.ovirt.engine.api.model.Ssh;
+import org.ovirt.engine.api.model.SshAuthenticationMethod;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
@@ -504,18 +504,16 @@ public class HostMapper {
         return hooks;
     }
 
-    @Mapping(from = AuthenticationMethod.class, to = org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.class)
-    public static org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod map(AuthenticationMethod template,
-            org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod authType) {
-        switch (template) {
+    private static VdsOperationActionParameters.AuthenticationMethod mapSshAuthenticationMethod(SshAuthenticationMethod method) {
+        switch (method) {
         case PASSWORD:
-            return org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.Password;
+            return VdsOperationActionParameters.AuthenticationMethod.Password;
 
         case PUBLICKEY:
-            return org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.PublicKey;
+            return VdsOperationActionParameters.AuthenticationMethod.PublicKey;
 
         default:
-            return org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.Password;
+            return VdsOperationActionParameters.AuthenticationMethod.Password;
         }
     }
 
@@ -541,7 +539,7 @@ public class HostMapper {
                 params.getvds().setSshKeyFingerprint(action.getSsh().getFingerprint());
             }
             if (action.getSsh().isSetAuthenticationMethod()) {
-                params.setAuthMethod(map(AuthenticationMethod.fromValue(action.getSsh().getAuthenticationMethod()), null));
+                params.setAuthMethod(mapSshAuthenticationMethod(action.getSsh().getAuthenticationMethod()));
             }
         }
         if (action.isSetHost()) {
@@ -574,7 +572,7 @@ public class HostMapper {
                 params.getvds().setSshKeyFingerprint(host.getSsh().getFingerprint());
             }
             if (host.getSsh().isSetAuthenticationMethod()) {
-                params.setAuthMethod(map(AuthenticationMethod.fromValue(host.getSsh().getAuthenticationMethod()), null));
+                params.setAuthMethod(mapSshAuthenticationMethod(host.getSsh().getAuthenticationMethod()));
             }
         }
         return params;
