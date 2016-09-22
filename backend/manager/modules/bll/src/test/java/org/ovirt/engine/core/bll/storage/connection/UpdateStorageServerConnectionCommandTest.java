@@ -107,7 +107,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 
-    protected StorageDomain createDomain(StorageDomainDynamic domainDynamic) {
+    protected StorageDomain createDomain() {
         StorageDomain domain = new StorageDomain();
         domain.setStorageName("mydomain");
         return domain;
@@ -525,8 +525,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         VDSReturnValue returnValueConnectSuccess = new VDSReturnValue();
         StoragePoolIsoMap map = new StoragePoolIsoMap();
         returnValueConnectSuccess.setSucceeded(true);
-        StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
-        StorageDomain domain = createDomain(domainDynamic);
+        StorageDomain domain = createDomain();
         doReturn(Collections.singletonList(map)).when(command).getStoragePoolIsoMap(domain);
         returnValueConnectSuccess.setReturnValue(domain);
         doReturn(returnValueConnectSuccess).when(command).getStatsForDomain(domain);
@@ -575,7 +574,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         VDSReturnValue returnValueUpdate = new VDSReturnValue();
         returnValueUpdate.setSucceeded(false);
 
-        StorageDomain domain = createDomain(new StorageDomainDynamic());
+        StorageDomain domain = createDomain();
         initDomainListForConnection(newNFSConnection.getId(), domain);
 
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
@@ -605,7 +604,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         returnValueUpdate.setSucceeded(true);
 
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
-        StorageDomain domain = createDomain(domainDynamic);
+        StorageDomain domain = createDomain();
         initDomainListForConnection(newNFSConnection.getId(), domain);
 
         StoragePoolIsoMap map = new StoragePoolIsoMap();
