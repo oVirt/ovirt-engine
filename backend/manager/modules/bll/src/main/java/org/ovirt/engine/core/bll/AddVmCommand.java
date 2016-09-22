@@ -1244,7 +1244,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 return;
             }
             Guid imageId = vdcReturnValueBase.getActionReturnValue();
-            createAndSaveNewDiskVmElement(imageId, getVmId(), cinderDisk.getDiskVmElementForVm(getVmTemplateId()));
 
             diskImageMap.put(cinderDisk.getId(), imageId);
         }
