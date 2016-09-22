@@ -21,7 +21,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -65,8 +67,10 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.SupportedClusterLevels, SUPPORTED_VERSIONS)
     );
 
-
-    private UpdateStoragePoolCommand<StoragePoolManagementParameter> cmd;
+    @Spy
+    @InjectMocks
+    private UpdateStoragePoolCommand<StoragePoolManagementParameter> cmd =
+            new UpdateStoragePoolCommand<>(new StoragePoolManagementParameter(createStoragePool()), null);
 
     @Mock
     private StoragePoolDao spDao;
@@ -84,27 +88,18 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
+        when(spDao.get(any(Guid.class))).thenReturn(createStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
-        spyCommand(new StoragePoolManagementParameter(createNewStoragePool()));
-    }
-
-    protected void spyCommand(StoragePoolManagementParameter params) {
-        UpdateStoragePoolCommand<StoragePoolManagementParameter> realCommand =
-                new UpdateStoragePoolCommand<>(params, null);
-
-        cmd = spy(realCommand);
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(sdDao).when(cmd).getStorageDomainStaticDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
-        doReturn(managementNetworkUtil).when(cmd).getManagementNetworkUtil();
 
         // Spy the StoragePoolValidator:
-        poolValidator = spy(new StoragePoolValidator(params.getStoragePool()));
+        poolValidator = spy(new StoragePoolValidator(cmd.getStoragePool()));
         doReturn(ValidationResult.VALID).when(poolValidator).isNotLocalfsWithDefaultCluster();
         doReturn(poolValidator).when(cmd).createStoragePoolValidator();
     }
@@ -124,7 +119,9 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     public void hasLocalDomain() {
         StorageDomainStatic sdc = new StorageDomainStatic();
         sdc.setStorageType(StorageType.LOCALFS);
-        when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
+        StoragePool existingSp = createStoragePool();
+        existingSp.setIsLocal(true);
+        when(spDao.get(any(Guid.class))).thenReturn(existingSp);
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
                 (Collections.singletonList(sdc));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -135,7 +132,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     public void hasSharedDomain() {
         StorageDomainStatic sdc = new StorageDomainStatic();
         sdc.setStorageType(StorageType.NFS);
-        when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
                 (Collections.singletonList(sdc));
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
@@ -143,7 +139,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void hasNoStorageDomains() {
-        when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
                 (Collections.emptyList());
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
@@ -151,42 +146,40 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void hasMultipleClustersForLocalDC() {
-        spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
-        when(spDao.get(any(Guid.class))).thenReturn(createNewStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         List<Cluster> clusters = Arrays.asList(new Cluster(), new Cluster());
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        cmd.getStoragePool().setIsLocal(true);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
     }
 
     @Test
     public void hasMultipleHostsForLocalDC() {
-        spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
-        when(spDao.get(any(Guid.class))).thenReturn(createNewStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         List<VDS> hosts = Arrays.asList(new VDS(), new VDS());
         when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(hosts);
+        cmd.getStoragePool().setIsLocal(true);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
     }
 
     @Test
     public void unsupportedVersion() {
-        storagePoolWithInvalidVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_2_0);
         ValidateTestUtils.runAndAssertValidateFailure(cmd, VersionSupport.getUnsupportedVersionMessage());
     }
 
     @Test
     public void lowerVersionNoHostsNoNetwork() {
-        storagePoolWithLowerVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void lowerVersionHostsNoNetwork() {
-        storagePoolWithLowerVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         addHostsToCluster();
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
@@ -194,7 +187,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void lowerVersionNoHostsWithNetwork() {
-        storagePoolWithLowerVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         addNonManagementNetworkToPool();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
@@ -202,7 +195,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void lowerVersionMgmtNetworkAndRegularNetworks() {
-        storagePoolWithLowerVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         addManagementNetworkToPool();
         addNonManagementNetworksToPool(2);
@@ -212,7 +205,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void lowerVersionHostsAndNetwork() {
-        storagePoolWithLowerVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         addHostsToCluster();
         addNonManagementNetworkToPool();
@@ -221,7 +214,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void lowerVersionMgmtNetworkSupportedFeatures() {
-        storagePoolWithLowerVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(true);
@@ -230,7 +223,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void lowerVersionMgmtNetworkNonSupportedFeatures() {
-        storagePoolWithLowerVersion();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(false);
@@ -239,13 +232,13 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void versionHigherThanCluster() {
-        storagePoolWithVersionHigherThanCluster();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_2);
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
     }
 
     @Test
     public void testValidateAllClustersLevel() {
-        storagePoolWithVersionHigherThanCluster();
+        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_2);
         List<Cluster> clusterList = createClusterList();
         // Create new supported cluster.
         Cluster secondCluster = new Cluster();
@@ -273,7 +266,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     public void poolHasDefaultCluster() {
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID);
         addDefaultClusterToPool();
-        storagePoolWithLocalFS();
         doReturn(new ValidationResult
                 (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS))
                 .when(poolValidator).isNotLocalfsWithDefaultCluster();
@@ -283,65 +275,15 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     private void newPoolNameIsAlreadyTaken() {
         when(spDao.get(any(Guid.class))).thenReturn(new StoragePool());
         List<StoragePool> storagePoolList = new ArrayList<>();
-        storagePoolList.add(createDefaultStoragePool());
+        storagePoolList.add(createStoragePool());
         when(spDao.getByName(anyString(), anyBoolean())).thenReturn(new ArrayList<>(storagePoolList));
     }
 
-    private void storagePoolWithVersionHigherThanCluster() {
-        spyCommand(new StoragePoolManagementParameter(createHigherVersionStoragePool()));
-    }
-
-    private void storagePoolWithLowerVersion() {
-        spyCommand(new StoragePoolManagementParameter(createLowerVersionStoragePool()));
-    }
-
-    private void storagePoolWithInvalidVersion() {
-        spyCommand(new StoragePoolManagementParameter(createInvalidVersionStoragePool()));
-    }
-
-    private void storagePoolWithLocalFS() {
-        spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
-    }
-
-    private static StoragePool createNewStoragePool() {
-        StoragePool pool = createBasicPool();
-        pool.setIsLocal(false);
-        pool.setCompatibilityVersion(VERSION_1_1);
-        return pool;
-    }
-
-    private static StoragePool createDefaultStoragePool() {
-        StoragePool pool = createBasicPool();
-        pool.setIsLocal(true);
-        pool.setCompatibilityVersion(VERSION_1_1);
-        return pool;
-    }
-
-    private static StoragePool createLowerVersionStoragePool() {
-        StoragePool pool = createBasicPool();
-        pool.setIsLocal(true);
-        pool.setCompatibilityVersion(VERSION_1_0);
-        return pool;
-    }
-
-    private static StoragePool createBasicPool() {
+    private static StoragePool createStoragePool() {
         StoragePool pool = new StoragePool();
         pool.setId(Guid.newGuid());
         pool.setName("Default");
-        return pool;
-    }
-
-    private static StoragePool createHigherVersionStoragePool() {
-        StoragePool pool = createBasicPool();
-        pool.setIsLocal(true);
-        pool.setCompatibilityVersion(VERSION_1_2);
-        return pool;
-    }
-
-    private static StoragePool createInvalidVersionStoragePool() {
-        StoragePool pool = createBasicPool();
-        pool.setIsLocal(true);
-        pool.setCompatibilityVersion(VERSION_2_0);
+        pool.setCompatibilityVersion(VERSION_1_1);
         return pool;
     }
 
