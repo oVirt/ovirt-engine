@@ -231,9 +231,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     protected ImportVmTemplateParameters createParameters() {
         VmTemplate t = new VmTemplate();
         t.setName("testTemplate");
-        final ImportVmTemplateParameters p =
-                new ImportVmTemplateParameters(Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), t);
-        return p;
+        return new ImportVmTemplateParameters(Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), t);
     }
 
     private final String string100 = "0987654321" +
