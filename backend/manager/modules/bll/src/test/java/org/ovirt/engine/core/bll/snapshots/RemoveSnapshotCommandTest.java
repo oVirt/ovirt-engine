@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
@@ -49,9 +48,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     @Mock
     private VmTemplateDao vmTemplateDao;
-
-    @Mock
-    StorageDomainDao sdDao;
 
     @Mock
     private DiskImageDao diskImageDao;
@@ -81,7 +77,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
-        doReturn(sdDao).when(cmd).getStorageDomainDao();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         mockVm();
         vmValidator = spy(new VmValidator(cmd.getVm()));
@@ -113,7 +108,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         Set<Guid> sdIds = new HashSet<>(Collections.singletonList(STORAGE_DOMAIN_ID));
         storageDomainsValidator = spy(new MultipleStorageDomainsValidator(STORAGE_POOL_ID, sdIds));
         doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
-        doReturn(sdDao).when(storageDomainsValidator).getStorageDomainDao();
         doReturn(sdIds).when(cmd).getStorageDomainsIds();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsWithinThresholds();
