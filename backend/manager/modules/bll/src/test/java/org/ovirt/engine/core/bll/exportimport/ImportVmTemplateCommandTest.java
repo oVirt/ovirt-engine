@@ -291,9 +291,14 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
+    }
+
+    @Test
+    public void testOtherFieldsNotValidatedInImportNotNewEntity() {
+        final ImportVmTemplateParameters parameters = createParameters();
         parameters.setImportAsNewEntity(false);
-        command = createImportVmTemplateCommandSpy(parameters);
-        validate =
+        ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(parameters);
+        Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
