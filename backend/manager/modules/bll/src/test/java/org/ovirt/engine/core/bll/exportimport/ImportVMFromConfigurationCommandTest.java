@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -39,8 +38,6 @@ import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -53,11 +50,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
@@ -112,13 +107,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         final int osId = 0;
-        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> graphicsAndDisplays = new HashMap<>();
-        graphicsAndDisplays.put(osId, new HashMap());
-        graphicsAndDisplays.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
-        when(osRepository.getGraphicsAndDisplays()).thenReturn(
-                Collections.singletonMap(osId,
-                        Collections.singletonMap(Version.getLast(),
-                                Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)))));
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
         when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
@@ -127,17 +115,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b")));
         }});
         mockCluster();
-        mockDisplayTypes();
         setXmlOvfData();
-    }
-
-    private void mockDisplayTypes() {
-        Integer osId = 0;
-        Version clusterVersion = null;
-        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<>());
-        displayTypeMap.get(osId).put(clusterVersion, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
-        when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
     private void setXmlOvfData() throws IOException {
@@ -147,9 +125,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Test
     public void testPositiveImportVmFromConfiguration() {
         initCommand(getOvfEntityData());
-        final StorageDomainDao dao = mock(StorageDomainDao.class);
-        doReturn(dao).when(cmd).getStorageDomainDao();
-        when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(createStorageDomain());
         doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(anyMap());
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(anyMap());
@@ -167,11 +142,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         StorageDomain storageDomain = createStorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Maintenance);
 
-        // Mock Storage Domain.
-        final StorageDomainDao dao = mock(StorageDomainDao.class);
-        doReturn(dao).when(cmd).getStorageDomainDao();
-        when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
-
         doReturn(storageDomain).when(cmd).getStorageDomain();
         when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
@@ -185,11 +155,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         StorageDomain storageDomain = createStorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Inactive);
 
-        // Mock Storage Domain.
-        final StorageDomainDao dao = mock(StorageDomainDao.class);
         when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
-        when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
