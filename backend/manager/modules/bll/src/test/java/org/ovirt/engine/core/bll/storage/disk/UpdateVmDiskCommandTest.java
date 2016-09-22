@@ -21,9 +21,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -180,7 +177,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void validateFailedUpdateReadOnly() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         command.getParameters().getDiskInfo().setReadOnly(true);
-        initializeCommand(Collections.singletonList(createVm(VMStatus.Up)));
+        initializeCommand(createVm(VMStatus.Up));
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
@@ -191,7 +188,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         command.getParameters().getDiskInfo().setReadOnly(true);
         VM vm = createVm(VMStatus.Down);
         vm.setVmPoolId(Guid.newGuid());
-        initializeCommand(Collections.singletonList(vm));
+        initializeCommand(vm);
 
         VmDevice vmDevice = stubVmDevice(diskImageGuid, vmId); // Default RO is false
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
@@ -211,7 +208,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         command.getParameters().getDiskInfo().setWipeAfterDelete(false);
         VM vm = createVm(VMStatus.Down);
         vm.setVmPoolId(Guid.newGuid());
-        initializeCommand(Collections.singletonList(vm));
+        initializeCommand(vm);
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
@@ -302,7 +299,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         command.getParameters().getDiskInfo().setReadOnly(false);
         command.getParameters().getDiskInfo().setWipeAfterDelete(true);
-        initializeCommand(Collections.singletonList(createVm(status)));
+        initializeCommand(createVm(status));
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -323,7 +320,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         command.getParameters().getDiskInfo().setReadOnly(false);
         disk.setDescription(RandomUtils.instance().nextString(10));
-        initializeCommand(Collections.singletonList(createVm(status)));
+        initializeCommand(createVm(status));
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -486,12 +483,12 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     private void initializeCommand() {
-        initializeCommand(Collections.singletonList(createVmStatusDown()));
+        initializeCommand(createVmStatusDown());
     }
 
-    protected void initializeCommand(List<VM> vms) {
-        mockGetForDisk(vms);
-        mockGetVmsListForDisk(vms);
+    protected void initializeCommand(VM vm) {
+        mockGetForDisk(vm);
+        mockGetVmsListForDisk(vm);
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
@@ -531,8 +528,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         mockVds();
-        mockVmsStoragePoolInfo(vms);
-        mockToUpdateDiskVm(vms);
+        mockVmsStoragePoolInfo(vm);
+        mockToUpdateDiskVm(vm);
 
         StorageDomain sd = new StorageDomain();
         sd.setAvailableDiskSize(Integer.MAX_VALUE);
@@ -663,19 +660,13 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
     }
 
-    private void mockToUpdateDiskVm(List<VM> vms) {
-        for (VM vm: vms) {
-            if (vm.getId().equals(command.getParameters().getVmId())) {
-                when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-                when(diskVmElementDao.get(new VmDeviceId(command.getParameters().getDiskInfo().getId(), vm.getId()))).thenReturn(new DiskVmElement());
-                break;
-            }
-        }
+    private void mockToUpdateDiskVm(VM vm) {
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+        when(diskVmElementDao.get(new VmDeviceId(command.getParameters().getDiskInfo().getId(), vm.getId()))).thenReturn(new DiskVmElement());
     }
 
     private void mockNullVm() {
-        mockGetForDisk((VM) null);
-        mockGetVmsListForDisk(null);
+        mockGetForDisk(null);
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(null);
     }
 
@@ -696,33 +687,19 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         return vm;
     }
 
-    private void mockVmsStoragePoolInfo(List<VM> vms) {
+    private void mockVmsStoragePoolInfo(VM vm) {
         StoragePool storagePool = mockStoragePool();
-        for (VM vm : vms) {
-            vm.setStoragePoolId(storagePool.getId());
-        }
+        vm.setStoragePoolId(storagePool.getId());
     }
 
     private void mockGetForDisk(VM vm) {
-        mockGetForDisk(Collections.singletonList(vm));
+        when(vmDao.getForDisk(diskImageGuid, true)).thenReturn(
+                Collections.singletonMap(Boolean.TRUE, Collections.singletonList(vm)));
     }
 
-    private void mockGetForDisk(List<VM> vms) {
-        Map<Boolean, List<VM>> vmsMap = new HashMap<>();
-        vmsMap.put(Boolean.TRUE, vms);
-        when(vmDao.getForDisk(diskImageGuid, true)).thenReturn(vmsMap);
-    }
-
-    private void mockGetVmsListForDisk(List<VM> vms) {
-        List<Pair<VM, VmDevice>> vmsWithVmDevice = new ArrayList<>();
-        if (vms != null) {
-            for (VM vm : vms) {
-                VmDevice device = createVmDevice(diskImageGuid, vm.getId());
-                vmsWithVmDevice.add(new Pair<>(vm, device));
-            }
-        }
-
-        when(vmDao.getVmsWithPlugInfo(diskImageGuid)).thenReturn(vmsWithVmDevice);
+    private void mockGetVmsListForDisk(VM vm) {
+        VmDevice device = createVmDevice(diskImageGuid, vm.getId());
+        when(vmDao.getVmsWithPlugInfo(diskImageGuid)).thenReturn(Collections.singletonList(new Pair<>(vm, device)));
     }
 
     /**
