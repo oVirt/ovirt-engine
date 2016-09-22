@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +10,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -27,10 +28,20 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
-    private RemoveStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
+    private static final StorageServerConnections NFSConnection = createNFSConnection(
+            "multipass.my.domain.tlv.company.com:/export/allstorage/data1",
+            StorageType.NFS,
+            NfsVersion.V4,
+            50,
+            0);
 
-    private StorageServerConnections NFSConnection = null;
-    private StorageServerConnections iSCSIConnection = null;
+    private StorageServerConnections iSCSIConnection = createIscsiConnection(
+            "10.11.12.225",
+            StorageType.ISCSI,
+            "iqn.2013-04.myhat.com:abc-target1",
+            "user1",
+            "mypassword",
+            "1");
 
     @Mock
     private LunDao lunDao;
@@ -38,41 +49,24 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     @Mock
     private StorageServerConnectionDao storageServerConnectionDao;
 
-    private StorageServerConnectionParametersBase parameters;
+    private StorageServerConnectionParametersBase parameters =
+            new StorageServerConnectionParametersBase(null, Guid.newGuid());
 
-    @Before
-    public void prepareParams() {
+    @Spy
+    @InjectMocks
+    private RemoveStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = prepareCommand();
 
-        NFSConnection =
-                createNFSConnection(
-                        "multipass.my.domain.tlv.company.com:/export/allstorage/data1",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        50,
-                        0);
-
-        iSCSIConnection =
-                createIscsiConnection(
-                        "10.11.12.225",
-                        StorageType.ISCSI,
-                        "iqn.2013-04.myhat.com:abc-target1",
-                        "user1",
-                        "mypassword",
-                        "1");
-
-        prepareCommand();
+    private RemoveStorageServerConnectionCommand<StorageServerConnectionParametersBase> prepareCommand() {
+        return new RemoveStorageServerConnectionCommand<>(parameters, null);
     }
 
-    private void prepareCommand() {
-        parameters = new StorageServerConnectionParametersBase();
-        parameters.setVdsId(Guid.newGuid());
-
-        command = spy(new RemoveStorageServerConnectionCommand<>(parameters, null));
+    @Before
+    public void prepareMocks() {
         doReturn(lunDao).when(command).getLunDao();
         doReturn(storageServerConnectionDao).when(command).getStorageServerConnectionDao();
     }
 
-    private StorageServerConnections createNFSConnection(String connection,
+    private static StorageServerConnections createNFSConnection(String connection,
             StorageType type,
             NfsVersion version,
             int timeout,
@@ -85,7 +79,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         return connectionDetails;
     }
 
-    private StorageServerConnections createIscsiConnection(String connection,
+    private static StorageServerConnections createIscsiConnection(String connection,
             StorageType type,
             String iqn,
             String userName,
@@ -101,7 +95,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         return connectionDetails;
     }
 
-    private StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
+    private static StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
         connectionDetails.setId(id.toString());
         connectionDetails.setConnection(connection);
