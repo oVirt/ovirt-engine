@@ -8,7 +8,6 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -22,6 +21,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -59,9 +59,14 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VmPriorityMaxValue, 100));
 
-    private AddVmTemplateCommand<AddVmTemplateParameters> cmd;
-    private VM vm;
-    private Guid spId;
+    private VM vm = createVM();
+
+    @Spy
+    @InjectMocks
+    private AddVmTemplateCommand<AddVmTemplateParameters> cmd =
+            new AddVmTemplateCommand<>(
+                    new AddVmTemplateParameters(vm, "templateName", "Template for testing"),
+                    CommandContext.createContext(""));
 
     @Mock
     private VmDao vmDao;
@@ -83,53 +88,46 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
 
-    @Before
-    public void setUp() {
-        // The VM to use
+    private VM createVM() {
         Guid vmId = Guid.newGuid();
         Guid clusterId = Guid.newGuid();
-        spId = Guid.newGuid();
+        Guid spId = Guid.newGuid();
 
-        vm = new VM();
+        VM vm = new VM();
         vm.setId(vmId);
         vm.setClusterId(clusterId);
         vm.setStoragePoolId(spId);
         vm.setVmOs(14);
-        when(vmDao.get(vmId)).thenReturn(vm);
+
+        return vm;
+    }
+
+    @Before
+    public void setUp() {
+        when(vmDao.get(vm.getId())).thenReturn(vm);
 
         // The cluster to use
         Cluster cluster = new Cluster();
         cluster.setCpuName("Intel Conroe Family");
         cluster.setArchitecture(ArchitectureType.x86_64);
-        cluster.setId(clusterId);
-        cluster.setStoragePoolId(spId);
+        cluster.setId(vm.getClusterId());
+        cluster.setStoragePoolId(vm.getStoragePoolId());
         cluster.setCompatibilityVersion(Version.getLast());
-        when(clusterDao.get(clusterId)).thenReturn(cluster);
-        AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
+        when(clusterDao.get(vm.getClusterId())).thenReturn(cluster);
 
         mockOsRepository();
 
-        // Using the compensation constructor since the normal one contains DB access
-        cmd = spy(new AddVmTemplateCommand<>(params, CommandContext.createContext(params.getSessionId())));
-
         doNothing().when(cmd).initUser();
         doNothing().when(cmd).separateCustomProperties(any(VmStatic.class));
-        doReturn(getDisksList(spId)).when(cmd).getVmDisksFromDB();
+        doReturn(getDisksList(vm.getStoragePoolId())).when(cmd).getVmDisksFromDB();
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
 
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-        VmHandler.init();
-
-        cmd.setVm(vm);
         cmd.postConstruct();
-        cmd.setVmId(vmId);
-        cmd.setClusterId(clusterId);
     }
 
     protected void mockOsRepository() {
-        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         vmDeviceUtils.init();
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
@@ -150,7 +148,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Test
     // When Template by the same name already exists in the datacenter - fail.
     public void testValidateDuplicateTemplateName() {
-        doReturn(true).when(cmd).isVmTemlateWithSameNameExist("templateName", spId);
+        doReturn(true).when(cmd).isVmTemlateWithSameNameExist("templateName", vm.getStoragePoolId());
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
@@ -255,7 +253,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     public void testPermissionsForAddingTemplateDedicatedHostChanged(){
         setupDedicatedHostForVmAndTemplate(false);
 
-        PermissionSubject editDefaultHostPermission = new PermissionSubject(spId,
+        PermissionSubject editDefaultHostPermission = new PermissionSubject(vm.getStoragePoolId(),
                 VdcObjectType.StoragePool,
                 ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES);
         List<PermissionSubject> permissionCheckSubjects = cmd.getPermissionCheckSubjects();
@@ -298,10 +296,10 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     private void setupStoragePool() {
         StoragePool storagePool = new StoragePool();
-        storagePool.setId(spId);
+        storagePool.setId(vm.getStoragePoolId());
         storagePool.setStatus(StoragePoolStatus.Up);
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
-        when(storagePoolDao.get(spId)).thenReturn(storagePool);
+        when(storagePoolDao.get(vm.getStoragePoolId())).thenReturn(storagePool);
     }
 
     private List<DiskImage> getDisksList(Guid spId) {
