@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.repoimage;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -9,7 +8,9 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -31,7 +32,11 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     @Mock
     protected VmDao vmDao;
 
-    protected ExportRepoImageCommand<ExportRepoImageParameters> cmd;
+    @Spy
+    @InjectMocks
+    protected ExportRepoImageCommand<ExportRepoImageParameters> cmd =
+            new ExportRepoImageCommand<>(
+                    new ExportRepoImageParameters(getDiskImageGroupId(), getRepoStorageDomainId()), null);
 
     protected VM vm;
 
@@ -45,16 +50,10 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
         when(vmDao.getVmsListForDisk(getDiskImageId(), Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
 
-        ExportRepoImageParameters exportParameters = new ExportRepoImageParameters(
-                getDiskImageGroupId(), getRepoStorageDomainId());
-
-        cmd = spy(new ExportRepoImageCommand<>(exportParameters, null));
-
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDao();
         doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDao();
         doReturn(getDiskDao()).when(cmd).getDiskDao();
-        doReturn(getProviderProxy()).when(cmd).getProviderProxy();
     }
 
     @Test

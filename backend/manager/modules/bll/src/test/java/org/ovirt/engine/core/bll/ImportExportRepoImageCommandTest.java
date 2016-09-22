@@ -48,21 +48,21 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
     @Mock
     private OpenStackImageProviderProxy providerProxy;
 
-    private Guid repoStorageDomainId;
+    private Guid repoStorageDomainId = Guid.newGuid();
 
-    private Guid storagePoolId;
+    private Guid storagePoolId = Guid.newGuid();
 
-    private Guid storageDomainId;
+    private Guid storageDomainId = Guid.newGuid();
 
     private StorageDomain diskStorageDomain;
 
     private StoragePool storagePool;
 
-    private String repoImageId;
+    private String repoImageId = Guid.newGuid().toString();
 
-    private Guid diskImageId;
+    private Guid diskImageId = Guid.newGuid();
 
-    private Guid diskImageGroupId;
+    private Guid diskImageGroupId = Guid.newGuid();
 
     private DiskImage diskImage;
 
@@ -124,16 +124,6 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        repoStorageDomainId = Guid.newGuid();
-
-        repoImageId = Guid.newGuid().toString();
-
-        diskImageId = Guid.newGuid();
-        diskImageGroupId = Guid.newGuid();
-
-        storagePoolId = Guid.newGuid();
-        storageDomainId = Guid.newGuid();
-
         StorageDomain imageStorageDomain = new StorageDomain();
         imageStorageDomain.setStorage(Guid.newGuid().toString());
 
