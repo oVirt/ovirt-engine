@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -11,7 +10,9 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 public class EditAffinityGroupCommandTest extends BaseCommandTest {
     private static final String AFFINITY_GROUP_NAME = "test123";
     Guid clusterId = Guid.newGuid();
-    EditAffinityGroupCommand command;
 
     @Mock
     AffinityGroupDao affinityGroupDao;
@@ -35,18 +35,19 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
     @Mock
     VmStaticDao vmStaticDao;
 
-    @Mock
-    AffinityGroupCRUDParameters parameters;
+    AffinityGroupCRUDParameters parameters = new AffinityGroupCRUDParameters(null, createAffinityGroup());
+
+    @Spy
+    @InjectMocks
+    EditAffinityGroupCommand command = new EditAffinityGroupCommand(parameters, null);
 
     private AffinityGroup affinityGroup;
 
     @Before
     public void setup() {
-        doReturn(createAffinityGroup()).when(parameters).getAffinityGroup();
         AffinityGroup affinityGroup2 = new AffinityGroup();
         affinityGroup2.setClusterId(clusterId);
         affinityGroup2.setName(AFFINITY_GROUP_NAME + "##");
-        command = spy(new EditAffinityGroupCommand(parameters, null));
         doReturn(affinityGroup2).when(command).getAffinityGroup();
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
