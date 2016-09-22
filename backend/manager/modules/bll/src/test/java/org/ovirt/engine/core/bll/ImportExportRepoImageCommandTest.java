@@ -10,8 +10,6 @@ import org.junit.Rule;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
-import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -49,8 +47,6 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
 
     @Mock
     private OpenStackImageProviderProxy providerProxy;
-
-    private Guid providerId;
 
     private Guid repoStorageDomainId;
 
@@ -128,7 +124,6 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        providerId = Guid.newGuid();
         repoStorageDomainId = Guid.newGuid();
 
         repoImageId = Guid.newGuid().toString();
@@ -140,7 +135,7 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
         storageDomainId = Guid.newGuid();
 
         StorageDomain imageStorageDomain = new StorageDomain();
-        imageStorageDomain.setStorage(providerId.toString());
+        imageStorageDomain.setStorage(Guid.newGuid().toString());
 
         diskStorageDomain = new StorageDomain();
         diskStorageDomain.setId(storageDomainId);
@@ -150,9 +145,6 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
         storagePool  = new StoragePool();
         storagePool.setId(storagePoolId);
         storagePool.setStatus(StoragePoolStatus.Up);
-
-        Provider provider = new Provider();
-        provider.setType(ProviderType.OPENSTACK_IMAGE);
 
         diskImage = new DiskImage();
         diskImage.setId(diskImageId);
