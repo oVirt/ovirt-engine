@@ -600,7 +600,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
     }
 
-    private LunDisk createISCSILunDisk(ScsiGenericIO sgio, boolean isUsingScsiReservation, DiskInterface diskInterface) {
+    private LunDisk createISCSILunDisk(ScsiGenericIO sgio, boolean isUsingScsiReservation) {
         LunDisk disk = createISCSILunDisk();
         disk.setSgio(sgio);
         disk.setUsingScsiReservation(isUsingScsiReservation);
@@ -609,7 +609,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testIscsiLunCannotBeAddedIfSgioIsFilteredAndScsiReservationEnabled() {
-        LunDisk disk = createISCSILunDisk(ScsiGenericIO.FILTERED, true, DiskInterface.IDE);
+        LunDisk disk = createISCSILunDisk(ScsiGenericIO.FILTERED, true);
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
@@ -621,7 +621,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testIscsiLunCanBeAddedIfScsiPassthroughEnabledAndScsiReservationEnabled() {
-        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED, true, DiskInterface.IDE);
+        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED, true);
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
@@ -633,7 +633,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testIscsiLunCannotBeAddedIfAddingFloatingDisk() {
-        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED, true, DiskInterface.IDE);
+        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED, true);
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
