@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
@@ -30,11 +31,11 @@ import org.ovirt.engine.ui.userportal.widget.extended.vm.AbstractConsoleButtonCe
 import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleEditButtonCell;
-import org.ovirt.engine.ui.userportal.widget.refresh.UserPortalRefreshManager;
 import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.cell.VmButtonsImageButtonCell;
 import org.ovirt.engine.ui.userportal.widget.table.column.AbstractUserportalMaskedDataurlImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
+
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
@@ -90,7 +91,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 getTableResources(),
                 ClientGinjectorProvider.getEventBus(),
                 ClientGinjectorProvider.getClientStorage(),
-                new UserPortalRefreshManager(modelProvider,
+                new SimpleRefreshManager(modelProvider,
                         ClientGinjectorProvider.getEventBus(),
                         ClientGinjectorProvider.getClientStorage()));
     }
