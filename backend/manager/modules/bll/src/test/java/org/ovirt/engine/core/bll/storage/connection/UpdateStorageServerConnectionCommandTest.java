@@ -10,7 +10,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -197,15 +196,13 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 300,
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
-        List<StorageServerConnections> connections = new ArrayList<>();
         StorageServerConnections conn1 = new StorageServerConnections();
         conn1.setConnection(newNFSConnection.getConnection());
         conn1.setId(newNFSConnection.getId());
         StorageServerConnections conn2 = new StorageServerConnections();
         conn2.setConnection(newNFSConnection.getConnection());
         conn2.setId(Guid.newGuid().toString());
-        connections.add(conn1);
-        connections.add(conn2);
+        List<StorageServerConnections> connections = Arrays.asList(conn1, conn2);
         when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
         doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
@@ -269,28 +266,25 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
     @Test
     public void updateConnectionOfDomainsAndLunDisks() {
         StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-        List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("3600144f09dbd05000000517e730b1212");
         lun1.setVolumeGroupId("");
         lun1.setDiskAlias("disk1");
         Guid diskId1 = Guid.newGuid();
         lun1.setDiskId(diskId1);
-        luns.add(lun1);
         LUNs lun2 = new LUNs();
         lun2.setLUNId("3600144f09dbd05000000517e730b1212");
         lun2.setVolumeGroupId("");
         lun2.setDiskAlias("disk2");
         Guid diskId2 = Guid.newGuid();
         lun2.setDiskId(diskId2);
-        luns.add(lun2);
         LUNs lun3 = new LUNs();
         lun3.setLUNId("3600144f09dbd05000000517e730b1212");
         lun3.setStorageDomainName("storagedomain4");
         Guid storageDomainId = Guid.newGuid();
         lun3.setStorageDomainId(storageDomainId);
         lun3.setVolumeGroupId(Guid.newGuid().toString());
-        luns.add(lun3);
+        List<LUNs> luns = Arrays.asList(lun1, lun2, lun3);
 
         Map<Boolean, List<VM>> vmsMap = new HashMap<>();
         VM vm1 = new VM();
@@ -302,11 +296,8 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         VM vm3 = new VM();
         vm3.setName("vm3");
         vm3.setStatus(VMStatus.Up);
-        List<VM> pluggedVms = new ArrayList<>();
-        pluggedVms.add(vm1);
-        pluggedVms.add(vm2);
-        List<VM> unPluggedVms = new ArrayList<>();
-        unPluggedVms.add(vm3);
+        List<VM> pluggedVms = Arrays.asList(vm1, vm2);
+        List<VM> unPluggedVms = Collections.singletonList(vm3);
         vmsMap.put(Boolean.FALSE, unPluggedVms);
         vmsMap.put(Boolean.TRUE, pluggedVms);
         when(vmDao.getForDisk(diskId1, true)).thenReturn(vmsMap);
@@ -334,21 +325,19 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
     @Test
     public void updateConnectionOfLunDisks() {
         StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-        List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("3600144f09dbd05000000517e730b1212");
         lun1.setVolumeGroupId("");
         lun1.setDiskAlias("disk1");
         Guid diskId1 = Guid.newGuid();
         lun1.setDiskId(diskId1);
-        luns.add(lun1);
         LUNs lun2 = new LUNs();
         lun2.setLUNId("3600144f09dbd05000000517e730b1212");
         lun2.setVolumeGroupId("");
         lun2.setDiskAlias("disk2");
         Guid diskId2 = Guid.newGuid();
         lun2.setDiskId(diskId2);
-        luns.add(lun2);
+        List<LUNs> luns = Arrays.asList(lun1, lun2);
         Map<Boolean, List<VM>> vmsMap = new HashMap<>();
         VM vm1 = new VM();
         vm1.setName("vm1");
@@ -359,11 +348,8 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         VM vm3 = new VM();
         vm3.setName("vm3");
         vm3.setStatus(VMStatus.Up);
-        List<VM> pluggedVms = new ArrayList<>();
-        pluggedVms.add(vm1);
-        pluggedVms.add(vm2);
-        List<VM> unPluggedVms = new ArrayList<>();
-        unPluggedVms.add(vm3);
+        List<VM> pluggedVms = Arrays.asList(vm1, vm2);
+        List<VM> unPluggedVms = Collections.singletonList(vm3);
         vmsMap.put(Boolean.FALSE, unPluggedVms);
         vmsMap.put(Boolean.TRUE, pluggedVms);
         when(vmDao.getForDisk(diskId1, true)).thenReturn(vmsMap);
@@ -378,14 +364,13 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
     @Test
     public void updateConnectionOfDomains() {
         StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-        List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("3600144f09dbd05000000517e730b1212");
         lun1.setStorageDomainName("storagedomain4");
         Guid storageDomainId = Guid.newGuid();
         lun1.setStorageDomainId(storageDomainId);
         lun1.setVolumeGroupId(Guid.newGuid().toString());
-        luns.add(lun1);
+        List<LUNs> luns = Collections.singletonList(lun1);
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getId())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
@@ -408,14 +393,13 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
     @Test
     public void updateConnectionOfUnattachedBlockDomain() {
         StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-        List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("3600144f09dbd05000000517e730b1212");
         lun1.setStorageDomainName("storagedomain4");
         Guid storageDomainId = Guid.newGuid();
         lun1.setStorageDomainId(storageDomainId);
         lun1.setVolumeGroupId(Guid.newGuid().toString());
-        luns.add(lun1);
+        List<LUNs> luns = Collections.singletonList(lun1);
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getId())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
@@ -461,8 +445,8 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 300,
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
-        List<StorageDomain> domains = new ArrayList<>();
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
+        List<StorageDomain> domains = Collections.emptyList();
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getId());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -526,8 +510,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         returnValueConnectSuccess.setReturnValue(domain);
         doReturn(returnValueConnectSuccess).when(command).getStatsForDomain(domain);
         doReturn(true).when(command).connectToStorage();
-        List<StorageDomain> domains = new ArrayList<>();
-        domains.add(domain);
+        List<StorageDomain> domains = Collections.singletonList(domain);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getId());
         doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
         doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);
@@ -623,21 +606,19 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         300,
                         0);
 
-       List<StorageServerConnections> connections = new ArrayList<>();
        StorageServerConnections connection1 = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
                         NfsVersion.V4,
                         300,
                         0);
-       connections.add(connection1);
        StorageServerConnections connection2 = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
                         NfsVersion.V4,
                         600,
                         0);
-       connections.add(connection2);
+        List<StorageServerConnections> connections = Arrays.asList(connection1, connection2);
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
        boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
@@ -653,8 +634,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         300,
                         0);
 
-       List<StorageServerConnections> connections = new ArrayList<>();
-        connections.add(newNFSConnection);
+       List<StorageServerConnections> connections = Collections.singletonList(newNFSConnection);
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
        boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
@@ -670,7 +650,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         300,
                         0);
 
-       List<StorageServerConnections> connections = new ArrayList<>();
+       List<StorageServerConnections> connections = Collections.emptyList();
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
        boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
