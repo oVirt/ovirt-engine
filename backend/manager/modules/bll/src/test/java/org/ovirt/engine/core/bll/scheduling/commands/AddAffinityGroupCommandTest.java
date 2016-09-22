@@ -4,13 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -27,7 +28,6 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     Guid clusterId = Guid.newGuid();
     Guid vmId = Guid.newGuid();
-    AddAffinityGroupCommand command;
 
     @Mock
     AffinityGroupDao affinityGroupDao;
@@ -35,15 +35,16 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     @Mock
     VmStaticDao vmStaticDao;
 
-    @Mock
-    AffinityGroupCRUDParameters parameters;
+    AffinityGroupCRUDParameters parameters = new AffinityGroupCRUDParameters(null, createAffinityGroup());
+
+    @Spy
+    @InjectMocks
+    AddAffinityGroupCommand command = new AddAffinityGroupCommand(parameters, null);
 
     private AffinityGroup affinityGroup;
 
     @Before
     public void setup() {
-        command = spy(new AddAffinityGroupCommand(parameters, null));
-        doReturn(createAffinityGroup()).when(parameters).getAffinityGroup();
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(new Cluster()).when(command).getCluster();
