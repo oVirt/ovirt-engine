@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,22 +24,14 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddStorageServerConnectionCommandTest extends StorageServerConnectionTestCommon {
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
-
     private AddStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
 
     @Mock
     StorageServerConnectionDao storageConnDao;
-
-    @Mock
-    StorageDomainDao storageDomainDao;
 
     @Before
     public void prepareParams() {
@@ -48,7 +39,6 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
         parameters.setVdsId(Guid.newGuid());
         command = spy(new AddStorageServerConnectionCommand<>(parameters, null));
         doReturn(storageConnDao).when(command).getStorageConnDao();
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
     }
 
