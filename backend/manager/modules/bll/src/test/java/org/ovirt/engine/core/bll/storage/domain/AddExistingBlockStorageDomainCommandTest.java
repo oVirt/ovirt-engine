@@ -44,7 +44,6 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         parameters = new StorageDomainManagementParameter(getStorageDomain());
-        parameters.setVdsId(Guid.newGuid());
         command = spy(new AddExistingBlockStorageDomainCommand<>(parameters, null));
         doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
 
