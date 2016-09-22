@@ -15,13 +15,8 @@ import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlav
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseCommandTest {
-
-    @Mock
-    GlusterVolumeDao volumeDao;
-
     private UpdateGlusterHostPubKeyToSlaveInternalCommand command;
 
     @Mock
