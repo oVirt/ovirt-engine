@@ -6,6 +6,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -60,11 +61,8 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         sp.setIsLocal(false);
         sp.setCompatibilityVersion(Version.v3_6);
 
-        List<String> lunIdList = new ArrayList<>();
-        lunIdList.add("1");
-        lunIdList.add("2");
-
-        cmd = spy(new RefreshLunsSizeCommand<>(new ExtendSANStorageDomainParameters(sdId, (ArrayList)lunIdList), null));
+        cmd = spy(new RefreshLunsSizeCommand<>
+                (new ExtendSANStorageDomainParameters(sdId, new ArrayList<>(Arrays.asList("1", "2"))), null));
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
         doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();
@@ -73,16 +71,13 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
         doReturn(lunsDao).when(cmd).getLunDao();
 
-        List<LUNs> lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("1");
         lun1.setStorageDomainId(sdId);
         LUNs lun2 = new LUNs();
         lun2.setLUNId("2");
         lun2.setStorageDomainId(sdId);
-        lunsFromDb.add(lun1);
-        lunsFromDb.add(lun2);
-        when(lunsDao.getAll()).thenReturn(lunsFromDb);
+        when(lunsDao.getAll()).thenReturn(Arrays.asList(lun1, lun2));
     }
 
     private StorageDomainStatic createStorageDomain() {
@@ -143,16 +138,13 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateLunsNotPartOfStorageDomain() {
-        List lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("111");
         lun1.setStorageDomainId(sdId);
         LUNs lun2 = new LUNs();
         lun2.setLUNId("222");
         lun2.setStorageDomainId(sdId);
-        lunsFromDb.add(lun1);
-        lunsFromDb.add(lun2);
-        when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(lunsFromDb);
+        when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(Arrays.asList(lun1, lun2));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
@@ -160,16 +152,13 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     @Test
     public void validate() {
-        List lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("1");
         lun1.setStorageDomainId(sdId);
         LUNs lun2 = new LUNs();
         lun2.setLUNId("2");
         lun2.setStorageDomainId(sdId);
-        lunsFromDb.add(lun1);
-        lunsFromDb.add(lun2);
-        when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(lunsFromDb);
+        when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(Arrays.asList(lun1, lun2));
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 }
