@@ -425,13 +425,8 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeEndElement();
         }
 
-        _writer.writeStartElement(OvfProperties.CUSTOM_EMULATED_MACHINE);
-        _writer.writeRaw(vmBase.getCustomEmulatedMachine());
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.CUSTOM_CPU_NAME);
-        _writer.writeRaw(vmBase.getCustomCpuName());
-        _writer.writeEndElement();
+        writeCustomEmulatedMachine();
+        writeCustomCpuName();
 
         _writer.writeStartElement(OvfProperties.PREDEFINED_PROPERTIES);
         _writer.writeRaw(vmBase.getPredefinedProperties());
@@ -440,6 +435,15 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeStartElement(OvfProperties.USER_DEFINED_PROPERTIES);
         _writer.writeRaw(vmBase.getUserDefinedProperties());
         _writer.writeEndElement();
+    }
+
+    protected void writeCustomEmulatedMachine() {
+        _writer.writeElement(OvfProperties.CUSTOM_EMULATED_MACHINE, vmBase.getCustomEmulatedMachine());
+    }
+
+    protected void writeCustomCpuName() {
+        _writer.writeElement(OvfProperties.CUSTOM_CPU_NAME, vmBase.getCustomCpuName());
+
     }
 
     protected abstract void writeAppList();

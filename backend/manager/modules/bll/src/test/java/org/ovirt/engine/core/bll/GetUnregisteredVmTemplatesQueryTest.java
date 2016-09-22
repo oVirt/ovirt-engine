@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -94,7 +95,7 @@ public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<IdQue
 
         // Mock OVF
         OvfHelper ovfHelperMock = mock(OvfHelper.class);
-        when(getQuery().getOvfHelper()).thenReturn(ovfHelperMock);
+        doReturn(ovfHelperMock).when(getQuery()).getOvfHelper();
         when(ovfHelperMock.readVmTemplateFromOvf(ovfData)).thenReturn(VmTemplateReturnForOvf);
         when(ovfHelperMock.readVmTemplateFromOvf(ovfData2)).thenReturn(VmTemplateReturnForOvf2);
     }

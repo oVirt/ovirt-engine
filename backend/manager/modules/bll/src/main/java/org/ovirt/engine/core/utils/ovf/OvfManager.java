@@ -3,6 +3,8 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -13,6 +15,8 @@ import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +27,19 @@ public class OvfManager {
     private OvfVmIconDefaultsProvider iconDefaultsProvider = SimpleDependencyInjector.getInstance().get(
             OvfVmIconDefaultsProvider.class);
 
+    private ClusterDao clusterDao = Injector.get(ClusterDao.class);
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
+
     public String exportVm(VM vm, List<DiskImage> images, Version version) {
-        return new OvfVmWriter(vm, images, version).build().getStringRepresentation();
+        final OvfVmWriter vmWriter;
+        if (vm.isHostedEngine()) {
+            Cluster cluster = clusterDao.get(vm.getClusterId());
+            String cpuId = cpuFlagsManagerHandler.getCpuId(cluster.getCpuName(), cluster.getCompatibilityVersion());
+            vmWriter = new HostedEngineOvfWriter(vm, images, version, cluster.getEmulatedMachine(), cpuId);
+        } else {
+            vmWriter = new OvfVmWriter(vm, images, version);
+        }
+        return vmWriter.build().getStringRepresentation();
     }
 
     public String exportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {

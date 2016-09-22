@@ -28,11 +28,13 @@ import java.util.stream.IntStream;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -54,6 +56,7 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -62,6 +65,7 @@ import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
@@ -96,6 +100,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
+
+    @Mock
+    private ClusterDao clusterDao;
+
     @Spy
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
@@ -111,6 +121,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.StorageDomainOvfStoreCount, 1),
             mockConfig(ConfigValues.OvfItemsCountPerUpdate, ITEMS_COUNT_PER_UPDATE)
     );
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Before
     public void setUp() {
@@ -129,6 +142,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(pool1).when(command).getStoragePool();
         List<Snapshot> snapshots = new ArrayList<>();
         doReturn(snapshots).when(snapshotDao).getAllWithConfiguration(any(Guid.class));
+        // needed for ovf writer utility
+        injectorRule.bind(ClusterDao.class, clusterDao);
         mockAnswers();
     }
 
