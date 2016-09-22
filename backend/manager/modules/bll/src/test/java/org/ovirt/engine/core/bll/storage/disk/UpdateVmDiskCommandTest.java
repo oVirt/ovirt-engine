@@ -506,9 +506,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     protected void initializeCommand(VmDiskOperationParameterBase params, List<VM> vms) {
-        // Done before creating the spy to have correct values during the ctor run
-        mockCtorRelatedDaoCalls(vms);
         command = spy(new UpdateVmDiskCommand<>(params, CommandContext.createContext(params.getSessionId())));
+        mockGetForDisk(vms);
+        mockGetVmsListForDisk(vms);
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
@@ -722,11 +722,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         vm.setGuestOs("rhel6");
         vm.setId(vmId);
         return vm;
-    }
-
-    private void mockCtorRelatedDaoCalls(List<VM> vms) {
-        mockGetForDisk(vms);
-        mockGetVmsListForDisk(vms);
     }
 
     private void mockVmsStoragePoolInfo(List<VM> vms) {
