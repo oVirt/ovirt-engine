@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,8 +15,11 @@ import org.ovirt.engine.core.dao.RoleGroupMapDao;
 
 /** An abstract base class for tests for roles commands */
 public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
-    private RolesParameterBase params;
-    private RolesCommandBase<? extends RolesParameterBase> command;
+    private RolesParameterBase params = generateParameters();
+
+    @Spy
+    @InjectMocks
+    private RolesCommandBase<? extends RolesParameterBase> command = generateCommand();
     private Role role;
 
     @Mock
@@ -26,8 +30,6 @@ public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        params = generateParameters();
-        command = spy(generateCommand());
         role = new Role();
         role.setId(params.getRoleId());
 
