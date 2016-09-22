@@ -508,21 +508,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     protected void initializeCommand(VmDiskOperationParameterBase params, List<VM> vms) {
         // Done before creating the spy to have correct values during the ctor run
         mockCtorRelatedDaoCalls(vms);
-        command = spy(new UpdateVmDiskCommand<VmDiskOperationParameterBase>(
-                params, CommandContext.createContext(params.getSessionId())) {
-            // Overridden here and not during spying, since it's called in the constructor
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public DiskDao getDiskDao() {
-                return diskDao;
-            }
-
-            @Override
-            public VmDao getVmDao() {
-                return vmDao;
-            }
-
-        });
+        command = spy(new UpdateVmDiskCommand<>(params, CommandContext.createContext(params.getSessionId())));
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
