@@ -57,11 +57,9 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     private StorageServerConnectionDao sscDao;
 
     private StorageDomainStatic sd;
-    private VDS vds;
     private Guid spId;
     private StoragePool sp;
     private Guid connId;
-    private StorageDomainManagementParameter params;
 
     @Before
     public void setUp() {
@@ -77,7 +75,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageFormat(StorageFormatType.V3);
         sd.setStorage(connId.toString());
 
-        vds = new VDS();
+        VDS vds = new VDS();
         vds.setId(vdsId);
         vds.setStatus(VDSStatus.Up);
         vds.setStoragePoolId(spId);
@@ -94,7 +92,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
 
         when(sscDao.get(connId.toString())).thenReturn(conn);
 
-        params = new StorageDomainManagementParameter(sd);
+        StorageDomainManagementParameter params = new StorageDomainManagementParameter(sd);
         params.setVdsId(vdsId);
 
         cmd = spy(new AddStorageDomainCommon<>(params, null));
@@ -151,7 +149,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
 
     @Test
     public void validateFailsPoolSpecifiedDoesNotExist() {
-        params.setStoragePoolId(spId);
+        cmd.getParameters().setStoragePoolId(spId);
         when(spDao.get(spId)).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
