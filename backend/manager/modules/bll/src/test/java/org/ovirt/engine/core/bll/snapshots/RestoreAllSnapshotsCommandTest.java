@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -34,20 +33,14 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 
 public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
-
-    @Mock
-    private VDSBrokerFrontend vdsBrokerFrontend;
-
     @Mock
     private VmDao vmDao;
 
@@ -55,13 +48,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     private VmDynamicDao vmDynamicDao;
 
     @Mock
-    private BackendInternal backend;
-
-    @Mock
     private DiskDao diskDao;
-
-    @Mock
-    private StorageDomainDao storageDomainDao;
 
     @Mock
     private StoragePoolDao storagePoolDao;
@@ -86,14 +73,9 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     @Before
     public void setupCommand() {
         initSpyCommand();
-        mockBackend();
         mockDaos();
         mockSnapshotValidator();
         mockVm();
-    }
-
-    protected void mockBackend() {
-        doReturn(backend).when(spyCommand).getBackend();
     }
 
     @Test
@@ -147,7 +129,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsWithinThresholds();
         spyCommand = spy(new RestoreAllSnapshotsCommand<>(parameters, null));
-        doReturn(vdsBrokerFrontend).when(spyCommand).getVdsBroker();
         doReturn(true).when(spyCommand).performImagesChecks();
         doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();
         doReturn(vmValidator).when(spyCommand).createVmValidator(any(VM.class));
@@ -188,9 +169,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         // Variables only for passing the available size check.
         storageDomains.setAvailableDiskSize(10000000);
         storageDomains.setUsedDiskSize(10);
-        doReturn(storageDomainDao).when(spyCommand).getStorageDomainDao();
-        when(storageDomainDao.getForStoragePool(storageDomainId, Guid.Empty)).thenReturn(storageDomains);
-        when(storageDomainDao.get(storageDomainId)).thenReturn(storageDomains);
     }
 
     private void mockStoragePoolDao() {
