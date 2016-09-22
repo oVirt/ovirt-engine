@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,7 +12,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -39,7 +40,9 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
-    private AttachStorageConnectionToStorageDomainCommand<AttachDetachStorageConnectionParameters> command = null;
+    @Spy
+    @InjectMocks
+    private AttachStorageConnectionToStorageDomainCommand<AttachDetachStorageConnectionParameters> command = getCommand();
 
     private StorageConnectionValidator validator = null;
 
@@ -54,21 +57,26 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
     @Mock
     StorageServerConnectionLunMapDao lunMapDao;
 
-    @Before
-    public void init() {
+    private static AttachStorageConnectionToStorageDomainCommand<AttachDetachStorageConnectionParameters> getCommand() {
         Guid connectionId = Guid.newGuid();
         Guid domainId = Guid.newGuid();
+
         AttachDetachStorageConnectionParameters parameters = new AttachDetachStorageConnectionParameters();
         parameters.setStorageConnectionId(connectionId.toString());
         parameters.setStorageDomainId(domainId);
+
+        return new AttachStorageConnectionToStorageDomainCommand<>(parameters, null);
+    }
+
+    @Before
+    public void init() {
         validator = mock(StorageConnectionValidator.class);
-        command = spy(new AttachStorageConnectionToStorageDomainCommand<>(parameters, null));
         doReturn(validator).when(command).createStorageConnectionValidator();
         doReturn(lunDao).when(command).getLunDao();
         doReturn(connectionDao).when(command).getStorageServerConnectionDao();
         doReturn(lunMapDao).when(command).getStorageServerConnectionLunMapDao();
         domain = new StorageDomain();
-        domain.setId(domainId);
+        domain.setId(command.getParameters().getStorageDomainId());
         domain.setStorageDomainType(StorageDomainType.Data);
         domain.setStatus(StorageDomainStatus.Maintenance);
         domain.setStorageType(StorageType.ISCSI);
