@@ -17,10 +17,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -34,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
@@ -51,7 +48,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -65,9 +61,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -106,9 +100,6 @@ public class RunVmCommandTest extends BaseCommandTest {
     private VmDeviceDao deviceDao;
 
     @Mock
-    private BackendInternal backend;
-
-    @Mock
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
     @Mock
@@ -143,13 +134,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(vdsBrokerFrontend.runAsyncVdsCommand(eq(VDSCommandType.CreateVm),
                 any(VdsAndVmIDVDSParametersBase.class),
                 any(IVdsAsyncCommand.class))).thenReturn(returnValue);
-    }
-
-    private static DiskImage createImage() {
-        final DiskImage diskImage = new DiskImage();
-        diskImage.setId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
-        return diskImage;
     }
 
     /**
@@ -351,10 +335,6 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidate() {
-        final ArrayList<Disk> disks = new ArrayList<>();
-        final DiskImage diskImage = createImage();
-        disks.add(diskImage);
-        initDaoMocks(disks);
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         doReturn(new StoragePool()).when(command).getStoragePool();
@@ -490,16 +470,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).isStatelessSnapshotExistsForVm();
         doReturn(true).when(command).isVmPartOfManualPool();
         assertEquals(RunVmFlow.RUN, command.getFlow());
-    }
-
-    protected void initDaoMocks(final List<Disk> disks) {
-        final DiskDao diskDao = mock(DiskDao.class);
-        when(diskDao.getAllForVm(Guid.Empty, true)).thenReturn(disks);
-        doReturn(diskDao).when(command).getDiskDao();
-
-        final StorageDomainDao storageDomainDao = mock(StorageDomainDao.class);
-        when(storageDomainDao.getAllForStoragePool(Guid.Empty)).thenReturn(new ArrayList<>());
-        doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 
     private SnapshotsValidator mockSuccessfulSnapshotValidator() {
