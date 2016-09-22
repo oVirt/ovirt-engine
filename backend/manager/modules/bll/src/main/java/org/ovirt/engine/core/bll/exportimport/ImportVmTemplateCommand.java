@@ -102,8 +102,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         setStoragePoolId(parameters.getStoragePoolId());
         setClusterId(parameters.getClusterId());
         setStorageDomainId(parameters.getStorageDomainId());
-        setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
+    }
 
+    @Override
+    protected void init() {
+        super.init();
+        setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
         ImportUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
     }
 

@@ -33,7 +33,6 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -321,16 +320,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     private ImportVmTemplateCommand createImportVmTemplateCommandSpy(final ImportVmTemplateParameters parameters) {
-        ImportVmTemplateCommand spy = spy(new ImportVmTemplateCommand(
-                parameters, CommandContext.createContext(parameters.getSessionId())) {
-
-            @Override
-            public Cluster getCluster() {
-                return null;
-            }
-        });
-
-        return spy;
+        return spy(new ImportVmTemplateCommand(parameters, CommandContext.createContext(parameters.getSessionId())));
     }
 
 }
