@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
-import org.ovirt.engine.core.bll.validator.storage.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -27,14 +26,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /** A test case for the {@link RemoveDiskSnapshotsCommand} class. */
 public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
@@ -42,28 +35,10 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
     private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> cmd;
 
     @Mock
-    private VmTemplateDao vmTemplateDao;
-
-    @Mock
-    private StorageDomainDao sdDao;
-
-    @Mock
     private DiskImageDao diskImageDao;
 
     @Mock
-    private DiskDao diskDao;
-
-    @Mock
-    private SnapshotDao snapshotDao;
-
-    @Mock
     private StoragePoolDao spDao;
-
-    @Mock
-    private VmDao vmDao;
-
-    @Mock
-    private VmDeviceDao vmDeviceDao;
 
     @Mock
     private SnapshotsValidator snapshotsValidator;
@@ -75,13 +50,10 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
     private DiskImagesValidator diskImagesValidator;
 
-    private DiskSnapshotsValidator diskSnapshotsValidator;
-
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private static final Guid STORAGE_POOLD_ID = Guid.newGuid();
     private static final Guid IMAGE_ID_1 = Guid.newGuid();
     private static final Guid IMAGE_ID_2 = Guid.newGuid();
-    private static final Guid IMAGE_ID_3 = Guid.newGuid();
 
     @Before
     public void setUp() {
@@ -92,13 +64,8 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
         cmd = spy(new RemoveDiskSnapshotsCommand<>(params, null));
 
-        doReturn(snapshotDao).when(cmd).getSnapshotDao();
         doReturn(spDao).when(cmd).getStoragePoolDao();
-        doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
-        doReturn(diskDao).when(cmd).getDiskDao();
-        doReturn(sdDao).when(cmd).getStorageDomainDao();
-        doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
         doReturn(snapshotsValidator).when(cmd).getSnapshotsValidator();
         doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();
         doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();
@@ -111,11 +78,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
         diskImagesValidator = spy(new DiskImagesValidator(mockImages()));
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any(List.class));
-        doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotExist();
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesSnapshotsNotAttachedToOtherVms(false);
-
-        diskSnapshotsValidator = spy(new DiskSnapshotsValidator(mockImages()));
-        doReturn(diskSnapshotsValidator).when(cmd).createDiskSnapshotsValidator(any(List.class));
     }
 
     private void mockVm() {
