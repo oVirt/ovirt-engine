@@ -89,7 +89,7 @@ public class HostMonitoring {
                     // use this lock in order to allow only one host updating DB and
                     // calling UpEvent in a time
                     vdsManager.cancelRecoveryJob();
-                    log.debug("vds '{}' ({}) firing up event.", vds.getName(), vds.getId());
+                    log.debug("Host '{}' ({}) firing up event.", vds.getName(), vds.getId());
                     vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(vds));
                 }
                 // save all data to db
@@ -138,7 +138,7 @@ public class HostMonitoring {
             }
         } catch (ClassCastException cce) {
             // This should occur only if the vdsm API is not the same as the cluster API (version mismatch)
-            log.error("Failure to refresh Vds '{}' runtime info. Incorrect vdsm version for cluster '{}': {}",
+            log.error("Failure to refresh host '{}' runtime info. Incorrect vdsm version for cluster '{}': {}",
                     vds.getName(),
                     vds.getClusterName(), cce.getMessage());
             log.debug("Exception", cce);
@@ -147,8 +147,8 @@ public class HostMonitoring {
                         new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
             }
         } catch (Throwable t) {
-            log.error("Failure to refresh Vds runtime info: {}", t.getMessage());
-            log.error("Exception", t);
+            log.error("Failure to refresh host '{}' runtime info: {}", vds.getName(), t.getMessage());
+            log.debug("Exception", t);
             throw t;
         }
         moveVDSToMaintenanceIfNeeded();
@@ -371,7 +371,7 @@ public class HostMonitoring {
     }
 
     private void logFailureMessage(String messagePrefix, RuntimeException ex) {
-        log.error("{} vds={}({}): {}",
+        log.error("{} host={}({}): {}",
                 messagePrefix,
                 vds.getName(),
                 vds.getId(),
@@ -443,7 +443,7 @@ public class HostMonitoring {
 
     public void refreshVdsStats() {
         if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
-            log.debug("vdsManager::refreshVdsStats entered, vds='{}'({})",
+            log.debug("vdsManager::refreshVdsStats entered, host='{}'({})",
                     vds.getName(), vds.getId());
         }
         // get statistics data, images checks and vm_count data (dynamic)
@@ -452,7 +452,7 @@ public class HostMonitoring {
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
         if (!statsReturnValue.getSucceeded()
                 && statsReturnValue.getExceptionObject() != null) {
-            log.error(" Failed getting vds stats,  vds='{}'({}): {}",
+            log.error("Failed getting vds stats, host='{}'({}): {}",
                     vds.getName(), vds.getId(), statsReturnValue.getExceptionString());
             throw statsReturnValue.getExceptionObject();
         }
@@ -561,7 +561,8 @@ public class HostMonitoring {
             problematicNicsWithNetworks = NetworkMonitoringHelper.determineProblematicNics(vds.getInterfaces(),
                     getDbFacade().getNetworkDao().getAllForCluster(vds.getClusterId()));
         } catch (Exception e) {
-            log.error("Failure on checkInterfaces on update runtimeinfo for vds: '{}': {}", vds.getName(), e.getMessage());
+            log.error("Failure on checkInterfaces on update runtime info for host '{}': {}",
+                    vds.getName(), e.getMessage());
             log.error("Exception", e);
         } finally {
             if (!problematicNicsWithNetworks.isEmpty()) {
@@ -713,7 +714,7 @@ public class HostMonitoring {
                 saveVdsDynamic = true;
                 saveVdsStatistics = true;
                 log.info(
-                        "Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds '{}'({})",
+                        "Updated host status from 'Preparing for Maintenance' to 'Maintenance' in database, host '{}'({})",
                         vds.getName(),
                         vds.getId());
             } else {
