@@ -68,7 +68,6 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -118,8 +117,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private StorageDomainStaticDao storageDomainStaticDao;
     @Mock
     private StorageDomainDao storageDomainDao;
-    @Mock
-    private DbFacade dbFacade;
     @Mock
     private DiskValidator diskValidator;
 
