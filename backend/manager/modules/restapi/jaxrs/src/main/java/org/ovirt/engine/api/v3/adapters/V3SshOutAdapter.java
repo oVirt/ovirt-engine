@@ -33,7 +33,7 @@ public class V3SshOutAdapter implements V3Adapter<Ssh, V3SSH> {
             to.setActions(adaptOut(from.getActions()));
         }
         if (from.isSetAuthenticationMethod()) {
-            to.setAuthenticationMethod(from.getAuthenticationMethod());
+            to.setAuthenticationMethod(from.getAuthenticationMethod().value());
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());

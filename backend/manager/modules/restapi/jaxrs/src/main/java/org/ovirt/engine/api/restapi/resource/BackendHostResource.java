@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.FenceType;
@@ -17,6 +16,7 @@ import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStatus;
+import org.ovirt.engine.api.model.SshAuthenticationMethod;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
@@ -189,8 +189,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             params.setRootPassword(action.getRootPassword());
         }
         else if (action.isSetSsh() && action.getSsh().isSetAuthenticationMethod()) {
-            if (action.getSsh().getAuthenticationMethod().equals(
-                    AuthenticationMethod.PASSWORD.value())) {
+            if (action.getSsh().getAuthenticationMethod() == SshAuthenticationMethod.PASSWORD) {
                 params.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.Password);
                 if (action.getSsh().isSetUser() && action.getSsh().getUser().isSetPassword()) {
                     params.setPassword(action.getSsh().getUser().getPassword());

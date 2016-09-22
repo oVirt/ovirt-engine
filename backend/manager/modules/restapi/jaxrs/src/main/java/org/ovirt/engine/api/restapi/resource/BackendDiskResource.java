@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -171,5 +170,11 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
+    }
+
+    @Override
+    public Response sparsify(Action action) {
+        // TODO: Implement this.
+        return null;
     }
 }
