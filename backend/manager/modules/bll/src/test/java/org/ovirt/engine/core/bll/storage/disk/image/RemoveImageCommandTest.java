@@ -17,7 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -95,12 +94,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
             protected void initStorageDomainId() {
                 // Stub implementation for testing
             }
-
-            @Override
-            protected void initContainerDetails(ImagesContainterParametersBase parameters) {
-                // Stub implementation for testing
-            }
-
         });
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{

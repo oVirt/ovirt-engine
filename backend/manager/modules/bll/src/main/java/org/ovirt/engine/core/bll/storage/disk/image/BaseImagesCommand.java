@@ -53,7 +53,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
         super.setVmId(parameters.getContainerId());
-        if (getDiskImage() != null && getDiskImage().getStoragePoolId() != null) {
+        if (parameters.getStoragePoolId() != null) {
+            setStoragePoolId(parameters.getStoragePoolId());
+        } else if (getDiskImage() != null && getDiskImage().getStoragePoolId() != null) {
             setStoragePoolId(getDiskImage().getStoragePoolId());
         }
     }

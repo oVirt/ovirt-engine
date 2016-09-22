@@ -64,8 +64,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Mock
     private SnapshotsValidator snapshotsValidator;
 
-    private Disk disk;
-
     /**
      * The command under test.
      */
@@ -339,8 +337,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
         doReturn(vmDao).when(command).getVmDao();
         doReturn(diskDao).when(command).getDiskDao();
-        this.disk = disk;
-        when(diskDao.get(any(Guid.class))).thenReturn(this.disk);
+        doReturn(diskImageDao).when(command).getDiskImageDao();
+        when(diskDao.get(any(Guid.class))).thenReturn(disk);
 
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
@@ -385,11 +383,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         @Override
         protected VmTemplate getTemplateForImage() {
             return null;
-        }
-
-        @Override
-        public DiskImageDao getDiskImageDao() {
-            return diskImageDao;
         }
     }
 }
