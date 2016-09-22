@@ -63,17 +63,19 @@ public final class BrowserHacks {
      */
     private native void fixIEImageSize(String placeholderImageUrl) /*-{
         var $ = $wnd.jQuery;
+        var insertionQuery = $wnd.insertionQ;
 
-        // Using DOM mutation events to stay compatible with IE9+
-        $('body').on('DOMNodeInserted', 'img', function (e) {
-            var $img = $(e.target);
+        $($doc).ready(function () {
+            insertionQuery('img').every(function (element) {
+                var $img = $(element);
 
-            if ($img.attr('src') == placeholderImageUrl) {
-                setTimeout(function () {
-                    $img.attr('width', 'auto');
-                    $img.attr('height', 'auto');
-                }, 1);
-            }
+                if ($img.attr('src') == placeholderImageUrl) {
+                    setTimeout(function () {
+                        $img.attr('width', 'auto');
+                        $img.attr('height', 'auto');
+                    }, 1);
+                }
+            });
         });
     }-*/;
 
