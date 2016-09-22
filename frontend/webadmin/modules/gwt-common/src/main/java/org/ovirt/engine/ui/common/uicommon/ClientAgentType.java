@@ -31,10 +31,6 @@ public class ClientAgentType {
         return "explorer".equalsIgnoreCase(browser); //$NON-NLS-1$
     }
 
-    public boolean isIE8OrBelow() {
-        return isIE() && version <= 8.0f;
-    }
-
     public boolean isFirefox() {
         return "firefox".equalsIgnoreCase(browser); //$NON-NLS-1$
     }

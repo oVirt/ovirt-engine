@@ -35,13 +35,7 @@ public class PostMessageDispatcher implements HasHandlers {
             context.@org.ovirt.engine.ui.webadmin.system.PostMessageDispatcher::onMessage(Ljava/lang/String;Ljava/lang/Object;Lcom/google/gwt/core/client/JavaScriptObject;)(event.origin,event.data,event.source);
         };
 
-        if ($wnd.addEventListener) {
-            // Modern web browsers, including IE9+
-            $wnd.addEventListener('message', callback, false);
-        } else {
-            // IE8
-            $wnd.attachEvent('onmessage', callback);
-        }
+        $wnd.addEventListener('message', callback, false);
     }-*/;
 
 }
