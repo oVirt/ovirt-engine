@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,12 +28,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCommandTest {
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
-
     private StorageConnectionValidator validator = null;
 
     private StorageDomain domain = null;
