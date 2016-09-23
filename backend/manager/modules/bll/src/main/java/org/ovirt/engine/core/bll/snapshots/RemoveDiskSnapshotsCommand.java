@@ -79,8 +79,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     @Override
-    protected void init(T parameters) {
-        super.init(parameters);
+    public void init() {
+        super.init();
 
         sortImages();
         // Images must be specified in parameters and belong to a single Disk;

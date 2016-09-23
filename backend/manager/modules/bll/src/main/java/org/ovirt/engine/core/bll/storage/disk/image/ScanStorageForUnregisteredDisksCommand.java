@@ -50,7 +50,6 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
 
     public ScanStorageForUnregisteredDisksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        init(parameters);
     }
 
     public ScanStorageForUnregisteredDisksCommand(T parameters) {

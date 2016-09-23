@@ -84,12 +84,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        init(parameters);
 
     }
 
-    protected void init(T parameters) {
-        setVdsId(parameters.getVdsId());
+    @Override
+    public void init() {
+        super.init();
+        setVdsId(getParameters().getVdsId());
         if (getParameters() != null && !getParameters().getStoragePoolId().equals(Guid.Empty)) {
             setStoragePoolId(getParameters().getStoragePoolId());
         }

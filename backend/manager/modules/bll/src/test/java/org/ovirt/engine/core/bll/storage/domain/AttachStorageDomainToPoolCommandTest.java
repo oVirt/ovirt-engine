@@ -82,6 +82,8 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
                 spy(new AttachStorageDomainToPoolCommand<>(
                         params, CommandContext.createContext(params.getSessionId())));
 
+        cmd.init();
+
         doNothing().when(cmd).attemptToActivateDomain();
         doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
         doReturn(isoMapDao).when(cmd).getStoragePoolIsoMapDao();

@@ -172,6 +172,7 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
         params.setStorageDomainId(Guid.newGuid());
         params.setStoragePoolId(Guid.newGuid());
         cmd = spy(new ActivateStorageDomainCommand<>(params, null));
+        cmd.init();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(vdsDao).when(cmd).getVdsDao();

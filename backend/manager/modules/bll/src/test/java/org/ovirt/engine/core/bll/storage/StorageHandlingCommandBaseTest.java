@@ -60,6 +60,7 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     public void initCommand() {
         cmd = spy(new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(storagePool)));
+        cmd.init();
     }
 
     @Test

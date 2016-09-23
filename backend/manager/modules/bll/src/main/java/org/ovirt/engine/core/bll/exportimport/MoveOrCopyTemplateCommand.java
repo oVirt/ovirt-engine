@@ -49,11 +49,11 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     }
 
     @Override
-    protected void init(T parameters) {
-        super.init(parameters);
+    public void init() {
+        super.init();
 
-        setVmTemplateId(parameters.getContainerId());
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
+        setVmTemplateId(getParameters().getContainerId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         imageFromSourceDomainMap = new HashMap<>();
     }

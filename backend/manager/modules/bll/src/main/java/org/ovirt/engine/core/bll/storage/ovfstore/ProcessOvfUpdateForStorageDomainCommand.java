@@ -71,7 +71,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         setStorageDomainId(getParameters().getStorageDomainId());
 

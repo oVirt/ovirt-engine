@@ -105,7 +105,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
         ImportUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
