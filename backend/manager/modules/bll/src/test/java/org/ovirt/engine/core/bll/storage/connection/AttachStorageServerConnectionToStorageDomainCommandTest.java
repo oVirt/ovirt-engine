@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
-import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -117,7 +116,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
        connection.setConnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUNId(), connection.getId());
        //dummy lun already exists, thus no need to save
        verify(lunDao, never()).save(dummyLun);
        verify(lunMapDao, never()).save(new LUNStorageServerConnectionMap());
@@ -127,8 +125,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
 
     @Test
     public void executeCommandFirstDummyLun() {
-       LUNs dummyLun = new LUNs();
-       dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
        StorageServerConnections connection = new StorageServerConnections();
        connection.setId(Guid.newGuid().toString());
@@ -137,8 +133,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
        connection.setConnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUNId(), connection.getId());
-       LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
        command.executeCommand();
        CommandAssertUtils.checkSucceeded(command, true);
     }
