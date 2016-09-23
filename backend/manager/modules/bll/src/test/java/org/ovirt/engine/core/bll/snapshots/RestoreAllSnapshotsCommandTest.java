@@ -66,7 +66,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     private Guid diskImageId = Guid.newGuid();
     private Guid storageDomainId = Guid.newGuid();
     private Guid spId = Guid.newGuid();
-    private VmDynamic mockDynamicVm;
     private Snapshot mockSnapshot;
     private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand;
 
@@ -145,7 +144,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     }
 
     private void mockDynamicVmDao() {
-        mockDynamicVm = getVmDynamic();
+        VmDynamic mockDynamicVm = getVmDynamic();
         doReturn(vmDynamicDao).when(spyCommand).getVmDynamicDao();
         when(vmDynamicDao.get(vmId)).thenReturn(mockDynamicVm);
     }
