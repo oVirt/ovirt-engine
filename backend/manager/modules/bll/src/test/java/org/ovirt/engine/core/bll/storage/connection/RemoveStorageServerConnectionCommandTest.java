@@ -32,7 +32,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
-    private RemoveStorageServerConnectionCommand command = null;
+    private RemoveStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
 
     private StorageServerConnections NFSConnection = null;
     private StorageServerConnections iSCSIConnection = null;
@@ -72,7 +72,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
 
-        command = spy(new RemoveStorageServerConnectionCommand(parameters, null));
+        command = spy(new RemoveStorageServerConnectionCommand<>(parameters, null));
         doReturn(lunDao).when(command).getLunDao();
         doReturn(storageServerConnectionDao).when(command).getStorageServerConnectionDao();
     }
