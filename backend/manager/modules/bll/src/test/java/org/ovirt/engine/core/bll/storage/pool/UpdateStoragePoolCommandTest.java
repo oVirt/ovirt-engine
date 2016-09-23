@@ -122,8 +122,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         StoragePool existingSp = createStoragePool();
         existingSp.setIsLocal(true);
         when(spDao.get(any(Guid.class))).thenReturn(existingSp);
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
-                (Collections.singletonList(sdc));
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(sdc));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_LOCAL);
     }
@@ -132,15 +131,13 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     public void hasSharedDomain() {
         StorageDomainStatic sdc = new StorageDomainStatic();
         sdc.setStorageType(StorageType.NFS);
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
-                (Collections.singletonList(sdc));
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(sdc));
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void hasNoStorageDomains() {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
-                (Collections.emptyList());
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
