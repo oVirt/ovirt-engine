@@ -13,7 +13,7 @@ public class VirtIoRngValidator {
                 cluster.getRequiredRngSources().contains(source);
 
         if (!supported) {
-            return new ValidationResult(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GENERATOR_NOT_SUPPORTED_BY_CLUSTER);
         }
 
         return ValidationResult.VALID;
