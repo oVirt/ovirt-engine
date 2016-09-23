@@ -48,8 +48,6 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
     private VmValidator vmValidator;
 
-    private DiskImagesValidator diskImagesValidator;
-
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private static final Guid STORAGE_POOLD_ID = Guid.newGuid();
     private static final Guid IMAGE_ID_1 = Guid.newGuid();
@@ -76,7 +74,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         vmValidator = spy(new VmValidator(cmd.getVm()));
         doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
 
-        diskImagesValidator = spy(new DiskImagesValidator(mockImages()));
+        DiskImagesValidator diskImagesValidator = spy(new DiskImagesValidator(mockImages()));
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any(List.class));
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesSnapshotsNotAttachedToOtherVms(false);
     }
