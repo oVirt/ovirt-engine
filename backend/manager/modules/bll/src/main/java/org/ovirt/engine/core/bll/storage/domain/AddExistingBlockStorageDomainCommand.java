@@ -109,7 +109,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     protected void saveLUNsInDB(final List<LUNs> luns) {
         TransactionSupport.executeInNewTransaction(() -> {
             for (LUNs lun : luns) {
-                proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
+                lunHelper.proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
             }
             return null;
         });

@@ -22,7 +22,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.storage.domain.LunHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -85,6 +85,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+
+    @Inject
+    private LunHelper lunHelper;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -461,7 +464,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             lun = lunFromStorage;
         }
         TransactionSupport.executeInNewTransaction(() -> {
-            StorageDomainCommandBase.proceedLUNInDb(lun, lun.getLunType());
+            lunHelper.proceedLUNInDb(lun, lun.getLunType());
             getBaseDiskDao().save(getParameters().getDiskInfo());
             getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
             if (getVm() != null) {

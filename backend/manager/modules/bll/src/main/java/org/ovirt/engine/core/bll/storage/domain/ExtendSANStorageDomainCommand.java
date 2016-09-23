@@ -49,7 +49,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         updateLunsList();
         executeInNewTransaction(() -> {
             for (LUNs lun : getParameters().getLunsList()) {
-                proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
+                lunHelper.proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
             }
 
             setStorageDomainStatus(StorageDomainStatus.Active, null);

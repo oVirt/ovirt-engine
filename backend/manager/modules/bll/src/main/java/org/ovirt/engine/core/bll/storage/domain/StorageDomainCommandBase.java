@@ -19,7 +19,6 @@ import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
-import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.pool.RefreshStoragePoolAndDisconnectAsyncOperationFactory;
@@ -35,11 +34,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
-import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
@@ -50,7 +46,6 @@ import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -71,6 +66,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+
+    @Inject
+    protected LunHelper lunHelper;
 
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -242,43 +240,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected String getFormattedLunId(LUNs lun, String usedByEntityName) {
         return String.format("%1$s (%2$s)", lun.getLUNId(), usedByEntityName);
-    }
-
-    public static void proceedLUNInDb(final LUNs lun, StorageType storageType) {
-        proceedLUNInDb(lun, storageType, "");
-    }
-
-    public static void proceedLUNInDb(final LUNs lun, StorageType storageType, String volumeGroupId) {
-        lun.setVolumeGroupId(volumeGroupId);
-        if (DbFacade.getInstance().getLunDao().get(lun.getLUNId()) == null) {
-            DbFacade.getInstance().getLunDao().save(lun);
-        } else if (!volumeGroupId.isEmpty()) {
-            DbFacade.getInstance().getLunDao().update(lun);
-        }
-
-        if (storageType == StorageType.FCP) {
-            // No need to handle connections (FCP storage doesn't utilize connections).
-            return;
-        }
-
-        for (StorageServerConnections connection : lun.getLunConnections()) {
-            StorageServerConnections dbConnection = ISCSIStorageHelper.findConnectionWithSameDetails(connection);
-            if (dbConnection == null) {
-                connection.setId(Guid.newGuid().toString());
-                connection.setStorageType(storageType);
-                DbFacade.getInstance().getStorageServerConnectionDao().save(connection);
-
-            } else {
-                connection.setId(dbConnection.getId());
-            }
-            if (DbFacade.getInstance()
-                    .getStorageServerConnectionLunMapDao()
-                    .get(new LUNStorageServerConnectionMapId(lun.getLUNId(),
-                            connection.getId())) == null) {
-                DbFacade.getInstance().getStorageServerConnectionLunMapDao().save(
-                        new LUNStorageServerConnectionMap(lun.getLUNId(), connection.getId()));
-            }
-        }
     }
 
     protected List<Pair<Guid, Boolean>> connectHostsInUpToDomainStorageServer() {

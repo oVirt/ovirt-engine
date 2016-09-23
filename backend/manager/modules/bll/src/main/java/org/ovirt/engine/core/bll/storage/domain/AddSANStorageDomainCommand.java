@@ -57,7 +57,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
 
         TransactionSupport.executeInNewTransaction(() -> {
             for (LUNs lun : luns) {
-                proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
+                lunHelper.proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
             }
             return null;
         });
