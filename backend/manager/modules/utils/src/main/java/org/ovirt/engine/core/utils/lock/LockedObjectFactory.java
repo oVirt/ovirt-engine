@@ -56,7 +56,11 @@ public class LockedObjectFactory {
                 }
             }
 
-            return method.invoke(instance, args);
+            try {
+                return method.invoke(instance, args);
+            } catch (InvocationTargetException e) {
+                throw e.getTargetException();
+            }
         }
 
     }

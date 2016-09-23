@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * In this test, we need to test, that MacPoolLockingProxy actually works. Assuming write lock, we must setup scenario,
@@ -27,6 +29,9 @@ import org.junit.Test;
  * org.ovirt.engine.core.bll.network.macpool.MacPoolLockingProxyTest#threadMarks using thread ID as a key.
  */
 public class LockedObjectFactoryTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     //be careful with making this delays smaller or removing them entirely, as surprising result may occur.
     /**
@@ -138,6 +143,17 @@ public class LockedObjectFactoryTest {
         assertThat(threadsOverlaps(Arrays.asList(2, 3)), is(false));
     }
 
+    /**
+     * Tests, that proxy does not throw controlled exception, if proxied instance throws a RuntimeException.
+     * Otherwise it would cause caller to fail with UndeclaredThrowableException
+     */
+    @Test
+    public void testThatNoControlledExceptionIsThrown() {
+        NullPointerException runtimeException = new NullPointerException();
+        expectedException.expect(runtimeException.getClass());
+        lockedTestInstanceA.failingMethod(runtimeException);
+    }
+
     private static void sleep(int millis) {
         try {
             Thread.sleep(millis);
@@ -154,6 +170,8 @@ public class LockedObjectFactoryTest {
 
         @AcquireWriteLock
         void methodWithWriteLock();
+
+        void failingMethod(RuntimeException runtimeException);
     }
 
     public static class TestInstance implements TestInterface {
@@ -197,6 +215,11 @@ public class LockedObjectFactoryTest {
 
         public List<Integer> getThreadMarks() {
             return threadMarks;
+        }
+
+        @Override
+        public void failingMethod(RuntimeException runtimeException) {
+            throw runtimeException;
         }
     }
 }
