@@ -108,15 +108,16 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     Label message;
 
     @Ignore
-    protected ListModelObjectCellTable<Object, ImportVmFromExportDomainModel> table;
+    ListModelObjectCellTable<Object, ImportVmFromExportDomainModel> table;
 
     @Ignore
-    private ListModelObjectCellTable<DiskImage, SearchableListModel> diskTable;
+    ListModelObjectCellTable<DiskImage, SearchableListModel> diskTable;
 
     @Ignore
-    private ListModelObjectCellTable<VmNetworkInterface, SearchableListModel> nicTable;
+    ListModelObjectCellTable<VmNetworkInterface, SearchableListModel> nicTable;
 
-    private ListModelObjectCellTable<String, VmAppListModel> appTable;
+    @Ignore
+    ListModelObjectCellTable<String, VmAppListModel> appTable;
 
     @Ignore
     protected TabLayoutPanel subTabLayoutPanel = null;

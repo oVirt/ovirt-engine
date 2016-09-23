@@ -47,7 +47,8 @@ import com.google.gwt.view.client.SingleSelectionModel;
  * @param <M>
  *            List model type.
  */
-public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements IsEditorDriver<M>, HasColumns {
+public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements
+    IsEditorDriver<M>, HasColumns {
 
     public interface CellTableValidation extends CssResource {
         String invalidRow();
@@ -446,4 +447,9 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.onLoadingStateChanged(state);
     }
 
+    @Override
+    public void cleanup() {
+        asEditor().cleanup();
+        super.cleanup();
+    }
 }

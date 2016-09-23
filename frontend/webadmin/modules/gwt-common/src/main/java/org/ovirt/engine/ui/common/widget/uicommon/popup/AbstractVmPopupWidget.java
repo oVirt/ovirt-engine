@@ -1848,6 +1848,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Override
     public void cleanup() {
         driver.cleanup();
+        if (unitVmModel != null) {
+            unitVmModel.cleanup();
+            unitVmModel = null;
+        }
     }
 
     @Override
@@ -2035,7 +2039,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected List<Widget> poolSpecificFields() {
-        return Arrays.asList(numOfVmsEditor,
+        return Arrays.asList(
+                numOfVmsEditor,
                 newPoolEditVmsRow,
                 editPoolEditVmsRow,
                 editPoolIncreaseNumOfVmsRow,
@@ -2046,11 +2051,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 editPoolEditMaxAssignedVmsPerUserRow,
                 spiceProxyEditor,
                 spiceProxyEnabledCheckboxWithInfoIcon,
-                spiceProxyOverrideEnabledEditor);
+                spiceProxyOverrideEnabledEditor
+                );
     }
 
     protected List<Widget> allTabs() {
-        return Arrays.<Widget> asList(initialRunTab,
+        return Arrays.<Widget> asList(
+                initialRunTab,
                 consoleTab,
                 hostTab,
                 resourceAllocationTab,
@@ -2061,7 +2068,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 poolTab,
                 systemTab,
                 iconTab,
-                foremanTab);
+                foremanTab
+                );
     }
 
     protected List<Widget> advancedFieldsFromGeneralTab() {

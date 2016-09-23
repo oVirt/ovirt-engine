@@ -76,6 +76,8 @@ public class HasDataListModelEditorAdapter<M extends ListModel, T> implements Ha
 
     @Override
     public void cleanup() {
-        listModel.cleanup();
+        if (listModel != null) {
+            listModel.cleanup();
+        }
     }
 }

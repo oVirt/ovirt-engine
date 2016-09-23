@@ -148,10 +148,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     ScrollPanel clusterQuotaTableContainer;
 
     @Ignore
-    private ListModelObjectCellTable<QuotaCluster, ListModel> quotaClusterTable;
+    ListModelObjectCellTable<QuotaCluster, ListModel> quotaClusterTable;
 
     @Ignore
-    private ListModelObjectCellTable<QuotaStorage, ListModel> quotaStorageTable;
+    ListModelObjectCellTable<QuotaStorage, ListModel> quotaStorageTable;
 
     @UiField
     @Ignore

@@ -501,4 +501,14 @@ public class DisksAllocationModel extends EntityModel {
             }
         });
     }
+
+    @Override
+    public void cleanup() {
+        if (disks != null) {
+            for (DiskModel diskModel : disks) {
+                diskModel.cleanup();
+            }
+        }
+        super.cleanup();
+    }
 }
