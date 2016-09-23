@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anySet;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -109,33 +110,11 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         mockOsRepository();
 
         // Using the compensation constructor since the normal one contains DB access
-        cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(
-                params, CommandContext.createContext(params.getSessionId())) {
+        cmd = spy(new AddVmTemplateCommand<>(params, CommandContext.createContext(params.getSessionId())));
 
-            @Override
-            protected void initUser() {
-            }
-
-            @Override
-            protected List<DiskImage> getVmDisksFromDB() {
-                return getDisksList(spId);
-            }
-
-            @Override
-            protected void updateVmDevices() {
-            }
-
-            @Override
-            public VM getVm() {
-                return vm;
-            }
-
-            @Override
-            public void separateCustomProperties(VmStatic parameterMasterVm) {
-            }
-
-        });
-
+        doNothing().when(cmd).initUser();
+        doNothing().when(cmd).separateCustomProperties(any(VmStatic.class));
+        doReturn(getDisksList(spId)).when(cmd).getVmDisksFromDB();
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
@@ -143,6 +122,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
         VmHandler.init();
 
+        cmd.setVm(vm);
         cmd.postConstruct();
         cmd.setVmId(vmId);
         cmd.setClusterId(clusterId);
