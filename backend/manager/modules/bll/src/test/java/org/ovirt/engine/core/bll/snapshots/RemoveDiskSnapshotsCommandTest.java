@@ -90,15 +90,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         Guid vmGuid = Guid.newGuid();
         params.setContainerId(vmGuid);
 
-        cmd = spy(new RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters>(params, null) {
-            protected List<DiskImage> getImages() {
-                return mockImages();
-            }
-
-            protected List<DiskImage> getAllImagesForDisk() {
-                return mockAllImages();
-            }
-        });
+        cmd = spy(new RemoveDiskSnapshotsCommand<>(params, null));
 
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         doReturn(spDao).when(cmd).getStoragePoolDao();
@@ -159,16 +151,6 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         image2.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID)));
 
         return new ArrayList<>(Arrays.asList(image1, image2));
-    }
-
-    private List<DiskImage> mockAllImages() {
-        List<DiskImage> images = mockImages();
-
-        DiskImage image3 = new DiskImage();
-        image3.setImageId(IMAGE_ID_3);
-        image3.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID)));
-        images.add(image3);
-        return images;
     }
 
     @Test
