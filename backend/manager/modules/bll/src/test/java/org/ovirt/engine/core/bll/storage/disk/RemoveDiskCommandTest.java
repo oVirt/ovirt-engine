@@ -60,7 +60,6 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
     private RemoveDiskCommand<RemoveDiskParameters> cmd;
     private Disk disk;
     private VM vm;
-    private VmDevice vmDevice;
 
     @Before
     public void setUp() {
@@ -72,7 +71,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         vm.setId(vmId);
 
         VmDeviceId vmDeviceId = new VmDeviceId(disk.getId(), vmId);
-        vmDevice = new VmDevice();
+        VmDevice vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
         vmDevice.setIsPlugged(true);
 
