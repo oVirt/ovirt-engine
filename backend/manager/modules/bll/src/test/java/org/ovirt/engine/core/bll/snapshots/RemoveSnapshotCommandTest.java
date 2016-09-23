@@ -60,8 +60,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     private SnapshotsValidator snapshotValidator;
 
-    private VmValidator vmValidator;
-
     private MultipleStorageDomainsValidator storageDomainsValidator;
 
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
@@ -79,7 +77,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         mockVm();
-        vmValidator = spy(new VmValidator(cmd.getVm()));
+        VmValidator vmValidator = spy(new VmValidator(cmd.getVm()));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(anyBoolean());
         doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
