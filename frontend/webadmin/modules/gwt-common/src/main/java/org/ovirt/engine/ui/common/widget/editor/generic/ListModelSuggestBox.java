@@ -25,7 +25,7 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
         super(new MultiWordSuggestOracle());
         initWidget(asSuggestBox());
 
-        asSuggestBox().getValueBox().addFocusHandler(new FocusHandler() {
+        handlerRegistrations.add(asSuggestBox().getValueBox().addFocusHandler(new FocusHandler() {
 
             @Override
             public void onFocus(FocusEvent event) {
@@ -37,8 +37,8 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
                     }
                 });
             }
-        });
-        addKeyPressHandler(new KeyPressHandler() {
+        }));
+        handlerRegistrations.add(addKeyPressHandler(new KeyPressHandler() {
 
             @Override
             public void onKeyPress(KeyPressEvent event) {
@@ -50,8 +50,8 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
                     }
                 });
             }
-        });
-        Event.addNativePreviewHandler(new NativePreviewHandler() {
+        }));
+        handlerRegistrations.add(Event.addNativePreviewHandler(new NativePreviewHandler() {
 
             @Override
             public void onPreviewNativeEvent(NativePreviewEvent event) {
@@ -61,7 +61,7 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
                     hideSuggestions();
                 }
             }
-        });
+        }));
     }
 
     @Override
@@ -81,5 +81,4 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
     protected String asEntity(String value) {
         return value;
     }
-
 }

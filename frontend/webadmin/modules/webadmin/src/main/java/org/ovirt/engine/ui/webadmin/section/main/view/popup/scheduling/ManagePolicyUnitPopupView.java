@@ -48,7 +48,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
     ScrollPanel policyUnitTableContainer;
 
     @Ignore
-    private ListModelObjectCellTable<PolicyUnit, ListModel> policyUnitTable;
+    ListModelObjectCellTable<PolicyUnit, ListModel> policyUnitTable;
 
     private ManagePolicyUnitModel model;
 

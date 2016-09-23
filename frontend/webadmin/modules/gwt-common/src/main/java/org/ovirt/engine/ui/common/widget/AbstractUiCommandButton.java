@@ -106,6 +106,8 @@ public abstract class AbstractUiCommandButton extends Composite
 
     @Override
     public void cleanup() {
-        getCommand().getPropertyChangedEvent().removeListener(listener);
+        if (getCommand() != null) {
+            getCommand().getPropertyChangedEvent().removeListener(listener);
+        }
     }
 }
