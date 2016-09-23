@@ -16,15 +16,10 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VmDao;
 
 public class RemoveQuotaCommandTest extends BaseCommandTest {
 
@@ -36,11 +31,6 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     private QuotaDao quotaDao;
 
     @Mock
-    private VmDao vmDao;
-
-    @Mock
-    private StoragePoolDao storagePoolDao;
-    @Mock
     private QuotaManager quotaManager;
 
     /**
@@ -49,19 +39,7 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     private RemoveQuotaCommand command;
 
     @Before
-    public void testSetup() {
-        mockQuotaDao();
-        mockVmDao();
-        mockStoragePoolDao();
-    }
-
-    private void mockVmDao() {
-        // Mock VM Dao getAllVmsRelatedToQuotaId.
-        List<VM> newList = new ArrayList<>();
-        when(vmDao.getAllVmsRelatedToQuotaId(generalGuidQuota)).thenReturn(newList);
-    }
-
-    private void mockQuotaDao() {
+    public void mockQuotaDao() {
         when(quotaDao.getById(generalGuidQuota)).thenReturn(mockStorageQuota(generalGuidQuota));
 
         Quota defaultQuota = mockStorageQuota(defaultQuotaGuid);
@@ -74,10 +52,6 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
         quotaList.add(new Quota());
         when(quotaDao.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(quotaList);
         when(quotaDao.isQuotaInUse(any(Quota.class))).thenReturn(false);
-    }
-
-    private void mockStoragePoolDao() {
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(mockStoragePool());
     }
 
     @Test
@@ -103,19 +77,11 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     private RemoveQuotaCommand createCommand(Guid guid) {
         IdParameters param = new IdParameters(guid);
         command = spy(new RemoveQuotaCommand(param, null));
-        doReturn(storagePoolDao).when(command).getStoragePoolDao();
         doReturn(quotaDao).when(command).getQuotaDao();
-        doReturn(vmDao).when(command).getVmDao();
         doReturn(quotaManager).when(command).getQuotaManager();
         return command;
     }
 
-    private StoragePool mockStoragePool() {
-        StoragePool storagePool = new StoragePool();
-        storagePool.setId(storagePoolUUID);
-        storagePool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.DISABLED);
-        return storagePool;
-    }
 
     private Quota mockStorageQuota(Guid guid) {
         Quota generalQuota = new Quota();
