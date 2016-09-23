@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.table.header.AbstractHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
@@ -64,7 +65,8 @@ import com.google.gwt.view.client.ProvidesKey;
  * @param <T>
  *            Table row data type.
  */
-public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizableColumns<T>, ColumnController<T> {
+public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizableColumns<T>, ColumnController<T>,
+    HasCleanup {
 
     /**
      * {@link #emptyNoWidthColumn} header that supports handling context menu events.
@@ -724,4 +726,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         });
     }
 
+    @Override
+    public void cleanup() {
+    }
 }

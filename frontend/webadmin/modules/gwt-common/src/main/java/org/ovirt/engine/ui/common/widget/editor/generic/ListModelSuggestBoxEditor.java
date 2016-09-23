@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
+
 import com.google.gwt.editor.client.IsEditor;
 
 /**
@@ -9,7 +11,7 @@ import com.google.gwt.editor.client.IsEditor;
  *
  */
 public class ListModelSuggestBoxEditor extends AbstractValidatedWidgetWithLabel<String, ListModelSuggestBox>
-        implements IsEditor<WidgetWithLabelEditor<String, ListModelSuggestBoxEditor>> {
+        implements IsEditor<WidgetWithLabelEditor<String, ListModelSuggestBoxEditor>>, HasCleanup {
 
     private final WidgetWithLabelEditor<String, ListModelSuggestBoxEditor> editor;
 
@@ -23,4 +25,8 @@ public class ListModelSuggestBoxEditor extends AbstractValidatedWidgetWithLabel<
         return editor;
     }
 
+    @Override
+    public void cleanup() {
+        getContentWidget().cleanup();
+    }
 }

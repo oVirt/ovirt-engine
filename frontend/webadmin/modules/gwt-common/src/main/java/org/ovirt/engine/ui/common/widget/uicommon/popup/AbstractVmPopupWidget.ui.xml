@@ -672,7 +672,7 @@
                   </b:Row>
                   <b:Row>
                     <b:Column size="LG_12">
-                      <g:Label ui:field="rngSourceLabel" text="{constants.deviceSource}" addStyleNames="{style.sectionLabel}" />
+                      <g:Label text="{constants.deviceSource}" addStyleNames="{style.sectionLabel}" />
                     </b:Column>
                   </b:Row>
                   <b:Row>

@@ -133,13 +133,13 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     Label winWithoutVirtioMessage;
 
     @Ignore
-    protected ListModelObjectCellTable<ImportVmData, ImportVmFromExternalProviderModel> table;
+    ListModelObjectCellTable<ImportVmData, ImportVmFromExternalProviderModel> table;
 
     @Ignore
-    private ListModelObjectCellTable<DiskImage, SearchableListModel> diskTable;
+    ListModelObjectCellTable<DiskImage, SearchableListModel> diskTable;
 
     @Ignore
-    private ListModelObjectCellTable<VmNetworkInterface, SearchableListModel> nicTable;
+    ListModelObjectCellTable<VmNetworkInterface, SearchableListModel> nicTable;
 
     @Ignore
     protected TabLayoutPanel subTabLayoutPanel = null;

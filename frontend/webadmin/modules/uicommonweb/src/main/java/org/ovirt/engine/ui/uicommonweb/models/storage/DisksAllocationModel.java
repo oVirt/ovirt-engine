@@ -470,4 +470,14 @@ public class DisksAllocationModel extends EntityModel {
     public void setTargetAvailable(boolean targetAvailable) {
         isTargetAvailable = targetAvailable;
     }
+
+    @Override
+    public void cleanup() {
+        if (disks != null) {
+            for (DiskModel diskModel : disks) {
+                diskModel.cleanup();
+            }
+        }
+        super.cleanup();
+    }
 }
