@@ -53,13 +53,16 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Version VERSION_2_0 = new Version(2, 0);
+    private static final Set<Version> SUPPORTED_VERSIONS =
+            new HashSet<>(Arrays.asList(VERSION_1_0, VERSION_1_1, VERSION_1_2));
     private static final Guid DEFAULT_CLUSTER_ID = Guid.newGuid();
     private static final Guid NON_DEFAULT_CLUSTER_ID = Guid.newGuid();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID),
-            mockConfig(ConfigValues.StoragePoolNameSizeLimit, 10)
+            mockConfig(ConfigValues.StoragePoolNameSizeLimit, 10),
+            mockConfig(ConfigValues.SupportedClusterLevels, SUPPORTED_VERSIONS)
     );
 
 
@@ -93,8 +96,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
                 new UpdateStoragePoolCommand<>(params, null);
 
         cmd = spy(realCommand);
-        doReturn(createVersionSet().contains(cmd.getStoragePool().getCompatibilityVersion())).when(cmd)
-                .isStoragePoolVersionSupported();
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(sdDao).when(cmd).getStorageDomainStaticDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
@@ -300,14 +301,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     private void storagePoolWithLocalFS() {
         spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
-    }
-
-    private static Set<Version> createVersionSet() {
-        Set<Version> versions = new HashSet<>();
-        versions.add(VERSION_1_0);
-        versions.add(VERSION_1_1);
-        versions.add(VERSION_1_2);
-        return versions;
     }
 
     private static StoragePool createNewStoragePool() {
