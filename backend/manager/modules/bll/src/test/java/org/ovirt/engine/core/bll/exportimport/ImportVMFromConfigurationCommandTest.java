@@ -249,7 +249,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                 MacPoolPerCluster macPoolPerCluster,
                 ExternalVmMacsFinder externalVmMacsFinder) {
 
-            super(parameters, CommandContext.createContext(parameters.getSessionId()));
+            super(parameters, null);
             this.macPoolPerCluster = macPoolPerCluster;
             this.externalVmMacsFinder = externalVmMacsFinder;
         }
