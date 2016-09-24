@@ -33,7 +33,6 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
-import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -835,7 +834,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /** Save the entire image, including it's storage mapping */
     protected void saveImage(DiskImage disk) {
-        BaseImagesCommand.saveImage(disk);
+        ImagesHandler.saveImage(disk);
     }
 
     /** Updates an image of a disk */

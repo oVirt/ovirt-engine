@@ -410,6 +410,21 @@ public final class ImagesHandler {
     }
 
     /**
+     * The following method unify saving of image, it will be also saved with its storage
+     * mapping.
+     */
+    public static ImageStorageDomainMap saveImage(DiskImage diskImage) {
+        DbFacade.getInstance().getImageDao().save(diskImage.getImage());
+        ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(diskImage.getImageId(),
+                diskImage.getStorageIds()
+                        .get(0), diskImage.getQuotaId(), diskImage.getDiskProfileId());
+        DbFacade.getInstance()
+                .getImageStorageDomainMapDao()
+                .save(imageStorageDomainMap);
+        return imageStorageDomainMap;
+    }
+
+    /**
      * This function was developed especially for GUI needs. It returns a list of all the snapshots of current image of
      * a specific VM. If there are two images mapped to same VM, it's assumed that this is a TryBackToImage case and the
      * function returns a list of snapshots of inactive images. In this case the parent of the active image appears to

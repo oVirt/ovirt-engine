@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
 /**
@@ -419,21 +418,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {
             getBaseDiskDao().remove(snapshot.getId());
         }
-    }
-
-    /**
-     * The following method unify saving of image, it will be also saved with its storage
-     * mapping.
-     */
-    public static ImageStorageDomainMap saveImage(DiskImage diskImage) {
-        DbFacade.getInstance().getImageDao().save(diskImage.getImage());
-        ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(diskImage.getImageId(),
-                diskImage.getStorageIds()
-                        .get(0), diskImage.getQuotaId(), diskImage.getDiskProfileId());
-        DbFacade.getInstance()
-                .getImageStorageDomainMapDao()
-                .save(imageStorageDomainMap);
-        return imageStorageDomainMap;
     }
 
     protected void lockVmSnapshotsWithWait(VM vm) {

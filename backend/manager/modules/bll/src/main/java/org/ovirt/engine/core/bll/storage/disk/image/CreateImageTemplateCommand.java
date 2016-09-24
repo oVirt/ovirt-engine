@@ -92,7 +92,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setImageTemplateId(Guid.Empty);
         newImage.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
         newImage.setActive(true);
-        saveImage(newImage);
+        ImagesHandler.saveImage(newImage);
         getBaseDiskDao().save(newImage);
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();

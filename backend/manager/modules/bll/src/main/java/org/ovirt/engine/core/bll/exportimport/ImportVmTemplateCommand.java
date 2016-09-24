@@ -19,7 +19,6 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -447,7 +446,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         int count = 1;
         for (DiskImage image : getImages()) {
             image.setActive(true);
-            ImageStorageDomainMap map = BaseImagesCommand.saveImage(image);
+            ImageStorageDomainMap map = ImagesHandler.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());
             getCompensationContext().snapshotNewEntity(map);
             if (!getBaseDiskDao().exists(image.getId())) {
