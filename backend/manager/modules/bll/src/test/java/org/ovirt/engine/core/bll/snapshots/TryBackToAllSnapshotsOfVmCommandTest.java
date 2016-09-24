@@ -38,7 +38,6 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
     private VmDao vmDao;
 
     private VM vm;
-    private Snapshot snapshot;
     Guid vmId;
 
     @Before
@@ -51,7 +50,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
         when(vmDao.get(vmId)).thenReturn(vm);
 
         Guid snapshotId = Guid.newGuid();
-        snapshot = new Snapshot();
+        Snapshot snapshot = new Snapshot();
         snapshot.setId(snapshotId);
         snapshot.setVmId(vmId);
         when(snapshotDao.get(snapshotId)).thenReturn(snapshot);
