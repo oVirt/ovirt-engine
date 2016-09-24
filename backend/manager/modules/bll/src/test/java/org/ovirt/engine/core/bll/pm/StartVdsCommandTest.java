@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,7 +17,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -78,7 +79,10 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     @Mock
     private AuditLogDirector auditLogDirector;
 
-    private StartVdsCommand<FenceVdsActionParameters> command;
+    @Spy
+    @InjectMocks
+    private StartVdsCommand<FenceVdsActionParameters> command =
+            new StartVdsCommand<>(new FenceVdsActionParameters(FENCECD_HOST_ID), null);
 
     @Before
     public void setup() {
@@ -86,7 +90,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         initAgents();
         mockDbFacades();
         initCommand();
-        mockBackend();
     }
 
     private void mockDbFacades() {
@@ -134,18 +137,8 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         agent2.setOrder(2);
     }
 
-    private void mockBackend() {
-        doReturn(backend).when(command).getBackend();
-    }
-
     private void initCommand() {
-        FenceVdsActionParameters params = new FenceVdsActionParameters();
-        params.setVdsId(FENCECD_HOST_ID);
-        command = new StartVdsCommand<>(params, null);
-        command.setAuditLogDirector(auditLogDirector);
-        command = spy(command);
         doReturn(executor).when(command).createHostFenceActionExecutor(any(VDS.class), any(FencingPolicy.class));
-        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         command.setClusterId(FENCECD_HOST_CLUSTER_ID);
     }
 
