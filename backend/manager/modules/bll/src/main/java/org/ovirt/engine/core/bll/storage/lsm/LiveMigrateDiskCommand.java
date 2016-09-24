@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.lsm;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
@@ -50,6 +52,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     private Guid sourceQuotaId;
     private Guid sourceDiskProfileId;
+
+    @Inject
+    private LiveStorageMigrationHelper liveStorageMigrationHelper;
 
     public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -101,7 +106,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             updateStage(LiveDiskMigrateStage.VM_REPLICATE_DISK_FINISH);
             completeLiveMigration();
             updateStage(LiveDiskMigrateStage.SOURCE_IMAGE_DELETION);
-            LiveStorageMigrationHelper.removeImage(this, getParameters().getSourceStorageDomainId(), getParameters()
+            liveStorageMigrationHelper.removeImage(this, getParameters().getSourceStorageDomainId(), getParameters()
                     .getImageGroupID(), getParameters().getDestinationImageId(), AuditLogType
                     .USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE);
             return false;
@@ -407,7 +412,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
             log.error("Attempting to delete the target of disk '{}' of vm '{}'",
                     getParameters().getImageGroupID(), getParameters().getVmId());
-            LiveStorageMigrationHelper.removeImage(this, getParameters().getTargetStorageDomainId(), getParameters()
+            liveStorageMigrationHelper.removeImage(this, getParameters().getTargetStorageDomainId(), getParameters()
                     .getImageGroupID(), getParameters().getDestinationImageId(), AuditLogType
                     .USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE);
         }

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -7,12 +10,19 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
+@Singleton
 public class LiveStorageMigrationHelper {
-    private LiveStorageMigrationHelper() {
-    }
 
-    public static void removeImage(CommandBase<?> cmd, Guid storageDomainId, Guid imageGroupId, Guid imageId,
+    @Inject
+    private BaseDiskDao baseDiskDao;
+
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+
+    public void removeImage(CommandBase<?> cmd, Guid storageDomainId, Guid imageGroupId, Guid imageId,
                                     AuditLogType failureAuditLog) {
         RemoveImageParameters removeImageParams =
                 new RemoveImageParameters(imageId);
@@ -26,8 +36,8 @@ public class LiveStorageMigrationHelper {
         if (returnValue.getSucceeded()) {
             cmd.startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {
-            cmd.addCustomValue("DiskAlias", cmd.getBaseDiskDao().get(imageGroupId).getDiskAlias());
-            cmd.addCustomValue("StorageDomainName", cmd.getStorageDomainStaticDao().get(storageDomainId).getName());
+            cmd.addCustomValue("DiskAlias", baseDiskDao.get(imageGroupId).getDiskAlias());
+            cmd.addCustomValue("StorageDomainName", storageDomainStaticDao.get(storageDomainId).getName());
             cmd.addCustomValue("UserName", cmd.getUserName());
             cmd.getAuditLogDirector().log(cmd, failureAuditLog);
         }
