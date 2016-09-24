@@ -19,13 +19,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -72,18 +71,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
-
-    @Mock
-    private OsRepository osRepository;
-
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
-
-    @Mock
-    private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
     @Mock
     private MacPoolPerCluster macPoolPerCluster;
@@ -94,15 +83,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
 
-    @Before
-    public void setUp() throws IOException {
-        vmId = Guid.newGuid();
-        storageDomainId = Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
-        storagePoolId = Guid.newGuid();
-        clusterId = Guid.newGuid();
-
-
+    @BeforeClass
+    public static void setUpInjections() {
         // init the injector with the osRepository instance
+        OsRepository osRepository = mock(OsRepository.class);
+        OvfVmIconDefaultsProvider iconDefaultsProvider = mock(OvfVmIconDefaultsProvider.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         final int osId = 0;
@@ -112,6 +97,20 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                 Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
                 Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b"))
         ));
+    }
+
+    @Before
+    public void setUp() throws IOException {
+        vmId = Guid.newGuid();
+        storageDomainId = Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
+        storagePoolId = Guid.newGuid();
+        clusterId = Guid.newGuid();
+
+        ImportVmParameters parameters = createParametersWhenImagesExistOnTargetStorageDomain();
+        cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters,
+                macPoolPerCluster,
+                externalVmMacsFinder));
+
         mockCluster();
         setXmlOvfData();
     }
@@ -194,18 +193,14 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     }
 
     private void initCommand(OvfEntityData resultOvfEntityData) {
-        ImportVmParameters parameters = createParametersWhenImagesExistOnTargetStorageDomain();
         initUnregisteredOVFData(resultOvfEntityData);
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-        cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters,
-                macPoolPerCluster,
-                externalVmMacsFinder));
-        cmd.init();
         doReturn(mock(MacPool.class)).when(cmd).getMacPool();
-        validator = spy(new ImportValidator(parameters));
+        validator = spy(new ImportValidator(cmd.getParameters()));
         doReturn(validator).when(cmd).getImportValidator();
         mockStoragePool();
         doReturn(storagePool).when(validator).getStoragePool();
+        cmd.init();
     }
 
     private void initUnregisteredOVFData(OvfEntityData resultOvfEntityData) {
