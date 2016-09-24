@@ -110,6 +110,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters,
                 macPoolPerCluster,
                 externalVmMacsFinder));
+        doReturn(unregisteredOVFDataDao).when(cmd).getUnregisteredOVFDataDao();
+        doReturn(cluster).when(cmd).getCluster();
+        doReturn(Collections.emptyList()).when(cmd).getImages();
 
         mockCluster();
         setXmlOvfData();
@@ -249,26 +252,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
             super(parameters, CommandContext.createContext(parameters.getSessionId()));
             this.macPoolPerCluster = macPoolPerCluster;
             this.externalVmMacsFinder = externalVmMacsFinder;
-        }
-
-        // Overridden here and not during spying, since it's called in the constructor
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
-            return unregisteredOVFDataDao;
-        }
-
-        @Override
-        protected void initUser() {
-        }
-
-        public Cluster getCluster() {
-            return cluster;
-        }
-
-        @Override
-        protected List<DiskImage> getImages() {
-            return Collections.emptyList();
         }
     }
 }
