@@ -177,7 +177,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
      * mocking, EngineException is thrown and the command fails. In the finally() clause, SetVdsStatus is invoked to
      * restore the old status. This test verifies that this invocation was made.
      */
-    @Test()
+    @Test
     public void onFailureResetInitialStatus() {
         mockExecutor(false);
         try {
