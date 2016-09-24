@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -109,11 +108,10 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         final int osId = 0;
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
         when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
-        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
-            put(osId, new VmIconIdSizePair(
-                    Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
-                    Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b")));
-        }});
+        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(Collections.singletonMap(osId, new VmIconIdSizePair(
+                Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
+                Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b"))
+        ));
         mockCluster();
         setXmlOvfData();
     }
