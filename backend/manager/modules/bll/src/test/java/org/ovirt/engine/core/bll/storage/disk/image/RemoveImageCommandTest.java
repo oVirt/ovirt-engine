@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -62,9 +61,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
-    @Mock
-    private SnapshotDao snapshotDao;
 
     @Mock
     OsRepository osRepository;
@@ -95,7 +91,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
                 // Stub implementation for testing
             }
         });
-        doReturn(snapshotDao).when(cmd).getSnapshotDao();
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
             put(0, new VmIconIdSizePair(
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
@@ -134,7 +129,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);
 
-        when(snapshotDao.get(vmSnapshotId)).thenReturn(snap);
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();
