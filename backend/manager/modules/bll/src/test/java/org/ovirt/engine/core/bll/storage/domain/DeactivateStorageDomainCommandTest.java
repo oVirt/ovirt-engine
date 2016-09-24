@@ -12,7 +12,6 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -49,8 +48,10 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 
 public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
 
-    @Rule
-    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.EVENTQUEUE_MANAGER, mock(EventQueue.class));
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule =
+            new MockEJBStrategyRule(BeanType.EVENTQUEUE_MANAGER, mock(EventQueue.class));
+
     @Mock
     private StoragePoolIsoMapDao isoMapDao;
     @Mock
@@ -74,9 +75,6 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
 
     private StoragePoolIsoMap map;
     private StorageDomain domain;
-
-    @ClassRule
-    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid());
 
