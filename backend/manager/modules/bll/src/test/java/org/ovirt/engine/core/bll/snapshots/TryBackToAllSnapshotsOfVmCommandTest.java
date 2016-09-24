@@ -65,8 +65,6 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
     @Test
     public void testValidateWithEmptySnapshotGuid() {
         cmd.getParameters().setDstSnapshotId(Guid.Empty);
-        doNothing().when(cmd).updateVmDisksFromDb();
-        doReturn(snapshotDao).when(cmd).getSnapshotDao();
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
     }
