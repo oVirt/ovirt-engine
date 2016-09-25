@@ -114,14 +114,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     public UpdateVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        if (getCluster() != null) {
-            setStoragePoolId(getCluster().getStoragePoolId());
-        }
     }
 
     @Override
     protected void init() {
         super.init();
+
+        if (getCluster() != null) {
+            setStoragePoolId(getCluster().getStoragePoolId());
+        }
 
         if (isVmExist()) {
             Version compatibilityVersion = getEffectiveCompatibilityVersion();
