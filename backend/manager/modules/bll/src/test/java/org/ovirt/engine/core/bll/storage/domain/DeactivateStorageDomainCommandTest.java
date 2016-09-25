@@ -20,7 +20,6 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -60,8 +59,6 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     private StorageDomainDao storageDomainDao;
     @Mock
     private VdsDao vdsDao;
-    @Mock
-    private BackendInternal backendInternal;
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
