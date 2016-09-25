@@ -43,15 +43,11 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
     @Before
     public void setup() {
         doReturn(createAffinityGroup()).when(parameters).getAffinityGroup();
-        command = spy(new EditAffinityGroupCommand(parameters, null) {
-            @Override
-            protected AffinityGroup getAffinityGroup() {
-                AffinityGroup affinityGroup2 = new AffinityGroup();
-                affinityGroup2.setClusterId(clusterId);
-                affinityGroup2.setName(AFFINITY_GROUP_NAME + "##");
-                return affinityGroup2;
-            }
-        });
+        AffinityGroup affinityGroup2 = new AffinityGroup();
+        affinityGroup2.setClusterId(clusterId);
+        affinityGroup2.setName(AFFINITY_GROUP_NAME + "##");
+        command = spy(new EditAffinityGroupCommand(parameters, null));
+        doReturn(affinityGroup2).when(command).getAffinityGroup();
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(new Cluster()).when(command).getCluster();
