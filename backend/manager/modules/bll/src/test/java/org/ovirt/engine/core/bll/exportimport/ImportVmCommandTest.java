@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -74,9 +73,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 public class ImportVmCommandTest extends BaseCommandTest {
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     OsRepository osRepository;
