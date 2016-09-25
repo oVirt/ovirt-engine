@@ -5,10 +5,12 @@ import java.util.Collections;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -21,6 +23,23 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class UpdateRngDeviceTest extends BaseCommandTest {
+    private static final Guid vmId = new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db");
+    private static final Guid clusterId = new Guid("e862dae0-5c41-416a-922c-5395e7245c9b");
+    private static final Guid deviceId = new Guid("b24ae590-f42b-49b6-b8f4-cbbc720b230d");
+
+    @Mock
+    private VmStaticDao vmDaoMock;
+
+    @Mock
+    private VmDeviceDao vmDeviceDaoMock;
+
+    @Mock
+    private ClusterDao clusterMock;
+
+    @Spy
+    @InjectMocks
+    private UpdateRngDeviceCommand cmd =
+            new UpdateRngDeviceCommand(new RngDeviceParameters(getDevice(deviceId, vmId), true), null);
 
     @Test
     public void testValidate() {
@@ -29,24 +48,14 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
     }
 
     private UpdateRngDeviceCommand mockCommand() {
-        final Guid vmId = new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db");
-        final Guid clusterId = new Guid("e862dae0-5c41-416a-922c-5395e7245c9b");
-        final Guid deviceId = new Guid("b24ae590-f42b-49b6-b8f4-cbbc720b230d");
-        final VmRngDevice dev = getDevice(deviceId, vmId);
-
         final VmStatic vmMock = mock(VmStatic.class);
         when(vmMock.getClusterId()).thenReturn(clusterId);
-        final VmStaticDao vmDaoMock = mock(VmStaticDao.class);
         when(vmDaoMock.get(vmId)).thenReturn(vmMock);
-        final VmDeviceDao vmDeviceDaoMock = mock(VmDeviceDao.class);
         when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG)).thenReturn(Collections.singletonList(new VmDevice()));
         final Cluster cluster = mock(Cluster.class);
         when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
-        final ClusterDao clusterMock = mock(ClusterDao.class);
         when(clusterMock.get(clusterId)).thenReturn(cluster);
 
-        RngDeviceParameters params = new RngDeviceParameters(dev, true);
-        UpdateRngDeviceCommand cmd = spy(new UpdateRngDeviceCommand(params, null));
         doReturn(vmDaoMock).when(cmd).getVmStaticDao();
         doReturn(clusterMock).when(cmd).getClusterDao();
         doReturn(vmDeviceDaoMock).when(cmd).getVmDeviceDao();
@@ -55,7 +64,7 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         return cmd;
     }
 
-    private VmRngDevice getDevice(Guid deviceId, Guid vmId) {
+    private static VmRngDevice getDevice(Guid deviceId, Guid vmId) {
         VmRngDevice device = new VmRngDevice();
         device.setVmId(vmId);
         device.setDeviceId(deviceId);
