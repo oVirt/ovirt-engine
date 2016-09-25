@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -16,12 +15,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -51,10 +51,11 @@ import org.slf4j.Logger;
 public class AddVdsCommandTest {
     private static final String PEER_1 = "peer1";
     private static final Guid vdsId = Guid.newGuid();
-    private AddVdsActionParameters parameters;
 
-    @Mock
-    private AddVdsCommand<AddVdsActionParameters> commandMock;
+    @Spy
+    @InjectMocks
+    private AddVdsCommand<AddVdsActionParameters> command = new AddVdsCommand<>(createParameters(), null);
+
     @Mock
     private ClusterDao groupDaoMock;
     @Mock
@@ -91,35 +92,29 @@ public class AddVdsCommandTest {
         return newVdsData;
     }
 
-    @Before
-    public void createParameters() {
-        parameters = new AddVdsActionParameters();
+    public AddVdsActionParameters createParameters() {
+        AddVdsActionParameters parameters = new AddVdsActionParameters();
         parameters.setPassword("secret");
         VDS newVds = makeTestVds(vdsId);
         parameters.setvds(newVds);
+        return parameters;
     }
 
     private void setupCommonMock(boolean glusterEnabled) throws Exception {
         mockHostValidator();
-        when(commandMock.validate()).thenCallRealMethod();
-        when(commandMock.canConnect(any(VDS.class))).thenCallRealMethod();
-        when(commandMock.getParameters()).thenReturn(parameters);
 
-        when(commandMock.isGlusterSupportEnabled()).thenReturn(glusterEnabled);
-        when(commandMock.getClusterDao()).thenReturn(groupDaoMock);
-        when(commandMock.getClusterUtils()).thenReturn(clusterUtils);
+        doReturn(glusterEnabled).when(command).isGlusterSupportEnabled();
+        doReturn(groupDaoMock).when(command).getClusterDao();
+        doReturn(clusterUtils).when(command).getClusterUtils();
 
-        when(commandMock.getVdsDao()).thenReturn(vdsDaoMock);
-        when(commandMock.validateCluster()).thenReturn(true);
-        when(commandMock.isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class))).thenReturn(true);
-        when(commandMock.getSSHClient()).thenReturn(sshClient);
+        doReturn(vdsDaoMock).when(command).getVdsDao();
+        doReturn(true).when(command).validateCluster();
+        doReturn(true).when(command).isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class));
+        doReturn(sshClient).when(command).getSSHClient();
         Version version = new Version("1.2.3");
         Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(version);
-        when(commandMock.getCluster()).thenReturn(cluster);
-        when(commandMock.isPowerManagementLegal(parameters.getVdsStaticData().isPmEnabled(),
-                parameters.getFenceAgents(),
-                new Version("1.2.3").toString())).thenReturn(true);
+        doReturn(cluster).when(command).getCluster();
         doNothing().when(sshClient).connect();
         doNothing().when(sshClient).authenticate();
     }
@@ -143,8 +138,7 @@ public class AddVdsCommandTest {
         when(validator.passwordNotEmpty(any(Boolean.class),
                 any(AuthenticationMethod.class),
                 any(String.class))).thenReturn(ValidationResult.VALID);
-        when(commandMock.getHostValidator()).thenReturn(validator);
-        when(commandMock.validate(any(ValidationResult.class))).thenCallRealMethod();
+        doReturn(validator).when(command).getHostValidator();
     }
 
     private void setupVirtMock() throws Exception {
@@ -154,15 +148,11 @@ public class AddVdsCommandTest {
     private void setupGlusterMock(boolean clusterHasServers, VDS upServer, boolean hasPeers) throws Exception {
         setupCommonMock(true);
 
-        when(commandMock.createReturnValue()).thenCallRealMethod();
-        when(commandMock.getReturnValue()).thenCallRealMethod();
-        doCallRealMethod().when(commandMock).addValidationMessages(any(List.class));
-
-        when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
+        when(command.getGlusterUtil()).thenReturn(glusterUtil);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
                 : Collections.emptySet());
 
-        when(commandMock.getGlusterDBUtils()).thenReturn(glusterDBUtils);
+        when(command.getGlusterDBUtils()).thenReturn(glusterDBUtils);
 
         when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
         when(vdsDaoMock.getAllForCluster(any(Guid.class))).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
@@ -181,13 +171,13 @@ public class AddVdsCommandTest {
     @Test
     public void validateVirtOnlySucceeds() throws Exception {
         setupVirtMock();
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
     public void validateSucceedsOnEmptyClusterEvenWhenGlusterServerHasPeers() throws Exception {
         setupGlusterMock(false, null, true);
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
@@ -195,7 +185,7 @@ public class AddVdsCommandTest {
     public void validateSucceedsWhenHasPeersThrowsException() throws Exception {
         setupGlusterMock(true, new VDS(), true);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenThrow(new RuntimeException());
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
@@ -203,8 +193,8 @@ public class AddVdsCommandTest {
         setupGlusterMock(true, new VDS(), true);
         when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(false);
 
-        assertFalse(commandMock.validate());
-        assertTrue(commandMock.getReturnValue()
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER.toString()));
     }
@@ -214,26 +204,26 @@ public class AddVdsCommandTest {
         setupGlusterMock(true, new VDS(), true);
         when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(true);
 
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
     public void validateSucceedsWhenGlusterServerHasNoPeers() throws Exception {
         setupGlusterMock(true, new VDS(), false);
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
     public void validateSuccessForGlusterServerWhenUpServerExists() throws Exception {
         setupGlusterMock(true, new VDS(), false);
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
     }
 
     @Test
     public void validateFailsForGlusterServerWhenNoUpServer() throws Exception {
         setupGlusterMock(true, null, false);
-        assertFalse(commandMock.validate());
-        assertTrue(commandMock.getReturnValue()
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE.toString()));
     }
@@ -241,7 +231,7 @@ public class AddVdsCommandTest {
     @Test
     public void provisioningValidated() throws Exception {
         setupVirtMock();
-        assertTrue(commandMock.validate());
+        assertTrue(command.validate());
         verify(validator, times(1)).provisioningComputeResourceValid(any(Boolean.class),
                 any(ExternalComputeResource.class));
         verify(validator, times(1)).provisioningHostGroupValid(any(Boolean.class), any(ExternalHostGroup.class));
