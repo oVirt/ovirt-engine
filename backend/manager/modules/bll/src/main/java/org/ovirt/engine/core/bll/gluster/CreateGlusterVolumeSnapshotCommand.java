@@ -46,7 +46,11 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         this.snapshot = params.getSnapshot();
         this.force = params.getForce();
         this.enginePausedSessions = new ArrayList<>();
+    }
 
+    @Override
+    protected void init() {
+        super.init();
         if (this.snapshot != null) {
             setClusterId(this.snapshot.getClusterId());
             setGlusterVolumeId(snapshot.getVolumeId());
