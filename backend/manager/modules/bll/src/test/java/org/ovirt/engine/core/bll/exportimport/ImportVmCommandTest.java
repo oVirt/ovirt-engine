@@ -532,10 +532,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         }
 
         @Override
-        protected void initUser() {
-        }
-
-        @Override
         public Cluster getCluster() {
             return null;
         }
