@@ -3,7 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
@@ -44,27 +46,10 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         when(clusterMock.get(clusterId)).thenReturn(cluster);
 
         RngDeviceParameters params = new RngDeviceParameters(dev, true);
-        UpdateRngDeviceCommand cmd = new UpdateRngDeviceCommand(params, null) {
-            @Override
-            public VmStaticDao getVmStaticDao() {
-                return vmDaoMock;
-            }
-
-            @Override
-            public ClusterDao getClusterDao() {
-                return clusterMock;
-            }
-
-            @Override
-            public VmDeviceDao getVmDeviceDao() {
-                return vmDeviceDaoMock;
-            }
-
-            @Override
-            public Guid getClusterId() {
-                return clusterId;
-            }
-        };
+        UpdateRngDeviceCommand cmd = spy(new UpdateRngDeviceCommand(params, null));
+        doReturn(vmDaoMock).when(cmd).getVmStaticDao();
+        doReturn(clusterMock).when(cmd).getClusterDao();
+        doReturn(vmDeviceDaoMock).when(cmd).getVmDeviceDao();
         cmd.init();
 
         return cmd;
