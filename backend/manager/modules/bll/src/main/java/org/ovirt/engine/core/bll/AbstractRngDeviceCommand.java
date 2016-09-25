@@ -28,12 +28,16 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
 
     protected AbstractRngDeviceCommand(T parameters, CommandContext context) {
         super(parameters, context);
+    }
 
-        if (parameters.getRngDevice() == null || parameters.getRngDevice().getVmId() == null) {
+    @Override
+    protected void init() {
+        super.init();
+        if (getParameters().getRngDevice() == null || getParameters().getRngDevice().getVmId() == null) {
             return;
         }
 
-        Guid vmId = parameters.getRngDevice().getVmId();
+        Guid vmId = getParameters().getRngDevice().getVmId();
         setVmId(vmId);
 
         if (getParameters().isVm()) {

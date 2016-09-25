@@ -65,6 +65,7 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
                 return clusterId;
             }
         };
+        cmd.init();
 
         return cmd;
     }
