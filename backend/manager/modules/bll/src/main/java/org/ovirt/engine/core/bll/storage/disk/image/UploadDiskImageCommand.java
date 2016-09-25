@@ -38,7 +38,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
 
     @Override
     protected boolean validate() {
-        VdcReturnValueBase returnValue = CommandHelper.canDoAction(VdcActionType.AddDisk, getAddDiskParameters(),
+        VdcReturnValueBase returnValue = CommandHelper.validate(VdcActionType.AddDisk, getAddDiskParameters(),
                 getContext().clone());
         getReturnValue().setValidationMessages(returnValue.getValidationMessages());
         return returnValue.isValid();

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.CommandStatus;
 
 public class CommandHelper {
 
-    public static VdcReturnValueBase canDoAction(VdcActionType actionType,
+    public static VdcReturnValueBase validate(VdcActionType actionType,
                                                  VdcActionParametersBase parameters,
                                                  CommandContext commandContext) {
         return CommandsFactory.createCommand(actionType, parameters, commandContext).validateOnly();
