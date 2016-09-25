@@ -68,7 +68,6 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -81,9 +80,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Mock
     private MacPool macPool;
-
-    @Mock
-    private ClusterDao clusterDao;
 
     @Mock
     private MacPoolPerCluster poolPerCluster;
@@ -245,7 +241,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
-        doReturn(clusterDao).when(cmd).getClusterDao();
         Cluster cluster = new Cluster();
         cluster.setClusterId(cmd.getParameters().getClusterId());
         doReturn(cluster).when(cmd).getCluster();
