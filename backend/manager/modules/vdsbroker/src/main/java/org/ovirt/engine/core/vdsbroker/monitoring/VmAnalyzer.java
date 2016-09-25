@@ -527,7 +527,17 @@ public class VmAnalyzer {
             log.debug("removing VM '{}' from successful run VMs list", dbVm.getId());
             succeededToRun = true;
         }
-        afterMigrationFrom(vdsmVmDynamic, dbVm);
+
+        // if the VM's status on source host was MigratingFrom and now the VM is running and its status
+        // is not MigratingFrom, it means the migration failed
+        if (dbVm.getStatus() == VMStatus.MigratingFrom
+                && vdsmVmDynamic.getStatus() != VMStatus.MigratingFrom
+                && vdsmVmDynamic.getStatus().isRunning()) {
+            rerun = true;
+            log.info("Adding VM '{}'({}) to re-run list", dbVm.getId(), getVmManager().getName());
+            dbVm.setMigratingToVds(null);
+            getVmManager().getStatistics().setMigrationProgressPercent(0);
+        }
 
         if (dbVm.getStatus() != VMStatus.NotResponding
                 && vdsmVmDynamic.getStatus() == VMStatus.NotResponding) {
@@ -748,21 +758,6 @@ public class VmAnalyzer {
 
     private boolean isVdsNonResponsive(Guid vdsId) {
         return vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
-    }
-
-    private void afterMigrationFrom(VmDynamic runningVm, VmDynamic vmToUpdate) {
-        VMStatus oldVmStatus = vmToUpdate.getStatus();
-        VMStatus currentVmStatus = runningVm.getStatus();
-
-        // if the VM's status on source host was MigratingFrom and now the VM is running and its status
-        // is not MigratingFrom, it means the migration failed
-        if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom
-                && currentVmStatus.isRunning()) {
-            rerun = true;
-            log.info("Adding VM '{}'({}) to re-run list", vmToUpdate.getId(), getVmManager().getName());
-            vmToUpdate.setMigratingToVds(null);
-            getVmManager().getStatistics().setMigrationProgressPercent(0);
-        }
     }
 
     private void logVmStatusTransionFromUnknown() {
