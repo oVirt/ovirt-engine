@@ -12,6 +12,7 @@ import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -26,10 +27,12 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -74,8 +77,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
-    @Mock
-    OsRepository osRepository;
+    static OsRepository osRepository;
 
     @Mock
     private MacPool macPool;
@@ -92,10 +94,14 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
 
-    @Before
-    public void setUp() {
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
+    @Spy
+    @InjectMocks
+    private ImportVmCommand<ImportVmParameters> cmd = new ImportVmCommand<>(createParameters(), null);
+
+    @BeforeClass
+    public static void setUpOsRepository() {
         // init the injector with the osRepository instance
+        osRepository = mock(OsRepository.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         final int osId = 0;
@@ -106,23 +112,28 @@ public class ImportVmCommandTest extends BaseCommandTest {
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
+    @Before
+    public void setUp() {
+        doReturn(null).when(cmd).getCluster();
+    }
+
     @Test
     public void insufficientDiskSpaceWithCollapse() {
-        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(true).when(command).validateImages(anyMapOf(Guid.class, StorageDomain.class));
-        when(command.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class))).thenReturn(
+        setupDiskSpaceTest();
+        doReturn(true).when(cmd).validateImages(anyMapOf(Guid.class, StorageDomain.class));
+        when(cmd.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class))).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        ValidateTestUtils.runAndAssertValidateFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     @Test
     public void insufficientDiskSpaceWithSnapshots() {
-        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(true).when(command).validateImages(anyMapOf(Guid.class, StorageDomain.class));
-        when(command.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class))).thenReturn(
+        setupDiskSpaceTest();
+        doReturn(true).when(cmd).validateImages(anyMapOf(Guid.class, StorageDomain.class));
+        when(cmd.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class))).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        ValidateTestUtils.runAndAssertValidateFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
@@ -147,8 +158,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         vm.getManagedVmDeviceMap().put(deviceId, sound);
     }
 
-    private ImportVmCommand<ImportVmParameters> setupCanImportPpcTest() {
-        final ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(createParameters());
+    private void setupCanImportPpcTest() {
+        setupDiskSpaceTest();
 
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         Cluster cluster = new Cluster();
@@ -156,13 +167,11 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(cmd).getCluster();
         doReturn(true).when(cmd).validateImages(anyMapOf(Guid.class, StorageDomain.class));
-
-        return cmd;
     }
 
     @Test
     public void refuseBalloonOnPPC() {
-        final ImportVmCommand<ImportVmParameters> cmd = setupCanImportPpcTest();
+        setupCanImportPpcTest();
 
         addBalloonToVm(cmd.getVmFromExportDomain(null));
         when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
@@ -175,7 +184,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Test
     public void refuseSoundDeviceOnPPC() {
-        final ImportVmCommand<ImportVmParameters> cmd = setupCanImportPpcTest();
+        setupCanImportPpcTest();
 
         addSoundDeviceToVm(cmd.getVmFromExportDomain(null));
         when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
@@ -188,41 +197,40 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Test
     public void acceptBalloon() {
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(createParameters());
+        setupDiskSpaceTest();
 
-        addBalloonToVm(c.getParameters().getVm());
+        addBalloonToVm(cmd.getParameters().getVm());
 
-        c.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
+        cmd.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
         Cluster cluster = new Cluster();
         cluster.setId(Guid.newGuid());
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
-        doReturn(cluster).when(c).getCluster();
-        c.setClusterId(cluster.getId());
-        c.getParameters().setClusterId(cluster.getId());
+        doReturn(cluster).when(cmd).getCluster();
+        cmd.setClusterId(cluster.getId());
+        cmd.getParameters().setClusterId(cluster.getId());
         osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
                 Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
-        when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
-        c.initEffectiveCompatibilityVersion();
-        assertTrue(c.validateBallonDevice());
+        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
+        cmd.initEffectiveCompatibilityVersion();
+        assertTrue(cmd.validateBallonDevice());
     }
 
     @Test
     public void lowThresholdStorageSpace() {
-        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(true).when(command).validateImages(anyMapOf(Guid.class, StorageDomain.class));
-        when(command.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class)))
+        setupDiskSpaceTest();
+        doReturn(true).when(cmd).validateImages(anyMapOf(Guid.class, StorageDomain.class));
+        when(cmd.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class)))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        ValidateTestUtils.runAndAssertValidateFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
-    private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
-        final ImportValidator validator = spy(new ImportValidator(parameters));
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(parameters));
+    private void setupDiskSpaceTest() {
+        final ImportValidator validator = spy(new ImportValidator(cmd.getParameters()));
         doReturn(validator).when(cmd).getImportValidator();
         cmd.init();
-        parameters.setCopyCollapse(true);
+        cmd.getParameters().setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -234,25 +242,23 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollectionOf(DiskImage.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
-        doReturn(parameters.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
+        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         doReturn(clusterDao).when(cmd).getClusterDao();
         Cluster cluster = new Cluster();
-        cluster.setClusterId(parameters.getClusterId());
+        cluster.setClusterId(cmd.getParameters().getClusterId());
         doReturn(cluster).when(cmd).getCluster();
         doReturn(macPool).when(cmd).getMacPool();
 
         when(poolPerCluster.getMacPoolForCluster(any(Guid.class), any(CommandContext.class))).thenReturn(macPool);
 
         ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
-        for (DiskImage image : parameters.getVm().getImages()) {
+        for (DiskImage image : cmd.getParameters().getVm().getImages()) {
             image.setStorageIds(sdIds);
         }
 
         doReturn(Collections.emptyList()).when(cmd).createDiskDummiesForSpaceValidations(anyListOf(DiskImage.class));
-
-        return cmd;
     }
 
     protected ImportVmParameters createParameters() {
@@ -353,14 +359,12 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     private void checkVmName(boolean isImportAsNewEntity, String name) {
-        ImportVmParameters parameters = createParameters();
-        parameters.getVm().setName(name);
-        parameters.setImportAsNewEntity(isImportAsNewEntity);
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
-        command.init();
+        cmd.getParameters().getVm().setName(name);
+        cmd.getParameters().setImportAsNewEntity(isImportAsNewEntity);
+        cmd.init();
         Set<ConstraintViolation<ImportVmParameters>> validate =
-                ValidationUtils.getValidator().validate(parameters,
-                        command.getValidationGroups().toArray(new Class<?>[0]));
+                ValidationUtils.getValidator().validate(cmd.getParameters(),
+                        cmd.getValidationGroups().toArray(new Class<?>[0]));
         assertEquals(validate.isEmpty(), !isImportAsNewEntity);
     }
 
@@ -370,23 +374,20 @@ public class ImportVmCommandTest extends BaseCommandTest {
      */
     @Test
     public void testOtherFieldsNotValidatedInImport() {
-        ImportVmParameters parameters = createParameters();
         String tooLongString =
                 RandomUtils.instance().nextPropertyString(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE + 1);
-        parameters.getVm().setUserDefinedProperties(tooLongString);
-        parameters.setImportAsNewEntity(true);
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
-        command.init();
+        cmd.getParameters().getVm().setUserDefinedProperties(tooLongString);
+        cmd.getParameters().setImportAsNewEntity(true);
+        cmd.init();
         Set<ConstraintViolation<ImportVmParameters>> validate =
-                ValidationUtils.getValidator().validate(parameters,
-                        command.getValidationGroups().toArray(new Class<?>[0]));
+                ValidationUtils.getValidator().validate(cmd.getParameters(),
+                        cmd.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
-        parameters.getVm().setUserDefinedProperties(tooLongString);
-        parameters.setImportAsNewEntity(false);
-        command = new ImportVmCommandStub(parameters);
-        command.init();
+        cmd.getParameters().getVm().setUserDefinedProperties(tooLongString);
+        cmd.getParameters().setImportAsNewEntity(false);
+        cmd.init();
         validate = ValidationUtils.getValidator()
-                .validate(parameters, command.getValidationGroups().toArray(new Class<?>[0]));
+                .validate(cmd.getParameters(), cmd.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
     }
 
@@ -395,9 +396,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
      */
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
-        ImportVmParameters parameters = createParameters();
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
-        command.init();
+        cmd.init();
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
         diskImage.setStorageIds(new ArrayList<>());
@@ -405,13 +404,13 @@ public class ImportVmCommandTest extends BaseCommandTest {
         diskImage2.setStorageIds(new ArrayList<>());
         diskList.add(diskImage);
         diskList.add(diskImage2);
-        DiskImage disk = command.getActiveVolumeDisk(diskList);
+        DiskImage disk = cmd.getActiveVolumeDisk(diskList);
         Map<Guid, VmDevice> managedDevices = new HashMap<>();
         managedDevices.put(disk.getId(), new VmDevice());
         Guid beforeOldDiskId = disk.getId();
-        command.generateNewDiskId(diskList, disk);
-        command.updateManagedDeviceMap(disk, managedDevices);
-        Guid oldDiskId = command.newDiskIdForDisk.get(disk.getId()).getId();
+        cmd.generateNewDiskId(diskList, disk);
+        cmd.updateManagedDeviceMap(disk, managedDevices);
+        Guid oldDiskId = cmd.newDiskIdForDisk.get(disk.getId()).getId();
         assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.",
                 beforeOldDiskId,
                 oldDiskId);
@@ -425,12 +424,10 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
-        ImportVmParameters params = createParameters();
-        params.setCopyCollapse(true);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
+        cmd.getParameters().setCopyCollapse(true);
         cmd.init();
 
-        DiskImage collapsedDisk = params.getVm().getImages().get(1);
+        DiskImage collapsedDisk = cmd.getParameters().getVm().getImages().get(1);
 
         doNothing().when(cmd).saveImage(collapsedDisk);
         doNothing().when(cmd).saveBaseDisk(collapsedDisk);
@@ -445,11 +442,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testEmptyGuidFails() {
-        ImportVmParameters params = createParameters();
-        params.setCopyCollapse(Boolean.TRUE);
-        DiskImage diskImage = params.getVm().getImages().get(0);
+        cmd.getParameters().setCopyCollapse(Boolean.TRUE);
+        DiskImage diskImage = cmd.getParameters().getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
         doReturn(macPool).when(cmd).getMacPool();
         cmd.init();
         doReturn(true).when(cmd).validateNoDuplicateVm();
@@ -462,11 +457,11 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollectionOf(DiskImage.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
-        doReturn(params.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
+        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         Cluster cluster = new Cluster();
-        cluster.setId(params.getClusterId());
+        cluster.setId(cmd.getParameters().getClusterId());
         doReturn(cluster).when(cmd).getCluster();
 
         assertFalse(cmd.validate());
@@ -477,17 +472,15 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
-        ImportVmParameters params = createParameters();
-        params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandTest.ImportVmCommandStub(params));
+        cmd.getParameters().setCopyCollapse(false);
         cmd.init();
 
-        for (DiskImage image : params.getVm().getImages()) {
+        for (DiskImage image : cmd.getParameters().getVm().getImages()) {
             doNothing().when(cmd).saveImage(image);
             doNothing().when(cmd).saveSnapshotIfNotExists(any(Guid.class), eq(image));
             doNothing().when(cmd).saveDiskImageDynamic(image);
         }
-        DiskImage activeDisk = params.getVm().getImages().get(1);
+        DiskImage activeDisk = cmd.getParameters().getVm().getImages().get(1);
 
         doNothing().when(cmd).updateImage(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
@@ -502,14 +495,11 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testCDANoCollapseNoSnapshots() {
         final VM v = createVmWithNoSnapshots();
         v.setName("testVm");
-        ImportVmParameters params =
-                new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
-
-        params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
+        cmd.getParameters().setVm(v);
+        cmd.getParameters().setCopyCollapse(false);
         cmd.init();
 
-        DiskImage activeDisk = params.getVm().getImages().get(0);
+        DiskImage activeDisk = cmd.getParameters().getVm().getImages().get(0);
 
         doNothing().when(cmd).saveImage(activeDisk);
         doNothing().when(cmd).saveDiskImageDynamic(activeDisk);
@@ -519,17 +509,5 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
-    }
-
-    private static class ImportVmCommandStub extends ImportVmCommand<ImportVmParameters> {
-
-        public ImportVmCommandStub(ImportVmParameters parameters) {
-            super(parameters, null);
-        }
-
-        @Override
-        public Cluster getCluster() {
-            return null;
-        }
     }
 }
