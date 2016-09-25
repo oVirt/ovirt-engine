@@ -144,6 +144,7 @@ public enum VdcActionType {
     RemoveVmTemplateInterface(221, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
     UpdateVmTemplateInterface(222, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
     AddVmTemplateFromSnapshot(240, ActionGroup.CREATE_TEMPLATE, QuotaDependency.BOTH),
+    SealVmTemplate(252, QuotaDependency.NONE),
 
     // ImagesCommands
     TryBackToSnapshot(204, QuotaDependency.NONE),

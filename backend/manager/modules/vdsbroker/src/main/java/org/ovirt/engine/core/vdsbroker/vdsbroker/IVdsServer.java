@@ -492,4 +492,6 @@ public interface IVdsServer {
     StatusOnlyReturn sparsifyVolume(String jobId, Map<String, Object> volumeAddress);
 
     StatusOnlyReturn amendVolume(String jobId, Map<String, Object> volInfo, Map<String, Object> volAttr);
+
+    StatusOnlyReturn sealDisks(String templateId, String jobId, String storagePoolId, List<Map<String, Object>> images);
 }

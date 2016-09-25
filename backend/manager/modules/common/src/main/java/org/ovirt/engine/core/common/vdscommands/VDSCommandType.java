@@ -102,6 +102,7 @@ public enum VDSCommandType {
     GetVolumesList("org.ovirt.engine.core.vdsbroker.irsbroker"),
     SparsifyImage("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     AmendVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    SealDisks("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateVG("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetVGInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetDeviceList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
