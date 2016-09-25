@@ -6,7 +6,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -16,7 +15,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 
 public class VmManager {
@@ -106,16 +104,6 @@ public class VmManager {
     public void update(VmStatic vmStatic) {
         vmStaticDao.update(vmStatic);
         updateStaticFields(vmStatic);
-    }
-
-    public void succededToHibernate() {
-        TransactionSupport.executeInNewTransaction(() -> {
-                    VmDynamic vmDynamic = vmDynamicDao.get(vmId);
-                    vmDynamic.setStatus(VMStatus.SavingState);
-                    update(vmDynamic);
-                    return null;
-                }
-        );
     }
 
     public int getConvertOperationProgress() {
