@@ -62,7 +62,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.JsonHelper;
@@ -101,10 +100,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      */
     protected StorageHandlingCommandBase(Guid commandId) {
         super(commandId);
-    }
-
-    public static List<VDS> getAllRunningVdssInPool(StoragePool pool) {
-        return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
 
     protected List<VDS> getAllRunningVdssInPool() {

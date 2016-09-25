@@ -6,12 +6,13 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -100,7 +101,7 @@ public final class StoragePoolStatusHandler {
 
     private static void nonOperationalPoolTreatment(StoragePool pool) {
         boolean changeStatus = false;
-        if (StorageHandlingCommandBase.getAllRunningVdssInPool(pool).size() > 0) {
+        if (getAllRunningVdssInPool(pool).size() > 0) {
             changeStatus = true;
         }
         if (changeStatus) {
@@ -117,6 +118,11 @@ public final class StoragePoolStatusHandler {
             }
         }
     }
+
+    private static List<VDS> getAllRunningVdssInPool(StoragePool pool) {
+        return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
+    }
+
 
     public static void init() {
         List<StoragePool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
