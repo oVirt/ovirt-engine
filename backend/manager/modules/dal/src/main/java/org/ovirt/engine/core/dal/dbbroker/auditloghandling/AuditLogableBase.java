@@ -758,11 +758,11 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getVmNicDao();
     }
 
-    protected NetworkClusterDao getNetworkClusterDao() {
+    public NetworkClusterDao getNetworkClusterDao() {
         return getDbFacade().getNetworkClusterDao();
     }
 
-    protected NetworkDao getNetworkDao() {
+    public NetworkDao getNetworkDao() {
         return getDbFacade().getNetworkDao();
     }
 

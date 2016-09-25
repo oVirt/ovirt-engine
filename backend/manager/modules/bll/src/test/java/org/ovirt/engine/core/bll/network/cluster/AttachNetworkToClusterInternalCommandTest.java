@@ -4,12 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
@@ -24,34 +27,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.springframework.dao.DataIntegrityViolationException;
 
 public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
-
-    /**
-     * Since the command isn't in the same package as AuditLogableBase which defines the Dao accessors they
-     * cannot be spied from here. Instead, will override them manually.
-     */
-    private class TestAttachNetworkToClusterCommand extends
-                                                   AttachNetworkToClusterInternalCommand<AttachNetworkToClusterParameter> {
-
-        private TestAttachNetworkToClusterCommand(AttachNetworkToClusterParameter parameters) {
-            super(parameters, null);
-        }
-
-        @Override
-        public ClusterDao getClusterDao() {
-            return mockClusterDao;
-        }
-
-        @Override
-        protected NetworkClusterDao getNetworkClusterDao() {
-            return mockNetworkClusterDao;
-        }
-
-        @Override
-        protected NetworkDao getNetworkDao() {
-            return mockNetworkDao;
-        }
-    }
-
     @Mock
     private NetworkClusterDao mockNetworkClusterDao;
 
@@ -61,17 +36,22 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
     @Mock
     private NetworkDao mockNetworkDao;
 
-    private AttachNetworkToClusterInternalCommand<AttachNetworkToClusterParameter> underTest;
-
     private Cluster existingGroup = new Cluster();
     private Network network = createNetwork();
-    private AttachNetworkToClusterParameter param;
+
+    private AttachNetworkToClusterParameter param =
+            new AttachNetworkToClusterParameter(getExistingCluster(), getNetwork());
+
+    @Spy
+    @InjectMocks
+    private AttachNetworkToClusterInternalCommand<AttachNetworkToClusterParameter> underTest =
+            new AttachNetworkToClusterInternalCommand<>(param, null);
 
     @Before
-    public void setup() {
-        param = new AttachNetworkToClusterParameter(getExistingCluster(), getNetwork());
-
-        underTest = new TestAttachNetworkToClusterCommand(param);
+    public void setUp() {
+        doReturn(mockClusterDao).when(underTest).getClusterDao();
+        doReturn(mockNetworkClusterDao).when(underTest).getNetworkClusterDao();
+        doReturn(mockNetworkDao).when(underTest).getNetworkDao();
     }
 
     @Test

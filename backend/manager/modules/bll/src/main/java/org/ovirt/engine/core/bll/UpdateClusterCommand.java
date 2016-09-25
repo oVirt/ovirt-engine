@@ -700,11 +700,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     @Override
-    protected NetworkDao getNetworkDao() {
-        return getDbFacade().getNetworkDao();
-    }
-
-    @Override
     public String getEntityType() {
         return VdcObjectType.Cluster.getVdcObjectTranslation();
     }

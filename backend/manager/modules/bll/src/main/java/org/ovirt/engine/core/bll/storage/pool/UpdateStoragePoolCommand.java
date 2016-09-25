@@ -42,7 +42,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -306,11 +305,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             }
         }
         return masterDomainForPool;
-    }
-
-    @Override
-    protected NetworkDao getNetworkDao() {
-        return getDbFacade().getNetworkDao();
     }
 
     protected NetworkValidator getNetworkValidator(Network network) {

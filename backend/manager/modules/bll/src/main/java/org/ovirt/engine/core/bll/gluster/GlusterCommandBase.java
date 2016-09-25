@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 
 /**
  * Base class for all Gluster commands
@@ -298,11 +297,4 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected InterfaceDao getInterfaceDao() {
         return getDbFacade().getInterfaceDao();
     }
-
-    @Override
-    // overriding for Junit visibility
-    protected NetworkDao getNetworkDao() {
-        return super.getNetworkDao();
-    }
-
 }
