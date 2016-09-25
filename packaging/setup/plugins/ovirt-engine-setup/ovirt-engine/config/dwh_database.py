@@ -27,6 +27,7 @@ from otopi import filetransaction, plugin, util
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.engine_common import dwh_history_timekeeping
 
 
 def _(m):
@@ -93,13 +94,23 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _closeupDWHConfig(self):
-        self.dialog.note(
-            _(
-                'The engine requires access to the Data Warehouse database.\n'
-                'Data Warehouse was not set up. Please set it up on some '
-                'other machine and configure access to it on the engine.'
-            )
+        self._statement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
         )
+        self._dwh_host = dwh_history_timekeeping.getValueFromTimekeeping(
+            statement=self._statement,
+            name=dwh_history_timekeeping.DB_KEY_HOSTNAME
+        )
+        if not self._dwh_host:
+            self.dialog.note(
+                _(
+                    'The engine requires access to the Data Warehouse '
+                    'database.\nData Warehouse was not set up. Please set it '
+                    'up on some other machine and configure access to it on '
+                    'the engine.'
+                )
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
