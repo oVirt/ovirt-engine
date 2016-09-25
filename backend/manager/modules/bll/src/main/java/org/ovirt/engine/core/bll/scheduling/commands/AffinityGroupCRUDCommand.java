@@ -26,6 +26,11 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     public AffinityGroupCRUDCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         if (getAffinityGroup() != null) {
             setClusterId(getAffinityGroup().getClusterId());
             addCustomValue("affinityGroupName", getAffinityGroup().getName());
