@@ -528,7 +528,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     private static class ImportVmCommandStub extends ImportVmCommand<ImportVmParameters> {
 
         public ImportVmCommandStub(ImportVmParameters parameters) {
-            super(parameters, CommandContext.createContext(parameters.getSessionId()));
+            super(parameters, null);
         }
 
         @Override
