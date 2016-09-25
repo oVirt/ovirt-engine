@@ -223,8 +223,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
         final ImportValidator validator = spy(new ImportValidator(parameters));
-        ImportVmCommand<ImportVmParameters> cmd =
-                spy(new ImportVmCommandStub(parameters, validator, poolPerCluster, externalVmMacsFinder));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(parameters, validator));
         cmd.init();
         parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
@@ -360,8 +359,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         ImportVmParameters parameters = createParameters();
         parameters.getVm().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
-        ImportVmCommand<ImportVmParameters> command =
-                new ImportVmCommandStub(parameters, poolPerCluster, externalVmMacsFinder);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
         command.init();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
@@ -380,8 +378,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 RandomUtils.instance().nextPropertyString(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE + 1);
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(true);
-        ImportVmCommand<ImportVmParameters> command =
-                new ImportVmCommandStub(parameters, poolPerCluster, externalVmMacsFinder);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
         command.init();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
@@ -389,7 +386,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
-        command = new ImportVmCommandStub(parameters, poolPerCluster, externalVmMacsFinder);
+        command = new ImportVmCommandStub(parameters);
         command.init();
         validate = ValidationUtils.getValidator()
                 .validate(parameters, command.getValidationGroups().toArray(new Class<?>[0]));
@@ -402,8 +399,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmParameters parameters = createParameters();
-        ImportVmCommand<ImportVmParameters> command =
-                new ImportVmCommandStub(parameters, poolPerCluster, externalVmMacsFinder);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
         command.init();
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
@@ -434,8 +430,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
-        ImportVmCommand<ImportVmParameters> cmd =
-                spy(new ImportVmCommandStub(params, poolPerCluster, externalVmMacsFinder));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
         cmd.init();
 
         DiskImage collapsedDisk = params.getVm().getImages().get(1);
@@ -457,8 +452,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         params.setCopyCollapse(Boolean.TRUE);
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        ImportVmCommand<ImportVmParameters> cmd =
-                spy(new ImportVmCommandStub(params, poolPerCluster, externalVmMacsFinder));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
         doReturn(macPool).when(cmd).getMacPool();
         cmd.init();
         doReturn(true).when(cmd).validateNoDuplicateVm();
@@ -488,8 +482,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd =
-                spy(new ImportVmCommandTest.ImportVmCommandStub(params, poolPerCluster, externalVmMacsFinder));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandTest.ImportVmCommandStub(params));
         cmd.init();
 
         for (DiskImage image : params.getVm().getImages()) {
@@ -516,8 +509,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
 
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd =
-                spy(new ImportVmCommandStub(params, poolPerCluster, externalVmMacsFinder));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
         cmd.init();
 
         DiskImage activeDisk = params.getVm().getImages().get(0);
@@ -536,20 +528,14 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         private final ImportValidator validator;
 
-        public ImportVmCommandStub(ImportVmParameters parameters,
-                MacPoolPerCluster poolPerCluster,
-                ExternalVmMacsFinder externalVmMacsFinder) {
-            this(parameters, null, poolPerCluster, externalVmMacsFinder);
+        public ImportVmCommandStub(ImportVmParameters parameters) {
+            this(parameters, null);
         }
 
         public ImportVmCommandStub(ImportVmParameters parameters,
-                ImportValidator validator,
-                MacPoolPerCluster poolPerCluster,
-                ExternalVmMacsFinder externalVmMacsFinder) {
+                ImportValidator validator) {
             super(parameters, CommandContext.createContext(parameters.getSessionId()));
             this.validator = validator;
-            this.macPoolPerCluster = poolPerCluster;
-            this.externalVmMacsFinder = externalVmMacsFinder;
         }
 
         @Override
