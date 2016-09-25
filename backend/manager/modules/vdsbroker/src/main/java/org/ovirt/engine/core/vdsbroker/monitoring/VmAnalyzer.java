@@ -244,7 +244,8 @@ public class VmAnalyzer {
             clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                     vdsmVm.getVmDynamic().getExitMessage(),
                     vdsmVm.getVmDynamic().getExitReason());
-            afterSuspendTreatment();
+            resourceManager.removeAsyncRunningVm(dbVm.getId());
+            auditVmSuspended();
             break;
 
         case MigratingFrom:
@@ -313,14 +314,13 @@ public class VmAnalyzer {
         auditLog(logable, type);
     }
 
-    private void afterSuspendTreatment() {
+    private void auditVmSuspended() {
         VmDynamic vm = vdsmVm.getVmDynamic();
         AuditLogType type = vm.getExitStatus() == VmExitStatus.Normal ? AuditLogType.USER_SUSPEND_VM_OK
                 : AuditLogType.USER_FAILED_SUSPEND_VM;
 
         AuditLogableBase logable = new AuditLogableBase(vdsManager.getVdsId(), vm.getId());
         auditLog(logable, type);
-        resourceManager.removeAsyncRunningVm(vm.getId());
     }
 
     private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason) {
