@@ -223,7 +223,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
         final ImportValidator validator = spy(new ImportValidator(parameters));
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(parameters, validator));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(parameters));
+        doReturn(validator).when(cmd).getImportValidator();
         cmd.init();
         parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
@@ -526,16 +527,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     private static class ImportVmCommandStub extends ImportVmCommand<ImportVmParameters> {
 
-        private final ImportValidator validator;
-
         public ImportVmCommandStub(ImportVmParameters parameters) {
-            this(parameters, null);
-        }
-
-        public ImportVmCommandStub(ImportVmParameters parameters,
-                ImportValidator validator) {
             super(parameters, CommandContext.createContext(parameters.getSessionId()));
-            this.validator = validator;
         }
 
         @Override
@@ -545,11 +538,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         @Override
         public Cluster getCluster() {
             return null;
-        }
-
-        @Override
-        protected ImportValidator getImportValidator() {
-            return validator != null ? validator : super.getImportValidator();
         }
     }
 }
