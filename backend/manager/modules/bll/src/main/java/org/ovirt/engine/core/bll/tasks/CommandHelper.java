@@ -14,11 +14,8 @@ public class CommandHelper {
 
     public static VdcReturnValueBase canDoAction(VdcActionType actionType,
                                                  VdcActionParametersBase parameters,
-                                                 ExecutionContext executionContext,
-                                                 boolean isInternal) {
-        CommandBase<?> command = buildCommand(actionType, parameters, executionContext, CommandStatus.NOT_STARTED);
-        command.setInternalExecution(isInternal);
-        return command.validateOnly();
+                                                 CommandContext commandContext) {
+        return CommandsFactory.createCommand(actionType, parameters, commandContext).validateOnly();
     }
 
     public static CommandBase<?> buildCommand(VdcActionType actionType,
