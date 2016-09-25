@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -11,7 +10,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -23,9 +24,9 @@ import org.ovirt.engine.core.dao.QuotaDao;
 
 public class RemoveQuotaCommandTest extends BaseCommandTest {
 
-    private final Guid generalGuidQuota = Guid.newGuid();
-    private final Guid defaultQuotaGuid = Guid.newGuid();
+    private final Guid quotaGuid = Guid.newGuid();
     private final Guid storagePoolUUID = Guid.newGuid();
+    private Quota quota;
 
     @Mock
     private QuotaDao quotaDao;
@@ -36,17 +37,15 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private RemoveQuotaCommand command;
+    @Spy
+    @InjectMocks
+    private RemoveQuotaCommand command = createCommand();
 
     @Before
     public void mockQuotaDao() {
-        when(quotaDao.getById(generalGuidQuota)).thenReturn(mockStorageQuota(generalGuidQuota));
-
-        Quota defaultQuota = mockStorageQuota(defaultQuotaGuid);
-        defaultQuota.setDefault(true);
-
-        when(quotaDao.getById(defaultQuotaGuid)).thenReturn(defaultQuota);
-
+        doReturn(quotaDao).when(command).getQuotaDao();
+        quota = mockStorageQuota(quotaGuid);
+        when(quotaDao.getById(quotaGuid)).thenReturn(quota);
         List<Quota> quotaList = new ArrayList<>();
         quotaList.add(new Quota());
         quotaList.add(new Quota());
@@ -56,30 +55,25 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommand() throws Exception {
-        RemoveQuotaCommand removeQuotaCommand = createCommand(generalGuidQuota);
-        removeQuotaCommand.executeCommand();
-        assertTrue(removeQuotaCommand.getSucceeded());
+        command.executeCommand();
+        assertTrue(command.getSucceeded());
     }
 
     @Test
     public void testValidateCommand() throws Exception {
-        RemoveQuotaCommand removeQuotaCommand = createCommand(generalGuidQuota);
-        ValidateTestUtils.runAndAssertValidateSuccess(removeQuotaCommand);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void testFailToRemoveDefaultQuota() {
-        RemoveQuotaCommand removeQuotaCommand = createCommand(defaultQuotaGuid);
-        ValidateTestUtils.runAndAssertValidateFailure(removeQuotaCommand,
+        quota.setDefault(true);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_QUOTA_DEFAULT_CANNOT_BE_CHANGED);
     }
 
-    private RemoveQuotaCommand createCommand(Guid guid) {
-        IdParameters param = new IdParameters(guid);
-        command = spy(new RemoveQuotaCommand(param, null));
-        doReturn(quotaDao).when(command).getQuotaDao();
-        doReturn(quotaManager).when(command).getQuotaManager();
-        return command;
+    private RemoveQuotaCommand createCommand() {
+        IdParameters param = new IdParameters(quotaGuid);
+        return new RemoveQuotaCommand(param, null);
     }
 
 
