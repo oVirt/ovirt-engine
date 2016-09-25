@@ -543,18 +543,21 @@ public class VmAnalyzer {
                 && vdsmVmDynamic.getStatus() == VMStatus.NotResponding) {
             auditVmNotResponding();
         }
-        // check if vm is suspended and remove it from async list
-        else if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
-            removeFromAsync = true;
-            if (dbVm.getStatus() != VMStatus.Paused) {
-                auditVmPaused();
 
+        if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
+            switch(dbVm.getStatus()) {
+            case Paused:
+                break;
+
+            default:
+                // otherwise, remove the vm from async list
+                removeFromAsync = true;
+                auditVmPaused();
                 // check exit message to determine why the VM is paused
                 if (vdsmVmDynamic.getPauseStatus().isError()) {
                     auditVmPausedError(vdsmVmDynamic);
                 }
             }
-
         }
 
         updateVmDynamicData();
