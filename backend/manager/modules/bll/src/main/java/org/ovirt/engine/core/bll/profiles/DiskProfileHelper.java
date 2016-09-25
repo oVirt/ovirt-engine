@@ -76,7 +76,7 @@ public class DiskProfileHelper {
                     return new ValidationResult(EngineMessage.USER_NOT_AUTHORIZED_TO_ATTACH_DISK_PROFILE);
                 }
             } else {
-                DiskProfile diskProfile = updateDiskImageProfilesList(diskImage, storageDomainId, user);
+                DiskProfile diskProfile = updateDiskImageProfilesList(diskImage, storageDomainId);
                 if (diskProfile == null) {
                     return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_PROFILE_NOT_FOUND_FOR_STORAGE_DOMAIN,
                             String.format("$storageDomainId %s", storageDomainId));
@@ -107,7 +107,7 @@ public class DiskProfileHelper {
      * @return valid disk profile in case there is a match with the given storage domain ID. otherwise return an
      * invalid disk profile.
      */
-    private DiskProfile updateDiskImageProfilesList(DiskImage diskImage, Guid storageDomainId, DbUser user) {
+    private DiskProfile updateDiskImageProfilesList(DiskImage diskImage, Guid storageDomainId) {
         DiskProfile diskProfile = null;
         if (storageDomainId != null) {
             List<Guid> diskProfileIds = diskImage.getDiskProfileIds();
