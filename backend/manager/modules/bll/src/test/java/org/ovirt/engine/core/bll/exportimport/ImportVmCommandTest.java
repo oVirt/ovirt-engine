@@ -254,7 +254,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
             image.setStorageIds(sdIds);
         }
 
-        doReturn(Collections.<DiskImage> emptyList()).when(cmd).createDiskDummiesForSpaceValidations(anyListOf(DiskImage.class));
+        doReturn(Collections.emptyList()).when(cmd).createDiskDummiesForSpaceValidations(anyListOf(DiskImage.class));
 
         return cmd;
     }
