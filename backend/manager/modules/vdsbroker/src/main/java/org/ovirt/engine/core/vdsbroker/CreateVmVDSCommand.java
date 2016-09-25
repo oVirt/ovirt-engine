@@ -2,6 +2,9 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -11,14 +14,19 @@ import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends ManagingVmCommand<P> {
 
-    private static final Logger log = LoggerFactory.getLogger(CreateVmVDSCommand.class);
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public CreateVmVDSCommand(P parameters) {
         super(parameters);
@@ -33,8 +41,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             try {
                 vdsReturnValue = runCreateVDSCommand();
                 if (vdsReturnValue.getSucceeded()) {
-                    saveSetInitializedToDb(vm.getId());
-
+                    vmDao.saveIsInitialized(vm.getId(), true);
                     vm.setStopReason(null);
                     vm.setInitialized(true);
                     vm.setRunOnVds(getParameters().getVdsId());
@@ -44,7 +51,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     resourceManager.removeAsyncRunningVm(getParameters().getVmId());
                 }
             } catch (Exception e) {
-                log.error("Error in excuting CreateVmVDSCommand: {}", e.getMessage());
+                log.error("Failed to create VM: {}", e.getMessage());
                 log.error("Exception", e);
                 if (vdsReturnValue != null && !vdsReturnValue.getSucceeded()) {
                     resourceManager.removeAsyncRunningVm(getParameters().getVmId());
@@ -60,9 +67,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         if (vm.isSysprepUsed()) {
             // use answer file to run after sysprep.
             CreateVmVDSCommandParameters createVmFromSysPrepParam =
-                    new CreateVmVDSCommandParameters(
-                            getParameters().getVdsId(),
-                            vm);
+                    new CreateVmVDSCommandParameters(getParameters().getVdsId(), vm);
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
             return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromSysPrep, createVmFromSysPrepParam);
         } else if (vm.isCloudInitUsed()) {
@@ -74,34 +79,34 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     }
 
     private boolean canExecute() {
-
         Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getName();
-        VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDao().get(guid);
+        VmDynamic vmDynamicFromDb = vmDynamicDao.get(guid);
+
         if (resourceManager.isVmDuringInitiating(getParameters().getVm().getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vmName, guid);
             getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
             return false;
-        } else {
-            VMStatus vmStatus = vmDynamicFromDb.getStatus();
-
-            if (vmStatus == VMStatus.ImageLocked) {
-                log.info("Vm Running failed - vm '{}'({}) - cannot run vm when image is locked", vmName, guid);
-                return false;
-            }
-            if (vmDynamicFromDb.getStatus() != VMStatus.Down && vmDynamicFromDb.getStatus() != VMStatus.Suspended) {
-                log.info("Vm Running failed - vm '{}'({}) already running, status {}", vmName, guid, vmStatus);
-                getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
-                return false;
-            }
-
-            List<Snapshot> snapshots = DbFacade.getInstance().getSnapshotDao().getAll(guid);
-
-            if (!snapshots.isEmpty() && SnapshotStatus.LOCKED == snapshots.get(snapshots.size() - 1).getStatus()) {
-                log.info("VM Running failed - VM '{}'({}) - cannot run VM when VM during Snapshot", vmName, guid);
-                return false;
-            }
         }
+
+        VMStatus vmStatus = vmDynamicFromDb.getStatus();
+        if (vmStatus == VMStatus.ImageLocked) {
+            log.info("VM Running failed - vm '{}'({}) - cannot run vm when image is locked", vmName, guid);
+            return false;
+        }
+
+        if (vmDynamicFromDb.getStatus() != VMStatus.Down && vmDynamicFromDb.getStatus() != VMStatus.Suspended) {
+            log.info("VM Running failed - vm '{}'({}) already running, status {}", vmName, guid, vmStatus);
+            getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
+            return false;
+        }
+
+        List<Snapshot> snapshots = snapshotDao.getAll(guid);
+        if (!snapshots.isEmpty() && SnapshotStatus.LOCKED == snapshots.get(snapshots.size() - 1).getStatus()) {
+            log.info("VM Running failed - VM '{}'({}) - cannot run VM when VM during Snapshot", vmName, guid);
+            return false;
+        }
+
         return true;
     }
 
@@ -121,7 +126,4 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         }
     }
 
-    private void saveSetInitializedToDb(final Guid vmId) {
-        DbFacade.getInstance().getVmDao().saveIsInitialized(vmId, true);
-    }
 }
