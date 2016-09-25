@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -181,7 +180,6 @@ public class AddVdsCommandTest {
     }
 
     @Test
-    @Ignore("Cannot mock the log")
     public void validateSucceedsWhenHasPeersThrowsException() throws Exception {
         setupGlusterMock(true, new VDS(), true);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenThrow(new RuntimeException());
