@@ -212,6 +212,7 @@ public class VmAnalyzer {
 
             break;
 
+        case Paused:
         case MigratingFrom:
             // do nothing
             break;
@@ -555,6 +556,10 @@ public class VmAnalyzer {
         if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
             switch(dbVm.getStatus()) {
             case Paused:
+                break;
+
+            case MigratingFrom:
+                handOverVm();
                 break;
 
             default:
