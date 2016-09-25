@@ -546,19 +546,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 ImportValidator validator,
                 MacPoolPerCluster poolPerCluster,
                 ExternalVmMacsFinder externalVmMacsFinder) {
-            this(parameters,
-                    CommandContext.createContext(parameters.getSessionId()),
-                    validator,
-                    poolPerCluster,
-                    externalVmMacsFinder);
-        }
-
-        public ImportVmCommandStub(ImportVmParameters parameters,
-                CommandContext commandContext,
-                ImportValidator validator,
-                MacPoolPerCluster poolPerCluster,
-                ExternalVmMacsFinder externalVmMacsFinder) {
-            super(parameters, commandContext);
+            super(parameters, CommandContext.createContext(parameters.getSessionId()));
             this.validator = validator;
             this.macPoolPerCluster = poolPerCluster;
             this.externalVmMacsFinder = externalVmMacsFinder;
