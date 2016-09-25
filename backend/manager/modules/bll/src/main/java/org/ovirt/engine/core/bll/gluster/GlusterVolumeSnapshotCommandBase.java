@@ -19,6 +19,11 @@ public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSn
 
     public GlusterVolumeSnapshotCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         snapshot = getGlusterVolumeSnapshotDao().getByName(getGlusterVolumeId(), getParameters().getSnapshotName());
     }
 

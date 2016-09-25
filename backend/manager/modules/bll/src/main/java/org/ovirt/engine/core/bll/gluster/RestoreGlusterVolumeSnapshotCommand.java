@@ -40,6 +40,11 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
             CommandContext commandContext) {
         super(params, commandContext);
         engineStoppedSessions = new ArrayList<>();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
     }
 

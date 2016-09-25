@@ -25,6 +25,11 @@ public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCom
     public DeleteGlusterVolumeSnapshotCommand(GlusterVolumeSnapshotActionParameters params,
             CommandContext commandContext) {
         super(params, commandContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
     }
 
