@@ -38,19 +38,23 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
  * @see RestartVdsCommand
  */
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
-    private final VDS problematicVds;
+    private VDS problematicVds;
 
     /**
      * Constructor for command creation when compensation is applied on startup
      */
     public FenceVdsManualyCommand(Guid commandId) {
         super(commandId);
-        problematicVds = null;
     }
 
     public FenceVdsManualyCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        problematicVds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        problematicVds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
     }
 
     @Override
