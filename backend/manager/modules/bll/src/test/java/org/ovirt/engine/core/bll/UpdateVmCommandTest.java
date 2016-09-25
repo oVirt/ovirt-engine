@@ -8,6 +8,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,10 +27,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
@@ -85,8 +88,11 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     private VM vm;
     private VmStatic vmStatic;
-    private UpdateVmCommand<VmManagementParametersBase> command;
     private Cluster group;
+
+    @Spy
+    @InjectMocks
+    private UpdateVmCommand<VmManagementParametersBase> command = new UpdateVmCommand<>(initParams(), null);
 
     private static final Guid[] GUIDS = {
         new Guid("00000000-0000-0000-0000-000000000000"),
@@ -98,6 +104,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private static final String vncKeyboardLayoutValues =
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
     private static final String CPU_ID = "0";
+    private static final Version version = Version.v3_6;
+    private static final Guid clusterId = Guid.newGuid();
 
     @Mock
     private VmDao vmDao;
@@ -119,8 +127,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private DiskVmElementDao diskVmElementDao;
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
-    @Mock
-    OsRepository osRepository;
+    static OsRepository osRepository;
 
     @Mock
     DbFacade dbFacade;
@@ -167,14 +174,29 @@ public class UpdateVmCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
     );
 
+    private static VmManagementParametersBase initParams() {
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setClusterId(clusterId);
+        vmStatic.setName("my_vm");
+
+        VmManagementParametersBase params = new VmManagementParametersBase();
+        params.setCommandType(VdcActionType.UpdateVm);
+        params.setVmStaticData(vmStatic);
+
+        return params;
+    }
+
+    @BeforeClass
+    public static void setUpOsRepository() {
+        osRepository = mock(OsRepository.class);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+    }
+
     @Before
     public void setUp() {
         final int osId = 0;
-        final Version version = Version.v3_6;
 
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        injectorRule.bind(DbFacade.class, dbFacade);
 
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
 
@@ -193,23 +215,15 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         VmHandler.init();
         vm = new VM();
-        vmStatic = new VmStatic();
+        vmStatic = command.getParameters().getVmStaticData();
         group = new Cluster();
         group.setCpuName("Intel Conroe Family");
-        group.setId(Guid.newGuid());
+        group.setId(clusterId);
         group.setCompatibilityVersion(version);
         group.setArchitecture(ArchitectureType.x86_64);
-
-        vm.setClusterId(group.getId());
+        vm.setClusterId(clusterId);
         vm.setClusterArch(ArchitectureType.x86_64);
-        vmStatic.setClusterId(group.getId());
-        vmStatic.setName("my_vm");
 
-        VmManagementParametersBase params = new VmManagementParametersBase();
-        params.setCommandType(VdcActionType.UpdateVm);
-        params.setVmStaticData(vmStatic);
-
-        command = spy(new UpdateVmCommand<>(params, null));
         doReturn(group).when(command).getCluster();
         doReturn(vm).when(command).getVm();
         doReturn(VdcActionType.UpdateVm).when(command).getActionType();
@@ -219,7 +233,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
         doReturn(numaValidator).when(command).getNumaValidator();
-        doReturn(inClusterUpgradeValidator).when(command).getClusterUpgradeValidator();
     }
 
     @Test
