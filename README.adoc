@@ -19,7 +19,7 @@ Install the following system components:
 - otopi >= 1.1.0
 - ovirt-host-deploy >= 1.1.0
 - ovirt-setup-lib
-- maven-3 (optional)
+- maven-3
 - pyflakes (optional)
 - python-pep8 / pep8 (optional)
 - patternfly1 (optional)
