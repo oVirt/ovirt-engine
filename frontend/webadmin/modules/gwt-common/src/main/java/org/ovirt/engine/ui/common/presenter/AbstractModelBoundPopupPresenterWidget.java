@@ -273,8 +273,11 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         super.hideAndUnbind();
 
         getView().cleanup();
-        this.model.cleanup();
-        this.model = null;
+
+        if (this.model != null) {
+            this.model.cleanup();
+            this.model = null;
+        }
     }
 
     /**
