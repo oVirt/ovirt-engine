@@ -160,8 +160,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             }
 
-            if (VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(), null,
-                    getReturnValue().getValidationMessages(), true, true, true, false, getTemplateDisks())) {
+            if (validate(VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(), null,
+                    true, true, true, false, getTemplateDisks()))) {
                 setStoragePoolId(getVmTemplate().getStoragePoolId());
                 StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
                 if (!validate(sdValidator.isDomainExistAndActive())

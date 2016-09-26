@@ -144,16 +144,14 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         getParameters().setStorageDomainsList(new ArrayList<>(allDomainsList));
 
         // check template images for selected domains
-        ArrayList<String> validationMessages = getReturnValue().getValidationMessages();
         for (Guid domainId : getParameters().getStorageDomainsList()) {
-            if (!VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
+            if (!validate(VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
                     domainId,
-                    validationMessages,
                     getParameters().getCheckDisksExists(),
                     true,
                     false,
                     true,
-                    storageToDisksMap.get(domainId))) {
+                    storageToDisksMap.get(domainId)))) {
                 return false;
             }
         }

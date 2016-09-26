@@ -754,9 +754,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         for (StorageDomain storage : destStorages.values()) {
-            if (!VmTemplateHandler.isVmTemplateImagesReady(vmDisksSource, storage.getId(),
-                    reasons, false, false, true, true,
-                    storageToDisksMap.get(storage.getId()))) {
+            if (!validate(VmTemplateHandler.isVmTemplateImagesReady(vmDisksSource, storage.getId(),
+                    false, false, true, true,
+                    storageToDisksMap.get(storage.getId())))) {
                 return false;
             }
         }

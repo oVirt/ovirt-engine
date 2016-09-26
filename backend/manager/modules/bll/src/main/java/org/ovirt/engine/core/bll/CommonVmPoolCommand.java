@@ -432,14 +432,13 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {
-        return VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
+        return validate(VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
                 storageId,
-                getReturnValue().getValidationMessages(),
                 false,
                 true,
                 true,
                 destStorages.isEmpty(),
-                storageToDisksMap.get(storageId));
+                storageToDisksMap.get(storageId)));
     }
 
     private Guid findAvailableStorageDomain(long diskSize, List<Guid> storageIds) {
