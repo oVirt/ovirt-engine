@@ -41,10 +41,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.slf4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddVdsCommandTest {
@@ -56,8 +54,6 @@ public class AddVdsCommandTest {
     private AddVdsCommand<AddVdsActionParameters> command = new AddVdsCommand<>(createParameters(), null);
 
     @Mock
-    private ClusterDao groupDaoMock;
-    @Mock
     private VdsDao vdsDaoMock;
     @Mock
     private ClusterUtils clusterUtils;
@@ -67,8 +63,6 @@ public class AddVdsCommandTest {
     private GlusterDBUtils glusterDBUtils;
     @Mock
     private EngineSSHClient sshClient;
-    @Mock
-    private Logger log;
     @Mock
     private HostValidator validator;
 
@@ -103,7 +97,6 @@ public class AddVdsCommandTest {
         mockHostValidator();
 
         doReturn(glusterEnabled).when(command).isGlusterSupportEnabled();
-        doReturn(groupDaoMock).when(command).getClusterDao();
         doReturn(clusterUtils).when(command).getClusterUtils();
 
         doReturn(vdsDaoMock).when(command).getVdsDao();
