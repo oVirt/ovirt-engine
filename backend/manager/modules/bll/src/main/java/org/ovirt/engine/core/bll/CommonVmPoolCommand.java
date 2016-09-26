@@ -432,7 +432,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {
-        return VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(),
+        return VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
                 storageId,
                 getReturnValue().getValidationMessages(),
                 false,

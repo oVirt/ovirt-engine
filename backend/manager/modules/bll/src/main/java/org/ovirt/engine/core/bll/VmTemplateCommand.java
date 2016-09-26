@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +9,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,12 +20,8 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -67,62 +58,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
 
     public boolean isInstanceWithSameNameExists(String name) {
         return vmTemplateDao.getInstanceTypeByName(name, null, false) != null;
-    }
-
-    public static boolean isVmTemplateImagesReady(VmTemplate vmTemplate,
-            Guid storageDomainId,
-            List<String> reasons,
-            boolean checkImagesExists,
-            boolean checkLocked,
-            boolean checkIllegal,
-            boolean checkStorageDomain, List<DiskImage> providedVmtImages) {
-        boolean returnValue = true;
-        List<DiskImage> vmtImages = providedVmtImages;
-        if (checkStorageDomain) {
-            StorageDomainValidator storageDomainValidator =
-                    new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
-                            storageDomainId, vmTemplate.getStoragePoolId()));
-            ValidationResult res = storageDomainValidator.isDomainExistAndActive();
-            returnValue = res.isValid();
-            if (!returnValue) {
-                reasons.addAll(res.getMessagesAsStrings());
-                reasons.addAll(res.getVariableReplacements());
-            }
-        }
-        if (returnValue && checkImagesExists) {
-            if (vmtImages == null) {
-                vmtImages =
-                        DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmTemplate.getId()),
-                                ONLY_ACTIVE);
-            }
-            if (vmtImages.size() > 0
-                    && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId())) {
-                reasons.add(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST.toString());
-                returnValue = false;
-            }
-        }
-        if (returnValue && checkLocked) {
-            if (vmTemplate.getStatus() == VmTemplateStatus.Locked) {
-                returnValue = false;
-            } else {
-                if (vmtImages != null) {
-                    for (DiskImage image : vmtImages) {
-                        if (image.getImageStatus() == ImageStatus.LOCKED) {
-                            returnValue = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!returnValue) {
-                reasons.add(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
-            }
-        }
-        if (returnValue && checkIllegal && (vmTemplate.getStatus() == VmTemplateStatus.Illegal)) {
-            returnValue = false;
-            reasons.add(EngineMessage.VM_TEMPLATE_IMAGE_IS_ILLEGAL.toString());
-        }
-        return returnValue;
     }
 
     /**

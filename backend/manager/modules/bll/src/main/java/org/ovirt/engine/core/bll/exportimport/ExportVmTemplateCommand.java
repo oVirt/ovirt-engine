@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmHandler;
-import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -161,7 +160,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             }
 
-            if (VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), null,
+            if (VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(), null,
                     getReturnValue().getValidationMessages(), true, true, true, false, getTemplateDisks())) {
                 setStoragePoolId(getVmTemplate().getStoragePoolId());
                 StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
