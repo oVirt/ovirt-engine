@@ -107,7 +107,7 @@ in which you selected to install the development environment.
 === Build
 
 To build and install ovirt-engine at your home folder under ovirt-engine
-directory execute the folllowing command:
+directory execute the following command:
 
   $ make clean install-dev PREFIX="${PREFIX}"
 
