@@ -99,6 +99,14 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         getStorageStaticData().setFirstMetadataDevice(firstMetadataDevice);
     }
 
+    public String getVgMetadataDevice() {
+        return getStorageStaticData().getVgMetadataDevice();
+    }
+
+    public void setVgMetadataDevice(String vgMetadataDevice) {
+        getStorageStaticData().setVgMetadataDevice(vgMetadataDevice);
+    }
+
     @JsonIgnore
     @Override
     public String getName() {

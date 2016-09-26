@@ -490,6 +490,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_domain_static (
     v_last_time_used_as_master BIGINT,
     v_wipe_after_delete BOOLEAN,
     v_first_metadata_device VARCHAR(100),
+    v_vg_metadata_device VARCHAR(100),
     v_warning_low_space_indicator INT,
     v_critical_space_action_blocker INT
     )
@@ -507,6 +508,7 @@ BEGIN
         last_time_used_as_master,
         wipe_after_delete,
         first_metadata_device,
+        vg_metadata_device,
         warning_low_space_indicator,
         critical_space_action_blocker
         )
@@ -522,6 +524,7 @@ BEGIN
         v_last_time_used_as_master,
         v_wipe_after_delete,
         v_first_metadata_device,
+        v_vg_metadata_device,
         v_warning_low_space_indicator,
         v_critical_space_action_blocker
         );
@@ -555,6 +558,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
     v_last_time_used_as_master BIGINT,
     v_wipe_after_delete BOOLEAN,
     v_first_metadata_device VARCHAR(100),
+    v_vg_metadata_device VARCHAR(100),
     v_warning_low_space_indicator INT,
     v_critical_space_action_blocker INT
     )
@@ -572,6 +576,7 @@ BEGIN
         last_time_used_as_master = v_last_time_used_as_master,
         wipe_after_delete = v_wipe_after_delete,
         first_metadata_device=v_first_metadata_device,
+        vg_metadata_device=v_vg_metadata_device,
         storage_description = v_storage_description,
         storage_comment = v_storage_comment,
         warning_low_space_indicator = v_warning_low_space_indicator,

@@ -85,6 +85,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
                 .addValue("last_time_used_as_master", domain.getLastTimeUsedAsMaster())
                 .addValue("wipe_after_delete", domain.getWipeAfterDelete())
                 .addValue("first_metadata_device", domain.getFirstMetadataDevice())
+                .addValue("vg_metadata_device", domain.getVgMetadataDevice())
                 .addValue("warning_low_space_indicator", domain.getWarningLowSpaceIndicator())
                 .addValue("critical_space_action_blocker", domain.getCriticalSpaceActionBlocker());
     }
@@ -107,6 +108,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
         entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
         entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
         entity.setFirstMetadataDevice(rs.getString("first_metadata_device"));
+        entity.setVgMetadataDevice(rs.getString("vg_metadata_device"));
         entity.setWarningLowSpaceIndicator((Integer) rs.getObject("warning_low_space_indicator"));
         entity.setCriticalSpaceActionBlocker((Integer) rs.getObject("critical_space_action_blocker"));
         return entity;

@@ -393,6 +393,7 @@ public final class Cloner {
         obj.setStorageType(instance.getStorageType());
         obj.setStorageName(instance.getStorageName());
         obj.setFirstMetadataDevice(instance.getFirstMetadataDevice());
+        obj.setVgMetadataDevice(instance.getVgMetadataDevice());
         obj.setDescription(instance.getDescription());
         obj.setComment(instance.getComment());
         obj.setStorageFormat(instance.getStorageFormat());

@@ -445,6 +445,11 @@ public class FixturesTool {
      */
     protected static final String LUN_ID_OF_DOMAIN_METADATA = "DOMAIN_METADATA_LUN-1";
 
+    /**
+     * Predefined LUN ID that contains domain's 72e3a666-89e1-4005-a7ca-f7548004a9ab vg metadata
+     */
+    protected static final String LUN_ID_OF_DOMAIN_VG_METADATA = "VG_DOMAIN_METADATA_LUN-1";
+
     protected static final String LUN_ID1= "1IET_00180001";
 
     protected static final String LUN_ID2= "1IET_00180003";

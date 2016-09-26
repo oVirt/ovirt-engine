@@ -199,6 +199,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertEquals("Wrong actual disk size", 4, result.getActualImagesSize());
         assertEquals("Wrong first metadata device", FixturesTool.LUN_ID_OF_DOMAIN_METADATA,
                 result.getFirstMetadataDevice());
+        assertEquals("Wrong vg metadata device", FixturesTool.LUN_ID_OF_DOMAIN_VG_METADATA, result.getVgMetadataDevice());
         assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, result.getStorageDomainSharedStatus());
     }
 
