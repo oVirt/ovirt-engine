@@ -143,15 +143,17 @@ public class VmTemplateHandler {
             boolean checkLocked,
             boolean checkIllegal,
             boolean checkStorageDomain, List<DiskImage> providedVmtImages) {
-        ValidationResult returnValue = ValidationResult.VALID;
         List<DiskImage> vmtImages = providedVmtImages;
         if (checkStorageDomain) {
             StorageDomainValidator storageDomainValidator =
                     new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                             storageDomainId, vmTemplate.getStoragePoolId()));
-            returnValue = storageDomainValidator.isDomainExistAndActive();
+            ValidationResult returnValue = storageDomainValidator.isDomainExistAndActive();
+            if (!returnValue.isValid()) {
+                return returnValue;
+            }
         }
-        if (returnValue.isValid() && checkImagesExists) {
+        if (checkImagesExists) {
             if (vmtImages == null) {
                 vmtImages =
                         DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmTemplate.getId()),
@@ -159,27 +161,25 @@ public class VmTemplateHandler {
             }
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId())) {
-                returnValue = new ValidationResult(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
+                return new ValidationResult(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
             }
         }
-        if (returnValue.isValid() && checkLocked) {
+        if (checkLocked) {
             if (vmTemplate.getStatus() == VmTemplateStatus.Locked) {
-                returnValue = new ValidationResult(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
-            } else {
-                if (vmtImages != null) {
-                    for (DiskImage image : vmtImages) {
-                        if (image.getImageStatus() == ImageStatus.LOCKED) {
-                            returnValue = new ValidationResult(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
-                            break;
-                        }
+                return new ValidationResult(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
+            }
+            if (vmtImages != null) {
+                for (DiskImage image : vmtImages) {
+                    if (image.getImageStatus() == ImageStatus.LOCKED) {
+                        return new ValidationResult(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
                     }
                 }
             }
         }
-        if (returnValue.isValid() && checkIllegal && (vmTemplate.getStatus() == VmTemplateStatus.Illegal)) {
-            returnValue = new ValidationResult(EngineMessage.VM_TEMPLATE_IMAGE_IS_ILLEGAL);
+        if (checkIllegal && (vmTemplate.getStatus() == VmTemplateStatus.Illegal)) {
+            return new ValidationResult(EngineMessage.VM_TEMPLATE_IMAGE_IS_ILLEGAL);
         }
-        return returnValue;
+        return ValidationResult.VALID;
     }
 }
 
