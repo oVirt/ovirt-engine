@@ -13,8 +13,12 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> e
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setSucceeded(false);
-        VdcQueryReturnValue returnValue = null;
+        // Initially we set the command as failed:
+        VdcQueryReturnValue queryReturnValue = getQueryReturnValue();
+        queryReturnValue.setSucceeded(false);
+
+        // Check if the virtual machine is running on a host, and if does then retrieve the host and copy the subject
+        // of the certificate to the value returned by the query:
         Guid vmId = getParameters().getId();
         if (vmId != null) {
             VM vm = getDbFacade().getVmDao().get(vmId);
@@ -22,14 +26,10 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> e
                 Guid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
                     VDS vds = getDbFacade().getVdsDao().get(vdsId);
-                    returnValue = new VdcQueryReturnValue();
-                    returnValue.setReturnValue(vds.getCertificateSubject());
+                    queryReturnValue.setSucceeded(true);
+                    queryReturnValue.setReturnValue(vds.getCertificateSubject());
                 }
             }
-        }
-        if (returnValue != null) {
-            getQueryReturnValue().setSucceeded(returnValue.getSucceeded());
-            getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
         }
     }
 }
