@@ -60,6 +60,14 @@ public class XmlTextWriter {
         }
     }
 
+    public void writeAttributeString(String localName, String value) {
+        try {
+            writer.writeAttribute(localName, value);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to write attribute", e);
+        }
+    }
+
     public void writeEndElement() {
         try {
             writer.writeEndElement();

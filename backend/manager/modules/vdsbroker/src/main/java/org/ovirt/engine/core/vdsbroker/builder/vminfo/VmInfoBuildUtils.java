@@ -315,7 +315,7 @@ public class VmInfoBuildUtils {
         return parameter;
     }
 
-    private NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {
+    protected NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {
         if (vmNic.getVnicProfileId() != null) {
             VnicProfile vnicProfile = vnicProfileDao.get(vmNic.getVnicProfileId());
             if (vnicProfile != null) {
