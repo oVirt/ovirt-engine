@@ -89,16 +89,16 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private UpdateVmCommand<VmManagementParametersBase> command;
     private Cluster group;
 
-    protected static final Guid[] GUIDS = {
+    private static final Guid[] GUIDS = {
         new Guid("00000000-0000-0000-0000-000000000000"),
         new Guid("11111111-1111-1111-1111-111111111111"),
         new Guid("22222222-2222-2222-2222-222222222222"),
         new Guid("33333333-3333-3333-3333-333333333333")
     };
 
-    private static String vncKeyboardLayoutValues =
+    private static final String vncKeyboardLayoutValues =
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
-    private static String CPU_ID = "0";
+    private static final String CPU_ID = "0";
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
