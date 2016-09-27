@@ -29,18 +29,21 @@ public class EndExternalJobCommandTest extends BaseCommandTest {
     @Mock
     private Logger log;
 
-    private Job makeExternalTestJob() {
+    private Job makeJob() {
         Job job = new Job();
         job.setId(jobId);
         job.setDescription("Sample Job");
+        return job;
+    }
+
+    private Job makeExternalTestJob() {
+        Job job = makeJob();
         job.setExternal(true);
         return job;
     }
 
     private Job makeNonExternalTestJob() {
-        Job job = new Job();
-        job.setId(jobId);
-        job.setDescription("Sample Job");
+        Job job = makeJob();
         job.setExternal(false);
         return job;
     }
