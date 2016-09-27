@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -75,7 +76,8 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
         return step;
     }
 
-    private void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         doReturn(jobDaoMock).when(command).getJobDao();
         doReturn(stepDaoMock).when(command).getStepDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
@@ -88,7 +90,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     @Test
     public void validateOkSucceeds() throws Exception {
-        setupMock();
         parameters.setId(stepId);
         parameters.setJobId(jobId);
         assertTrue(command.validate());
@@ -96,7 +97,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     @Test
     public void validateNonExistingJobFails() throws Exception {
-        setupMock();
         parameters.setId(nonExistingStepId);
         parameters.setJobId(jobId);
         assertTrue(! command.validate());
@@ -104,7 +104,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     @Test
     public void validateNonExternalJobFails() throws Exception {
-        setupMock();
         parameters.setId(nonExternalStepId);
         parameters.setJobId(jobId);
         assertTrue(! command.validate());
@@ -112,7 +111,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     @Test
     public void validateNonExistingStepFails() throws Exception {
-        setupMock();
         parameters.setId(nonExistingStepId);
         parameters.setJobId(jobId);
         assertTrue(! command.validate());
@@ -120,7 +118,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     @Test
     public void validateNonExternalStepFails() throws Exception {
-        setupMock();
         parameters.setJobId(jobId);
         parameters.setId(nonExternalStepId);
         assertTrue(! command.validate());
