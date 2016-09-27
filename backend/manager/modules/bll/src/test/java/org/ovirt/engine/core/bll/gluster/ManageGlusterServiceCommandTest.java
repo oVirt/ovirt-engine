@@ -7,7 +7,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,7 +18,9 @@ import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -45,7 +46,9 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 
 public class ManageGlusterServiceCommandTest extends BaseCommandTest {
-    ManageGlusterServiceCommand cmd;
+    @Spy
+    @InjectMocks
+    ManageGlusterServiceCommand cmd = new ManageGlusterServiceCommand(new GlusterServiceParameters(), null);
 
     @Mock
     GlusterServerServiceDao serverServiceDao;
@@ -73,7 +76,6 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         doReturn(serverServiceDao).when(command).getGlusterServerServiceDao();
         doReturn(serviceDao).when(command).getGlusterServiceDao();
         doReturn(glusterUtils).when(command).getGlusterUtils();
-        doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         doReturn(getUpServers()).when(glusterUtils).getAllUpServers(any(Guid.class));
     }
 
@@ -93,8 +95,6 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     }
 
     private void mockBackend(boolean succeeded, EngineError errorCode, GlusterServiceStatus status) {
-        doReturn(backend).when(cmd).getBackend();
-
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(succeeded);
         if (!succeeded) {
@@ -177,58 +177,48 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFails() {
-        GlusterServiceParameters params = new GlusterServiceParameters();
-        params.setActionType("InvalidActionType");
-        cmd = spy(new ManageGlusterServiceCommand(params, null));
+        cmd.getParameters().setActionType("InvalidActionType");
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateSucceedsWithStartActionType() {
-        GlusterServiceParameters params = new GlusterServiceParameters();
-        params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
-        cmd = spy(new ManageGlusterServiceCommand(params, null));
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateSucceedsWithStopActionType() {
-        GlusterServiceParameters params = new GlusterServiceParameters();
-        params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
-        cmd = spy(new ManageGlusterServiceCommand(params, null));
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateSucceedsWithStopActionTypeAndClusterId() {
-        GlusterServiceParameters params = new GlusterServiceParameters();
-        params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
-        params.setClusterId(Guid.newGuid());
-        cmd = spy(new ManageGlusterServiceCommand(params, null));
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateSucceedsWithStopActionTypeAndClusterIdAndServerId() {
-        GlusterServiceParameters params = new GlusterServiceParameters();
-        params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
-        params.setClusterId(Guid.newGuid());
-        params.setServerId(Guid.newGuid());
-        cmd = spy(new ManageGlusterServiceCommand(params, null));
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.getParameters().setServerId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
+        cmd.setVdsId(cmd.getParameters().getServerId());
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(null,
-                        null,
-                        ServiceType.NFS,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START), null));
+        cmd.getParameters().setServiceType(ServiceType.NFS);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -268,11 +258,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandByClusterIdForStart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
         setUpMockUpForStart();
         mockBackend(true, null, GlusterServiceStatus.STOPPED);
         cmd.executeCommand();
@@ -282,11 +271,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandByClusterIdForStop() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
         setUpMockUpForStop();
         mockBackend(true, null, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
@@ -297,11 +285,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandByClusterIdForRestart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
         setUpMockUpForRestart();
         mockBackend(true, null, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
@@ -311,11 +298,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandByServerIdForStart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(null,
-                        Guid.newGuid(),
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
+        cmd.getParameters().setServerId(Guid.newGuid());
+        cmd.setVdsId(cmd.getParameters().getServerId());
         setUpMockUpForStart();
         mockBackend(true, null, GlusterServiceStatus.STOPPED);
         cmd.executeCommand();
@@ -325,11 +311,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandByServerIdForStop() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(null,
-                        Guid.newGuid(),
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
+        cmd.getParameters().setServerId(Guid.newGuid());
+        cmd.setVdsId(cmd.getParameters().getServerId());
         setUpMockUpForStop();
         mockBackend(true, null, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
@@ -340,11 +325,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandByServerIdForRestart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(null,
-                        Guid.newGuid(),
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART);
+        cmd.getParameters().setServerId(Guid.newGuid());
+        cmd.setVdsId(cmd.getParameters().getServerId());
         setUpMockUpForRestart();
         mockBackend(true, null, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
@@ -354,11 +338,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandFailsWithClusterIdForStart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
         setUpMockUpForStart();
         mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.STOPPED);
         cmd.executeCommand();
@@ -368,11 +351,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandFailsWithClusterIdForStop() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
         setUpMockUpForStart();
         mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
@@ -382,11 +364,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandFailsWithClusterIdForRestart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART);
+        cmd.getParameters().setClusterId(Guid.newGuid());
+        cmd.setClusterId(cmd.getParameters().getClusterId());
         setUpMockUpForStart();
         mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
@@ -396,11 +377,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandFailsWithServerIdForStart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
+        cmd.getParameters().setServerId(Guid.newGuid());
+        cmd.setVdsId(cmd.getParameters().getServerId());
         setUpMockUpForStart();
         mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.STOPPED);
         cmd.executeCommand();
@@ -410,11 +390,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandFailsWithServerIdForStop() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
+        cmd.getParameters().setServerId(Guid.newGuid());
+        cmd.setVdsId(cmd.getParameters().getServerId());
         setUpMockUpForStart();
         mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
@@ -424,11 +403,10 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     @Test
     public void testExecuteCommandFailsWithServerIdForRestart() {
-        cmd =
-                spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(Guid.newGuid(),
-                        null,
-                        ServiceType.GLUSTER_SWIFT,
-                        GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART), null));
+        cmd.getParameters().setServiceType(ServiceType.GLUSTER_SWIFT);
+        cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART);
+        cmd.getParameters().setServerId(Guid.newGuid());
+        cmd.setVdsId(cmd.getParameters().getServerId());
         setUpMockUpForStart();
         mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
