@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -10,9 +9,9 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.EngineContext;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
@@ -21,7 +20,9 @@ import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 
 public class AddVdsSpmIdCommandTest extends BaseCommandTest {
 
-    private AddVdsSpmIdCommand<VdsActionParameters> cmd;
+    @Spy
+    @InjectMocks
+    private AddVdsSpmIdCommand<VdsActionParameters> cmd = new AddVdsSpmIdCommand<>(new VdsActionParameters(), null);
     private Guid spId;
     private Guid vdsId;
 
@@ -30,9 +31,6 @@ public class AddVdsSpmIdCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        VdsActionParameters params = new VdsActionParameters();
-        CommandContext ctx = new CommandContext(new EngineContext());
-        cmd = spy(new AddVdsSpmIdCommand<>(params, ctx));
         doReturn(vdsSpmIdMapDao).when(cmd).getVdsSpmIdMapDao();
 
         spId = Guid.newGuid();
