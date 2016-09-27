@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
@@ -40,7 +41,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public abstract class AbstractPermissionsPopupView<T extends AdElementListModel> extends AbstractModelBoundPopupView<T> implements AbstractPermissionsPopupPresenterWidget.ViewDef<T> {
+public abstract class AbstractPermissionsPopupView<T extends AdElementListModel> extends AbstractModelBoundPopupView<T>
+    implements AbstractPermissionsPopupPresenterWidget.ViewDef<T>, HasCleanup {
 
     @SuppressWarnings("rawtypes")
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractPermissionsPopupView> {
@@ -240,6 +242,12 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public T flush() {
         searchItems.flush();
         return doFlush();
+    }
+
+    @Override
+    public void cleanup() {
+        searchItems.cleanup();
+        searchButton.cleanup();
     }
 
     @Override
