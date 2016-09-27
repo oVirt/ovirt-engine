@@ -373,7 +373,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private void initHostKdumpDetectionStatus() {
         // host is UP, remove kdump status
-        getDbFacade().getVdsKdumpStatusDao().remove(getVdsId());
+        vdsKdumpStatusDao.remove(getVdsId());
 
         if (getVds().isPmEnabled() &&
                 getVds().isPmKdumpDetection() &&

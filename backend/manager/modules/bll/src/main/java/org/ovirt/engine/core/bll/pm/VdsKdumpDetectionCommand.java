@@ -119,7 +119,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
                 return KdumpDetectionResult.LISTENER_NOT_ALIVE;
             }
 
-            kdumpStatus = getDbFacade().getVdsKdumpStatusDao().get(getVdsId());
+            kdumpStatus = vdsKdumpStatusDao.get(getVdsId());
             if (kdumpStatus == null) {
                 // host kdump flow hasn't started yet
                 if (timeout < System.currentTimeMillis()) {
