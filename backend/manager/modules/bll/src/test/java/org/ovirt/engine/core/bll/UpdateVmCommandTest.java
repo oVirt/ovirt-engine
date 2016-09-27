@@ -209,17 +209,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         params.setCommandType(VdcActionType.UpdateVm);
         params.setVmStaticData(vmStatic);
 
-        command = spy(new UpdateVmCommand<VmManagementParametersBase>(params, null) {
-            @Override
-            protected void initUser() {
-                // Stub for testing
-            }
-
-            @Override
-            public Cluster getCluster() {
-                return group;
-            }
-        });
+        command = spy(new UpdateVmCommand<>(params, null));
+        doReturn(group).when(command).getCluster();
         doReturn(vm).when(command).getVm();
         doReturn(VdcActionType.UpdateVm).when(command).getActionType();
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
