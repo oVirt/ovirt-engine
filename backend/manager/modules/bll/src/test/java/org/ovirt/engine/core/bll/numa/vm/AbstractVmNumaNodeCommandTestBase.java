@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -45,9 +44,6 @@ public abstract class AbstractVmNumaNodeCommandTestBase
 
     @Mock
     protected VmDao vmDao;
-
-    @Mock
-    private DbFacade dbFacade;
 
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
@@ -74,8 +70,6 @@ public abstract class AbstractVmNumaNodeCommandTestBase
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
 
-        doReturn(dbFacade).when(command).getDbFacade();
-        when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);
         doReturn(numaValidator).when(command).getNumaValidator();
 
         vm = new VM();

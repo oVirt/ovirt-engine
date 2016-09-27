@@ -28,10 +28,6 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         super(parameters, cmdContext);
     }
 
-    protected VdsNumaNodeDao getVdsNumaNodeDao() {
-        return getDbFacade().getVdsNumaNodeDao();
-    }
-
     @Override
     protected final void init() {
         super.init();
@@ -72,7 +68,7 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         if (!getVm().getDedicatedVmForVdsList().isEmpty()) {
             Guid vdsId = getVm().getDedicatedVmForVdsList().get(0);
             if (vdsId != null) {
-                return getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
+                return vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
             }
         }
         return Arrays.asList();
