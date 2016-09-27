@@ -240,10 +240,18 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
 
         for (JField field : editorType.getFields()) {
             JClassType fieldClassType = field.getType().isClassOrInterface();
+
             if (fieldClassType != null && fieldClassType.isAssignableTo(hasCleanupType)
                     && !field.getType().isClassOrInterface().isAssignableTo(baseModelType)) {
-                sw.println(String.format("getEditor().%s.cleanup();", //$NON-NLS-1$
-                        field.getName()));
+                String fieldName = field.getName();
+
+                sw.println(String.format("if (getEditor().%s != null) {", fieldName)); //$NON-NLS-1$
+                sw.indent();
+
+                sw.println(String.format("getEditor().%s.cleanup();", fieldName)); //$NON-NLS-1$
+
+                sw.outdent();
+                sw.println("}"); //$NON-NLS-1$
             }
         }
 
