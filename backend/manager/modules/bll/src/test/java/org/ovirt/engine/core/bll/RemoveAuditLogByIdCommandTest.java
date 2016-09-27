@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,7 +30,8 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     private static final long EVENT_ID_2 = 102;
     private static final long EVENT_ID_3 = 103;
 
-    private void prepareMocks(RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters> command) {
+    @Before
+    public void prepareMocks() {
         doReturn(auditLogDao).when(command).getAuditLogDao();
         doReturn(getEventWithOvirtOrigin()).when(auditLogDao).get(EVENT_ID_2);
         doReturn(getEventWithExternalOrigin()).when(auditLogDao).get(EVENT_ID_3);
@@ -52,7 +54,6 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsOnNonExistingEvent() {
         command.getParameters().setAuditLogId(EVENT_ID_1);
-        prepareMocks(command);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
     }
@@ -60,7 +61,6 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     @Test
     public void validateSucceeds() {
         command.getParameters().setAuditLogId(EVENT_ID_3);
-        prepareMocks(command);
         assertTrue(command.validate());
     }
 
