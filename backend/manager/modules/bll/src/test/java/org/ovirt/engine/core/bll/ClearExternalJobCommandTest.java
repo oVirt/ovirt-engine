@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,21 +39,20 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
         return job;
     }
 
-    private void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         doReturn(jobDaoMock).when(command).getJobDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeTestJob(jobId));
     }
 
     @Test
     public void validateOkSucceeds() throws Exception {
-        setupMock();
         command.getParameters().setJobId(jobId);
         assertTrue(command.validate());
     }
 
     @Test
     public void validateNonExistingJobFails() throws Exception {
-        setupMock();
         command.getParameters().setJobId(nonExistingJobId);
         assertTrue(!command.validate());
     }
