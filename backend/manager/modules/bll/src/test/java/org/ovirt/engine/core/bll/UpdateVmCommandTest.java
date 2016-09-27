@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -100,9 +99,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
     private static final String CPU_ID = "0";
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
     @Mock
     private VmDao vmDao;
     @Mock
@@ -144,9 +140,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         migrationMap.put("x86_64", "true");
         migrationMap.put("ppc64", "false");
     }
-
-    @ClassRule
-    public static InjectorRule injectorMock = new InjectorRule() {};
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
