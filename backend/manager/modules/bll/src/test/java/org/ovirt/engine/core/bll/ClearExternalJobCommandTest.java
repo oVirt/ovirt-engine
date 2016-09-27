@@ -2,13 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
@@ -18,19 +19,16 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
 
     private static final Guid jobId = Guid.newGuid();
     private static final Guid nonExistingJobId = Guid.newGuid();
-    private VdcActionParametersBase parameters;
+
     @Mock
     private JobDao jobDaoMock;
-    @Mock
-    private ClearExternalJobCommand<VdcActionParametersBase> commandMock;
+
+    @Spy
+    @InjectMocks
+    private ClearExternalJobCommand<VdcActionParametersBase> command =
+            new ClearExternalJobCommand<>(new VdsActionParameters(), null);
     @Mock
     private Logger log;
-
-    @Before
-    public void createParameters() {
-        parameters = new VdcActionParametersBase();
-        parameters.setJobId(jobId);
-    }
 
     private Job makeTestJob(Guid jobId) {
         Job job = new Job();
@@ -41,22 +39,21 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
     }
 
     private void setupMock() throws Exception {
-        commandMock = spy(new ClearExternalJobCommand<>(parameters, null));
-        when(commandMock.getParameters()).thenReturn(parameters);
-        doReturn(jobDaoMock).when(commandMock).getJobDao();
+        doReturn(jobDaoMock).when(command).getJobDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeTestJob(jobId));
     }
 
     @Test
     public void validateOkSucceeds() throws Exception {
         setupMock();
-        assertTrue(commandMock.validate());
+        command.getParameters().setJobId(jobId);
+        assertTrue(command.validate());
     }
 
     @Test
     public void validateNonExistingJobFails() throws Exception {
         setupMock();
-        parameters.setJobId(nonExistingJobId);
-        assertTrue(! commandMock.validate());
+        command.getParameters().setJobId(nonExistingJobId);
+        assertTrue(!command.validate());
     }
 }
