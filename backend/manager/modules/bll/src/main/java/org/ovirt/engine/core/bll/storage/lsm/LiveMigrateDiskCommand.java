@@ -353,7 +353,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     protected DiskValidator createDiskValidator(DiskImage disk) {
-        return new DiskValidator(disk, getVmDeviceUtils());
+        return new DiskValidator(disk);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        DiskValidator oldDiskValidator = new DiskValidator(disk, getVmDeviceUtils());
+        DiskValidator oldDiskValidator = new DiskValidator(disk);
         ValidationResult isHostedEngineDisk = oldDiskValidator.validateNotHostedEngineDisk();
         if (!isHostedEngineDisk.isValid()) {
             return validate(isHostedEngineDisk);

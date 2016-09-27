@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -16,7 +14,6 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -46,9 +43,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 @SuppressWarnings("unused")
 public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends CommandBase<T> {
-
-    @Inject
-    private VmDeviceUtils vmDeviceUtils;
 
     private DiskImage diskImage;
 
@@ -218,7 +212,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     private boolean validateDiskImage() {
         Disk disk = getDiskDao().get(getParameters().getImageGroupID());
-        if (disk != null && !validate(new DiskValidator(disk, vmDeviceUtils).validateUnsupportedDiskStorageType(
+        if (disk != null && !validate(new DiskValidator(disk).validateUnsupportedDiskStorageType(
                 DiskStorageType.LUN, DiskStorageType.CINDER)) ) {
             return false;
         }

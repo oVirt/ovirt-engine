@@ -30,7 +30,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -65,9 +64,6 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 @InternalCommandAttribute
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
         implements QuotaStorageDependent, SerialChildExecutingCommand {
-
-    @Inject
-    private VmDeviceUtils vmDeviceUtils;
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
@@ -539,7 +535,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected DiskValidator createDiskValidator(Disk disk) {
-        return new DiskValidator(disk, vmDeviceUtils);
+        return new DiskValidator(disk);
     }
 
     protected StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {

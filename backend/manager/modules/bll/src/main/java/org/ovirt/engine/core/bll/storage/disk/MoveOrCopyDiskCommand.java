@@ -583,6 +583,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected DiskValidator createDiskValidator() {
-        return new DiskValidator(getImage(), getVmDeviceUtils());
+        return new DiskValidator(getImage());
     }
 }

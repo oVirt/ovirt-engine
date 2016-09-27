@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
@@ -33,15 +34,13 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
  */
 public class DiskValidator {
 
-    private final VmDeviceUtils vmDeviceUtils;
     private final Disk disk;
 
     protected static final String DISK_NAME_VARIABLE = "DiskName";
     protected static final String VM_NAME_VARIABLE = "VmName";
 
-    public DiskValidator(Disk disk, VmDeviceUtils vmDeviceUtils) {
+    public DiskValidator(Disk disk) {
         this.disk = disk;
-        this.vmDeviceUtils = vmDeviceUtils;
     }
 
     /**
@@ -84,6 +83,7 @@ public class DiskValidator {
     }
 
     public boolean isVirtioScsiControllerAttached(Guid vmId) {
+        VmDeviceUtils vmDeviceUtils = Injector.get(VmDeviceUtils.class);
         return vmDeviceUtils.hasVirtioScsiController(vmId);
     }
 

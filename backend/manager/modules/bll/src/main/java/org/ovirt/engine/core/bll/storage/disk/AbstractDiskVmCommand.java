@@ -220,7 +220,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected DiskValidator getDiskValidator(Disk disk) {
-        return new DiskValidator(disk, getVmDeviceUtils());
+        return new DiskValidator(disk);
     }
 
     protected boolean isVmNotInPreviewSnapshot() {
