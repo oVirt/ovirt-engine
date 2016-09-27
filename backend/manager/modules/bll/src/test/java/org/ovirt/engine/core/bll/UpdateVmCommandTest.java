@@ -439,14 +439,16 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
 
+    @Test
     public void testCannotUpdateOSNotSupportVirtioScsi() {
         prepareVmToPassValidate();
-        group.setCompatibilityVersion(Version.v4_0);
+        group.setCompatibilityVersion(Version.v3_6);
 
         when(command.isVirtioScsiEnabledForVm(any(Guid.class))).thenReturn(true);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 Collections.singletonList("VirtIO"));
 
+        command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
