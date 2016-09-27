@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -31,8 +30,6 @@ public class AddVdsSpmIdCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        doReturn(vdsSpmIdMapDao).when(cmd).getVdsSpmIdMapDao();
-
         spId = Guid.newGuid();
         vdsId = Guid.newGuid();
         VDS vds = new VDS();

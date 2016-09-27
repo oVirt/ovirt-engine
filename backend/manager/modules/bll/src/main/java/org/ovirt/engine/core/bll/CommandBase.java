@@ -92,7 +92,6 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.EntityDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
-import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -328,10 +327,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     protected BusinessEntitySnapshotDao getBusinessEntitySnapshotDao() {
         return DbFacade.getInstance().getBusinessEntitySnapshotDao();
-    }
-
-    protected VdsSpmIdMapDao getVdsSpmIdMapDao() {
-        return DbFacade.getInstance().getVdsSpmIdMapDao();
     }
 
     /**

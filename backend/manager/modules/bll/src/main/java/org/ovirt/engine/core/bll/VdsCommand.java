@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -53,6 +54,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     @Inject
     private HostLocking hostLocking;
+
+    @Inject
+    protected VdsSpmIdMapDao vdsSpmIdMapDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

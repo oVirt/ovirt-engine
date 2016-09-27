@@ -255,7 +255,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         if (getSourceCluster().getStoragePoolId() != null
                 && (targetStoragePool== null || !getSourceCluster().getStoragePoolId().equals(targetStoragePool.getId()))) {
-            getVdsSpmIdMapDao().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
+            vdsSpmIdMapDao.removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
         }
 
         HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
