@@ -9,7 +9,9 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -33,6 +35,7 @@ public class SessionDataContainerTest {
     private static final String TEST_KEY = "someKey";
     private static final String TEST_VALUE = "someValue";
     private static final String TEST_SESSION_ID = "someSession";
+    private static final String TEST_SSO_TOKEN = "someToken";
     private static final String USER = "user";
     private static final String SOFT_LIMIT = "soft_limit";
 
@@ -55,11 +58,13 @@ public class SessionDataContainerTest {
     @Before
     public void setUpContainer() {
         when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
-        when(ssoSessionValidator.isSessionValid(anyString())).thenReturn(true);
+        when(ssoSessionValidator.getSessionStatuses(any(Set.class))).thenReturn(
+                Collections.singletonMap(TEST_SSO_TOKEN,true));
         when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 
         DbUser user = mock(DbUser.class);
         container.setUser(TEST_SESSION_ID, user);
+        container.setSsoAccessToken(TEST_SESSION_ID, TEST_SSO_TOKEN);
     }
 
     public void clearSession() {

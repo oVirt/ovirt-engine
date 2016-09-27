@@ -2,12 +2,15 @@ package org.ovirt.engine.core.bll.aaa;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -141,7 +144,7 @@ public class SessionDataContainer {
     public String getSessionIdBySeqId(long sessionSequenceId) {
         String sessionId = null;
         for (SessionInfo sessionInfo : sessionInfoMap.values()) {
-            if (sessionInfo.contentOfSession.get(ENGINE_SESSION_SEQ_ID).equals(sessionSequenceId)) {
+            if (Long.valueOf(sessionSequenceId).equals(sessionInfo.contentOfSession.get(ENGINE_SESSION_SEQ_ID))) {
                 sessionId = (String) sessionInfo.contentOfSession.get(ENGINE_SESSION_ID);
                 break;
             }
@@ -151,10 +154,12 @@ public class SessionDataContainer {
 
     public String getSessionIdBySsoAccessToken(String ssoToken) {
         String sessionId = null;
-        for (SessionInfo sessionInfo : sessionInfoMap.values()) {
-            if (sessionInfo.contentOfSession.get(SSO_ACCESS_TOKEN_PARAMETER_NAME).equals(ssoToken)) {
-                sessionId = (String) sessionInfo.contentOfSession.get(ENGINE_SESSION_ID);
-                break;
+        if (StringUtils.isNotEmpty(ssoToken)) {
+            for (SessionInfo sessionInfo : sessionInfoMap.values()) {
+                if (ssoToken.equals(sessionInfo.contentOfSession.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))) {
+                    sessionId = (String) sessionInfo.contentOfSession.get(ENGINE_SESSION_ID);
+                    break;
+                }
             }
         }
         return sessionId;
@@ -165,15 +170,17 @@ public class SessionDataContainer {
     }
 
     public void cleanupEngineSessionsForSsoAccessToken(String ssoAccessToken) {
-        Iterator<Entry<String, SessionInfo>>  iter = sessionInfoMap.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<String, SessionInfo> entry = iter.next();
-            ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
-            if (ssoAccessToken.equals(sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))) {
-                removeSessionImpl(entry.getKey(),
-                        Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED,
-                        "Session has expired for principal %1$s",
-                        getUserName(entry.getKey()));
+        if (StringUtils.isNotEmpty(ssoAccessToken)) {
+            Iterator<Entry<String, SessionInfo>> iter = sessionInfoMap.entrySet().iterator();
+            while (iter.hasNext()) {
+                Entry<String, SessionInfo> entry = iter.next();
+                ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
+                if (ssoAccessToken.equals(sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))) {
+                    removeSessionImpl(entry.getKey(),
+                            Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED,
+                            "Session has expired for principal %1$s",
+                            getUserName(entry.getKey()));
+                }
             }
         }
     }
@@ -198,13 +205,19 @@ public class SessionDataContainer {
     public final void cleanExpiredUsersSessions() {
         Date now = new Date();
         Iterator<Entry<String, SessionInfo>>  iter = sessionInfoMap.entrySet().iterator();
+        Set<String> tokens = sessionInfoMap.values().stream()
+                .map(sessionInfo -> (String) sessionInfo.contentOfSession.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))
+                .collect(Collectors.toSet());
+        // retrieve session statues from SSO
+        Map<String, Boolean> sessionStatuses = ssoSessionValidator.getSessionStatuses(tokens);
+
         while (iter.hasNext()) {
             Entry<String, SessionInfo> entry = iter.next();
             ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
             Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
             Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
-            boolean sessionValid = ssoSessionValidator.isSessionValid(
-                    (String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME));
+            String token = (String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME);
+            boolean sessionValid = StringUtils.isEmpty(token) ? false : sessionStatuses.getOrDefault(token, false);
             if (((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) ||
                     !(boolean) sessionMap.get(SESSION_VALID_PARAMETER_NAME) ||
                     !sessionValid) {
@@ -401,19 +414,19 @@ public class SessionDataContainer {
     }
 
     class SsoSessionValidator {
-        public boolean isSessionValid(String token) {
-            boolean isValid = false;
-            if (StringUtils.isNotEmpty(token)) {
+        public Map<String, Boolean> getSessionStatuses(Set<String> tokens) {
+            Map<String, Boolean> sessionStatuses = Collections.emptyMap();
+            if (!tokens.isEmpty()) {
                 try {
-                    Map<String, Object> response = SsoOAuthServiceUtils.getTokenInfo(token, "ovirt-ext=token-info:validate");
+                    Map<String, Object> response = SsoOAuthServiceUtils.getSessionStatues(tokens);
                     if (response.get("error") == null) {
-                        isValid = true;
+                        sessionStatuses = (Map<String, Boolean>) response.get("result");
                     }
                 } catch (Exception e) {
-                    log.error("Session not valid session id = " + token, e.getMessage());
+                    log.error("Unable to retrieve session statuses." + e.getMessage());
                 }
             }
-            return isValid;
+            return sessionStatuses;
         }
     }
 }

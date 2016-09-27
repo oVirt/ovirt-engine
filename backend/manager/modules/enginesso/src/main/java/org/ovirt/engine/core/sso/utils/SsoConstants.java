@@ -46,6 +46,7 @@ public class SsoConstants {
     public static final String HTTP_PARAM_IDS = "ids";
     public static final String HTTP_PARAM_NAMESPACE = "namespace";
     public static final String HTTP_PARAM_TOKEN = "token";
+    public static final String HTTP_PARAM_TOKENS = "tokens";
     public static final String HTTP_PARAM_APP_URL = "app_url";
     public static final String HTTP_PARAM_ENGINE_URL = "engine_url";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
@@ -106,6 +107,7 @@ public class SsoConstants {
     public static final String PROFILE_LIST_QUERY = "profile-list";
     public static final String SEARCH_GROUPS_QUERY = "groups";
     public static final String SEARCH_USERS_QUERY = "users";
+    public static final String SESSION_STATUES_QUERY = "session-statuses";
 
     public static final String AUTHZ_SEARCH_SCOPE = "ovirt-ext=token-info:authz-search";
     public static final String PASSWORD_ACCESS_SCOPE = "ovirt-ext=token:password-access";
