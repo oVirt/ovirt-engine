@@ -3,10 +3,8 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,7 +13,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -27,11 +27,16 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link UpdateQuotaCommand} class. */
 public class UpdateQuotaCommandTest extends BaseCommandTest {
-    /** The command to test */
-    private UpdateQuotaCommand command;
+    /** The ID of the quota used for testing */
+    private static final Guid QUOTA_ID = Guid.newGuid();
 
     /** The parameters to test the command with */
-    private QuotaCRUDParameters params;
+    private QuotaCRUDParameters params = new QuotaCRUDParameters(setUpQuota(QUOTA_ID));
+
+    /** The command to test */
+    @Spy
+    @InjectMocks
+    private UpdateQuotaCommand command = new UpdateQuotaCommand(params, null);
 
     /** The quota to use for testing */
     private Quota quota;
@@ -42,11 +47,9 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        quota = setUpQuota(Guid.newGuid());
-        when(quotaDao.getById(any(Guid.class))).thenReturn(quota);
+        quota = setUpQuota(QUOTA_ID);
+        when(quotaDao.getById(QUOTA_ID)).thenReturn(quota);
 
-        params = new QuotaCRUDParameters(setUpQuota(quota.getId()));
-        command = spy(new UpdateQuotaCommand(params, null));
         doReturn(quotaDao).when(command).getQuotaDao();
         doNothing().when(command).removeQuotaFromCache();
         doNothing().when(command).afterUpdate();
