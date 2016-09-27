@@ -151,6 +151,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     @Inject
     private EntityDao entityDao;
 
+    @Inject
+    private BusinessEntitySnapshotDao businessEntitySnapshotDao;
+
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
 
@@ -319,14 +322,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         DefaultCompensationContext defaultContext = new DefaultCompensationContext();
         defaultContext.setCommandId(commandId);
         defaultContext.setCommandType(getClass().getName());
-        defaultContext.setBusinessEntitySnapshotDao(getBusinessEntitySnapshotDao());
+        defaultContext.setBusinessEntitySnapshotDao(businessEntitySnapshotDao);
         defaultContext.setSnapshotSerializer(
                 SerializationFactory.getSerializer());
         return defaultContext;
-    }
-
-    protected BusinessEntitySnapshotDao getBusinessEntitySnapshotDao() {
-        return DbFacade.getInstance().getBusinessEntitySnapshotDao();
     }
 
     /**
@@ -455,8 +454,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         TransactionSupport.executeInNewTransaction(() -> {
             Deserializer deserializer =
                     SerializationFactory.getDeserializer();
-            List<BusinessEntitySnapshot> entitySnapshots =
-                    getBusinessEntitySnapshotDao().getAllForCommandId(commandId);
+            List<BusinessEntitySnapshot> entitySnapshots = businessEntitySnapshotDao.getAllForCommandId(commandId);
             log.debug("Command [id={}]: {} compensation data.", commandId,
                     entitySnapshots.isEmpty() ? "No" : "Going over");
             for (BusinessEntitySnapshot snapshot : entitySnapshots) {
