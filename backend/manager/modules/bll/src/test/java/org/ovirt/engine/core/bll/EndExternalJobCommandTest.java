@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
-import org.slf4j.Logger;
 
 public class EndExternalJobCommandTest extends BaseCommandTest {
     private static final Guid jobId = Guid.newGuid();
@@ -26,8 +25,6 @@ public class EndExternalJobCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private EndExternalJobCommand<EndExternalJobParameters> commandMock = new EndExternalJobCommand<>(parameters, null);
-    @Mock
-    private Logger log;
 
     private Job makeJob() {
         Job job = new Job();
