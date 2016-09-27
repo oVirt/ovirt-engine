@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.StepDao;
-import org.slf4j.Logger;
 
 public class EndExternalStepCommandTest extends BaseCommandTest {
 
@@ -38,9 +37,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private EndExternalStepCommand<EndExternalStepParameters> command = new EndExternalStepCommand<>(parameters, null);
-
-    @Mock
-    private Logger log;
 
     private Job makeExternalTestJob(Guid jobId) {
         Job job = new Job();
