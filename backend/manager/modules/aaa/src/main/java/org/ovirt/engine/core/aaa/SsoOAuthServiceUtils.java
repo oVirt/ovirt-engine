@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
@@ -278,6 +279,10 @@ public class SsoOAuthServiceUtils {
 
     public static Map<String, Object> getAvailableNamespaces(String token) {
         return search(token, null, "available-namespaces", authzSearchScope);
+    }
+
+    public static Map<String, Object> getSessionStatues(Set<String> entries) {
+        return search(null, Collections.singletonMap("tokens", entries), "session-statuses", publicAuthzSearchScope);
     }
 
     public static Map<String, Object> getProfileList() {

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,14 @@ public enum DirectorySearch {
                     Authz.class.getName()).stream()
                     .map(AuthzUtils::getName)
                     .collect(Collectors.toList());
+        }
+    },
+
+    GetSessionStatuses(SsoConstants.SESSION_STATUES_QUERY, true) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
+            return ((Set<String>) readParams(request).get(SsoConstants.HTTP_PARAM_TOKENS)).stream()
+                    .filter(token -> StringUtils.isNotEmpty(token))
+                    .collect(Collectors.toMap(token -> token, token -> ssoContext.getSsoSession(token) != null));
         }
     },
 
