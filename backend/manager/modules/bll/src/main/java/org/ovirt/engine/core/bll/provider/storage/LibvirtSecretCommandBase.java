@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.provider.storage;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
@@ -22,12 +24,11 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
 
     private StorageDomain storageDomain;
 
+    @Inject
+    protected LibvirtSecretDao libvirtSecretDao;
+
     public LibvirtSecretCommandBase(LibvirtSecretParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    protected LibvirtSecretDao getLibvirtSecretDao() {
-        return getDbFacade().getLibvirtSecretDao();
     }
 
     @Override
