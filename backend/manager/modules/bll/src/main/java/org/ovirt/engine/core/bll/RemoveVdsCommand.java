@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -34,6 +37,9 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     private AuditLogType errorType = AuditLogType.USER_FAILED_REMOVE_VDS;
     private VDS upServer;
+
+    @Inject
+    private GlusterServerDao glusterServerDao;
 
     public RemoveVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -256,7 +262,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void removeOtherKnowAddressesForGlusterServer(Guid lastServerId) {
-        getDbFacade().getGlusterServerDao().updateKnownAddresses(lastServerId, null);
+        glusterServerDao.updateKnownAddresses(lastServerId, null);
     }
 
     @Override
