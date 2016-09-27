@@ -11,7 +11,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
@@ -33,6 +32,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
@@ -68,7 +68,11 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private static final int ITEMS_COUNT_PER_UPDATE = 100;
-    private ProcessOvfUpdateForStoragePoolCommand<ProcessOvfUpdateForStoragePoolParameters> command;
+
+    @Spy
+    @InjectMocks
+    private ProcessOvfUpdateForStoragePoolCommand<ProcessOvfUpdateForStoragePoolParameters> command =
+            new ProcessOvfUpdateForStoragePoolCommand<>(new ProcessOvfUpdateForStoragePoolParameters(), null);
 
     @Mock
     private StoragePoolDao storagePoolDao;
@@ -97,6 +101,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
 
+    @Spy
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
     private StoragePool pool1;
@@ -114,9 +119,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-        command = spy(new ProcessOvfUpdateForStoragePoolCommand<>(new ProcessOvfUpdateForStoragePoolParameters(), null));
-        ovfUpdateProcessHelper = spy(new OvfUpdateProcessHelper(vmDeviceUtils));
         doReturn(ITEMS_COUNT_PER_UPDATE).when(command).loadConfigValue();
         doReturn(new ArrayList<DiskImage>()).when(ovfUpdateProcessHelper).getAllImageSnapshots(any(DiskImage.class));
         doCallRealMethod().when(command).executeCommand();
@@ -132,9 +134,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(vmTemplateDao).when(command).getVmTemplateDao();
         doReturn(storageDomainOvfInfoDao).when(command).getStorageDomainOvfInfoDao();
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
-
-        doReturn(ovfUpdateProcessHelper).when(command).getOvfUpdateProcessHelper();
-
 
         // mock ovf data updater methods
         doNothing().when(ovfUpdateProcessHelper).loadTemplateData(any(VmTemplate.class));

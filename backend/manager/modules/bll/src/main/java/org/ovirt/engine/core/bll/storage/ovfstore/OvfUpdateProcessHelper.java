@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -27,21 +29,32 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
+@Singleton
 public class OvfUpdateProcessHelper {
-    private final OvfManager ovfManager;
-    private final VmDeviceUtils vmDeviceUtils;
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
-    public OvfUpdateProcessHelper(VmDeviceUtils vmDeviceUtils) {
-        this.vmDeviceUtils = vmDeviceUtils;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private ResourceManager resourceManager;
+
+    private final OvfManager ovfManager;
+
+    public OvfUpdateProcessHelper() {
         this.ovfManager = new OvfManager();
     }
 
@@ -81,11 +94,11 @@ public class OvfUpdateProcessHelper {
     public void loadVmData(VM vm) {
         vmDeviceUtils.setVmDevices(vm.getStaticData());
         if (vm.getInterfaces().isEmpty()) {
-            vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
+            vm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(vm.getId()));
         }
         if (StringUtils.isEmpty(vm.getVmtName())) {
             if (!Guid.Empty.equals(vm.getVmtGuid())) {
-                VmTemplate t = getVmTemplateDao().get(vm.getVmtGuid());
+                VmTemplate t = vmTemplateDao.get(vm.getVmtGuid());
                 vm.setVmtName(t.getName());
             } else {
                 vm.setVmtName(VmTemplateHandler.BLANK_VM_TEMPLATE_NAME);
@@ -107,7 +120,7 @@ public class OvfUpdateProcessHelper {
         }
 
         for (DiskImage disk : allVmImages) {
-            DiskVmElement dve = DbFacade.getInstance().getDiskVmElementDao().get(new VmDeviceId(disk.getId(), vm.getId()));
+            DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(disk.getId(), vm.getId()));
             disk.setDiskVmElements(Collections.singletonList(dve));
         }
 
@@ -120,38 +133,12 @@ public class OvfUpdateProcessHelper {
     public void loadTemplateData(VmTemplate template) {
         vmDeviceUtils.setVmDevices(template);
         if (template.getInterfaces() == null || template.getInterfaces().isEmpty()) {
-            template.setInterfaces(getVmNetworkInterfaceDao()
-                    .getAllForTemplate(template.getId()));
+            template.setInterfaces(vmNetworkInterfaceDao.getAllForTemplate(template.getId()));
         }
     }
 
     protected String generateVmMetadata(VM vm, List<DiskImage> AllVmImages) {
         return ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
-    }
-
-    protected VmDao getVmDao() {
-        return DbFacade.getInstance().getVmDao();
-    }
-
-    protected StorageDomainDao getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDao();
-    }
-
-
-    protected VmTemplateDao getVmTemplateDao() {
-        return DbFacade.getInstance().getVmTemplateDao();
-    }
-
-    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDao();
-    }
-
-    protected VmStaticDao getVmStaticDao() {
-        return DbFacade.getInstance().getVmStaticDao();
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
     }
 
     /**
@@ -162,15 +149,14 @@ public class OvfUpdateProcessHelper {
                                                   Guid storageDomainId) {
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, metaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
-        return Backend.getInstance().getResourceManager().runVdsCommand(VDSCommandType.UpdateVM, tempVar)
-                .getSucceeded();
+        return resourceManager.runVdsCommand(VDSCommandType.UpdateVM, tempVar).getSucceeded();
     }
 
     /**
      * Removes the ovf of the vm/template with the given id from the given storage pool/storage domain.
      */
     protected boolean executeRemoveVmInSpm(Guid storagePoolId, Guid id, Guid storageDomainId) {
-        return Backend.getInstance().getResourceManager().runVdsCommand(VDSCommandType.RemoveVM,
+        return resourceManager.runVdsCommand(VDSCommandType.RemoveVM,
                 new RemoveVMVDSCommandParameters(storagePoolId, id, storageDomainId)).getSucceeded();
     }
 }

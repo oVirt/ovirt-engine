@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -74,6 +76,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyTemplateCommand<T> {
+
+    @Inject
+    private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
     private List<DiskImage> disksImages;
     private Collection<Snapshot> snapshotsWithMemory;
@@ -511,13 +516,12 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     }
 
     protected boolean updateVmInSpm() {
-        OvfUpdateProcessHelper ovfHelper = new OvfUpdateProcessHelper(getVmDeviceUtils());
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
-        ovfHelper.loadVmData(getVm());
-        ovfHelper.buildMetadataDictionaryForVm(getVm(),
+        ovfUpdateProcessHelper.loadVmData(getVm());
+        ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
-                ovfHelper.getVmImagesFromDb(getVm()));
-        return ovfHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
+                ovfUpdateProcessHelper.getVmImagesFromDb(getVm()));
+        return ovfUpdateProcessHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
     }
 

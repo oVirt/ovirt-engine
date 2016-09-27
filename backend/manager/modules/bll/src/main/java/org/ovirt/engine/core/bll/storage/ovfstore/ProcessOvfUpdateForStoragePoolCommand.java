@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -16,7 +18,6 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
@@ -40,11 +41,13 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.di.Injector;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateForStoragePoolParameters> extends StorageHandlingCommandBase<T> {
+
+    @Inject
+    private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
     private int itemsCountPerUpdate;
     private List<Guid> proccessedIdsInfo;
@@ -52,23 +55,17 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     private List<String> proccessedOvfConfigurationsInfo;
     private HashSet<Guid> proccessedDomains;
     private List<Guid> removedOvfIdsInfo;
-    private OvfUpdateProcessHelper ovfUpdateProcessHelper;
     private List<Guid> activeDataDomainsIds;
 
     public ProcessOvfUpdateForStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStoragePoolId(parameters.getStoragePoolId());
-        ovfUpdateProcessHelper = new OvfUpdateProcessHelper(Injector.get(VmDeviceUtils.class));
         activeDataDomainsIds = new LinkedList<>();
     }
 
     @Override
     protected Object getActionReturnValue() {
         return super.getActionReturnValue();
-    }
-
-    protected OvfUpdateProcessHelper getOvfUpdateProcessHelper() {
-        return ovfUpdateProcessHelper;
     }
 
     protected int loadConfigValue() {
@@ -207,11 +204,11 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
                 updateTemplateDisksFromDb(template);
                 boolean verifyDisksNotLocked = verifyImagesStatus(template.getDiskList());
                 if (verifyDisksNotLocked) {
-                    getOvfUpdateProcessHelper().loadTemplateData(template);
+                    ovfUpdateProcessHelper.loadTemplateData(template);
                     Long currentDbGeneration = getVmStaticDao().getDbGeneration(template.getId());
                     // currentDbGeneration can be null in case that the template was deleted during the run of OvfDataUpdater.
                     if (currentDbGeneration != null && template.getDbGeneration() == currentDbGeneration) {
-                        proccessedOvfConfigurationsInfo.add(getOvfUpdateProcessHelper().buildMetadataDictionaryForTemplate(template, vmsAndTemplateMetadata));
+                        proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForTemplate(template, vmsAndTemplateMetadata));
                         proccessedIdsInfo.add(template.getId());
                         proccessedOvfGenerationsInfo.add(template.getDbGeneration());
                         proccessDisksDomains(template.getDiskList());
@@ -294,7 +291,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
                 if (!verifyImagesStatus(vm.getDiskList())) {
                     continue;
                 }
-                ArrayList<DiskImage> vmImages = getOvfUpdateProcessHelper().getVmImagesFromDb(vm);
+                ArrayList<DiskImage> vmImages = ovfUpdateProcessHelper.getVmImagesFromDb(vm);
                 if (!verifyImagesStatus(vmImages)) {
                     continue;
                 }
@@ -303,7 +300,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
                     continue;
                 }
 
-                getOvfUpdateProcessHelper().loadVmData(vm);
+                ovfUpdateProcessHelper.loadVmData(vm);
                 Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
                 if (currentDbGeneration == null) {
                     log.warn("currentDbGeneration of VM (name: '{}', id: '{}') is null, probably because the VM was deleted during the run of OvfDataUpdater.",
@@ -312,7 +309,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
                     continue;
                 }
                 if (vm.getStaticData().getDbGeneration() == currentDbGeneration) {
-                    proccessedOvfConfigurationsInfo.add(getOvfUpdateProcessHelper().buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata, vmImages));
+                    proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata, vmImages));
                     proccessedIdsInfo.add(vm.getId());
                     proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
                     proccessDisksDomains(vm.getDiskList());

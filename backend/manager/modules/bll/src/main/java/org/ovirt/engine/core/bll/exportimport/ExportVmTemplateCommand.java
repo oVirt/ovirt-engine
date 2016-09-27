@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -42,6 +44,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends MoveOrCopyTemplateCommand<T> {
+
+    @Inject
+    private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
     private String cachedTemplateIsBeingExportedMessage;
 
@@ -227,7 +232,6 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         // and there's no need for exporting the template's ovf.
         if (getParameters().getTaskGroupSuccess()) {
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
-            OvfUpdateProcessHelper ovfUpdateProcessHelper = new OvfUpdateProcessHelper(getVmDeviceUtils());
             ovfUpdateProcessHelper.loadTemplateData(getVmTemplate());
             VmTemplateHandler.updateDisksFromDb(getVmTemplate());
             // update the target (export) domain
