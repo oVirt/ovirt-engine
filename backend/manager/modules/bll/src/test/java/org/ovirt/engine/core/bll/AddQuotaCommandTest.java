@@ -2,14 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -27,7 +28,9 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private AddQuotaCommand command;
+    @Spy
+    @InjectMocks
+    private AddQuotaCommand command = createCommand();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -39,33 +42,29 @@ public class AddQuotaCommandTest extends BaseCommandTest {
 
     @Before
     public void testSetup() {
+        doReturn(quotaDao).when(command).getQuotaDao();
         when(quotaDao.getById(any(Guid.class))).thenReturn(mockGeneralStorageQuota());
     }
 
     @Test
     public void testExecuteCommand() throws Exception {
-        AddQuotaCommand addQuotaCommand = createCommand();
-        addQuotaCommand.executeCommand();
+        command.executeCommand();
     }
 
     @Test
     public void testValidateCommand() throws Exception {
-        AddQuotaCommand addQuotaCommand = createCommand();
-        ValidateTestUtils.runAndAssertValidateSuccess(addQuotaCommand);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void testAddDefaultQuota() {
-        AddQuotaCommand command = createCommand();
         command.getParameters().getQuota().setDefault(true);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
     }
 
     private AddQuotaCommand createCommand() {
         QuotaCRUDParameters param = new QuotaCRUDParameters(mockGeneralStorageQuota());
-        command = spy(new AddQuotaCommand(param, null));
-        doReturn(quotaDao).when(command).getQuotaDao();
-        return command;
+        return new AddQuotaCommand(param, null);
     }
 
     private Quota mockGeneralStorageQuota() {
