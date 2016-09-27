@@ -12,6 +12,9 @@ public abstract class MacPoolCommandBase<T extends VdcActionParametersBase> exte
     @Inject
     protected MacPoolPerCluster macPoolPerCluster;
 
+    @Inject
+    protected MacPoolDao macPoolDao;
+
     public MacPoolCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -20,9 +23,5 @@ public abstract class MacPoolCommandBase<T extends VdcActionParametersBase> exte
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
         addValidationMessage(EngineMessage.VAR__TYPE__MAC__POOL);
-    }
-
-    public MacPoolDao getMacPoolDao() {
-        return getDbFacade().getMacPoolDao();
     }
 }

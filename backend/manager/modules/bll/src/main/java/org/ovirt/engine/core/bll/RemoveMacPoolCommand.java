@@ -41,7 +41,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
     protected void executeCommand() {
         registerRollbackHandler(new CustomTransactionCompletionListener());
 
-        getMacPoolDao().remove(getMacPoolId());
+        macPoolDao.remove(getMacPoolId());
         macPoolPerCluster.removePool(getMacPoolId());
 
         getReturnValue().setSucceeded(true);
@@ -79,7 +79,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
 
     private MacPool getOldMacPool() {
         if (oldMacPool == null) {
-            oldMacPool = getMacPoolDao().get(getMacPoolId());
+            oldMacPool = macPoolDao.get(getMacPoolId());
         }
         return oldMacPool;
     }

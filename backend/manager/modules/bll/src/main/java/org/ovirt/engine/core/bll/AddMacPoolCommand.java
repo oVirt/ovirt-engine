@@ -61,7 +61,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
         registerRollbackHandler(new CustomTransactionCompletionListener());
 
         getMacPoolEntity().setId(Guid.newGuid());
-        getMacPoolDao().save(getMacPoolEntity());
+        macPoolDao.save(getMacPoolEntity());
         addPermission(getCurrentUser().getId(), getMacPoolEntity().getId());
 
         macPoolPerCluster.createPool(getMacPoolEntity());

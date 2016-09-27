@@ -45,7 +45,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
             return false;
         }
 
-        oldMacPool = getMacPoolDao().get(getMacPoolId());
+        oldMacPool = macPoolDao.get(getMacPoolId());
         return validate(new MacPoolValidator(oldMacPool).macPoolExists()) &&
                 validate(new MacPoolValidator(getMacPoolEntity()).hasUniqueName()) &&
                 validate(validateDefaultFlagIsNotChanged(oldMacPool, getMacPoolEntity()));
@@ -69,7 +69,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
     protected void executeCommand() {
         registerRollbackHandler(new CustomTransactionCompletionListener());
 
-        getMacPoolDao().update(getMacPoolEntity());
+        macPoolDao.update(getMacPoolEntity());
         macPoolPerCluster.modifyPool(getMacPoolEntity());
 
         setSucceeded(true);
