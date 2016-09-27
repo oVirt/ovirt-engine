@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RestartVdsVmsOperation;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ExternalVariableDao;
 import org.ovirt.engine.core.utils.ThreadUtils;
 
 /**
@@ -57,6 +60,9 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
      */
     private KdumpDetectionResult kdumpDetectionResult;
 
+    @Inject
+    private ExternalVariableDao externalVariableDao;
+
 
     public VdsKdumpDetectionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -66,7 +72,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
 
     private boolean isListenerAlive() {
-        ExternalVariable fkAlive = getDbFacade().getExternalVariableDao().get(LISTENER_HEARTBEAT);
+        ExternalVariable fkAlive = externalVariableDao.get(LISTENER_HEARTBEAT);
         return fkAlive != null
                 && fkAlive.getUpdateDate().getTime() + listenerTimeoutInterval >= System.currentTimeMillis();
     }
