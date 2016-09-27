@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -221,6 +222,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected DiskValidator getDiskValidator(Disk disk) {
         return new DiskValidator(disk);
+    }
+
+    protected DiskVmElementValidator getDiskVmElementValidator(Disk disk, DiskVmElement diskVmElement) {
+        return new DiskVmElementValidator(disk, diskVmElement);
     }
 
     protected boolean isVmNotInPreviewSnapshot() {

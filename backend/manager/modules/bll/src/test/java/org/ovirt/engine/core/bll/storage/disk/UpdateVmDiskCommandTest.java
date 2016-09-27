@@ -38,6 +38,7 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -120,6 +121,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private DbFacade dbFacade;
     @Mock
     private DiskValidator diskValidator;
+
+    @Mock
+    private DiskVmElementValidator diskVmElementValidator;
 
     @Mock
     private DiskVmElementDao diskVmElementDao;
@@ -390,8 +394,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(dve).when(command).getOldDiskVmElement();
         doReturn(createDiskImage()).when(command).getOldDisk();
 
-        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class), any(DiskVmElement.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
+        when(diskVmElementValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(parameters.getDiskInfo())).thenReturn(diskValidator);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
@@ -416,18 +420,18 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
-                when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
+                when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
 
-        assertFalse(command.validateCanUpdateReadOnly(diskValidator));
+        assertFalse(command.validateCanUpdateReadOnly());
     }
 
     @Test
     public void testSucceedInterfaceCanUpdateReadOnly() {
         initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
-        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
+        doReturn(ValidationResult.VALID).when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
 
-        assertTrue(command.validateCanUpdateReadOnly(diskValidator));
+        assertTrue(command.validateCanUpdateReadOnly());
     }
 
     @Test
@@ -543,13 +547,14 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        when(diskValidator.isVirtIoScsiValid(any(VM.class), any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
+        when(diskVmElementValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskUsedAsOvfStore()).thenReturn(ValidationResult.VALID);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(any(VM.class));
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).validateNotHostedEngineDisk();
-        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
+        doReturn(ValidationResult.VALID).when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
 
         doReturn(true).when(command).validateQuota();

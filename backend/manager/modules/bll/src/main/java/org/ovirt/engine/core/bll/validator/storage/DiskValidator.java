@@ -5,27 +5,19 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
@@ -41,50 +33,6 @@ public class DiskValidator {
 
     public DiskValidator(Disk disk) {
         this.disk = disk;
-    }
-
-    /**
-     * Verifies Virtio-SCSI interface validity.
-     */
-    public ValidationResult isVirtIoScsiValid(VM vm, DiskVmElement diskVmElement) {
-        if (vm != null && DiskInterface.VirtIO_SCSI != diskVmElement.getDiskInterface()) {
-            return ValidationResult.VALID;
-        }
-
-        if (disk.getSgio() != null) {
-            if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-                return new ValidationResult(EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
-            }
-        }
-
-        if (vm != null) {
-            if (!isVirtioScsiControllerAttached(vm.getId())) {
-                return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
-            }
-            else {
-                return isOsSupportedForVirtIoScsi(vm);
-
-            }
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * Validates that the OS is supported for Virtio-SCSI interface.
-     */
-    public ValidationResult isOsSupportedForVirtIoScsi(VM vm) {
-        if (!VmValidationUtils.isDiskInterfaceSupportedByOs(
-                vm.getOs(), vm.getCompatibilityVersion(), DiskInterface.VirtIO_SCSI)) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    public boolean isVirtioScsiControllerAttached(Guid vmId) {
-        VmDeviceUtils vmDeviceUtils = Injector.get(VmDeviceUtils.class);
-        return vmDeviceUtils.hasVirtioScsiController(vmId);
     }
 
     public ValidationResult isDiskPluggedToVmsThatAreNotDown(boolean checkOnlyVmsSnapshotPluggedTo, List<Pair<VM, VmDevice>> vmsForDisk) {
@@ -111,23 +59,6 @@ public class DiskValidator {
 
     }
 
-
-    public ValidationResult isReadOnlyPropertyCompatibleWithInterface(DiskVmElement diskVmElement) {
-        if (Boolean.TRUE.equals(disk.getReadOnly())) {
-            DiskInterface diskInterface = diskVmElement.getDiskInterface();
-
-            if (diskInterface == DiskInterface.IDE) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR,
-                        String.format("$interface %1$s", diskInterface));
-            }
-
-            if (disk.isScsiPassthrough()) {
-                return new ValidationResult(EngineMessage.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK);
-            }
-        }
-        return ValidationResult.VALID;
-    }
-
     public ValidationResult isDiskUsedAsOvfStore() {
         if (disk.isOvfStore()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
@@ -137,18 +68,6 @@ public class DiskValidator {
 
     protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
-    }
-
-    public ValidationResult isDiskInterfaceSupported(VM vm, DiskVmElement diskVmElement) {
-        if (vm != null) {
-            if (!VmValidationUtils.isDiskInterfaceSupportedByOs(
-                    vm.getOs(), vm.getCompatibilityVersion(), diskVmElement.getDiskInterface())) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
-                        String.format("$osName %s", getOsRepository().getOsName(vm.getOs())));
-            }
-        }
-
-        return ValidationResult.VALID;
     }
 
     public ValidationResult validateUnsupportedDiskStorageType(DiskStorageType... diskStorageTypes) {
@@ -162,10 +81,6 @@ public class DiskValidator {
 
     protected VDSBrokerFrontend getVdsBroker() {
         return Backend.getInstance().getResourceManager();
-    }
-
-    private static OsRepository getOsRepository() {
-        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     public ValidationResult validateNotHostedEngineDisk() {

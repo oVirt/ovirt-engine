@@ -29,6 +29,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -142,7 +143,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return failValidation(EngineMessage.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
         }
 
-        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface(getDiskVmElement()))) {
+        DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getParameters().getDiskInfo(), getDiskVmElement());
+        if (!validate(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface())) {
             return false;
         }
 
@@ -151,7 +153,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            if (!checkIfImageDiskCanBeAdded(vm, diskValidator)) {
+            if (!checkIfImageDiskCanBeAdded(vm, diskVmElementValidator)) {
                 return false;
             }
 
@@ -206,11 +208,13 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
-        if (!validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement()))) {
+        DiskVmElementValidator diskVmElementValidator = new DiskVmElementValidator(getParameters().getDiskInfo(), getDiskVmElement());
+
+        if (!validate(diskVmElementValidator.isVirtIoScsiValid(getVm()))) {
             return false;
         }
 
-        if (!validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()))) {
+        if (!validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()))) {
             return false;
         }
 
@@ -246,7 +250,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
     }
 
-    protected boolean checkIfImageDiskCanBeAdded(VM vm, DiskValidator diskValidator) {
+    protected boolean checkIfImageDiskCanBeAdded(VM vm, DiskVmElementValidator diskVmElementValidator) {
         if (Guid.Empty.equals(getStorageDomainId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
         }
@@ -262,8 +266,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 validate(storageDomainValidator.isDomainWithinThresholds()) &&
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk() &&
-                validate(diskValidator.isVirtIoScsiValid(vm, getDiskVmElement())) &&
-                validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()));
+                validate(diskVmElementValidator.isVirtIoScsiValid(vm)) &&
+                validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()));
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.

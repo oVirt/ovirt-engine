@@ -20,7 +20,9 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -56,6 +58,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     protected static final List<String> DISK_HOTPLUGGABLE_INTERFACES = Arrays.asList("VirtIO_SCSI", "VirtIO");
 
     private DiskImage disk = new DiskImage();
+    private DiskVmElement diskVmElement = new DiskVmElement(diskImageGuid, vmId);
     protected VmDevice vmDevice;
 
     @Mock
@@ -74,8 +77,11 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Mock
     private DiskVmElementDao diskVmElementDao;
 
+    @Mock
+    private DiskValidator diskValidator;
+
     @Spy
-    private DiskValidator diskValidator = new DiskValidator(disk);
+    private DiskVmElementValidator diskVmElementValidator = new DiskVmElementValidator(disk, diskVmElement);
 
     @Mock
     private SnapshotsValidator snapshotsValidator;
@@ -85,6 +91,9 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     @Mock
     protected OsRepository osRepository;
+
+    @Mock
+    private VmDeviceUtils vmDeviceUtils;
 
     /**
      * The command under test.
@@ -112,11 +121,14 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
         doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
         doReturn(diskValidator).when(command).getDiskValidator(disk);
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vm);
 
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
+        SimpleDependencyInjector.getInstance().bind(VmDeviceUtils.class, vmDeviceUtils);
+
     }
 
     @Test
@@ -174,8 +186,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockVmStatusUp();
         createVirtIODisk();
         initStorageDomain();
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class), any(DiskVmElement.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
+        when(diskVmElementValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
@@ -234,7 +245,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
      * @return Valid parameters for the command.
      */
     protected VmDiskOperationParameterBase createParameters() {
-        return new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId));
+        return new VmDiskOperationParameterBase(diskVmElement);
     }
 
     /**

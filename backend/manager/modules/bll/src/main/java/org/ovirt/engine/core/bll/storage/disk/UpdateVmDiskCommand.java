@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -221,11 +222,11 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             return false;
         }
 
-        DiskValidator diskValidator = getDiskValidator(getNewDisk());
-        return validateCanUpdateShareable() && validateCanUpdateReadOnly(diskValidator) &&
+        DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getNewDisk(), getDiskVmElement());
+        return validateCanUpdateShareable() && validateCanUpdateReadOnly() &&
                 validateVmPoolProperties() && validateQuota() &&
-                validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement())) &&
-                (!isDiskInterfaceUpdated || validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()))) &&
+                validate(diskVmElementValidator.isVirtIoScsiValid(getVm())) &&
+                (!isDiskInterfaceUpdated || validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()))) &&
                 setAndValidateDiskProfiles();
     }
 
@@ -284,12 +285,13 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         return true;
     }
 
-    protected boolean validateCanUpdateReadOnly(DiskValidator diskValidator) {
+    protected boolean validateCanUpdateReadOnly() {
         if (updateReadOnlyRequested()) {
             if(getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
-            return validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface(getDiskVmElement()));
+            DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getNewDisk(), getDiskVmElement());
+            return validate(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface());
         }
         return true;
     }

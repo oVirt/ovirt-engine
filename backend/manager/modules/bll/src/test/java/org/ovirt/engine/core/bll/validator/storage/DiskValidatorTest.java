@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -10,9 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,16 +24,12 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -45,8 +37,6 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class DiskValidatorTest {
 
-    @Mock
-    private OsRepository osRepository;
     @Mock
     private VmDao vmDao;
 
@@ -78,18 +68,8 @@ public class DiskValidatorTest {
         return vm;
     }
 
-    private void initializeOsRepository(DiskInterface diskInterface) {
-        ArrayList<String> supportedDiskInterfaces = new ArrayList<>();
-        supportedDiskInterfaces.add(diskInterface.name());
-        when(osRepository.getDiskInterfaces(1, null)).thenReturn(supportedDiskInterfaces);
-        when(osRepository.getDiskInterfaces(2, null)).thenReturn(new ArrayList<>());
-        // init the injector with the osRepository instance
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-    }
-
     @Before
     public void setUp() {
-        initializeOsRepository(DiskInterface.VirtIO);
         disk = createDiskImage();
         disk.setDiskAlias("disk1");
         validator = spy(new DiskValidator(disk));
@@ -152,70 +132,6 @@ public class DiskValidatorTest {
         vmsInfo.get(1).getSecond().setSnapshotId(Guid.newGuid());
         assertThat(validator.isDiskPluggedToVmsThatAreNotDown(true, vmsInfo),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
-    }
-
-    @Test
-    public void diskInterfaceSupportedByOs() {
-        VM vm = createVM();
-        initializeOsRepository(DiskInterface.VirtIO);
-        DiskVmElement dve = new DiskVmElement();
-        dve.setDiskInterface(DiskInterface.VirtIO);
-        assertThat(validator.isDiskInterfaceSupported(vm, dve), isValid());
-    }
-
-    @Test
-    public void diskInterfaceNotSupportedByOs() {
-        VM vm = createVM();
-        vm.setVmOs(2);
-        initializeOsRepository(DiskInterface.VirtIO);
-        DiskVmElement dve = new DiskVmElement();
-        dve.setDiskInterface(DiskInterface.VirtIO);
-        assertThat(validator.isDiskInterfaceSupported(vm, dve), failsWith(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-    }
-
-    @Test
-    public void readOnlyIsNotSupportedByDiskInterface() {
-        disk.setReadOnly(true);
-        DiskVmElement dve = new DiskVmElement();
-        dve.setDiskInterface(DiskInterface.IDE);
-
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
-                        and(replacements(hasItem(String.format("$interface %1$s", DiskInterface.IDE)))));
-
-        setupForLun();
-        lunDisk.setReadOnly(true);
-        lunDisk.setSgio(ScsiGenericIO.FILTERED);
-        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve),
-                failsWith(EngineMessage.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK));
-    }
-
-    @Test
-    public void readOnlyIsSupportedByDiskInterface() {
-        disk.setReadOnly(true);
-        DiskVmElement dve = new DiskVmElement();
-        dve.setDiskInterface(DiskInterface.VirtIO);
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
-
-        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
-
-        disk.setReadOnly(false);
-        dve.setDiskInterface(DiskInterface.IDE);
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
-
-        setupForLun();
-        lunDisk.setReadOnly(true);
-        dve.setDiskInterface(DiskInterface.VirtIO);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
-
-        lunDisk.setReadOnly(false);
-        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
-
-        dve.setDiskInterface(DiskInterface.IDE);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
     }
 
     @Test

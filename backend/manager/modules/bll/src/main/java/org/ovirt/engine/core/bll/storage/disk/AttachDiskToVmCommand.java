@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -151,15 +152,16 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             }
         }
 
-        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface(getDiskVmElement()))) {
+        DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(disk, getDiskVmElement());
+        if (!validate(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface())) {
             return false;
         }
 
-        if (!validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement()))) {
+        if (!validate(diskVmElementValidator.isVirtIoScsiValid(getVm()))) {
             return false;
         }
 
-        if (!validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()))) {
+        if (!validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()))) {
             return false;
         }
 

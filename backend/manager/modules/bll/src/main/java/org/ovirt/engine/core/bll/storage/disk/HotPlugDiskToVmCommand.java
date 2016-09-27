@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VmValidator;
-import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -66,13 +66,13 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     }
 
     private boolean virtIoScsiDiskValidation() {
-        DiskValidator diskValidator = getDiskValidator(disk);
-        return validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement()));
+        DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(disk, getDiskVmElement());
+        return validate(diskVmElementValidator.isVirtIoScsiValid(getVm()));
     }
 
     private boolean interfaceDiskValidation() {
-        DiskValidator diskValidator = getDiskValidator(disk);
-        return validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()));
+        DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(disk, getDiskVmElement());
+        return validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()));
     }
 
     private boolean imageStorageValidation() {
