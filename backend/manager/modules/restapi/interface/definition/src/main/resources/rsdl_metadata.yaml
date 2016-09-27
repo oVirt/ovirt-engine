@@ -1432,8 +1432,16 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.clone: 'xs:boolean', action.vm.name: 'xs:string'}
+      - mandatoryArguments:
+          action.cluster.id|name: xs:string
+        optionalArguments:
+          action.clone: xs:boolean
+          action.vm.name: xs:string
+          action.vnic_profile_mappings:vnic_profile_mapping--COLLECTION:
+            vnic_profile_mapping.source_network_name: xs:string
+            vnic_profile_mapping.source_network_profile_name: xs:string
+            vnic_profile_mapping.target_vnic_profile.id: xs:string
+          action.reassign_bad_macs: xs:boolean
         description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
   description: import the specified virtual machine in the storage domain into the system

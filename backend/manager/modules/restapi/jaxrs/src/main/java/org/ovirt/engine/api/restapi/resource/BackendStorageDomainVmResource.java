@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
@@ -9,15 +10,18 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
+import org.ovirt.engine.api.model.VnicProfileMapping;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainVmDiskAttachmentsResource;
 import org.ovirt.engine.api.resource.StorageDomainVmResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.restapi.types.ExternalVnicProfileMappingMapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -62,7 +66,9 @@ public class BackendStorageDomainVmResource
     @Override
     public Response register(Action action) {
         validateParameters(action, "cluster.id|name");
-        ImportVmParameters params = new ImportVmParameters();
+        validateVnicMappings(action);
+
+        ImportVmParameters params = new ImportVmParameters(getVnicProfileMappings(action), getReassignBadMacs(action));
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
         params.setClusterId(getClusterId(action));
@@ -106,6 +112,36 @@ public class BackendStorageDomainVmResource
         }
 
         return doAction(VdcActionType.ImportVm, params, action);
+    }
+
+    private void validateVnicMappings(Action action) {
+        if (action.isSetVnicProfileMappings() && action.getVnicProfileMappings().isSetVnicProfileMappings()) {
+            action.getVnicProfileMappings().getVnicProfileMappings().forEach(this::validateVnicProfileMapping);
+        }
+    }
+
+    private void validateVnicProfileMapping(VnicProfileMapping mapping) {
+        if (!mapping.isSetSourceNetworkName()) {
+            badRequest("vNic profile mapping is missing source network name.");
+        }
+        if (!mapping.isSetSourceNetworkProfileName()) {
+            badRequest("vNic profile mapping is missing source network profile name.");
+        }
+        if (!mapping.isSetTargetVnicProfile()) {
+            badRequest("vNic profile mapping is missing target vNic profile.");
+        }
+        if (!mapping.getTargetVnicProfile().isSetId()) {
+            badRequest("vNic profile mapping is missing target vNic profile id.");
+        }
+        asGuid(mapping.getTargetVnicProfile().getId());
+    }
+
+    private boolean getReassignBadMacs(Action action) {
+        return action.isSetReassignBadMacs() && action.isReassignBadMacs();
+    }
+
+    private Collection<ExternalVnicProfileMapping> getVnicProfileMappings(Action action) {
+        return ExternalVnicProfileMappingMapper.mapFromModel(action.getVnicProfileMappings());
     }
 
     private void setVolumesTypeFormat(Action action) {
