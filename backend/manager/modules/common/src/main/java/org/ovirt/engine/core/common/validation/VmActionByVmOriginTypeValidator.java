@@ -13,7 +13,6 @@ public class VmActionByVmOriginTypeValidator {
     static {
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVmToServer);
-        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.InternalMigrateVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.CancelMigrateVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.SetVmTicket);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.VmLogon);
@@ -24,7 +23,6 @@ public class VmActionByVmOriginTypeValidator {
 
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.MigrateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.MigrateVmToServer);
-        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.InternalMigrateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.CancelMigrateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.SetVmTicket);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.VmLogon);

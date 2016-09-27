@@ -63,10 +63,6 @@ ASYNC_TASKS_MAP = {
         'MigrateVmToServerCommand',
         'Migrating a virtual machine to a dedicated server',
     ],
-    '15': [
-        'InternalMigrateVmCommand',
-        'Migrating a virtual machine due to an internal engine flow',
-    ],
     '23': [
         'ExportVmCommand',
         'Exporting a virtual machine to an export domain',

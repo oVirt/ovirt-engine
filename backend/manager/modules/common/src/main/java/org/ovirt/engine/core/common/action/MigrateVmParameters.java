@@ -35,15 +35,6 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         setForceMigrationForNonMigratableVm(forceMigrationForNonMigratableVM);
     }
 
-    public MigrateVmParameters(InternalMigrateVmParameters internalMigrateVmParameters) {
-        this(false, internalMigrateVmParameters.getVmId());
-
-        setReason(internalMigrateVmParameters.getReason());
-        setTransactionScopeOption(internalMigrateVmParameters.getTransactionScopeOption());
-        setCorrelationId(internalMigrateVmParameters.getCorrelationId());
-        setParentCommand(internalMigrateVmParameters.getParentCommand());
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(

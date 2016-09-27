@@ -23,7 +23,6 @@ public enum VdcActionType {
     RunVm(12, ActionGroup.RUN_VM, QuotaDependency.CLUSTER),
     RunVmOnce(13, ActionGroup.RUN_VM, QuotaDependency.BOTH),
     MigrateVm(14, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
-    InternalMigrateVm(15, QuotaDependency.NONE),
     MigrateVmToServer(16, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
     ReorderVmNics(17, ActionGroup.CREATE_VM, false, QuotaDependency.NONE),
     VmLogon(18, ActionGroup.CONNECT_TO_VM, QuotaDependency.NONE),
