@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
-import org.slf4j.Logger;
 
 public class ClearExternalJobCommandTest extends BaseCommandTest {
 
@@ -28,8 +27,6 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
     @InjectMocks
     private ClearExternalJobCommand<VdcActionParametersBase> command =
             new ClearExternalJobCommand<>(new VdsActionParameters(), null);
-    @Mock
-    private Logger log;
 
     private Job makeTestJob(Guid jobId) {
         Job job = new Job();
