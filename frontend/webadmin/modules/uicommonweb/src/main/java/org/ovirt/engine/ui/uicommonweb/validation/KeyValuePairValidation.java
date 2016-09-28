@@ -1,27 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-@SuppressWarnings("unused")
 public class KeyValuePairValidation implements IValidation {
-    private boolean privateallowAlsoKey;
-
-    private boolean getallowAlsoKey() {
-        return privateallowAlsoKey;
-    }
-
-    private void setallowAlsoKey(boolean value) {
-        privateallowAlsoKey = value;
-    }
+    private final boolean allowAlsoKey;
 
     public KeyValuePairValidation() {
-        this.setallowAlsoKey(false);
+        this(false);
     }
 
     // allows key without value, i.e. key,key=value,key,key</param>
     public KeyValuePairValidation(boolean allowAlsoKey) {
-        this.setallowAlsoKey(allowAlsoKey);
+        this.allowAlsoKey = allowAlsoKey;
     }
 
     @Override
@@ -45,7 +36,7 @@ public class KeyValuePairValidation implements IValidation {
 
                     // if the split length is 2, its a 'key=value'
                     // if the split length is 1 (key), we accept only when we allow it (allowAlsoKey==true)
-                    if (getallowAlsoKey()) {
+                    if (allowAlsoKey) {
                         if (array.length < 1 || array.length > 2) {
                             result.setSuccess(false);
                             break;
@@ -59,17 +50,21 @@ public class KeyValuePairValidation implements IValidation {
                     }
 
                     for (String t : array) {
-                        if (StringHelper.isNullOrEmpty(t.trim())) {
+                        if (StringUtils.isEmpty(t.trim())) {
                             result.setSuccess(false);
                             break;
                         }
+                    }
+                    if (result.getSuccess() && array.length == 2) {
+                        //No problems so far, check if there are type issues.
+                        validateKeyValuePair(array[0], array[1], result);
                     }
                 }
             }
         }
 
         if (!result.getSuccess()) {
-            if (!getallowAlsoKey()) {
+            if (!allowAlsoKey) {
                 result.getReasons().add(ConstantsManager.getInstance()
                         .getConstants()
                         .valueDoesntNotMatchPatternKeyValueKeyValueInvalidReason());
@@ -82,5 +77,9 @@ public class KeyValuePairValidation implements IValidation {
         }
 
         return result;
+    }
+
+    protected void validateKeyValuePair(String key, String value, ValidationResult result) {
+        //No-op, sub classes can override for specific tests they need to perform.
     }
 }

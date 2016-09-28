@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -227,7 +228,11 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
             String v = pair.getValue();
 
             if (PM_PORT_KEY.equals(k)) {
-                port.setEntity(StringUtils.isEmpty(value.get(k)) ? 0 : Integer.parseInt(value.get(k)));
+                try {
+                    port.setEntity(StringUtils.isEmpty(value.get(k)) ? 0 : Integer.parseInt(value.get(k)));
+                } catch (NumberFormatException e) {
+                    port.setEntity(0);
+                }
             } else if (PM_SLOT_KEY.equals(k)) {
                 slot.setEntity(StringUtils.isEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
@@ -361,7 +366,18 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         password.validateEntity(new IValidation[] {new NotEmptyValidation(), new LengthValidation(50)});
         type.validateSelectedItem(new IValidation[] {new NotEmptyValidation()});
         port.validateEntity(new IValidation[] {new IntegerValidation(1, 65535)});
-        options.validateEntity(new IValidation[] {new KeyValuePairValidation(true)});
+        options.validateEntity(new IValidation[] {new KeyValuePairValidation(true) {
+            @Override
+            protected void validateKeyValuePair(String key, String value, ValidationResult result) {
+                super.validateKeyValuePair(key, value, result);
+                IntegerValidation intValidation = new IntegerValidation();
+                ValidationResult intResult = intValidation.validate(value);
+                if (!intResult.getSuccess()) {
+                    result.getReasons().addAll(intResult.getReasons());
+                    result.setSuccess(false);
+                }
+            }
+        }});
     }
 
     /**
