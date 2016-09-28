@@ -5,18 +5,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
-import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.CreateSnapshotCommand;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.CreateVolumeParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -40,24 +36,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
 
     public AddImageFromScratchCommand(Guid commandId) {
         super(commandId);
-    }
-
-    @Override
-    public CommandCallback getCallback() {
-        if (isDataOperationsByHSM()) {
-            return new ConcurrentChildCommandsExecutionCallback();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected AsyncTaskType getTaskType() {
-        if (isDataOperationsByHSM()) {
-            return AsyncTaskType.notSupported;
-        }
-
-        return super.getTaskType();
     }
 
     @Override
@@ -108,24 +86,19 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     protected boolean processImageInIrs() {
-        if (isDataOperationsBySpm()) {
-            Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage,
-                    getCreateImageVDSCommandParameters());
-            if (vdsReturnValue.getSucceeded()) {
-                getParameters().setVdsmTaskIds(new ArrayList<>());
-                getParameters().getVdsmTaskIds().add(
-                        createTask(taskId,
-                                vdsReturnValue.getCreationInfo(),
-                                getParameters().getParentCommand(),
-                                VdcObjectType.Storage,
-                                getParameters().getStorageDomainId()));
-                getTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage,
+                getCreateImageVDSCommandParameters());
+        if (vdsReturnValue.getSucceeded()) {
+            getParameters().setVdsmTaskIds(new ArrayList<>());
+            getParameters().getVdsmTaskIds().add(
+                    createTask(taskId,
+                            vdsReturnValue.getCreationInfo(),
+                            getParameters().getParentCommand(),
+                            VdcObjectType.Storage,
+                            getParameters().getStorageDomainId()));
+            getTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
 
-                return true;
-            }
-        } else {
-            runInternalAction(VdcActionType.CreateVolume, getCreateVolumeParameters());
             return true;
         }
 
