@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -64,9 +63,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private AddVmTemplateCommand<AddVmTemplateParameters> cmd =
-            new AddVmTemplateCommand<>(
-                    new AddVmTemplateParameters(vm, "templateName", "Template for testing"),
-                    CommandContext.createContext(""));
+            new AddVmTemplateCommand<>(new AddVmTemplateParameters(vm, "templateName", "Template for testing"), null);
 
     @Mock
     private VmDao vmDao;
@@ -117,14 +114,13 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
         mockOsRepository();
 
-        doNothing().when(cmd).initUser();
         doNothing().when(cmd).separateCustomProperties(any(VmStatic.class));
         doReturn(getDisksList(vm.getStoragePoolId())).when(cmd).getVmDisksFromDB();
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
 
-        cmd.postConstruct();
+        cmd.init();
     }
 
     protected void mockOsRepository() {
