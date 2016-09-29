@@ -183,6 +183,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 }
                 provisioning_SelectedItemChanged();
                 updateMigrationForLocalSD();
+
+                // A workaround for setting the current saved CustomCompatibilityVersion value after
+                // it was reset by getTemplateWithVersion event
+                getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
+                setCustomCompatibilityVersionChangeInProgress(false);
             }
         });
     }
@@ -399,4 +404,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         }
     }
 
+    @Override
+    public void setCustomCompatibilityVersionChangeInProgress(boolean isCustomCompatibilityVersionChangeInProgress) {
+        this.isCustomCompatibilityVersionChangeInProgress = isCustomCompatibilityVersionChangeInProgress;
+    }
 }

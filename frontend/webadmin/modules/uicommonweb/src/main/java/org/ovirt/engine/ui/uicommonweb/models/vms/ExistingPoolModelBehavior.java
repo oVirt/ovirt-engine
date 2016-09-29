@@ -74,7 +74,11 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                         : Linq.firstOrNull(dataCenterWithClusters));
         getModel().getCpuSharesAmount().setEntity(pool.getCpuShares());
         updateCpuSharesSelection();
-        initTemplate();
+
+        if (!isCustomCompatibilityVersionChangeInProgress) {
+            initTemplate();
+        }
+
         instanceTypeManager.updateAll();
     }
 

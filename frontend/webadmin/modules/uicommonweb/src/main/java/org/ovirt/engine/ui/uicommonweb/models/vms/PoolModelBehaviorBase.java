@@ -160,6 +160,11 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
                     getModel().getCpuSharesAmount().setEntity(vmBase.getCpuShares());
                     updateCpuSharesSelection();
+
+                    // A workaround for setting the current saved CustomCompatibilityVersion value after
+                    // it was reset by getTemplateWithVersion event
+                    getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
+                    setCustomCompatibilityVersionChangeInProgress(false);
                 }
             });
         }
@@ -295,4 +300,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getVmInitModel().disableAutoSetHostname();
     }
 
+    @Override
+    public void setCustomCompatibilityVersionChangeInProgress(boolean isCustomCompatibilityVersionChangeInProgress) {
+        this.isCustomCompatibilityVersionChangeInProgress = isCustomCompatibilityVersionChangeInProgress;
+    }
 }

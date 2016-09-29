@@ -1976,6 +1976,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             else if (sender == getCustomCompatibilityVersion()) {
                 // window must be updated as if a cluster change occurred because feature availability should be reconsidered
+                if (behavior.isCustomCompatibilityVersionChangeInProgress()) {
+                    return;
+                }
+
+                // A workaround for saving the current CustomCompatibilityVersion value for re-setting it after
+                // it will be reset by the getTemplateWithVersion event.
+                // This is relevant for new VM only
+                behavior.setCustomCompatibilityVersionChangeInProgress(true);
+                behavior.setSavedCurrentCustomCompatibilityVersion(getCustomCompatibilityVersion().getSelectedItem());
+
                 compatibilityVersionChanged(sender, args);
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {

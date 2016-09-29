@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -104,15 +103,11 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
     @Override
     public void executed(FrontendMultipleQueryAsyncResult result) {
-        List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-        List<VmTemplate> templates =
-                (ArrayList<VmTemplate>) returnValueList.get(0).getReturnValue();
-        initTemplateWithVersion(templates, null, false);
         initCdImage();
     }
 
     @Override
-    protected void initTemplateWithVersion(List<VmTemplate> templates, Guid previousTemplateId, boolean useLatest) {
+    protected void initTemplateWithVersion(List<VmTemplate> templates, Guid previousTemplateId, boolean useLatest, boolean addLatest) {
         DataCenterWithCluster dataCenterWithCluster = this.getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
         Guid selectedDataCenterId = selectedDataCenter.getId();

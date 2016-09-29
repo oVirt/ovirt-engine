@@ -81,6 +81,14 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                         templatesWithoutBlank.add(template);
                     }
                 }
+
+                // A workaround - mark the process of CustomCompatibilityVersionChange as finished in case of an empty templates list for the
+                // new pool.
+                // The reason is that in case of an empty templates list, the getTemplateWithVersion event won't be raised and therefore
+                // CustomCompatibilityVersion won't be reset by a selected template.
+                if (templatesWithoutBlank.isEmpty()) {
+                    setCustomCompatibilityVersionChangeInProgress(false);
+                }
                 initTemplateWithVersion(templatesWithoutBlank, null, false);
             }
         }), dataCenter.getId());

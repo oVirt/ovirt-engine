@@ -96,6 +96,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private int maxVmsInPool = 1000;
 
+    protected boolean isCustomCompatibilityVersionChangeInProgress = false;
+    protected Version savedCurrentCustomCompatibilityVersion = null;
+
     public List<String> getDedicatedHostsNames() {
         return dedicatedHostsNames;
     }
@@ -1636,5 +1639,20 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected <T> AsyncQuery<T> asyncQuery(AsyncCallback<T> callback) {
         return getModel().asyncQuery(callback);
+    }
+
+    public boolean isCustomCompatibilityVersionChangeInProgress() {
+        return isCustomCompatibilityVersionChangeInProgress;
+    }
+
+    public void setCustomCompatibilityVersionChangeInProgress(boolean isCustomCompatibilityVersionChangeInProgress) {
+    }
+
+    public void setSavedCurrentCustomCompatibilityVersion(Version savedCurrentCustomCompatibilityVersion) {
+        this.savedCurrentCustomCompatibilityVersion = savedCurrentCustomCompatibilityVersion;
+    }
+
+    public Version getSavedCurrentCustomCompatibilityVersion() {
+        return savedCurrentCustomCompatibilityVersion;
     }
 }

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
@@ -24,6 +23,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
 
     @Override
     protected void postInitTemplate(List<VmTemplate> templates) {
+
         DataCenterWithCluster selectedDCWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         Guid clusterId =
                 selectedDCWithCluster != null ? selectedDCWithCluster.getCluster().getId()
@@ -53,13 +53,10 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
             relatedTemplates.add(baseTemplate);
         }
 
-        initTemplateWithVersion(relatedTemplates, null, false);
-
-        if (selectedDCWithCluster != null && selectedDCWithCluster.getCluster() != null) {
-            if (selectedTemplate.getClusterId() == null || selectedTemplate.getClusterId().equals(selectedDCWithCluster.getCluster().getId())) {
-                TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, selectedTemplate);
-                getModel().getTemplateWithVersion().setSelectedItem(templateCouple);
-            }
+        if (getModel().getTemplateWithVersion().getSelectedItem() == null) {
+            initTemplateWithVersion(relatedTemplates, selectedTemplate.getId(), false);
+        } else {
+            initTemplateWithVersion(relatedTemplates, null, false);
         }
 
         updateIsDisksAvailable();
