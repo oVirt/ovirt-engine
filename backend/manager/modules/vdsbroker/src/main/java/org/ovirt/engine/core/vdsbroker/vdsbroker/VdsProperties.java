@@ -31,6 +31,7 @@ public final class VdsProperties {
     public static final String selinux_mode = "mode";
     public static final String numOfIoThreads = "numOfIoThreads";
     public static final String pinToIoThread = "pinToIoThread";
+    public static final String ioThreadId = "ioThreadId";
 
     // vds runtime (i.e. VdsDynamic req getVdsStats)
     public static final String netConfigDirty = "netConfigDirty";

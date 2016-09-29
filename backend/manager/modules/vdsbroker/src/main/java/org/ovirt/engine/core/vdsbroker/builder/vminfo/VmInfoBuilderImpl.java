@@ -338,9 +338,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         vmDevice.setAddress(
                                 vmInfoBuildUtils.createAddressForScsiDisk(virtioScsiIndex, unit).toString());
                     }
-                    if (FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion())) {
-                        pinnedDriveIndex = pinToIoThreads(vmDevice, pinnedDriveIndex);
-                    }
                     break;
                 case SPAPR_VSCSI:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);

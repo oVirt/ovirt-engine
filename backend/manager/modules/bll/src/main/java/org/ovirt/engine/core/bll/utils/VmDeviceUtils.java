@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -340,31 +341,38 @@ public class VmDeviceUtils {
      *
      * @param isVirtioScsiEnabled    true/false to enable/disable device respectively, null to leave it untouched
      */
-    public void updateVirtioScsiController(Guid vmId, Boolean isVirtioScsiEnabled) {
+    public void updateVirtioScsiController(VmBase vm, Boolean isVirtioScsiEnabled) {
         if (isVirtioScsiEnabled == null) {
             return; //we don't want to update the device
         }
 
+        removeVirtioScsiControllers(vm.getId());
         if (isVirtioScsiEnabled) {
-            if (!hasVirtioScsiController(vmId)) {
-                addVirtioScsiController(vmId);
-            }
-        } else {
-            removeVirtioScsiControllers(vmId);
+            addVirtioScsiController(vm, getVmCompatibilityVersion(vm));
         }
     }
 
     /**
-     * Add new VirtIO-SCSI controller to the VM.
+     * Add new VirtIO-SCSI controllers to the VM.
      */
-    public VmDevice addVirtioScsiController(Guid vmId) {
-        return addManagedDevice(
-            new VmDeviceId(Guid.newGuid(), vmId),
-            VmDeviceGeneralType.CONTROLLER,
-            VmDeviceType.VIRTIOSCSI,
-            Collections.emptyMap(),
-            true,
-            false);
+    public void addVirtioScsiController(VmBase vm, Version version) {
+        boolean hasIoThreads = vm.getNumOfIoThreads() > 0 && FeatureSupported.virtioScsiIoThread(version);
+        int numOfScsiControllers = hasIoThreads ? vm.getNumOfIoThreads() : 1;
+
+        for (int i = 0; i < numOfScsiControllers; i++) {
+            Map<String, Object> specParams = new HashMap<>();
+            if (hasIoThreads) {
+                specParams.put(VdsProperties.ioThreadId, i);
+            }
+            VmDevice device = addManagedDevice(
+                    new VmDeviceId(Guid.newGuid(), vm.getId()),
+                    VmDeviceGeneralType.CONTROLLER,
+                    VmDeviceType.VIRTIOSCSI,
+                    specParams,
+                    true,
+                    false);
+
+        }
     }
 
     /**
@@ -1099,7 +1107,7 @@ public class VmDeviceUtils {
                 params.isSoundDeviceEnabled());
         updateSmartcardDevice(oldVm, newVmBase);
         updateConsoleDevice(newVmBase.getId(), params.isConsoleEnabled());
-        updateVirtioScsiController(newVmBase.getId(), params.isVirtioScsiEnabled());
+        updateVirtioScsiController(newVmBase, params.isVirtioScsiEnabled());
     }
 
     /**
@@ -1289,7 +1297,7 @@ public class VmDeviceUtils {
         }
 
         if (Boolean.TRUE.equals(isVirtioScsiEnabled) && !hasVirtioScsi) {
-            addVirtioScsiController(dstId);
+            addVirtioScsiController(dstVmBase, getVmCompatibilityVersion(dstVmBase));
         }
 
         if (isBalloonEnabled && !hasBalloon) {
@@ -1354,6 +1362,16 @@ public class VmDeviceUtils {
         }
 
         return vmBase;
+    }
+
+    private Version getVmCompatibilityVersion(VmBase base) {
+        if (base.getCustomCompatibilityVersion() != null) {
+            return base.getCustomCompatibilityVersion();
+        }
+        if (base.getClusterId() != null) {
+            return clusterDao.get(base.getClusterId()).getCompatibilityVersion();
+        }
+        return Version.getLast();
     }
 
     /**
