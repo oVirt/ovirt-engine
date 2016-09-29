@@ -113,7 +113,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.StorageDomainOvfStoreCount, 1)
+            mockConfig(ConfigValues.StorageDomainOvfStoreCount, 1),
+            mockConfig(ConfigValues.OvfItemsCountPerUpdate, ITEMS_COUNT_PER_UPDATE)
     );
 
     @BeforeClass
@@ -123,7 +124,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        doReturn(ITEMS_COUNT_PER_UPDATE).when(command).loadConfigValue();
         doReturn(new ArrayList<DiskImage>()).when(ovfUpdateProcessHelper).getAllImageSnapshots(any(DiskImage.class));
         // init members
         initMembers();

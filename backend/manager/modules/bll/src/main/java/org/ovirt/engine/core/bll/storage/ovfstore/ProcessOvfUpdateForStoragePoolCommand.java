@@ -68,13 +68,9 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
         return super.getActionReturnValue();
     }
 
-    protected int loadConfigValue() {
-        return Config.<Integer> getValue(ConfigValues.OvfItemsCountPerUpdate);
-    }
-
     @Override
     protected void executeCommand() {
-        itemsCountPerUpdate = loadConfigValue();
+        itemsCountPerUpdate = Config.getValue(ConfigValues.OvfItemsCountPerUpdate);
         proccessedDomains = new HashSet<>();
         StoragePool pool = getStoragePool();
         proccessDomainsForOvfUpdate(pool);
