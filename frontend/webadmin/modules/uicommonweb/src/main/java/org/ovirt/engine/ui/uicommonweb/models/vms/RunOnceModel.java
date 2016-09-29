@@ -400,18 +400,6 @@ public abstract class RunOnceModel extends Model {
         privateIsWindowsOS = value;
     }
 
-    private boolean hwAcceleration;
-
-    public boolean getHwAcceleration() {
-        return hwAcceleration;
-    }
-
-    public void setHwAcceleration(boolean value) {
-        if (hwAcceleration != value) {
-            hwAcceleration = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HwAcceleration")); //$NON-NLS-1$
-        }
-    }
 
     private BootSequenceModel bootSequence;
 
@@ -653,7 +641,6 @@ public abstract class RunOnceModel extends Model {
         getBootMenuEnabled().setEntity(true);
         getRunAsStateless().setEntity(vm.isStateless());
         getRunAndPause().setEntity(vm.isRunAndPause());
-        setHwAcceleration(true);
 
         // passing Kernel parameters
         getKernelParameters().setEntity(vm.getKernelParams());
@@ -733,7 +720,6 @@ public abstract class RunOnceModel extends Model {
         params.setBootSequence(getBootSequence().getSequence());
         params.setDiskPath(getIsoImagePath());
         params.setFloppyPath(getFloppyImagePath());
-        params.setKvmEnable(getHwAcceleration());
         params.setBootMenuEnabled(getBootMenuEnabled().getEntity());
         params.setRunAndPause(getRunAndPause().getEntity());
         params.setAcpiEnable(true);

@@ -33,7 +33,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     private BootSequence bootSequence;
     private String diskPath;
-    private boolean kvmEnable;
     private Boolean runAndPause;
     private boolean acpiEnable;
     private Boolean win2kHackEnable;
@@ -60,7 +59,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public RunVmParams(Guid vmId) {
         super(vmId);
-        kvmEnable = true;
         acpiEnable = true;
     }
 
@@ -78,7 +76,6 @@ public class RunVmParams extends VmOperationParameterBase {
         return Objects.equals(getVmId(), other.getVmId())
                 && bootSequence == other.bootSequence
                 && Objects.equals(diskPath, other.diskPath)
-                && kvmEnable == other.kvmEnable
                 && Objects.equals(runAndPause, other.runAndPause)
                 && acpiEnable == other.acpiEnable
                 && Objects.equals(win2kHackEnable, other.win2kHackEnable)
@@ -105,7 +102,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 getVmId(),
                 bootSequence,
                 diskPath,
-                kvmEnable,
                 runAndPause,
                 acpiEnable,
                 win2kHackEnable,
@@ -149,14 +145,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setDiskPath(String value) {
         diskPath = value;
-    }
-
-    public boolean getKvmEnable() {
-        return kvmEnable;
-    }
-
-    public void setKvmEnable(boolean value) {
-        kvmEnable = value;
     }
 
     public Boolean getRunAndPause() {

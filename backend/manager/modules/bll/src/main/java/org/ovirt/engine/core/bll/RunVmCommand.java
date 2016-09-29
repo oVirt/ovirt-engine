@@ -698,7 +698,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         updateGraphicsInfos();
 
-        getVm().setKvmEnable(getParameters().getKvmEnable());
+        getVm().setKvmEnable(true);
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
         if (getParameters().getBootMenuEnabled() != null) {
