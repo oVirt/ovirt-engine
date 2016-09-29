@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,30 +53,38 @@ public class FindVmAndDestinations {
         this.requiredMemory = requiredMemory;
     }
 
-    public Result invoke(List<VDS> sourceHosts, List<VDS> destinationHosts, VmDao vmDao) {
-        List<VDS> validDestinationHosts;
+    public Optional<Result> invoke(List<VDS> sourceHosts,
+            List<VDS> destinationHosts,
+            VmDao vmDao,
+            VmStatisticsDao vmStatisticsDao) {
+
         // Iterate over source hosts until you find valid vm to migrate, hosts sorted by cpu usage
         for (VDS sourceHost : sourceHosts){
             // Get list of all migratable vms on host
             List<VM> migratableVmsOnHost = getMigratableVmsRunningOnVds(vmDao, sourceHost.getId());
-            if (migratableVmsOnHost != null && !migratableVmsOnHost.isEmpty()){
-                // Sort vms by cpu usage
-                Collections.sort(migratableVmsOnHost, VmCpuUsageComparator.INSTANCE);
-                for (VM vmToMigrate : migratableVmsOnHost){
-                    if (vmToMigrate != null){
-                        // Check if vm not over utilize memory or CPU of destination hosts
-                        validDestinationHosts = getValidHosts(
-                                destinationHosts, cluster, vmToMigrate, highCpuUtilization, requiredMemory
-                        );
-                        if (!validDestinationHosts.isEmpty()){
-                            log.debug("Vm '{}' selected for migration", vmToMigrate.getName());
-                            return new Result(vmToMigrate, validDestinationHosts);
-                        }
-                    }
+            if (migratableVmsOnHost.isEmpty()) {
+                continue;
+            }
+
+            // Statistics are needed for sorting by cpu usage
+            for (VM vm : migratableVmsOnHost) {
+                vm.setStatisticsData(vmStatisticsDao.get(vm.getId()));
+            }
+
+            // Sort vms by cpu usage
+            Collections.sort(migratableVmsOnHost, VmCpuUsageComparator.INSTANCE);
+            for (VM vmToMigrate : migratableVmsOnHost){
+                // Check if vm not over utilize memory or CPU of destination hosts
+                List<VDS> validDestinationHosts = getValidHosts(
+                        destinationHosts, cluster, vmToMigrate, highCpuUtilization, requiredMemory);
+
+                if (!validDestinationHosts.isEmpty()){
+                    log.debug("Vm '{}' selected for migration", vmToMigrate.getName());
+                    return Optional.of(new Result(vmToMigrate, validDestinationHosts));
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -103,12 +113,9 @@ public class FindVmAndDestinations {
      * @return list od VM that run on host and can be migrated
      */
     protected List<VM> getMigratableVmsRunningOnVds(final VmDao vmDao, final Guid hostId) {
-        List<VM> vmsFromDB = vmDao.getAllRunningForVds(hostId);
-
-        return vmsFromDB.stream()
-                .filter(
-                        vm -> vm.getMigrationSupport() == MigrationSupport.MIGRATABLE
-                ).collect(Collectors.toList());
+        return vmDao.getAllRunningForVds(hostId).stream()
+                .filter(vm -> vm.getMigrationSupport() == MigrationSupport.MIGRATABLE)
+                .collect(Collectors.toList());
     }
 
     /**

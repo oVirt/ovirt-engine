@@ -21,6 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 
 public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest {
     protected  <T extends CpuAndMemoryBalancingPolicyUnit> T mockUnit(
@@ -51,6 +52,12 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
         doReturn(vmDao).when(unit).getVmDao();
         for (Guid guid: hosts.keySet()) {
             doReturn(vmsOnAHost(vms.values(), guid)).when(vmDao).getAllRunningForVds(guid);
+        }
+
+        VmStatisticsDao vmStatisticsDao = mock(VmStatisticsDao.class);
+        doReturn(vmStatisticsDao).when(unit).getVmStatisticsDao();
+        for (Map.Entry<Guid, VM> entry : vms.entrySet()) {
+            doReturn(entry.getValue().getStatisticsData()).when(vmStatisticsDao).get(entry.getKey());
         }
 
         return unit;

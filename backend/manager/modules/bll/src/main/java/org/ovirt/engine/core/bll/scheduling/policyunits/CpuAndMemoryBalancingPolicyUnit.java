@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
@@ -21,21 +23,26 @@ import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUsageComparator;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuAndMemoryBalancingPolicyUnit.class);
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
 
     @Override
     protected Set<PolicyUnitParameter> getParameters() {
@@ -74,10 +81,8 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             return Optional.empty();
         }
 
-        List<VDS> destinationHosts = null;
-        VM vmToMigrate = null;
-
         FindVmAndDestinations findVmAndDestinations = getFindVmAndDestinations(cluster, parameters);
+        Optional<BalanceResult> result = Optional.empty();
 
         // try balancing based on CPU first
         if (overUtilizedPrimaryHosts != null && overUtilizedPrimaryHosts.size() > 0) {
@@ -91,18 +96,12 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                                 + " based on the CPU usage, will try memory based approach",
                         cluster.getName());
             } else {
-                FindVmAndDestinations.Result result =
-                        findVmAndDestinations.invoke(overUtilizedPrimaryHosts, underUtilizedHosts, getVmDao());
-                if (result != null) {
-                    destinationHosts = result.getDestinationHosts();
-                    vmToMigrate = result.getVmToMigrate();
-                }
+                result = getBalance(findVmAndDestinations, overUtilizedPrimaryHosts, underUtilizedHosts);
             }
         }
 
         // if it is not possible (or necessary) to balance based on CPU, try with memory
-        if ((destinationHosts == null || destinationHosts.size() == 0 || vmToMigrate == null)
-                && (overUtilizedSecondaryHosts != null && overUtilizedSecondaryHosts.size() > 0)) {
+        if (!result.isPresent() && (overUtilizedSecondaryHosts != null && overUtilizedSecondaryHosts.size() > 0)) {
             // returns hosts with more free memory than the specified threshold
             List<VDS> underUtilizedHosts = getSecondaryDestinations(cluster, hosts, parameters);
 
@@ -114,22 +113,24 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                 return Optional.empty();
             }
 
-            FindVmAndDestinations.Result result = findVmAndDestinations.invoke(overUtilizedSecondaryHosts, underUtilizedHosts, getVmDao());
-            if (result != null) {
-                destinationHosts = result.getDestinationHosts();
-                vmToMigrate = result.getVmToMigrate();
-            }
+            result = getBalance(findVmAndDestinations, overUtilizedSecondaryHosts, underUtilizedHosts);
         }
 
-        if (destinationHosts == null || destinationHosts.size() == 0
-                || vmToMigrate == null) {
-            return Optional.empty();
-        }
-
-        List<Guid> destinationHostsKeys = destinationHosts.stream().map(VDS::getId).collect(Collectors.toList());
-
-        return Optional.of(new BalanceResult(vmToMigrate.getId(), destinationHostsKeys));
+        return result;
     }
+
+    private Optional<BalanceResult> getBalance(FindVmAndDestinations findVmAndDestinations,
+            final List<VDS> overUtilizedHosts,
+            final List<VDS> underUtilizedHosts) {
+
+        return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, getVmDao(), getVmStatisticsDao())
+                .map(res -> new BalanceResult(res.getVmToMigrate().getId(),
+                                res.getDestinationHosts().stream()
+                                    .map(VDS::getId)
+                                    .collect(Collectors.toList()))
+                    );
+    }
+
 
     /**
      * Get all hosts that have more free memory than minFreeMemory, but less free memory than maxFreeMemory.
@@ -299,7 +300,11 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     }
 
     protected VmDao getVmDao() {
-        return DbFacade.getInstance().getVmDao();
+        return vmDao;
+    }
+
+    protected VmStatisticsDao getVmStatisticsDao() {
+        return vmStatisticsDao;
     }
 
     protected ClusterDao getClusterDao() {
