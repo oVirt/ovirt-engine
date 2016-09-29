@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -113,7 +114,10 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
 
-    private Set<VmRngDevice.Source> requiredRngSources;
+    /**
+     * Set of rng sources that are required in addition to mandatory {@link VmRngDevice.Source.RANDOM}.
+     */
+    private Set<VmRngDevice.Source> additionalRngSources;
 
     private FencingPolicy fencingPolicy;
 
@@ -148,7 +152,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         name = "";
         virtService = true;
         optimizationType = OptimizationType.NONE;
-        requiredRngSources = new HashSet<>();
+        additionalRngSources = new HashSet<>();
         fencingPolicy = new FencingPolicy();
         addtionalFeaturesSupported = new HashSet<>();
         ksmMergeAcrossNumaNodes = true;
@@ -437,8 +441,21 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         this.serialNumberPolicy = serialNumberPolicy;
     }
 
+    public Set<VmRngDevice.Source> getAdditionalRngSources() {
+        return additionalRngSources;
+    }
+
+    public void setAdditionalRngSources(Set<VmRngDevice.Source> additionalRngSources) {
+        this.additionalRngSources = additionalRngSources;
+    }
+
+    /**
+     * @return Set of required rng sources.
+     */
     public Set<VmRngDevice.Source> getRequiredRngSources() {
-        return requiredRngSources;
+        final Set<VmRngDevice.Source> requiredRngSources = new HashSet<>(getAdditionalRngSources());
+        requiredRngSources.add(VmRngDevice.Source.RANDOM);
+        return Collections.unmodifiableSet(requiredRngSources);
     }
 
     public FencingPolicy getFencingPolicy() {
@@ -562,7 +579,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 haReservation,
                 clusterPolicyName,
                 clusterPolicyProperties,
-                requiredRngSources,
+                additionalRngSources,
                 enableKsm,
                 enableBallooning,
                 optimizationType,
@@ -624,7 +641,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 && serialNumberPolicy == other.serialNumberPolicy
                 && Objects.equals(customSerialNumber, other.customSerialNumber)
                 && Objects.equals(clusterHostsAndVms, other.clusterHostsAndVms)
-                && Objects.equals(requiredRngSources, other.requiredRngSources)
+                && Objects.equals(additionalRngSources, other.additionalRngSources)
                 && Objects.equals(fencingPolicy, other.fencingPolicy)
                 && Objects.equals(autoConverge, other.autoConverge)
                 && Objects.equals(migrateCompressed, other.migrateCompressed)

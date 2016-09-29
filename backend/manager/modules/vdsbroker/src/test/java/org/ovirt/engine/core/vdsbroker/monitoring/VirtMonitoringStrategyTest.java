@@ -151,7 +151,6 @@ public class VirtMonitoringStrategyTest {
         ClusterDao mock = mock(ClusterDao.class);
         cluster = new Cluster();
         cluster.setEmulatedMachine("pc-1.0");
-        cluster.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
         when(mock.get(any(Guid.class))).thenReturn(cluster);
         return mock;
     }

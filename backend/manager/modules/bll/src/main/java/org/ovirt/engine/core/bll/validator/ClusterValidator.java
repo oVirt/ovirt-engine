@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -8,6 +11,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -16,6 +20,9 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class ClusterValidator {
+
+    public static final Set<VmRngDevice.Source> ALLOWED_ADDITIONAL_RNG_SOURCES =
+            Collections.singleton(VmRngDevice.Source.HWRNG);
 
     private final Cluster cluster;
     private final ClusterDao clusterDao;
@@ -92,6 +99,11 @@ public class ClusterValidator {
     public ValidationResult migrationSupported(ArchitectureType arch) {
         return ValidationResult.failWith(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED)
                 .unless(migrationSupportedForArch(arch));
+    }
+
+    public ValidationResult rngSourcesAllowed() {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_RANDOM_RNG_SOURCE_CANT_BE_ADDED_TO_CLUSTER_ADDITIONAL_RNG_SOURCES)
+                .unless(ALLOWED_ADDITIONAL_RNG_SOURCES.containsAll(cluster.getAdditionalRngSources()));
     }
 
     protected boolean migrationSupportedForArch(ArchitectureType arch) {

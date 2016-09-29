@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class ClusterDaoImpl extends BaseDao implements ClusterDao {
+
     @Override
     public Cluster get(Guid id) {
         return get(id, null, false);
@@ -217,7 +218,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("gluster_service", cluster.supportsGlusterService())
                 .addValue("gluster_cli_based_snapshot_scheduled", cluster.isGlusterCliBasedSchedulingOn())
                 .addValue("tunnel_migration", cluster.isTunnelMigration())
-                .addValue("required_rng_sources", VmRngDevice.sourcesToCsv(cluster.getRequiredRngSources()))
+                .addValue("additional_rng_sources", VmRngDevice.sourcesToCsv(cluster.getAdditionalRngSources()))
                 .addValue("emulated_machine", cluster.getEmulatedMachine())
                 .addValue("detect_emulated_machine", cluster.isDetectEmulatedMachine())
                 .addValue("trusted_service", cluster.supportsTrustedService())
@@ -277,7 +278,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setGlusterService(rs.getBoolean("gluster_service"));
         entity.setGlusterCliBasedSchedulingOn(rs.getBoolean("gluster_cli_based_snapshot_scheduled"));
         entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
-        entity.getRequiredRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("required_rng_sources")));
+        entity.getAdditionalRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("additional_rng_sources")));
         entity.setEmulatedMachine(rs.getString("emulated_machine"));
         entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
         entity.setTrustedService(rs.getBoolean("trusted_service"));

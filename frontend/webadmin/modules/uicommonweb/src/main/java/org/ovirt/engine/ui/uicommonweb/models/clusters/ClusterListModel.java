@@ -757,9 +757,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
         cluster.setGlusterTunedProfile(model.getGlusterTunedProfile().getSelectedItem());
 
-        cluster.getRequiredRngSources().clear();
+        cluster.getAdditionalRngSources().clear();
         if (Boolean.TRUE.equals(model.getRngHwrngSourceRequired().getEntity())) {
-            cluster.getRequiredRngSources().add(VmRngDevice.Source.HWRNG);
+            cluster.getAdditionalRngSources().add(VmRngDevice.Source.HWRNG);
         }
         cluster.setMigrationBandwidthLimitType(model.getMigrationBandwidthLimitType().getSelectedItem());
         cluster.setCustomMigrationNetworkBandwidth(

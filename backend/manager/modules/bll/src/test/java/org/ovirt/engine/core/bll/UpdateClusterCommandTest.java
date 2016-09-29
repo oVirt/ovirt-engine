@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -520,6 +521,24 @@ public class UpdateClusterCommandTest {
         when(vmStaticDao.getAllByCluster(any())).thenReturn(Arrays.asList(vm1, vm2, vm3));
         // the VMs ordered by Guids: v2, v3, v1
         assertEquals(Arrays.asList(vm2, vm3, vm1), cmd.filterVmsInClusterNeedUpdate());
+    }
+
+    @Test
+    public void hwrngAdditionalRngDeviceUsed() {
+        final Cluster cluster = createDefaultCluster();
+        cluster.setAdditionalRngSources(Collections.singleton(VmRngDevice.Source.HWRNG));
+        createCommand(cluster);
+        cpuExists();
+        initAndAssertValidation(true);
+    }
+
+    @Test
+    public void randomAdditionalRngDeviceUsed() {
+        final Cluster cluster = createDefaultCluster();
+        cluster.setAdditionalRngSources(Collections.singleton(VmRngDevice.Source.RANDOM));
+        createCommand(cluster);
+        cpuExists();
+        validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_RANDOM_RNG_SOURCE_CANT_BE_ADDED_TO_CLUSTER_ADDITIONAL_RNG_SOURCES);
     }
 
     private void createSimpleCommand() {

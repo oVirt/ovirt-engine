@@ -588,6 +588,12 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_WRONG_PROTOCOL_FOR_CLUSTER_VERSION);
             }
         }
+
+        result = result && validate(new ClusterValidator(
+                getDbFacade(),
+                getCluster(),
+                cpuFlagsManagerHandler).rngSourcesAllowed());
+
         return result;
     }
 

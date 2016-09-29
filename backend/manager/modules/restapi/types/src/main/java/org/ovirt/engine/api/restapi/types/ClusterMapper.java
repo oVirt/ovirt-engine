@@ -23,6 +23,7 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapper {
@@ -119,9 +120,15 @@ public class ClusterMapper {
         if (model.isSetSerialNumber()) {
             SerialNumberMapper.copySerialNumber(model.getSerialNumber(), entity);
         }
+        /*
+         * For backward compatibility additional rng sources are presented in <required_rng_sources> together with
+         * implicit /dev/random source. <required_rng_sources> should be changed to <additional_rng_sources> during
+         * next api change.
+         */
         if (model.isSetRequiredRngSources()) {
-            entity.getRequiredRngSources().clear();
-            entity.getRequiredRngSources().addAll(RngDeviceMapper.mapRngSources(model.getRequiredRngSources().getRequiredRngSources()));
+            entity.getAdditionalRngSources().clear();
+            entity.getAdditionalRngSources().addAll(RngDeviceMapper.mapRngSources(model.getRequiredRngSources().getRequiredRngSources()));
+            entity.getAdditionalRngSources().remove(VmRngDevice.Source.RANDOM);
         }
         if (model.isSetFencingPolicy()) {
             entity.setFencingPolicy(FencingPolicyMapper.map(model.getFencingPolicy(), null));

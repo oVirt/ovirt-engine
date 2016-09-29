@@ -168,6 +168,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 && validate(validator.mixedClusterServicesSupported())
                 && validate(validator.attestationServerConfigured())
                 && validate(validator.migrationSupported(getArchitecture()))
+                && validate(validator.rngSourcesAllowed())
                 && validateClusterPolicy(null)
                 && validateManagementNetwork();
     }

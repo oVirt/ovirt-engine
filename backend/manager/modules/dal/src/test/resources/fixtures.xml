@@ -827,7 +827,7 @@
         <column>spice_proxy</column>
         <column>serial_number_policy</column>
         <column>custom_serial_number</column>
-        <column>required_rng_sources</column>
+        <column>additional_rng_sources</column>
         <column>skip_fencing_if_sd_active</column>
         <column>skip_fencing_if_connectivity_broken</column>
         <column>hosts_with_broken_connectivity_threshold</column>
