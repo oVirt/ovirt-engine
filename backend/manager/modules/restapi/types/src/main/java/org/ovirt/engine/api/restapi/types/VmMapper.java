@@ -40,7 +40,6 @@ import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
-import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.Template;
@@ -129,6 +128,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setConsoleDisconnectAction(entity.getConsoleDisconnectAction());
         staticVm.setSmallIconId(entity.getSmallIconId());
         staticVm.setLargeIconId(entity.getLargeIconId());
+        staticVm.setQuotaId(entity.getQuotaId());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm, version);
     }
 
@@ -214,9 +214,6 @@ public class VmMapper extends VmBaseMapper {
             staticVm.setDedicatedVmForVdsList(new LinkedList<>(hostGuidsSet));
         }
 
-        if (vm.isSetQuota() && vm.getQuota().isSetId()) {
-            staticVm.setQuotaId(GuidUtils.asGuid(vm.getQuota().getId()));
-        }
         if (vm.isSetInitialization()) {
             staticVm.setVmInit(InitializationMapper.map(vm.getInitialization(), staticVm.getVmInit()));
         }
@@ -468,11 +465,6 @@ public class VmMapper extends VmBaseMapper {
                 hostsList.getHosts().add(newHost);
             }
             model.getPlacementPolicy().setHosts(hostsList);
-        }
-        if (entity.getQuotaId()!=null) {
-            Quota quota = new Quota();
-            quota.setId(entity.getQuotaId().toString());
-            model.setQuota(quota);
         }
 
         if (entity.getVmInit() != null) {
