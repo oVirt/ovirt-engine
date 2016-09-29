@@ -129,6 +129,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setConsoleDisconnectAction(entity.getConsoleDisconnectAction());
         staticVm.setSmallIconId(entity.getSmallIconId());
         staticVm.setLargeIconId(entity.getLargeIconId());
+        staticVm.setQuotaId(entity.getQuotaId());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm, version);
     }
 
@@ -214,9 +215,6 @@ public class VmMapper extends VmBaseMapper {
             staticVm.setDedicatedVmForVdsList(new LinkedList<>(hostGuidsSet));
         }
 
-        if (vm.isSetQuota() && vm.getQuota().isSetId()) {
-            staticVm.setQuotaId(GuidUtils.asGuid(vm.getQuota().getId()));
-        }
         if (vm.isSetInitialization()) {
             staticVm.setVmInit(InitializationMapper.map(vm.getInitialization(), staticVm.getVmInit()));
         }
@@ -473,11 +471,6 @@ public class VmMapper extends VmBaseMapper {
                 hostsList.getHosts().add(newHost);
             }
             model.getPlacementPolicy().setHosts(hostsList);
-        }
-        if (entity.getQuotaId()!=null) {
-            Quota quota = new Quota();
-            quota.setId(entity.getQuotaId().toString());
-            model.setQuota(quota);
         }
 
         if (entity.getVmInit() != null) {

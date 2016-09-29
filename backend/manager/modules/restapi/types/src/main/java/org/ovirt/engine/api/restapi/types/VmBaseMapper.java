@@ -18,6 +18,7 @@ import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Io;
 import org.ovirt.engine.api.model.MemoryPolicy;
+import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
@@ -217,6 +218,10 @@ public class VmBaseMapper {
         if (model.isSetSmallIcon() && model.getSmallIcon().isSetId()) {
             entity.setSmallIconId(GuidUtils.asGuid(model.getSmallIcon().getId()));
         }
+
+        if (model.isSetQuota() && model.getQuota().isSetId()) {
+            entity.setQuotaId(GuidUtils.asGuid(model.getQuota().getId()));
+        }
     }
 
     /**
@@ -352,6 +357,12 @@ public class VmBaseMapper {
                 model.setSmallIcon(new Icon());
             }
             model.getSmallIcon().setId(entity.getSmallIconId().toString());
+        }
+
+        if (entity.getQuotaId()!=null) {
+            Quota quota = new Quota();
+            quota.setId(entity.getQuotaId().toString());
+            model.setQuota(quota);
         }
     }
 
