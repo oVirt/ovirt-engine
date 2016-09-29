@@ -137,6 +137,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPolicyEnableHostMaintenanceReasonLabel();
 
+    String additionalRngSource();
+
     String ksmLabelTitle();
 
     String enableKsmLabel();

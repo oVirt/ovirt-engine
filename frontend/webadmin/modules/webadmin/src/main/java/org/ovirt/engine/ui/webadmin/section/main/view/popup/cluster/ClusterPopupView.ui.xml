@@ -237,8 +237,7 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:Label ui:field="rngLabel"  addStyleNames="{style.smallPanelTitle}" text="{constants.requiredRngSources}" />
-                                        <ge:EntityModelCheckBoxEditor ui:field="rngRandomSourceRequired" label="{constants.rngSourceRandom}" removeFormGroup="true" usePatternFly="true" />
+                                        <g:Label ui:field="rngLabel"  addStyleNames="{style.smallPanelTitle} {style.groupTitle}" text="{constants.additionalRngSource}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" label="{constants.rngSourceHwrng}" removeFormGroup="true" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>

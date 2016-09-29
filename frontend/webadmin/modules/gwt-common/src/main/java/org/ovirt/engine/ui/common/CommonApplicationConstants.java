@@ -1389,8 +1389,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String spiceCopyPasteEnabled();
 
-    String requiredRngSources();
-
     String namespace();
 
     String authz();

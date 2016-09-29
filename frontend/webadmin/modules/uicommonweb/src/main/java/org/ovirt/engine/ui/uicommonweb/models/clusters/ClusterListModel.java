@@ -758,9 +758,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setGlusterTunedProfile(model.getGlusterTunedProfile().getSelectedItem());
 
         cluster.getRequiredRngSources().clear();
-        if (Boolean.TRUE.equals(model.getRngRandomSourceRequired().getEntity())) {
-            cluster.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
-        }
         if (Boolean.TRUE.equals(model.getRngHwrngSourceRequired().getEntity())) {
             cluster.getRequiredRngSources().add(VmRngDevice.Source.HWRNG);
         }

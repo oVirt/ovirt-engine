@@ -208,11 +208,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     Label rngLabel;
 
     @UiField(provided = true)
-    @Path(value = "rngRandomSourceRequired.entity")
-    @WithElementId
-    EntityModelCheckBoxEditor rngRandomSourceRequired;
-
-    @UiField(provided = true)
     @Path(value = "rngHwrngSourceRequired.entity")
     @WithElementId
     EntityModelCheckBoxEditor rngHwrngSourceRequired;
@@ -655,7 +650,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableBallooning.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
 
-        rngRandomSourceRequired = new EntityModelCheckBoxEditor(Align.RIGHT);
         rngHwrngSourceRequired = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         fencingEnabledCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);

@@ -245,16 +245,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         privateCPU = value;
     }
 
-    private EntityModel<Boolean> rngRandomSourceRequired;
-
-    public EntityModel<Boolean> getRngRandomSourceRequired() {
-        return rngRandomSourceRequired;
-    }
-
-    public void setRngRandomSourceRequired(EntityModel<Boolean> rngRandomSourceRequired) {
-        this.rngRandomSourceRequired = rngRandomSourceRequired;
-    }
-
     private EntityModel<Boolean> rngHwrngSourceRequired;
 
     public EntityModel<Boolean> getRngHwrngSourceRequired() {
@@ -1066,8 +1056,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getEnableOvirtService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.VirtOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
-        setRngRandomSourceRequired(new EntityModel<Boolean>());
-        getRngRandomSourceRequired().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         setRngHwrngSourceRequired(new EntityModel<Boolean>());
         getRngHwrngSourceRequired().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
@@ -1320,7 +1308,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         initSwitchType();
 
 
-        getRngRandomSourceRequired().setEntity(false);
         getRngHwrngSourceRequired().setEntity(false);
 
         setValidTab(TabName.GENERAL_TAB, true);
@@ -1896,14 +1883,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void setRngSourcesCheckboxes(Version ver) {
-        getRngRandomSourceRequired().setIsChangeable(true);
         getRngHwrngSourceRequired().setIsChangeable(true);
 
         String defaultRequiredRngSourcesCsv = defaultClusterRngSourcesCsv(ver);
 
-        getRngRandomSourceRequired().setEntity(getIsNew()
-                ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.RANDOM.name().toLowerCase())
-                : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.RANDOM));
         getRngHwrngSourceRequired().setEntity(getIsNew()
                 ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.HWRNG.name().toLowerCase())
                 : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.HWRNG));
@@ -2133,7 +2116,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         getManagementNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        validateRngRequiredSource();
+        getRngHwrngSourceRequired().setIsValid(true);
 
         boolean validService = true;
         if (getEnableOvirtService().getIsAvailable() && getEnableGlusterService().getIsAvailable()) {
@@ -2174,7 +2157,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         boolean generalTabValid = getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getManagementNetwork().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
-                && getRngRandomSourceRequired().getIsValid()
                 && getRngHwrngSourceRequired().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
@@ -2212,11 +2194,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     public void validateCPU() {
         getCPU().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-    }
-
-    private void validateRngRequiredSource() {
-        getRngRandomSourceRequired().setIsValid(true);
-        getRngHwrngSourceRequired().setIsValid(true);
     }
 
     private String defaultClusterRngSourcesCsv(Version ver) {
