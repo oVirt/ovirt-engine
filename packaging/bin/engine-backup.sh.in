@@ -27,6 +27,7 @@ export ENGINE_VARS="${ENGINE_VARS:-@ENGINE_VARS@}"
 PACKAGE_NAME="@PACKAGE_NAME@"
 PACKAGE_VERSION="@PACKAGE_VERSION@"
 DISPLAY_VERSION="@DISPLAY_VERSION@"
+ENGINE_USR="@ENGINE_USR@"
 
 die() {
 	local m="$1"
@@ -195,6 +196,8 @@ for p in /var/lib/ovirt-engine/*; do
 ${p}"
 done
 
+HE_CLEANER="${ENGINE_USR}/setup/dbutils/hecleaner.sh"
+
 ENGINE_TABLES_TO_CLEAN_ON_RESTORE="async_tasks
 async_tasks_entities
 business_entity_snapshot
@@ -302,6 +305,9 @@ USAGE:
                                     Might not work as expected with the --*db-user options.
  --provision-all-databases          on restore, create a PostgreSQL database for all the
                                     databases that were included in the backup
+
+ --he-remove-storage-vm             Removes the hosted-engine storage domain, all its entities and the hosted-engine VM during restore.
+ --he-remove-hosts                  Removes all the hosted-engine hosts during restore.
 
  --fast-restore                     the default for backup, equivalent to:
          --archive-compressor=gzip \\
@@ -432,6 +438,8 @@ MY_REPORTS_DB_SECURED_VALIDATION=False
 MY_REPORTS_DB_CREDS=
 RESTORE_PERMISSIONS=
 PROVISION_ALL_DBS=
+HE_REMOVE_STORAGE_VM=
+HE_REMOVE_HOSTS=
 VALID_BACKUP_RESTORE_PAIRS="3.6 4.0"
 # A newline-separated list of pair. E.g. if we want to allow 4.0->4.1,
 #VALID_BACKUP_RESTORE_PAIRS="3.6 4.0
@@ -723,6 +731,12 @@ parseArgs() {
 				PROVISION_ALL_DBS=1
 				PROVISIONING=1
 			;;
+			--he-remove-storage-vm)
+				HE_REMOVE_STORAGE_VM=1
+			;;
+			--he-remove-hosts)
+				HE_REMOVE_HOSTS=1
+			;;
 			--fast-restore)
 				ARCHIVE_COMPRESS_OPTION=z
 				FILES_COMPRESS_OPTION=J
@@ -774,6 +788,12 @@ verifyArgs() {
 	[ -n "${LOG}" ] || die "--log is missing"
 	if [ "${MODE}" == "restore" ] ; then
 		[ -e "${FILE}" ] || die "${FILE} does not exist"
+	fi
+
+	if [ -n "${HE_REMOVE_STORAGE_VM}" -o -n "${HE_REMOVE_HOSTS}" ] ; then
+		if [ "${MODE}" != "restore" ] ; then
+			die "hosted-engine cleaning options work only in restore mode"
+		fi
 	fi
 
 	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
@@ -1123,6 +1143,8 @@ machines, disks, etc., are missing in the engine, and will probably require
 recovery or recreation.
 ------------------------------------------------------------------------------
 __EOF__
+		[ -n "${HE_REMOVE_STORAGE_VM}" ] && removeHostedEngineStorageVM
+		[ -n "${HE_REMOVE_HOSTS}" ] && removeHostedEngineHosts
 	fi
 	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
 		output "- DWH database '"${DWH_DB_DATABASE}"'"
@@ -1400,6 +1422,33 @@ cleanDbTempData() {
 			>> "${LOG}"  2>&1 \
 			|| logdie "Failed cleaning up ${table}"
 	done || logdie "Failed cleaning up temp data"
+}
+
+callHECleaner() {
+	local mode="$1"
+	DBFUNC_DB_PGPASSFILE="${MYPGPASS}"
+	export DBFUNC_DB_PGPASSFILE
+	$HE_CLEANER \
+		-l "${LOG}" \
+		-u "${ENGINE_DB_USER}" \
+		-s "${ENGINE_DB_HOST}" \
+		-p "${ENGINE_DB_PORT}" \
+		-d "${ENGINE_DB_DATABASE}" \
+		-v \
+		-q \
+		-${mode} \
+		>> "${LOG}"  2>&1 \
+		|| logdie "Failed cleaning hosted-engine"
+}
+
+removeHostedEngineStorageVM() {
+	output "  - Removing the hosted-engine storage domain, all its entities and the hosted-engine VM."
+	callHECleaner "R"
+}
+
+removeHostedEngineHosts() {
+	output "  - Removing all the hosted-engine hosts."
+	callHECleaner "M"
 }
 
 resetDwhCurrentlyRunning() {
