@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -31,7 +30,6 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     @Mock
     protected VmDao vmDao;
 
-    @Spy
     @InjectMocks
     protected ExportRepoImageCommand<ExportRepoImageParameters> cmd =
             new ExportRepoImageCommand<>(

@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -79,7 +78,6 @@ public class AddClusterCommandTest extends BaseCommandTest {
     private ManagementNetworkOnClusterOperationParameters parameters = createParameters(cluster);
     private CommandContext commandContext = CommandContext.createContext(parameters.getSessionId());
 
-    @Spy
     @InjectMocks
     private AddClusterCommand<ManagementNetworkOnClusterOperationParameters> addClusterCommand =
             new AddClusterCommand<>(parameters, commandContext);

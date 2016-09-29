@@ -10,7 +10,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -35,7 +34,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -71,7 +69,6 @@ public class HostedEngineConfigFetcherTest {
     private Instance<HostedEngineHelper> hostedEngineHelperInstance;
     @Mock
     private HostedEngineHelper hostedEngineHelper;
-    @Spy
     @InjectMocks
     private HostedEngineConfigFetcher configFetcher;
 
@@ -81,7 +78,6 @@ public class HostedEngineConfigFetcherTest {
         when(hostedEngineHelper.getStorageDomainId()).thenReturn(DOMAIN_ID);
         when(hostedEngineHelper.getStoragePoolId()).thenReturn(POOL_ID);
         when(hostedEngineHelper.getRunningHostId()).thenReturn(HOST_ID);
-        reset(configFetcher);
     }
 
     @Test

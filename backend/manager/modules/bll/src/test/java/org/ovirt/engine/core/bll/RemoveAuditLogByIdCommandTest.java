@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.dao.AuditLogDao;
 
 public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
 
-    @Spy
     @InjectMocks
     RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters> command =
             new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(), null);

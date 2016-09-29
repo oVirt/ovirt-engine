@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,7 +15,6 @@ import org.ovirt.engine.core.dao.RoleGroupMapDao;
 public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
     private RolesParameterBase params = generateParameters();
 
-    @Spy
     @InjectMocks
     private RolesCommandBase<? extends RolesParameterBase> command = generateCommand();
     private Role role;

@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.EndExternalStepParameters;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
@@ -33,7 +32,6 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
 
     private EndExternalStepParameters parameters = new EndExternalStepParameters(stepId, true);
 
-    @Spy
     @InjectMocks
     private EndExternalStepCommand<EndExternalStepParameters> command = new EndExternalStepCommand<>(parameters, null);
 

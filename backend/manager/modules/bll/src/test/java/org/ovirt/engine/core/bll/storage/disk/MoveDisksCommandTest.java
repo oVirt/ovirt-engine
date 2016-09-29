@@ -14,7 +14,6 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
@@ -50,7 +49,6 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     /**
      * The command under test
      */
-    @Spy
     @InjectMocks
     protected MoveDisksCommand<MoveDisksParameters> command =
             new MoveDisksCommand<>(new MoveDisksParameters(new ArrayList<>()), null);

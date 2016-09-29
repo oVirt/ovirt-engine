@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
@@ -31,7 +30,6 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
     private Guid vdsId = Guid.newGuid();
     private Guid storagePoolId = Guid.newGuid();
 
-    @Spy
     @InjectMocks
     private ForceSelectSPMCommand<ForceSelectSPMParameters> command =
             new ForceSelectSPMCommand<>(new ForceSelectSPMParameters(vdsId), null);

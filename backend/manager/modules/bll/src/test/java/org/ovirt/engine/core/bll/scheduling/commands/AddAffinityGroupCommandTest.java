@@ -45,11 +45,10 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     @Before
     public void setup() {
-        doReturn(new Cluster()).when(command).getCluster();
+        command.setCluster(new Cluster());
         VmStatic vmStatic = new VmStatic();
         vmStatic.setClusterId(clusterId);
         doReturn(vmStatic).when(vmStaticDao).get(any(Guid.class));
-        doReturn(clusterId).when(command).getClusterId();
     }
 
     @Test
@@ -114,6 +113,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
         affinityGroup = new AffinityGroup();
         affinityGroup.setEntityIds(new ArrayList<>());
         affinityGroup.getEntityIds().add(vmId);
+        affinityGroup.setClusterId(clusterId);
         return affinityGroup;
     }
 }

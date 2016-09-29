@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -63,7 +62,6 @@ public class AuditLogableBaseTest {
     @Mock
     VdsDao vdsDao;
 
-    @Spy
     @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
 

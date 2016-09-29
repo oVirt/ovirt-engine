@@ -9,7 +9,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -27,7 +26,6 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    @Spy
     @InjectMocks
     private AddQuotaCommand command = createCommand();
 

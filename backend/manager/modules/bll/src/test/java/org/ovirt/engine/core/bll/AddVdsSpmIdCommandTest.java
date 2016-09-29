@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
@@ -18,8 +17,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 
 public class AddVdsSpmIdCommandTest extends BaseCommandTest {
-
-    @Spy
     @InjectMocks
     private AddVdsSpmIdCommand<VdsActionParameters> cmd = new AddVdsSpmIdCommand<>(new VdsActionParameters(), null);
     private Guid spId;

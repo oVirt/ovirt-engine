@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -36,7 +35,6 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    @Spy
     @InjectMocks
     private RemoveQuotaCommand command = createCommand();
 

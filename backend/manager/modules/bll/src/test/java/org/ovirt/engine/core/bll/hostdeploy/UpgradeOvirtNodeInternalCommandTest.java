@@ -10,7 +10,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
@@ -44,7 +43,6 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     @Mock
     private VdsDao vdsDao;
 
-    @Spy
     @InjectMocks
     private UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command =
             new UpgradeOvirtNodeInternalCommand<>(createParameters(), null);

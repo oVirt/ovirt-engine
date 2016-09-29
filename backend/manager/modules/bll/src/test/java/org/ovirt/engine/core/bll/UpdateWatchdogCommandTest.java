@@ -17,7 +17,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -44,7 +43,6 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
     @Mock
     private VmDeviceDao vmDeviceDaoMock;
 
-    @Spy
     @InjectMocks
     private UpdateWatchdogCommand command = new UpdateWatchdogCommand(new WatchdogParameters(), null);
 

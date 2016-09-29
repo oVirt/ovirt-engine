@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -25,7 +24,6 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
     @Mock
     private StepDao stepDaoMock;
 
-    @Spy
     @InjectMocks
     private AddExternalStepCommand<AddExternalStepParameters> command =
             new AddExternalStepCommand<>(new AddExternalStepParameters(jobId, "step 1", StepEnum.VALIDATING), null);

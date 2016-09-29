@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -20,7 +19,6 @@ public class EndExternalJobCommandTest extends BaseCommandTest {
     @Mock
     private JobDao jobDaoMock;
 
-    @Spy
     @InjectMocks
     private EndExternalJobCommand<EndExternalJobParameters> commandMock = new EndExternalJobCommand<>(parameters, null);
 

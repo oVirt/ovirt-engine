@@ -9,7 +9,6 @@ import java.util.Collections;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -33,7 +32,6 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     @Mock
     private VdsDao vdsDao;
 
-    @Spy
     @InjectMocks
     private ActivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd =
             new ActivateStorageDomainCommand<>(new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid()), null);

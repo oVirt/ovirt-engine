@@ -11,7 +11,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 public class AddStorageDomainCommonTest extends BaseCommandTest {
 
-    @Spy
     @InjectMocks
     private AddStorageDomainCommon<StorageDomainManagementParameter> cmd =
             new AddStorageDomainCommon<>(new StorageDomainManagementParameter(), null);

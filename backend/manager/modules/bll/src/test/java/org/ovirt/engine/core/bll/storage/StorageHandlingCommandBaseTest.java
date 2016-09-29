@@ -12,7 +12,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
-    @Spy
     @InjectMocks
     private StorageHandlingCommandBase<StoragePoolManagementParameter> cmd =
             new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(createStoragePool()));

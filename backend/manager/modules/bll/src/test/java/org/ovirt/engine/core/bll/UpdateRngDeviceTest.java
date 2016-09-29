@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -35,7 +34,6 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
     @Mock
     private ClusterDao clusterMock;
 
-    @Spy
     @InjectMocks
     private UpdateRngDeviceCommand cmd =
             new UpdateRngDeviceCommand(new RngDeviceParameters(getDevice(deviceId, vmId), true), null);

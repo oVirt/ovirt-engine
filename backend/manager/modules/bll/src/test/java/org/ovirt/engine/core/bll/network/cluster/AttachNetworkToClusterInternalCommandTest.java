@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
@@ -40,7 +39,6 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
     private AttachNetworkToClusterParameter param =
             new AttachNetworkToClusterParameter(getExistingCluster(), getNetwork());
 
-    @Spy
     @InjectMocks
     private AttachNetworkToClusterInternalCommand<AttachNetworkToClusterParameter> underTest =
             new AttachNetworkToClusterInternalCommand<>(param, null);

@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -39,7 +38,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 @RunWith(MockitoJUnitRunner.class)
 public class AutoRecoveryManagerTest {
 
-    @Spy
     @InjectMocks
     private AutoRecoveryManager manager;
 

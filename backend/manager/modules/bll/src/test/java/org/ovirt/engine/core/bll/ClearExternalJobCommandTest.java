@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.job.Job;
@@ -22,7 +21,6 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
     @Mock
     private JobDao jobDaoMock;
 
-    @Spy
     @InjectMocks
     private ClearExternalJobCommand<VdcActionParametersBase> command =
             new ClearExternalJobCommand<>(new VdsActionParameters(), null);
