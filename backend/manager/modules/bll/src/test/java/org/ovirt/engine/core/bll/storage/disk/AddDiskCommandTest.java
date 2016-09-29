@@ -131,7 +131,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
-        mockVm();
         mockEntities(storageId);
         runAndAssertValidateSuccess();
     }
@@ -141,7 +140,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
-        mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
@@ -215,7 +213,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, VolumeType.Preallocated);
 
-        mockVm();
         mockEntities(storageId);
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
@@ -227,7 +224,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, VolumeType.Sparse);
 
-        mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
@@ -249,7 +245,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         parameters.setDiskInfo(createDiskImage(MAX_BLOCK_SIZE));
         initializeCommand(storageId, parameters);
 
-        mockVm();
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
         mockInterfaceList();
@@ -268,7 +263,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         parameters.setDiskInfo(createDiskImage(MAX_BLOCK_SIZE * 2));
         initializeCommand(storageId, parameters);
 
-        mockVm();
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
@@ -292,7 +286,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
 
-        mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockInterfaceList();
@@ -314,7 +307,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
 
-        mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
@@ -335,7 +327,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
-        mockVm();
         mockStorageDomain(storageId, StorageType.GLUSTERFS);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
@@ -597,8 +588,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         lun.setLunConnections(connections);
         disk.setLun(lun);
         disk.setId(Guid.newGuid());
-        DiskVmElement dve = new DiskVmElement(disk.getId(), vmId);
-        disk.setDiskVmElements(Collections.singletonList(dve));
         return disk;
     }
 
@@ -625,7 +614,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        mockVm();
         mockInterfaceList();
         assertFalse("Lun disk added successfully WHILE sgio is filtered and scsi reservation is enabled",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
@@ -775,7 +763,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(Guid.newGuid(), parameters);
         command.setVds(vds);
 
-        mockVm();
         mockMaxPciSlots();
         mockInterfaceList();
 
@@ -815,7 +802,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateSuccess(command);
 
         LunDisk newDisk = createISCSILunDisk();
-        newDisk.getDiskVmElementForVm(vmId).setDiskInterface(DiskInterface.IDE);
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vmId);
+        dve.setDiskInterface(DiskInterface.IDE);
+        newDisk.setDiskVmElements(Collections.singletonList(dve));
+
         vm.getDiskMap().put(newDisk.getId(), newDisk);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS);
@@ -837,7 +827,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateSuccess(command);
 
         LunDisk newDisk = createISCSILunDisk();
-        newDisk.getDiskVmElementForVm(vmId).setDiskInterface(DiskInterface.VirtIO);
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vmId);
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        newDisk.setDiskVmElements(Collections.singletonList(dve));
         vm.getDiskMap().put(newDisk.getId(), newDisk);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS);
@@ -910,7 +902,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
-        VM vm = mockVm();
         mockMaxPciSlots();
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -971,7 +962,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void testValidateFailReadOnlyOnInterface() {
         AddDiskParameters parameters = createParameters();
         initializeCommand(Guid.newGuid(), parameters);
-        mockVm();
 
         doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
@@ -1039,7 +1029,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, params);
 
-        mockVm();
         mockEntities(storageId);
 
         QuotaDao quotaDaoMock = mock(QuotaDao.class);
