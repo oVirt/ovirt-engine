@@ -469,7 +469,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
                                         case V1:
                                         case V2:
                                         case V3:
-                                        case V4:
                                             result.setSuccess(false);
                                             result.getReasons().add(messages.uploadImageQemuCompatUnsupported(
                                                     qcowCompat.getValue(), storageFormatType.name()));
