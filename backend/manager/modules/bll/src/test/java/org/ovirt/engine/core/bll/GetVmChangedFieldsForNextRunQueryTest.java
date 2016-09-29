@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -33,9 +32,6 @@ import org.ovirt.engine.core.compat.Version;
 @RunWith(MockitoJUnitRunner.class)
 public class GetVmChangedFieldsForNextRunQueryTest
         extends AbstractQueryTest<GetVmChangedFieldsForNextRunParameters, GetVmChangedFieldsForNextRunQuery<? extends GetVmChangedFieldsForNextRunParameters>> {
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;

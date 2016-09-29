@@ -7,11 +7,11 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -26,9 +26,7 @@ import org.ovirt.engine.core.dao.VmDao;
 @RunWith(MockitoJUnitRunner.class)
 public class SnapshotVmConfigurationHelperTest {
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
+    @Mock
     private SnapshotDao snapshotDaoMock;
     private DiskImageDao diskImageDaoMock;
     private VmDao vmDaoMock;
@@ -40,14 +38,17 @@ public class SnapshotVmConfigurationHelperTest {
     private VM existingVm = null;
     private SnapshotsManager snapshotsManager;
     private DiskImage existingDiskImage;
+
+    @Mock
+    private MacPoolPerCluster macPoolPerCluster;
+
+    @InjectMocks
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     private static final String EXISTING_VM_NAME = "Dummy configuration";
 
     @Before
     public void setUp() throws Exception {
-        injectorRule.bind(MacPoolPerCluster.class, mock(MacPoolPerCluster.class));
-
         existingSnapshot = createSnapshot(existingSnapshotId);
         existingVm = createVm(existingVmId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration
@@ -62,7 +63,6 @@ public class SnapshotVmConfigurationHelperTest {
         vmDaoMock = mock(VmDao.class);
         doReturn(vmDaoMock).when(snapshotVmConfigurationHelper).getVmDao();
 
-        snapshotDaoMock = mock(SnapshotDao.class);
         doReturn(snapshotDaoMock).when(snapshotVmConfigurationHelper).getSnapshotDao();
 
         diskImageDaoMock = mock(DiskImageDao.class);

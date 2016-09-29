@@ -27,14 +27,12 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -98,9 +96,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
-    @InjectMocks
-    private static VmDeviceUtils vmDeviceUtils;
-
     @Spy
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
@@ -116,11 +111,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.StorageDomainOvfStoreCount, 1),
             mockConfig(ConfigValues.OvfItemsCountPerUpdate, ITEMS_COUNT_PER_UPDATE)
     );
-
-    @BeforeClass
-    public static void setUpClass() {
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-    }
 
     @Before
     public void setUp() {
