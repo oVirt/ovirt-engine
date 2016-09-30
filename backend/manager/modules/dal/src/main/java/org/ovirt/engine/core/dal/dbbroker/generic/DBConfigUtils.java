@@ -145,7 +145,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     }
 
     /**
-     * Initializes a new instance of the <see cref="DBConfigUtils"/> class.
+     * Initializes a new instance of the DBConfigUtils class.
      */
     public DBConfigUtils() {
         dbfacade = DbFacade.getInstance();
