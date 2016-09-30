@@ -1,10 +1,6 @@
 package org.ovirt.engine.core.utils;
 
 import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -13,9 +9,6 @@ import org.ovirt.engine.core.common.config.DefaultValueAttribute;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.TypeConverterAttribute;
-import org.ovirt.engine.core.compat.TimeSpan;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,59 +19,13 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
     private static final Logger log = LoggerFactory.getLogger(ConfigUtilsBase.class);
 
     @Override
-    public final boolean getBoolValue(String name, String defaultValue) {
-        return ((Boolean) getValue(DataType.Bool, name, defaultValue)).booleanValue();
-    }
-
-
-    @Override
-    public final int getIntValue(String name, String defaultValue) {
-        return ((Integer) getValue(DataType.Int, name, defaultValue)).intValue();
-    }
-
-
-    @Override
-    public final Date getDateTimeValue(String name, String defaultValue) {
-        Date dt = new Date(0);
-        String dateString = getValue(DataType.String, name, defaultValue).toString();
-        try {
-            dt = new SimpleDateFormat("k:m:s").parse(dateString);
-        } catch (Exception e) {
-            // eat it, the value is null
-        }
-        return dt;
-    }
-
-
-    @Override
-    public final TimeSpan getTimeSpanValue(String name, String defaultValue) {
-        return (TimeSpan) getValue(DataType.TimeSpan, name, defaultValue);
-    }
-
-
-    @Override
-    public final Version getVersionValue(String name, String defaultValue) {
-        return (Version) getValue(DataType.Version, name, defaultValue);
-    }
-
-
-    @Override
-    public final String getPathValue(String name, String defaultValue) {
-        return (String) getValue(DataType.String, name, defaultValue);
-    }
-
-
-    @Override
     public final void setStringValue(String name, String value) {
         setValue(name, value, ConfigCommon.defaultConfigurationVersion);
     }
 
-
-
     protected abstract void setValue(String name, String value, String version);
 
     protected abstract Object getValue(DataType type, String name, String defaultValue);
-
 
     @Override
     public abstract <T> T getValue(ConfigValues configValue, String version);
@@ -149,17 +96,6 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
                 // if could not get type then cannot continue
                 return null;
             }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<String, String> getMapValue(final String name, final String defaultValue) {
-        final String jsonString = (String) getValue(DataType.String, name, defaultValue);
-        if(jsonString != null) {
-            return new JsonObjectDeserializer().deserialize(jsonString, HashMap.class);
-        } else {
-            return null;
         }
     }
 }
