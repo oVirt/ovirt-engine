@@ -51,6 +51,8 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.DBEngine, null),
+            mockConfig(ConfigValues.DBPagingType, null),
             mockConfig(ConfigValues.SearchResultsLimit, 100),
             mockConfig(ConfigValues.DBSearchTemplate,
                     "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s"),

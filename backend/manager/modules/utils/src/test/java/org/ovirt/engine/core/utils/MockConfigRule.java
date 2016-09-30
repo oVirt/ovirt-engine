@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.utils;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,6 +12,7 @@ import java.util.List;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -95,7 +99,14 @@ public class MockConfigRule extends TestWatcher {
     @Override
     public void starting(Description description) {
         origConfUtils = Config.getConfigUtils();
-        Config.setConfigUtils(mock(IConfigUtilsInterface.class));
+        IConfigUtilsInterface configUtils = mock(IConfigUtilsInterface.class);
+        doAnswer(invocationOnMock -> {
+            VdcOption option = new VdcOption();
+            option.setOptionName(((ConfigValues) invocationOnMock.getArguments()[0]).name());
+            option.setVersion((String) invocationOnMock.getArguments()[1]);
+            return ConfigUtilsBase.getValue(option);
+        }).when(configUtils).getValue(any(ConfigValues.class), anyString());
+        Config.setConfigUtils(configUtils);
 
         for (MockConfigDescriptor<?> config : configs) {
             mockConfigValue(config.getValue(), config.getVersion(), config.getReturnValue());
