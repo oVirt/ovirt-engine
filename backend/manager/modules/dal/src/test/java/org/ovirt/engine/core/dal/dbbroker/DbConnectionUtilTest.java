@@ -9,8 +9,6 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -40,7 +38,6 @@ public class DbConnectionUtilTest extends BaseDaoTestCase{
     @DirtiesContext
     public void testDBConnectionWithoutConnection() throws Exception {
 
-        Config.setConfigUtils(new DBConfigUtils(false));
         try (InputStream is = super.getClass().getResourceAsStream("/test-database.properties")) {
             Properties properties = new Properties();
             properties.load(is);
