@@ -148,23 +148,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
      * Initializes a new instance of the <see cref="DBConfigUtils"/> class.
      */
     public DBConfigUtils() {
-        this(true);
+        dbfacade = DbFacade.getInstance();
+        refreshVdcOptionCache(dbfacade);
     }
 
     private DbFacade dbfacade = null;
-
-    /**
-     * Constructs a DBConfigUtils instance which does not use DbFacade. Used by the unit test.
-     *
-     * @param initDB
-     *            Whether to use DbFacade
-     */
-    public DBConfigUtils(boolean initDB) {
-        if (initDB) {
-            dbfacade = DbFacade.getInstance();
-            refreshVdcOptionCache(dbfacade);
-        }
-    }
 
     @SuppressWarnings("unchecked")
     @Override

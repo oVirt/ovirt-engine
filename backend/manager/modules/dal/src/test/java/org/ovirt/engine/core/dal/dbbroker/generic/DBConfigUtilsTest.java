@@ -24,7 +24,7 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        config = new DBConfigUtils(true);
+        config = new DBConfigUtils();
         Config.setConfigUtils(config);
     }
 
