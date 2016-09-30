@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.generic;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -70,5 +71,11 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
         // 3.6 -> false, 4.0 -> true
         assertFalse(Config.getValue(ConfigValues.SriovHotPlugSupported, "3.6"));
         assertTrue(Config.getValue(ConfigValues.SriovHotPlugSupported, "4.0"));
+    }
+
+    @Test
+    public void testValueDependent() {
+        assertEquals
+                (Config.<String> getValue(ConfigValues.PostgresPagingType), Config.getValue(ConfigValues.DBPagingType));
     }
 }

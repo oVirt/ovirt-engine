@@ -114,16 +114,16 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     break;
                 case ValueDependent:
                     // get the config that this value depends on
-                    if ((values = _vdcOptionCache.get(optionBehaviour.dependentOn().toString())) != null) {
-                        // its value is this value's prefix
-                        String prefix = (String) values.get(ConfigCommon.defaultConfigurationVersion);
-                        // combine the prefix with the 'real value'
-                        if ((values = _vdcOptionCache
-                                .get(String.format("%1$s%2$s", prefix, optionBehaviour.realValue()))) != null) {
-                            // get value of the wanted config - assuming
-                            // default!!
-                            result = values.get(ConfigCommon.defaultConfigurationVersion);
-                        }
+                    VdcOption dependsOption = new VdcOption();
+                    dependsOption.setOptionName(optionBehaviour.dependentOn().toString());
+                    dependsOption.setVersion(ConfigCommon.defaultConfigurationVersion);
+                    String prefix = (String) getValue(dependsOption);
+                    // combine the prefix with the 'real value'
+                    if (prefix != null) {
+                        VdcOption real = new VdcOption();
+                        real.setOptionName(String.format("%1$s%2$s", prefix, optionBehaviour.realValue()));
+                        real.setVersion(ConfigCommon.defaultConfigurationVersion);
+                        result = getValue(real);
                     }
                     break;
                 case CommaSeparatedVersionArray:
