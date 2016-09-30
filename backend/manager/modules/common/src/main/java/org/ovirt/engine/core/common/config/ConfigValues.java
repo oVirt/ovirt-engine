@@ -567,17 +567,17 @@ public enum ConfigValues {
     SendSMPOnRunVm,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" WHERE RowNum BETWEEN %1$s AND %2$s")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = DBEngine,
     realValue = "PagingSyntax")
     DBPagingSyntax,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Range")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = DBEngine,
     realValue = "PagingType")
     DBPagingType,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = DBEngine,
     realValue = "SearchTemplate")
     DBSearchTemplate,
     @TypeConverterAttribute(String.class)
@@ -723,7 +723,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = DBEngine,
     realValue = "LikeSyntax")
     DBLikeSyntax,
     @TypeConverterAttribute(String.class)
@@ -732,7 +732,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = DBEngine,
     realValue = "I18NPrefix")
     DBI18NPrefix,
     @TypeConverterAttribute(String.class)
