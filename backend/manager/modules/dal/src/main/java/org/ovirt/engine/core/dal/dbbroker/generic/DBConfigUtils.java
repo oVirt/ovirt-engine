@@ -158,8 +158,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
     @Override
     public <T> T getValue(ConfigValues name, String version) {
         T returnValue;
-        Map<String, Object> values = null;
-        if ((values = _vdcOptionCache.get(name.toString())) != null && values.containsKey(version)) {
+        Map<String, Object> values = _vdcOptionCache.get(name.toString());
+        if (values != null && values.containsKey(version)) {
             returnValue = (T) values.get(version);
         } else {
             VdcOption option = new VdcOption();
