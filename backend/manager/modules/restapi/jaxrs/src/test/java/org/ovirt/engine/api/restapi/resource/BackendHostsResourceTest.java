@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
@@ -20,13 +21,18 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 
 public class BackendHostsResourceTest
         extends AbstractBackendCollectionResourceTest<Host, VDS, BackendHostsResource> {
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.OrganizationName, "ovirt"));
 
     protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
     protected static final VDSStatus[] VDS_STATUS = { VDSStatus.Up, VDSStatus.Down, VDSStatus.Up };
@@ -225,8 +231,6 @@ public class BackendHostsResourceTest
         entity.setHostName(ADDRESSES[index]);
         entity.setStatus(VDS_STATUS[index]);
         entity.setStoragePoolId(GUIDS[1]);
-
-        doReturn(null).when(entity).getCertificateSubject();
 
         if (statistics != null) {
             setUpStatisticalEntityExpectations(entity, statistics);

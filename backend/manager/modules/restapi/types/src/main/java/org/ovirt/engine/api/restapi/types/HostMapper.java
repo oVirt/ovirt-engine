@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
+import org.ovirt.engine.core.common.utils.CertificateSubjectHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.OS;
 
@@ -114,9 +115,6 @@ public class HostMapper {
         if (model.isSetExternalHostProvider()) {
             String providerId = model.getExternalHostProvider().getId();
             entity.setHostProviderId(providerId == null ? null : GuidUtils.asGuid(providerId));
-        }
-        if (model.isSetCertificate()) {
-            entity.setCertificateSubject(model.getCertificate().getSubject());
         }
         if (model.isSetOs()) {
             mapOperatingSystem(model.getOs(), entity);
@@ -323,8 +321,8 @@ public class HostMapper {
         }
         devicePassthrough.setEnabled(entity.isHostDevicePassthroughEnabled());
 
-        if(entity.getCertificateSubject() != null) {
-            String subject = entity.getCertificateSubject();
+        if(entity.getHostName() != null) {
+            String subject = CertificateSubjectHelper.getCertificateSubject(entity.getHostName());
             model.setCertificate(new Certificate());
             model.getCertificate().setSubject(subject);
             model.getCertificate().setOrganization(subject.split(",")[0].replace("O=", ""));

@@ -11,6 +11,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.set
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpStatisticalEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.verifyModelSpecific;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -21,6 +22,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -52,16 +54,21 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostResourceTest
         extends AbstractBackendSubResourceTest<Host, VDS, BackendHostResource> {
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.OrganizationName, "ovirt"));
 
     private static final StorageType ISCSI_STORAGE_TYPE = StorageType.ISCSI;
     private static final int ISCSI_PORT_INT = 3260;

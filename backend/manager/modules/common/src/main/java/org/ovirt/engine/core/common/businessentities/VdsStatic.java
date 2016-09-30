@@ -10,7 +10,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
-import org.ovirt.engine.core.common.utils.CertificateSubjectHelper;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -120,8 +119,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableVdsField
     private Guid openstackNetworkProviderId;
-
-    private String certificateSubject;
 
     /**
      * Current kernel cmdline
@@ -386,17 +383,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setOpenstackNetworkProviderId(Guid openstackNetworkProviderId) {
         this.openstackNetworkProviderId = openstackNetworkProviderId;
-    }
-
-    public String getCertificateSubject() {
-        if (certificateSubject == null && getHostName() != null) {
-            setCertificateSubject(CertificateSubjectHelper.getCertificateSubject(getHostName()));
-        }
-        return certificateSubject;
-    }
-
-    public void setCertificateSubject(String certificateSubject) {
-        this.certificateSubject = certificateSubject;
     }
 
     public String getCurrentKernelCmdline() {

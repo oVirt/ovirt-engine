@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.utils.CertificateSubjectHelper;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -27,7 +28,7 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> e
                 if (vdsId != null) {
                     VdsStatic vds = getDbFacade().getVdsStaticDao().get(vdsId);
                     queryReturnValue.setSucceeded(true);
-                    queryReturnValue.setReturnValue(vds.getCertificateSubject());
+                    queryReturnValue.setReturnValue(CertificateSubjectHelper.getCertificateSubject(vds.getHostName()));
                 }
             }
         }

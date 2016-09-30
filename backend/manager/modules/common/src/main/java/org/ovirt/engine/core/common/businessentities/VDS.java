@@ -44,7 +44,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     private ServerCpu cpuName;
     private Integer vdsSpmId;
     private float maxSchedulingMemory;
-    private String certificateSubject;
     private boolean hostedEngineHost;
     private boolean fencingEnabled;
     private PeerStatus glusterPeerStatus;
@@ -1510,14 +1509,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         }
 
         return result;
-    }
-
-    public String getCertificateSubject() {
-        return vdsStatic.getCertificateSubject();
-    }
-
-    public void setCertificateSubject(String certificateSubject) {
-        vdsStatic.setCertificateSubject(certificateSubject);
     }
 
     public boolean isHostedEngineHost() {
