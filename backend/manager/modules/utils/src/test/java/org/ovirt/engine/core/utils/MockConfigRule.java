@@ -27,8 +27,6 @@ public class MockConfigRule extends TestWatcher {
     /** A descriptor for a single config mocking */
     public static class MockConfigDescriptor<T> {
 
-        public MockConfigDescriptor() {
-        }
         public MockConfigDescriptor(ConfigValues value, String version, T returnValue) {
             this.value = value;
             this.version = version;
