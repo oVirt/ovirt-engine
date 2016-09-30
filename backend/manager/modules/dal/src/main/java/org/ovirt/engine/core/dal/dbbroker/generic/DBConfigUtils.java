@@ -31,11 +31,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
      * Initializes a new instance of the DBConfigUtils class.
      */
     public DBConfigUtils() {
-        dbfacade = DbFacade.getInstance();
-        refreshVdcOptionCache(dbfacade);
+        refreshVdcOptionCache(DbFacade.getInstance());
     }
-
-    private DbFacade dbfacade = null;
 
     @SuppressWarnings("unchecked")
     @Override
