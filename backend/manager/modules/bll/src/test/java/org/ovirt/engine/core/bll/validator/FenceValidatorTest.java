@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.when;
@@ -15,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -24,14 +24,16 @@ import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Version;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FenceValidatorTest {
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private FenceValidator validator;
@@ -42,16 +44,12 @@ public class FenceValidatorTest {
     @Mock
     private BackendInternal backend;
 
-    @Mock
-    private IConfigUtilsInterface configUtils;
-
     @Before
     public void setup() {
         validator = new FenceValidator();
         validator = spy(validator);
         stub(validator.getProxyLocator(any(VDS.class))).toReturn(proxyLocator);
         doReturn(backend).when(validator).getBackend();
-        Config.setConfigUtils(configUtils);
     }
 
     @Test
@@ -93,7 +91,7 @@ public class FenceValidatorTest {
     @Test
     public void failWhenStartupTimeoutHasNotPassed() {
         List<String> messages = new LinkedList<>();
-        when(configUtils.getValue(eq(ConfigValues.DisableFenceAtStartupInSec), any(String.class))).thenReturn(5);
+        mcr.mockConfigValue(ConfigValues.DisableFenceAtStartupInSec, 5);
         when(backend.getStartedAt()).thenReturn(new DateTime(new Date()));
         boolean result = validator.isStartupTimeoutPassed(messages);
         assertEquals(1, messages.size());
@@ -104,7 +102,7 @@ public class FenceValidatorTest {
     @Test
     public void succeedWhenStartupTimeoutHasPassed() {
         List<String> messages = new LinkedList<>();
-        when(configUtils.getValue(eq(ConfigValues.DisableFenceAtStartupInSec), any(String.class))).thenReturn(5);
+        mcr.mockConfigValue(ConfigValues.DisableFenceAtStartupInSec, 5);
         when(backend.getStartedAt()).thenReturn(new DateTime(new Date().getTime() - 20000));
         boolean result = validator.isStartupTimeoutPassed(messages);
         assertTrue(result);
@@ -159,8 +157,8 @@ public class FenceValidatorTest {
         agent.setType("apc");
         vds.getFenceAgents().add(agent);
         List<String> messages = new LinkedList<>();
-        when(configUtils.getValue(eq(ConfigValues.VdsFenceType), any(String.class))).thenReturn("apc");
-        when(configUtils.getValue(eq(ConfigValues.CustomVdsFenceType), any(String.class))).thenReturn("apc");
+        mcr.mockConfigValue(ConfigValues.VdsFenceType, Version.getLast(), "apc");
+        mcr.mockConfigValue(ConfigValues.CustomVdsFenceType, Version.getLast(), "apc");
         boolean result = validator.isPowerManagementEnabledAndLegal(vds, cluster, messages);
         assertTrue(result);
     }
