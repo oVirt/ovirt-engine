@@ -24,8 +24,7 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        config = new DBConfigUtils(false);
-        config.refreshVdcOptionCache(dbFacade);
+        config = new DBConfigUtils(true);
         Config.setConfigUtils(config);
     }
 
