@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.Config;
@@ -25,6 +26,12 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
         super.setUp();
         config = new DBConfigUtils(false);
         config.refreshVdcOptionCache(dbFacade);
+        Config.setConfigUtils(config);
+    }
+
+    @After
+    public void tearDown() {
+        Config.setConfigUtils(null);
     }
 
     @Test

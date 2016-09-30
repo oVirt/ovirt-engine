@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -12,18 +13,23 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * {@code AuditLogDaoTest} performs tests against the {@link AuditLogDao} type.
  */
 public class AuditLogDaoTest extends BaseDaoTestCase {
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.MaxAuditLogMessageLength, 10000));
+
     private static final String VM_NAME = "rhel5-pool-50";
     private static final String VM_TEMPLATE_NAME = "1";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");

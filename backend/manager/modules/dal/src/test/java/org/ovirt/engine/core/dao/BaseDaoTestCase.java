@@ -20,10 +20,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.slf4j.LoggerFactory;
@@ -128,8 +126,6 @@ public abstract class BaseDaoTestCase {
     private static DataSource createDataSource() throws Exception {
         DataSource result = null;
         Properties properties = new Properties();
-
-        Config.setConfigUtils(new DBConfigUtils(false));
 
         String job = System.getProperty("JOB_NAME", "");
         String number = System.getProperty("BUILD_NUMBER", "");
