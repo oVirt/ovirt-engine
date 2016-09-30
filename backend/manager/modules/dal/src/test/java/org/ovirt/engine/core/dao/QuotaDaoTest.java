@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 
 public class QuotaDaoTest extends BaseDaoTestCase {
@@ -47,10 +45,10 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
         quota.setDescription("General quota");
-        quota.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
-        quota.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
-        quota.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
-        quota.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
+        quota.setThresholdClusterPercentage(80);
+        quota.setThresholdStoragePercentage(80);
+        quota.setGraceClusterPercentage(20);
+        quota.setGraceStoragePercentage(20);
         setQuotaGlobalLimitations(quota);
         quota.setQuotaClusters(getQuotaCluster(null));
         quota.setQuotaStorages(getQuotaStorage(null));
@@ -73,10 +71,10 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
         quota.setDescription("Specific quota");
-        quota.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
-        quota.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
-        quota.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
-        quota.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
+        quota.setThresholdClusterPercentage(80);
+        quota.setThresholdStoragePercentage(80);
+        quota.setGraceClusterPercentage(20);
+        quota.setGraceStoragePercentage(20);
         quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quotaId)));
         quota.setQuotaStorages(getQuotaStorage(getSpecificQuotaStorage(quotaId)));
         dao.save(quota);
@@ -95,10 +93,10 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
         quota.setDescription("General and specific quota");
-        quota.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
-        quota.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
-        quota.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
-        quota.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
+        quota.setThresholdClusterPercentage(80);
+        quota.setThresholdStoragePercentage(80);
+        quota.setGraceClusterPercentage(20);
+        quota.setGraceStoragePercentage(20);
         quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quotaId)));
         quota.setQuotaStorages(getQuotaStorage(null));
         quota.setGlobalQuotaStorage(new QuotaStorage(null, null, null, 10000L, 0d));
