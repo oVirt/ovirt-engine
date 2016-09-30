@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils;
+package org.ovirt.engine.core.utils;
 
 
 import static org.junit.Assert.assertEquals;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 
 
 public class CertificateSubjectHelperTest {

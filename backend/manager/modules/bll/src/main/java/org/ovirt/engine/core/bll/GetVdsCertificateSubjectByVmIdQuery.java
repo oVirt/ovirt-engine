@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.utils.CertificateSubjectHelper;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.CertificateSubjectHelper;
 
 public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsCertificateSubjectByVmIdQuery(P parameters) {

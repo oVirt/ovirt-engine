@@ -61,8 +61,8 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
-import org.ovirt.engine.core.common.utils.CertificateSubjectHelper;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.CertificateSubjectHelper;
 import org.ovirt.engine.core.utils.OS;
 
 public class HostMapper {

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils;
+package org.ovirt.engine.core.utils;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
