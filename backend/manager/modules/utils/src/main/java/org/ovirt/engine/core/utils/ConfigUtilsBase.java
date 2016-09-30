@@ -3,7 +3,6 @@ package org.ovirt.engine.core.utils;
 import java.lang.reflect.Field;
 
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.common.config.DefaultValueAttribute;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
@@ -16,10 +15,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
     private static final Logger log = LoggerFactory.getLogger(ConfigUtilsBase.class);
-
-    protected abstract void setValue(String name, String value, String version);
-
-    protected abstract Object getValue(DataType type, String name, String defaultValue);
 
     @Override
     public abstract <T> T getValue(ConfigValues configValue, String version);

@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.Reloadable;
 import org.ovirt.engine.core.compat.Version;
@@ -165,37 +164,6 @@ public class DBConfigUtils extends ConfigUtilsBase {
             dbfacade = DbFacade.getInstance();
             refreshVdcOptionCache(dbfacade);
         }
-    }
-
-    /**
-     * Sets a vdcoption value.
-     *
-     * @param name
-     *            The name.
-     * @param value
-     *            The value.
-     */
-    @Override
-    protected void setValue(String name, String value, String version) {
-        VdcOption vdcOption = dbfacade.getVdcOptionDao().getByNameAndVersion(name, version);
-        vdcOption.setOptionValue(value);
-        dbfacade.getVdcOptionDao().update(vdcOption);
-        try {
-            // refresh the cache entry after update
-            _vdcOptionCache.get(vdcOption.getOptionName()).put(version, getValue(vdcOption));
-        } catch (Exception e) {
-            log.error("Error updating option '{}' in cache: {}", name, e.getMessage());
-            log.debug("Exception", e);
-        }
-    }
-
-    @Override
-    protected Object getValue(DataType type, String name, String defaultValue) {
-        // Note that the type parameter is useless, it should be removed (and
-        // maybe all the method) in a future refactoring.
-        log.warn("Using old getValue for '{}'.", name);
-        ConfigValues value = ConfigValues.valueOf(name);
-        return getValue(value, ConfigCommon.defaultConfigurationVersion);
     }
 
     @SuppressWarnings("unchecked")
