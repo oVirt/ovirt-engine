@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDeleteParameters;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Theories.class)
 public class GetStorageDomainDefaultWipeAfterDeleteQueryTest

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.scheduling;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.HashSet;
 
@@ -25,9 +25,9 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @Category(IntegrationTest.class)

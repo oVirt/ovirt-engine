@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * Test invertible mappings, by mapping the outward followed by the inverse

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * {@code AuditLogDaoTest} performs tests against the {@link AuditLogDao} type.

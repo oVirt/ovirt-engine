@@ -52,14 +52,6 @@
       <scope>provided</scope>
     </dependency>
 
-   <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.xmlrpc;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,8 +10,8 @@ import java.net.URL;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class XmlRpcUtilsTest {
 

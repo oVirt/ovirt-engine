@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,11 +39,11 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddVdsCommandTest {
@@ -68,9 +69,9 @@ public class AddVdsCommandTest {
 
     @ClassRule
     public static MockConfigRule configRule =
-            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.MaxVdsNameLength, 4),
-                    MockConfigRule.mockConfig(ConfigValues.EncryptHostCommunication, false),
-                    MockConfigRule.mockConfig(ConfigValues.InstallVds, true));
+            new MockConfigRule(mockConfig(ConfigValues.MaxVdsNameLength, 4),
+                    mockConfig(ConfigValues.EncryptHostCommunication, false),
+                    mockConfig(ConfigValues.InstallVds, true));
 
     private VDS makeTestVds(Guid vdsId) {
         VDS newVdsData = new VDS();

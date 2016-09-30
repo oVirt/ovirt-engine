@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class AddQuotaCommandTest extends BaseCommandTest {
     @Mock

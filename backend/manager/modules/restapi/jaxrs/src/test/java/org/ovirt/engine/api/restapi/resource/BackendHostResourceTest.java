@@ -11,7 +11,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.set
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpStatisticalEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.verifyModelSpecific;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -60,9 +60,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class BackendHostResourceTest
         extends AbstractBackendSubResourceTest<Host, VDS, BackendHostResource> {

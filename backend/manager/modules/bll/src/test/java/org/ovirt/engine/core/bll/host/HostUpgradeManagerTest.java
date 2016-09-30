@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.host;
 
 import static org.junit.Assert.assertEquals;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +12,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class HostUpgradeManagerTest {
 

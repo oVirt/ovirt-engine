@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils;
+package org.ovirt.engine.core.utils;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

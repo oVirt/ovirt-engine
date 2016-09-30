@@ -185,13 +185,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-       <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.dbunit</groupId>
       <artifactId>dbunit</artifactId>
       <version>2.4.8</version>
