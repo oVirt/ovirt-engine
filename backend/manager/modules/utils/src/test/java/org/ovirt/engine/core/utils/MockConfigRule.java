@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.rules.TestWatcher;
@@ -52,11 +51,6 @@ public class MockConfigRule extends TestWatcher {
 
     private IConfigUtilsInterface origConfUtils;
     private List<MockConfigDescriptor<?>> configs;
-
-    /** Create the rule with no mocking */
-    public MockConfigRule() {
-        this(Collections.<MockConfigDescriptor<?>> emptyList());
-    }
 
     /** Create the rule, mocking the given configurations */
     public <T> MockConfigRule(MockConfigDescriptor<?>... configs) {
