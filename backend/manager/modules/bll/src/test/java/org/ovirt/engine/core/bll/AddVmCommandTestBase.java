@@ -9,14 +9,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,20 +51,8 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends BaseCommandTest {
-
-    private static final Map<String, String> migrationMap = new HashMap<>();
-    static {
-        migrationMap.put("undefined", "true");
-        migrationMap.put("x86_64", "true");
-        migrationMap.put("ppc64", "false");
-    }
-
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
-            mockConfig(ConfigValues.IsMigrationSupported, Version.v4_0, migrationMap),
-            mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
-    );
+    public MockConfigRule mcr = new MockConfigRule();
 
     protected static final int TOTAL_NUM_DOMAINS = 2;
     protected static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -44,9 +42,7 @@ public class JsonObjectSerializationEntitiesTest {
     private final BusinessEntity<?> entity;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.OrganizationName, "My Org")
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     public JsonObjectSerializationEntitiesTest(BusinessEntity<?> entity) {
         this.entity = entity;

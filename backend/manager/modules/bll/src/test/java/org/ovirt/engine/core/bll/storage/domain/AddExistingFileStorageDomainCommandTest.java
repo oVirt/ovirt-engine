@@ -6,7 +6,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -47,11 +45,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
             new AddExistingFileStorageDomainCommand<>(parameters, null);
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.StorageDomainNameSizeLimit, 50),
-            mockConfig(ConfigValues.WarningLowSpaceIndicator, 10),
-            mockConfig(ConfigValues.CriticalSpaceActionBlocker, 5)
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private VdsDao vdsDao;

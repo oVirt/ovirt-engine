@@ -12,7 +12,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.repla
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterValidatorBase> {
@@ -57,9 +55,6 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     protected Cluster cluster;
 
     protected T validator;
-
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Before
     public void setup() {

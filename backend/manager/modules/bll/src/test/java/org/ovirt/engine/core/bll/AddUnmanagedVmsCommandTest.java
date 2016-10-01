@@ -9,7 +9,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,8 +34,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.config.ConfigCommon;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -45,11 +42,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 public class AddUnmanagedVmsCommandTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HostedEngineVmName,
-                    ConfigCommon.defaultConfigurationVersion,
-                    "HostedEngine")
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     Instance<HostedEngineImporter> hostedEngineImporterProvider;

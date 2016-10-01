@@ -5,7 +5,6 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.List;
 
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -34,10 +32,7 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
     private NestedCommandFactory commandFactory;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DefaultMinThreadPoolSize, 6),
-            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 6),
-            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();

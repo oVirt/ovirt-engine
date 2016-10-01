@@ -8,22 +8,14 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
-
-    @Rule
-    public MockConfigRule mockConfigRule =
-            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false));
-
     @Test
     public void testCheckAddEditValidations() {
         Guid clusterPolicyId = new Guid("e754440b-76a6-4099-8235-4565ab4b5521");

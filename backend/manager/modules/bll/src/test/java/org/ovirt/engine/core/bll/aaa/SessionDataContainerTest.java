@@ -21,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -39,8 +38,7 @@ public class SessionDataContainerTest {
     private static final String SOFT_LIMIT = "soft_limit";
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.UserSessionTimeOutInterval, 2));
+    public MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private EngineSessionDao engineSessionDao;

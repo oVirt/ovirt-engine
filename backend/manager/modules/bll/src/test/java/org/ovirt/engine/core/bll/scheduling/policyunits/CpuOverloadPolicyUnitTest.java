@@ -4,16 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class CpuOverloadPolicyUnitTest {
 
     @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(
-                    MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, Integer.MAX_VALUE)
-            );
+    public static MockConfigRule configRule = new MockConfigRule();
 
     @Test
     public void testGetHighUtilizationForAllCores() throws Exception {

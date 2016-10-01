@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 
@@ -80,9 +78,6 @@ public class NetworkDeviceHelperImplTest {
     @Captor
     private ArgumentCaptor<Guid> vmIdCaptor;
     private NetworkDeviceHelperImpl networkDeviceHelper;
-
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Before
     public void setUp() {

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -47,10 +45,7 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
     protected static final Guid HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
-            mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
-            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     protected GlusterHooksDao hooksDao;

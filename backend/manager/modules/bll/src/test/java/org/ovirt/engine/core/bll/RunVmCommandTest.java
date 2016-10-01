@@ -15,7 +15,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -48,7 +47,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -69,9 +67,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class RunVmCommandTest extends BaseCommandTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GuestToolsSetupIsoPrefix, "General", "")
-            );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     /**
      * The command under test.

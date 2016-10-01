@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,14 +18,13 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class PermissionDaoTest extends BaseDaoTestCase {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ApplicationMode, 255));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private static final Guid STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
     private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");

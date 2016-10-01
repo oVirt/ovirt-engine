@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,12 +28,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
     private static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
 
     @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(
-                    MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, 1000),
-                    MockConfigRule.mockConfig(ConfigValues.VcpuConsumptionPercentage, 20),
-                    MockConfigRule.mockConfig(ConfigValues.SpmVCpuConsumption, 1)
-            );
+    public static MockConfigRule configRule = new MockConfigRule();
 
     @Test
     public void testScoreForCpuLoad() throws Exception {

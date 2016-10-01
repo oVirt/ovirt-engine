@@ -10,7 +10,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -62,10 +60,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     GlusterUtil glusterUtils;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
-            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
-            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 100));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private final Guid startedServiceId1 = Guid.newGuid();
     private final Guid startedServiceId2 = Guid.newGuid();

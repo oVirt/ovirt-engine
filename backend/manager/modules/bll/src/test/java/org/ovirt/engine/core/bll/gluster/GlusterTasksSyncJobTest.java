@@ -6,7 +6,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -99,11 +97,7 @@ public class GlusterTasksSyncJobTest {
     private GlusterTasksSyncJob tasksSyncJob;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
-            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
-            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
-            mockConfig(ConfigValues.GlusterTaskMinWaitForCleanupInMins, 10));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void init() {

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -44,8 +43,7 @@ public class FenceAgentExecutorTest {
     public static InjectorRule injectorRule = new InjectorRule();
 
     @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.FenceAgentMapping, ""));
+    public static MockConfigRule configRule = new MockConfigRule();
 
     @Mock
     private VDS vds;

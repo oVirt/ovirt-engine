@@ -9,7 +9,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -41,10 +39,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 public class AffinityRulesEnforcementManagerTest {
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1),
-            mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1)
-    );
+    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();

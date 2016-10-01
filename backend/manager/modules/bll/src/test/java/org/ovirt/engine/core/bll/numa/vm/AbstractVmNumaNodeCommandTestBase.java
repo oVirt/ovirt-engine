@@ -5,7 +5,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsNumaNodeDao;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVmNumaNodeDao;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -37,7 +35,7 @@ public abstract class AbstractVmNumaNodeCommandTestBase
         <T extends AbstractVmNumaNodeCommand<VmNumaNodeOperationParameters>> extends BaseCommandTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.SupportNUMAMigration, false));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     protected VmNumaNodeDao vmNumaNodeDao;

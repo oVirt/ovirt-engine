@@ -15,7 +15,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -40,17 +39,7 @@ public class HostMonitoringTest {
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(
-                    ConfigValues.DebugTimerLogging,
-                    true),
-            MockConfigRule.mockConfig(
-                    ConfigValues.VdsRefreshRate,
-                    3),
-            MockConfigRule.mockConfig(
-                    ConfigValues.TimeToReduceFailedRunOnVdsInMinutes,
-                    3)
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private VDS vds;
     private HostMonitoring updater;

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -19,24 +18,12 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolic
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InternalClusterPoliciesTest {
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.ExternalSchedulerEnabled, false),
-            MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false),
-            MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, Integer.MAX_VALUE),
-            MockConfigRule.mockConfig(ConfigValues.SpmVmGraceForEvenGuestDistribute, 10),
-            MockConfigRule.mockConfig(ConfigValues.MigrationThresholdForEvenGuestDistribute, 5),
-            MockConfigRule.mockConfig(ConfigValues.HighVmCountForEvenGuestDistribute, 10)
-    );
-
     @Test
     public void testConfiguredPolicyCreation() {
         assertNotNull(InternalClusterPolicies.getClusterPolicies());

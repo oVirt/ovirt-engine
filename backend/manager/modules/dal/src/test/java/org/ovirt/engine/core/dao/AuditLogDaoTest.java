@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -28,7 +27,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
  */
 public class AuditLogDaoTest extends BaseDaoTestCase {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.MaxAuditLogMessageLength, 10000));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private static final String VM_NAME = "rhel5-pool-50";
     private static final String VM_TEMPLATE_NAME = "1";

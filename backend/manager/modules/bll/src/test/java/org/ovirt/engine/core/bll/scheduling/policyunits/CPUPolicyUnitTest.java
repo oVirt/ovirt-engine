@@ -18,7 +18,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -28,9 +27,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class CPUPolicyUnitTest {
 
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, Integer.MAX_VALUE)
-    );
+    public static MockConfigRule configRule = new MockConfigRule();
 
     @Mock
     private ClusterDao clusterDao;

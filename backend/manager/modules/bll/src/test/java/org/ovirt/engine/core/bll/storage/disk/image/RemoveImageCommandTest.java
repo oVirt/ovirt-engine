@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -42,22 +40,7 @@ import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
 public class RemoveImageCommandTest extends BaseCommandTest {
     @ClassRule
-    public static MockConfigRule mcr =
-        new MockConfigRule(
-                mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
-                mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
-                mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v3_6, 16),
-                mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v3_6, 1),
-                mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
-                mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
-                mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v4_0, 16),
-                mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v4_0, 8),
-                mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_1, 16),
-                mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_1, 16),
-                mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v4_1, 16),
-                mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v4_1, 8),
-                mockConfig(ConfigValues.VdcVersion, Version.getLast().toString())
-        );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();

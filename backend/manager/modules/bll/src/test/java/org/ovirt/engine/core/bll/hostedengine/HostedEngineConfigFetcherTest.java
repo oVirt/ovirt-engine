@@ -14,7 +14,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -41,7 +40,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -59,8 +57,7 @@ public class HostedEngineConfigFetcherTest {
     private static final Guid VOLUME_ID = Guid.newGuid();
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HostedEngineConfigDiskSizeInBytes, 20480));
+    public MockConfigRule mcr = new MockConfigRule();
     @Mock
     private ResourceManager resourceManager;
     @Mock

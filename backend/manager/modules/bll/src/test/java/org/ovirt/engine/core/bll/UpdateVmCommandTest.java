@@ -15,10 +15,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -136,39 +134,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @InjectMocks
     private NumaValidator numaValidator;
 
-    private static final Map<String, String> migrationMap = new HashMap<>();
-
-    static {
-        migrationMap.put("undefined", "true");
-        migrationMap.put("x86_64", "true");
-        migrationMap.put("ppc64", "false");
-    }
-
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxVmNameLength, 64),
-            mockConfig(ConfigValues.SupportedClusterLevels,
-                    new HashSet<>(Arrays.asList(Version.v3_6, Version.v4_0))),
-            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
-            mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, ""),
-            mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, ""),
-            mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, ""),
-            mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, ""),
-            mockConfig(ConfigValues.VmPriorityMaxValue, 100),
-            mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
-            mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
-            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v3_6, 16),
-            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v3_6, 1),
-            mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
-            mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
-            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v4_0, 16),
-            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v4_0, 8),
-            mockConfig(ConfigValues.VncKeyboardLayoutValidValues, Arrays.asList(vncKeyboardLayoutValues.split(","))),
-            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(","))),
-            mockConfig(ConfigValues.IsMigrationSupported, Version.v3_6, migrationMap),
-            mockConfig(ConfigValues.IsMigrationSupported, Version.v4_0, migrationMap),
-            mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private static VmManagementParametersBase initParams() {
         VmStatic vmStatic = new VmStatic();

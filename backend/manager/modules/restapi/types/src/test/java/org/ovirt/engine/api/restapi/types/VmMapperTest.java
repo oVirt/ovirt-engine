@@ -57,11 +57,6 @@ public class VmMapperTest extends
     }
 
     @Override
-    protected void setUpConfigExpectations() {
-        mcr.mockConfigValue(ConfigValues.NumberVmRefreshesBeforeSave, 10);
-    }
-
-    @Override
     protected org.ovirt.engine.core.common.businessentities.VM getInverse(VmStatic to) {
         VmStatistics statistics = new VmStatistics();
         statistics.setCpuUser(10.0);

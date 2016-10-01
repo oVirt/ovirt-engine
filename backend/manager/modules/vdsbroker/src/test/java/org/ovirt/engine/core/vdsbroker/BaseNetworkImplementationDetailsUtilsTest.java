@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -28,8 +27,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
 public abstract class BaseNetworkImplementationDetailsUtilsTest {
-    private static final int DEFAULT_MTU = 1500;
-
     private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
 
@@ -37,7 +34,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
+    public MockConfigRule mcr = new MockConfigRule();
 
 
     @Mock

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import static org.junit.Assert.assertEquals;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,7 +9,6 @@ import java.util.List;
 
 import javax.validation.groups.Default;
 
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,21 +33,18 @@ public class QosRangeValidatorTest {
     public static InjectorRule injectorRule = new InjectorRule();
 
     @Rule
-    public final MockConfigRule configRule = new MockConfigRule();
-
-    @Before
-    public void init() {
-        configRule.mockConfigValue(ConfigValues.MaxCpuLimitQosValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxThroughputUpperBoundQosValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxReadThroughputUpperBoundQosValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxWriteThroughputUpperBoundQosValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxIopsUpperBoundQosValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxReadIopsUpperBoundQosValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxWriteIopsUpperBoundQosValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxAverageNetworkQoSValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxPeakNetworkQoSValue, MAX_RANGE);
-        configRule.mockConfigValue(ConfigValues.MaxBurstNetworkQoSValue, MAX_RANGE);
-    }
+    public final MockConfigRule configRule = new MockConfigRule(
+        mockConfig(ConfigValues.MaxCpuLimitQosValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxThroughputUpperBoundQosValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxReadThroughputUpperBoundQosValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxWriteThroughputUpperBoundQosValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxIopsUpperBoundQosValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxReadIopsUpperBoundQosValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxWriteIopsUpperBoundQosValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxAverageNetworkQoSValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxPeakNetworkQoSValue, MAX_RANGE),
+        mockConfig(ConfigValues.MaxBurstNetworkQoSValue, MAX_RANGE)
+    );
 
     @Test
     public void validCpuMessage() {

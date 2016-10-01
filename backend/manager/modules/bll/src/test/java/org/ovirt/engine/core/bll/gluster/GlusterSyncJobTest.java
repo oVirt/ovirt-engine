@@ -9,7 +9,6 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +54,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeIn
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -89,10 +87,7 @@ public class GlusterSyncJobTest {
     private GlusterUtil glusterUtil;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterRefreshRateLight, 5),
-            mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300),
-            mockConfig(ConfigValues.GlusterMetaVolumeName, "gluster_shared_storage"));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();

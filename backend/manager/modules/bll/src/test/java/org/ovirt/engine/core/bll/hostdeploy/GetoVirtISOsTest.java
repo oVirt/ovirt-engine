@@ -4,12 +4,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,28 +20,12 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoVirtISOsQuery<IdQueryParameters>> {
 
-    private static final String OVIRT_INIT_SUPPORTED_VERSION = "5.8";
-    private static final String OVIRT_ISO_PREFIX = "^rhevh-(.*)\\.*\\.iso$";
-    private static final String OVIRT_ISOS_REPOSITORY_PATH = "src/test/resources/ovirt-isos";
-    private static final String OVIRT_ISOS_DATA_DIR = ".";
     private static final String AVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 6.2 - 20111010.0.el6";
     private static final String UNAVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 8.2 - 20111010.0.el6";
-    private static final String OVIRT_NODEOS = "^rhevh.*";
-
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
-            mockConfig(ConfigValues.DataDir, OVIRT_ISOS_DATA_DIR),
-            mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
-            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, OVIRT_INIT_SUPPORTED_VERSION),
-            mockConfig(ConfigValues.OvirtNodeOS, OVIRT_NODEOS),
-            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60)
-            );
 
     @Mock
     private VdsDao vdsDao;

@@ -10,10 +10,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,14 +53,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxVmNameLength, 64),
-            mockConfig(ConfigValues.MaxVmsInPool, 87),
-            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 2048),
-            mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 262144),
-            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
-            mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
-            );
+    public MockConfigRule mcr = new MockConfigRule();
 
     private final Guid clusterId = Guid.newGuid();
     protected final Guid firstStorageDomainId = Guid.newGuid();

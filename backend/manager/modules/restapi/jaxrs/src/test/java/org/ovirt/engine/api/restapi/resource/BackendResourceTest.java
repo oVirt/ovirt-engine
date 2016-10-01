@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.ROOT_PASSWORD;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +21,13 @@ import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class BackendResourceTest extends AbstractBackendBaseTest {
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.OrganizationName, "ovirt"));
+    public MockConfigRule mcr = new MockConfigRule();
 
     BackendHostResource resource;
 

@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -14,14 +13,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class InternalPolicyUnitsTest {
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.ExternalSchedulerEnabled, false),
-            MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false),
-            MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, Integer.MAX_VALUE),
-            MockConfigRule.mockConfig(ConfigValues.SpmVmGraceForEvenGuestDistribute, 10),
-            MockConfigRule.mockConfig(ConfigValues.MigrationThresholdForEvenGuestDistribute, 5),
-            MockConfigRule.mockConfig(ConfigValues.HighVmCountForEvenGuestDistribute, 10)
-    );
+    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     public class DummyUnit extends PolicyUnitImpl {
         public DummyUnit(PolicyUnit policyUnit,

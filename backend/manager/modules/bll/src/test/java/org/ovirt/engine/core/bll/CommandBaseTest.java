@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
@@ -31,10 +29,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest extends BaseCommandTest {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.IsMultilevelAdministrationOn, false),
-            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60),
-            mockConfig(ConfigValues.UserSessionHardLimit, 600));
+    public static MockConfigRule mcr = new MockConfigRule();
 
 
     @ClassRule

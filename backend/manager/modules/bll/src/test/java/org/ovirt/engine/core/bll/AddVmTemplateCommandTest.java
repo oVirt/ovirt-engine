@@ -9,7 +9,6 @@ import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -56,7 +54,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VmPriorityMaxValue, 100));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private VM vm = createVM();
 

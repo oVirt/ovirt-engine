@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -85,21 +84,10 @@ public class UpdateClusterCommandTest {
     private static final Guid VM_ID2 = new Guid("87296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid VM_ID3 = new Guid("67296e00-0cad-4e5a-9299-008a7b6f4355");
 
-    private static final Map<String, String> migrationMap = new HashMap<>();
-    static {
-        migrationMap.put("undefined", "true");
-        migrationMap.put("x86_64", "true");
-        migrationMap.put("ppc64", "false");
-    }
-
     private static final Set<Version> versions = new HashSet<>(Arrays.asList(VERSION_1_0, VERSION_1_1, VERSION_1_2));
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_0.getValue(), migrationMap),
-            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_1.getValue(), migrationMap),
-            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
-    );
+    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.SupportedClusterLevels, versions));
 
     @Mock
     DbFacade dbFacadeMock;
@@ -590,8 +578,6 @@ public class UpdateClusterCommandTest {
     }
 
     private void createCommand(final Cluster group) {
-        setValidCpuVersionMap();
-
         cmd.getParameters().setManagementNetworkId(managementNetworkId);
         cmd.getParameters().setCluster(group);
         cmd.setClusterId(group.getId());
@@ -838,10 +824,6 @@ public class UpdateClusterCommandTest {
 
     private void architectureIsNotUpdatable() {
         doReturn(false).when(cmd).isArchitectureUpdatable();
-    }
-
-    private void setValidCpuVersionMap() {
-        mcr.mockConfigValue(ConfigValues.SupportedClusterLevels, versions);
     }
 
     private void validateFailedWithReason(final EngineMessage message) {

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.MockConfigDescriptor;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
@@ -19,7 +18,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -29,8 +27,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends BaseCommandTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60));
+    public static MockConfigRule mcr = new MockConfigRule();
 
     protected P params;
     private Q query;

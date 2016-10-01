@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurati
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.network.SwitchType;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -62,7 +60,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     private IpV6Address ipv6Address = new IpV6Address();
 
     @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DefaultMTU, 1500));
+    public static final MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void setUp() throws Exception {

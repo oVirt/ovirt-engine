@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -23,19 +21,10 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class InstallVdsInternalCommandTest extends BaseCommandTest {
 
-    private static final String OVIRT_ISO_PREFIX = "^rhevh-(.*)\\.*\\.iso$";
-    private static final String OVIRT_ISOS_REPOSITORY_PATH = "src/test/resources/ovirt-isos";
     private static final String VALID_OVIRT_VERSION = "6.2";
-    private static final String OVIRT_NODEOS = "^rhevh.*";
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
-            mockConfig(ConfigValues.DataDir, "."),
-            mockConfig(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
-            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, VALID_OVIRT_VERSION),
-            mockConfig(ConfigValues.OvirtNodeOS, OVIRT_NODEOS)
-            );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private VdsDao vdsDao;
