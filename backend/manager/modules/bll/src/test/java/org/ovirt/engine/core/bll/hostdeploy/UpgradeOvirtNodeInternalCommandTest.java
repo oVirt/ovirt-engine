@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -46,6 +47,11 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     @InjectMocks
     private UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command =
             new UpgradeOvirtNodeInternalCommand<>(createParameters(), null);
+
+    @BeforeClass
+    public static void setUpClass() {
+        OVirtNodeInfo.clearInstance();
+    }
 
     @Before
     public void mockVdsDao() {
