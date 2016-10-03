@@ -10,7 +10,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
@@ -65,7 +64,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturnForXmlRpc;
@@ -478,14 +476,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         final FutureCallable callable = new FutureCallable(() -> {
             if (isPolicyReset) {
-                int connectionId = client.getConnectionId();
                 updateHeartbeatPolicy(client.getClientRetryPolicy().clone(), false);
-
-                if (client.isClosed() && client.getConnectionId() == connectionId) {
-                    waitUntilCheck(client -> client.isClosed(),
-                            "Waiting on losing connection to {}",
-                            "Connection lost for {}");
-                }
             }
             return new FutureMap(client, request).withResponseKey("status");
         });
@@ -510,32 +501,6 @@ public class JsonRpcVdsServer implements IVdsServer {
         policy.setIncomingHeartbeat(isHeartbeat);
         policy.setOutgoingHeartbeat(isHeartbeat);
         client.setClientRetryPolicy(policy);
-    }
-
-    /**
-     * The method waits on {@link Predicate#test} condition. If it is not met after 10 seconds it would
-     * throw {@link VDSNetworkException}.
-     *
-     * @param check - a lambda which provides condition function.
-     * @param formatBefore - log formatter which accepts hostname as parameter. It is logged in debug level
-     *                       before calling condition function.
-     * @param formatAfter - log formatter which accepts hostname as parameter. Is is logged in debug level
-     *                      after successful wait.
-     * @throws InterruptedException - It is thrown when waiting operation was interrupted.
-     */
-    private void waitUntilCheck(Predicate<JsonRpcClient> check, String formatBefore, String formatAfter)
-            throws InterruptedException {
-        String hostname = client.getHostname();
-        logger.debug(formatBefore, hostname);
-        int retries = 50;
-        while (check.test(this.client)) {
-            if (retries == 0) {
-                throw new VDSNetworkException("Unable to reconnect to " + hostname + " after policy reset");
-            }
-            retries--;
-            TimeUnit.MILLISECONDS.sleep(200);
-        }
-        logger.debug(formatAfter, hostname);
     }
 
     @Override
