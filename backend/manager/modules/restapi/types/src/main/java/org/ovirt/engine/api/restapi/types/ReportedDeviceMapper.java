@@ -53,8 +53,9 @@ public class ReportedDeviceMapper {
             List<String> ipv4 = new ArrayList<>();
             List<String> ipv6 = new ArrayList<>();
             for (Ip ip : model.getIps().getIps()) {
-                if (ip.isSetVersion() && ip.isSetAddress()) {
-                    switch (ip.getVersion()) {
+                IpVersion version = IpHelper.getVersion(ip);
+                if (version != null) {
+                    switch (version) {
                     case V4:
                         ipv4.add(ip.getAddress());
                         break;

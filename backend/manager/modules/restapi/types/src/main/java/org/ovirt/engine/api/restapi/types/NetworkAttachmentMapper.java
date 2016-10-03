@@ -91,10 +91,7 @@ public class NetworkAttachmentMapper {
     }
 
     private static IpVersion getIpVersion(IpAddressAssignment ipAddressAssignment) {
-        if (!(ipAddressAssignment.isSetIp() && ipAddressAssignment.getIp().isSetVersion())) {
-            return null;
-        }
-        return ipAddressAssignment.getIp().getVersion();
+        return IpHelper.getVersion(ipAddressAssignment.getIp());
     }
 
     private static IPv4Address mapIpv4AddressAssignment(IpAddressAssignment ipAddressAssignment) {
