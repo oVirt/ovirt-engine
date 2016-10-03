@@ -5,9 +5,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.Ipv6;
 
@@ -15,7 +13,6 @@ public class IpV6Address implements Serializable {
     private static final long serialVersionUID = 5112759833343439658L;
 
     @Ipv6
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
     private String address;
 
     @Min(0L)
@@ -23,7 +20,6 @@ public class IpV6Address implements Serializable {
     private Integer prefix;
 
     @Ipv6
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
     private String gateway;
 
     private Ipv6BootProtocol bootProtocol;
