@@ -19,18 +19,13 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest extends BaseCommandTest {
@@ -39,9 +34,6 @@ public class CommandBaseTest extends BaseCommandTest {
             mockConfig(ConfigValues.IsMultilevelAdministrationOn, false),
             mockConfig(ConfigValues.UserSessionTimeOutInterval, 60),
             mockConfig(ConfigValues.UserSessionHardLimit, 600));
-
-    @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     protected String session = "someSession";
 
@@ -67,8 +59,6 @@ public class CommandBaseTest extends BaseCommandTest {
         /** A dummy constructor to pass parameters, since constructors aren't inherited in Java */
         protected CommandBaseDummy(VdcActionParametersBase params) {
             super(params, CommandContext.createContext(params.getSessionId()));
-            executionHandler = mock(ExecutionHandler.class);
-            setCompensationContext(NoOpCompensationContext.getInstance());
         }
 
         @Override
@@ -79,28 +69,6 @@ public class CommandBaseTest extends BaseCommandTest {
         @Override
         public List<PermissionSubject> getPermissionCheckSubjects() {
             return Collections.emptyList();
-        }
-
-        @Override
-        protected BusinessEntitySnapshotDao getBusinessEntitySnapshotDao() {
-            return mock(BusinessEntitySnapshotDao.class);
-        }
-
-        @Override
-        protected boolean parentHasCallback() {
-            return false;
-        }
-
-        @Override
-        public void setCommandStatus(CommandStatus status) {
-        }
-
-        @Override
-        public void setCommandExecuted() {
-        }
-
-        @Override
-        protected void updateCommandIfNeeded() {
         }
     }
 
