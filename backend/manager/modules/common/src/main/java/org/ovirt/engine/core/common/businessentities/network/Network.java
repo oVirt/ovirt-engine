@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Commented;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.annotation.Ipv4;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -38,16 +38,13 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
 
     private Integer type;
 
-    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
+    @Ipv4(message = "IPV4_ADDR_BAD_FORMAT")
     private String addr;
 
-    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_SUBNET_SIZE)
+    @Ipv4(message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
     private String subnet;
 
-    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
+    @Ipv4(message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     private String gateway;
 
     @Min(value = 0, message = "NETWORK_VLAN_OUT_OF_RANGE", groups = { CreateEntity.class, UpdateEntity.class })

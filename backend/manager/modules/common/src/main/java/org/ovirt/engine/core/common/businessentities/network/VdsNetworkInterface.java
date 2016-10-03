@@ -6,11 +6,10 @@ import java.util.Set;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.annotation.Ipv4;
 import org.ovirt.engine.core.common.validation.annotation.Ipv6;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameOfVdsNetworkInterface;
@@ -39,13 +38,13 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     private Ipv4BootProtocol ipv4BootProtocol;
 
-    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_BAD_FORMAT")
+    @Ipv4(message = "IPV4_ADDR_BAD_FORMAT")
     private String ipv4Address;
 
     @Mask
     private String ipv4Subnet;
 
-    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
+    @Ipv4(message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     private String ipv4Gateway;
 
     private Ipv6BootProtocol ipv6BootProtocol;

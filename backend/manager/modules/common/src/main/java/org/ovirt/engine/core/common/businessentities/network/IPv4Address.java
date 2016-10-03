@@ -3,26 +3,20 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.annotation.Ipv4;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 
 public class IPv4Address implements Serializable {
     private static final long serialVersionUID = -3762999158282212711L;
 
-    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
+    @Ipv4(message = "IPV4_ADDR_BAD_FORMAT")
     private String address;
 
     @Mask
     private String netmask;
 
-    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
+    @Ipv4(message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     private String gateway;
 
     private Ipv4BootProtocol bootProtocol;
