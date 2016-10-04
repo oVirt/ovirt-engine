@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -73,9 +72,6 @@ public class RunVmCommandTest extends BaseCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GuestToolsSetupIsoPrefix, "General", "")
             );
-
-    @Rule
-    public VmHandlerRule vmHandlerRule = new VmHandlerRule();
 
     /**
      * The command under test.
@@ -315,7 +311,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(osRepository.isWindows(anyInt())).thenReturn(false);
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        updateVmHandler();
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
+        VmHandler.init();
 
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();
@@ -326,11 +323,6 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     private void mockCpuFlagsManagerHandler() {
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
-    }
-
-    private void updateVmHandler() {
-        vmHandlerRule.updateCpuFlagsManagerHandler(cpuFlagsManagerHandler);
-        vmHandlerRule.updateOsRepository(osRepository);
     }
 
     @Test
