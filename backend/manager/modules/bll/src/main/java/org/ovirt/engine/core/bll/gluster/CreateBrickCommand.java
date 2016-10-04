@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -25,9 +27,12 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateBrickVDSParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 
 public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
+
+    @Inject
+    private StorageDeviceDao storageDeviceDao;
 
     public CreateBrickCommand(CreateBrickParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -120,12 +125,12 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
     private void resetIsFreeFlag(List<StorageDevice> devices) {
         for (StorageDevice device : devices) {
-            DbFacade.getInstance().getStorageDeviceDao().updateIsFreeFlag(device.getId(), false);
+            storageDeviceDao.updateIsFreeFlag(device.getId(), false);
         }
     }
 
     private void saveStoageDevice(StorageDevice storageDevice) {
-        DbFacade.getInstance().getStorageDeviceDao().save(storageDevice);
+        storageDeviceDao.save(storageDevice);
     }
 
     @Override
