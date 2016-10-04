@@ -181,10 +181,6 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         params.setActionType("InvalidActionType");
         cmd = spy(new ManageGlusterServiceCommand(params, null));
         assertFalse(cmd.validate());
-
-        params.setClusterId(null);
-        params.setServerId(null);
-        assertFalse(cmd.validate());
     }
 
     @Test
