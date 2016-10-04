@@ -17,7 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
+import org.mockito.InjectMocks;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -36,6 +36,9 @@ public class CommandBaseTest extends BaseCommandTest {
             mockConfig(ConfigValues.UserSessionHardLimit, 600));
 
     protected String session = "someSession";
+
+    @InjectMocks
+    private CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(new VdcActionParametersBase());
 
     @Before
     public void setupEnvironment() {
@@ -58,7 +61,7 @@ public class CommandBaseTest extends BaseCommandTest {
 
         /** A dummy constructor to pass parameters, since constructors aren't inherited in Java */
         protected CommandBaseDummy(VdcActionParametersBase params) {
-            super(params, CommandContext.createContext(params.getSessionId()));
+            super(params, CommandContext.createContext(session));
         }
 
         @Override
@@ -78,18 +81,10 @@ public class CommandBaseTest extends BaseCommandTest {
         DbUser user = mock(DbUser.class);
         when(user.getId()).thenReturn(Guid.EVERYONE);
 
-        // Mock the parameters
-        VdcActionParametersBase paramterMock = mock(VdcActionParametersBase.class);
-        when(paramterMock.getSessionId()).thenReturn(session);
+        // Mock the session
         sessionDataContainer.setUser(session, user);
 
         // Create a command
-        CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(paramterMock) {
-            @Override
-            protected SessionDataContainer getSessionDataContainer() {
-                return sessionDataContainer;
-            }
-        };
         command.postConstruct();
 
         // Check the session
@@ -98,8 +93,6 @@ public class CommandBaseTest extends BaseCommandTest {
 
     @Test
     public void logRenamedEntityNotRename() {
-        CommandBase<?> command = mock(CommandBase.class);
-        doCallRealMethod().when(command).logRenamedEntity();
         command.logRenamedEntity();
     }
 
@@ -127,8 +120,6 @@ public class CommandBaseTest extends BaseCommandTest {
 
     @Test
     public void testExtractVariableDeclarationsForStaticMsgs() {
-        VdcActionParametersBase parameterMock = mock(VdcActionParametersBase.class);
-        CommandBase<VdcActionParametersBase>command = new CommandBaseDummy(parameterMock);
         List<String> msgs = Arrays.asList(
                 "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM",
                 "IRS_FAILED_RETRIEVING_SNAPSHOT_INFO");
@@ -139,8 +130,6 @@ public class CommandBaseTest extends BaseCommandTest {
 
     @Test
     public void testExtractVariableDeclarationsForDynamicMsgs() {
-        VdcActionParametersBase parameterMock = mock(VdcActionParametersBase.class);
-        CommandBase<VdcActionParametersBase>command = new CommandBaseDummy(parameterMock);
         String msg1_1 = "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM";
         String msg1_2 = "$VmName Vm1";
         String msg2   = "IRS_FAILED_CREATING_SNAPSHOT";
