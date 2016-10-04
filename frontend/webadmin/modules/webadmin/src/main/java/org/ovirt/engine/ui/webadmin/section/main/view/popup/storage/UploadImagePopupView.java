@@ -225,5 +225,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     @Override
     public void cleanup() {
         // Related Model is still alive for uploading the file.
+        // TODO(vs) fix the associated models so that we can call `driver.cleanup()`
     }
 }
