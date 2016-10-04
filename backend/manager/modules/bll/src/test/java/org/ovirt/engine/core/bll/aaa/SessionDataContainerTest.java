@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +58,7 @@ public class SessionDataContainerTest {
     public void setUpContainer() {
         when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
         when(ssoSessionValidator.getSessionStatuses(any(Set.class))).thenReturn(
-                Collections.singletonMap(TEST_SSO_TOKEN,true));
+                Collections.singletonMap(TEST_SSO_TOKEN, true));
         when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 
         DbUser user = mock(DbUser.class);
