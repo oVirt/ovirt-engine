@@ -27,6 +27,8 @@ public class OvfDataUpdater {
     private static final Logger log = LoggerFactory.getLogger(OvfDataUpdater.class);
     private static final OvfDataUpdater INSTANCE = new OvfDataUpdater();
 
+    private volatile String updateTimerJobId;
+
     private OvfDataUpdater() {
     }
 
@@ -40,7 +42,7 @@ public class OvfDataUpdater {
 
     public void initOvfDataUpdater() {
         SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
-        scheduler.scheduleAFixedDelayJob(this, "ovfUpdateTimer", new Class[] {},
+        updateTimerJobId = scheduler.scheduleAFixedDelayJob(this, "ovfUpdateTimer", new Class[] {},
                 new Object[] {}, Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
                 Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes), TimeUnit.MINUTES);
         log.info("Initialization of OvfDataUpdater completed successfully.");
@@ -82,6 +84,13 @@ public class OvfDataUpdater {
             } else {
                 log.error("Data Center '{}' domains list for OVF update returned as NULL");
             }
+        }
+    }
+
+    public void triggerNow() {
+        if (updateTimerJobId != null) {
+            SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
+            scheduler.triggerJob(updateTimerJobId);
         }
     }
 }
