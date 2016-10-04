@@ -72,7 +72,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
@@ -128,9 +127,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
     static OsRepository osRepository;
-
-    @Mock
-    DbFacade dbFacade;
 
     @Mock
     InClusterUpgradeValidator inClusterUpgradeValidator;
@@ -674,7 +670,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private void mockVmValidator() {
         VmValidator vmValidator = spy(new VmValidator(vm));
         doReturn(vmValidator).when(command).createVmValidator(vm);
-        doReturn(dbFacade).when(vmValidator).getDbFacade();
         doReturn(diskDao).when(vmValidator).getDiskDao();
         doReturn(getNoVirtioScsiDiskElement()).when(diskVmElementDao).get(any(VmDeviceId.class));
         doReturn(diskVmElementDao).when(vmValidator).getDiskVmElementDao();
