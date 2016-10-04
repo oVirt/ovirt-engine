@@ -458,7 +458,7 @@ public class AuditLogableBase extends TimeoutBase {
         return vm;
     }
 
-    protected void setVm(final VM value) {
+    public void setVm(final VM value) {
         vm = value;
     }
 
@@ -509,7 +509,7 @@ public class AuditLogableBase extends TimeoutBase {
         return cluster;
     }
 
-    protected void setCluster(final Cluster value) {
+    public void setCluster(final Cluster value) {
         cluster = value;
     }
 

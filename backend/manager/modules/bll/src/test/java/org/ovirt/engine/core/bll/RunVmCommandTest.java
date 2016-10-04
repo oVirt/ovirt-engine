@@ -301,7 +301,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
         doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        doReturn(new Cluster()).when(command).getCluster();
+        command.setCluster(new Cluster());
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
         doNothing().when(command).updateCurrentCd(any(String.class));
         doReturn(snapshotDAO).when(command).getSnapshotDao();
@@ -337,11 +337,11 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void testValidate() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        doReturn(new StoragePool()).when(command).getStoragePool();
-        doReturn(vm).when(command).getVm();
+        command.setVm(vm);
+        command.setStoragePool(new StoragePool());
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
-        doReturn(new Cluster()).when(command).getCluster();
+        command.setCluster(new Cluster());
         assertTrue(command.validate());
         assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
     }
@@ -368,11 +368,11 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void testValidateUnsupportedRng(VmRngDevice.Source vmRngSource, Set<VmRngDevice.Source> clusterReqSources) {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        doReturn(vm).when(command).getVm();
+        command.setVm(vm);
 
         Cluster cluster = mock(Cluster.class);
         when(cluster.getRequiredRngSources()).thenReturn(clusterReqSources);
-        doReturn(cluster).when(command).getCluster();
+        command.setCluster(cluster);
 
         VmRngDevice rngDevice = new VmRngDevice();
         rngDevice.setSource(vmRngSource);
@@ -390,7 +390,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void testFlowOnResume() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Paused);
-        doReturn(vm).when(command).getVm();
+        command.setVm(vm);
         assertEquals(RunVmFlow.RESUME_PAUSE, command.getFlow());
     }
 
@@ -398,7 +398,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void testFlowOnDehibernate() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Suspended);
-        doReturn(vm).when(command).getVm();
+        command.setVm(vm);
         assertEquals(RunVmFlow.RESUME_HIBERNATE, command.getFlow());
     }
 
@@ -407,10 +407,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.getDiskList().clear();
-        doReturn(vm).when(command).getVm();
-        final RunVmParams params = new RunVmParams();
-        params.setRunAsStateless(true);
-        doReturn(params).when(command).getParameters();
+        command.setVm(vm);
+        command.getParameters().setRunAsStateless(true);
         doNothing().when(command).fetchVmDisksFromDb();
         doReturn(false).when(command).isStatelessSnapshotExistsForVm();
         assertEquals(RunVmFlow.CREATE_STATELESS_IMAGES, command.getFlow());
@@ -421,11 +419,9 @@ public class RunVmCommandTest extends BaseCommandTest {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.getDiskList().add(new DiskImage());
-        doReturn(vm).when(command).getVm();
-        final RunVmParams params = new RunVmParams();
-        params.setRunAsStateless(true);
+        command.setVm(vm);
+        command.getParameters().setRunAsStateless(true);
         doReturn(false).when(command).isStatelessSnapshotExistsForVm();
-        doReturn(params).when(command).getParameters();
         doNothing().when(command).fetchVmDisksFromDb();
         assertEquals(RunVmFlow.CREATE_STATELESS_IMAGES, command.getFlow());
     }
@@ -434,11 +430,9 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void testFlowOnRemoveStatelessImages() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        doReturn(vm).when(command).getVm();
-        final RunVmParams params = new RunVmParams();
-        params.setRunAsStateless(false);
-        doReturn(params).when(command).getParameters();
-        doReturn(false).when(command).isInternalExecution();
+        command.setVm(vm);
+        command.getParameters().setRunAsStateless(false);
+        command.setInternalExecution(false);
         doReturn(true).when(command).isStatelessSnapshotExistsForVm();
         doReturn(false).when(command).isVmPartOfManualPool();
         assertEquals(RunVmFlow.REMOVE_STATELESS_IMAGES, command.getFlow());
@@ -449,10 +443,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.getDiskList().add(new DiskImage());
-        doReturn(vm).when(command).getVm();
-        final RunVmParams params = new RunVmParams();
-        params.setRunAsStateless(true);
-        doReturn(params).when(command).getParameters();
+        command.setVm(vm);
+        command.getParameters().setRunAsStateless(true);
         doReturn(true).when(command).isStatelessSnapshotExistsForVm();
         doNothing().when(command).fetchVmDisksFromDb();
         assertEquals(RunVmFlow.REMOVE_STATELESS_IMAGES, command.getFlow());
@@ -462,11 +454,9 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void testFlowOnStatelessExistsForManualPool() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        doReturn(vm).when(command).getVm();
-        final RunVmParams params = new RunVmParams();
-        params.setRunAsStateless(false);
-        doReturn(params).when(command).getParameters();
-        doReturn(false).when(command).isInternalExecution();
+        command.setVm(vm);
+        command.getParameters().setRunAsStateless(false);
+        command.setInternalExecution(false);
         doReturn(true).when(command).isStatelessSnapshotExistsForVm();
         doReturn(true).when(command).isVmPartOfManualPool();
         assertEquals(RunVmFlow.RUN, command.getFlow());
