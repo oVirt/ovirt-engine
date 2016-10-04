@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -172,7 +171,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // Trigger OVF update for hosted engine VM only
         if (getVm().isHostedEngine()) {
-            registerRollbackHandler(new HostedEngineEditNotifier(getVm()));
+            registerRollbackHandler(new TransactionCompletionListener() {
+                @Override
+                public void onSuccess() {
+                    OvfDataUpdater.getInstance().triggerNow();
+                }
+
+                @Override
+                public void onRollback() {
+                    // No notification is needed
+                }
+            });
         }
 
         // save user selected value for hotplug before overriding with db values (when updating running vm)
@@ -1141,25 +1150,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!getParameters().isUpdateNuma()) {
             getParameters().getVm().setvNumaNodeList(getDbFacade().getVmNumaNodeDao().getAllVmNumaNodeByVmId
                     (getParameters().getVmId()));
-        }
-    }
-
-    private static class HostedEngineEditNotifier implements TransactionCompletionListener {
-        final VM vm;
-
-        public HostedEngineEditNotifier(VM vm) {
-            this.vm = vm;
-        }
-
-        @Override
-        public void onSuccess() {
-            Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool,
-                    new ProcessOvfUpdateForStoragePoolParameters(vm.getStoragePoolId()));
-        }
-
-        @Override
-        public void onRollback() {
-            // No notification is needed
         }
     }
 }
