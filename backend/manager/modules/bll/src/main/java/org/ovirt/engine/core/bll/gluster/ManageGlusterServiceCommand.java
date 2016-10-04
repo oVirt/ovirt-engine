@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
-import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -35,10 +34,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @NonTransactiveCommandAttribute
 public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServiceParameters> {
-    private Guid clusterId;
-    private Guid serverId;
-    private ServiceType serviceType;
-    private String actionType;
     private final List<String> errors = new ArrayList<>();
 
     private static final Map<String, ManageActionDetail> manageActionDetailsMap = new HashMap<>();
@@ -63,16 +58,8 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     public ManageGlusterServiceCommand(GlusterServiceParameters params, CommandContext commandContext) {
         super(params, commandContext);
-        this.clusterId = params.getClusterId();
-        this.serverId = params.getServerId();
-        this.serviceType = params.getServiceType();
-        this.actionType = params.getActionType();
-        if (serverId != null) {
-            setVdsId(serverId);
-        }
-        if (clusterId != null) {
-            setClusterId(clusterId);
-        }
+        setVdsId(params.getServerId());
+        setClusterId(params.getClusterId());
     }
 
     @Override
@@ -88,20 +75,15 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     @Override
     protected boolean validate() {
-        clusterId = getParameters().getClusterId();
-        serverId = getParameters().getServerId();
-        serviceType = getParameters().getServiceType();
-        actionType = getParameters().getActionType();
-
-        if (!manageActionDetailsMap.keySet().contains(actionType)) {
+        if (!manageActionDetailsMap.keySet().contains(getParameters().getActionType())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ACTION_TYPE);
         }
 
-        if (Guid.isNullOrEmpty(clusterId) && Guid.isNullOrEmpty(serverId)) {
+        if (Guid.isNullOrEmpty(getClusterId()) && Guid.isNullOrEmpty(getParameters().getServerId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
         }
 
-        if (!Guid.isNullOrEmpty(clusterId) && getGlusterUtils().getAllUpServers(clusterId).size() == 0) {
+        if (!Guid.isNullOrEmpty(getClusterId()) && getGlusterUtils().getAllUpServers(getClusterId()).size() == 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
         }
 
@@ -118,16 +100,16 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     @Override
     protected void executeCommand() {
-        if (!Guid.isNullOrEmpty(serverId)) {
+        if (!Guid.isNullOrEmpty(getParameters().getServerId())) {
             performActionForServicesOfServer();
-        } else if (!Guid.isNullOrEmpty(clusterId)) {
+        } else if (!Guid.isNullOrEmpty(getClusterId())) {
             performActionForServicesOfCluster();
         }
         addCustomValue(GlusterConstants.SERVICE_TYPE, getParameters().getServiceType().name());
     }
 
     private List<String> getServiceList() {
-        List<GlusterService> serviceList = getGlusterServiceDao().getByServiceType(serviceType);
+        List<GlusterService> serviceList = getGlusterServiceDao().getByServiceType(getParameters().getServiceType());
         List<String> serviceListStr = new ArrayList<>();
         for (GlusterService srvc : serviceList) {
             serviceListStr.add(srvc.getServiceName());
@@ -137,14 +119,15 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     }
 
     private List<Callable<Pair<VDS, VDSReturnValue>>> getCallableVdsCmdList() {
-        List<VDS> servers = getGlusterUtils().getAllUpServers(clusterId);
+        List<VDS> servers = getGlusterUtils().getAllUpServers(getClusterId());
         final List<String> serviceList = getServiceList();
         List<Callable<Pair<VDS, VDSReturnValue>>> commandList = new ArrayList<>();
         for (final VDS upServer : servers) {
             commandList.add(() -> {
                 VDSReturnValue returnValue =
                         runVdsCommand(VDSCommandType.ManageGlusterService,
-                                new GlusterServiceVDSParameters(upServer.getId(), serviceList, actionType));
+                                new GlusterServiceVDSParameters(
+                                        upServer.getId(), serviceList, getParameters().getActionType()));
                 Pair<VDS, VDSReturnValue> pairRetVal = new Pair<>(upServer, returnValue);
                 if (returnValue.getSucceeded()) {
                     updateService(upServer.getId(), (List<GlusterServerService>) returnValue.getReturnValue());
@@ -188,27 +171,28 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         VDSReturnValue returnValue = null;
         returnValue =
                 runVdsCommand(VDSCommandType.ManageGlusterService,
-                        new GlusterServiceVDSParameters(serverId, serviceList, actionType));
+                        new GlusterServiceVDSParameters(
+                                getParameters().getServerId(), serviceList, getParameters().getActionType()));
 
         setSucceeded(returnValue.getSucceeded());
 
         if (!getSucceeded()) {
             handleVdsError(getAuditLogTypeValue(), returnValue.getVdsError().getMessage());
         } else {
-            updateService(serverId, (List<GlusterServerService>) returnValue.getReturnValue());
+            updateService(getParameters().getServerId(), (List<GlusterServerService>) returnValue.getReturnValue());
         }
     }
 
     private void updateService(Guid serverId, List<GlusterServerService> fetchedServerServices) {
         // form the list of service ids
         List<Guid> serviceIds = new ArrayList<>();
-        for (GlusterService srvc : getGlusterServiceDao().getByServiceType(serviceType)) {
+        for (GlusterService srvc : getGlusterServiceDao().getByServiceType(getParameters().getServiceType())) {
             serviceIds.add(srvc.getId());
         }
 
         for (GlusterServerService serverService : fetchedServerServices) {
             if (serviceIds.contains(serverService.getServiceId())) {
-                serverService.setStatus(manageActionDetailsMap.get(actionType).getStatus());
+                serverService.setStatus(manageActionDetailsMap.get(getParameters().getActionType()).getStatus());
                 getGlusterServerServiceDao().updateByServerIdAndServiceType(serverService);
             } else {
                 getGlusterServerServiceDao().save(serverService);
