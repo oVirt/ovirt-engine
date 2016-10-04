@@ -10,8 +10,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.network.cluster.DefaultRouteUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -19,8 +21,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -48,13 +52,19 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     private ClusterDao clusterDaoMock;
 
     @Mock
-    private VdsDao vdsDaoMock;
+    private VdsDynamicDao vdsDynamicDaoMock;
 
-    @Mock CalculateBaseNic calculateBaseNic;
+    @Mock
+    private VdsStaticDao vdsStaticDaoMock;
+
+    @Mock
+    protected CalculateBaseNic calculateBaseNic;
+
+    @Mock
+    private DefaultRouteUtil defaultRouteUtil;
 
     private Guid VDS_ID = Guid.newGuid();
     private Guid CLUSTER_ID = Guid.newGuid();
-    private VDS vds;
     private Cluster cluster;
 
 
@@ -72,23 +82,28 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         qosB = createAndMockQos(60, 60, 60);
         unlimitedHostNetworkQos = createQos(null, null, null);
 
-        vds = new VDS();
-        vds.setId(VDS_ID);
-        vds.setClusterId(CLUSTER_ID);
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setId(VDS_ID);
+        vdsStatic.setClusterId(CLUSTER_ID);
+
+        VdsDynamic vdsDynamic = new VdsDynamic();
 
         cluster = new Cluster();
+        cluster.setCompatibilityVersion(Version.v4_1);
         cluster.setId(CLUSTER_ID);
 
-        when(vdsDaoMock.get(eq(VDS_ID))).thenReturn(vds);
+        when(vdsStaticDaoMock.get(eq(VDS_ID))).thenReturn(vdsStatic);
+        when(vdsDynamicDaoMock.get(eq(VDS_ID))).thenReturn(vdsDynamic);
         when(clusterDaoMock.get(eq(CLUSTER_ID))).thenReturn(cluster);
 
         EffectiveHostNetworkQos effectiveHostNetworkQos = new EffectiveHostNetworkQos(hostNetworkQosDaoMock);
         networkImplementationDetailsUtils = new NetworkImplementationDetailsUtils(effectiveHostNetworkQos,
-                        networkAttachmentDaoMock,
-                        vdsDaoMock,
-                        clusterDaoMock,
-                        calculateBaseNic);
-
+                networkAttachmentDaoMock,
+                vdsStaticDaoMock,
+                vdsDynamicDaoMock,
+                clusterDaoMock,
+                calculateBaseNic,
+                this.defaultRouteUtil);
     }
 
     @Test

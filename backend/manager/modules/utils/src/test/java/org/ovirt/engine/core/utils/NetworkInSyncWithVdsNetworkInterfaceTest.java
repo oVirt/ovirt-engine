@@ -5,8 +5,11 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -14,12 +17,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
@@ -27,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurati
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.network.SwitchType;
+import org.ovirt.engine.core.compat.Version;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkInSyncWithVdsNetworkInterfaceTest {
@@ -51,19 +57,33 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     private Network network;
     private HostNetworkQos ifaceQos;
     private HostNetworkQos networkQos;
-
     private NetworkAttachment testedNetworkAttachment;
-
     private Cluster cluster;
 
     private IPv4Address ipv4Address = new IPv4Address();
     private IpV6Address ipv6Address = new IpV6Address();
+
+    private DnsResolverConfiguration sampleDnsResolverConfiguration;
+    private DnsResolverConfiguration sampleDnsResolverConfiguration2;
+    private DnsResolverConfiguration sampleDnsResolverConfigurationWithReversedNameServers;
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void setUp() throws Exception {
+        sampleDnsResolverConfiguration = new DnsResolverConfiguration();
+        sampleDnsResolverConfiguration.setNameServers(Arrays.asList(
+                        new NameServer("192.168.1.1"),
+                        new NameServer("2001:0db8:85a3:0000:0000:8a2e:0370:7334")));
+
+        sampleDnsResolverConfiguration2 = new DnsResolverConfiguration();
+        sampleDnsResolverConfiguration2.setNameServers(Arrays.asList(
+                new NameServer("192.168.1.2"),
+                new NameServer("2002:0db8:85a3:0000:0000:8a2e:0370:7334")));
+
+        sampleDnsResolverConfigurationWithReversedNameServers = reverseNameServersOrder(sampleDnsResolverConfiguration);
+
         ifaceQos = new HostNetworkQos();
         networkQos = new HostNetworkQos();
         iface = new VdsNetworkInterface();
@@ -73,11 +93,13 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         iface.setReportedSwitchType(SwitchType.LEGACY);
 
         network = new Network();
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
 
         testedNetworkAttachment = new NetworkAttachment();
         testedNetworkAttachment.setIpConfiguration(new IpConfiguration());
 
         cluster = new Cluster();
+        cluster.setCompatibilityVersion(Version.v4_1);
         cluster.setRequiredSwitchTypeForCluster(SwitchType.LEGACY);
     }
 
@@ -179,7 +201,11 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
     }
 
-    public NetworkInSyncWithVdsNetworkInterface createTestedInstanceWithSameNonQosValues() {
+    private NetworkInSyncWithVdsNetworkInterface createTestedInstanceWithSameNonQosValues() {
+        return createTestedInstanceWithSameNonQosValues(false);
+    }
+
+    private NetworkInSyncWithVdsNetworkInterface createTestedInstanceWithSameNonQosValues(boolean isDefaultRouteNetwork) {
         iface.setMtu(1);
         network.setMtu(1);
 
@@ -188,11 +214,22 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
         iface.setBridged(true);
         network.setVmNetwork(true);
-        return createTestedInstance();
+        return createTestedInstance(isDefaultRouteNetwork, sampleDnsResolverConfiguration);
     }
 
-    public NetworkInSyncWithVdsNetworkInterface createTestedInstance() {
-        return new NetworkInSyncWithVdsNetworkInterface(iface, network, networkQos, testedNetworkAttachment, cluster);
+    private NetworkInSyncWithVdsNetworkInterface createTestedInstance() {
+        return createTestedInstance(false, sampleDnsResolverConfiguration);
+    }
+
+    private NetworkInSyncWithVdsNetworkInterface createTestedInstance(boolean isDefaultRouteNetwork,
+            DnsResolverConfiguration reportedDnsResolverConfiguration) {
+        return new NetworkInSyncWithVdsNetworkInterface(iface,
+                network,
+                networkQos,
+                testedNetworkAttachment,
+                reportedDnsResolverConfiguration,
+                cluster,
+                isDefaultRouteNetwork);
     }
 
     @Test
@@ -209,21 +246,8 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(reportedConfigurations.isNetworkInSync(), is(false));
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
-        List<ReportedConfiguration> expectedReportedConfigurations = combineReportedConfigurations(
-                createBasicReportedConfigurations(),
-
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
-                        ifaceQos.getOutAverageLinkshare(),
-                        null,
-                        false),
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
-                        ifaceQos.getOutAverageUpperlimit(),
-                        null,
-                        false),
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
-                        ifaceQos.getOutAverageRealtime(),
-                        null,
-                        false)
+        List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
+                combineReportedConfigurations(createBasicReportedConfigurations(), reportQos(false))
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
@@ -248,6 +272,60 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
+    public void testReportConfigurationsOnHostWhenDnsConfigurationResolverIsDifferentButNotDefinedByEngineThusInSync() {
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration2);
+        ReportedConfigurations reportedConfigurations = createTestedInstanceWithSameNonQosValues(true).reportConfigurationsOnHost();
+
+        assertThat(reportedConfigurations.isNetworkInSync(), is(true));
+        List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
+
+        List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
+                combineReportedConfigurations(createBasicReportedConfigurations(), reportQos(true)),
+
+                new ReportedConfiguration(ReportedConfigurationType.DNS_CONFIGURATION,
+                        addressesAsString(sampleDnsResolverConfiguration.getNameServers()),
+                        "",
+                        true)
+        );
+
+        assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
+        assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
+    }
+
+    @Test
+    public void testReportConfigurationsOnHostWhenDnsConfigurationResolverOutOfSync() {
+        //cannot use initIpv4ConfigurationBootProtocol because of 'randomized tests' technique.
+        iface.setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
+        IPv4Address address = new IPv4Address();
+        address.setBootProtocol(Ipv4BootProtocol.DHCP);
+        testedNetworkAttachment.getIpConfiguration().setIPv4Addresses(Collections.singletonList(address));
+
+
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration2);
+        ReportedConfigurations reportedConfigurations = createTestedInstanceWithSameNonQosValues(true).reportConfigurationsOnHost();
+
+        assertThat(reportedConfigurations.isNetworkInSync(), is(false));
+        List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
+
+        List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
+                combineReportedConfigurations(createBasicReportedConfigurations(), reportQos(true)),
+
+                new ReportedConfiguration(ReportedConfigurationType.IPV4_BOOT_PROTOCOL,
+                        iface.getIpv4BootProtocol().name(),
+                        /*ipv4Address*/address.getBootProtocol().name(),
+                        true),
+
+                new ReportedConfiguration(ReportedConfigurationType.DNS_CONFIGURATION,
+                        addressesAsString(sampleDnsResolverConfiguration.getNameServers()),
+                        addressesAsString(network.getDnsResolverConfiguration().getNameServers()),
+                        false)
+        );
+
+        assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
+        assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
+    }
+
+    @Test
     public void testReportConfigurationsOnHostWhenIfaceQosIsNull() throws Exception {
         ifaceQos = null;
         iface.setQos(null);
@@ -263,7 +341,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(reportedConfigurations.isNetworkInSync(), is(false));
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
-        List<ReportedConfiguration> expectedReportedConfigurations = combineReportedConfigurations(
+        List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
                 createBasicReportedConfigurations(),
 
                 new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
@@ -383,7 +461,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                 testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
         IPv4Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
 
-        List<ReportedConfiguration> expectedReportedConfigurations = combineReportedConfigurations(
+        List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
                 createBasicAndQosReportedConfigurations(),
 
                 new ReportedConfiguration(ReportedConfigurationType.IPV4_BOOT_PROTOCOL,
@@ -410,7 +488,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                 testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
         IPv4Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
 
-        List<ReportedConfiguration> expectedReportedConfigurations = combineReportedConfigurations(
+        List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
                 createBasicAndQosReportedConfigurations(),
 
                 new ReportedConfiguration(ReportedConfigurationType.IPV4_BOOT_PROTOCOL,
@@ -577,6 +655,105 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 */
 
+    @Test
+    public void testDnsResolverConfigurationInSync() {
+        testDnsResolverConfiguration(null, null, null, true);
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNetworkAttachmentInSyncWithHost() {
+        testDnsResolverConfiguration(sampleDnsResolverConfiguration, null, sampleDnsResolverConfiguration, true);
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNetworkAttachmentOutOfSyncWithHostDueNoDataOnHost() {
+        testDnsResolverConfiguration(null, null, sampleDnsResolverConfiguration, false);
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNetworkInSyncWithHost() {
+        testDnsResolverConfiguration(sampleDnsResolverConfiguration, sampleDnsResolverConfiguration, null, true);
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNetworkOutOfSyncWithHostDueNoDataOnHost() {
+        testDnsResolverConfiguration(null, sampleDnsResolverConfiguration, null, false);
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNetworkOutOfSyncWithHostDueNoDataOnNetworkOrNetworkAttachment() {
+        testDnsResolverConfiguration(sampleDnsResolverConfiguration, null, null, true);
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNetworkAttachmentHasPrecedenceNetworkAttachmentInSyncWithHost() {
+        testDnsResolverConfiguration(sampleDnsResolverConfiguration,
+                sampleDnsResolverConfiguration2,
+                sampleDnsResolverConfiguration,
+                true);
+    }
+
+    @Test
+    public void testDnsResolverConfigurationOrderOfAddressesIsNotImportant() {
+        testDnsResolverConfiguration(this.sampleDnsResolverConfigurationWithReversedNameServers,
+                null,
+                this.sampleDnsResolverConfiguration,
+                true);
+    }
+
+    private DnsResolverConfiguration reverseNameServersOrder(DnsResolverConfiguration sampleDnsResolverConfiguration) {
+        List<NameServer> reversedNameServers = sampleDnsResolverConfiguration.getNameServers();
+        Collections.reverse(reversedNameServers);
+        DnsResolverConfiguration result = new DnsResolverConfiguration();
+        result.setNameServers(reversedNameServers);
+        return result;
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNetworkAttachmentHasPrecedenceNetworkAttachmentOutOfSyncWithHost() {
+        testDnsResolverConfiguration(sampleDnsResolverConfiguration,
+                sampleDnsResolverConfiguration,
+                sampleDnsResolverConfiguration2,
+                false);
+    }
+
+    private void testDnsResolverConfiguration(DnsResolverConfiguration vdsDnsResolver,
+            DnsResolverConfiguration networkDnsResolver,
+            DnsResolverConfiguration attachmentDnsResolver,
+            boolean expectedInSync) {
+
+        //cannot use initIpv4ConfigurationBootProtocol because of 'randomized tests' technique.
+        iface.setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
+        IPv4Address address = new IPv4Address();
+        address.setBootProtocol(Ipv4BootProtocol.DHCP);
+        testedNetworkAttachment.getIpConfiguration().setIPv4Addresses(Collections.singletonList(address));
+
+        network.setDnsResolverConfiguration(networkDnsResolver);
+        testedNetworkAttachment.setDnsResolverConfiguration(attachmentDnsResolver);
+        assertThat(createTestedInstance(true, vdsDnsResolver).isNetworkInSync(), is(expectedInSync));
+    }
+
+    @Test
+    public void testDnsResolverConfigurationNonDefaultRouteNetworkIsIgnored() {
+
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
+        testedNetworkAttachment.setDnsResolverConfiguration(sampleDnsResolverConfiguration2);
+        assertThat(createTestedInstance(false, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
+    }
+
+    @Test
+    public void testDnsResolverConfigurationInSyncWithHostWhenDhcpIsUsed() {
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration2);
+        testedNetworkAttachment.setDnsResolverConfiguration(null);
+
+
+        iface.setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
+        IPv4Address address = new IPv4Address();
+        address.setBootProtocol(Ipv4BootProtocol.DHCP);
+        testedNetworkAttachment.getIpConfiguration().setIPv4Addresses(Collections.singletonList(address));
+        assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(false));
+    }
+
     private void initIpv4Configuration() {
         IpConfiguration ipConfiguration = this.testedNetworkAttachment.getIpConfiguration();
         ipConfiguration.setIPv4Addresses(Collections.singletonList(ipv4Address));
@@ -654,10 +831,20 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         iface.setIpv6BootProtocol(networkBootProtocol);
     }
 
-    private List<ReportedConfiguration> combineReportedConfigurations(List<ReportedConfiguration> configurations, ReportedConfiguration ... toAdd) {
+    private List<ReportedConfiguration> addReportedConfigurations(Stream<ReportedConfiguration> configurations, ReportedConfiguration ... toAdd) {
+        return addReportedConfigurations(configurations.collect(Collectors.toList()), toAdd);
+    }
+
+    private List<ReportedConfiguration> addReportedConfigurations(List<ReportedConfiguration> configurations, ReportedConfiguration ... toAdd) {
         List<ReportedConfiguration> result = new ArrayList<>(configurations);
         result.addAll(Arrays.asList(toAdd));
         return result;
+    }
+
+    @SafeVarargs
+    private final Stream<ReportedConfiguration> combineReportedConfigurations(List<ReportedConfiguration>... configurations) {
+        Stream<List<ReportedConfiguration>> basicReportedConfigurations = Stream.of(configurations);
+        return basicReportedConfigurations.flatMap(Collection::stream);
     }
 
     private List<ReportedConfiguration> createBasicReportedConfigurations() {
@@ -670,7 +857,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     private List<ReportedConfiguration> createBasicAndQosReportedConfigurations() {
-        return combineReportedConfigurations(createBasicReportedConfigurations(),
+        return addReportedConfigurations(createBasicReportedConfigurations(),
 
                 new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE),
                 new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME),
@@ -698,6 +885,28 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                 SwitchType.LEGACY,
                 SwitchType.LEGACY,
                 true);
+    }
+
+    private List<ReportedConfiguration> reportQos(boolean allInSync) {
+        return Arrays.asList(new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
+                        ifaceQos.getOutAverageLinkshare(),
+                        null,
+                        allInSync),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
+                        ifaceQos.getOutAverageUpperlimit(),
+                        null,
+                        allInSync),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
+                        ifaceQos.getOutAverageRealtime(),
+                        null,
+                        allInSync));
+    }
+
+    private String addressesAsString(List<NameServer> nameServers) {
+        if (nameServers == null) {
+            return null;
+        }
+        return nameServers.stream().map(NameServer::getAddress).sorted().collect(Collectors.joining(","));
     }
 
     private ReportedConfiguration reporteEqualBridged() {

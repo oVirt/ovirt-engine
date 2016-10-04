@@ -1,24 +1,33 @@
 package org.ovirt.engine.core.utils;
 
+import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.DNS_CONFIGURATION;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.host.ShouldSetDefaultRouteFlagAndDnsData;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.SubnetUtils;
 
 public class NetworkInSyncWithVdsNetworkInterface {
@@ -27,19 +36,25 @@ public class NetworkInSyncWithVdsNetworkInterface {
     private final Network network;
     private final NetworkAttachment networkAttachment;
     private final HostNetworkQos ifaceQos;
+    private final boolean isDefaultRouteNetwork;
     private final HostNetworkQos hostNetworkQos;
+    private final DnsResolverConfiguration reportedDnsResolverConfiguration;
     private final Cluster cluster;
 
     public NetworkInSyncWithVdsNetworkInterface(VdsNetworkInterface iface,
             Network network,
             HostNetworkQos hostNetworkQos,
             NetworkAttachment networkAttachment,
-            Cluster cluster) {
+            DnsResolverConfiguration reportedDnsResolverConfiguration,
+            Cluster cluster,
+            boolean isDefaultRouteNetwork) {
         this.iface = iface;
         this.network = network;
         this.ifaceQos = iface.getQos();
+        this.isDefaultRouteNetwork = isDefaultRouteNetwork;
         this.hostNetworkQos = hostNetworkQos;
         this.networkAttachment = networkAttachment;
+        this.reportedDnsResolverConfiguration = reportedDnsResolverConfiguration;
         this.cluster = cluster;
     }
 
@@ -75,6 +90,8 @@ public class NetworkInSyncWithVdsNetworkInterface {
             result.add(OUT_AVERAGE_UPPER_LIMIT, getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos));
             result.add(OUT_AVERAGE_REAL_TIME, getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos));
         }
+
+        addDnsConfiguration(result);
 
         return result;
     }
@@ -188,5 +205,69 @@ public class NetworkInSyncWithVdsNetworkInterface {
                     getIpv6PrimaryAddress().getGateway(),
                     isIpv6GatewayInSync());
         }
+    }
+
+    private void addDnsConfiguration(ReportedConfigurations result) {
+        boolean dnsResolverConfigurationSupported =
+                FeatureSupported.supportedInConfig(ConfigValues.DnsResolverConfigurationSupported,
+                this.cluster.getCompatibilityVersion());
+
+        //DNS configuration is reported only on network having default_route role
+        if (!isDefaultRouteNetwork || !dnsResolverConfigurationSupported) {
+            return;
+        }
+
+        List<NameServer> nameServersOfNetworkAttachment = getNameServers(networkAttachment.getDnsResolverConfiguration());
+        List<NameServer> nameServersOfNetwork = getNameServers(network.getDnsResolverConfiguration());
+        List<NameServer> nameServersOfHost = getNameServers(reportedDnsResolverConfiguration);
+
+        boolean shouldSetDefaultRoute = new ShouldSetDefaultRouteFlagAndDnsData().test(true, networkAttachment);
+        boolean engineDefineDnsConfiguration =
+                shouldSetDefaultRoute && (nameServersOfNetworkAttachment != null || nameServersOfNetwork != null);
+
+        List<NameServer> expectedNameServers = nameServersOfNetworkAttachment != null
+                ? nameServersOfNetworkAttachment
+                : nameServersOfNetwork;
+
+        boolean outOfSync = engineDefineDnsConfiguration
+                && !Objects.equals(nameServersOfHost, expectedNameServers);
+
+        result.add(DNS_CONFIGURATION,
+                addressesAsString(nameServersOfHost),
+                engineDefineDnsConfiguration ? addressesAsString(expectedNameServers): "",
+                !outOfSync);
+    }
+
+    private boolean isDhcpUsed(NetworkAttachment networkAttachment) {
+        IpConfiguration ipConf = networkAttachment.getIpConfiguration();
+
+        boolean dhcpOnIpv4 = ipConf.hasIpv4PrimaryAddressSet() &&
+                Ipv4BootProtocol.DHCP.equals(ipConf.getIpv4PrimaryAddress().getBootProtocol());
+
+        List<Ipv6BootProtocol> ipv6DhcpEnumValues = Arrays.asList(Ipv6BootProtocol.DHCP, Ipv6BootProtocol.AUTOCONF);
+        boolean dhcpOnIpv6 = ipConf.hasIpv6PrimaryAddressSet()
+                && ipv6DhcpEnumValues.contains(ipConf.getIpv6PrimaryAddress().getBootProtocol());
+
+        return dhcpOnIpv4 || dhcpOnIpv6;
+    }
+
+    private String addressesAsString(List<NameServer> nameServers) {
+        if (nameServers == null) {
+            return null;
+        }
+        return nameServers.stream().map(NameServer::getAddress).sorted().collect(Collectors.joining(","));
+    }
+
+    private List<NameServer> getNameServers(DnsResolverConfiguration dnsResolverConfiguration) {
+        if (dnsResolverConfiguration == null) {
+            return null;
+        }
+
+        List<NameServer> nameServers = dnsResolverConfiguration.getNameServers();
+        if (nameServers == null || nameServers.isEmpty()) {
+            return null;
+        }
+
+        return nameServers;
     }
 }

@@ -16,15 +16,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.network.cluster.DefaultRouteUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -47,10 +52,16 @@ public class ReportedConfigurationsFillerTest {
     private ClusterDao clusterDao;
 
     @Mock
-    private VdsDao vdsDao;
+    private VdsStaticDao vdsStaticDao;
+
+    @Mock
+    private VdsDynamicDao vdsDynamicDao;
 
     @Mock
     private EffectiveHostNetworkQos effectiveHostNetworkQos;
+
+    @Mock
+    private DefaultRouteUtil defaultRouteUtil;
 
     @Spy
     @InjectMocks
@@ -69,15 +80,22 @@ public class ReportedConfigurationsFillerTest {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule();
+    private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
     @Before
     public void setUp() {
         hostId = Guid.newGuid();
         clusterId = Guid.newGuid();
 
-        VDS vds = new VDS();
-        vds.setId(hostId);
-        vds.setClusterId(clusterId);
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setId(hostId);
+        vdsStatic.setClusterId(clusterId);
+
+        reportedDnsResolverConfiguration = new DnsResolverConfiguration();
+
+        VdsDynamic vdsDynamic = new VdsDynamic();
+        vdsDynamic.setId(hostId);
+        vdsDynamic.setReportedDnsResolverConfiguration(reportedDnsResolverConfiguration);
 
         baseNic = createNic("eth0");
 
@@ -95,9 +113,11 @@ public class ReportedConfigurationsFillerTest {
         vlanNetworkQos = new HostNetworkQos();
         vlanNetworkQos.setId(vlanNetwork.getQosId());
 
-        when(vdsDao.get(hostId)).thenReturn(vds);
+        when(vdsStaticDao.get(hostId)).thenReturn(vdsStatic);
+        when(vdsDynamicDao.get(hostId)).thenReturn(vdsDynamic);
 
         cluster = new Cluster();
+        cluster.setCompatibilityVersion(Version.v4_1);
         when(clusterDao.get(any())).thenReturn(cluster);
     }
 
@@ -133,7 +153,11 @@ public class ReportedConfigurationsFillerTest {
         when(effectiveHostNetworkQos.getQos(networkAttachment, baseNicNetwork)).thenReturn(baseNicNetworkQos);
         filler.fillReportedConfiguration(networkAttachment, hostId);
 
-        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, baseNic, baseNicNetwork, cluster);
+        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment,
+                baseNic,
+                baseNicNetwork,
+                reportedDnsResolverConfiguration,
+                cluster);
     }
 
     @Test
@@ -152,6 +176,10 @@ public class ReportedConfigurationsFillerTest {
         when(effectiveHostNetworkQos.getQos(networkAttachment, vlanNetwork)).thenReturn(vlanNetworkQos);
         filler.fillReportedConfiguration(networkAttachment, hostId);
 
-        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, vlanNic, vlanNetwork, cluster);
+        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment,
+                vlanNic,
+                vlanNetwork,
+                reportedDnsResolverConfiguration,
+                cluster);
     }
 }

@@ -2004,6 +2004,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     AgentChannelNamingSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    DnsResolverConfigurationSupported,
+
     /**
      * Timeout in seconds for the completion of calls to external network providers.
      */

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -57,14 +58,15 @@ public class GetNetworkAttachmentsByHostIdQuery<P extends IdQueryParameters> ext
 
         List<VdsNetworkInterface> allInterfacesForHost = interfaceDao.getAllInterfacesForVds(hostId);
 
-        Guid clusterId = hostDao.get(hostId).getClusterId();
+        VDS vds = hostDao.get(hostId);
+        Guid clusterId = vds.getClusterId();
 
         BusinessEntityMap<Network> networkMap = new BusinessEntityMap<>(networkDao.getAllForCluster(clusterId));
 
         reportedConfigurationsFiller.fillReportedConfigurations(allInterfacesForHost,
                 networkMap,
                 networkAttachments,
-                clusterId);
+                vds.getDynamicData().getReportedDnsResolverConfiguration(), clusterId);
 
         completeNicNames(networkAttachments, allInterfacesForHost);
         completeNetworkNames(networkAttachments, networkMap);
