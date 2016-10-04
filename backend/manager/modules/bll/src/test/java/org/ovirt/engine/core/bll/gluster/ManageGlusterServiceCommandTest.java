@@ -188,30 +188,40 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsWithValidActionTypes() {
+    public void validateSucceedsWithStartActionType() {
         GlusterServiceParameters params = new GlusterServiceParameters();
         params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
         cmd = spy(new ManageGlusterServiceCommand(params, null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
+    }
 
+    @Test
+    public void validateSucceedsWithStopActionType() {
+        GlusterServiceParameters params = new GlusterServiceParameters();
         params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
         cmd = spy(new ManageGlusterServiceCommand(params, null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
+    }
 
+    @Test
+    public void validateSucceedsWithStopActionTypeAndClusterId() {
+        GlusterServiceParameters params = new GlusterServiceParameters();
+        params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
         params.setClusterId(Guid.newGuid());
         cmd = spy(new ManageGlusterServiceCommand(params, null));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
+    }
 
-        params.setServerId(Guid.newGuid());
-        cmd = spy(new ManageGlusterServiceCommand(params, null));
-        prepareMocks(cmd);
-        assertTrue(cmd.validate());
-
+    @Test
+    public void validateSucceedsWithStopActionTypeAndClusterIdAndServerId() {
+        GlusterServiceParameters params = new GlusterServiceParameters();
+        params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
         params.setClusterId(Guid.newGuid());
         params.setServerId(Guid.newGuid());
+        cmd = spy(new ManageGlusterServiceCommand(params, null));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
