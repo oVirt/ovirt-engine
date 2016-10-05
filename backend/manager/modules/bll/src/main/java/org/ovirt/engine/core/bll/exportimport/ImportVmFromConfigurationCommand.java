@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
@@ -43,6 +44,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     @Inject
     private OvfHelper ovfHelper;
 
+    @Inject
+    ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
     }
@@ -55,6 +59,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     @Override
     protected boolean validate() {
         if (isImagesAlreadyOnTarget()) {
+            if (!validateExternalVnicProfileMapping()) {
+                return false;
+            }
+
             ImportValidator importValidator = getImportValidator();
             if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData, getImages()))) {
                 return false;
@@ -62,6 +70,14 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
         return super.validate();
+    }
+
+    private boolean validateExternalVnicProfileMapping() {
+        final ValidationResult validationResult =
+                externalVnicProfileMappingValidator.validateExternalVnicProfileMapping(
+                        getParameters().getExternalVnicProfileMappings(),
+                        getParameters().getClusterId());
+        return validate(validationResult);
     }
 
     @Override

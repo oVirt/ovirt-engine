@@ -59,8 +59,8 @@ import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private Guid vmId = Guid.newGuid();
     private static final Guid storageDomainId = new Guid("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
-    private Guid storagePoolId;
-    private Guid clusterId;
+    private final Guid storagePoolId = Guid.newGuid();
+    private final Guid clusterId = Guid.newGuid();
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
     private String xmlOvfData;
     @Mock
@@ -86,6 +86,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Mock
     private ExternalVmMacsFinder externalVmMacsFinder;
 
+    @Mock
+    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
 
@@ -110,11 +113,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() throws IOException {
-        storagePoolId = Guid.newGuid();
-        clusterId = Guid.newGuid();
-
         doReturn(cluster).when(cmd).getCluster();
         doReturn(Collections.emptyList()).when(cmd).getImages();
+        when(externalVnicProfileMappingValidator.validateExternalVnicProfileMapping(
+                new ArrayList<>(), clusterId))
+                .thenReturn(ValidationResult.VALID);
 
         mockCluster();
         setXmlOvfData();
