@@ -149,7 +149,7 @@ class Plugin(plugin.PluginBase):
         )
         dcVersions = statement.execute(
             statement="""
-                SELECT compatibility_version FROM storage_pool;
+                SELECT name, compatibility_version FROM storage_pool;
             """,
             ownConnection=True,
             transaction=False,
@@ -163,7 +163,7 @@ class Plugin(plugin.PluginBase):
             transaction=False,
         )
         sql = _(
-            'SELECT compatibility_version FROM {table};'
+            'SELECT name, compatibility_version FROM {table};'
         ).format(
             table=clusterTable[0]['table_name']
         )
@@ -186,6 +186,31 @@ class Plugin(plugin.PluginBase):
         ])
 
         if versions - supported:
+            for (queryres, errmsg) in (
+                (
+                    dcVersions,
+                    _(
+                        'The following Data Centers have a too old '
+                        'compatibility level, please upgrade them:'
+                    )
+                ),
+                (
+                    clusterVersions,
+                    _(
+                        'The following Clusters have a too old '
+                        'compatibility level, please upgrade them:'
+                    )
+                ),
+            ):
+                objs = [
+                    x['name']
+                    for x in queryres
+                    if x['compatibility_version'] not in supported
+                ]
+                if objs:
+                    self.logger.error(errmsg)
+                    self.dialog.note('\n'.join(objs))
+
             raise RuntimeError(
                 _(
                     'Trying to upgrade from unsupported versions: {versions}'
