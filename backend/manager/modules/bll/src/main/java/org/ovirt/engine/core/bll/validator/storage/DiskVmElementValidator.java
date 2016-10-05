@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 
 public class DiskVmElementValidator {
 
@@ -67,7 +68,7 @@ public class DiskVmElementValidator {
     }
 
     private boolean isVirtioScsiControllerAttached(Guid vmId) {
-        VmDeviceUtils vmDeviceUtils = SimpleDependencyInjector.getInstance().get(VmDeviceUtils.class);
+        VmDeviceUtils vmDeviceUtils = Injector.get(VmDeviceUtils.class);
         return vmDeviceUtils.hasVirtioScsiController(vmId);
     }
 

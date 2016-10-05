@@ -382,7 +382,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
                 .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
 
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        SimpleDependencyInjector.getInstance().bind(VmDeviceUtils.class, vmDeviceUtils);
+
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
     }
 
     /**
