@@ -1,17 +1,23 @@
 package org.ovirt.engine.core.aaa;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.constants.SessionConstants;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+import org.ovirt.engine.core.uutils.crypto.EnvelopeEncryptDecrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +75,25 @@ public class SsoUtils {
             }
         }
         return engineSessionId;
+    }
+
+    public static String getPassword(String token) throws Exception {
+        if (StringUtils.isEmpty(token)) {
+            throw new RuntimeException("Sso access token is null.");
+        }
+        final Map<String, Object> response = SsoOAuthServiceUtils.getTokenInfo(
+                token,
+                "ovirt-ext=token:password-access");
+        FiltersHelper.isStatusOk(response);
+        final Map<String, Object> ovirt = (HashMap<String, Object>) response.get("ovirt");
+        String password = (String) ovirt.get("password");
+        // passwords can be empty so we check for null
+        if (password == null) {
+            throw new RuntimeException("Unable to retrieve user password for session.");
+        }
+        return new String(
+                EnvelopeEncryptDecrypt.decrypt(EngineEncryptionUtils.getPrivateKeyEntry(), password),
+                StandardCharsets.UTF_8);
     }
 
 }
