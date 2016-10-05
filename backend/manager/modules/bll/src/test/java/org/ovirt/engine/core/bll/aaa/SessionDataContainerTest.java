@@ -3,14 +3,13 @@ package org.ovirt.engine.core.bll.aaa;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -54,8 +53,8 @@ public class SessionDataContainerTest {
 
     @Before
     public void setUpContainer() {
-        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
-        when(ssoSessionValidator.getSessionStatuses(any(Set.class))).thenReturn(
+        when(engineSessionDao.remove(anyLong())).thenReturn(1);
+        when(ssoSessionValidator.getSessionStatuses(anySetOf(String.class))).thenReturn(
                 Collections.singletonMap(TEST_SSO_TOKEN, true));
         when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 
