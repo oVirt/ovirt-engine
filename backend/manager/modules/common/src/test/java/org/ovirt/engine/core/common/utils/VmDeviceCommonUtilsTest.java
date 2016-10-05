@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -112,7 +112,7 @@ public class VmDeviceCommonUtilsTest {
     }
 
     private Disk createDisk(Guid id, boolean boot) {
-        Disk disk = new DiskImageBase();
+        Disk disk = new DiskImage();
         disk.setId(id);
 
         DiskVmElement dve = new DiskVmElement(new VmDeviceId(id, null));

@@ -5,9 +5,9 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DiskImageBase extends Disk {
+public abstract class DiskImageBase extends Disk {
 
-    private static final long serialVersionUID = 4913899921353163969L;
+    private static final long serialVersionUID = -82774278437463811L;
 
     @Valid
     private Image image;
