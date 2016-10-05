@@ -51,7 +51,6 @@ public class SessionDataContainer {
 
     private static final String USER_PARAMETER_NAME = "user";
     private static final String SOURCE_IP = "source_ip";
-    private static final String PASSWORD_PARAMETER_NAME = "password";
     private static final String PROFILE_PARAMETER_NAME = "profile";
     private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
     private static final String SOFT_LIMIT_PARAMETER_NAME = "soft_limit";
@@ -290,27 +289,6 @@ public class SessionDataContainer {
     public DbUser getUser(String sessionId, boolean refresh) {
         return (DbUser) getData(sessionId, USER_PARAMETER_NAME, refresh);
     }
-
-    /**
-     * Sets the password of the user for the current session.
-     *
-     * @param user the password of the user
-     */
-    public void setPassword(String sessionId, String password) {
-        setData(sessionId, PASSWORD_PARAMETER_NAME, password);
-    }
-
-    /**
-     * Returns the password of the current user stored in the session.
-     *
-     * @return an array of characters containing the password or
-     *     <code>null</code> if the password is not available
-     */
-    public String getPassword(String sessionId) {
-        return (String) getData(sessionId, PASSWORD_PARAMETER_NAME, false);
-    }
-
-
 
     public void refresh(String sessionId) {
         refresh(getSessionInfo(sessionId));
