@@ -898,11 +898,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
 
             if (!hasCpuPinning) {
-                if(isLocalSD) {
-                    getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailableLocalStorage());
-                } else {
-                    getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
-                }
+                getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
             }
             getModel().getCpuPinning().setIsChangeable(hasCpuPinning);
         }
