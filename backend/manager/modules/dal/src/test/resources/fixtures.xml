@@ -4227,7 +4227,6 @@
         <column>app_list</column>
         <column>acpi_enable</column>
         <column>session</column>
-        <column>kvm_enable</column>
         <column>utc_diff</column>
         <column>last_vds_run_on</column>
         <column>client_ip</column>
@@ -4275,7 +4274,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4324,7 +4322,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4373,7 +4370,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4422,7 +4418,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4471,7 +4466,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4520,7 +4514,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4569,7 +4562,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4618,7 +4610,6 @@
             <value></value>
             <value>1</value>
             <value>0</value>
-            <value>1</value>
             <value>0</value>
             <null />
             <value></value>

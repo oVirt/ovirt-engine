@@ -164,7 +164,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("vm_pid", vm.getPid())
                 .addValue("acpi_enable", vm.getAcpiEnable())
                 .addValue("session", vm.getSession())
-                .addValue("kvm_enable", vm.getKvmEnable())
                 .addValue("boot_sequence", vm.getBootSequence())
                 .addValue("utc_diff", vm.getUtcDiff())
                 .addValue("last_vds_run_on", vm.getLastVdsRunOn())
@@ -243,7 +242,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setPid((Integer) rs.getObject("vm_pid"));
         entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
         entity.setSession(SessionState.forValue(rs.getInt("session")));
-        entity.setKvmEnable((Boolean) rs.getObject("kvm_enable"));
         entity.setBootSequence(BootSequence.forValue(rs.getInt("boot_sequence")));
         entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
         entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));

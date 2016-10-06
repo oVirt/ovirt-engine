@@ -754,9 +754,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             createInfo.put(VdsProperties.emulatedMachine, vm.getEmulatedMachine());
         }
 
-        createInfo.put(VdsProperties.kvmEnable, vm.getKvmEnable()
-                .toString()
-                .toLowerCase());
+        createInfo.put(VdsProperties.kvmEnable, "true");
         createInfo.put(VdsProperties.acpiEnable, vm.getAcpiEnable()
                 .toString()
                 .toLowerCase());

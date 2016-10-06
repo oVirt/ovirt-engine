@@ -648,14 +648,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmDynamic.setAcpiEnable(value);
     }
 
-    public Boolean getKvmEnable() {
-        return this.vmDynamic.getKvmEnable();
-    }
-
-    public void setKvmEnable(Boolean value) {
-        this.vmDynamic.setKvmEnable(value);
-    }
-
     public SessionState getSession() {
         return this.vmDynamic.getSession();
     }

@@ -42,7 +42,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Boolean acpiEnabled;
     private SessionState session;
     private String vncKeyboardLayout;
-    private Boolean kvmEnable;
     private Integer utcDiff;
     @UnchangeableByVdsm
     private Guid lastVdsRunOn;
@@ -98,7 +97,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 consoleUserId,
                 guestOs,
                 guestRequestedMemory,
-                kvmEnable,
                 lastVdsRunOn,
                 exitMessage,
                 exitStatus,
@@ -156,7 +154,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(consoleUserId, other.consoleUserId)
                 && Objects.equals(guestOs, other.guestOs)
                 && Objects.equals(guestRequestedMemory, other.guestRequestedMemory)
-                && Objects.equals(kvmEnable, other.kvmEnable)
                 && Objects.equals(lastVdsRunOn, other.lastVdsRunOn)
                 && Objects.equals(exitMessage, other.exitMessage)
                 && exitStatus == other.exitStatus
@@ -223,7 +220,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         pauseStatus = VmPauseStatus.NONE;
         exitStatus = VmExitStatus.Normal;
         acpiEnabled = true;
-        kvmEnable = true;
         session = SessionState.Unknown;
         bootSequence = BootSequence.C;
         exitReason = VmExitReason.Unknown;
@@ -259,7 +255,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         acpiEnabled = template.getAcpiEnable();
         session = template.getSession();
         vncKeyboardLayout = template.getVncKeyboardLayout();
-        kvmEnable = template.getKvmEnable();
         utcDiff = template.getUtcDiff();
         lastVdsRunOn = template.getLastVdsRunOn();
         clientIp = template.getClientIp();
@@ -440,14 +435,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setVncKeyboardLayout(String vncKeyboardLayout) {
         this.vncKeyboardLayout = vncKeyboardLayout;
-    }
-
-    public Boolean getKvmEnable() {
-        return this.kvmEnable;
-    }
-
-    public void setKvmEnable(Boolean value) {
-        this.kvmEnable = value;
     }
 
     public SessionState getSession() {
@@ -696,7 +683,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setAppList(vm.getAppList());
         setGuestOs(vm.getGuestOs());
         setVncKeyboardLayout(vm.getVncKeyboardLayout());
-        setKvmEnable(vm.getKvmEnable());
         setAcpiEnable(vm.getAcpiEnable());
         setGuestCurrentUserName(vm.getGuestCurrentUserName());
         setUtcDiff(vm.getUtcDiff());

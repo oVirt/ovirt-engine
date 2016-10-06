@@ -428,9 +428,6 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.vm_pid)) {
             vm.setPid(assignIntValue(xmlRpcStruct, VdsProperties.vm_pid));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.kvmEnable)) {
-            vm.setKvmEnable(Boolean.parseBoolean((String) xmlRpcStruct.get(VdsProperties.kvmEnable)));
-        }
         if (xmlRpcStruct.containsKey(VdsProperties.acpiEnable)) {
             vm.setAcpiEnable(Boolean.parseBoolean((String) xmlRpcStruct.get(VdsProperties.acpiEnable)));
         }

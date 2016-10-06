@@ -124,7 +124,6 @@ public final class Cloner {
         vm.setIsoPath(instance.getIsoPath());
         vm.setKernelParams(instance.getKernelParams());
         vm.setKernelUrl(instance.getKernelUrl());
-        vm.setKvmEnable(instance.getKvmEnable());
         // TODO: Guid is an object, but code should treat it as immutable, and not change it's uuid directly.
         // (quick skim of code shows this should be safe with current code)
         vm.setLastVdsRunOn(instance.getLastVdsRunOn());
