@@ -342,7 +342,10 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     }
 
     private void setButtonsEnabled(V widget, boolean enabled) {
-        getEntry(widget).setButtonsEnabled(enabled);
+        AddRemoveRowPanel parent = getEntry(widget);
+        if (parent != null) {
+            parent.setButtonsEnabled(enabled);
+        }
     }
 
     protected class AddRemoveRowPanel extends FlowPanel implements HasCleanup {
