@@ -34,7 +34,6 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
     protected ImageResource volumeSomeBricksDownImage = resources.volumeBricksDownWarning();
 
     public VolumeStatusCell() {
-
     }
 
     public VolumeStatusCell(UICommand onClickCommand) {
@@ -52,17 +51,17 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
     public void onBrowserEvent(Context context,
             Element parent,
             GlusterVolumeEntity volume,
-            SafeHtml tooltipContent,
             NativeEvent event, ValueUpdater<GlusterVolumeEntity> valueUpdater) {
-        super.onBrowserEvent(context, parent, volume, tooltipContent, event, valueUpdater);
+        super.onBrowserEvent(context, parent, volume, event, valueUpdater);
         VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
+
         if (BrowserEvents.CLICK.equals(event.getType()) && onClickCommand != null && (status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN)) {
             onClickCommand.execute();
         }
     }
 
     protected ImageResource getStatusImage(VolumeStatus vStatus) {
-     // Find the image corresponding to the status of the volume:
+        // Find the image corresponding to the status of the volume:
         ImageResource statusImage = null;
 
         switch (vStatus) {
@@ -84,11 +83,14 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         if (volume == null) {
             return;
         }
+
         VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
         ImageResource statusImage = getStatusImage(status);
-     // Generate the HTML for the image:
+
+        // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
+
         if (status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN
                 || GlusterVolumeUtils.isHealingRequired(volume)) {
             SafeHtml alertImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
@@ -97,4 +99,5 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
             sb.append(templates.statusTemplate(statusImageHtml, id, status.toString()));
         }
     }
+
 }

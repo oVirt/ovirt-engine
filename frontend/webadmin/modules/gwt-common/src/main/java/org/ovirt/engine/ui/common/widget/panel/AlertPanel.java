@@ -11,7 +11,7 @@ import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.gwtbootstrap3.client.ui.html.Text;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
@@ -21,13 +21,14 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * Renders a PatternFly alert panel. @see https://www.patternfly.org/widgets/#alerts
  */
 public class AlertPanel extends Composite {
 
-    interface ViewUiBinder extends UiBinder<Alert, AlertPanel> {
+    interface ViewUiBinder extends UiBinder<IsWidget, AlertPanel> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -45,6 +46,9 @@ public class AlertPanel extends Composite {
 
     @UiField
     Text badgeText;
+
+    @UiField
+    WidgetTooltip alertTooltip;
 
     private Type type;
     private ColumnSize widgetColumnSize;
@@ -85,7 +89,7 @@ public class AlertPanel extends Composite {
      * Create a new alert panel of type 'info'.
      */
     public AlertPanel() {
-        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this).asWidget());
         setType(Type.INFO);
         setWidgetColumnSize(ColumnSize.SM_11);
         badge.setVisible(false);
@@ -122,7 +126,7 @@ public class AlertPanel extends Composite {
             for (SafeHtml message: messagesList) {
                 builder.append(message);
             }
-            TooltipMixin.updateTooltipContent(builder.toSafeHtml(), getElement());
+            alertTooltip.setHtml(builder.toSafeHtml());
         }
     }
 
@@ -213,6 +217,10 @@ public class AlertPanel extends Composite {
 
     public HTMLPanel getMessageAt(int index) {
         return (HTMLPanel) messagePanel.getWidget(index);
+    }
+
+    public WidgetTooltip getAlertTooltip() {
+        return alertTooltip;
     }
 
 }

@@ -31,7 +31,6 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
     @Override
     public void disable(String disabilityHint) {
         tooltip.setText(disabilityHint);
-        tooltip.reconfigure();
         setEnabled(false);
     }
 
@@ -45,7 +44,6 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
         getLabel().setEnabled(enabled);
         if (enabled) {
             tooltip.setText("");
-            tooltip.reconfigure();
         }
     }
 

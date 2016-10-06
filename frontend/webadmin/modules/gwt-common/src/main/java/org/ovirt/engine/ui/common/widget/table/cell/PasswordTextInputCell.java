@@ -44,4 +44,5 @@ public class PasswordTextInputCell extends TextInputCell {
             sb.append(template.input(id));
         }
     }
+
 }

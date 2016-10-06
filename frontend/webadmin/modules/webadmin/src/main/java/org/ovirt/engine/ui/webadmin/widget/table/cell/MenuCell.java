@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -62,10 +63,9 @@ public class MenuCell<T> extends AbstractCell<T> {
     public void onBrowserEvent(Context context,
             Element parent,
             T value,
-            SafeHtml tooltipValue,
             NativeEvent event,
             ValueUpdater<T> valueUpdater) {
-        super.onBrowserEvent(context, parent, value, tooltipValue, event, valueUpdater);
+        super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
         int eventX = event.getClientX();
         int eventY = event.getClientY();

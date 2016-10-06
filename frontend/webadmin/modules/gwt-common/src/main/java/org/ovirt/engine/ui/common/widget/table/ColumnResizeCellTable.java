@@ -729,4 +729,5 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     @Override
     public void cleanup() {
     }
+
 }

@@ -26,7 +26,7 @@ public class QuotaStorageProgressBar extends QuotaProgressBar {
     }
 
     @Override
-    protected SafeHtml getTooltip() {
+    public SafeHtml getTooltip() {
         if (quotaUsagePerUser.getStorageLimit() == UNLIMITED) {
             return null;
         }
@@ -45,4 +45,5 @@ public class QuotaStorageProgressBar extends QuotaProgressBar {
     private String renderStorage(double storage) {
         return storage <= 0 ? "0" : diskSizeRenderer.render(storage); //$NON-NLS-1$
     }
+
 }

@@ -21,7 +21,7 @@ public class QuotaCPUProgressBar extends QuotaProgressBar {
     }
 
     @Override
-    protected SafeHtml getTooltip() {
+    public SafeHtml getTooltip() {
         if (quotaUsagePerUser.getVcpuLimit() == UNLIMITED) {
             return null;
         }
@@ -36,4 +36,5 @@ public class QuotaCPUProgressBar extends QuotaProgressBar {
                         0),
                 String.valueOf(quotaUsagePerUser.getFreeVcpu()));
     }
+
 }

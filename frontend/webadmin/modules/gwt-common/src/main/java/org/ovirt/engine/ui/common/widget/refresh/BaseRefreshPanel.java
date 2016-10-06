@@ -297,7 +297,6 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
 
     public void setTooltipText(String status) {
         tooltip.setText(status);
-        tooltip.reconfigure();
     }
 
     private void createRefreshButton() {

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
+import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltip;
 
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -13,7 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 /**
  * A Header that renders SafeHtml. Supports tooltips. Supports element-id framework.
  */
-public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWithElementId, TooltipHeader {
+public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWithElementId, ProvidesTooltip {
 
     private SafeHtml headerText;
     private SafeHtml tooltipText;

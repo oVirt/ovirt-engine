@@ -1,13 +1,15 @@
 package org.ovirt.engine.ui.userportal.widget;
 
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
+import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltip;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-public abstract class QuotaProgressBar extends DoublePercentageProgressBar {
+public abstract class QuotaProgressBar extends DoublePercentageProgressBar implements ProvidesTooltip {
 
     public static final int UNLIMITED = -1;
 
@@ -78,10 +80,7 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar {
 
         // update tooltip
         tooltip.setHtml(getTooltip());
-        tooltip.reconfigure();
     }
-
-    protected abstract SafeHtml getTooltip();
 
     protected SafeHtml templateWithLabels(String quota,
             int totalUsagePercentage, String totalUsage,

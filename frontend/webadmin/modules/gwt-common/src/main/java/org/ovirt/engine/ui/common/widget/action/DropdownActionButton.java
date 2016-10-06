@@ -6,7 +6,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -106,8 +107,9 @@ public class DropdownActionButton<T> extends AbstractActionButton {
     void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef, List selectedItems) {
         item.setVisible(buttonDef.isAccessible(selectedItems) && buttonDef.isVisible(selectedItems));
         item.setEnabled(buttonDef.isEnabled(selectedItems));
+
         if (buttonDef.getTooltip() != null) {
-            TooltipMixin.addTooltipToElement(buttonDef.getTooltip(), item.getElement());
+            ElementTooltipUtils.setTooltipOnElement(item.getElement(), buttonDef.getTooltip());
         }
     }
 

@@ -25,8 +25,4 @@ public class ListModelSuggestBoxEditor extends AbstractValidatedWidgetWithLabel<
         return editor;
     }
 
-    @Override
-    public void cleanup() {
-        getContentWidget().cleanup();
-    }
 }
