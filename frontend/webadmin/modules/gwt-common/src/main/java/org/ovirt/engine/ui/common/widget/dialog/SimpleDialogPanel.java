@@ -68,7 +68,6 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         getElement().getStyle().setZIndex(1);
         addHelpButtonHandler();
         helpIconButtonTooltip.setText(constants.clickForHelp());
-        helpIconButtonTooltip.reconfigure();
     }
 
     @Override

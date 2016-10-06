@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
+import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltipForObject;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -19,51 +21,27 @@ import com.google.gwt.user.client.DOM;
  * Supports tooltips.
  * </p>
  */
-public abstract class AbstractCell<C> extends com.google.gwt.cell.client.AbstractCell<C> implements Cell<C> {
+public abstract class AbstractCell<C> extends com.google.gwt.cell.client.AbstractCell<C> implements Cell<C>,
+        ProvidesTooltipForObject<C> {
 
     private String elementIdPrefix = DOM.createUniqueId(); // default
     private String columnId;
 
-    /**
-     * Events to sink. By default, we only sink mouse events that tooltips need. Override this
-     * (and include addAll(super.getConsumedEvents())'s events!) if your cell needs to respond
-     * to additional events.
-     */
+    private SafeHtml tooltipFallback;
+
     @Override
     public Set<String> getConsumedEvents() {
-        Set<String> set = new HashSet<>();
-        TooltipMixin.addTooltipsEvents(set);
-        return set;
+        return new HashSet<>(ElementTooltipUtils.HANDLED_CELL_EVENTS);
     }
 
-    /**
-     * Don't call this from a custom Column. This is only used in the case this Cell is used by
-     * a CompositeCell. In that case, we give each component Cell of the Composite a chance to render its own
-     * tooltip.
-     *
-     * See userportal's composite action button cell as an example (SideTabExtendedVirtualMachineView).
-     *
-     * @see com.google.gwt.cell.client.AbstractCell#onBrowserEvent(com.google.gwt.cell.client.Cell.Context, com.google.gwt.dom.client.Element, java.lang.Object, com.google.gwt.dom.client.NativeEvent, com.google.gwt.cell.client.ValueUpdater)
-     */
     @Override
-    public final void onBrowserEvent(Context context, Element parent, C value, NativeEvent event, ValueUpdater<C> valueUpdater) {
-        onBrowserEvent(context, parent, value, null, event, valueUpdater);
-    }
-
-    /**
-     * Handle events for this cell.
-     *
-     * @see org.ovirt.engine.ui.common.widget.table.cell.Cell#onBrowserEvent(com.google.gwt.cell.client.Cell.Context, com.google.gwt.dom.client.Element, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtml, com.google.gwt.dom.client.NativeEvent, com.google.gwt.cell.client.ValueUpdater)
-     */
-    public void onBrowserEvent(Context context, Element parent, C value,
-            SafeHtml tooltipContent, NativeEvent event, ValueUpdater<C> valueUpdater) {
-
-        // if the Column did not provide a tooltip, give the Cell a chance to render one using the cell value C
-        if (tooltipContent == null) {
-            tooltipContent = getTooltip(value);
+    public void onBrowserEvent(Context context, Element parent, C value, NativeEvent event, ValueUpdater<C> valueUpdater) {
+        SafeHtml tooltip = getTooltip(value);
+        if (tooltip == null) {
+            tooltip = getTooltip(value, parent);
         }
-        TooltipMixin.handleTooltipEvent(parent, tooltipContent, event);
 
+        ElementTooltipUtils.handleCellEvent(event, parent, tooltip);
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
     }
 
@@ -73,7 +51,19 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
      * contains multiple Cells, but each Cell needs its own tooltip.
      */
     public SafeHtml getTooltip(C value) {
-        return null;
+        return tooltipFallback;
+    }
+
+    /**
+     * Alternative {@code getTooltip}, in case we need access to the DOM element.
+     */
+    public SafeHtml getTooltip(C value, Element parent) {
+        return getTooltip(value);
+    }
+
+    @Override
+    public void setTooltipFallback(SafeHtml tooltipFallback) {
+        this.tooltipFallback = tooltipFallback;
     }
 
     /**

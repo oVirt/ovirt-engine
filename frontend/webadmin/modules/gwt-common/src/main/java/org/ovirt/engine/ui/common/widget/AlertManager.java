@@ -12,14 +12,12 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -56,6 +54,7 @@ public class AlertManager {
 
     private boolean canShowAlerts;
 
+    // TODO(vs) why are we holding reference to a specific instance?
     private AlertPanel alert;
 
     public AlertManager() {
@@ -161,8 +160,8 @@ public class AlertManager {
         // Use tool tip in case the textual content overflows
         Element messageDivElement = alertPanel.getMessageAt(0).getElement();
         if (ElementUtils.detectHorizontalOverflow(messageDivElement)) {
-            SafeHtml tooltipContent = SafeHtmlUtils.fromString(messageDivElement.getInnerText());
-            TooltipMixin.addTooltipToElement(tooltipContent, alertPanel.getElement(), Placement.BOTTOM);
+            alertPanel.getAlertTooltip().setText(messageDivElement.getInnerText());
+            alertPanel.getAlertTooltip().setPlacement(Placement.BOTTOM);
         }
     }
 

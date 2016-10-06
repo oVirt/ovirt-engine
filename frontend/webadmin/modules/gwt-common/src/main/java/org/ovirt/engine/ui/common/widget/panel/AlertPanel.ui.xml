@@ -12,12 +12,14 @@
         }
     </ui:style>
 
-    <b:Alert ui:field="alert">
-        <h:Span ui:field="icon" addStyleNames="{PFICON}" />
-        <b:Badge ui:field="badge" addStyleNames="{style.badge}">
-            <h:Text ui:field="badgeText" />
-        </b:Badge>
-        <h:Div ui:field="messagePanel" />
-    </b:Alert>
+    <t:WidgetTooltip ui:field="alertTooltip">
+        <b:Alert ui:field="alert">
+            <h:Span ui:field="icon" addStyleNames="{PFICON}" />
+            <b:Badge ui:field="badge" addStyleNames="{style.badge}">
+                <h:Text ui:field="badgeText" />
+            </b:Badge>
+            <h:Div ui:field="messagePanel" />
+        </b:Alert>
+    </t:WidgetTooltip>
 
 </ui:UiBinder>

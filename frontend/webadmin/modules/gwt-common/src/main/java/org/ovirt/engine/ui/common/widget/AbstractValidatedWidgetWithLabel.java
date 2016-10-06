@@ -12,6 +12,8 @@ import org.ovirt.engine.ui.common.widget.label.HasWidgetLabels;
 import org.ovirt.engine.ui.common.widget.label.LabelWithTooltip;
 import org.ovirt.engine.ui.common.widget.label.WidgetLabel;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -55,7 +57,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?> & TakesValue<T> &
     HasValueChangeHandlers<T>> extends AbstractValidatedWidget
         implements HasLabel, HasEnabledWithHints, HasWidgetLabels, HasAccess, HasAllKeyHandlers, HasElementId, Focusable,
-        FocusableComponentsContainer {
+        FocusableComponentsContainer, HasCleanup {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -337,7 +339,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         }
         label.setEnabled(true);
         contentWidgetContainerTooltip.setText(contentWidgetContainerConfiguredTooltip);
-        contentWidgetContainerTooltip.reconfigure();
     }
 
     @Override
@@ -346,7 +347,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         String tooltipText = getValidationTooltipText(validationHints);
         label.disable(tooltipText);
         contentWidgetContainerTooltip.setText(tooltipText);
-        contentWidgetContainerTooltip.reconfigure();
     }
 
     public void setWidgetTooltip(String text) {
@@ -367,7 +367,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void setContentWidgetContainerTooltip(String tooltipText) {
         contentWidgetContainerConfiguredTooltip = tooltipText;
         contentWidgetContainerTooltip.setText(tooltipText);
-        contentWidgetContainerTooltip.reconfigure();
     }
 
     // set styleNames on my components
@@ -467,4 +466,15 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public boolean isUsePatternfly() {
         return this.usePatternfly;
     }
+
+    @Override
+    public void cleanup() {
+        W contentWidget = getContentWidget();
+        if (contentWidget instanceof HasCleanup) {
+            ((HasCleanup) contentWidget).cleanup();
+        }
+
+        contentWidgetContainerTooltip.cleanup();
+    }
+
 }

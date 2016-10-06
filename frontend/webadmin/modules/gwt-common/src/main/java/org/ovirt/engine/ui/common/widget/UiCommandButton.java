@@ -94,7 +94,6 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
     protected void updateButton() {
         super.updateButton();
         tooltip.setText(buildTooltipText());
-        tooltip.reconfigure();
     }
 
     /**

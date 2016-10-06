@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -52,11 +53,9 @@ public abstract class AbstractToggleButtonCell<T> extends AbstractCell<T> {
     public void onBrowserEvent(Context context,
                                Element parent,
                                T model,
-                               SafeHtml tooltipContent,
                                NativeEvent event,
                                ValueUpdater<T> valueUpdater) {
-
-        super.onBrowserEvent(context, parent, model, tooltipContent, event, valueUpdater);
+        super.onBrowserEvent(context, parent, model, event, valueUpdater);
         if (!BrowserEvents.CLICK.equals(event.getType())) {
             return;
         }
@@ -64,4 +63,5 @@ public abstract class AbstractToggleButtonCell<T> extends AbstractCell<T> {
     }
 
     public abstract void onClickEvent(T model);
+
 }

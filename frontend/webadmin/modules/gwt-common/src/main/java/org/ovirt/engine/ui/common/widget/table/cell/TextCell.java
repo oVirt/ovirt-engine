@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
-import com.google.gwt.cell.client.ValueUpdater;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -100,7 +99,8 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
         }
     }
 
-    public SafeHtml renderTooltip(Context context, Element parent, String value) {
+    @Override
+    public SafeHtml getTooltip(String value, Element parent) {
         if (value != null) {
             SafeHtml safeHtmlValue = SafeHtmlUtils.fromString(value);
             if (maxTextLength >= 0) {
@@ -116,20 +116,6 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
             }
         }
         return null;
-    }
-
-    public void onBrowserEvent(Context context, Element parent, String value, SafeHtml tooltipContent,
-            NativeEvent event, ValueUpdater<String> valueUpdater) {
-
-        // if a tooltip was provided, use it.
-        // else, see if we need to render a tooltip for purposes of showing the full string that
-        // was truncated.
-
-        if (tooltipContent == null || tooltipContent.asString().isEmpty()) {
-            tooltipContent = renderTooltip(context, parent, value);
-        }
-
-        super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
     }
 
     /**

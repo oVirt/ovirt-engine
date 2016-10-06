@@ -50,7 +50,6 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
 
         WidgetTooltip corrIdTextBoxLabelTooltip = new WidgetTooltip(new StringValueLabel());
         corrIdTextBoxLabelTooltip.setText(constants.correltaionIdEvent());
-        corrIdTextBoxLabelTooltip.reconfigure();
 
         addTextBoxToPanel(panel,
                 corrIdTextBoxLabelTooltip,

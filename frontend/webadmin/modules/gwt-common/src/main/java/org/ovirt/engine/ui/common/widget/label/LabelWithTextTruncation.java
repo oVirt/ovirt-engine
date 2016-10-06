@@ -55,7 +55,6 @@ public class LabelWithTextTruncation extends Composite implements IsEditor<LeafV
         } else {
             tooltip.setText(null);
         }
-        tooltip.reconfigure();
     }
 
     @Override

@@ -75,7 +75,6 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
         percentageBarB.setWidth("0px"); //$NON-NLS-1$
         percentageBarA.setVisible(true);
         tooltip.setHtml(tooltipText);
-        tooltip.reconfigure();
         percentageBarA.setStyleName(style.empty());
         percentageBarA.setWidth(FULL_WIDTH + "%"); //$NON-NLS-1$
         percentageLabelA.setText(ZERO);

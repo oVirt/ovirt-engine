@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.common.widget.action;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -21,6 +22,9 @@ public abstract class AbstractActionButton extends Composite implements ActionBu
 
     @UiField
     public ToggleButton button;
+
+    @UiField
+    public WidgetTooltip buttonTooltip;
 
     @Override
     public void setEnabledHtml(SafeHtml html) {
@@ -50,12 +54,13 @@ public abstract class AbstractActionButton extends Composite implements ActionBu
 
     @Override
     public void setTooltip(SafeHtml tooltip) {
-        TooltipMixin.addTooltipToElement(tooltip, getElement());
+        buttonTooltip.setHtml(tooltip);
     }
 
     @Override
     public void setTooltip(SafeHtml tooltip, Placement placement) {
-        TooltipMixin.addTooltipToElement(tooltip, getElement(), placement);
+        buttonTooltip.setHtml(tooltip);
+        buttonTooltip.setPlacement(placement);
     }
 
     @Override

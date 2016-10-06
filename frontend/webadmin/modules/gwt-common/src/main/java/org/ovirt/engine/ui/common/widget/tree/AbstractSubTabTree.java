@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
@@ -271,14 +272,21 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         Element col = tableElm.getElementsByTagName("td").getItem(0); //$NON-NLS-1$
         col.setAttribute("width", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        if (!enabled) {
-            NodeList<Element> inputs = item.getElement().getElementsByTagName("input"); //$NON-NLS-1$
-            for (int i = 0; i < inputs.getLength(); i++) {
+        NodeList<Element> inputs = item.getElement().getElementsByTagName("input"); //$NON-NLS-1$
+        for (int i = 0; i < inputs.getLength(); i++) {
+            if (!enabled) {
                 disableElement(inputs.getItem(i));
+            } else {
+                ElementTooltipUtils.destroyTooltip(inputs.getItem(i));
             }
-            NodeList<Element> spans = item.getElement().getElementsByTagName("span"); //$NON-NLS-1$
-            for (int i = 0; i < spans.getLength(); i++) {
+        }
+
+        NodeList<Element> spans = item.getElement().getElementsByTagName("span"); //$NON-NLS-1$
+        for (int i = 0; i < spans.getLength(); i++) {
+            if (!enabled) {
                 disableElement(spans.getItem(i));
+            } else {
+                ElementTooltipUtils.destroyTooltip(spans.getItem(i));
             }
         }
 
@@ -332,7 +340,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         element.getStyle().setColor("#999999"); //$NON-NLS-1$
 
         if (getNodeDisabledTooltip() != null) {
-            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(getNodeDisabledTooltip()), element);
+            ElementTooltipUtils.setTooltipOnElement(element, SafeHtmlUtils.fromString(getNodeDisabledTooltip()));
         }
     }
 

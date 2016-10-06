@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractInputCell;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -73,8 +74,9 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
     @Override
     public void onBrowserEvent(Context context, Element parent, String value,
-            SafeHtml tooltipContent, NativeEvent event, ValueUpdater<String> valueUpdater) {
-        super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
+            NativeEvent event, ValueUpdater<String> valueUpdater) {
+        super.onBrowserEvent(context, parent, value, event, valueUpdater);
+
         String type = event.getType();
         if (BrowserEvents.CHANGE.equals(type)) {
             Object key = context.getKey();
@@ -140,4 +142,5 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
             indexForOption.put(option, index++);
         }
     }
+
 }

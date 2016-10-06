@@ -61,11 +61,6 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         removeContentWidgetStyleName(Styles.FORM_CONTROL);
     }
 
-    @Override
-    public void cleanup() {
-        getContentWidget().cleanup();
-    }
-
     /**
      * A renderer for the suggest box. Receives an instance of the EntityModel and returns two kinds of the rendering.
      */

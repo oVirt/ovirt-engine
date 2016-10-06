@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
+import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltipForObject;
+
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -27,7 +28,8 @@ import com.google.gwt.user.client.DOM;
  * </p>
  * @param <C> Cell data type.
  */
-public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C> implements Cell<C> {
+public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C> implements Cell<C>,
+        ProvidesTooltipForObject<C> {
 
     private final List<HasCell<C, ?>> hasCells;
 
@@ -35,48 +37,22 @@ public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C
     private String elementIdPrefix = DOM.createUniqueId();
     private String columnId;
 
+    private SafeHtml tooltipFallback;
+
     public CompositeCell(List<HasCell<C, ?>> hasCells) {
         super(hasCells);
         this.hasCells = hasCells;
     }
 
-    /**
-     * Events to sink. By default, we only sink mouse events that tooltips need. Override this
-     * (and include addAll(super.getConsumedEvents())'s events!) if your cell needs to respond
-     * to additional events.
-     */
     @Override
     public Set<String> getConsumedEvents() {
-        Set<String> set = new HashSet<>();
-        TooltipMixin.addTooltipsEvents(set);
-        return set;
+        return new HashSet<>(ElementTooltipUtils.HANDLED_CELL_EVENTS);
     }
 
-    /**
-     * Handle events for this cell.
-     *
-     * @see org.ovirt.engine.ui.common.widget.table.cell.Cell#onBrowserEvent(com.google.gwt.cell.client.Cell.Context, com.google.gwt.dom.client.Element, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtml, com.google.gwt.dom.client.NativeEvent, com.google.gwt.cell.client.ValueUpdater)
-     */
+    @Override
     public void onBrowserEvent(Context context, Element parent, C value,
-            SafeHtml tooltipContent, NativeEvent event, ValueUpdater<C> valueUpdater) {
-
-        // if the Column did not provide a tooltip, give the Cell a chance to render one using the cell value C
-        if (tooltipContent == null) {
-            tooltipContent = getTooltip(value);
-        }
-
-        if (BrowserEvents.MOUSEOVER.equals(event.getType())) {
-            TooltipMixin.configureTooltip(parent, tooltipContent, event);
-        }
-
-        if (BrowserEvents.MOUSEOUT.equals(event.getType())) {
-            TooltipMixin.reapAllTooltips();
-        }
-
-        if (BrowserEvents.MOUSEDOWN.equals(event.getType())) {
-            TooltipMixin.hideAllTooltips();
-        }
-
+            NativeEvent event, ValueUpdater<C> valueUpdater) {
+        ElementTooltipUtils.handleCellEvent(event, parent, getTooltip(value));
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
     }
 
@@ -86,7 +62,12 @@ public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C
      * contains multiple Cells, but each Cell needs its own tooltip.
      */
     public SafeHtml getTooltip(C value) {
-        return null;
+        return tooltipFallback;
+    }
+
+    @Override
+    public void setTooltipFallback(SafeHtml tooltipFallback) {
+        this.tooltipFallback = tooltipFallback;
     }
 
     /**
@@ -154,6 +135,5 @@ public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C
     public String getColumnId() {
         return columnId;
     }
-
 
 }

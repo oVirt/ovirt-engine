@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ConfigureLocalStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -249,9 +250,9 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         memoryOptimizationInfo = new InfoIcon(templates.italicText(constants.clusterPopupMemoryOptimizationInfo()));
-        memoryOptimizationInfo.setTooltipMaxWidth(Width.W520);
+        memoryOptimizationInfo.setTooltipMaxWidth(TooltipWidth.W520);
         cpuThreadsInfo = new InfoIcon(templates.italicText(constants.clusterPopupCpuThreadsInfo()));
-        cpuThreadsInfo.setTooltipMaxWidth(Width.W620);
+        cpuThreadsInfo.setTooltipMaxWidth(TooltipWidth.W620);
 
     }
 

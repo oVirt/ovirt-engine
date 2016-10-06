@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.common.utils.ElementUtils;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
@@ -160,7 +160,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
     @Override
     protected void initTooltip() {
         super.initTooltip();
-        setToolTipMaxWidth(Width.W520);
+        setToolTipMaxWidth(TooltipWidth.W520);
     }
 
     protected abstract ImageResource getStatusImage();

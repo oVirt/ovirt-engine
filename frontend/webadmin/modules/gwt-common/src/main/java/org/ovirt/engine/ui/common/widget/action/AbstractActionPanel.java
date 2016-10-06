@@ -12,13 +12,14 @@ import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -546,8 +547,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
             List<ActionButtonDefinition<T>> actions,
             final PopupPanel popupPanel,
             boolean removeOldItems) {
-
         if (removeOldItems) {
+            ElementTooltipUtils.destroyMenuItemTooltips(menuBar);
             menuBar.clearItems();
         }
 
@@ -613,7 +614,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
 
         if (buttonDef.getMenuItemTooltip() != null) {
-            TooltipMixin.addTooltipToElement(buttonDef.getMenuItemTooltip(), item.getElement());
+            ElementTooltipUtils.setTooltipOnElement(item.getElement(), buttonDef.getMenuItemTooltip());
         }
     }
 

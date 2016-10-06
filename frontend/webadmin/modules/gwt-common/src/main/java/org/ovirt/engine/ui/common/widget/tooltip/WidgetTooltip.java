@@ -1,37 +1,117 @@
 package org.ovirt.engine.ui.common.widget.tooltip;
 
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
+import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
+import org.ovirt.engine.ui.common.widget.WidgetDecorator;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Wrapper around Bootstrap Tooltip that sets up oVirt-specific config values.
- * Use as a drop-in for b:Tooltip.
+ * Decorates a {@link Widget} with jQuery/Bootstrap tooltip.
  */
-public class WidgetTooltip extends Tooltip {
+public class WidgetTooltip extends WidgetDecorator implements HasCleanup {
 
-    public WidgetTooltip(IsWidget w) {
-        super(w.asWidget());
-        init();
-    }
+    private SafeHtml tooltip;
+
+    private final TooltipConfig tooltipConfig = new TooltipConfig();
+
+    private boolean widgetAttached = false;
+    private boolean tooltipUpdateScheduled = false;
 
     public WidgetTooltip() {
         super();
-        init();
     }
 
-    private void init() {
-        this.setIsAnimated(TooltipConfig.IS_ANIMATED);
-        this.setPlacement(TooltipConfig.PLACEMENT);
-        this.setIsHtml(TooltipConfig.IS_HTML);
-        this.setTrigger(TooltipConfig.TRIGGER);
-        this.setShowDelayMs(TooltipConfig.SHOW_DELAY_MS);
-        this.setHideDelayMs(TooltipConfig.HIDE_DELAY_MS);
-        this.setContainer(TooltipConfig.CONTAINER);
+    public WidgetTooltip(Widget w) {
+        super(w);
     }
 
-    public void setMaxWidth(Width width) {
-        addTooltipClassName(width.getWidthClass());
+    @Override
+    protected void decorateWidget(Widget w) {
+        w.addAttachHandler(new AttachEvent.Handler() {
+            @Override
+            public void onAttachOrDetach(AttachEvent event) {
+                WidgetTooltip.this.widgetAttached = event.isAttached();
+                scheduleTooltipUpdate();
+            }
+        });
+    }
+
+    private void scheduleTooltipUpdate() {
+        if (tooltipUpdateScheduled) {
+            return;
+        }
+
+        Scheduler.get().scheduleFinally(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                applyTooltip();
+                tooltipUpdateScheduled = false;
+            }
+        });
+
+        tooltipUpdateScheduled = true;
+    }
+
+    private void applyTooltip() {
+        if (getWidget() == null) {
+            return;
+        }
+
+        // Apply tooltip if the widget is attached to live DOM.
+        if (widgetAttached && tooltip != null) {
+            ElementTooltipUtils.setTooltipOnElement(getWidget().getElement(), tooltip, tooltipConfig);
+        }
+
+        // Destroy tooltip if the widget is detached from live DOM.
+        else if (!widgetAttached) {
+            ElementTooltipUtils.destroyTooltip(getWidget().getElement());
+        }
+    }
+
+    public void setHtml(SafeHtml html) {
+        assert html != null : "Tooltip HTML content cannot be null"; //$NON-NLS-1$
+
+        if (tooltip == null || !tooltip.asString().equals(html.asString())) {
+            tooltip = html;
+            scheduleTooltipUpdate();
+        }
+    }
+
+    public void setText(String text) {
+        String nullSafeText = (text == null) ? "" : text;
+        setHtml(SafeHtmlUtils.fromString(nullSafeText));
+    }
+
+    public void setPlacement(Placement placement) {
+        tooltipConfig.setPlacement(placement);
+    }
+
+    public void setMaxWidth(TooltipWidth width) {
+        tooltipConfig.addTooltipClassName(width.getClassName());
+    }
+
+    public void hide() {
+        if (getWidget() != null) {
+            ElementTooltipUtils.hideTooltip(getWidget().getElement());
+        }
+    }
+
+    public void destroy() {
+        if (getWidget() != null) {
+            ElementTooltipUtils.destroyTooltip(getWidget().getElement());
+        }
+    }
+
+    @Override
+    public void cleanup() {
+        destroy();
     }
 
 }

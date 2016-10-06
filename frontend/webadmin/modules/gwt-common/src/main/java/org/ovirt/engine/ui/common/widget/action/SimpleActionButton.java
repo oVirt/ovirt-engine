@@ -10,11 +10,11 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 
 public class SimpleActionButton extends AbstractActionButton {
 
-    interface WidgetUiBinder extends UiBinder<Widget, SimpleActionButton> {
+    interface WidgetUiBinder extends UiBinder<IsWidget, SimpleActionButton> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
@@ -22,7 +22,7 @@ public class SimpleActionButton extends AbstractActionButton {
     Style style;
 
     public SimpleActionButton() {
-        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this).asWidget());
 
         button.addClickHandler(new ClickHandler() {
             @Override

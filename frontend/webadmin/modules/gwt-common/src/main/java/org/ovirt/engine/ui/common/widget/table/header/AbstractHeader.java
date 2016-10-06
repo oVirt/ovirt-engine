@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.header;
 import org.ovirt.engine.ui.common.widget.table.NativeContextMenuHandler;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
+import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltip;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -17,7 +18,7 @@ import com.google.gwt.user.cellview.client.Header;
  *
  * @param <H> Cell data type.
  */
-public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithElementId, TooltipHeader {
+public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithElementId, ProvidesTooltip {
 
     private ValueUpdater<H> updater = null;
 
@@ -38,7 +39,7 @@ public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithE
      */
     @Override
     public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
-        getCell().onBrowserEvent(context, elem, getValue(), getTooltip(), event, updater);
+        getCell().onBrowserEvent(context, elem, getValue(), event, updater);
 
         if (BrowserEvents.CONTEXTMENU.equals(event.getType()) && contextMenuHandler != null) {
             contextMenuHandler.onContextMenu(event);

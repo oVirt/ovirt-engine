@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -61,9 +62,9 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
     @Override
     public void onBrowserEvent(Context context, Element parent,
-            final UserPortalItemModel model, SafeHtml tooltip, NativeEvent event,
+            final UserPortalItemModel model, NativeEvent event,
             ValueUpdater<UserPortalItemModel> valueUpdater) {
-        super.onBrowserEvent(context, parent, model, tooltip, event, valueUpdater);
+        super.onBrowserEvent(context, parent, model, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
 

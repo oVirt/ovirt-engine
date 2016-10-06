@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -70,19 +71,13 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
     }
 
     @Override
-    public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
-                               Boolean value, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
-        onBrowserEvent(context, parent, value, null, event, valueUpdater);
-    }
-
-    @Override
-    public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
-            Boolean value, SafeHtml tooltipContent, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
-
+    public void onBrowserEvent(Context context, Element parent, Boolean value,
+            NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
         String type = event.getType();
 
         boolean enterPressed = BrowserEvents.KEYDOWN.equals(type)
                 && event.getKeyCode() == KeyCodes.KEY_ENTER;
+
         if (BrowserEvents.CHANGE.equals(type) || enterPressed) {
             InputElement input = parent.getFirstChild().cast();
             boolean isChecked = input.isChecked();
@@ -134,6 +129,11 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
     @Override
     public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
         return EventHandlingCellMixin.inputHandlesClick(event);
+    }
+
+    @Override
+    public void setTooltipFallback(SafeHtml tooltipFallback) {
+        // no-op, this Cell doesn't support tooltips
     }
 
 }

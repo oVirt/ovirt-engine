@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
@@ -132,10 +133,12 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
             LunModel model,
             EntityModelCellTable<ListModel<LunModel>> table) {
         for (int row = 0; row < table.getRowCount(); row++) {
+            TableRowElement tableRowElement = table.getRowElement(row);
             if (table.getVisibleItem(row).equals(model)) {
-                TableRowElement tableRowElement = table.getRowElement(row);
                 tableRowElement.setPropertyBoolean("disabled", true); //$NON-NLS-1$
                 updateInputTitle(grayOutReasons, tableRowElement);
+            } else {
+                ElementTooltipUtils.destroyTooltip(tableRowElement);
             }
         }
     }
@@ -145,7 +148,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         for (String reason : grayOutReasons) {
             title.append(reason).append(constants.space());
         }
-        TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(title.toString()), input, Placement.LEFT);
+        ElementTooltipUtils.setTooltipOnElement(input, SafeHtmlUtils.fromString(title.toString()), Placement.LEFT);
     }
 
     protected void updateSelectedLunWarning(LunModel lunModel) {

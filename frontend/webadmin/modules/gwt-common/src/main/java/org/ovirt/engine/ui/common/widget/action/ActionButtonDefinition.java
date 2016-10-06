@@ -82,11 +82,11 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     /**
      * Returns the tooltip for this action button.
      */
-    public SafeHtml getTooltip();
+    SafeHtml getTooltip();
 
     /**
      * Returns the tooltip for the context menu item representing this action button.
      */
-    public SafeHtml getMenuItemTooltip();
+    SafeHtml getMenuItemTooltip();
 
 }

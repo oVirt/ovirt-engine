@@ -33,7 +33,6 @@ public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, Glus
 
     @Override
     public SafeHtml getTooltip(GlusterVolumeEntity volume) {
-
         if (volume == null) {
             return null;
         }

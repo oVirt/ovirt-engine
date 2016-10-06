@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
@@ -354,7 +354,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         int rowCount = getRowCount();
         assert errors != null && errors.size() == rowCount : "errors must be the same size as the contents of the table!"; //$NON-NLS-1$
 
-        for (int i=0; i < rowCount; ++i) {
+        for (int i = 0; i < rowCount; ++i) {
             Element element = getRowElement(i);
             assert element != null : "element shouldn't be null if errors is the same size as the contents of the table!"; //$NON-NLS-1$
 
@@ -362,9 +362,10 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             boolean valid = StringUtils.isEmpty(error);
 
             if (!valid) {
-                TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(error), element);
+                ElementTooltipUtils.setTooltipOnElement(element, SafeHtmlUtils.fromString(error));
                 element.addClassName(style.invalidRow());
             } else {
+                ElementTooltipUtils.destroyTooltip(element);
                 element.removeClassName(style.invalidRow());
             }
         }

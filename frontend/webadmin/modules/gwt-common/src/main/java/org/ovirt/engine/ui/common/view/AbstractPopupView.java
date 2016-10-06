@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.view;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,13 +21,15 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
 
     private static final CommonApplicationResources resources = AssetProvider.getResources();
 
+    public static final String POPUP_CONTENT_STYLE_NAME = "popup-content"; //$NON-NLS-1$
+
     public AbstractPopupView(EventBus eventBus) {
         super(eventBus);
         resources.dialogBoxStyle().ensureInjected();
     }
 
     @Override
-    protected void initWidget(Widget widget) {
+    protected final void initWidget(Widget widget) {
         throw new IllegalArgumentException("Use initWidget(PopupPanel) instead of initWidget(Widget)"); //$NON-NLS-1$
     }
 
@@ -41,6 +44,7 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
 
         // Add popup widget style
         widget.addStyleName(resources.dialogBoxStyle().getName());
+        widget.addStyleName(POPUP_CONTENT_STYLE_NAME);
     }
 
     @SuppressWarnings("unchecked")

@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.common.system.ClientStorageImpl;
 import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.frontend.AppErrors;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -69,6 +70,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(AlertManager.class).in(Singleton.class);
         bindTypeAndImplAsSingleton(ClientLogProvider.class, LocalStorageLogHandler.class);
         bind(BrowserHacks.class).asEagerSingleton();
+        bind(ElementTooltipUtils.CellWidgetTooltipReaper.class).asEagerSingleton();
         requestStaticInjection(AssetProvider.class);
     }
 

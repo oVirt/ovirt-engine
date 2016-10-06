@@ -13,6 +13,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 public class StatusCompositeCell<C> extends CompositeCell<C> {
+
     public interface StatusCompositeCellResources extends ClientBundle {
         @ClientBundle.Source("org/ovirt/engine/ui/common/css/StatusCompositeCell.css")
         StatusCompositeCellCss statusCompositeCellCss();
@@ -83,4 +84,5 @@ public class StatusCompositeCell<C> extends CompositeCell<C> {
     public boolean resetFocus(Context context, Element parent, C value) {
         return false;
     }
+
 }

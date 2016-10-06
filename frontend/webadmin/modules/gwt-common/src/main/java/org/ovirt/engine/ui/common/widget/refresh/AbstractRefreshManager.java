@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -91,9 +92,8 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
         if (statusUpdateHandlerRegistration != null) {
             statusUpdateHandlerRegistration.removeHandler();
         }
-        statusUpdateHandlerRegistration =
-                modelTimer.addGridTimerStateChangeEventHandler(new GridTimerStateChangeEventHandler() {
 
+        statusUpdateHandlerRegistration = modelTimer.addGridTimerStateChangeEventHandler(new GridTimerStateChangeEventHandler() {
             @Override
             public void onGridTimerStateChange(GridTimerStateChangeEvent event) {
                 onRefresh(modelTimer.getTimerRefreshStatus());

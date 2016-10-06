@@ -2,8 +2,11 @@ package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -101,6 +104,16 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
     protected void onHide() {
         super.onHide();
         activePopups--;
+
+        if (activePopups == 0) {
+            // No popups active, reap tooltips attached to popup content.
+            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                @Override
+                public void execute() {
+                    ElementTooltipUtils.reapPopupContentTooltips();
+                }
+            });
+        }
     }
 
     protected int getActivePopupCount() {

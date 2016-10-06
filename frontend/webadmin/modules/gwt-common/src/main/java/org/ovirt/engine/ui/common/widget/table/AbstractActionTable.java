@@ -434,7 +434,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
                 if (mousePosition[0] == 0 && mousePosition[1] == 0) {
                     mousePosition[0] = Window.getClientWidth() / 2;
-                    mousePosition[1] = Window.getClientHeight() * 1 / 3;
+                    mousePosition[1] = Window.getClientHeight() / 3;
                 }
 
                 tooltip.setPopupPosition(mousePosition[0] + 15, mousePosition[1]);
