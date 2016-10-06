@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -58,8 +59,8 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
     }
 
     @Override
-    public void onBrowserEvent(Context context, Element parent, T value, SafeHtml tooltip, NativeEvent event, ValueUpdater<T> valueUpdater) {
-        super.onBrowserEvent(context, parent, value, tooltip, event, valueUpdater);
+    public void onBrowserEvent(Context context, Element parent, T value, NativeEvent event, ValueUpdater<T> valueUpdater) {
+        super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
         if (!Element.is(eventTarget)) {
@@ -67,7 +68,6 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
         }
 
         if (BrowserEvents.CLICK.equals(event.getType()) && isEnabled(value)) {
-
             UICommand command = resolveCommand(value);
             if (command != null) {
                 command.execute();

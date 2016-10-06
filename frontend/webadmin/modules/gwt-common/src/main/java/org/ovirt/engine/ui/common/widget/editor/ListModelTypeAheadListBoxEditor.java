@@ -59,11 +59,6 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         getContentWidget().setUsePatternFly(usePatternFly);
     }
 
-    @Override
-    public void cleanup() {
-        getContentWidget().cleanup();
-    }
-
     /**
      * A renderer for the suggest box. Receives an instance of the EntityModel and returns two kinds of the rendering.
      */

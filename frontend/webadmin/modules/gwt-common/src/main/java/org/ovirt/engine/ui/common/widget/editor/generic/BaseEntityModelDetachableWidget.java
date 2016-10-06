@@ -38,7 +38,6 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
         this.decoratedWidget = decoratedWidget;
         this.attachedSeparatedImage = attachedSeparatedImage;
         this.tooltip.setWidget(attachedSeparatedImage);
-        this.tooltip.reconfigure();
         this.style = style;
 
         setAttached(true);
@@ -78,6 +77,5 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
         attachedSeparatedImage.setResource(attached ? resources.joinedIcon() : resources.separatedIcon());
 
         tooltip.setText(attached ? constants.attachedToInstanceType() : constants.detachedFromInstanceType());
-        tooltip.reconfigure();
     }
 }

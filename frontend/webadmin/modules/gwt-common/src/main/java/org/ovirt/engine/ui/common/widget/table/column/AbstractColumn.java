@@ -3,8 +3,9 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import java.util.Comparator;
 
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
+import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltipForObject;
+
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -21,7 +22,8 @@ import com.google.gwt.user.cellview.client.Column;
  * @param <C>
  *            Cell data type.
  */
-public abstract class AbstractColumn<T, C> extends Column<T, C> implements ColumnWithElementId, TooltipColumn<T>, SortableColumn<T, C> {
+public abstract class AbstractColumn<T, C> extends Column<T, C> implements ColumnWithElementId, SortableColumn<T, C>,
+        ProvidesTooltipForObject<T> {
 
     // Name of the field to sort by, or null for undefined sort order
     // (applies in case of server-side sorting)
@@ -42,19 +44,10 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
         return (Cell<C>) super.getCell();
     }
 
-    /**
-     * This is copied from GWT's Column, but we also inject the tooltip content into the cell.
-     * TODO-GWT: make sure that this method is in sync with Column::onBrowserEvent.
-     */
-    public void onBrowserEvent(Context context, Element elem, final T object, NativeEvent event) {
-        final int index = context.getIndex();
-        ValueUpdater<C> valueUpdater = (getFieldUpdater() == null) ? null : new ValueUpdater<C>() {
-            @Override
-            public void update(C value) {
-                getFieldUpdater().update(index, object, value);
-            }
-        };
-        getCell().onBrowserEvent(context, elem, getValue(object), /***/ getTooltip(object) /***/, event, valueUpdater);
+    @Override
+    public void onBrowserEvent(Context context, Element elem, T object, NativeEvent event) {
+        getCell().setTooltipFallback(getTooltip(object));
+        super.onBrowserEvent(context, elem, object, event);
     }
 
     @Override
@@ -63,9 +56,6 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
         getCell().setColumnId(columnId);
     }
 
-    /* (non-Javadoc)
-     * @see org.ovirt.engine.ui.common.widget.table.column.SortableColumn#makeSortable(java.lang.String)
-     */
     @Override
     public void makeSortable(String sortBy) {
         assert sortBy != null : "sortBy cannot be null"; //$NON-NLS-1$
@@ -74,9 +64,6 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
         setSortable(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.ovirt.engine.ui.common.widget.table.column.SortableColumn#makeSortable(java.util.Comparator)
-     */
     @Override
     public void makeSortable(Comparator<? super T> comparator) {
         assert comparator != null : "comparator cannot be null"; //$NON-NLS-1$
@@ -85,17 +72,11 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
         setSortable(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.ovirt.engine.ui.common.widget.table.column.SortableColumn#getSortBy()
-     */
     @Override
     public String getSortBy() {
         return sortBy;
     }
 
-    /* (non-Javadoc)
-     * @see org.ovirt.engine.ui.common.widget.table.column.SortableColumn#getComparator()
-     */
     @Override
     public Comparator<? super T> getComparator() {
         return comparator;
@@ -107,8 +88,6 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
      * Override this to set a tooltip for the column.
      *
      * @return the tooltip to show
-     *
-     * @see org.ovirt.engine.ui.common.widget.table.column.TooltipColumn#getTooltip(java.lang.Object)
      */
     @Override
     public SafeHtml getTooltip(T object) {

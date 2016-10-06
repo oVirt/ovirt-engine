@@ -59,7 +59,6 @@ public class UiCommandLink extends AbstractUiCommandButton implements Focusable 
     protected void updateButton() {
         super.updateButton();
         tooltip.setText(buildTooltipText());
-        tooltip.reconfigure();
     }
 
     /**

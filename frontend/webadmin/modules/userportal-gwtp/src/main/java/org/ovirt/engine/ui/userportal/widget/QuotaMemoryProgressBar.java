@@ -28,7 +28,7 @@ public class QuotaMemoryProgressBar extends QuotaProgressBar {
     }
 
     @Override
-    protected SafeHtml getTooltip() {
+    public SafeHtml getTooltip() {
         if (quotaUsagePerUser.getMemoryLimit() == UNLIMITED) {
             return null;
         }
@@ -50,4 +50,5 @@ public class QuotaMemoryProgressBar extends QuotaProgressBar {
         }
         return memory > Math.abs(MB_GB_THRESHOLD * GIGA) ? diskSizeRenderer.render(memory / GIGA) : (int) memory + "MB"; //$NON-NLS-1$
     }
+
 }

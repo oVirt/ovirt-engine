@@ -230,28 +230,12 @@ public abstract class GridTimer extends Timer implements HasGridTimerStateChange
     }
 
     /**
-     * Start an inactive timer.
-     */
-    public void startWithNotification() {
-        start();
-        GridTimerStateChangeEvent.fire(this, getRefreshRate());
-    }
-
-    /**
      * Stop an active timer.
      */
     public void stop() {
         logger.fine("GridTimer[" + name + "].stop()"); //$NON-NLS-1$ //$NON-NLS-2$
         active = false;
         doStop();
-    }
-
-    /**
-     * Stop an active timer and fire notification it stopped.
-     */
-    public void stopWithNotification() {
-        stop();
-        GridTimerStateChangeEvent.fire(this, getRefreshRate());
     }
 
     /**

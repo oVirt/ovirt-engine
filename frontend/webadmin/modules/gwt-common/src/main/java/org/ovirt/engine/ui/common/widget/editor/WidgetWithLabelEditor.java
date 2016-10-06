@@ -132,8 +132,7 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
 
     @Override
     public void cleanup() {
-        if (widgetWithLabel instanceof HasCleanup) {
-            ((HasCleanup) widgetWithLabel).cleanup();
-        }
+        widgetWithLabel.cleanup();
     }
+
 }

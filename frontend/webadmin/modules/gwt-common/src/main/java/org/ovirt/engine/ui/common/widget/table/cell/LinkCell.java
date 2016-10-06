@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.core.compat.StringHelper;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -50,11 +51,9 @@ public class LinkCell extends TextCell {
     public void onBrowserEvent(Context context,
             Element parent,
             String value,
-            SafeHtml tooltipContent,
             NativeEvent event,
             ValueUpdater<String> valueUpdater) {
-
-        super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
+        super.onBrowserEvent(context, parent, value, event, valueUpdater);
         if (!BrowserEvents.CLICK.equals(event.getType())) {
             return;
         }

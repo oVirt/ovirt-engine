@@ -58,4 +58,13 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
     public boolean isEmpty(){
         return getItems() == null || getItems().isEmpty();
     }
+
+    public int getItemCount() {
+        return getItems() == null ? 0 : getItems().size();
+    }
+
+    public MenuItem getItem(int index) {
+        return getItems() == null ? null : getItems().get(index);
+    }
+
 }

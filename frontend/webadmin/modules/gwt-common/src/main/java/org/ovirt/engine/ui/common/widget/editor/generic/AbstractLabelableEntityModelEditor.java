@@ -233,17 +233,14 @@ public abstract class AbstractLabelableEntityModelEditor<E, W extends Widget & F
 
     void setTooltipText(String tooltipText) {
         tooltip.setText(tooltipText);
-        tooltip.reconfigure();
     }
 
     void setTooltipHtml(SafeHtml tooltipHtml) {
         tooltip.setHtml(tooltipHtml);
-        tooltip.reconfigure();
     }
 
     void clearTooltip() {
         tooltip.setText("");
-        tooltip.reconfigure();
     }
 
     /**

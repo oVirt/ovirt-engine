@@ -61,8 +61,7 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
 
     @Override
     public SafeHtml getTooltip(T object) {
-
-        String tooltip = null;
+        String tooltip;
         EnumTranslator translator = EnumTranslator.getInstance();
 
         VM vm = getValue(object);
