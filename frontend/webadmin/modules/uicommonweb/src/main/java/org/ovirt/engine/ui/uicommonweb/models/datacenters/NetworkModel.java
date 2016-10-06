@@ -11,7 +11,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -31,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
+import org.ovirt.engine.ui.uicommonweb.models.dnsconfiguration.DnsConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -76,6 +79,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private EntityModel<Integer> mtu;
     private EntityModel<Boolean> privateIsVmNetwork;
     private ListModel<HostNetworkQos> qos;
+    private DnsConfigurationModel dnsConfigurationModel;
     private boolean isSupportBridgesReportByVDSM = false;
     private boolean mtuOverrideSupported = false;
     private ListModel<StoragePool> privateDataCenters;
@@ -141,6 +145,16 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         getProfiles().setItems(profiles);
 
         setQos(new ListModel<HostNetworkQos>());
+
+        DnsResolverConfiguration dnsResolverConfiguration = getNetwork().getDnsResolverConfiguration();
+        if (dnsResolverConfiguration == null) {
+            dnsResolverConfiguration = new DnsResolverConfiguration();
+            dnsResolverConfiguration.setNameServers(new ArrayList<NameServer>());
+        }
+
+        DnsConfigurationModel dnsConfigurationModel = new DnsConfigurationModel();
+        dnsConfigurationModel.setEntity(dnsResolverConfiguration);
+        setDnsConfigurationModel(dnsConfigurationModel);
 
         EntityModel<Boolean> createSubnet = new EntityModel<>(false);
         setCreateSubnet(createSubnet);
@@ -334,6 +348,14 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         this.qos = qos;
     }
 
+    public DnsConfigurationModel getDnsConfigurationModel() {
+        return dnsConfigurationModel;
+    }
+
+    private void setDnsConfigurationModel(DnsConfigurationModel dnsConfigurationModel) {
+        this.dnsConfigurationModel = dnsConfigurationModel;
+    }
+
     public boolean isSupportBridgesReportByVDSM() {
         return isSupportBridgesReportByVDSM;
     }
@@ -460,6 +482,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         tempVar5.setMinimum(68);
         getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
 
+        getDnsConfigurationModel().validate();
+
         getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         boolean subnetValid = true;
@@ -477,14 +501,23 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
         getNetworkLabel().validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
 
-        setValidTab(TabName.GENERAL_TAB, getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
-                && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
-                && getNetworkLabel().getIsValid());
+        setValidTab(TabName.GENERAL_TAB, isGeneralTabValid());
         setValidTab(TabName.SUBNET_TAB, subnetValid);
         setValidTab(TabName.PROFILES_TAB, profilesValid);
 
         ValidationCompleteEvent.fire(getEventBus(), this);
         return allTabsValid();
+    }
+
+    private boolean isGeneralTabValid() {
+        return getName().getIsValid()
+                && getVLanTag().getIsValid()
+                && getDescription().getIsValid()
+                && getMtu().getIsValid()
+                && getExternalProviders().getIsValid()
+                && getComment().getIsValid()
+                && getNetworkLabel().getIsValid()
+                && getDnsConfigurationModel().getIsValid();
     }
 
     protected boolean isCustomMtu() {
@@ -543,6 +576,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         if (getMtu().getIsChangable()) {
             network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
         }
+
+        network.setDnsResolverConfiguration(getDnsConfigurationModel().flush());
 
         network.setVlanId(null);
         if (getHasVLanTag().getEntity()) {

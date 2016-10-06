@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -12,8 +13,9 @@ public class ManagementNetworkAttachmentModel extends NetworkAttachmentModel {
     public ManagementNetworkAttachmentModel(Network network,
             VdsNetworkInterface nic,
             NetworkAttachment networkAttachment,
-            HostNetworkQos networkQos) {
-        super(network, nic, networkAttachment, networkQos);
+            HostNetworkQos networkQos,
+            DnsResolverConfiguration reportedDnsResolverConfiguration) {
+        super(network, nic, networkAttachment, networkQos, reportedDnsResolverConfiguration);
 
         getIpv4Gateway().setIsAvailable(true);
         getIpv6Gateway().setIsAvailable(true);

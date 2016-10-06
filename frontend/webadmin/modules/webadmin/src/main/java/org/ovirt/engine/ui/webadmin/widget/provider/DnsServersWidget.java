@@ -1,15 +1,16 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.dnsconfiguration.NameServerModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DnsServersWidget extends AddRemoveRowWidget<ListModel<EntityModel<String>>, EntityModel<String>, DnsServerEditor> {
+public class DnsServersWidget extends AddRemoveRowWidget<ListModel<NameServerModel>, NameServerModel, DnsServerEditor> {
 
     public interface WidgetUiBinder extends UiBinder<Widget, DnsServersWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -22,7 +23,7 @@ public class DnsServersWidget extends AddRemoveRowWidget<ListModel<EntityModel<S
     private double width = 150;
 
     @Override
-    protected DnsServerEditor createWidget(EntityModel<String> value) {
+    protected DnsServerEditor createWidget(NameServerModel value) {
         DnsServerEditor widget = new DnsServerEditor();
         if (usePatternFly) {
             widget.setUsePatternFly(true);
@@ -34,14 +35,12 @@ public class DnsServersWidget extends AddRemoveRowWidget<ListModel<EntityModel<S
     }
 
     @Override
-    protected EntityModel<String> createGhostValue() {
-        EntityModel<String> value = new EntityModel<>();
-        value.setEntity("");
-        return value;
+    protected NameServerModel createGhostValue() {
+        return new NameServerModel();
     }
 
     @Override
-    protected boolean isGhost(EntityModel<String> value) {
+    protected boolean isGhost(NameServerModel value) {
         return StringUtils.isEmpty(value.getEntity());
     }
 

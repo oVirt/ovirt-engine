@@ -36,8 +36,10 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.DnsServersWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.ExternalSubnetWidget;
 import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -122,6 +124,16 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "mtu.entity")
     public IntegerEntityModelTextBoxOnlyEditor mtuEditor;
 
+    @UiField(provided = true)
+    @Path(value = "dnsConfigurationModel.shouldSetDnsConfiguration.entity")
+    @WithElementId
+    public EntityModelCheckBoxEditor shouldSetDnsConfigurationEditor;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    public DnsServersWidget dnsServersWidget;
+
     @UiField
     @Path(value = "networkLabel.selectedItem")
     public ListModelSuggestBoxEditor networkLabel;
@@ -198,9 +210,13 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         mtuEditor.setUsePatternFly(true);
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.clustersTable = new EntityModelCellTable<>(SelectionMode.NONE, true);
+        shouldSetDnsConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable();
         localize();
+
+        dnsServersWidget.setUsePatternFly(true);
     }
 
     protected void localize() {
@@ -225,6 +241,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         createSubnetEditor.setLabel(constants.createSubnetLabel());
 
         profilesLabel.setText(constants.profilesLabel());
+        shouldSetDnsConfigurationEditor.setLabel(constants.shouldSetDnsConfigurationLabel());
     }
 
     @Override
@@ -374,12 +391,14 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public void edit(T model) {
         profilesEditor.edit(model.getProfiles());
         subnetWidget.edit(model.getSubnetModel());
+        dnsServersWidget.edit(model.getDnsConfigurationModel().getNameServerModelListModel());
     }
 
     @Override
     public T flush() {
         profilesEditor.flush();
         subnetWidget.flush();
+        dnsServersWidget.flush();
         return null;
     }
 

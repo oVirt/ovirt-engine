@@ -994,6 +994,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String switchTypeOutOfSyncPopUp();
 
+    String dnsConfigurationOutOfSyncPopUp();
+
     String outAverageRealTimeOutOfSyncPopUp();
 
     String unknownPropertyOutOfSyncPopUp();
@@ -3206,6 +3208,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String qosTabLabel();
 
     String customPropertiesTabLabel();
+
+    String dnsConfigurationTabLabel();
+
+    String shouldSetDnsConfigurationLabel();
+
+    String nameServerAddressLabel();
 
     String bondInMode4HasNoPartnerMac();
 

@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -336,7 +337,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         : logicalNetworkModel.getAttachedToNic().getOriginalIface();
             }
 
-            final NetworkAttachmentModel networkDialogModel;
+            final NetworkAttachmentModel networkAttachmentModel;
             String version = getEntity().getClusterCompatibilityVersion().getValue();
             final Network network = logicalNetworkModel.getNetwork();
             final String logicalNetworkModelName = network.getName();
@@ -345,22 +346,27 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     logicalNetworkModel.getNetworkAttachment();
 
             HostNetworkQos networkQos = qosById.get(network.getQosId());
+            DnsResolverConfiguration reportedDnsResolverConfiguration = getEntity().getReportedDnsResolverConfiguration();
             if (logicalNetworkModel.isManagement()) {
-                networkDialogModel = new ManagementNetworkAttachmentModel(network,
+                networkAttachmentModel = new ManagementNetworkAttachmentModel(network,
                         nic,
                         networkAttachment,
-                        networkQos
-                );
+                        networkQos,
+                        reportedDnsResolverConfiguration);
             } else {
-                networkDialogModel = new NetworkAttachmentModel(network, nic, networkAttachment, networkQos);
-                networkDialogModel.getIpv4Gateway().setIsAvailable(true);
-                networkDialogModel.getIpv6Gateway().setIsAvailable(false);
+                networkAttachmentModel = new NetworkAttachmentModel(network,
+                        nic,
+                        networkAttachment,
+                        networkQos,
+                        reportedDnsResolverConfiguration);
+                networkAttachmentModel.getIpv4Gateway().setIsAvailable(true);
+                networkAttachmentModel.getIpv6Gateway().setIsAvailable(false);
             }
 
-            networkDialogModel.getQosOverridden().setIsAvailable(true);
-            networkDialogModel.getQosModel().setIsAvailable(true);
+            networkAttachmentModel.getQosOverridden().setIsAvailable(true);
+            networkAttachmentModel.getQosModel().setIsAvailable(true);
 
-            KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
+            KeyValueModel customPropertiesModel = networkAttachmentModel.getCustomPropertiesModel();
             customPropertiesModel.setIsAvailable(true);
             Map<String, String> validProperties =
                     KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(
@@ -376,22 +382,22 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             customPropertiesModel.setKeyValueMap(validProperties);
             customPropertiesModel.deserialize(KeyValueModel.convertProperties(networkAttachment.getProperties()));
 
-            networkDialogModel.getIsToSync().setIsChangeable(!logicalNetworkModel.isInSync());
-            networkDialogModel.getIsToSync()
+            networkAttachmentModel.getIsToSync().setIsChangeable(!logicalNetworkModel.isInSync());
+            networkAttachmentModel.getIsToSync()
                     .setEntity(shouldSyncNetwork(logicalNetworkModelName));
 
-            networkDialogModel.getQosOverridden().setEntity(networkAttachment.isQosOverridden());
+            networkAttachmentModel.getQosOverridden().setEntity(networkAttachment.isQosOverridden());
 
-            editPopup = networkDialogModel;
+            editPopup = networkAttachmentModel;
 
             // OK Target
             okTarget = new BaseCommandTarget() {
                 @Override
                 public void executeCommand(UICommand command) {
-                    if (!networkDialogModel.validate()) {
+                    if (!networkAttachmentModel.validate()) {
                         return;
                     }
-                    final FromNetworkAttachmentModel interfacePropertiesAccessor = new FromNetworkAttachmentModel(networkDialogModel);
+                    final FromNetworkAttachmentModel interfacePropertiesAccessor = new FromNetworkAttachmentModel(networkAttachmentModel);
                     LogicalNetworkModelParametersHelper.populateIpv4Details(
                             interfacePropertiesAccessor,
                             networkAttachment.getIpConfiguration().getIpv4PrimaryAddress());
@@ -399,10 +405,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             interfacePropertiesAccessor,
                             networkAttachment.getIpConfiguration().getIpv6PrimaryAddress());
 
-                    if (networkDialogModel.getQosModel().getIsAvailable()) {
-                        if (networkDialogModel.getQosOverridden().getEntity()) {
+                    if (networkAttachmentModel.getQosModel().getIsAvailable()) {
+                        if (networkAttachmentModel.getQosOverridden().getEntity()) {
                             HostNetworkQos overriddenQos = new HostNetworkQos();
-                            networkDialogModel.getQosModel().flush(overriddenQos);
+                            networkAttachmentModel.getQosModel().flush(overriddenQos);
                             AnonymousHostNetworkQos hostNetworkQos = fromHostNetworkQos(overriddenQos);
                             networkAttachment.setHostNetworkQos(hostNetworkQos);
                         } else {
@@ -410,17 +416,19 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         }
                     }
 
-                    if (networkDialogModel.getIsToSync().getEntity()) {
+                    if (networkAttachmentModel.getIsToSync().getEntity()) {
                         hostSetupNetworksParametersData.getNetworksToSync().add(logicalNetworkModelName);
                     } else {
                         hostSetupNetworksParametersData.getNetworksToSync().remove(logicalNetworkModelName);
                     }
 
-                    boolean customPropertiesAvailable = networkDialogModel.getCustomPropertiesModel().getIsAvailable();
+                    boolean customPropertiesAvailable = networkAttachmentModel.getCustomPropertiesModel().getIsAvailable();
                     Map<String, String> customProperties = customPropertiesAvailable
-                            ? KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel().serialize())
+                            ? KeyValueModel.convertProperties(networkAttachmentModel.getCustomPropertiesModel().serialize())
                             : null;
                     networkAttachment.setProperties(customProperties);
+
+                    networkAttachment.setDnsResolverConfiguration(networkAttachmentModel.getDnsConfigurationModel().flush());
 
                     sourceListModel.setConfirmWindow(null);
                 }

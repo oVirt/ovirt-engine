@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
@@ -34,11 +35,15 @@ public interface InterfacePropertiesAccessor {
 
     Map<String, String> getCustomProperties();
 
-    class FromNic implements InterfacePropertiesAccessor {
-        VdsNetworkInterface nic;
+    DnsResolverConfiguration getDnsResolverConfiguration();
 
-        public FromNic(VdsNetworkInterface nic) {
+    class FromNic implements InterfacePropertiesAccessor {
+        private final VdsNetworkInterface nic;
+        private final DnsResolverConfiguration reportedDnsResolverConfiguration;
+
+        public FromNic(VdsNetworkInterface nic, DnsResolverConfiguration reportedDnsResolverConfiguration) {
             this.nic = nic;
+            this.reportedDnsResolverConfiguration = reportedDnsResolverConfiguration;
         }
 
         @Override
@@ -94,6 +99,11 @@ public interface InterfacePropertiesAccessor {
         @Override
         public Map<String, String> getCustomProperties() {
             return null;
+        }
+
+        @Override
+        public DnsResolverConfiguration getDnsResolverConfiguration() {
+            return this.reportedDnsResolverConfiguration;
         }
     }
 
@@ -174,6 +184,11 @@ public interface InterfacePropertiesAccessor {
         public Map<String, String> getCustomProperties() {
             return networkAttachment.getProperties();
         }
+
+        @Override
+        public DnsResolverConfiguration getDnsResolverConfiguration() {
+            return networkAttachment.getDnsResolverConfiguration();
+        }
     }
 
     class FromNetworkAttachmentModel implements InterfacePropertiesAccessor {
@@ -240,6 +255,11 @@ public interface InterfacePropertiesAccessor {
                     ? KeyValueModel.convertProperties(networkAttachmentModel.getCustomPropertiesModel().serialize())
                     : null;
             return customProperties;
+        }
+
+        @Override
+        public DnsResolverConfiguration getDnsResolverConfiguration() {
+            return networkAttachmentModel.getDnsConfigurationModel().getEntity();
         }
     }
 

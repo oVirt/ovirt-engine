@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
@@ -19,6 +20,7 @@ public class NetworkParameters implements InterfacePropertiesAccessor {
     private boolean qosOverridden;
     private HostNetworkQos qos;
     private Map<String, String> customProperties;
+    private DnsResolverConfiguration dnsResolverConfiguration;
 
     public NetworkParameters() {
     }
@@ -119,4 +121,11 @@ public class NetworkParameters implements InterfacePropertiesAccessor {
         this.customProperties = customProperties;
     }
 
+    public DnsResolverConfiguration getDnsResolverConfiguration() {
+        return dnsResolverConfiguration;
+    }
+
+    public void setDnsResolverConfiguration(DnsResolverConfiguration dnsResolverConfiguration) {
+        this.dnsResolverConfiguration = dnsResolverConfiguration;
+    }
 }

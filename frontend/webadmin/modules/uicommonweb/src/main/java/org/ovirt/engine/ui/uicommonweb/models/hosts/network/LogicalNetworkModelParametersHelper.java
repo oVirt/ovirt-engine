@@ -48,8 +48,9 @@ public class LogicalNetworkModelParametersHelper {
 
             boolean newlyCreatedBond = nicToTakeParamsFrom != null && nicToTakeParamsFrom.getId() == null;
             if (nicToTakeParamsFrom != null && !newlyCreatedBond) {
-                applyOnAttachmentParamsFrom(new InterfacePropertiesAccessor.FromNic(nicToTakeParamsFrom),
-                        networkAttachment);
+                InterfacePropertiesAccessor.FromNic interfacePropertiesAccessor =
+                        new InterfacePropertiesAccessor.FromNic(nicToTakeParamsFrom, null);
+                applyOnAttachmentParamsFrom(interfacePropertiesAccessor, networkAttachment);
             }
 
             fixBootProtocolOfMgmtNetworkIfNeeded(networkAttachment);
@@ -89,6 +90,7 @@ public class LogicalNetworkModelParametersHelper {
         }
 
         networkAttachment.setProperties(interfacePropertiesAccessor.getCustomProperties());
+        networkAttachment.setDnsResolverConfiguration(interfacePropertiesAccessor.getDnsResolverConfiguration());
     }
 
     public void updateParametersToDetach() {
@@ -128,6 +130,7 @@ public class LogicalNetworkModelParametersHelper {
 
         netParams.setQosOverridden(networkAttachment.isQosOverridden());
         netParams.setCustomProperties(networkAttachment.getProperties());
+        netParams.setDnsResolverConfiguration(networkAttachment.getDnsResolverConfiguration());
 
         networkModel.getSetupModel().getNetworkToLastDetachParams().put(networkModel.getName(), netParams);
     }

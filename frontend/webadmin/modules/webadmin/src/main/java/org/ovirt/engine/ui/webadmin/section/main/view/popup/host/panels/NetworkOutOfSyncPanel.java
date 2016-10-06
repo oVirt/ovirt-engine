@@ -143,6 +143,8 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
             return constants.outAverageRealTimeOutOfSyncPopUp();
         case SWITCH_TYPE:
             return constants.switchTypeOutOfSyncPopUp();
+        case DNS_CONFIGURATION:
+            return constants.dnsConfigurationOutOfSyncPopUp();
         default:
             return constants.unknownPropertyOutOfSyncPopUp();
         }

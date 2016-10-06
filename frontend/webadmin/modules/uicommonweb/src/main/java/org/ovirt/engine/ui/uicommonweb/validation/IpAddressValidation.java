@@ -15,7 +15,7 @@ public class IpAddressValidation extends RegexValidation {
             empty = "|^$"; //$NON-NLS-1$
             setMessage(getConstantsManager().getConstants().emptyOrValidIpAddressInFormatMsg());
         } else {
-            setMessage(getConstantsManager().getConstants().thisFieldMustContainIpAddressMsg());
+            setMessage(getConstantsManager().getConstants().thisFieldMustContainIpv4OrIpv6AddressMsg());
         }
         setExpression(start() + ValidationUtils.ANY_IP_PATTERN + end() + empty);
     }

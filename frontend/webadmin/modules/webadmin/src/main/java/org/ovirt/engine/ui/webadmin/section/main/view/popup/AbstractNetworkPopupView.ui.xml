@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
-    xmlns:v="urn:import:org.ovirt.engine.ui.webadmin.widget.vnicProfile"
-    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-    xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
-    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:v="urn:import:org.ovirt.engine.ui.webadmin.widget.vnicProfile"
+             xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
@@ -125,6 +124,17 @@
                                     <b:Column size="SM_2" offset="SM_10">
                                         <w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
                                     </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                  <b:Column size="LG_12">
+                                    <ge:EntityModelCheckBoxEditor ui:field="shouldSetDnsConfigurationEditor"
+                                                                  usePatternFly="true"/>
+                                  </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                  <b:Column size="LG_12">
+                                    <p:DnsServersWidget ui:field="dnsServersWidget" />
+                                  </b:Column>
                                 </b:Row>
                             </b:Container>
                         </t:content>

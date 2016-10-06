@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.dnsconfiguration.NameServerModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -23,7 +24,7 @@ public class ExternalSubnetModel extends Model {
     private EntityModel<String> cidr;
     private ListModel<IpVersion> ipVersion;
     private EntityModel<String> gateway;
-    private ListModel<EntityModel<String>> dnsServers;
+    private ListModel<NameServerModel> dnsServers;
 
     private ExternalSubnet subnet;
     private ProviderNetwork externalNetwork;
@@ -34,7 +35,7 @@ public class ExternalSubnetModel extends Model {
         setIpVersion(new ListModel<IpVersion>());
         getIpVersion().setItems(Arrays.asList(IpVersion.values()));
         setGateway(new EntityModel<String>());
-        setDnsServers(new ListModel<EntityModel<String>>());
+        setDnsServers(new ListModel<NameServerModel>());
     }
 
     public EntityModel<String> getName() {
@@ -69,11 +70,11 @@ public class ExternalSubnetModel extends Model {
         this.gateway = gateway;
     }
 
-    public ListModel<EntityModel<String>> getDnsServers() {
+    public ListModel<NameServerModel> getDnsServers() {
         return dnsServers;
     }
 
-    private void setDnsServers(ListModel<EntityModel<String>> dnsServers) {
+    private void setDnsServers(ListModel<NameServerModel> dnsServers) {
         this.dnsServers = dnsServers;
     }
 

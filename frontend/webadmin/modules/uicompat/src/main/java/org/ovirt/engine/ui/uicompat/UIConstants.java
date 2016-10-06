@@ -711,7 +711,7 @@ public interface UIConstants extends Constants {
 
     String thisFieldMustContainIpv6AddressMsg();
 
-    String thisFieldMustContainIpAddressMsg();
+    String thisFieldMustContainIpv4OrIpv6AddressMsg();
 
     String emptyOrValidIpv4AddressInFormatMsg();
 

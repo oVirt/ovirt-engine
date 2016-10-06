@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
+import org.ovirt.engine.ui.uicommonweb.models.dnsconfiguration.DnsConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -29,6 +31,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
     private VdsNetworkInterface nic;
     private NetworkAttachment networkAttachment;
     private HostNetworkQos networkQos;
+    private final DnsResolverConfiguration reportedDnsResolverConfiguration;
 
     private EntityModel<String> ipv4Address;
     private EntityModel<String> ipv4Subnet;
@@ -43,17 +46,20 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
     private boolean bootProtocolsAvailable;
     private EntityModel<Boolean> isToSync;
     private HostNetworkQosParametersModel qosModel;
+    private DnsConfigurationModel dnsConfigurationModel;
     private KeyValueModel customPropertiesModel;
     private EntityModel<Boolean> qosOverridden;
 
     public NetworkAttachmentModel(Network network,
             VdsNetworkInterface nic,
             NetworkAttachment networkAttachment,
-            HostNetworkQos networkQos) {
+            HostNetworkQos networkQos,
+            DnsResolverConfiguration reportedDnsResolverConfiguration) {
         this.network = network;
         this.nic = nic;
         this.networkAttachment = networkAttachment;
         this.networkQos = networkQos;
+        this.reportedDnsResolverConfiguration = reportedDnsResolverConfiguration;
 
         verifyInput(network, nic, networkAttachment);
 
@@ -67,6 +73,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
         setQosOverridden(new EntityModel<Boolean>());
         setQosModel(new HostNetworkQosParametersModel());
+        setDnsConfigurationModel(new DnsConfigurationModel());
         setCustomPropertiesModel(new KeyValueModel());
         setIsToSync(new EntityModel<Boolean>());
         setBootProtocolsAvailable(true);
@@ -83,6 +90,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
         getQosOverridden().setIsAvailable(false);
         getQosModel().setIsAvailable(false);
+        getDnsConfigurationModel().setIsAvailable(false);
         getCustomPropertiesModel().setIsAvailable(false);
 
         getQosOverridden().getEntityChangedEvent().addListener(this);
@@ -113,6 +121,8 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
         getQosModel().init(interfacePropertiesAccessor.getHostNetworkQos());
         getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(interfacePropertiesAccessor.getCustomProperties()));
+        getDnsConfigurationModel().setEntity(interfacePropertiesAccessor.getDnsResolverConfiguration());
+
     }
 
     public EntityModel<String> getIpv4Address() {
@@ -232,6 +242,14 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         this.qosModel = qosModel;
     }
 
+    public DnsConfigurationModel getDnsConfigurationModel() {
+        return dnsConfigurationModel;
+    }
+
+    public void setDnsConfigurationModel(DnsConfigurationModel dnsConfigurationModel) {
+        this.dnsConfigurationModel = dnsConfigurationModel;
+    }
+
     public KeyValueModel getCustomPropertiesModel() {
         return customPropertiesModel;
     }
@@ -285,7 +303,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         if (newAttachment || syncedNetwork || syncRequestedByUser) {
             syncWith(new InterfacePropertiesAccessor.FromNetworkAttachmentForModel(networkAttachment, networkQos, nic));
         } else {
-            syncWith(new InterfacePropertiesAccessor.FromNic(nic));
+            syncWith(new InterfacePropertiesAccessor.FromNic(nic, reportedDnsResolverConfiguration));
         }
     }
 
@@ -348,6 +366,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         }
 
         getQosModel().validate();
+        getDnsConfigurationModel().validate();
         getCustomPropertiesModel().validate();
 
         setValidTab(TabName.IPV4_TAB,
@@ -356,6 +375,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
                 getIpv6Address().getIsValid() && getIpv6Gateway().getIsValid() && getIpv6Prefix().getIsValid());
         setValidTab(TabName.QOS_TAB, getQosModel().getIsValid());
         setValidTab(TabName.CUSTOM_PROPERTIES_TAB, getCustomPropertiesModel().getIsValid());
+        setValidTab(TabName.DNS_CONFIGURATION_TAB, getDnsConfigurationModel().getIsValid());
 
         return allTabsValid();
     }

@@ -33,7 +33,7 @@ public class IpAddressValidationTest {
     @Before
     public void setUp() {
         when(mockConstantsManager.getConstants()).thenReturn(mockUiConstants);
-        when(mockUiConstants.thisFieldMustContainIpAddressMsg()).thenReturn(TEST_MESSAGE);
+        when(mockUiConstants.thisFieldMustContainIpv4OrIpv6AddressMsg()).thenReturn(TEST_MESSAGE);
     }
 
     @Test

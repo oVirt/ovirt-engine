@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.DnsServersWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -55,6 +56,10 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
     @UiField
     @WithElementId
     DialogTab customPropertiesTab;
+
+    @UiField
+    @WithElementId
+    DialogTab dnsConfigurationTab;
 
     @UiField(provided = true)
     EnumRadioEditor<Ipv4BootProtocol> ipv4BootProtocol;
@@ -117,6 +122,16 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
     @UiField(provided = true)
     InfoIcon isToSyncInfo;
 
+    @UiField(provided = true)
+    @Path(value = "dnsConfigurationModel.shouldSetDnsConfiguration.entity")
+    @WithElementId
+    public EntityModelCheckBoxEditor shouldSetDnsConfigurationEditor;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    public DnsServersWidget dnsServersWidget;
+
     @Inject
     public NetworkAttachmentPopupView(EventBus eventBus) {
 
@@ -127,6 +142,7 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
         qosWidget = new HostNetworkQosWidget();
 
         qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);
+        shouldSetDnsConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
         isToSyncInfo = new InfoIcon(
                 templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
@@ -142,6 +158,7 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
         getTabNameMapping().put(TabName.IPV6_TAB, this.ipv6Tab.getTabListItem());
         getTabNameMapping().put(TabName.QOS_TAB, this.qosTab.getTabListItem());
         getTabNameMapping().put(TabName.CUSTOM_PROPERTIES_TAB, this.customPropertiesTab.getTabListItem());
+        getTabNameMapping().put(TabName.DNS_CONFIGURATION_TAB, this.dnsConfigurationTab.getTabListItem());
     }
 
     @Override
@@ -165,6 +182,8 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
         customPropertiesTab.setVisible(object.getCustomPropertiesModel().getIsAvailable());
         customPropertiesWidget.edit(object.getCustomPropertiesModel());
         customPropertiesLabel.setEnabled(object.getCustomPropertiesModel().getIsChangable());
+
+        dnsServersWidget.edit(object.getDnsConfigurationModel().getNameServerModelListModel());
     }
 
     private void enableDisableByBootProtocol(NetworkAttachmentModel model) {
@@ -180,6 +199,7 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
     @Override
     public NetworkAttachmentModel flush() {
         qosWidget.flush();
+        dnsServersWidget.flush();
         return driver.flush();
     }
 
