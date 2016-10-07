@@ -216,6 +216,15 @@
         <url-pattern>/405.html</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+      <servlet-name>glusterevent-webhook</servlet-name>
+      <servlet-class>org.ovirt.engine.core.services.GlusterEventsWebHookServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>glusterevent-webhook</servlet-name>
+      <url-pattern>/glusterevents</url-pattern>
+    </servlet-mapping>
+
     <!-- Go to the index when a page is not found (preserving the
        404 status code): -->
     <error-page>
