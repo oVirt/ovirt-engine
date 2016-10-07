@@ -356,18 +356,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.monitorCommand(vmId, monitorCommand);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options) {
         try {

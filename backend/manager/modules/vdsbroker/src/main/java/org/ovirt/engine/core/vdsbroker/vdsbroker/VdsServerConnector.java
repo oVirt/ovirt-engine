@@ -70,8 +70,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> changeFloppy(String vmId, String imageLocation);
 
-    public Map<String, Object> monitorCommand(String vmId, String monitorCommand);
-
     public Map<String, Object> addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 

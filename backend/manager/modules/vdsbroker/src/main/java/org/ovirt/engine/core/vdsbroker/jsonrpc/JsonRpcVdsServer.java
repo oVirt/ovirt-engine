@@ -385,16 +385,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand) {
-        JsonRpcRequest request =
-                new RequestBuilder("VM.monitorCommand").withParameter("vmID", vmId)
-                        .withParameter("command", monitorCommand)
-                        .build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc addNetwork(String bridge,
             String vlan,
             String bond,

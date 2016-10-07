@@ -113,8 +113,6 @@ public interface IVdsServer {
 
     OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation);
 
-    StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand);
-
     StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
