@@ -8,23 +8,12 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class NonUtfValidation extends BaseI18NValidation {
 
     public NonUtfValidation() {
+        super(ConstantsManager.getInstance().getConstants().nonUtfValidationMsg());
         setIsNegate(true);
     }
 
     @Override
     protected String composeRegex() {
-        return "[" + allUtfLetters() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+        return "[" + utfLettersWithoutAsciiLetters() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
     }
-
-    @Override
-    protected String asciiLetters() {
-        // exclude ascii letters
-        return ""; //$NON-NLS-1$
-    }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().nonUtfValidationMsg();
-    }
-
 }

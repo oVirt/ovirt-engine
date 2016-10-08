@@ -21,14 +21,7 @@ public class UrlValidationTest {
     @Spy
     private UrlValidation urlValidation;
 
-    private class TestableHostValidation extends UriHostAddressValidation {
-        @Override
-        protected String composeMessage() {
-            return null;
-        }
-    }
-
-    private TestableHostValidation hostValidation;
+    private UriHostAddressValidation hostValidation;
 
     private String url;
     private boolean expectedResult;
@@ -41,7 +34,7 @@ public class UrlValidationTest {
     @Before
     public void setup() {
         urlValidation = spy(new UrlValidation(new String[] { Uri.SCHEME_HTTP }));
-        hostValidation = new TestableHostValidation();
+        hostValidation = new UriHostAddressValidation(null);
         doReturn(null).when(urlValidation).getUriMessage();
         doReturn(null).when(urlValidation).getSchemeMessage(any(String.class));
         doReturn(hostValidation).when(urlValidation).getHostValidation();

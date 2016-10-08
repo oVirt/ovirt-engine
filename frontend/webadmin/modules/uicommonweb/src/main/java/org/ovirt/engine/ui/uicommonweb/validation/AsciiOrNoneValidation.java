@@ -2,17 +2,14 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class AsciiOrNoneValidation extends SpecialAsciiI18NOrNoneValidation {
+public class AsciiOrNoneValidation extends BaseI18NValidation {
 
-    @Override
-    protected String allUtfLetters() {
-        // UTF is not allowed
-        return ""; //$NON-NLS-1$
+    public AsciiOrNoneValidation() {
+        super(ConstantsManager.getInstance().getConstants().asciiOrNoneValidationMsg());
     }
 
     @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().asciiOrNoneValidationMsg();
+    protected String composeRegex() {
+        return "^[\u0000-\u007F]*$"; //$NON-NLS-1$
     }
-
 }

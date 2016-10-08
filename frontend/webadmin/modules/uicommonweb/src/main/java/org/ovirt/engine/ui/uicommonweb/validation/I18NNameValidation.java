@@ -10,6 +10,14 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  */
 public class I18NNameValidation extends BaseI18NValidation {
 
+    public I18NNameValidation() {
+        this(ConstantsManager.getInstance().getConstants().i18NNameValidationMsg());
+    }
+
+    public I18NNameValidation(String message) {
+        super(message);
+    }
+
     @Override
     protected String composeRegex() {
         return start() + letters() + numbers() + specialCharacters() + end();
@@ -22,10 +30,4 @@ public class I18NNameValidation extends BaseI18NValidation {
     protected String end() {
         return "]+$"; //$NON-NLS-1$
     }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().i18NNameValidationMsg();
-    }
-
 }

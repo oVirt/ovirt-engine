@@ -72,21 +72,10 @@ public class UriHostAddressValidationTest {
     }
 
     private void doTest(String value, boolean valid) {
-        doTest(value, valid, new MyHostAddressValidation());
+        doTest(value, valid, new UriHostAddressValidation(TEST_VIOLATION_MESSAGE));
     }
 
     private void doTest(String value, boolean valid, HostAddressValidation underTest) {
         assertThat(underTest.validate(value), is(valid ? ok() : fail(TEST_VIOLATION_MESSAGE)));
-    }
-
-    private static class MyHostAddressValidation extends UriHostAddressValidation {
-        private MyHostAddressValidation() {
-            super();
-        }
-
-        @Override
-        protected String composeMessage() {
-            return TEST_VIOLATION_MESSAGE;
-        }
     }
 }

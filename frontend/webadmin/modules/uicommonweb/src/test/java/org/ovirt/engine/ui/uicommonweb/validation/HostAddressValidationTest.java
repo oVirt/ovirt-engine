@@ -120,16 +120,11 @@ public class HostAddressValidationTest {
 
     private static class MyHostAddressValidation extends HostAddressValidation {
         private MyHostAddressValidation() {
-            super();
+            super(TEST_VIOLATION_MESSAGE);
         }
 
         private MyHostAddressValidation(boolean acceptEmptyInput, boolean supportIpv6) {
-            super(acceptEmptyInput, supportIpv6);
-        }
-
-        @Override
-        protected String composeMessage() {
-            return TEST_VIOLATION_MESSAGE;
+            super(acceptEmptyInput, supportIpv6, TEST_VIOLATION_MESSAGE);
         }
     }
 }

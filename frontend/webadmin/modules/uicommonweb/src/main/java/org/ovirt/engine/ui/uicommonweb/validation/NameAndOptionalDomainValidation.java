@@ -4,14 +4,12 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NameAndOptionalDomainValidation extends BaseI18NValidation {
 
+    public NameAndOptionalDomainValidation() {
+        super(ConstantsManager.getInstance().getConstants().asciiNameAndDomainValidationMsg());
+    }
+
     @Override
     protected String composeRegex() {
         return "^[A-Za-z0-9_-]+(@[.A-Za-z0-9_-]+)?$"; //$NON-NLS-1$
     }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().asciiNameAndDomainValidationMsg();
-    }
-
 }

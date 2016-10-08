@@ -5,6 +5,16 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class PoolNameValidation extends BaseI18NValidation {
 
+    public PoolNameValidation() {
+        super(ConstantsManager.getInstance().getConstants().poolNameValidationMsg());
+    }
+
+    PoolNameValidation(String message) {
+        super(message);
+    }
+
+
+
     @Override
     protected String composeRegex() {
         return or(start() + oneOrMore(nonNumberMaskCharacter()) + numberMask() + zeroOrMore(nonNumberMaskCharacter()) + end(),
@@ -29,10 +39,5 @@ public class PoolNameValidation extends BaseI18NValidation {
 
     protected String nonNumberMaskCharacter() {
         return letters() + numbers() + specialCharacters();
-    }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().poolNameValidationMsg();
     }
 }

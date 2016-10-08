@@ -481,14 +481,9 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         return new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(maxClonedNameLength),
-                new I18NNameValidation() {
-                    @Override
-                    protected String composeMessage() {
-                        return ConstantsManager.getInstance()
-                                .getMessages()
-                                .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength);
-                    }
-                },
+                new I18NNameValidation(ConstantsManager.getInstance()
+                        .getMessages()
+                        .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength)),
                 new UniqueClonedNameValidator(assignedVmNames)
         };
     }
@@ -567,14 +562,9 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         return new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(maxClonedNameLength),
-                new I18NNameValidation() {
-                    @Override
-                    protected String composeMessage() {
-                        return ConstantsManager.getInstance()
-                                .getMessages()
-                                .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength);
-                    }
-                },
+                new I18NNameValidation(ConstantsManager.getInstance()
+                        .getMessages()
+                        .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength)),
                 new UniqueClonedAppendedNameValidator(assignedVmNames)
         };
     }

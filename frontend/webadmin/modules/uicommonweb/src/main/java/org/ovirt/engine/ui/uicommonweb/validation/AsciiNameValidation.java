@@ -7,14 +7,12 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  */
 public class AsciiNameValidation extends BaseI18NValidation {
 
+    public AsciiNameValidation() {
+        super(ConstantsManager.getInstance().getConstants().asciiNameValidationMsg());
+    }
+
     @Override
     protected String composeRegex() {
         return "^[A-Za-z0-9_-]*$"; //$NON-NLS-1$
     }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().asciiNameValidationMsg();
-    }
-
 }

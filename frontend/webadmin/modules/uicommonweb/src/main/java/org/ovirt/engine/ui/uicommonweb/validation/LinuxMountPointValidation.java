@@ -5,6 +5,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class LinuxMountPointValidation extends BaseI18NValidation {
 
+    public LinuxMountPointValidation() {
+        super(ConstantsManager.getInstance().getConstants().nfsMountPashIsIllegalMsg());
+    }
+
     @Override
     protected String composeRegex() {
         return start() + ValidationUtils.HOSTNAME_FOR_URI + path() + end();
@@ -12,10 +16,5 @@ public class LinuxMountPointValidation extends BaseI18NValidation {
 
     private String path() {
         return "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)"; //$NON-NLS-1$
-    }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().nfsMountPashIsIllegalMsg();
     }
 }

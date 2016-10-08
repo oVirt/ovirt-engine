@@ -8,7 +8,8 @@ public class HostAddressValidation extends BaseI18NValidation {
     private final boolean acceptEmptyInput;
     private final boolean supportIpv6;
 
-    public HostAddressValidation(boolean acceptEmptyInput, boolean supportIpv6) {
+    public HostAddressValidation(boolean acceptEmptyInput, boolean supportIpv6, String message) {
+        super(message);
         this.acceptEmptyInput = acceptEmptyInput;
         this.supportIpv6 = supportIpv6;
 
@@ -19,6 +20,16 @@ public class HostAddressValidation extends BaseI18NValidation {
 
     public HostAddressValidation() {
         this(false, true);
+    }
+
+    HostAddressValidation(String message) {
+        this(false, true, message);
+    }
+
+    public HostAddressValidation(boolean acceptEmptyInput, boolean supportIpv6) {
+        this(acceptEmptyInput,
+                supportIpv6,
+                ConstantsManager.getInstance().getConstants().addressIsNotValidHostNameOrIpAddressInvalidReason());
     }
 
     @Override
@@ -49,10 +60,4 @@ public class HostAddressValidation extends BaseI18NValidation {
     protected String getIpv6Pattern() {
         return ValidationUtils.IPV6_PATTERN;
     }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().addressIsNotValidHostNameOrIpAddressInvalidReason();
-    }
-
 }

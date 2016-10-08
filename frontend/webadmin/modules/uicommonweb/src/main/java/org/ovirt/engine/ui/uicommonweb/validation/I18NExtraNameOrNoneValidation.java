@@ -10,6 +10,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  */
 public class I18NExtraNameOrNoneValidation extends I18NNameValidation {
 
+    public I18NExtraNameOrNoneValidation() {
+        super(ConstantsManager.getInstance().getConstants().I18NExtraNameOrNoneValidation());
+    }
+
     @Override
     protected String specialCharacters() {
         return "\\+" + super.specialCharacters(); //$NON-NLS-1$
@@ -19,10 +23,4 @@ public class I18NExtraNameOrNoneValidation extends I18NNameValidation {
     protected String end() {
         return "]*$"; //$NON-NLS-1$
     }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().I18NExtraNameOrNoneValidation();
-    }
-
 }

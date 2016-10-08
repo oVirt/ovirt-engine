@@ -5,6 +5,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class BrickMountPointValidation extends BaseI18NValidation {
 
+    public BrickMountPointValidation() {
+        super(ConstantsManager.getInstance().getConstants().invalidMountPointMsg());
+    }
+
     @Override
     public ValidationResult validate(Object value) {
 
@@ -28,10 +32,4 @@ public class BrickMountPointValidation extends BaseI18NValidation {
     private String mountPath() {
         return "/(.*?/)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)"; //$NON-NLS-1$
     }
-
-    @Override
-    protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().invalidMountPointMsg();
-    }
-
 }
