@@ -46,8 +46,6 @@ public class RegexValidation implements IValidation {
 
     @Override
     public ValidationResult validate(Object value) {
-        ValidationResult result = new ValidationResult();
-
         if (value == null) {
             value = EMPTY_STRING;
         }
@@ -55,12 +53,13 @@ public class RegexValidation implements IValidation {
         if (value instanceof String) {
             final String stringValue = (String) value;
             if (getIsNegate() ^ !Regex.isMatch(stringValue, getExpression())) {
-                result.setSuccess(false);
-                result.getReasons().add(getMessage());
+                return ValidationResult.fail(getMessage());
+            } else {
+                return ValidationResult.ok();
             }
+        } else {
+            return ValidationResult.fail("Unable to do Regex validation on non String input"); //$NON-NLS-1$
         }
-
-        return result;
     }
 
     protected String start() {
