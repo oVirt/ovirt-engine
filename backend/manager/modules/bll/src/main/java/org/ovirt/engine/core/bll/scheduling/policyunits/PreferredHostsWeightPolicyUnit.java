@@ -36,7 +36,7 @@ public class PreferredHostsWeightPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         // Preferred hosts are only used during VM startup
-        if (vm.getLastVdsRunOn() != null) {
+        if (!vm.isDown()) {
             return Collections.emptyList();
         }
 
