@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.transport.ProtocolDetector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -181,22 +180,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 break;
                 case Complete:
                     markCurrentCmdlineAsStored();
-                    try (ProtocolDetector detector = new ProtocolDetector(getVds(),
-                            resourceManager,
-                            getVdsStaticDao(),
-                            auditLogDirector)) {
-                        if (detector.shouldCheckProtocolTofallback()) {
-                            // we need to check whether we are connecting to vdsm which supports xmlrpc only
-                            if (!detector.attemptConnection()) {
-                                detector.stopConnection();
-                                if (detector.attemptFallbackProtocol()) {
-                                    detector.setFallbackProtocol();
-                                } else {
-                                    throw new VdsInstallException(VDSStatus.InstallFailed, "Host is not reachable");
-                                }
-                            }
-                        }
-                    }
                     configureManagementNetwork();
                     if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
                         setVdsStatus(VDSStatus.Maintenance);
