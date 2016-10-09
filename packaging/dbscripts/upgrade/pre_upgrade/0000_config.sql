@@ -473,8 +473,6 @@ select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
 select fn_db_add_config_value('VdsRecoveryTimeoutInMinutes','3','general');
 select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('vdsRetries','0','general');
-select fn_db_add_config_value('ProtocolFallbackRetries','3','general');
-select fn_db_add_config_value('ProtocolFallbackTimeoutInMilliSeconds','5000','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
