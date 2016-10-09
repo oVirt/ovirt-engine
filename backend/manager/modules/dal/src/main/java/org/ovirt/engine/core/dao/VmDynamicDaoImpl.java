@@ -165,7 +165,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("session", vm.getSession())
                 .addValue("boot_sequence", vm.getBootSequence())
                 .addValue("utc_diff", vm.getUtcDiff())
-                .addValue("last_vds_run_on", vm.getLastVdsRunOn())
                 .addValue("client_ip", vm.getClientIp())
                 .addValue("guest_requested_memory",
                         vm.getGuestRequestedMemory())
@@ -242,7 +241,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setSession(SessionState.forValue(rs.getInt("session")));
         entity.setBootSequence(BootSequence.forValue(rs.getInt("boot_sequence")));
         entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
-        entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));
         entity.setClientIp(rs.getString("client_ip"));
         entity.setGuestRequestedMemory((Integer) rs.getObject("guest_requested_memory"));
         VmExitStatus exitStatus = VmExitStatus.forValue(rs.getInt("exit_status"));

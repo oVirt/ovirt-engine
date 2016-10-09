@@ -42,8 +42,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private SessionState session;
     private String vncKeyboardLayout;
     private Integer utcDiff;
-    @UnchangeableByVdsm
-    private Guid lastVdsRunOn;
     private String clientIp;
     private Integer guestRequestedMemory;
     @UnchangeableByVdsm
@@ -96,7 +94,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 consoleUserId,
                 guestOs,
                 guestRequestedMemory,
-                lastVdsRunOn,
                 exitMessage,
                 exitStatus,
                 migratingToVds,
@@ -152,7 +149,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(consoleUserId, other.consoleUserId)
                 && Objects.equals(guestOs, other.guestOs)
                 && Objects.equals(guestRequestedMemory, other.guestRequestedMemory)
-                && Objects.equals(lastVdsRunOn, other.lastVdsRunOn)
                 && Objects.equals(exitMessage, other.exitMessage)
                 && exitStatus == other.exitStatus
                 && Objects.equals(migratingToVds, other.migratingToVds)
@@ -252,7 +248,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         session = template.getSession();
         vncKeyboardLayout = template.getVncKeyboardLayout();
         utcDiff = template.getUtcDiff();
-        lastVdsRunOn = template.getLastVdsRunOn();
         clientIp = template.getClientIp();
         guestRequestedMemory = template.getGuestRequestedMemory();
         bootSequence = template.getBootSequence();
@@ -447,14 +442,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setUtcDiff(Integer value) {
         this.utcDiff = value;
-    }
-
-    public Guid getLastVdsRunOn() {
-        return this.lastVdsRunOn;
-    }
-
-    public void setLastVdsRunOn(Guid value) {
-        this.lastVdsRunOn = value;
     }
 
     public String getClientIp() {

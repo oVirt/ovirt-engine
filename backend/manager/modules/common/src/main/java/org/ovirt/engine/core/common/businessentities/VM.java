@@ -696,14 +696,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmDynamic.setUtcDiff(value);
     }
 
-    public Guid getLastVdsRunOn() {
-        return this.vmDynamic.getLastVdsRunOn();
-    }
-
-    public void setLastVdsRunOn(Guid value) {
-        this.vmDynamic.setLastVdsRunOn(value);
-    }
-
     public String getClientIp() {
         return this.vmDynamic.getClientIp();
     }

@@ -4227,7 +4227,6 @@
         <column>acpi_enable</column>
         <column>session</column>
         <column>utc_diff</column>
-        <column>last_vds_run_on</column>
         <column>client_ip</column>
         <column>guest_requested_memory</column>
         <column>boot_sequence</column>
@@ -4273,7 +4272,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>
@@ -4320,7 +4318,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>
@@ -4367,7 +4364,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>
@@ -4414,7 +4410,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>
@@ -4461,7 +4456,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>
@@ -4508,7 +4502,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>
@@ -4555,7 +4548,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>
@@ -4602,7 +4594,6 @@
             <value>1</value>
             <value>0</value>
             <value>0</value>
-            <null />
             <value></value>
             <null />
             <value>0</value>

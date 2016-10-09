@@ -177,10 +177,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             ExecutionHandler.setAsyncJob(getExecutionContext(), false);
             executionHandler.endJob(getExecutionContext(), true);
             notifyHostsVmFailed();
-
-            if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
-                getVm().setLastVdsRunOn(getCurrentVdsId());
-            }
         }
         finally {
             freeLock();
