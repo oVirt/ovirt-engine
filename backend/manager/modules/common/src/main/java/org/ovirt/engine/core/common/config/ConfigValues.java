@@ -70,20 +70,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("20")
     MaxTotalConnections,
 
-    /**
-     * The number of time to retry connection during protocol fallback.
-     */
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("25")
-    ProtocolFallbackRetries,
-
-    /**
-     * Timeout in milliseconds to wait between connection attempt during protocol fallback.
-     */
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("5000")
-    ProtocolFallbackTimeoutInMilliSeconds,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
     VdsRefreshRate,
