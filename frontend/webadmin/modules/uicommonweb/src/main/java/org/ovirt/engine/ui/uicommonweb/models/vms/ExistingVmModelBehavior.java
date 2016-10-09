@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -282,6 +283,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
                 boolean isChangeable = vm == null || VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk);
 
+                Collections.sort(disks, new DiskByDiskAliasComparator());
                 for (Disk disk : disks) {
                     InstanceImageLineModel lineModel = new InstanceImageLineModel(getModel().getInstanceImages());
                     lineModel.initialize(disk, getVm());
