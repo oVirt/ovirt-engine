@@ -526,7 +526,13 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                 nics.get(i).setMacAddress(macAddresses.get(i));
             }
         } else {
-            reportExternalMacs();
+            if (isExternalMacsToBeReported()) {
+                reportExternalMacs();
+            }
+        }
+
+        if (getParameters().isReassignBadMacs()) {
+            reassignBadMacs(nics);
         }
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
@@ -542,6 +548,14 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         vnicProfileHelper.auditInvalidInterfaces(getVmName());
+    }
+
+    protected void reassignBadMacs(List<VmNetworkInterface> nics) {
+        // do nothing
+    }
+
+    protected boolean isExternalMacsToBeReported() {
+        return true;
     }
 
     private void initInterface(VmNic iface) {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
@@ -114,7 +115,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Before
     public void setUp() throws IOException {
         doReturn(cluster).when(cmd).getCluster();
-        doReturn(Collections.emptyList()).when(cmd).getImages();
+        doReturn(emptyList()).when(cmd).getImages();
         when(externalVnicProfileMappingValidator.validateExternalVnicProfileMapping(
                 new ArrayList<>(), clusterId))
                 .thenReturn(ValidationResult.VALID);
@@ -192,7 +193,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     }
 
     private ImportVmParameters createParametersWhenImagesExistOnTargetStorageDomain() {
-        ImportVmParameters params = new ImportVmParameters();
+        ImportVmParameters params = new ImportVmParameters(emptyList(), true);
         params.setContainerId(vmId);
         params.setStorageDomainId(storageDomainId);
         params.setClusterId(clusterId);
