@@ -172,7 +172,6 @@ public final class Cloner {
         vm.setVmMemSizeMb(instance.getVmMemSizeMb());
         vm.setName(instance.getName());
         vm.setVmOs(instance.getVmOsId());
-        vm.setPid(instance.getPid());
         vm.setVmType(instance.getVmType());
         vm.setVmPoolId(instance.getVmPoolId());
         vm.setVmPoolName(instance.getVmPoolName());

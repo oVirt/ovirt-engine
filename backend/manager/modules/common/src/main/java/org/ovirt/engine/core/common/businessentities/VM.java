@@ -560,14 +560,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmDynamic.setVmHost(value);
     }
 
-    public Integer getPid() {
-        return this.vmDynamic.getPid();
-    }
-
-    public void setPid(Integer value) {
-        this.vmDynamic.setPid(value);
-    }
-
     public Date getLastStartTime() {
         return this.vmDynamic.getLastStartTime();
     }

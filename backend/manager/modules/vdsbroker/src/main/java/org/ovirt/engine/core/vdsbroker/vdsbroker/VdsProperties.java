@@ -213,7 +213,6 @@ public final class VdsProperties {
     public static final String cpuPinning = "cpuPinning";
     public static final String vm_name = "vmName";
     public static final String vm_guid = "vmId";
-    public static final String vm_pid = "pid";
     public static final String smartcardEnabled = "smartcardEnable";
     public static final String vm_arch = "arch";
     // vm configuration (i.e. VmDynamic)

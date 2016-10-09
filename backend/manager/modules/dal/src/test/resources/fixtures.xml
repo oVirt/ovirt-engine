@@ -4215,7 +4215,6 @@
         <column>vm_ip</column>
         <column>vm_fqdn</column>
         <column>vm_host</column>
-        <column>vm_pid</column>
         <column>last_start_time</column>
         <column>last_stop_time</column>
         <column>guest_cur_user_name</column>
@@ -4259,7 +4258,6 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
-            <null />
             <null />
             <null />
             <null />
@@ -4313,7 +4311,6 @@
             <null />
             <null />
             <null />
-            <null />
             <null /> <!-- console_user_id -->
             <null />
             <null />
@@ -4361,7 +4358,6 @@
             <null />
             <null />
             <null />
-            <null />
             <value>9bf7c640-b620-456f-a550-0348f366544a</value> <!-- console_user_id -->
             <null />
             <null />
@@ -4403,7 +4399,6 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
             <value>1</value>
-            <null />
             <null />
             <null />
             <null />
@@ -4458,7 +4453,6 @@
             <null />
             <null />
             <null />
-            <null />
             <null /> <!-- console_user_id -->
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -4499,7 +4493,6 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
             <value>0</value>
-            <null />
             <null />
             <null />
             <null />
@@ -4554,7 +4547,6 @@
             <null />
             <null />
             <null />
-            <null />
             <null /> <!-- console_user_id -->
             <null />
             <null />
@@ -4595,7 +4587,6 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
             <value>0</value>
-            <null />
             <null />
             <null />
             <null />

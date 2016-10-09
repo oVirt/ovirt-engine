@@ -21,7 +21,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String fqdn;
     @UnchangeableByVdsm
     private String vmHost;
-    private Integer pid;
     @UnchangeableByVdsm
     private Date lastStartTime;
     @UnchangeableByVdsm
@@ -111,7 +110,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 fqdn,
                 lastStartTime,
                 lastStopTime,
-                pid,
                 lastWatchdogEvent,
                 lastWatchdogAction,
                 runOnce,
@@ -168,7 +166,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(fqdn, other.fqdn)
                 && Objects.equals(lastStartTime, other.lastStartTime)
                 && Objects.equals(lastStopTime, other.lastStopTime)
-                && Objects.equals(pid, other.pid)
                 && Objects.equals(lastWatchdogEvent, other.lastWatchdogEvent)
                 && Objects.equals(lastWatchdogAction, other.lastWatchdogAction)
                 && runOnce == other.runOnce
@@ -242,7 +239,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         ip = template.getIp();
         fqdn = template.getFqdn();
         vmHost = template.getVmHost();
-        pid = template.getPid();
         lastStartTime = template.getLastStartTime();
         lastStopTime = template.getLastStopTime();
         guestCurUserName = template.getGuestCurrentUserName();
@@ -400,14 +396,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setLastStopTime(Date value) {
         this.lastStopTime = value;
-    }
-
-    public Integer getPid() {
-        return this.pid;
-    }
-
-    public void setPid(Integer value) {
-        this.pid = value;
     }
 
     public Map<GraphicsType, GraphicsInfo> getGraphicsInfos() {
@@ -674,7 +662,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setVmHost(vm.getVmHost());
         setIp(vm.getIp());
         setFqdn(vm.getFqdn());
-        setPid(vm.getPid());
         // update only if vdsm actually provides some value, otherwise engine has more information
         if (vm.getCurrentCd() != null) {
             setCurrentCd(vm.getCurrentCd());

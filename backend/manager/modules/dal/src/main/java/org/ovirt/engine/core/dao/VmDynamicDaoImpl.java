@@ -161,7 +161,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("vm_fqdn", vm.getFqdn())
                 .addValue("last_start_time", vm.getLastStartTime())
                 .addValue("last_stop_time", vm.getLastStopTime())
-                .addValue("vm_pid", vm.getPid())
                 .addValue("acpi_enable", vm.getAcpiEnable())
                 .addValue("session", vm.getSession())
                 .addValue("boot_sequence", vm.getBootSequence())
@@ -239,7 +238,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setFqdn(rs.getString("vm_fqdn"));
         entity.setLastStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_start_time")));
         entity.setLastStopTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_stop_time")));
-        entity.setPid((Integer) rs.getObject("vm_pid"));
         entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
         entity.setSession(SessionState.forValue(rs.getInt("session")));
         entity.setBootSequence(BootSequence.forValue(rs.getInt("boot_sequence")));
