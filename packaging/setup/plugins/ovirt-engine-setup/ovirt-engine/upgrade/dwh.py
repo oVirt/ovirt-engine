@@ -26,6 +26,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.dwh import constants as odwhcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import constants as oengcommcons
@@ -122,12 +123,12 @@ class Plugin(plugin.PluginBase):
                         'Its hostname is {hostname}.\n'
                         'Please stop it before running Setup.'
                     ).format(
-                        service=oengcommcons.DWHConst.ENGINE_DWHD_SERVICE_NAME,
+                        service=odwhcons.Const.SERVICE_NAME,
                         hostname=self._dwh_host,
                     )
                 )
                 raise RuntimeError(_('{service} is currently running').format(
-                    service=oengcommcons.DWHConst.ENGINE_DWHD_SERVICE_NAME,
+                    service=odwhcons.Const.SERVICE_NAME,
                 ))
             self.logger.info(_('Stopped DWH'))
             self._remote_dwh_stopped = True

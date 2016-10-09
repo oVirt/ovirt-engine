@@ -182,7 +182,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            ovmpcons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_AVAILABLE,
         ),
         condition=lambda self: (
             self.environment[
@@ -277,7 +277,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            ovmpcons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_AVAILABLE,
         ),
         condition=lambda self: (
             self.environment[

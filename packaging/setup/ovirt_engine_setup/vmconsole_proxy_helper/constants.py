@@ -118,15 +118,6 @@ class FileLocations(object):
 
 
 @util.export
-class Stages(object):
-
-    # sync with engine
-    CA_AVAILABLE = 'osetup.pki.ca.available'
-    # sync with engine
-    ENGINE_CORE_ENABLE = 'osetup.engine.core.enable'
-
-
-@util.export
 class Defaults(object):
     DEFAULT_VMCONSOLE_PROXY_PORT = 2222
     DEFAULT_SYSTEM_USER_VMCONSOLE = 'ovirt-vmconsole'
@@ -160,22 +151,5 @@ class ConfigEnv(object):
 class SystemEnv(object):
     USER_VMCONSOLE = 'OVESETUP_SYSTEM/userVmConsole'
     GROUP_VMCONSOLE = 'OVESETUP_SYSTEM/groupVmConsole'
-
-
-@util.export
-@util.codegen
-@osetupattrsclass
-class EngineConfigEnv(object):
-    """Sync with ovirt-engine"""
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Engine Host FQDN'),
-        postinstallfile=True,
-    )
-    def ENGINE_FQDN(self):
-        return 'OVESETUP_ENGINE_CONFIG/fqdn'
-
 
 # vim: expandtab tabstop=4 shiftwidth=4

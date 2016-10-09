@@ -40,27 +40,6 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
-# Sync with dwh/reports
-
-
-@util.export
-@util.codegen
-@osetupattrsclass
-class DWHCoreEnv(object):
-    """Sync with ovirt-dwh"""
-
-    ENABLE = 'OVESETUP_DWH_CORE/enable'
-
-
-@util.export
-@util.codegen
-@osetupattrsclass
-class ReportsCoreEnv(object):
-    """Sync with ovirt-reports"""
-
-    ENABLE = 'OVESETUP_REPORTS_CORE/enable'
-
-
 @util.export
 class FileLocations(object):
     SYSCONFDIR = '/etc'
@@ -460,24 +439,6 @@ class Const(object):
             DEK.RESTORE_JOBS: Defaults.DEFAULT_DB_RESTORE_JOBS,
         }
 
-    @classproperty
-    def DWH_DB_ENV_KEYS(self):
-        return {
-            DEK.HOST: DWHDBEnv.HOST,
-            DEK.PORT: DWHDBEnv.PORT,
-            DEK.SECURED: DWHDBEnv.SECURED,
-            DEK.HOST_VALIDATION: DWHDBEnv.SECURED_HOST_VALIDATION,
-            DEK.USER: DWHDBEnv.USER,
-            DEK.PASSWORD: DWHDBEnv.PASSWORD,
-            DEK.DATABASE: DWHDBEnv.DATABASE,
-            DEK.CONNECTION: DWHDBEnv.CONNECTION,
-            DEK.PGPASSFILE: DWHDBEnv.PGPASS_FILE,
-            DEK.NEW_DATABASE: DWHDBEnv.NEW_DATABASE,
-            DEK.DUMPER: DWHDBEnv.DUMPER,
-            DEK.FILTER: DWHDBEnv.FILTER,
-            DEK.RESTORE_JOBS: DWHDBEnv.RESTORE_JOBS,
-        }
-
 
 @util.export
 @util.codegen
@@ -569,108 +530,6 @@ class EngineDBEnv(object):
     )
     def FIX_DB_VIOLATIONS(self):
         return 'OVESETUP_DB/fixDbViolations'
-
-
-@util.export
-@util.codegen
-@osetupattrsclass
-class DWHDBEnv(object):
-    """Sync with ovirt-dwh"""
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('DWH database host'),
-    )
-    def HOST(self):
-        return 'OVESETUP_DWH_DB/host'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('DWH database port'),
-    )
-    def PORT(self):
-        return 'OVESETUP_DWH_DB/port'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('DWH database secured connection'),
-    )
-    def SECURED(self):
-        return 'OVESETUP_DWH_DB/secured'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('DWH database host name validation'),
-    )
-    def SECURED_HOST_VALIDATION(self):
-        return 'OVESETUP_DWH_DB/securedHostValidation'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('DWH database name'),
-    )
-    def DATABASE(self):
-        return 'OVESETUP_DWH_DB/database'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('DWH database user name'),
-    )
-    def USER(self):
-        return 'OVESETUP_DWH_DB/user'
-
-    @osetupattrs(
-        answerfile=True,
-        answerfile_condition=lambda env: not env.get(
-            DWHProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
-        )
-    )
-    def PASSWORD(self):
-        return 'OVESETUP_DWH_DB/password'
-
-    @osetupattrs(
-        answerfile=True,
-    )
-    def DUMPER(self):
-        return 'OVESETUP_DWH_DB/dumper'
-
-    @osetupattrs(
-        answerfile=True,
-    )
-    def FILTER(self):
-        return 'OVESETUP_DWH_DB/filter'
-
-    @osetupattrs(
-        answerfile=True,
-    )
-    def RESTORE_JOBS(self):
-        return 'OVESETUP_DWH_DB/restoreJobs'
-
-    CONNECTION = 'OVESETUP_DWH_DB/connection'
-    STATEMENT = 'OVESETUP_DWH_DB/statement'
-    PGPASS_FILE = 'OVESETUP_DWH_DB/pgPassFile'
-    NEW_DATABASE = 'OVESETUP_DWH_DB/newDatabase'
-
-
-@util.export
-@util.codegen
-@osetupattrsclass
-class DWHProvisioningEnv(object):
-    """Sync with ovirt-dwh"""
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Configure local DWH database'),
-    )
-    def POSTGRES_PROVISIONING_ENABLED(self):
-        return 'OVESETUP_DWH_PROVISIONING/postgresProvisioningEnabled'
 
 
 @util.export

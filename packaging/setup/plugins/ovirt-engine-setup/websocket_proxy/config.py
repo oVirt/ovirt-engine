@@ -28,6 +28,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.websocket_proxy import constants as owspcons
 
@@ -65,11 +66,11 @@ class Plugin(plugin.PluginBase):
             'localhost'
         )
         self.environment.setdefault(
-            owspcons.EngineConfigEnv.ENGINE_FQDN,
+            oenginecons.ConfigEnv.ENGINE_FQDN,
             None
         )
         self.environment.setdefault(
-            owspcons.EngineCoreEnv.ENABLE,
+            oenginecons.CoreEnv.ENABLE,
             None
         )
 
@@ -137,7 +138,7 @@ class Plugin(plugin.PluginBase):
         osetuphostname.Hostname(
             plugin=self,
         ).getHostname(
-            envkey=owspcons.EngineConfigEnv.ENGINE_FQDN,
+            envkey=oenginecons.ConfigEnv.ENGINE_FQDN,
             whichhost=_('the engine'),
             supply_default=False,
             validate_syntax=True,
@@ -183,7 +184,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
         after=(
-            owspcons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_AVAILABLE,
         ),
     )
     def _check_separate(self):
@@ -216,7 +217,7 @@ class Plugin(plugin.PluginBase):
             )
         ),
         after=(
-            owspcons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_AVAILABLE,
         ),
     )
     def _misc_VDC(self):

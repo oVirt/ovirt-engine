@@ -27,6 +27,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.dwh import constants as odwhcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup.engine_common import dwh_history_timekeeping
@@ -49,7 +50,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            oenginecons.DWHCoreEnv.ENABLE,
+            odwhcons.CoreEnv.ENABLE,
             None
         )
 
@@ -57,7 +58,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self.environment[oenginecons.CoreEnv.ENABLE] and
-            self.environment[oenginecons.DWHCoreEnv.ENABLE]
+            self.environment[odwhcons.CoreEnv.ENABLE]
         ),
     )
     def _miscDWHConfig(self):
@@ -72,7 +73,7 @@ class Plugin(plugin.PluginBase):
                 enforcePermissions=True,
                 content=database.OvirtUtils(
                     plugin=self,
-                    dbenvkeys=oenginecons.Const.DWH_DB_ENV_KEYS
+                    dbenvkeys=odwhcons.Const.DWH_DB_ENV_KEYS
                 ).getDBConfig(
                     prefix="DWH"
                 ),
@@ -92,7 +93,7 @@ class Plugin(plugin.PluginBase):
         ),
         condition=lambda self: (
             self.environment[oenginecons.CoreEnv.ENABLE] and
-            not self.environment[oenginecons.DWHCoreEnv.ENABLE]
+            not self.environment[odwhcons.CoreEnv.ENABLE]
         ),
     )
     def _closeupDWHConfig(self):

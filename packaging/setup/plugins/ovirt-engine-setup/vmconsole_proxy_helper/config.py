@@ -26,6 +26,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
 
@@ -89,7 +90,7 @@ class Plugin(plugin.PluginBase):
             None
         )
         self.environment.setdefault(
-            ovmpcons.EngineConfigEnv.ENGINE_FQDN,
+            oenginecons.ConfigEnv.ENGINE_FQDN,
             None
         )
         self.environment.setdefault(
@@ -103,11 +104,11 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
         after=(
-            ovmpcons.Stages.ENGINE_CORE_ENABLE,
+            oenginecons.Stages.CORE_ENABLE,
         ),
     )
     def _customization(self):
-        if self.environment[oengcommcons.EngineConst.ENGINE_ENABLE]:
+        if self.environment[oenginecons.CoreEnv.ENABLE]:
             if self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
             ] is None:
@@ -147,7 +148,7 @@ class Plugin(plugin.PluginBase):
         osetuphostname.Hostname(
             plugin=self,
         ).getHostname(
-            envkey=ovmpcons.EngineConfigEnv.ENGINE_FQDN,
+            envkey=oenginecons.ConfigEnv.ENGINE_FQDN,
             whichhost=_('the engine'),
             supply_default=False,
             validate_syntax=True,

@@ -32,6 +32,7 @@ from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import remote_engine
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.websocket_proxy import constants as owspcons
 
@@ -59,10 +60,6 @@ class Plugin(plugin.PluginBase):
             owspcons.ConfigEnv.PKI_WSP_CSR_FILENAME,
             None
         )
-        self.environment.setdefault(
-            owspcons.ConfigEnv.KEY_SIZE,
-            owspcons.Defaults.DEFAULT_KEY_SIZE
-        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -71,7 +68,7 @@ class Plugin(plugin.PluginBase):
         ),
         after=(
             owspcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
-            owspcons.Stages.ENGINE_CORE_ENABLE,
+            oenginecons.Stages.CORE_ENABLE,
             oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         ),
         condition=lambda self: (
@@ -80,7 +77,7 @@ class Plugin(plugin.PluginBase):
             ] and
             # If on same host as engine, engine setup code creates pki for us
             not self.environment[
-                owspcons.EngineCoreEnv.ENABLE
+                oenginecons.CoreEnv.ENABLE
             ]
         ),
     )
@@ -103,7 +100,7 @@ class Plugin(plugin.PluginBase):
                     osetupcons.CoreEnv.REMOTE_ENGINE
                 ],
                 engine_fqdn=self.environment[
-                    owspcons.EngineConfigEnv.ENGINE_FQDN
+                    oenginecons.ConfigEnv.ENGINE_FQDN
                 ],
                 base_name=owspcons.Const.WEBSOCKET_PROXY_CERT_NAME,
                 base_touser=_('WebSocket Proxy'),
@@ -121,7 +118,7 @@ class Plugin(plugin.PluginBase):
                 OVIRT_ENGINE_PKIREQUESTSDIR,
                 engine_pki_certs_dir=owspcons.FileLocations.
                 OVIRT_ENGINE_PKICERTSDIR,
-                key_size=self.environment[owspcons.ConfigEnv.KEY_SIZE],
+                key_size=owspcons.Defaults.DEFAULT_KEY_SIZE,
                 url="http://http://www.ovirt.org/Features/"
                     "WebSocketProxy_on_a_separate_host",
             )
@@ -141,7 +138,7 @@ class Plugin(plugin.PluginBase):
             tries_left > 0
         ):
             remote_engine_host = self.environment[
-                owspcons.EngineConfigEnv.ENGINE_FQDN
+                oenginecons.ConfigEnv.ENGINE_FQDN
             ]
 
             with contextlib.closing(
@@ -177,7 +174,7 @@ class Plugin(plugin.PluginBase):
             self._enabled
         ),
         after=(
-            owspcons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_AVAILABLE,
         ),
     )
     def _misc_pki(self):
