@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -46,6 +47,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
 
     @Inject
     ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+
+    @Inject
+    private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -116,6 +120,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                 ovfEntityData = ovfEntityDataList.get(0);
                 vmFromConfiguration = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
+                mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
@@ -132,6 +137,11 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                 log.debug("Exception", e);
             }
         }
+    }
+
+    private void mapVnicProfiles(List<VmNetworkInterface> vnics) {
+        vnics.forEach(vnic ->
+                importedNetworkInfoUpdater.updateNetworkInfo(vnic, getParameters().getExternalVnicProfileMappings()));
     }
 
     private static ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
