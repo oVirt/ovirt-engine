@@ -221,7 +221,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         }
 
-        if (!validate(vmNicMacsUtils.validateMacAddress(getVmTemplate().getInterfaces()))) {
+        List<VmNetworkInterface> vmNetworkInterfaces = getVmTemplate().getInterfaces();
+        vmNicMacsUtils.replaceInvalidEmptyStringMacAddressesWithNull(vmNetworkInterfaces);
+        if (!validate(vmNicMacsUtils.validateMacAddress(vmNetworkInterfaces))) {
             return false;
         }
 

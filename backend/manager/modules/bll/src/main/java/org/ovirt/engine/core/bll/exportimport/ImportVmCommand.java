@@ -249,6 +249,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
+        List<VmNetworkInterface> vmNetworkInterfaces = getVm().getInterfaces();
+        vmNicMacsUtils.replaceInvalidEmptyStringMacAddressesWithNull(vmNetworkInterfaces);
+
         return true;
     }
 
