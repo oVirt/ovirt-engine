@@ -7,39 +7,51 @@
     xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationItemView.WidgetStyle">
-
         .editorLabel {
             display: none;
         }
 
-        .editorContent,
-        .editorContentNarrow {
-            width: 98px;
-            margin: 2px;
-            line-height: 15px;
-        }
-
-        .editorContentNarrow {
-            width: 75px;
+        .editorContent {
+            margin: 0px;
+            padding: 2px;
+            line-height: 30px;
         }
 
         .editorWrapper {
             display: block;
         }
 
+        .tableStyle {
+            width: 100%;
+        }
+
+        .column {
+            float: left;
+            overflow: visible;
+        }
+
+        .labelContainer {
+            overflow: hidden;
+        }
     </ui:style>
 
-    <g:HorizontalPanel width="100%">
-        <l:EnableableFormLabel ui:field="diskAliasLabel" />
-        <ge:StringEntityModelTextBoxEditor ui:field="diskAliasEditor" usePatternFly="true" />
-        <l:EnableableFormLabel ui:field="diskSizeLabel" />
-        <l:EnableableFormLabel ui:field="sourceStorageLabel" />
-        <e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
-        <e:ListModelListBoxEditor ui:field="volumeFormatListEditor" />
-        <e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
-        <e:ListModelListBoxEditor ui:field="storageListEditor" />
-        <e:ListModelListBoxEditor ui:field="diskProfileListEditor" />
-        <e:ListModelListBoxEditor ui:field="quotaListEditor" />
-    </g:HorizontalPanel>
+    <g:FlowPanel addStyleNames="{style.tableStyle}">
+        <g:FlowPanel ui:field="diskAliasLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
+            <l:EnableableFormLabel ui:field="diskAliasLabel" />
+        </g:FlowPanel>
+        <ge:StringEntityModelTextBoxEditor ui:field="diskAliasEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+        <g:FlowPanel ui:field="diskSizeLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
+            <l:EnableableFormLabel ui:field="diskSizeLabel" />
+        </g:FlowPanel>
+        <g:FlowPanel ui:field="sourceStorageLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
+            <l:EnableableFormLabel ui:field="sourceStorageLabel" />
+        </g:FlowPanel>
+        <e:ListModelListBoxEditor ui:field="volumeTypeListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+        <e:ListModelListBoxEditor ui:field="volumeFormatListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+        <e:ListModelListBoxEditor ui:field="sourceStorageListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+        <e:ListModelListBoxEditor ui:field="storageListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+        <e:ListModelListBoxEditor ui:field="diskProfileListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+        <e:ListModelListBoxEditor ui:field="quotaListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

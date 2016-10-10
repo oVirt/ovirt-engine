@@ -99,8 +99,8 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         driver.initialize(this);
     }
 
-    void updateListHeader(DisksAllocationModel model) {
-        String width = "85px"; //$NON-NLS-1$
+    void updateListHeader() {
+        String width = calculateColumnWidthPercentage() + "%"; //$NON-NLS-1$
         listHeader = new EntityModelCellTable(false, (Resources) GWT.create(
                 PopupSimpleTableResources.class), true);
         listHeader.addColumn(new EmptyColumn(), constants.aliasDisk(), width);
@@ -134,6 +134,31 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         diskListHeaderPanel.setWidget(listHeader);
     }
 
+    private String calculateColumnWidthPercentage() {
+        int columnCount = 2;
+        if (showVolumeType) {
+            columnCount++;
+        }
+        if (showVolumeFormat) {
+            columnCount++;
+        }
+        if (showSource) {
+            columnCount++;
+        }
+        if (showTarget) {
+            columnCount++;
+        }
+        columnCount++;
+        if (showQuota) {
+            columnCount++;
+        }
+        // Note the f, forcing this to be a real double instead of an int, is important, eventually this value
+        // is turning into a width of the column percentage, and that allows for fractions of whole percentages
+        // to be used.
+        double columnPercentage = 100f / columnCount;
+        return String.valueOf(columnPercentage); //$NON-NLS-1$
+    }
+
     void updateColumnsAvailability(DisksAllocationModel model) {
         setShowVolumeType(model.getIsVolumeTypeAvailable());
         setShowVolumeFormat(model.getIsVolumeFormatAvailable());
@@ -147,7 +172,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         driver.edit(model);
         initListeners(model);
         updateColumnsAvailability(model);
-        updateListHeader(model);
+        updateListHeader();
     }
 
     private void initListeners(final DisksAllocationModel model) {
@@ -159,7 +184,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
                 }
                 else if ("QuotaEnforcmentType".equals(args.propertyName)) { //$NON-NLS-1$
                     updateColumnsAvailability(model);
-                    updateListHeader(model);
+                    updateListHeader();
                 }
             }
         });
@@ -170,10 +195,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         diskAllocationLabel.setVisible(!model.getDisks().isEmpty());
 
         int diskIndex = 0;
+        String columnWidth = calculateColumnWidthPercentage();
         for (final DiskModel diskModel : model.getDisks()) {
-            DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView();
+            DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView(columnWidth);
             disksAllocationItemView.edit(diskModel);
-            disksAllocationItemView.updateStyles(showQuota);
             disksAllocationItemView.setIsAliasChangeable(model.getIsAliasChangable());
             disksAllocationItemView.setElementId(
                     ElementIdUtils.createElementId(elementId, "disk" + diskIndex++)); //$NON-NLS-1$

@@ -55,7 +55,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?> & TakesValue<T> &
     HasValueChangeHandlers<T>> extends AbstractValidatedWidget
         implements HasLabel, HasEnabledWithHints, HasWidgetLabels, HasAccess, HasAllKeyHandlers, HasElementId, Focusable,
-        FocusableComponentsContainer, PatternFlyCompatible {
+        FocusableComponentsContainer {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -77,9 +77,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     //runs and the editor is not valid (due to a parsing error), the editor doesn't get
     //reset by the model.
     private boolean editorStateValid = true;
-
-    //Store if we are using patternfly styles.
-    private boolean usePatternfly = false;
 
     private final W contentWidget;
 
@@ -153,7 +150,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     public void setUsePatternFly(final boolean usePatternfly) {
-        this.usePatternfly = usePatternfly;
+        super.setUsePatternFly(usePatternfly);
         // toggle styles -- remove both PatternFly and non-PatternFly styles
         removeContentWidgetStyleName(style.maxWidth());
         removeContentWidgetStyleName(Styles.FORM_CONTROL);

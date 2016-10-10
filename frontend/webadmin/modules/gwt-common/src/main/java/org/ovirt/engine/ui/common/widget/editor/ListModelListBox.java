@@ -41,7 +41,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -50,7 +49,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <T>
  *            List box item type.
  */
-public class ListModelListBox<T> extends Composite implements IsWidget, EditorWidget<T, TakesValueEditor<T>>,
+public class ListModelListBox<T> extends Composite implements EditorWidget<T, TakesValueEditor<T>>,
     HasConstrainedValue<T>, HasHandlers, HasElementId, HasEnabled {
 
     protected static final String DATA_TOGGLE = "data-toggle"; //$NON-NLS-1$
@@ -164,6 +163,7 @@ public class ListModelListBox<T> extends Composite implements IsWidget, EditorWi
         button.addStyleName(Styles.BTN);
         button.addStyleName(BTN_DEFAULT);
         button.addStyleName(Styles.DROPDOWN_TOGGLE);
+        button.addStyleName(Styles.FORM_CONTROL);
         button.getElement().setAttribute(ID, DROPDOWN_MENU);
         button.getElement().setAttribute(DATA_TOGGLE, Styles.DROPDOWN);
         selectedValue = Document.get().createSpanElement();
@@ -359,7 +359,8 @@ public class ListModelListBox<T> extends Composite implements IsWidget, EditorWi
         }
 
         void addListItem(String text, T value) {
-            ListItem li = getListItem(text, value);
+            String nonEmptyText = "".equals(text) ? NBSP : text;
+            ListItem li = getListItem(nonEmptyText, value);
             getClickHandlers().add(li.addClickHandler(new ClickHandler() {
 
                 @Override

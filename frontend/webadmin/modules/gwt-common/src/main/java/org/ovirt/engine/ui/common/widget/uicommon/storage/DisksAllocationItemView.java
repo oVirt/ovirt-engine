@@ -22,10 +22,12 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel>, HasElementId, FocusableComponentsContainer {
@@ -39,8 +41,6 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     interface WidgetStyle extends CssResource {
         String editorContent();
-
-        String editorContentNarrow();
 
         String editorWrapper();
 
@@ -90,6 +90,15 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     @Path(value = "quota.selectedItem")
     ListModelListBoxEditor<Quota> quotaListEditor;
 
+    @UiField
+    FlowPanel diskAliasLabelContainer;
+
+    @UiField
+    FlowPanel diskSizeLabelContainer;
+
+    @UiField
+    FlowPanel sourceStorageLabelContainer;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Override
@@ -100,12 +109,26 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         return nextTabIndex;
     }
 
-    public DisksAllocationItemView() {
-
+    public DisksAllocationItemView(String columnWidth) {
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
         diskAliasEditor.hideLabel();
+        updateStyles();
+        setColumnWidth(columnWidth);
+    }
+
+    private void setColumnWidth(String columnWidth) {
+        volumeTypeListEditor.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        storageListEditor.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        volumeFormatListEditor.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        sourceStorageListEditor.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        diskProfileListEditor.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        quotaListEditor.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        diskAliasLabelContainer.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        diskAliasEditor.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        diskSizeLabelContainer.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
+        sourceStorageLabelContainer.getElement().getStyle().setWidth(Double.valueOf(columnWidth), Unit.PCT);
     }
 
     void initEditors() {
@@ -128,19 +151,17 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         quotaListEditor.hideLabel();
     }
 
-    void updateStyles(Boolean isNarrowStyle) {
-        String editorStyle = isNarrowStyle ? style.editorContentNarrow() : style.editorContent();
-
-        updateLabelStyle(diskAliasLabel, editorStyle);
-        updateEditorStyle(diskAliasEditor, editorStyle);
-        updateLabelStyle(diskSizeLabel, editorStyle);
-        updateLabelStyle(sourceStorageLabel, editorStyle);
-        updateEditorStyle(volumeTypeListEditor, editorStyle);
-        updateEditorStyle(volumeFormatListEditor, editorStyle);
-        updateEditorStyle(sourceStorageListEditor, editorStyle);
-        updateEditorStyle(storageListEditor, editorStyle);
-        updateEditorStyle(diskProfileListEditor, editorStyle);
-        updateEditorStyle(quotaListEditor, editorStyle);
+    void updateStyles() {
+        updateLabelStyle(diskAliasLabel, style.editorContent());
+        updateEditorStyle(diskAliasEditor, style.editorContent());
+        updateLabelStyle(diskSizeLabel, style.editorContent());
+        updateLabelStyle(sourceStorageLabel, style.editorContent());
+        updateEditorStyle(volumeTypeListEditor, style.editorContent());
+        updateEditorStyle(volumeFormatListEditor, style.editorContent());
+        updateEditorStyle(sourceStorageListEditor, style.editorContent());
+        updateEditorStyle(storageListEditor, style.editorContent());
+        updateEditorStyle(diskProfileListEditor, style.editorContent());
+        updateEditorStyle(quotaListEditor, style.editorContent());
     }
 
     private void updateEditorStyle(AbstractValidatedWidgetWithLabel<?, ?> editor, String contentStyle) {
@@ -171,10 +192,12 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         StorageDomain sourceDomain = object.getSourceStorageDomain().getSelectedItem();
         if (sourceDomain != null) {
-            sourceStorageLabel.setText(object.getSourceStorageDomain().getSelectedItem().getName());
+            sourceStorageLabel.setText(sourceDomain.getName());
+        } else {
+            sourceStorageLabel.setVisible(false);
         }
+        sourceStorageListEditor.setVisible(false);
 
-        updateStyles(object.getQuota().getIsAvailable());
     }
 
     @Override

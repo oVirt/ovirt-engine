@@ -18,8 +18,8 @@
             height: auto;
             max-height: 130px;
             overflow-x: hidden;
-            min-width: 50px;
             width: auto;
+            min-width: 100%;
         }
 
         .selected {
