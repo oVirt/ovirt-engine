@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
@@ -14,9 +13,7 @@ public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends 
 
     @Override
     protected void executeVdsBrokerCommand() {
-        List<String> vmIds = getParameters().getVmIds();
-        String[] vmIdsArray = vmIds.toArray(new String[vmIds.size()]);
-        fullVmListReturn = getBroker().fullList(vmIdsArray);
+        fullVmListReturn = getBroker().fullList(getParameters().getVmIds());
         proceedProxyReturnValue();
         Map<String, Object>[] struct = fullVmListReturn.vmList;
         setReturnValue(struct);

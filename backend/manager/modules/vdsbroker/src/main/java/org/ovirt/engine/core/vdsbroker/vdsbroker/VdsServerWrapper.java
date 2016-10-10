@@ -180,9 +180,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public VMListReturnForXmlRpc fullList(String[] vmIds) {
+    public VMListReturnForXmlRpc fullList(List<String> vmIds) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.list(Boolean.TRUE.toString(), vmIds);
+            String[] vmIdsArray = vmIds.toArray(new String[vmIds.size()]);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.list(Boolean.TRUE.toString(), vmIdsArray);
             VMListReturnForXmlRpc wrapper = new VMListReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

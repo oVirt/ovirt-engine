@@ -64,7 +64,7 @@ public interface IVdsServer {
 
     VMListReturnForXmlRpc list();
 
-    VMListReturnForXmlRpc fullList(String[] vmIds);
+    VMListReturnForXmlRpc fullList(List<String> vmIds);
 
     VDSInfoReturnForXmlRpc getCapabilities();
 
