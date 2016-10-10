@@ -42,6 +42,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
+import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -86,6 +87,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Mock
     private ExternalVmMacsFinder externalVmMacsFinder;
+
+    @Mock
+    private VmNicMacsUtils vmNicMacsUtils;
 
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
