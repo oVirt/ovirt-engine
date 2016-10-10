@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +23,6 @@ import com.google.gwt.user.client.rpc.SerializationException;
 public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements GenericApiGWTService {
 
     private static final long serialVersionUID = 7395780289048030855L;
-
-    static Random r = new Random();
-    boolean noBackend = false;
 
     private static final Logger log = LoggerFactory.getLogger(GenericApiGWTServiceImpl.class);
 
@@ -121,12 +117,6 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);
         params.setSessionId(getEngineSessionId());
-
-        if (noBackend) {
-            VdcReturnValueBase rValue = new VdcReturnValueBase();
-            rValue.setSucceeded(true);
-            return rValue;
-        }
 
         return getBackend().runAction(actionType, params);
     }
