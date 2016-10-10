@@ -243,7 +243,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VMListReturnForXmlRpc list(String isFull, String[] vmIds) {
+    public VMListReturnForXmlRpc fullList(String[] vmIds) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getVMFullList").withOptionalParameterAsList("vmList",
                         new ArrayList<>(Arrays.asList(vmIds))).build();

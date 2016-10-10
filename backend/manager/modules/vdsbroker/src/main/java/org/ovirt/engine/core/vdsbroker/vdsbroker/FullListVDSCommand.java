@@ -16,7 +16,7 @@ public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends 
     protected void executeVdsBrokerCommand() {
         List<String> vmIds = getParameters().getVmIds();
         String[] vmIdsArray = vmIds.toArray(new String[vmIds.size()]);
-        fullVmListReturn = getBroker().list(Boolean.TRUE.toString(), vmIdsArray);
+        fullVmListReturn = getBroker().fullList(vmIdsArray);
         proceedProxyReturnValue();
         Map<String, Object>[] struct = fullVmListReturn.vmList;
         setReturnValue(struct);
