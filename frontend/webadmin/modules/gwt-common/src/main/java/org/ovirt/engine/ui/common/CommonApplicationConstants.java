@@ -1606,5 +1606,9 @@ public interface CommonApplicationConstants extends Constants {
     String imageVirtualSize();
 
     String diskAllocationTargetEnabled();
+
+    String automaticNetworkProviderInstallWarning();
+
+    String manualNetworkProviderInstallRecomendation();
 }
 
