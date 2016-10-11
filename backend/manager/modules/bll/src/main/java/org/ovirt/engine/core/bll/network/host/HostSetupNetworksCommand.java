@@ -431,12 +431,14 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private HostSetupNetworksVdsCommandParameters createSetupNetworksParameters(int timeout) {
+        SwitchType clusterSwitchType = getCluster().getRequiredSwitchTypeForCluster();
         final HostSetupNetworksVdsCommandParameters hostCmdParams = new HostSetupNetworksVdsCommandParameters(
             getVds(),
             getNetworksToConfigure(),
             getAllNetworksToRemove(),
             getParameters().getCreateOrUpdateBonds(),
-            getRemovedBondNames());
+            getRemovedBondNames(),
+            clusterSwitchType);
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
         hostCmdParams.setConnectivityTimeout(timeout);
         hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged());
@@ -577,9 +579,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                     HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(attachment, network);
                     networkToConfigure.setQos(hostNetworkQos);
                 }
-
-                SwitchType clusterSwitchType = getCluster().getRequiredSwitchTypeForCluster();
-                networkToConfigure.setSwitchType(clusterSwitchType);
 
                 networksToConfigure.add(networkToConfigure);
             }
