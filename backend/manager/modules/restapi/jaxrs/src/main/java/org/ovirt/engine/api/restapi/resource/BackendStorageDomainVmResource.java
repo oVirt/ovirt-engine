@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainVmsResource.SUB_COLLECTIONS;
+
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
@@ -34,7 +36,7 @@ public class BackendStorageDomainVmResource
     org.ovirt.engine.core.common.businessentities.VM vm;
 
     public BackendStorageDomainVmResource(BackendStorageDomainVmsResource parent, String vmId) {
-        super(vmId, parent, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, "disks");
+        super(vmId, parent, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
     }
 
     @Override
