@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
@@ -72,12 +73,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
                 attributes.put(DEFAULT_ROUTE, Boolean.TRUE);
             }
 
-            if (hostNetwork.getSwitchType() != null) {
-                /**
-                 * optional, specifies switch type.  Legacy will be used if switch option is not passed.
-                 */
-                attributes.put(VdsProperties.SWITCH_KEY, hostNetwork.getSwitchType().getOptionValue());
-            }
+            addSwitchTypeIfSpecified(attributes);
 
             if (hostNetwork.hasProperties()) {
                 attributes.put(VdsProperties.NETWORK_CUSTOM_PROPERTIES, hostNetwork.getProperties());
@@ -136,10 +132,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         Map<String, Object> bonds = new HashMap<>();
 
         for (CreateOrUpdateBond bond : getParameters().getCreateOrUpdateBonds()) {
-            Map<String, Object> attributes = new HashMap<>();
-            attributes.put(SLAVES, new ArrayList<>(bond.getSlaves()));
-            putIfNotEmpty(attributes, BONDING_OPTIONS, bond.getBondOptions());
-            bonds.put(bond.getName(), attributes);
+            bonds.put(bond.getName(), createBondAttributes(bond));
         }
 
         for (String bond : getParameters().getRemovedBonds()) {
@@ -147,6 +140,14 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         }
 
         return bonds;
+    }
+
+    private Map<String, Object> createBondAttributes(CreateOrUpdateBond bond) {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(SLAVES, new ArrayList<>(bond.getSlaves()));
+        addSwitchTypeIfSpecified(attributes);
+        putIfNotEmpty(attributes, BONDING_OPTIONS, bond.getBondOptions());
+        return attributes;
     }
 
     private Map<String, Object> generateOptions() {
@@ -164,6 +165,16 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     private static void putIfNotEmpty(Map<String, Object> map, String key, String value) {
         if (StringUtils.isNotEmpty(value)) {
             map.put(key, value);
+        }
+    }
+
+    /**
+     * switch type is optional, specifies switch type.  Legacy will be used if switch option is not set/passed.
+     */
+    private void addSwitchTypeIfSpecified(Map<String, Object> resultMap) {
+        SwitchType switchType = getParameters().getClusterSwitchType();
+        if (switchType != null) {
+            resultMap.put(VdsProperties.SWITCH_KEY, switchType.getOptionValue());
         }
     }
 }

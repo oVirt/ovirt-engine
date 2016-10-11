@@ -8,9 +8,11 @@ import java.util.Set;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommandParametersBase {
+    private SwitchType clusterSwitchType;
     private List<HostNetwork> networks;
     private Set<String> removedNetworks;
     private List<CreateOrUpdateBond> createOrUpdateBond;
@@ -23,13 +25,15 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
             List<HostNetwork> networks,
             Set<String> removedNetworks,
             List<CreateOrUpdateBond> createOrUpdateBond,
-            Set<String> removedBonds) {
+            Set<String> removedBonds,
+            SwitchType clusterSwitchType) {
         super(host);
         this.networks = (networks == null) ? new ArrayList<HostNetwork>() : networks;
         this.removedNetworks = (removedNetworks == null) ? new HashSet<String>() : removedNetworks;
         this.createOrUpdateBond = (createOrUpdateBond
                 == null) ? new ArrayList<CreateOrUpdateBond>() : createOrUpdateBond;
         this.removedBonds = (removedBonds == null) ? new HashSet<String>() : removedBonds;
+        this.clusterSwitchType = clusterSwitchType;
     }
 
     public HostSetupNetworksVdsCommandParameters() {
@@ -83,6 +87,10 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
         this.connectivityTimeout = connectivityTimeout;
     }
 
+    public SwitchType getClusterSwitchType() {
+        return clusterSwitchType;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -91,7 +99,8 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
                 .append("networks", Entities.collectionToString(getNetworks(), "\t\t"))
                 .append("removedNetworks", getRemovedNetworks())
                 .append("bonds", Entities.collectionToString(getCreateOrUpdateBonds(), "\t\t"))
-                .append("removedBonds", getRemovedBonds());
+                .append("removedBonds", getRemovedBonds())
+                .append("clusterSwitchType", getClusterSwitchType());
     }
 
     public boolean isManagementNetworkChanged() {
