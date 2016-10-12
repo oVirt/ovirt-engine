@@ -31,7 +31,6 @@ import org.ovirt.engine.core.dao.RoleDao;
 @NonTransactiveCommandAttribute
 public class CreateUserSessionCommand<T extends CreateUserSessionParameters> extends CommandBase<T> {
     private static final Guid BOTTOM_OBJECT_ID = new Guid("BBB00000-0000-0000-0000-123456789BBB");
-    private static final Guid DEFAULT_USER_ID = new Guid("00000000-0000-0000-0000-000000000000");
 
     @Inject
     private SessionDataContainer sessionDataContainer;
@@ -56,7 +55,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         DbUser user = dbUserDao.getByExternalId(authzName, params.getPrincipalId());
         if (user == null) {
             user = new DbUser();
-            user.setId(DEFAULT_USER_ID);
+            user.setId(Guid.newGuid());
             user.setExternalId(params.getPrincipalId());
             user.setDomain(authzName);
         }
