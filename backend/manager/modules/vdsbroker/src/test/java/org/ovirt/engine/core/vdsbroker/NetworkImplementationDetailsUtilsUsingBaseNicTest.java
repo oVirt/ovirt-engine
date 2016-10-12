@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NetworkImplementationDetailsUtilsTestForBaseNic extends BaseNetworkImplementationDetailsUtilsTest {
+public class NetworkImplementationDetailsUtilsUsingBaseNicTest extends BaseNetworkImplementationDetailsUtilsTest {
 
     @Override
     @Before
@@ -18,17 +18,17 @@ public class NetworkImplementationDetailsUtilsTestForBaseNic extends BaseNetwork
         super.setUpBefore();
 
         VdsNetworkInterface baseIface = createBaseInterface(qosA, networkName);
+        baseIface.setMtu(100);
 
-        testIface = baseIface;
+        setTestIface(baseIface);
 
         when(calculateBaseNic.getBaseNic(baseIface)).thenReturn(baseIface);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNicAndNicHasNoVlanId() throws Exception {
-        Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
+    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNetworkAndNicHasNoVlanId() throws Exception {
+        Network network = createNetwork(getTestIface().isBridged(), getTestIface().getMtu(), getTestIface().getVlanId());
 
-        testIface.setVlanId(null);
-        calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
+        calculateNetworkImplementationDetailsAndAssertSync(getTestIface(), true, qosA, network);
     }
 }

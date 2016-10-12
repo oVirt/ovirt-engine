@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -57,7 +58,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     private Cluster cluster;
 
 
-    protected VdsNetworkInterface testIface;
+    private VdsNetworkInterface testIface;
 
     protected HostNetworkQos qosA;
     protected HostNetworkQos qosB;
@@ -314,5 +315,14 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         vlanIface.setQos(qos);
         vlanIface.setVdsId(VDS_ID);
         return vlanIface;
+    }
+
+    public VdsNetworkInterface getTestIface() {
+        return testIface;
+    }
+
+    public void setTestIface(VdsNetworkInterface testIface) {
+        this.testIface = testIface;
+        this.testIface.setReportedSwitchType(SwitchType.LEGACY);
     }
 }

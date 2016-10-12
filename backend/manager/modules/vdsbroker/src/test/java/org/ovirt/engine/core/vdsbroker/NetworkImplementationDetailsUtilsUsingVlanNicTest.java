@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NetworkImplementationDetailsUtilsTestForVlanNic extends BaseNetworkImplementationDetailsUtilsTest {
+public class NetworkImplementationDetailsUtilsUsingVlanNicTest extends BaseNetworkImplementationDetailsUtilsTest {
 
     private VdsNetworkInterface baseIface;
 
@@ -22,7 +22,7 @@ public class NetworkImplementationDetailsUtilsTestForVlanNic extends BaseNetwork
         baseIface = createBaseInterface(null, null);
         VdsNetworkInterface vlanIface = createVlanInterface(baseIface, networkName, qosA);
 
-        testIface = vlanIface;
+        setTestIface(vlanIface);
 
         when(calculateBaseNic.getBaseNic(vlanIface)).thenReturn(baseIface);
         when(calculateBaseNic.getBaseNic(baseIface)).thenReturn(baseIface);
@@ -33,13 +33,13 @@ public class NetworkImplementationDetailsUtilsTestForVlanNic extends BaseNetwork
      */
     @Test
     public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNicAndNetworkHasDifferentVlanId() throws Exception {
-        Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId() + 1);
-        calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
+        Network network = createNetwork(getTestIface().isBridged(), getTestIface().getMtu(), getTestIface().getVlanId() + 1);
+        calculateNetworkImplementationDetailsAndAssertSync(getTestIface(), false, qosA, network);
     }
 
     @Test
     public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNicAndNetworkHasNoVlanId() throws Exception {
-        Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), null);
-        calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
+        Network network = createNetwork(getTestIface().isBridged(), getTestIface().getMtu(), null);
+        calculateNetworkImplementationDetailsAndAssertSync(getTestIface(), false, qosA, network);
     }
 }
