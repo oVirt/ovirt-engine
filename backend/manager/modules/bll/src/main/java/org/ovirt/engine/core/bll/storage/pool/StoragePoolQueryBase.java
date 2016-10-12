@@ -39,10 +39,6 @@ public abstract class StoragePoolQueryBase<P extends VdcQueryParametersBase>  ex
         getQueryReturnValue().setReturnValue(dataCenterQueryResult);
     }
 
-    //TODO MM: dear code reviewer. I don't want rely on subclasses to filling pool reference themselves to make sure,
-    // that future queries will not forget to fill it. Design around VdcQueryReturnValue.returnValue does not leave many
-    //options. I can rewrite this using two class hierarchies or two template methods+boolean flag. If you know about
-    //better solution, please advise.
     private void setMacPoolReference(Object dataCenterQueryResult) {
         if (dataCenterQueryResult == null) {
             return;

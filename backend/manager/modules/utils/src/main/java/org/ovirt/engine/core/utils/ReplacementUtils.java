@@ -158,8 +158,6 @@ public class ReplacementUtils {
         return ReplacementUtils.replaceWith(ReplacementUtils.getListVariableName(engineMessage), values);
     }
 
-
-    //TODO MM: this is older construct which probably will not be needed after dropping of SetupNetworksHelper. When that's done, messages needs to be revisited and 'getVariableAssignmentString' can be used instead.
     public static String getVariableAssignmentStringWithMultipleValues(EngineMessage engineMessage, String value) {
         return createSetVariableString(getListVariableName(engineMessage), value);
     }

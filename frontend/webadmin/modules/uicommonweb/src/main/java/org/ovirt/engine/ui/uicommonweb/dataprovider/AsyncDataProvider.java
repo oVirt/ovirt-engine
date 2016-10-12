@@ -205,7 +205,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class AsyncDataProvider {
 
-    //TODO MM: fix duplicity with org.ovirt.engine.core.bll.RunVmCommand.ISO_PREFIX  ?
     public static final String ISO_PREFIX = "iso://";    //$NON-NLS-1$
     private static AsyncDataProvider instance;
 
