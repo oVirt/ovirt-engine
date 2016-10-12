@@ -1911,7 +1911,7 @@ public class VdsBrokerObjectsBuilder {
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
             for (Entry<String, Map<String, Object>> entry : bonds.entrySet()) {
-                VdsNetworkInterface bond = new Bond();
+                Bond bond = new Bond();
                 updateCommonInterfaceData(bond, vds, entry);
                 bond.setBonded(true);
 
@@ -1954,6 +1954,7 @@ public class VdsBrokerObjectsBuilder {
                     }
 
                     bond.setAdPartnerMac((String) bondProperties.get("ad_partner_mac"));
+                    bond.setActiveSlave((String) bondProperties.get("active_slave"));
                 }
             }
         }
