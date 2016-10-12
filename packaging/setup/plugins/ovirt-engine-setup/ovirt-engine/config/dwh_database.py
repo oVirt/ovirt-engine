@@ -27,8 +27,8 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.dwh import constants as odwhcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import dwh_shared_constants as odwhcons
 from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup.engine_common import dwh_history_timekeeping
 
