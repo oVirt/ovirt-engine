@@ -5,13 +5,10 @@ import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetCon
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Row;
@@ -1171,27 +1168,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // General tab
         dataCenterWithClusterEditor = new GroupedListModelListBoxEditor<>(
                 new GroupedListModelListBox<DataCenterWithCluster>(new NameRenderer<DataCenterWithCluster>()) {
-            @Override
-            public SortedMap<String, List<DataCenterWithCluster>> getGroupedList(List<DataCenterWithCluster> acceptableValues) {
-                SortedMap<String, List<DataCenterWithCluster>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-                Collections.sort(acceptableValues, new DataCenterWithClusterComparator());
-                String currentDataCenter = null;
-                List<DataCenterWithCluster> currentClusterWithDcList = null;
-                for (DataCenterWithCluster clusterWithDc: acceptableValues) {
-                    if (currentDataCenter == null || !currentDataCenter.equals(
-                            clusterWithDc.getDataCenter().getName())) {
-                        currentClusterWithDcList = new ArrayList<>();
-                        currentDataCenter = clusterWithDc.getDataCenter().getName();
-                        if (currentDataCenter != null) {
-                            result.put(currentDataCenter, currentClusterWithDcList);
-                        }
-                     }
-                    if (currentClusterWithDcList != null) {
-                        currentClusterWithDcList.add(clusterWithDc);
-                    }
-                }
-                return result;
-            }
 
             @Override
             public String getModelLabel(DataCenterWithCluster model) {

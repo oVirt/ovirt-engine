@@ -231,7 +231,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
     }
 
     private void updateCurrentValue(final T value, boolean fireEvents) {
-        changing = true;
+        changing = !ignoreChanging();
         String renderedValue = renderer.render(value);
         if (StringUtils.isEmpty(renderedValue)) {
             renderedValue = NBSP;
@@ -261,6 +261,15 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         } else {
             changing = false;
         }
+    }
+
+    /**
+     * Return true if you want ignore the changing variable. This variable is used to avoid excessive changing
+     * of values during setting acceptable values. Override if you want to ignore this optimization.
+     * @return True if you want to ignore the 'changing' variable, false otherwise.
+     */
+    protected boolean ignoreChanging() {
+        return false;
     }
 
     public T getValue() {

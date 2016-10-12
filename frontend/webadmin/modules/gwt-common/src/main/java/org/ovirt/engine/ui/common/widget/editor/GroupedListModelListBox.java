@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.SortedMap;
 
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.OvirtCss;
@@ -89,7 +88,9 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
         }
     }
 
-    public abstract SortedMap<String, List<T>> getGroupedList(List<T> acceptableValues);
+    protected boolean ignoreChanging() {
+        return true;
+    }
 
     /**
      * Get the label that represents the model passed in.

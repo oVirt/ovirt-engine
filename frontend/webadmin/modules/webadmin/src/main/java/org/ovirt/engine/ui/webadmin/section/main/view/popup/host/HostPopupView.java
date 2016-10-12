@@ -1,11 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
@@ -477,27 +472,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         // List boxes
         clusterEditor = new GroupedListModelListBoxEditor<>(new GroupedListModelListBox<Cluster>(new NameRenderer<Cluster>()) {
-
-            @Override
-            public SortedMap<String, List<Cluster>> getGroupedList(List<Cluster> acceptableValues) {
-                SortedMap<String, List<Cluster>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-                Collections.sort(acceptableValues, new DataCenterClusterComparator());
-                String currentDataCenter = null;
-                List<Cluster> currentClusterList = null;
-                for (Cluster cluster: acceptableValues) {
-                    if (currentDataCenter == null || !currentDataCenter.equals(cluster.getStoragePoolName())) {
-                        currentClusterList = new ArrayList<>();
-                        currentDataCenter = cluster.getStoragePoolName();
-                        if (currentDataCenter != null) {
-                            result.put(currentDataCenter, currentClusterList);
-                        }
-                    }
-                    if (currentClusterList != null) {
-                        currentClusterList.add(cluster);
-                    }
-                }
-                return result;
-            }
 
             @Override
             public String getModelLabel(Cluster model) {
