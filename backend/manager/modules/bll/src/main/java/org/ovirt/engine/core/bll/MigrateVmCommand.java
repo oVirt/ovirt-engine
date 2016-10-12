@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
+import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
@@ -210,8 +211,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             convergenceSchedule = ConvergenceSchedule.from(effectiveMigrationPolicy.getConfig()).asMap();
 
             maxBandwidth = getMaxBandwidth(clusterMigrationPolicy);
-            autoConverge = effectiveMigrationPolicy.isAutoConvergence();
-            migrateCompressed = effectiveMigrationPolicy.isMigrationCompression();
+            if (!NoMigrationPolicy.ID.equals(effectiveMigrationPolicy.getId())) {
+                autoConverge = effectiveMigrationPolicy.isAutoConvergence();
+                migrateCompressed = effectiveMigrationPolicy.isMigrationCompression();
+            }
             enableGuestEvents = effectiveMigrationPolicy.isEnableGuestEvents();
         }
 
