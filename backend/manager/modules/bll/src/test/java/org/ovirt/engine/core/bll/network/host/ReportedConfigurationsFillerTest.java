@@ -139,46 +139,38 @@ public class ReportedConfigurationsFillerTest {
 
     @Test
     public void testFillReportedConfigurationOnBaseNic() throws Exception {
-
         baseNic.setNetworkName(baseNicNetwork.getName());
-        when(interfaceDao.getAllInterfacesForVds(eq(hostId))).thenReturn(Arrays.asList(baseNic, vlanNic));
-        when(networkDao.getAllForCluster(eq(clusterId))).thenReturn(Collections.singletonList(baseNicNetwork));
-
-
-        NetworkAttachment networkAttachment = new NetworkAttachment();
-        networkAttachment.setNicId(baseNic.getId());
-        networkAttachment.setNicName(baseNic.getName());
-        networkAttachment.setNetworkId(baseNicNetwork.getId());
-
-        when(effectiveHostNetworkQos.getQos(networkAttachment, baseNicNetwork)).thenReturn(baseNicNetworkQos);
-        filler.fillReportedConfiguration(networkAttachment, hostId);
-
-        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment,
-                baseNic,
-                baseNicNetwork,
-                reportedDnsResolverConfiguration,
-                cluster);
+        testFillReportedConfiguration(this.baseNicNetwork, baseNic, baseNicNetworkQos);
     }
 
     @Test
     public void testFillReportedConfigurationOnVlanNic() throws Exception {
-
         vlanNic.setNetworkName(vlanNetwork.getName());
+        testFillReportedConfiguration(this.vlanNetwork, vlanNic, vlanNetworkQos);
+    }
+
+    /**
+     * @param network network which will contain qos and will be attached to nic.
+     * @param nic nic to which network should be attached
+     * @param networkQos qos of network
+     */
+    private void testFillReportedConfiguration(Network network, VdsNetworkInterface nic, HostNetworkQos networkQos) {
+        nic.setNetworkName(network.getName());
         when(interfaceDao.getAllInterfacesForVds(eq(hostId))).thenReturn(Arrays.asList(baseNic, vlanNic));
-        when(networkDao.getAllForCluster(eq(clusterId))).thenReturn(Collections.singletonList(vlanNetwork));
+        when(networkDao.getAllForCluster(eq(clusterId))).thenReturn(Collections.singletonList(network));
 
 
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setNicId(baseNic.getId());
         networkAttachment.setNicName(baseNic.getName());
-        networkAttachment.setNetworkId(vlanNetwork.getId());
+        networkAttachment.setNetworkId(network.getId());
 
-        when(effectiveHostNetworkQos.getQos(networkAttachment, vlanNetwork)).thenReturn(vlanNetworkQos);
+        when(effectiveHostNetworkQos.getQos(networkAttachment, network)).thenReturn(networkQos);
         filler.fillReportedConfiguration(networkAttachment, hostId);
 
         verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment,
-                vlanNic,
-                vlanNetwork,
+                nic,
+                network,
                 reportedDnsResolverConfiguration,
                 cluster);
     }
