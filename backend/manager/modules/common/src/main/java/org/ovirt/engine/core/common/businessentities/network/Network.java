@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.Objects;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -69,6 +70,9 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
     private int mtu;
 
     private Guid qosId;
+
+    @Valid
+    private DnsResolverConfiguration dnsResolverConfiguration;
 
     public Network() {
         vmNetwork = true;
@@ -232,6 +236,7 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
                 .append("providedBy", getProvidedBy())
                 .append("label", getLabel())
                 .append("qosId", getQosId())
+                .append("dnsResolverConfiguration", dnsResolverConfiguration)
                 .build();
     }
 
@@ -254,7 +259,8 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
                 vmNetwork,
                 providedBy,
                 label,
-                qosId
+                qosId,
+                dnsResolverConfiguration
         );
     }
 
@@ -283,7 +289,8 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
                 && vmNetwork == other.vmNetwork
                 && Objects.equals(providedBy, other.providedBy)
                 && Objects.equals(label, other.label)
-                && Objects.equals(qosId, other.qosId);
+                && Objects.equals(qosId, other.qosId)
+                && Objects.equals(dnsResolverConfiguration, other.dnsResolverConfiguration);
     }
 
     public int getMtu() {
@@ -314,5 +321,13 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
      */
     public void setQosId(Guid qosId) {
         this.qosId = qosId;
+    }
+
+    public DnsResolverConfiguration getDnsResolverConfiguration() {
+        return dnsResolverConfiguration;
+    }
+
+    public void setDnsResolverConfiguration(DnsResolverConfiguration dnsResolverConfiguration) {
+        this.dnsResolverConfiguration = dnsResolverConfiguration;
     }
 }

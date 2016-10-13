@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -14,8 +15,10 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.slf4j.Logger;
@@ -31,13 +34,16 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid> implements VdsDynamicDao {
 
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
+
     private static final Logger log = LoggerFactory.getLogger(VdsDynamicDaoImpl.class);
 
     public VdsDynamicDaoImpl() {
         super("VdsDynamic");
     }
 
-    private static final RowMapper<VdsDynamic> vdsDynamicRowMapper = (rs, rowNum) -> {
+    private final RowMapper<VdsDynamic> vdsDynamicRowMapper = (rs, rowNum) -> {
         VdsDynamic entity = new VdsDynamic();
         entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
         entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
@@ -104,6 +110,10 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setKernelArgs(rs.getString("kernel_args"));
         entity.setPrettyName(rs.getString("pretty_name"));
         entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
+
+        Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
+        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
+
         return entity;
     };
 
@@ -117,16 +127,33 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
 
     @Override
     public void save(VdsDynamic vds) {
+        DnsResolverConfiguration reportedDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
+        if (reportedDnsResolverConfiguration != null) {
+            dnsResolverConfigurationDao.save(reportedDnsResolverConfiguration);
+        }
+
         getCallsHandler().executeModification("InsertVdsDynamic", createFullParametersMapperForSave(vds));
     }
 
     @Override
     public void update(VdsDynamic vds) {
+        DnsResolverConfiguration reportedDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
+        if (reportedDnsResolverConfiguration == null) {
+            dnsResolverConfigurationDao.removeByVdsDynamicId(vds.getId());
+        } else {
+            if (reportedDnsResolverConfiguration.getId() == null) {
+                dnsResolverConfigurationDao.save(reportedDnsResolverConfiguration);
+            } else {
+                dnsResolverConfigurationDao.update(reportedDnsResolverConfiguration);
+            }
+        }
         getCallsHandler().executeModification("UpdateVdsDynamic", createFullParametersMapper(vds));
     }
 
     @Override
     public void remove(Guid id) {
+        dnsResolverConfigurationDao.removeByVdsDynamicId(id);
+
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", id);
 
@@ -275,7 +302,17 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("kernel_args", vds.getKernelArgs())
                 .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled())
                 .addValue("pretty_name", vds.getPrettyName())
-                .addValue("hosted_engine_configured", vds.isHostedEngineConfigured());
+                .addValue("hosted_engine_configured", vds.isHostedEngineConfigured())
+                .addValue("dns_resolver_configuration_id", getReportedDnsResolverConfigurationId(vds));
+    }
+
+    private Guid getReportedDnsResolverConfigurationId(VdsDynamic vds) {
+        DnsResolverConfiguration reportedDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
+        if (reportedDnsResolverConfiguration == null) {
+            return null;
+        }
+
+        return reportedDnsResolverConfiguration.getId();
     }
 
     @Override

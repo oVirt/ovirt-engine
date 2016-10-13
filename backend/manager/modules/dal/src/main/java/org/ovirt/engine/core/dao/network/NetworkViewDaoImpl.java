@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -17,20 +19,32 @@ import org.ovirt.engine.core.dao.network.NetworkDaoImpl.NetworkRowMapperBase;
 @Singleton
 public class NetworkViewDaoImpl extends BaseDao implements NetworkViewDao {
 
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
+    private NetworkViewRowMapper networkViewRowMapper;
+
+    @PostConstruct
+    public void init() {
+        networkViewRowMapper = new NetworkViewRowMapper(dnsResolverConfigurationDao);
+    }
+
     @Override
     public List<NetworkView> getAllWithQuery(String query) {
-        return getJdbcTemplate().query(query, NetworkViewRowMapper.instance);
+        return getJdbcTemplate().query(query, networkViewRowMapper);
     }
 
     @Override
     public List<NetworkView> getAllForProvider(Guid id) {
         return getCallsHandler().executeReadList("GetAllNetworkViewsByNetworkProviderId",
-                NetworkViewRowMapper.instance,
+                networkViewRowMapper,
                 getCustomMapSqlParameterSource().addValue("id", id));
     }
 
     private static class NetworkViewRowMapper extends NetworkRowMapperBase<NetworkView> {
-        public static final NetworkViewRowMapper instance = new NetworkViewRowMapper();
+
+        public NetworkViewRowMapper(DnsResolverConfigurationDao dnsResolverConfigurationDao) {
+            super(dnsResolverConfigurationDao);
+        }
 
         @Override
         public NetworkView mapRow(ResultSet rs, int rowNum) throws SQLException {

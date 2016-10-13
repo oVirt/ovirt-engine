@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -32,6 +33,9 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
 
     @Inject
     private HostNetworkQosDao hostNetworkQosDao;
+
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     private final RowMapper<NetworkAttachment> networkAttachmentRowMapper = (rs, rowNum) -> {
         NetworkAttachment entity = new NetworkAttachment();
@@ -58,6 +62,9 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
             entity.setIpConfiguration(ipConfiguration);
         }
         entity.setHostNetworkQos(asAnonymousHostNetworkQos(hostNetworkQosDao.get(entity.getId())));
+
+        Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
+        entity.setDnsResolverConfiguration(this.dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
 
         return entity;
     };
@@ -100,6 +107,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     @Override
     public void remove(Guid id) {
         hostNetworkQosDao.remove(id);
+        dnsResolverConfigurationDao.removeByNetworkAttachmentId(id);
         super.remove(id);
     }
 
@@ -123,7 +131,17 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
 
         mapIpConfiguration(networkAttachment, mapper);
 
+        mapper.addValue("dns_resolver_configuration_id", getDnsResolverConfigurationId(networkAttachment));
         return mapper;
+    }
+
+    private Guid getDnsResolverConfigurationId(NetworkAttachment networkAttachment) {
+        DnsResolverConfiguration dnsResolverConfiguration = networkAttachment.getDnsResolverConfiguration();
+        if (dnsResolverConfiguration == null) {
+            return null;
+        }
+
+        return dnsResolverConfiguration.getId();
     }
 
     private void mapIpConfiguration(NetworkAttachment networkAttachment, MapSqlParameterSource mapper) {
@@ -178,6 +196,12 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     public void save(NetworkAttachment entity) {
         verifyRelationWithHostNetworkQos(entity);
         hostNetworkQosDao.persistQosChanges(entity.getId(), asHostNetworkQos(entity.getHostNetworkQos()));
+
+        DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
+        if (dnsResolverConfiguration != null) {
+            dnsResolverConfigurationDao.save(dnsResolverConfiguration);
+        }
+
         super.save(entity);
     }
 
@@ -193,6 +217,18 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     public void update(NetworkAttachment entity) {
         verifyRelationWithHostNetworkQos(entity);
         hostNetworkQosDao.persistQosChanges(entity.getId(), asHostNetworkQos(entity.getHostNetworkQos()));
+
+        DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
+        if (dnsResolverConfiguration == null) {
+            dnsResolverConfigurationDao.removeByNetworkAttachmentId(entity.getId());
+        } else {
+            if (dnsResolverConfiguration.getId() == null) {
+                dnsResolverConfigurationDao.save(dnsResolverConfiguration);
+            } else {
+                dnsResolverConfigurationDao.update(dnsResolverConfiguration);
+            }
+        }
+
         super.update(entity);
     }
 

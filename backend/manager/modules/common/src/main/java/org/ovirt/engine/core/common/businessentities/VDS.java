@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
@@ -219,6 +220,11 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setKernelCmdlinePciRealloc(isKernelCmdlinePciRealloc());
         vds.setKernelCmdlineUnsafeInterrupts(isKernelCmdlineUnsafeInterrupts());
         vds.setGlusterPeerStatus(getGlusterPeerStatus());
+
+        DnsResolverConfiguration originalDnsResolverConfiguration = getReportedDnsResolverConfiguration();
+        if (originalDnsResolverConfiguration != null) {
+            vds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration(originalDnsResolverConfiguration));
+        }
         return vds;
     }
 
@@ -1431,6 +1437,14 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public boolean isHostDevicePassthroughEnabled() {
         return vdsDynamic.isHostDevicePassthroughEnabled();
+    }
+
+    public DnsResolverConfiguration getReportedDnsResolverConfiguration() {
+        return vdsDynamic.getReportedDnsResolverConfiguration();
+    }
+
+    public void setReportedDnsResolverConfiguration(DnsResolverConfiguration dnsResolverConfiguration) {
+        vdsDynamic.setReportedDnsResolverConfiguration(dnsResolverConfiguration);
     }
 
     public String getLastStoredKernelCmdline() {

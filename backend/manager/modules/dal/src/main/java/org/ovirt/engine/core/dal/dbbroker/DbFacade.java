@@ -153,6 +153,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -662,6 +663,10 @@ public class DbFacade {
      */
     public NetworkClusterDao getNetworkClusterDao() {
         return getDao(NetworkClusterDao.class);
+    }
+
+    public DnsResolverConfigurationDao getDnsResolverConfigurationDao() {
+        return getDao(DnsResolverConfigurationDao.class);
     }
 
     /**

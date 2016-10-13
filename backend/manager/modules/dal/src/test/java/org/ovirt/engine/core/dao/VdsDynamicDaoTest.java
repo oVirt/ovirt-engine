@@ -17,13 +17,17 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class VdsDynamicDaoTest extends BaseDaoTestCase {
     private VdsDynamicDao dao;
     private VdsStaticDao staticDao;
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
     private VdsStatisticsDao statisticsDao;
     private VdsStatic existingVds;
     private VdsStatic newStaticVds;
@@ -42,6 +46,7 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getVdsDynamicDao();
         staticDao = dbFacade.getVdsStaticDao();
+        dnsResolverConfigurationDao = dbFacade.getDnsResolverConfigurationDao();
         statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
@@ -49,6 +54,9 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setClusterId(existingVds.getClusterId());
         newDynamicVds = new VdsDynamic();
+        newDynamicVds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration());
+        newDynamicVds.getReportedDnsResolverConfiguration().setNameServers(
+                new ArrayList<>(Arrays.asList(new NameServer("1.1.1.1"))));
     }
 
     /**
@@ -90,6 +98,8 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         assertNotNull(dynamicResult);
         assertEquals(newDynamicVds, dynamicResult);
         assertEquals(newDynamicVds.isUpdateAvailable(), dynamicResult.isUpdateAvailable());
+        assertEquals(newDynamicVds.getReportedDnsResolverConfiguration(),
+                dynamicResult.getReportedDnsResolverConfiguration());
     }
 
     /**
@@ -105,6 +115,7 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         assertNull(resultStatic);
         VdsDynamic resultDynamic = dao.get(existingVds.getId());
         assertNull(resultDynamic);
+        assertNull(dnsResolverConfigurationDao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION));
     }
 
     @Test
@@ -209,5 +220,14 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         for (VdsStatic host : staticDao.getAllForCluster(clusterId)) {
             dao.updateStatus(host.getId(), hostStatus);
         }
+    }
+
+    @Test
+    public void testUpdateDnsResolverConfiguration() {
+        VdsDynamic before = dao.get(existingVds.getId());
+        before.getReportedDnsResolverConfiguration().getNameServers().add(new NameServer("1.1.1.1"));
+        dao.update(before);
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(before.getReportedDnsResolverConfiguration(), after.getReportedDnsResolverConfiguration());
     }
 }

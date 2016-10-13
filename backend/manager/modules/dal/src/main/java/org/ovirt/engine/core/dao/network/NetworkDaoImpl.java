@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -25,6 +28,19 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements NetworkDao {
+
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
+
+    private NetworkClusterRowMapper networkClusterRowMapper;
+
+    private NetworkRowMapper networkRowMapper;
+
+    @PostConstruct
+    public void init() {
+        networkClusterRowMapper = new NetworkClusterRowMapper(dnsResolverConfigurationDao);
+        networkRowMapper = new NetworkRowMapper(dnsResolverConfigurationDao);
+    }
 
     public NetworkDaoImpl() {
         super("network");
@@ -40,7 +56,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public Network get(Guid networkId, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead(getProcedureNameForGet(),
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource().addValue("id", networkId)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered));
@@ -49,14 +65,14 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public Network getByName(String name) {
         return getCallsHandler().executeRead("GetnetworkByName",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource().addValue("networkName", name));
     }
 
     @Override
     public Network getByNameAndDataCenter(String name, Guid storagePoolId) {
         return getCallsHandler().executeRead("GetNetworkByNameAndDataCenter",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("name", name)
                         .addValue("storage_pool_id", storagePoolId));
@@ -65,7 +81,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public Network getByNameAndCluster(String name, Guid clusterId) {
         return getCallsHandler().executeRead("GetNetworkByNameAndCluster",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("name", name)
                         .addValue("cluster_id", clusterId));
@@ -79,7 +95,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public List<Network> getAll(Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllFromnetwork",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
@@ -91,7 +107,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public List<Network> getAllForDataCenter(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllNetworkByStoragePoolId",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
@@ -107,22 +123,24 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public List<Network> getAllForCluster(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllNetworkByClusterId",
-                NetworkClusterRowMapper.INSTANCE,
+                networkClusterRowMapper,
                 getCustomMapSqlParameterSource()
-                        .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
+                        .addValue("id", id)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override
     public List<Network> getAllForQos(Guid qosId) {
         return getCallsHandler().executeReadList("GetAllNetworksByQosId",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 createIdParameterMapper(qosId));
     }
 
     @Override
     public List<Network> getAllForProvider(Guid id) {
         return getCallsHandler().executeReadList("GetAllNetworksByNetworkProviderId",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 createIdParameterMapper(id));
     }
 
@@ -143,15 +161,45 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public Network getManagementNetwork(Guid clusterId) {
         return getCallsHandler().executeRead("GetManagementNetworkByCluster",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
     }
 
     @Override
     public List<Network> getManagementNetworks(Guid dataCenterId) {
         return getCallsHandler().executeReadList("GetAllManagementNetworksByDataCenterId",
-                NetworkRowMapper.instance,
+                networkRowMapper,
                 getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
+    }
+
+    @Override
+    public void save(Network entity) {
+        DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
+        if (dnsResolverConfiguration != null) {
+            dnsResolverConfigurationDao.save(dnsResolverConfiguration);
+        }
+        super.save(entity);
+    }
+
+    @Override
+    public void update(Network entity) {
+        DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
+        if (dnsResolverConfiguration == null) {
+            dnsResolverConfigurationDao.removeByNetworkId(entity.getId());
+        } else {
+            if (dnsResolverConfiguration.getId() == null) {
+                dnsResolverConfigurationDao.save(dnsResolverConfiguration);
+            } else {
+                dnsResolverConfigurationDao.update(dnsResolverConfiguration);
+            }
+        }
+        super.update(entity);
+    }
+
+    @Override
+    public void remove(Guid guid) {
+        dnsResolverConfigurationDao.removeByNetworkId(guid);
+        super.remove(guid);
     }
 
     @Override
@@ -180,17 +228,29 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
                 .addValue("provider_network_external_id",
                         network.getProvidedBy() == null ? null : network.getProvidedBy().getExternalId())
                 .addValue("qos_id", network.getQosId())
-                .addValue("label", network.getLabel());
+                .addValue("label", network.getLabel())
+                .addValue("dns_resolver_configuration_id", getDnsResolverConfigurationId(network));
+    }
+
+    private Guid getDnsResolverConfigurationId(Network network) {
+        DnsResolverConfiguration dnsResolverConfiguration = network.getDnsResolverConfiguration();
+        if (dnsResolverConfiguration == null) {
+            return null;
+        }
+
+        return dnsResolverConfiguration.getId();
     }
 
     @Override
     protected RowMapper<Network> createEntityRowMapper() {
-        return NetworkRowMapper.instance;
+        return networkRowMapper;
     }
 
-    private static final class NetworkClusterRowMapper extends NetworkRowMapper
-            implements RowMapper<Network> {
-        public static final NetworkClusterRowMapper INSTANCE = new NetworkClusterRowMapper();
+    private static final class NetworkClusterRowMapper extends NetworkRowMapper implements RowMapper<Network> {
+
+        private NetworkClusterRowMapper(DnsResolverConfigurationDao dnsResolverConfigurationDao) {
+            super(dnsResolverConfigurationDao);
+        }
 
         @Override
         public Network mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -210,6 +270,13 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     }
 
     abstract static class NetworkRowMapperBase<T extends Network> implements RowMapper<T> {
+
+        private final DnsResolverConfigurationDao dnsResolverConfigurationDao;
+
+        protected NetworkRowMapperBase(DnsResolverConfigurationDao dnsResolverConfigurationDao) {
+            this.dnsResolverConfigurationDao = dnsResolverConfigurationDao;
+        }
+
         @Override
         public T mapRow(ResultSet rs, int rowNum) throws SQLException {
             T entity = createNetworkEntity();
@@ -235,14 +302,20 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
             entity.setQosId(getGuid(rs, "qos_id"));
 
             entity.setLabel(rs.getString("label"));
+
+            Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
+            entity.setDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
+
             return entity;
         }
 
         protected abstract T createNetworkEntity();
     }
 
-    static class NetworkRowMapper extends NetworkRowMapperBase<Network> {
-        public static final NetworkRowMapper instance = new NetworkRowMapper();
+    private static class NetworkRowMapper extends NetworkRowMapperBase<Network> {
+        public NetworkRowMapper(DnsResolverConfigurationDao dnsResolverConfigurationDao) {
+            super(dnsResolverConfigurationDao);
+        }
 
         @Override
         protected Network createNetworkEntity() {

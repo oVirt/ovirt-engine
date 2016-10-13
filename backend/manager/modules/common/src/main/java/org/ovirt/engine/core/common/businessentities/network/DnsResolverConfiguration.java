@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,6 +21,14 @@ public class DnsResolverConfiguration implements BusinessEntity<Guid> {
     @Size(min = 1, max = BusinessEntitiesDefinitions.MAX_SUPPORTED_DNS_CONFIGURATIONS)
     @Valid
     private List<NameServer> nameServers;
+
+    public DnsResolverConfiguration() {
+    }
+
+    public DnsResolverConfiguration(DnsResolverConfiguration original) {
+        this.id = original.getId();
+        this.nameServers = original.nameServers == null ? null : new ArrayList<>(original.nameServers);
+    }
 
     @Override
     public Guid getId() {

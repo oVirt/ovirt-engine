@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -193,6 +195,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     private String prettyName;
 
     private boolean hostedEngineConfigured;
+
+    @Valid
+    private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
@@ -789,6 +794,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.hostedEngineConfigured = heConfigured;
     }
 
+    public DnsResolverConfiguration getReportedDnsResolverConfiguration() {
+        return reportedDnsResolverConfiguration;
+    }
+
+    public void setReportedDnsResolverConfiguration(DnsResolverConfiguration reportedDnsResolverConfiguration) {
+        this.reportedDnsResolverConfiguration = reportedDnsResolverConfiguration;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -854,7 +867,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 hostDevicePassthroughEnabled,
                 kernelArgs,
                 prettyName,
-                hostedEngineConfigured
+                hostedEngineConfigured,
+                reportedDnsResolverConfiguration
         );
     }
 
@@ -931,6 +945,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(kernelArgs, other.kernelArgs)
                 && Objects.equals(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled)
                 && Objects.equals(prettyName, other.prettyName)
-                && Objects.equals(hostedEngineConfigured, other.hostedEngineConfigured);
+                && Objects.equals(hostedEngineConfigured, other.hostedEngineConfigured)
+                && Objects.equals(reportedDnsResolverConfiguration, other.reportedDnsResolverConfiguration);
     }
 }

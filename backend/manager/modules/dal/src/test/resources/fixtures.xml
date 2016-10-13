@@ -18,6 +18,14 @@
   <mac_pool_ranges mac_pool_id="c248552d-64d4-4a77-ab1d-4c5eea00be6b" from_mac="02:c0:81:21:71:17" to_mac="02:c1:81:21:71:17"/>
   <mac_pool_ranges mac_pool_id="17baf4e3-4347-4f81-915f-7762a108b81b" from_mac="02:c0:81:21:71:17" to_mac="02:c1:81:21:71:17"/>
 
+
+  <dns_resolver_configuration id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <dns_resolver_configuration id="d1083ae5-df27-44dc-a3b1-a818844db9e4"/>
+
+  <name_server address="192.168.1.2" position="1" dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <name_server address="2002:0db8:85a3:0000:0000:8a2e:0370:7334" position="2"
+               dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+
   <command_entities user_id="9bf7c640-b620-456f-a550-0348f366544a" engine_session_seq_id="117" command_id="340fd52b-3400-4cdd-8d3f-c9d03704b0a1" command_type="230" created_at="2010-11-29 15:57:10" status="ACTIVE" data="{ &quot;NEXT_COMMAND_TYPE&quot; : [ &quot;org.ovirt.engine.core.common.action.VdcActionType&quot;, &quot;DestroyImage&quot; ] }"/>
   <command_entities user_id="9bf7c640-b620-456f-a550-0348f366544a" engine_session_seq_id="117" command_id="340fd52b-3400-4cdd-8d3f-c9d03704b0a2" command_type="211" root_command_id="340fd52b-3400-4cdd-8d3f-c9d03704b0a1" created_at="2010-11-29 15:57:10" status="ACTIVE" data="{ &quot;NEXT_COMMAND_TYPE&quot; : [ &quot;org.ovirt.engine.core.common.action.VdcActionType&quot;, &quot;DestroyImage&quot; ] }"/>
   <command_entities user_id="9bf7c640-b620-456f-a550-0348f366544a" engine_session_seq_id="117" command_id="340fd52b-3400-4cdd-8d3f-c9d03704b0a3" command_type="211" root_command_id="340fd52b-3400-4cdd-8d3f-c9d03704b0a1" created_at="2010-11-29 15:57:10" status="ACTIVE" data="{ &quot;NEXT_COMMAND_TYPE&quot; : [ &quot;org.ovirt.engine.core.common.action.VdcActionType&quot;, &quot;DestroyImage&quot; ] }"/>
@@ -147,13 +155,32 @@
   <qos id="de956031-6be2-43d6-bb90-5191c9253319" qos_type="4" name="host_network_qos_b" storage_pool_id="386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" out_average_linkshare="1200" out_average_upperlimit="2400" out_average_realtime="500"/>
   <qos id="de956031-6be2-43d6-bb90-5191c9253320" qos_type="4" name="host_network_qos_c" storage_pool_id="386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" out_average_linkshare="700" out_average_upperlimit="1400" out_average_realtime="500"/>
 
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607188" name="engine" description="Management Network" stp="0" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true" qos_id="de956031-6be2-43d6-bb90-5191c9253318"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607189" name="engine2" description="Management Network" stp="0" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="1500" vm_network="true" label="lbl1"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607190" name="engine3" description="Management Network" stp="0" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="9000" vm_network="true" label="lbl1"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607200" name="external" description="Some external network" stp="0" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true" provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111" provider_network_external_id="52d5c1c6-cb15-4832-b2a4-023770607200"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607201" name="external" description="Some external network" stp="0" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105e" mtu="0" vm_network="true" provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111" provider_network_external_id="52d5c1c6-cb15-4832-b2a4-023770607200"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607191" name="engine4" description="Management Network" stp="0" storage_pool_id="386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" mtu="1500" vm_network="true" label="lbl2"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-1234567890ab" name="management" description="The Management Network" stp="0" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"/>
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607188" name="engine" description="Management Network" stp="0"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
+           qos_id="de956031-6be2-43d6-bb90-5191c9253318"
+           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607189" name="engine2" description="Management Network" stp="0"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="1500" vm_network="true" label="lbl1"
+           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607190" name="engine3" description="Management Network" stp="0"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="9000" vm_network="true" label="lbl1"
+           dns_resolver_configuration_id="d1083ae5-df27-44dc-a3b1-a818844db9e4"/>
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607200" name="external" description="Some external network" stp="0"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
+           provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111"
+           provider_network_external_id="52d5c1c6-cb15-4832-b2a4-023770607200"
+           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607201" name="external" description="Some external network" stp="0"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105e" mtu="0" vm_network="true"
+           provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111"
+           provider_network_external_id="52d5c1c6-cb15-4832-b2a4-023770607200"
+           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607191" name="engine4" description="Management Network" stp="0"
+           storage_pool_id="386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" mtu="1500" vm_network="true" label="lbl2"
+           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <network id="58d5c1c6-cb15-4832-b2a4-1234567890ab" name="management" description="The Management Network" stp="0"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
+           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
 
   <network_filter filter_id="c477a4cc-f00e-45be-b61f-224766437091" filter_name="TEST_NETWORK_FILTER" version="4.0"/>
   <network_filter filter_id="22510576-a243-468e-bc37-d68f16130b02" filter_name="ovirt-no-filter" version="3.0"/>
@@ -239,11 +266,86 @@
   <vm_static vm_guid="77296e00-0cad-4e5a-9299-008a7b6f5002" entity_type="VM" num_of_io_threads="1" vm_name="rhel5-pool-52" mem_size_mb="1024" max_memory_size_mb="4096" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b83" os="0" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" creation_date="2010-11-18 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="1" fail_back="1" _create_date="2010-11-18 11:13:24" dedicated_vm_for_vds="afce7a39-8e8c-4819-ba9c-796d316592e6" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="2" quota_id="88296e00-0cad-4e5a-9291-008a7b7f4399" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="guest_agent" is_boot_menu_enabled="true" numatune_mode="preferred" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="true" custom_emulated_machine="rhel6.5.0" custom_cpu_name="Penryn" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN"/>
   <vm_static vm_guid="77296e00-0cad-4e5a-9299-008a7b6f5003" entity_type="VM" num_of_io_threads="1" vm_name="rhel5-pool-50" mem_size_mb="1024" max_memory_size_mb="4069" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b83" os="0" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" creation_date="2010-11-18 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="0" fail_back="1" _create_date="2010-11-18 11:13:24" dedicated_vm_for_vds="afce7a39-8e8c-4819-ba9c-796d316592e7" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="0" quota_id="88296e00-0cad-4e5a-9291-008a7b7f4399" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="guest_agent" template_version_number="1" serial_number_policy="0" is_boot_menu_enabled="false" numatune_mode="preferred" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="false" custom_emulated_machine="rhel6.5.0" custom_cpu_name="Penryn" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN"/>
 
-  <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e6" status="3" external_status="0" cpu_cores="8" cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1" physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256" guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man" previous_status="12" cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1" vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0" supported_cluster_levels="2.3" supported_engines="2.3" host_os="Fedora - 20 - 3" spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs" librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f" transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0" cpu_threads="16" kdump_status="-1" selinux_enforce_mode="1" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM" online_cpus="0,1,2,3" incoming_migrations="0" outgoing_migrations="0" is_update_available="true" is_hostdev_enabled="true" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"/>
-  <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e7" status="3" external_status="0" cpu_cores="8" cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1" physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256" guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man" previous_status="12" cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1" vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0" supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6" spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs" librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f" transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0" cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="0" selinux_enforce_mode="0" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="" online_cpus="0,2,4" incoming_migrations="0" outgoing_migrations="0" is_update_available="true" is_hostdev_enabled="false" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"/>
-  <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e8" status="3" external_status="0" cpu_cores="8" cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1" physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256" guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man" previous_status="12" cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1" vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0" supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6" spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs" librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f" transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0" cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="1" selinux_enforce_mode="-1" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="HWRNG" online_cpus="0,8,16,24,32" incoming_migrations="0" outgoing_migrations="0" is_update_available="false" is_hostdev_enabled="true" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"/>
-  <vds_dynamic vds_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" status="3" external_status="0" cpu_cores="8" cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1" physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256" guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man" previous_status="12" cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1" vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0" supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6" spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs" librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f" transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0" cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="-1" selinux_enforce_mode="2" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM" online_cpus="0,128" incoming_migrations="0" outgoing_migrations="0" is_update_available="false" is_hostdev_enabled="true" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"/>
-  <vds_dynamic vds_id="2001751e-549b-4e7a-aff6-32d36856c125" status="3" external_status="0" cpu_cores="8" cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1" physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256" guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man" previous_status="12" cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1" vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0" supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6" spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs" librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f" transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0" cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="-1" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM,HWRNG" online_cpus="0,1,2,3,4,5,6,7,8" incoming_migrations="0" outgoing_migrations="0" is_update_available="false" is_hostdev_enabled="false" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"/>
+  <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e6" status="3" external_status="0" cpu_cores="8"
+               cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
+               physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man"
+               previous_status="12"
+               cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1"
+               vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="2.3" supported_engines="2.3" host_os="Fedora - 20 - 3" spice_version="2.3"
+               kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs"
+               librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f"
+               transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0"
+               cpu_threads="16" kdump_status="-1" selinux_enforce_mode="1" auto_numa_balancing="2"
+               is_numa_supported="true" supported_rng_sources="RANDOM" online_cpus="0,1,2,3" incoming_migrations="0"
+               outgoing_migrations="0" is_update_available="true" is_hostdev_enabled="true"
+               pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
+               dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e7" status="3" external_status="0" cpu_cores="8"
+               cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
+               physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man"
+               previous_status="12"
+               cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1"
+               vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6"
+               spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs"
+               librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f"
+               transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0"
+               cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="0"
+               selinux_enforce_mode="0" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources=""
+               online_cpus="0,2,4" incoming_migrations="0" outgoing_migrations="0" is_update_available="true"
+               is_hostdev_enabled="false" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
+               dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e8" status="3" external_status="0" cpu_cores="8"
+               cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
+               physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man"
+               previous_status="12"
+               cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1"
+               vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6"
+               spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs"
+               librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f"
+               transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0"
+               cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="1"
+               selinux_enforce_mode="-1" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="HWRNG"
+               online_cpus="0,8,16,24,32" incoming_migrations="0" outgoing_migrations="0" is_update_available="false"
+               is_hostdev_enabled="true" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
+               dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <vds_dynamic vds_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" status="3" external_status="0" cpu_cores="8"
+               cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
+               physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man"
+               previous_status="12"
+               cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1"
+               vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6"
+               spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs"
+               librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f"
+               transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0"
+               cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="-1"
+               selinux_enforce_mode="2" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM"
+               online_cpus="0,128" incoming_migrations="0" outgoing_migrations="0" is_update_available="false"
+               is_hostdev_enabled="true" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
+               dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <vds_dynamic vds_id="2001751e-549b-4e7a-aff6-32d36856c125" status="3" external_status="0" cpu_cores="8"
+               cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
+               physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" rpm_version="4.9.6-24.0.el6_3" software_version="4.9.0.25" version_name="Snow Man"
+               previous_status="12"
+               cpu_flags="fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1"
+               vms_cores_count="0" pending_vcpus_count="0" cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="2.3" supported_engines="2.3" host_os="RHEL - 6Server - 6.0.0.37.el6"
+               spice_version="2.3" kernel_version="2.6.32 - 71.el6" gluster_version="glusterfs-3.4.0.34.1u2rhs-1.el6rhs"
+               librbd1_version="librbd1-0.80.9-1.fc21.x86_64" iscsi_initiator_name="iqn.1994-05.com.redhat:3d9116b4c11f"
+               transparent_hugepages_state="0" _update_date="2010-12-01 14:13:10" hooks="{}" non_operational_reason="0"
+               cpu_threads="16" supported_emulated_machines="rhel6.4,rhel6.4,pc-1.1,pc-1.0" kdump_status="-1"
+               auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM,HWRNG"
+               online_cpus="0,1,2,3,4,5,6,7,8" incoming_migrations="0" outgoing_migrations="0"
+               is_update_available="false" is_hostdev_enabled="false" pretty_name="RHEL 7.0 (core)"
+               hosted_engine_configured="false" dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
 
   <vds_statistics vds_id="afce7a39-8e8c-4819-ba9c-796d316592e6" cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0" usage_mem_percent="6" usage_cpu_percent="0" usage_network_percent="0" mem_available="14741" mem_shared="0" mem_free="13245" swap_free="15999" swap_total="15999" ksm_cpu_percent="0" ksm_pages="64" ksm_state="0" anonymous_hugepages="0" ha_score="0" ha_configured="false" ha_active="false" ha_global_maintenance="false" ha_local_maintenance="false" boot_time="123456789" cpu_over_commit_time_stamp="2010-12-01 14:13:10"/>
   <vds_statistics vds_id="afce7a39-8e8c-4819-ba9c-796d316592e7" cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0" usage_mem_percent="6" usage_cpu_percent="0" usage_network_percent="0" mem_available="14741" mem_shared="0" mem_free="13245" swap_free="15999" swap_total="15999" ksm_cpu_percent="0" ksm_pages="64" ksm_state="0" anonymous_hugepages="0" ha_score="0" ha_configured="false" ha_active="false" ha_global_maintenance="false" ha_local_maintenance="false" boot_time="123456789" cpu_over_commit_time_stamp="2010-12-01 14:13:10"/>
@@ -443,9 +545,19 @@
   <vds_interface_statistics id="ba31682e-6ae7-4f9d-8c6f-04c93acca9dd" rx_rate="0" tx_rate="0" rx_drop="0" tx_drop="0" rx_total="0" tx_total="0" rx_offset="0" tx_offset="0" iface_status="0" sample_time="0"/>
   <vds_interface_statistics id="ba31682e-6ae7-4f9d-8c6f-04c93acca9de" rx_rate="0" tx_rate="0" rx_drop="0" tx_drop="0" rx_total="0" tx_total="0" rx_offset="0" tx_offset="0" iface_status="0" sample_time="0"/>
 
-  <network_attachments id="fd81f1f1-785b-4579-ab75-1419ebb87051" network_id="58d5c1c6-cb15-4832-b2a4-023770607189" nic_id="ba31682e-6ae7-4f9d-8c6f-04c93acca9dd" boot_protocol="DHCP" ipv6_boot_protocol="DHCP" custom_properties="{ &quot;prop1&quot; : &quot;true&quot;, &quot;prop2&quot; : &quot;123456&quot; }" _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36"/>
-  <network_attachments id="fd81f1f1-785b-4579-ab75-1419ebb87052" network_id="58d5c1c6-cb15-4832-b2a4-023770607190" nic_id="ba31682e-6ae7-4f9d-8c6f-04c93acca9dd" boot_protocol="NONE" ipv6_boot_protocol="NONE" _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36"/>
-  <network_attachments id="fd81f1f1-785b-4579-ab75-1419ebb87053" network_id="58d5c1c6-cb15-4832-b2a4-023770607190" nic_id="ba31682e-6ae7-4f9d-8c6f-04c93acca9db" boot_protocol="NONE" ipv6_boot_protocol="NONE" _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36"/>
+  <network_attachments id="fd81f1f1-785b-4579-ab75-1419ebb87051" network_id="58d5c1c6-cb15-4832-b2a4-023770607189"
+                       nic_id="ba31682e-6ae7-4f9d-8c6f-04c93acca9dd" boot_protocol="DHCP" ipv6_boot_protocol="DHCP"
+                       custom_properties="{ &quot;prop1&quot; : &quot;true&quot;, &quot;prop2&quot; : &quot;123456&quot; }"
+                       _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36"
+                       dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <network_attachments id="fd81f1f1-785b-4579-ab75-1419ebb87052" network_id="58d5c1c6-cb15-4832-b2a4-023770607190"
+                       nic_id="ba31682e-6ae7-4f9d-8c6f-04c93acca9dd" boot_protocol="NONE" ipv6_boot_protocol="NONE"
+                       _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36"
+                       dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+  <network_attachments id="fd81f1f1-785b-4579-ab75-1419ebb87053" network_id="58d5c1c6-cb15-4832-b2a4-023770607190"
+                       nic_id="ba31682e-6ae7-4f9d-8c6f-04c93acca9db" boot_protocol="NONE" ipv6_boot_protocol="NONE"
+                       _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36"
+                       dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
 
   <vm_pool_map vm_pool_id="103cfd1d-18b1-4790-8a0c-1e52621b0076" vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4355"/>
   <vm_pool_map vm_pool_id="103cfd1d-18b1-4790-8a0c-1e52621b0076" vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4354"/>

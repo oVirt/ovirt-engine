@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -39,6 +41,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class VdsDaoImpl extends BaseDao implements VdsDao {
+
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     @Override
     public VDS get(Guid id) {
@@ -265,7 +270,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         return uniteAgents(vdsList);
     }
 
-    private static final RowMapper<VDS> vdsRowMapper = (rs, rowNum) -> {
+    private final RowMapper<VDS> vdsRowMapper = (rs, rowNum) -> {
         final VDS entity = new VDS();
         entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
         entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
@@ -335,6 +340,10 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setKsmPages(rs.getLong("ksm_pages"));
         entity.setKsmState((Boolean) rs.getObject("ksm_state"));
         entity.setSupportedClusterLevels(rs.getString("supported_cluster_levels"));
+
+        Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
+        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
+
         entity.setSupportedEngines(rs.getString("supported_engines"));
         entity.setClusterCompatibilityVersion(new VersionRowMapper("cluster_compatibility_version").mapRow(rs, rowNum));
         entity.setClusterSupportsVirtService(rs.getBoolean("cluster_virt_service"));

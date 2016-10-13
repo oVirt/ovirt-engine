@@ -40,6 +40,9 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
     private boolean overrideConfiguration;
     private ReportedConfigurations reportedConfigurations;
 
+    @Valid
+    private DnsResolverConfiguration dnsResolverConfiguration;
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -171,6 +174,14 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
         return hostNetworkQos != null;
     }
 
+    public DnsResolverConfiguration getDnsResolverConfiguration() {
+        return dnsResolverConfiguration;
+    }
+
+    public void setDnsResolverConfiguration(DnsResolverConfiguration dnsResolverConfiguration) {
+        this.dnsResolverConfiguration = dnsResolverConfiguration;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -201,6 +212,7 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
                 .append("nicId", getNicId())
                 .append("nicName", getNicName())
                 .append("ipConfiguration", getIpConfiguration())
+                .append("dnsResolverConfiguration", getDnsResolverConfiguration())
                 .append("properties", getProperties())
                 .append("overrideConfiguration", isOverrideConfiguration())
                 .build();

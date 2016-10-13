@@ -21,7 +21,8 @@ CREATE OR REPLACE FUNCTION Insertnetwork (
     v_provider_network_provider_id UUID,
     v_provider_network_external_id TEXT,
     v_qos_id UUID,
-    v_label TEXT
+    v_label TEXT,
+    v_dns_resolver_configuration_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -42,7 +43,8 @@ BEGIN
         provider_network_provider_id,
         provider_network_external_id,
         qos_id,
-        label
+        label,
+        dns_resolver_configuration_id
         )
     VALUES (
         v_addr,
@@ -61,7 +63,8 @@ BEGIN
         v_provider_network_provider_id,
         v_provider_network_external_id,
         v_qos_id,
-        v_label
+        v_label,
+        v_dns_resolver_configuration_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -83,7 +86,8 @@ CREATE OR REPLACE FUNCTION Updatenetwork (
     v_provider_network_provider_id UUID,
     v_provider_network_external_id TEXT,
     v_qos_id UUID,
-    v_label TEXT
+    v_label TEXT,
+    v_dns_resolver_configuration_id UUID
     )
 RETURNS VOID
     --The [network] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -105,7 +109,8 @@ BEGIN
         provider_network_provider_id = v_provider_network_provider_id,
         provider_network_external_id = v_provider_network_external_id,
         qos_id = v_qos_id,
-        label = v_label
+        label = v_label,
+        dns_resolver_configuration_id = v_dns_resolver_configuration_id
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -283,6 +288,7 @@ CREATE TYPE networkViewClusterType AS (
         provider_network_provider_id UUID,
         provider_network_external_id TEXT,
         qos_id UUID,
+        dns_resolver_configuration_id UUID,
         network_id UUID,
         cluster_id UUID,
         status INT,
@@ -320,6 +326,7 @@ BEGIN
         network.provider_network_provider_id,
         network.provider_network_external_id,
         network.qos_id,
+        network.dns_resolver_configuration_id,
         network_cluster.network_id,
         network_cluster.cluster_id,
         network_cluster.status,
@@ -1996,6 +2003,143 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------------------
+-- DnsResolverConfiguration
+-------------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION GetDnsResolverConfigurationByDnsResolverConfigurationId (v_id UUID)
+RETURNS SETOF dns_resolver_configuration STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM dns_resolver_configuration
+    WHERE id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetAllFromDnsResolverConfigurations ()
+RETURNS SETOF dns_resolver_configuration STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM dns_resolver_configuration;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION InsertDnsResolverConfiguration (
+    v_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO dns_resolver_configuration (id)
+    VALUES (v_id);
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateDnsResolverConfiguration (v_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE dns_resolver_configuration
+    SET id = v_id
+    WHERE id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteDnsResolverConfiguration (v_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM dns_resolver_configuration
+    WHERE id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetNameServersByDnsResolverConfigurationId (v_dns_resolver_configuration_id UUID)
+RETURNS SETOF name_server STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM name_server
+    WHERE dns_resolver_configuration_id = v_dns_resolver_configuration_id
+    ORDER BY position ASC;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION InsertNameServer (
+    v_dns_resolver_configuration_id UUID,
+    v_address VARCHAR(45),
+    v_position SMALLINT)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO
+    name_server(
+      address,
+      position,
+      dns_resolver_configuration_id)
+    VALUES (
+      v_address,
+      v_position,
+      v_dns_resolver_configuration_id);
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteNameServersByDnsResolverConfigurationId (v_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM name_server
+    WHERE dns_resolver_configuration_id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION DeleteDnsResolverConfigurationByNetworkAttachmentId (v_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM dns_resolver_configuration
+    WHERE id = (
+      SELECT
+        dns_resolver_configuration_id
+      FROM
+        network_attachments
+      WHERE
+        id = v_id);
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteDnsResolverConfigurationByNetworkId (v_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM dns_resolver_configuration
+    WHERE id = (
+      SELECT
+        dns_resolver_configuration_id
+      FROM
+        network
+      WHERE
+        id = v_id);
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteDnsResolverConfigurationByVdsDynamicId (v_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM dns_resolver_configuration
+    WHERE id = (
+      SELECT
+        dns_resolver_configuration_id
+      FROM
+        vds_dynamic
+      WHERE
+        vds_id = v_id);
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------------------
 -- Network attachments
 -------------------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentByNetworkAttachmentId (v_id UUID)
@@ -2021,7 +2165,8 @@ CREATE OR REPLACE FUNCTION InsertNetworkAttachment (
     v_ipv6_address VARCHAR(50),
     v_ipv6_prefix INT,
     v_ipv6_gateway VARCHAR(50),
-    v_custom_properties TEXT
+    v_custom_properties TEXT,
+    v_dns_resolver_configuration_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -2037,7 +2182,8 @@ BEGIN
         ipv6_address,
         ipv6_prefix,
         ipv6_gateway,
-        custom_properties
+        custom_properties,
+        dns_resolver_configuration_id
         )
     VALUES (
         v_id,
@@ -2051,7 +2197,8 @@ BEGIN
         v_ipv6_address,
         v_ipv6_prefix,
         v_ipv6_gateway,
-        v_custom_properties
+        v_custom_properties,
+        v_dns_resolver_configuration_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -2068,7 +2215,8 @@ CREATE OR REPLACE FUNCTION UpdateNetworkAttachment (
     v_ipv6_address VARCHAR(50),
     v_ipv6_prefix INT,
     v_ipv6_gateway VARCHAR(50),
-    v_custom_properties TEXT
+    v_custom_properties TEXT,
+    v_dns_resolver_configuration_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -2084,7 +2232,8 @@ BEGIN
         ipv6_address = v_ipv6_address,
         ipv6_prefix = v_ipv6_prefix,
         ipv6_gateway = v_ipv6_gateway,
-        _update_date = LOCALTIMESTAMP
+        _update_date = LOCALTIMESTAMP,
+        dns_resolver_configuration_id = v_dns_resolver_configuration_id
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

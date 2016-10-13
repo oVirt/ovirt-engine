@@ -857,4 +857,8 @@ public class FixturesTool {
     public static final Guid HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_2 = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c3");
 
     public static final Guid POSIX_STORAGE_DOMAIN_ID = new Guid("bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5");
+    public static final Guid EXISTING_DNS_RESOLVER_CONFIGURATION =
+            Guid.createGuidFromString("6de58dc3-171d-426d-99fc-295c25c091d3");
+    public static final Guid EXISTING_DNS_RESOLVER_CONFIGURATION_TO_REMOVE =
+                    Guid.createGuidFromString("d1083ae5-df27-44dc-a3b1-a818844db9e4");
 }

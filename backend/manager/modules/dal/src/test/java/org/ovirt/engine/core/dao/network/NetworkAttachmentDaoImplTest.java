@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +15,13 @@ import java.util.Map;
 import java.util.Random;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
@@ -27,18 +31,24 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
 
     private NetworkAttachment networkAttachment;
     private NetworkAttachmentDao dao;
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
         dao = dbFacade.getNetworkAttachmentDao();
+        dnsResolverConfigurationDao = dbFacade.getDnsResolverConfigurationDao();
         networkAttachment = new NetworkAttachment();
         networkAttachment.setNicId(FixturesTool.VDS_NETWORK_INTERFACE);
         networkAttachment.setProperties(new HashMap<>());
         networkAttachment.setId(Guid.newGuid());
         networkAttachment.setNetworkId(FixturesTool.NETWORK_ENGINE);
         networkAttachment.setIpConfiguration(createIpConfiguration(Ipv4BootProtocol.DHCP, Ipv6BootProtocol.AUTOCONF));
+
+        networkAttachment.setDnsResolverConfiguration(new DnsResolverConfiguration());
+        networkAttachment.getDnsResolverConfiguration().setNameServers(
+                new ArrayList<>(Arrays.asList(new NameServer("1.1.1.1"))));
     }
 
     /**
@@ -79,6 +89,13 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         properties.put("prop2", "123456");
 
         expected.setProperties(properties);
+
+        expected.setDnsResolverConfiguration(new DnsResolverConfiguration());
+        expected.getDnsResolverConfiguration().setId(Guid.createGuidFromString("6de58dc3-171d-426d-99fc-295c25c091d3"));
+        expected.getDnsResolverConfiguration().setNameServers(Arrays.asList(
+                new NameServer("192.168.1.2"),
+                new NameServer("2002:0db8:85a3:0000:0000:8a2e:0370:7334")
+        ));
 
         return expected;
     }
@@ -162,6 +179,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         assertEquals(expected.getNicName(), actual.getNicName());
         assertEquals(expected.getIpConfiguration(), actual.getIpConfiguration());
         assertEquals(expected.getProperties().entrySet(), actual.getProperties().entrySet());
+        assertEquals(expected.getDnsResolverConfiguration(), actual.getDnsResolverConfiguration());
     }
 
     /**
@@ -182,6 +200,8 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         networkAttachment.setProperties(properties);
 
         networkAttachment.setNicId(FixturesTool.NETWORK_ATTACHMENT_NIC2);
+
+        networkAttachment.getDnsResolverConfiguration().getNameServers().add(new NameServer("2.2.2.2"));
 
         dao.update(networkAttachment);
         NetworkAttachment result = dao.get(networkAttachment.getId());
@@ -251,6 +271,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         assertNotNull(result);
         dao.remove(networkAttachment.getId());
         assertNull(dao.get(networkAttachment.getId()));
+        assertNull(dnsResolverConfigurationDao.get(networkAttachment.getDnsResolverConfiguration().getId()));
     }
 
     @Test
