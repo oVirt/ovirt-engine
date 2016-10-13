@@ -1606,7 +1606,7 @@ public enum ConfigValues {
     PMHealthCheckIntervalInSec,
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("RANDOM")
+    @DefaultValueAttribute("")
     ClusterRequiredRngSourcesDefault,
 
     @TypeConverterAttribute(Integer.class)
