@@ -296,6 +296,7 @@ class CoreEnv(object):
     REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
     UPGRADE_SUPPORTED_VERSIONS = 'OVESETUP_CORE/upgradeSupportedVersions'
     ACTION = 'OVESETUP_CORE/action'
+    FAIL_ON_DUPLICATED_CONSTANT = 'OVESETUP_CORE/failOnDulicatedConstant'
 
     @osetupattrs(
         answerfile=True,

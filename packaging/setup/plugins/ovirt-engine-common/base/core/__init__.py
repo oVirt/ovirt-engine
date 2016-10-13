@@ -22,6 +22,7 @@
 from otopi import util
 
 from . import answerfile
+from . import duplicated_constants_check
 from . import misc
 from . import offlinepackager
 from . import postinstall
@@ -31,12 +32,13 @@ from . import uninstall
 
 @util.export
 def createPlugins(context):
-    offlinepackager.Plugin(context=context)
-    misc.Plugin(context=context)
     answerfile.Plugin(context=context)
-    uninstall.Plugin(context=context)
+    duplicated_constants_check.Plugin(context=context)
+    misc.Plugin(context=context)
+    offlinepackager.Plugin(context=context)
     postinstall.Plugin(context=context)
     reconfigure.Plugin(context=context)
+    uninstall.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
