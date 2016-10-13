@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -82,7 +81,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private List<VdsNetworkInterface> hostNics;
 
-    private final Version targetClusterCompatibilityVersion = getTargetCluster().getCompatibilityVersion();
     private List<Network> targetClusterNetworks;
 
     /**
@@ -138,7 +136,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         vds.setCpuName(getCpuFlagsManagerHandler().
-                findMaxServerCpuByFlags(vds.getCpuFlags(), targetClusterCompatibilityVersion));
+                findMaxServerCpuByFlags(vds.getCpuFlags(), getTargetCluster().getCompatibilityVersion()));
 
         // CPU flags are null if oVirt node cluster is changed during approve process.
         if (getTargetCluster().supportsVirtService() && !StringUtils.isEmpty(vds.getCpuFlags())) {
