@@ -226,6 +226,7 @@ public class HostModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
             final Provider<HostListModel<Void>> mainModelProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<HostVmListModel> modelProvider) {
         SearchableDetailTabModelProvider<VM, HostListModel<Void>, HostVmListModel> result =
                 new SearchableDetailTabModelProvider<VM, HostListModel<Void>, HostVmListModel>(
@@ -238,6 +239,17 @@ public class HostModule extends AbstractGinModule {
                             return migratePopupProvider.get();
                         }
                         return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(
+                            HostVmListModel sourceModel,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getStopCommand() ||
+                                lastExecutedCommand == getModel().getShutdownCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        }
+                        return super.getConfirmModelPopup(sourceModel, lastExecutedCommand);
                     }
                 };
         result.setMainModelProvider(mainModelProvider);
