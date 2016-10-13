@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,10 +40,8 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.SeparateNewAndModifiedInstances;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
-import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
-import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -100,8 +97,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksCommand.class);
 
     private static final String DEFAULT_BOND_OPTIONS = "mode=4 miimon=100 xmit_hash_policy=2";
-    private static final Set<Ipv6BootProtocol> IPV6_AUTO_BOOT_PROTOCOL =
-            EnumSet.of(Ipv6BootProtocol.DHCP, Ipv6BootProtocol.AUTOCONF);
 
     private BusinessEntityMap<Network> networkBusinessEntityMap;
 
@@ -364,7 +359,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 && Objects.equals(networkAttachmentFromRequest.getHostNetworkQos(), existingNetworkAttachment.getHostNetworkQos())
                 && Objects.equals(networkAttachmentFromRequest.getNicName(), existingNetworkAttachment.getNicName())
                 && Objects.equals(networkAttachmentFromRequest.getIpConfiguration(), existingNetworkAttachment.getIpConfiguration())
-                && Objects.equals(networkAttachmentFromRequest.getProperties(), existingNetworkAttachment.getProperties());
+                && Objects.equals(networkAttachmentFromRequest.getProperties(), existingNetworkAttachment.getProperties())
+                && Objects.equals(networkAttachmentFromRequest.getDnsResolverConfiguration(),
+                    existingNetworkAttachment.getDnsResolverConfiguration());
     }
 
     private void removeUnchangedAttachments() {
@@ -474,27 +471,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             : Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
     }
 
-    private boolean shouldSetDefaultRouteFlag(NetworkCluster networkCluster, NetworkAttachment networkAttachment) {
-        IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
-        return networkCluster.isDefaultRoute()
-                && ipConfiguration != null
-                && (isIpv4GatewaySet(ipConfiguration) || isIpv6GatewaySet(ipConfiguration));
-    }
-
-    private boolean isIpv4GatewaySet(IpConfiguration ipConfiguration) {
-        return ipConfiguration.hasIpv4PrimaryAddressSet()
-                && (ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.DHCP
-                        || ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.STATIC_IP
-                                && StringUtils.isNotEmpty(ipConfiguration.getIpv4PrimaryAddress().getGateway()));
-    }
-
-    private boolean isIpv6GatewaySet(IpConfiguration ipConfiguration) {
-        return ipConfiguration.hasIpv6PrimaryAddressSet()
-                && (IPV6_AUTO_BOOT_PROTOCOL.contains(ipConfiguration.getIpv6PrimaryAddress().getBootProtocol())
-                        || ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == Ipv6BootProtocol.STATIC_IP
-                                && StringUtils.isNotEmpty(ipConfiguration.getIpv6PrimaryAddress().getGateway()));
-    }
-
     private boolean noChangesDetected() {
         return getParameters().isEmptyRequest();
     }
@@ -586,7 +562,15 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             HostNetwork networkToConfigure = new HostNetwork(network, attachment);
             networkToConfigure.setBonding(isBonding(attachment, nics));
 
-            if (defaultRouteSupported() && shouldSetDefaultRouteFlag(networkCluster, attachment)) {
+            if (defaultRouteSupported()
+                    && new ShouldSetDefaultRouteFlagAndDnsData().test(networkCluster.isDefaultRoute(), attachment)) {
+                DnsResolverConfiguration dnsResolverConfiguration =
+                        getDnsConfigurationFromNetworkOrItsAttachment(attachment, network);
+
+                if (dnsResolverConfiguration != null) {
+                    networkToConfigure.setNameServers(dnsResolverConfiguration.getNameServers());
+                }
+
                 // TODO: YZ - should default route be set separately for IPv4 and IPv6
                 networkToConfigure.setDefaultRoute(true);
             }
@@ -602,6 +586,20 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         return networksToConfigure;
+    }
+
+    private DnsResolverConfiguration getDnsConfigurationFromNetworkOrItsAttachment(NetworkAttachment attachment,
+            Network network) {
+        DnsResolverConfiguration networkAttachmentDnsResolverConfiguration = attachment.getDnsResolverConfiguration();
+        if (networkAttachmentDnsResolverConfiguration != null) {
+            return networkAttachmentDnsResolverConfiguration;
+        }
+
+        DnsResolverConfiguration networkDnsResolverConfiguration = network.getDnsResolverConfiguration();
+        if (networkDnsResolverConfiguration != null) {
+            return networkDnsResolverConfiguration;
+        }
+        return null;
     }
 
     private BusinessEntityMap<VdsNetworkInterface> getExistingNicsBusinessEntityMap() {

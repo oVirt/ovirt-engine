@@ -3,12 +3,15 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
@@ -40,51 +43,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         Map<String, Object> networks = new HashMap<>();
 
         for (HostNetwork hostNetwork : getParameters().getNetworks()) {
-            Map<String, Object> attributes = new HashMap<>();
-            if (hostNetwork.isBonding()) {
-                attributes.put("bonding", hostNetwork.getNicName());
-            } else {
-                attributes.put("nic", hostNetwork.getNicName());
-            }
-
-            if (hostNetwork.isVlan()) {
-                attributes.put("vlan", hostNetwork.getVlan().toString());
-            }
-
-            if (hostNetwork.getMtu() == 0) {
-                attributes.put(VdsProperties.MTU, NetworkUtils.getDefaultMtu());
-            } else {
-                attributes.put(VdsProperties.MTU, hostNetwork.getMtu());
-            }
-
-            attributes.put("bridged", Boolean.toString(hostNetwork.isVmNetwork()));
-            if (hostNetwork.isVmNetwork()) {
-                attributes.put(VdsProperties.STP, hostNetwork.isStp() ? "yes" : "no");
-            }
-
-            if (hostNetwork.getIpv4BootProtocol() != null) {
-                addIpv4BootProtocol(attributes, hostNetwork);
-            }
-            if (hostNetwork.getIpv6BootProtocol() != null) {
-                addIpv6BootProtocol(attributes, hostNetwork);
-            }
-
-            if (hostNetwork.isDefaultRoute()) {
-                attributes.put(DEFAULT_ROUTE, Boolean.TRUE);
-            }
-
-            addSwitchTypeIfSpecified(attributes);
-
-            if (hostNetwork.hasProperties()) {
-                attributes.put(VdsProperties.NETWORK_CUSTOM_PROPERTIES, hostNetwork.getProperties());
-            }
-
-            if (hostNetwork.isQosConfiguredOnInterface()) {
-                HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(attributes);
-                qosMapper.serialize(hostNetwork.getQos());
-            }
-
-            networks.put(hostNetwork.getNetworkName(), attributes);
+            networks.put(hostNetwork.getNetworkName(), createNetworkAttributes(hostNetwork));
         }
 
         for (String net : getParameters().getRemovedNetworks()) {
@@ -92,6 +51,60 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         }
 
         return networks;
+    }
+
+    private Map<String, Object> createNetworkAttributes(HostNetwork hostNetwork) {
+        Map<String, Object> attributes = new HashMap<>();
+        if (hostNetwork.isBonding()) {
+            attributes.put("bonding", hostNetwork.getNicName());
+        } else {
+            attributes.put("nic", hostNetwork.getNicName());
+        }
+
+        if (hostNetwork.isVlan()) {
+            attributes.put("vlan", hostNetwork.getVlan().toString());
+        }
+
+        if (hostNetwork.getMtu() == 0) {
+            attributes.put(VdsProperties.MTU, NetworkUtils.getDefaultMtu());
+        } else {
+            attributes.put(VdsProperties.MTU, hostNetwork.getMtu());
+        }
+
+        attributes.put("bridged", Boolean.toString(hostNetwork.isVmNetwork()));
+        if (hostNetwork.isVmNetwork()) {
+            attributes.put(VdsProperties.STP, hostNetwork.isStp() ? "yes" : "no");
+        }
+
+        if (hostNetwork.getIpv4BootProtocol() != null) {
+            addIpv4BootProtocol(attributes, hostNetwork);
+        }
+        if (hostNetwork.getIpv6BootProtocol() != null) {
+            addIpv6BootProtocol(attributes, hostNetwork);
+        }
+
+        if (hostNetwork.isDefaultRoute()) {
+            attributes.put(DEFAULT_ROUTE, Boolean.TRUE);
+        }
+
+        addSwitchTypeIfSpecified(attributes);
+
+        if (hostNetwork.hasProperties()) {
+            attributes.put(VdsProperties.NETWORK_CUSTOM_PROPERTIES, hostNetwork.getProperties());
+        }
+
+        if (hostNetwork.isQosConfiguredOnInterface()) {
+            HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(attributes);
+            qosMapper.serialize(hostNetwork.getQos());
+        }
+
+        List<NameServer> nameServers = hostNetwork.getNameServers();
+        if (nameServers != null) {
+            List<String> nameServerIps = nameServers.stream().map(NameServer::getAddress).collect(Collectors.toList());
+            attributes.put(VdsProperties.name_servers, nameServerIps);
+        }
+
+        return attributes;
     }
 
     void addIpv4BootProtocol(Map<String, Object> opts, HostNetwork attachment) {

@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -17,6 +19,7 @@ public class HostNetwork {
     private boolean bonding;
     private boolean qosConfiguredOnInterface;
     private HostNetworkQos qos;
+    private List<NameServer> nameServers;
 
     @SuppressWarnings("unused")
     private HostNetwork() {
@@ -175,6 +178,14 @@ public class HostNetwork {
         return qos;
     }
 
+    public void setNameServers(List<NameServer> nameServers) {
+        this.nameServers = nameServers;
+    }
+
+    public List<NameServer> getNameServers() {
+        return nameServers;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
@@ -195,6 +206,7 @@ public class HostNetwork {
                 .append("ipv6Address", getIpv6Address())
                 .append("ipv6Prefix", getIpv6Prefix())
                 .append("ipv6Gateway", getIpv6Gateway())
+                .append("nameServers", getNameServers())
                 .build();
     }
 }

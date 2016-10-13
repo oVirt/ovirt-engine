@@ -129,6 +129,7 @@ public final class VdsProperties {
     public static final String BOND_XMIT_POLICY = "xmit_hash_policy";
 
     public static final String supported_cluster_levels = "clusterLevels";
+    public static final String name_servers = "nameservers";
     public static final String supported_engines = "supportedENGINEs";
     public static final String emulatedMachine = "emulatedMachine";
     public static final String emulatedMachines = "emulatedMachines";

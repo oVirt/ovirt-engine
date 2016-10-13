@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
@@ -69,10 +70,12 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -892,6 +895,8 @@ public class VdsBrokerObjectsBuilder {
     public static void updateVDSDynamicData(VDS vds, Map<String, Object> struct) {
         vds.setSupportedClusterLevels(assignStringValueFromArray(struct, VdsProperties.supported_cluster_levels));
 
+        setDnsResolverConfigurationData(vds, struct);
+
         updateNetworkData(vds, struct);
         updateNumaNodesData(vds, struct);
 
@@ -953,6 +958,25 @@ public class VdsBrokerObjectsBuilder {
         vds.setHostedEngineConfigured(assignBoolValue(struct, VdsProperties.hosted_engine_configured));
 
         updateAdditionalFeatures(vds, struct);
+    }
+
+    private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
+        String[] nameServersAddresses = assignStringArrayValue(struct, VdsProperties.name_servers);
+        if (nameServersAddresses != null) {
+            List<NameServer> nameServers = Stream.of(nameServersAddresses)
+                    .map(NameServer::new)
+                    .collect(Collectors.toList());
+
+            DnsResolverConfiguration reportedDnsResolverConfiguration = new DnsResolverConfiguration();
+            reportedDnsResolverConfiguration.setNameServers(nameServers);
+
+            DnsResolverConfiguration oldDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
+            if (oldDnsResolverConfiguration != null) {
+                reportedDnsResolverConfiguration.setId(oldDnsResolverConfiguration.getId());
+            }
+
+            vds.getDynamicData().setReportedDnsResolverConfiguration(reportedDnsResolverConfiguration);
+        }
     }
 
     private static void updateAdditionalFeatures(VDS vds, Map<String, Object> struct) {
