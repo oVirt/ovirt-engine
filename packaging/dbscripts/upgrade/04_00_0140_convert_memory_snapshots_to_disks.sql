@@ -29,6 +29,36 @@ FROM snapshots
 WHERE length(memory_volume) != 0
     AND memory_dump_disk_id IS NULL;
 
+-- add memory dump images for volumes contained only in active snapshots
+INSERT INTO images(
+    image_guid,
+    creation_date,
+    size,
+    it_guid,
+    imagestatus,
+    volume_type,
+    volume_format,
+    image_group_id)
+SELECT
+    CAST(split_part(memory_volume, ',', 4) AS UUID),
+    now(),
+    (mem_size_mb::bigint + 200 + (64 * num_of_monitors)) * 1024 * 1024,
+    CAST('00000000-0000-0000-0000-000000000000' AS UUID),
+    1, -- ok
+    0, -- unknown (will be updated by the next step)
+    5, -- raw
+    CAST(split_part(memory_volume, ',', 3) AS UUID)
+FROM snapshots
+JOIN vm_static ON vm_guid = vm_id
+WHERE length(memory_volume) != 0
+    AND memory_dump_disk_id IS NULL
+    AND snapshot_type = 'ACTIVE'
+    AND memory_volume NOT IN (
+        SELECT memory_volume
+        FROM snapshots
+        WHERE snapshot_type != 'ACTIVE'
+        );
+
 CREATE FUNCTION _temp_getVirtualMemoryQuantity(text) RETURNS int AS $$
 BEGIN
     RETURN (SELECT (xpath('//ovf:Envelope/Content/Section/Item[rasd:ResourceType/text() = 4]/rasd:VirtualQuantity/text()', XMLPARSE(CONTENT $1), ARRAY[ARRAY['ovf', 'http://schemas.dmtf.org/ovf/envelope/1/'], ARRAY['rasd', 'http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData']]))[1]::text::int);
@@ -41,7 +71,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- add memory dump images
+-- add memory dump images for volumes on other snapshots
 INSERT INTO images(
     image_guid,
     creation_date,
@@ -62,7 +92,8 @@ SELECT DISTINCT
     CAST(split_part(memory_volume, ',', 3) AS UUID)
 FROM snapshots
 WHERE length(memory_volume) != 0
-    AND memory_dump_disk_id IS NULL;
+    AND memory_dump_disk_id IS NULL
+    AND snapshot_type != 'ACTIVE';
 
 DROP FUNCTION _temp_getVirtualMemoryQuantity(text);
 DROP FUNCTION _temp_getVirtualMonitorsQuantity(text);
