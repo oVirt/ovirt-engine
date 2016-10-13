@@ -82,6 +82,11 @@ public class NetworkAttachmentMapper {
             }
         }
 
+        if (model.isSetDnsResolverConfiguration()) {
+            entity.setDnsResolverConfiguration(
+                    DnsResolverConfigurationMapper.map(model.getDnsResolverConfiguration()));
+        }
+
         if (model.isSetQos()) {
             HostNetworkQos hostNetworkQos = (HostNetworkQos) QosMapper.map(model.getQos(), null);
             entity.setHostNetworkQos(AnonymousHostNetworkQos.fromHostNetworkQos(hostNetworkQos));
@@ -199,6 +204,11 @@ public class NetworkAttachmentMapper {
                         .map(NetworkAttachmentMapper::mapIpv6AddressAssignment)
                         .forEach(model.getIpAddressAssignments().getIpAddressAssignments()::add);
             }
+        }
+
+        if (entity.getDnsResolverConfiguration() != null) {
+            model.setDnsResolverConfiguration(
+                    DnsResolverConfigurationMapper.map(entity.getDnsResolverConfiguration()));
         }
 
         if (entity.getReportedConfigurations() != null) {

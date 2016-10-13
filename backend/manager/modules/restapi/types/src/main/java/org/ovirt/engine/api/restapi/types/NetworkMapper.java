@@ -78,6 +78,11 @@ public class NetworkMapper {
             entity.setQosId(Guid.createGuidFromString(model.getQos().getId()));
         }
 
+        if (model.isSetDnsResolverConfiguration()) {
+            entity.setDnsResolverConfiguration(
+                    DnsResolverConfigurationMapper.map(model.getDnsResolverConfiguration()));
+        }
+
         return entity;
     }
 
@@ -140,6 +145,11 @@ public class NetworkMapper {
             Qos qos = new Qos();
             qos.setId(entityQosId.toString());
             model.setQos(qos);
+        }
+
+        if (entity.getDnsResolverConfiguration() != null) {
+            model.setDnsResolverConfiguration(
+                    DnsResolverConfigurationMapper.map(entity.getDnsResolverConfiguration()));
         }
 
         return model;
