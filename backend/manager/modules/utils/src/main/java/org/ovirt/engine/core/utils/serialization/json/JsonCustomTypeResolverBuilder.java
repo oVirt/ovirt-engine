@@ -21,7 +21,6 @@ public class JsonCustomTypeResolverBuilder extends ObjectMapper.DefaultTypeResol
     /**
      * Custom type resolver is used only for non concrete collections and maps.
      * @param t the JavaType of the object
-     * @return
      */
     @Override
     public boolean useForType(JavaType t) {
