@@ -2,8 +2,6 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
