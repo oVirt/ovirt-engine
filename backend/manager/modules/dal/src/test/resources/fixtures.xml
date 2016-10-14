@@ -6421,7 +6421,7 @@
         <column>is_bond</column>
         <column>bond_name</column>
         <column>bond_type</column>
-        <column>base_interface</column>
+        <column>bond_opts</column>
         <column>vlan_id</column>
         <column>speed</column>
         <column>addr</column>
@@ -6431,14 +6431,19 @@
         <column>type</column>
         <column>_create_date</column>
         <column>_update_date</column>
-        <column>bond_opts</column>
+        <column>mtu</column>
+        <column>bridged</column>
         <column>labels</column>
+        <column>qos_overridden</column>
+        <column>base_interface</column>
         <column>ipv6_boot_protocol</column>
         <column>ipv6_address</column>
         <column>ipv6_prefix</column>
         <column>ipv6_gateway</column>
+        <column>ad_partner_mac</column>
+        <column>reported_switch_type</column>
         <column>ad_aggregator_id</column>
-
+        <column>bond_active_slave</column>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
             <value>eth0</value>
@@ -6459,11 +6464,17 @@
             <value>2010-11-12 10:12:41</value>
             <value>2010-11-12 15:57:01</value>
             <null />
+            <value>true</value>
             <value>[ "aaa", "bbb", "abc" ]</value>
+            <value>false</value>
+            <null />
             <value>2</value>
             <value>1::2</value>
             <value>666</value>
             <value>1:2:3:4:5:6:7:8</value>
+            <null />
+            <null />
+            <null />
             <null />
         </row>
         <row>
@@ -6485,6 +6496,12 @@
             <value>2</value>
             <value>2010-11-12 10:12:41</value>
             <value>2010-11-12 15:57:01</value>
+            <null />
+            <value>false</value>
+            <null />
+            <value>false</value>
+            <null />
+            <null />
             <null />
             <null />
             <null />
@@ -6513,7 +6530,13 @@
             <value>2012-11-12 10:12:41</value>
             <value>2012-11-12 15:57:01</value>
             <null />
+            <value>false</value>
             <value>[ "abc" ]</value>
+            <value>false</value>
+            <null />
+            <null />
+            <null />
+            <null />
             <null />
             <null />
             <null />
@@ -6540,12 +6563,51 @@
             <value>2012-11-12 10:12:41</value>
             <value>2012-11-12 15:57:01</value>
             <null />
+            <value>false</value>
+            <null />
+            <value>false</value>
             <null />
             <null />
             <null />
             <null />
             <null />
             <null />
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9da</value>
+            <value>bond0</value>
+            <value>engine4</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>78:E7:D1:E4:8C:72</value>
+            <value>true</value>
+            <null />
+            <null />
+            <value>mode=1 miimon=100</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>0</value>
+            <value>2012-11-12 10:12:42</value>
+            <value>2012-11-12 15:57:02</value>
+            <value>1500</value>
+            <value>false</value>
+            <null />
+            <value>false</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>eth0</value>
         </row>
     </table>
 

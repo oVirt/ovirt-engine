@@ -148,6 +148,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
                 .addValue("ad_partner_mac", nic.getAdPartnerMac())
                 .addValue("ad_aggregator_id", nic.getAdAggregatorId())
+                .addValue("bond_active_slave", nic.isBond() ? ((Bond)nic).getActiveSlave() : null)
                 .addValue("reported_switch_type", nic.getReportedSwitchType() == null ? null : nic.getReportedSwitchType().getOptionValue());
     }
 
@@ -361,7 +362,10 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                         iface.setBondOptions(bondOptions);
                         iface.setSpeed(speed);
                     } else if (Boolean.TRUE.equals(isBond)) {
-                        iface = new Bond(macAddress, bondOptions, bondType);
+                        Bond bond = new Bond(macAddress, bondOptions, bondType);
+                        String bondActiveSlave = rs.getString("bond_active_slave");
+                        bond.setActiveSlave(bondActiveSlave);
+                        iface = bond;
                     } else if (vlanId != null) {
                         iface = new Vlan(vlanId, baseInterface);
                     } else {

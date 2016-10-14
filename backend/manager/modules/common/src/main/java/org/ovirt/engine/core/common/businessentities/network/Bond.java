@@ -13,6 +13,7 @@ public class Bond extends VdsNetworkInterface {
 
     private static final long serialVersionUID = 268337006285648461L;
     private List<String> slaves;
+    private String activeSlave;
 
     public Bond() {
         setBonded(true);
@@ -45,13 +46,34 @@ public class Bond extends VdsNetworkInterface {
         this.slaves = slaves;
     }
 
+    /**
+     * Returns the name of the active slave interface in bond.
+     *
+     * @return the name of the active slave interface in bond
+     */
+    public String getActiveSlave() {
+        return activeSlave;
+    }
+
+    /**
+     * Sets the name of the active slave interface in bond.
+     *
+     * @param activeSlave
+     *            name of the active slave interface in bond
+     */
+    public void setActiveSlave(String activeSlave) {
+        // No validation here to propagate even invalid values
+        this.activeSlave = activeSlave;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("macAddress", getMacAddress())
                 .append("bondOptions", getBondOptions())
                 .append("labels", getLabels())
-                .append("slaves", getSlaves());
+                .append("slaves", getSlaves())
+                .append("activeSlave", getActiveSlave());
     }
 
     @Override
@@ -64,14 +86,17 @@ public class Bond extends VdsNetworkInterface {
         }
         Bond other = (Bond) obj;
         return super.equals(obj)
-                && Objects.equals(slaves, other.slaves);
+                && Objects.equals(slaves, other.slaves)
+                && Objects.equals(activeSlave, other.activeSlave);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
                 super.hashCode(),
-                getSlaves()
+                getSlaves(),
+                getActiveSlave()
         );
     }
+
 }
