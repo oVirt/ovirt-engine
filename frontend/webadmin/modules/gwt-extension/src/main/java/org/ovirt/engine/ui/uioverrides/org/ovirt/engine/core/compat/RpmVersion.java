@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.compat;
 
+import java.util.Objects;
+
 public class RpmVersion extends Version {
 
     @Override
@@ -29,6 +31,11 @@ public class RpmVersion extends Version {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), rpmName, rpmRelease);
     }
 
     private String rpmName;
