@@ -677,8 +677,7 @@ public final class FormatterJava {
 
         private void checkFloat() {
             checkNumeric();
-            if (c == Conversion.DECIMAL_FLOAT) {
-            } else if (c == Conversion.HEXADECIMAL_FLOAT) {
+            if (c == Conversion.HEXADECIMAL_FLOAT) {
                 checkBadFlags(Flags.PARENTHESES, Flags.GROUP);
             } else if (c == Conversion.SCIENTIFIC) {
                 checkBadFlags(Flags.GROUP);
