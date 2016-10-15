@@ -47,12 +47,19 @@
     <suppress checks="MethodName" files="CommonApplicationResources.java"/>
     <suppress checks="MethodName" files="ApplicationResources.java"/>
     <suppress checks="MethodName" files="ApplicationResourcesWithLookup.java"/>
+    <suppress checks="MethodName" files="Enums.java"/>
+    <suppress checks="MethodName" files="LocalizedEnums.java"/>
+    <suppress checks="MethodName" files="SpiceRedKeys.java"/>
 
     <!-- Other GWT-related classes -->
     <suppress checks="MethodName" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]uicommonweb[\\/]models[\\/].*.java"/>
     <suppress checks="MethodName" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]common[\\/]widget[\\/].*.java"/>
     <suppress checks="MethodName" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]webadmin[\\/]section[\\/]main[\\/]view[\\/].*.java"/>
     <suppress checks="MethodName" files="SideTabWithDetailsViewStyle.java"/>
+    <suppress checks="TypeName" files="com[\\/]google[\\/]gwt[\\/]user[\\/]client[\\/]rpc[\\/]core[\\/]java[\\/]util[\\/].*_CustomFieldSerializer.java"/>
+    <suppress checks="TypeName" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]aaa[\\/].*_CustomFieldSerializer.java"/>
+    <suppress checks="TypeName" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]common[\\/]action[\\/].*_CustomFieldSerializer.java"/>
+    <suppress checks="TypeName" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]common[\\/]queries[\\/].*_CustomFieldSerializer.java"/>
 
     <!-- VDSBroker names which must match the VDSM API -->
     <suppress checks="MethodName" files="VdsServerConnector.java"/>
