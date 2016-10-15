@@ -124,7 +124,7 @@ public class GwtMessagesValidator {
                 classProps.load(input);
             }
             hierarchyProps.putAll(classProps);
-        };
+        }
 
         return hierarchyProps;
     }
