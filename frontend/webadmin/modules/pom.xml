@@ -208,17 +208,6 @@
             </sources>
           </configuration>
         </plugin>
-        <plugin>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>checkstyle</id>
-              <configuration>
-                 <excludes>**/GwtMessagesValidator.java</excludes>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
