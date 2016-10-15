@@ -23,8 +23,6 @@ import java.util.Objects;
  * (for example, a Model property is changed) by calling Event.raise(). raise()
  * publishes the event to all those who subscribed via addListener();
  * </p>
- *
- * @param <T>
  */
 public class Event<T extends EventArgs> {
 
