@@ -89,13 +89,13 @@ public class GwtMessagesValidator {
     @SuppressWarnings("unchecked")
     private static Properties loadDefaultProperties(Class<? extends Messages> leafClass) throws URISyntaxException, IOException {
         Properties hierarchyProps = new Properties();
-        ArrayList<Class<? extends Messages>> hierarchy = new ArrayList<Class<? extends Messages>>();
+        ArrayList<Class<? extends Messages>> hierarchy = new ArrayList<>();
 
         // discover from the leafClass up to the root
-        ArrayList<Class<? extends Messages>> round = new ArrayList<Class<? extends Messages>>();
+        ArrayList<Class<? extends Messages>> round = new ArrayList<>();
         round.add(leafClass);
         while (!round.isEmpty()) {
-            ArrayList<Class<? extends Messages>> round2 = new ArrayList<Class<? extends Messages>>();
+            ArrayList<Class<? extends Messages>> round2 = new ArrayList<>();
             for (Class<? extends Messages> c : round) {
                 hierarchy.add(c);
 
