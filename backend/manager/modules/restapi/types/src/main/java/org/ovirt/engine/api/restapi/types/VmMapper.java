@@ -40,7 +40,6 @@ import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
-import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.Template;
