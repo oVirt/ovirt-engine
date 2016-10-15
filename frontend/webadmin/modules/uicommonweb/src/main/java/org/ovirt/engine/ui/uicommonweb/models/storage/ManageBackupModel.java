@@ -96,7 +96,7 @@ public abstract class ManageBackupModel<T extends BusinessEntity<?>> extends Sea
             setMessage(ConstantsManager.getInstance().getConstants().theExportDomainIsInactiveMsg());
         }
         else if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
-            setMessage(ConstantsManager.getInstance().getConstants().ExportDomainIsNotAttachedToAnyDcMsg());
+            setMessage(ConstantsManager.getInstance().getConstants().exportDomainIsNotAttachedToAnyDcMsg());
         }
         else {
             setMessage(null);

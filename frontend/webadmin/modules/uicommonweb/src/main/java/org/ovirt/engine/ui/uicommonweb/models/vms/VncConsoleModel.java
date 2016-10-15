@@ -33,7 +33,7 @@ public class VncConsoleModel extends ConsoleModel {
     public VncConsoleModel(VM myVm, Model parentModel) {
         super(myVm, parentModel);
 
-        setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
+        setTitle(ConstantsManager.getInstance().getConstants().vncTitle());
 
         boolean webBasedClientsSupported =
                 ((ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class)).webBasedClientsSupported();

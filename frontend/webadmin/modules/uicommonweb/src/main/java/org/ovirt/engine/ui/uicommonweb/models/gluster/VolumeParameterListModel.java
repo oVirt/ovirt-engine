@@ -71,7 +71,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         setTitle(ConstantsManager.getInstance().getConstants().parameterTitle());
         setHelpTag(HelpTag.parameters);
         setHashName("parameters"); //$NON-NLS-1$
-        setAddParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().AddVolume(), this));
+        setAddParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().addVolume(), this));
         setEditParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().editVolume(), this));
         setResetParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().resetVolume(), this));
         setResetAllParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().resetAllVolume(), this));

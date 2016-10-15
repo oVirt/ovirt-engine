@@ -565,7 +565,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
         EntityModel model = new EntityModel();
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().ConfigureTitle());
+        model.setTitle(ConstantsManager.getInstance().getConstants().configureTitle());
         model.setHelpTag(HelpTag.configure);
         model.setHashName("configure"); //$NON-NLS-1$
         model.setEntity(new Model[] { getRoleList(), getSystemPermissionList(), getClusterPolicyList(),

@@ -333,7 +333,7 @@ public interface UIConstants extends Constants {
 
     String importVirtualMachinesTitle();
 
-    String ConfigureTitle();
+    String configureTitle();
 
     String eventsTitle();
 
@@ -525,7 +525,7 @@ public interface UIConstants extends Constants {
 
     String userSessionsTitle();
 
-    String RDPTitle();
+    String rdpTitle();
 
     String rdpIsNotSupportedInYourBrowser();
 
@@ -547,7 +547,7 @@ public interface UIConstants extends Constants {
 
     String runVirtualMachinesTitle();
 
-    String VNCTitle();
+    String vncTitle();
 
     String spiceTitle();
 
@@ -597,7 +597,7 @@ public interface UIConstants extends Constants {
 
     String poolNameValidationMsg();
 
-    String I18NExtraNameOrNoneValidation();
+    String i18NExtraNameOrNoneValidation();
 
     String nonUtfValidationMsg();
 
@@ -643,7 +643,7 @@ public interface UIConstants extends Constants {
 
     String theExportDomainIsInactiveMsg();
 
-    String ExportDomainIsNotAttachedToAnyDcMsg();
+    String exportDomainIsNotAttachedToAnyDcMsg();
 
     String importProviderCertificateTitle();
 
@@ -765,7 +765,7 @@ public interface UIConstants extends Constants {
 
     String osVersionAbout();
 
-    String VDSMVersionAbout();
+    String vdsmVersionAbout();
 
     String oVirtEnterpriseVirtualizationEngineHypervisorHostsAbout();
 
@@ -1219,7 +1219,7 @@ public interface UIConstants extends Constants {
 
     String addBricksReplicateConfirmationTitle();
 
-    String AddVolume();
+    String addVolume();
 
     String editVolume();
 

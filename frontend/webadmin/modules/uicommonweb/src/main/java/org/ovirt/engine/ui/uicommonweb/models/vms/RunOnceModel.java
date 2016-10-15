@@ -667,7 +667,7 @@ public abstract class RunOnceModel extends Model {
 
         // Display protocols.
         EntityModel<DisplayType> vncProtocol = new EntityModel<>(DisplayType.vga)
-           .setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
+           .setTitle(ConstantsManager.getInstance().getConstants().vncTitle());
 
         EntityModel<DisplayType> qxlProtocol = new EntityModel<>(DisplayType.qxl)
            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());

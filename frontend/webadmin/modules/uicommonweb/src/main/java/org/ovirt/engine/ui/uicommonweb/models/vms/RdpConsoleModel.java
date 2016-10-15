@@ -65,7 +65,7 @@ public class RdpConsoleModel extends ConsoleModel {
     public RdpConsoleModel(VM myVm, Model parentModel) {
         super(myVm, parentModel);
 
-        setTitle(ConstantsManager.getInstance().getConstants().RDPTitle());
+        setTitle(ConstantsManager.getInstance().getConstants().rdpTitle());
         this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
         setRdpImplementation(
                 ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeRdpDefault)));
