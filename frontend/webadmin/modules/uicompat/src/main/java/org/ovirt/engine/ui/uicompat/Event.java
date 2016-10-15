@@ -31,21 +31,17 @@ public class Event<T extends EventArgs> {
     private List<IEventListener<? super T>> listeners;
     private Map<IEventListener<? super T>, Object> contexts;
     private Class<?> privateOwnerType;
-    public Class<?> getOwnerType()
-    {
+    public Class<?> getOwnerType() {
         return privateOwnerType;
     }
-    private void setOwnerType(Class<?> value)
-    {
+    private void setOwnerType(Class<?> value) {
         privateOwnerType = value;
     }
     private String privateName;
-    public String getName()
-    {
+    public String getName() {
         return privateName;
     }
-    private void setName(String value)
-    {
+    private void setName(String value) {
         privateName = value;
     }
 
@@ -53,18 +49,15 @@ public class Event<T extends EventArgs> {
      * Gets an object representing current event context. Specified when add listener.
      */
     private Object privateContext;
-    public Object getContext()
-    {
+    public Object getContext() {
         return privateContext;
     }
-    private void setContext(Object value)
-    {
+    private void setContext(Object value) {
         privateContext = value;
     }
 
 
-    public Event(String name, Class<?> ownerType)
-    {
+    public Event(String name, Class<?> ownerType) {
         setName(name);
         setOwnerType(ownerType);
 
@@ -72,38 +65,32 @@ public class Event<T extends EventArgs> {
         contexts = new HashMap<>();
     }
 
-    public Event()
-    {
+    public Event() {
     }
 
-    public Event(EventDefinition definition)
-    {
+    public Event(EventDefinition definition) {
         this(definition.getName(), definition.getOwnerType());
     }
 
     /**
      * Add listener with no context specified.
      */
-    public void addListener(IEventListener<? super T> listener)
-    {
+    public void addListener(IEventListener<? super T> listener) {
         listeners.add(listener);
     }
 
     /**
      * Subscribe to this Event. Subscriber will have eventRaised() called back when the event is published.
      */
-    public void addListener(IEventListener<? super T> listener, Object context)
-    {
+    public void addListener(IEventListener<? super T> listener, Object context) {
         listeners.add(listener);
         contexts.put(listener, context);
     }
 
-    public void removeListener(IEventListener<? super T> listener)
-    {
+    public void removeListener(IEventListener<? super T> listener) {
         listeners.remove(listener);
 
-        if (contexts.containsKey(listener))
-        {
+        if (contexts.containsKey(listener)) {
             contexts.remove(listener);
         }
     }
@@ -111,22 +98,19 @@ public class Event<T extends EventArgs> {
     /**
      * Raise (publish) the event. This simply calls eventRaised() on all those who subscribed via addListener();
      */
-    public void raise(Object sender, T e)
-    {
+    public void raise(Object sender, T e) {
         // Iterate on a new instance of listeners list,
         // to enable listener unsubscribe from event
         // as a result on event firing.
 
         ArrayList<IEventListener<? super T>> list = new ArrayList<>();
 
-        for (IEventListener<? super T> listener : listeners)
-        {
+        for (IEventListener<? super T> listener : listeners) {
             list.add(listener);
 
         }
 
-        for (IEventListener<? super T> listener : list)
-        {
+        for (IEventListener<? super T> listener : list) {
             //Update current context.
             setContext(contexts.containsKey(listener) ? contexts.get(listener) : null);
 

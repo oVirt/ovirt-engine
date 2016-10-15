@@ -560,8 +560,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                     DiskModel diskModel = (DiskModel) object.getEntity();
                     diskModel.getDisk().setReadOnly(value);
                 }
-            })
-            {
+            }) {
                 @Override
                 protected boolean canEdit(EntityModel object) {
                     DiskModel diskModel = (DiskModel) object.getEntity();
@@ -588,8 +587,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                     DiskModel diskModel = (DiskModel) object.getEntity();
                     diskModel.getIsBootable().setEntity(value);
                 }
-            })
-            {
+            }) {
                 @Override
                 public SafeHtml getTooltip(EntityModel object) {
                     EntityModel<Boolean> bootModel = ((DiskModel) object.getEntity()).getIsBootable();

@@ -19,8 +19,7 @@ class DateUtils {
     }
 
     public static DateTimeFormat getFormat(int dateStyle) {
-        switch (dateStyle)
-        {
+        switch (dateStyle) {
             case DateFormat.FULL:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
             case DateFormat.LONG:
@@ -33,8 +32,7 @@ class DateUtils {
     }
 
     public static DateTimeFormat getFormat(int dateStyle, int timeStyle) {
-        switch (timeStyle)
-        {
+        switch (timeStyle) {
             case DateFormat.FULL:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
             case DateFormat.LONG:

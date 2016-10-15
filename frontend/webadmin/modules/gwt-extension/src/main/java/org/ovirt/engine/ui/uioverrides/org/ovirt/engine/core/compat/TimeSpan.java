@@ -4,8 +4,7 @@ import java.io.Serializable;
 
 import com.google.gwt.regexp.shared.RegExp;
 
-public class TimeSpan implements Comparable<TimeSpan>, Serializable
-{
+public class TimeSpan implements Comparable<TimeSpan>, Serializable {
     public static int MS_PER_SECOND = 1000 ;
     public static int MS_PER_MINUTE = 60 * 1000 ;
     public static int MS_PER_HOUR = 60 * 60 * 1000 ;
@@ -22,8 +21,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
     public double TotalSeconds;
     public long TotalMilliseconds;
 
-    public TimeSpan()
-    {
+    public TimeSpan() {
     }
 
 
@@ -32,18 +30,15 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
         computeProperties() ;
     }
 
-    public TimeSpan(int hours, int minutes, int seconds)
-    {
+    public TimeSpan(int hours, int minutes, int seconds) {
         this(0,hours,minutes,seconds,0) ;
     }
 
-    public TimeSpan(int days, int hours, int minutes, int seconds)
-    {
+    public TimeSpan(int days, int hours, int minutes, int seconds) {
         this(days,hours,minutes,seconds,0) ;
     }
 
-    public TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds)
-    {
+    public TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) {
         TotalMilliseconds = milliseconds ;
         TotalMilliseconds += seconds * MS_PER_SECOND ;
         TotalMilliseconds += minutes * MS_PER_MINUTE ;

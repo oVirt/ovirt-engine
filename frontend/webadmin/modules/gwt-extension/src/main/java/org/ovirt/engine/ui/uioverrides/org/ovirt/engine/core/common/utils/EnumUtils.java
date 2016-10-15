@@ -9,9 +9,7 @@ public class EnumUtils {
 
     public static <E extends Enum<E>> E valueOf(Class<E> c, String name, boolean ignorecase) {
         if (!ignorecase) {
-            {
-                return Enum.<E> valueOf(c, name);
-            }
+            return Enum.<E> valueOf(c, name);
         }
 
         E[] universe = c.getEnumConstants();
