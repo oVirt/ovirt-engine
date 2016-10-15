@@ -1317,42 +1317,40 @@ public final class FormatterJava {
             if (sb == null) {
                 sb = new StringBuilder();
             }
+            int i;
+            Flags flags;
+            char sep;
             switch (c) {
             case DateTime.HOUR_OF_DAY_0: // 'H' (00 - 23)
             case DateTime.HOUR_0: // 'I' (01 - 12)
             case DateTime.HOUR_OF_DAY: // 'k' (0 - 23) -- like H
-            case DateTime.HOUR: { // 'l' (1 - 12) -- like I
-                int i = t.getHours();
+            case DateTime.HOUR: // 'l' (1 - 12) -- like I
+                i = t.getHours();
                 if (c == DateTime.HOUR_0 || c == DateTime.HOUR) {
                     i = i == 0 || i == 12 ? 12 : i % 12;
                 }
-                Flags flags = c == DateTime.HOUR_OF_DAY_0
+                flags = c == DateTime.HOUR_OF_DAY_0
                         || c == DateTime.HOUR_0
                         ? Flags.ZERO_PAD
                         : Flags.NONE;
                 sb.append(localizedMagnitude(null, i, flags, 2));
                 break;
-            }
-            case DateTime.MINUTE: { // 'M' (00 - 59)
-                int i = t.getMinutes();
-                Flags flags = Flags.ZERO_PAD;
+            case DateTime.MINUTE: // 'M' (00 - 59)
+                i = t.getMinutes();
+                flags = Flags.ZERO_PAD;
                 sb.append(localizedMagnitude(null, i, flags, 2));
                 break;
-            }
-            case DateTime.SECONDS_SINCE_EPOCH: { // 's' (0 - 99...?)
-                long i = t.getTime() / 1000;
-                Flags flags = Flags.NONE;
-                sb.append(localizedMagnitude(null, i, flags, width));
+            case DateTime.SECONDS_SINCE_EPOCH: // 's' (0 - 99...?)
+                flags = Flags.NONE;
+                sb.append(localizedMagnitude(null, t.getTime() / 1000, flags, width));
                 break;
-            }
-            case DateTime.SECOND: { // 'S' (00 - 60 - leap second)
-                int i = t.getSeconds();
-                Flags flags = Flags.ZERO_PAD;
+            case DateTime.SECOND: // 'S' (00 - 60 - leap second)
+                i = t.getSeconds();
+                flags = Flags.ZERO_PAD;
                 sb.append(localizedMagnitude(null, i, flags, 2));
                 break;
-            }
-            case DateTime.ZONE_NUMERIC: { // 'z' ({-|+}####) - ls minus?
-                int i = t.getTimezoneOffset();
+            case DateTime.ZONE_NUMERIC: // 'z' ({-|+}####) - ls minus?
+                i = t.getTimezoneOffset();
                 boolean neg = i < 0;
                 sb.append(neg ? '-' : '+');
                 if (neg) {
@@ -1361,15 +1359,14 @@ public final class FormatterJava {
                 int min = i / 60000;
                 // combine minute and hour into a single integer
                 int offset = (min / 60) * 100 + (min % 60);
-                Flags flags = Flags.ZERO_PAD;
+                flags = Flags.ZERO_PAD;
 
                 sb.append(localizedMagnitude(null, offset, flags, 4));
                 break;
-            }
             case DateTime.CENTURY: // 'C' (00 - 99)
             case DateTime.YEAR_2: // 'y' (00 - 99)
-            case DateTime.YEAR_4: { // 'Y' (0000 - 9999)
-                int i = t.getYear();
+            case DateTime.YEAR_4: // 'Y' (0000 - 9999)
+                i = t.getYear();
                 int size = 2;
                 switch (c) {
                 case DateTime.CENTURY:
@@ -1382,30 +1379,26 @@ public final class FormatterJava {
                     size = 4;
                     break;
                 }
-                Flags flags = Flags.ZERO_PAD;
+                flags = Flags.ZERO_PAD;
                 sb.append(localizedMagnitude(null, i, flags, size));
                 break;
-            }
             case DateTime.DAY_OF_MONTH_0: // 'd' (01 - 31)
-            case DateTime.DAY_OF_MONTH: { // 'e' (1 - 31) -- like d
-                int i = t.getDate();
-                Flags flags = c == DateTime.DAY_OF_MONTH_0
+            case DateTime.DAY_OF_MONTH: // 'e' (1 - 31) -- like d
+                i = t.getDate();
+                flags = c == DateTime.DAY_OF_MONTH_0
                         ? Flags.ZERO_PAD
                         : Flags.NONE;
                 sb.append(localizedMagnitude(null, i, flags, 2));
                 break;
-            }
-            case DateTime.MONTH: { // 'm' (01 - 12)
-                int i = t.getMonth();
-                Flags flags = Flags.ZERO_PAD;
+            case DateTime.MONTH: // 'm' (01 - 12)
+                i = t.getMonth();
+                flags = Flags.ZERO_PAD;
                 sb.append(localizedMagnitude(null, i, flags, 2));
                 break;
-            }
-
             // Composites
             case DateTime.TIME: // 'T' (24 hour hh:mm:ss - %tH:%tM:%tS)
-            case DateTime.TIME_24_HOUR: { // 'R' (hh:mm same as %H:%M)
-                char sep = ':';
+            case DateTime.TIME_24_HOUR: // 'R' (hh:mm same as %H:%M)
+                sep = ':';
                 print(sb, t, DateTime.HOUR_OF_DAY_0).append(sep);
                 print(sb, t, DateTime.MINUTE);
                 if (c == DateTime.TIME) {
@@ -1413,9 +1406,8 @@ public final class FormatterJava {
                     print(sb, t, DateTime.SECOND);
                 }
                 break;
-            }
-            case DateTime.TIME_12_HOUR: { // 'r' (hh:mm:ss [AP]M)
-                char sep = ':';
+            case DateTime.TIME_12_HOUR: // 'r' (hh:mm:ss [AP]M)
+                sep = ':';
                 print(sb, t, DateTime.HOUR_0).append(sep);
                 print(sb, t, DateTime.MINUTE).append(sep);
                 print(sb, t, DateTime.SECOND).append(' ');
@@ -1424,9 +1416,8 @@ public final class FormatterJava {
                 print(tsb, t, DateTime.AM_PM);
                 sb.append(tsb.toString().toUpperCase());
                 break;
-            }
-            case DateTime.DATE_TIME: { // 'c' (Sat Nov 04 12:02:33 EST 1999)
-                char sep = ' ';
+            case DateTime.DATE_TIME: // 'c' (Sat Nov 04 12:02:33 EST 1999)
+                sep = ' ';
                 print(sb, t, DateTime.NAME_OF_DAY_ABBREV).append(sep);
                 print(sb, t, DateTime.NAME_OF_MONTH_ABBREV).append(sep);
                 print(sb, t, DateTime.DAY_OF_MONTH_0).append(sep);
@@ -1434,21 +1425,18 @@ public final class FormatterJava {
                 print(sb, t, DateTime.ZONE).append(sep);
                 print(sb, t, DateTime.YEAR_4);
                 break;
-            }
-            case DateTime.DATE: { // 'D' (mm/dd/yy)
-                char sep = '/';
+            case DateTime.DATE: // 'D' (mm/dd/yy)
+                sep = '/';
                 print(sb, t, DateTime.MONTH).append(sep);
                 print(sb, t, DateTime.DAY_OF_MONTH_0).append(sep);
                 print(sb, t, DateTime.YEAR_2);
                 break;
-            }
-            case DateTime.ISO_STANDARD_DATE: { // 'F' (%Y-%m-%d)
-                char sep = '-';
+            case DateTime.ISO_STANDARD_DATE: // 'F' (%Y-%m-%d)
+                sep = '-';
                 print(sb, t, DateTime.YEAR_4).append(sep);
                 print(sb, t, DateTime.MONTH).append(sep);
                 print(sb, t, DateTime.DAY_OF_MONTH_0);
                 break;
-            }
             default:
                 throw new IllegalArgumentException("Format flag: '" + c + "' is not supported");
             }
