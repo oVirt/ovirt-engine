@@ -22,4 +22,12 @@
     <engine.groupId>org.ovirt.engine.core</engine.groupId>
   </properties>
 
+  <build>
+    <plugins>
+        <plugin>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+        </plugin>
+    </plugins>
+  </build>
+
 </project>

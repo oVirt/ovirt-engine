@@ -261,12 +261,6 @@
         </executions>
       </plugin>
 
-      <!-- Run style checks: -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-
       <!-- This is needed to avoid having to manually add the generated sources
            directory to the source paths in Eclipse: -->
       <plugin>
