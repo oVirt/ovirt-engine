@@ -47,7 +47,7 @@ public class DiskVmElementValidatorTest {
         disk = new DiskImage();
         dve = new DiskVmElement();
 
-        validator = new DiskVmElementValidator(disk,dve);
+        validator = new DiskVmElementValidator(disk, dve);
     }
 
     @Test
