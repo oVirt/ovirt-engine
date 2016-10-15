@@ -2,7 +2,6 @@ package org.ovirt.engine.core.compat;
 
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import org.ovirt.engine.core.compat.Match;
 
 /**
  * Replacement for System.Text.RegularExpressions.Regex

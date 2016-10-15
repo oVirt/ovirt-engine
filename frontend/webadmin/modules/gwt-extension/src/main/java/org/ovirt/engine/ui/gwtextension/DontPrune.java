@@ -3,16 +3,14 @@ package org.ovirt.engine.ui.gwtextension;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+
 import com.google.gwt.dev.jjs.ast.JDeclaredType;
 import com.google.gwt.dev.jjs.ast.JMethod;
 import com.google.gwt.dev.jjs.ast.JProgram;
 import com.google.gwt.dev.jjs.impl.ControlFlowAnalyzer;
-//import com.google.gwt.dev.util.log.PrintWriterTreeLogger;
-//import com.google.gwt.core.ext.TreeLogger;
-
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class DontPrune {

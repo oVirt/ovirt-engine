@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is needed to decouple the searchbackend dependencies without introducing any DI frameworks or convulated

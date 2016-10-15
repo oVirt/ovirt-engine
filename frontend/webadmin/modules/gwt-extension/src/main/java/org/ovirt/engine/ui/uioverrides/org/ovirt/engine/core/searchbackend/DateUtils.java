@@ -1,12 +1,12 @@
 
 package org.ovirt.engine.core.searchbackend;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import org.ovirt.engine.core.compat.DateTime;
-
 import java.text.DateFormat;
 import java.util.Date;
+
+import org.ovirt.engine.core.compat.DateTime;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 
 class DateUtils {
 

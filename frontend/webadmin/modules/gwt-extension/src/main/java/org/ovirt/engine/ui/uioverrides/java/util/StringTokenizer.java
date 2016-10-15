@@ -25,8 +25,6 @@
 
 package java.util;
 
-import java.lang.*;
-
 /**
  * The string tokenizer class allows an application to break a
  * string into tokens. The tokenization method is much simpler than

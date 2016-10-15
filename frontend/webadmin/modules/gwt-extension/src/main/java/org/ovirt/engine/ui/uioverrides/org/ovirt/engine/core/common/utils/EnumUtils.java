@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.google.gwt.regexp.shared.RegExp;
-import org.ovirt.engine.core.compat.*;
 
 public class EnumUtils {
 
