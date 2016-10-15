@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.compat;
 
 /**
- * copied from .NET enum: System.Text.RegularExpressions.RegexOptions
+ * Copied from .NET enum: System.Text.RegularExpressions.RegexOptions
  * Provides enumerated values to use to set regular expression options.
  */
 public class RegexOptions {
@@ -31,11 +31,7 @@ public class RegexOptions {
 
     /**
      * Specifies that the regular expression is compiled to an assembly. This yields faster execution but increases
-     * startup time. This value should not be assigned to the
-     * System.Text.RegularExpressions.RegexCompilationInfo.Options property when calling the
-     * System.Text.RegularExpressions
-     * .Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName)
-     * method.
+     * startup time.
      */
     public static final int Compiled = 8;
 
@@ -46,9 +42,8 @@ public class RegexOptions {
     public static final int Singleline = 16;
 
     /**
-     * Eliminates unescaped white space from the pattern and enables comments marked with #. However, the
-     * System.Text.RegularExpressions.RegexOptions.IgnorePatternWhitespace value does not affect or eliminate white
-     * space in character classes.
+     * Eliminates unescaped white space from the pattern and enables comments marked with #. However, it
+     * does not affect or eliminate white space in character classes.
      */
     public static final int IgnorePatternWhitespace = 32;
 
@@ -59,15 +54,13 @@ public class RegexOptions {
 
     /**
      * Enables ECMAScript-compliant behavior for the expression. This value can be used only in conjunction with the
-     * System.Text.RegularExpressions.RegexOptions.IgnoreCase, System.Text.RegularExpressions.RegexOptions.Multiline,
-     * and System.Text.RegularExpressions.RegexOptions.Compiled values. The use of this value with any other values
+     * {@link #IgnoreCase}, {@link #Multiline} and {@link #Compiled} values. The use of this value with any other values
      * results in an exception.
      */
     public static final int ECMAScript = 256;
 
     /**
-     * Specifies that cultural differences in language is ignored. See
-     * [<topic://cpconPerformingCulture-InsensitiveOperationsInRegularExpressionsNamespace>] for more information.
+     * Specifies that cultural differences in language is ignored.
      */
     public static final int CultureInvariant = 512;
 }
