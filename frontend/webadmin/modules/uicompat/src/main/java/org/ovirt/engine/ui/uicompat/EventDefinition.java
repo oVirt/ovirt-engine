@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicompat;
 
 public class EventDefinition {
-    private java.lang.Class privateOwnerType;
-    public java.lang.Class getOwnerType() {
+    private Class privateOwnerType;
+    public Class getOwnerType() {
         return privateOwnerType;
     }
-    private void setOwnerType(java.lang.Class value) {
+    private void setOwnerType(Class value) {
         privateOwnerType = value;
     }
     private String privateName;
@@ -16,7 +16,7 @@ public class EventDefinition {
         privateName = value;
     }
 
-    public EventDefinition(String name, java.lang.Class ownerType) {
+    public EventDefinition(String name, Class ownerType) {
         setName(name);
         setOwnerType(ownerType);
     }
