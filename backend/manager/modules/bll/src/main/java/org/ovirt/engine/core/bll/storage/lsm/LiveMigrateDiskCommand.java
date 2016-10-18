@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.lsm;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 @NonTransactiveCommandAttribute
 public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T>implements SerialChildExecutingCommand {
@@ -73,6 +75,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -211,7 +215,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 srcDomain,
                 dstDomain,
                 getParameters().getImageGroupID(),
-                getParameters().getDestinationImageId());
+                getParameters().getDestinationImageId(),
+                null);
 
         VDSReturnValue ret = resourceManager.runVdsCommand(
                 VDSCommandType.VmReplicateDiskFinish, migrationStartParams);
@@ -296,6 +301,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     "VM " + getParameters().getVmId() + " is not running on any VDS");
         }
 
+        Optional<String> diskType = vmInfoBuildUtils.getNetworkDiskType(getVm(), diskImageDao.get(getParameters().getDestinationImageId()));
+
         // Start disk migration
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters(getParameters().getVdsId(),
                 getParameters().getVmId(),
@@ -303,7 +310,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 getParameters().getSourceStorageDomainId(),
                 getParameters().getTargetStorageDomainId(),
                 getParameters().getImageGroupID(),
-                getParameters().getDestinationImageId());
+                getParameters().getDestinationImageId(),
+                diskType.orElse(null));
         VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
 
         if (!ret.getSucceeded()) {

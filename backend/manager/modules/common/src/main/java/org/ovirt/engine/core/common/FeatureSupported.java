@@ -131,6 +131,15 @@ public class FeatureSupported {
     }
 
     /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if gluster libgfapi access is supported for the given version
+     */
+    public static boolean libgfApiSupported(Version version) {
+        return supportedInConfig(ConfigValues.LibgfApiSupported, version);
+    }
+
+    /**
      * @param version Compatibility version to check for.
      * @return {@code true} if Pass Discard is supported for this version.
      */

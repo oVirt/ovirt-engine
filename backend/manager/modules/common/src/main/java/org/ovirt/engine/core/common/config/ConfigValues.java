@@ -1864,6 +1864,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     DataOperationsByHSM,
 
+    /**
+     * In 4.1 gluster libgfapi is supported.
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    LibgfApiSupported,
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
     MaxMemorySlots,

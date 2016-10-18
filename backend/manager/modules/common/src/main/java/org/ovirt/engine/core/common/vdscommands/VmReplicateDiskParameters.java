@@ -11,13 +11,15 @@ public class VmReplicateDiskParameters extends VdsAndVmIDVDSParametersBase {
             Guid srcStorageDomainId,
             Guid targetStorageDomainId,
             Guid imageGroupId,
-            Guid imageId) {
+            Guid imageId,
+            String diskType) {
         super(vdsId, vmId);
         this.storagePoolId = storagePoolId;
         this.srcStorageDomainId = srcStorageDomainId;
         this.targetStorageDomainId = targetStorageDomainId;
         this.imageGroupId = imageGroupId;
         this.imageId = imageId;
+        this.diskType = diskType;
     }
 
     public VmReplicateDiskParameters() {
@@ -63,11 +65,20 @@ public class VmReplicateDiskParameters extends VdsAndVmIDVDSParametersBase {
         this.imageId = imageId;
     }
 
+    public String getDiskType() {
+        return diskType;
+    }
+
+    public void setDiskType(String diskType) {
+        this.diskType = diskType;
+    }
+
     private Guid storagePoolId;
     private Guid srcStorageDomainId;
     private Guid targetStorageDomainId;
     private Guid imageGroupId;
     private Guid imageId;
+    private String diskType;
 
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
