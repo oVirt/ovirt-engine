@@ -12,7 +12,10 @@ public enum VmExitReason {
     SaveStateSucceeded(5),
     AdminShutdown(6),
     UserShutdown(7),
-    MigrationFailed(8);
+    MigrationFailed(8),
+    LibvirtDomainMissing(9),
+    DestroyedOnStartup(10),
+    HostShutdown(11);
 
     private final int reason;
     private static final HashMap<Integer, VmExitReason> valueToReason = new HashMap<>();
