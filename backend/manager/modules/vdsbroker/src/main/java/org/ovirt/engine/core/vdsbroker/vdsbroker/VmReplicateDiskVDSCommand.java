@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
+import org.springframework.util.StringUtils;
 
 public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParameters> extends VdsBrokerCommand<P> {
 
@@ -18,6 +19,9 @@ public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParamet
         dstDisk.put(VdsProperties.DomainId, getParameters().getTargetStorageDomainId().toString());
         dstDisk.put(VdsProperties.ImageId, getParameters().getImageGroupId().toString());
         dstDisk.put(VdsProperties.VolumeId, getParameters().getImageId().toString());
+        if (!StringUtils.isEmpty(getParameters().getDiskType())) {
+            dstDisk.put(VdsProperties.DiskType, getParameters().getDiskType());
+        }
         return dstDisk;
     }
 

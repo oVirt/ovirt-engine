@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -557,4 +559,17 @@ public class VmInfoBuildUtils {
         new AuditLogDirector().log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
     }
 
+    public Optional<String> getNetworkDiskType(VM vm, DiskImage diskImage) {
+        StorageType storageType = diskImage.getStorageTypes().get(0);
+        if (storageType == StorageType.GLUSTERFS &&
+                FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())) {
+            return Optional.of(VdsProperties.NETWORK);
+        }
+        return Optional.empty();
+    }
+
+    public Map<String, Object> prepareGlusterDisk(VM vm, DiskImage diskImage, Map<String, Object> struct) {
+        getNetworkDiskType(vm, diskImage).ifPresent((diskType) -> struct.put(VdsProperties.DiskType, diskType));
+        return struct;
+    }
 }
