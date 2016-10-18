@@ -23,7 +23,7 @@ import contextlib
 import gettext
 import os
 import time
-import urllib2
+from six.moves.urllib.request import urlopen
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -142,7 +142,7 @@ class Plugin(plugin.PluginBase):
             ]
 
             with contextlib.closing(
-                urllib2.urlopen(
+                urlopen(
                     'http://{engine_fqdn}/ovirt-engine/services/'
                     'pki-resource?resource=engine-certificate&'
                     'format=X509-PEM'.format(
