@@ -48,6 +48,8 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Widget & HasValueChangeHandlers<T> & HasCleanup>
     extends AbstractModelBoundPopupWidget<M> implements HasEnabled {
 
+    private final int maxNumberOfItems;
+
     public interface WidgetStyle extends CssResource {
         String buttonStyle();
     }
@@ -69,6 +71,11 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     protected boolean usePatternFly = false;
 
     public AddRemoveRowWidget() {
+        this(Integer.MAX_VALUE);
+    }
+
+    public AddRemoveRowWidget(int maxNumberOfItems) {
+        this.maxNumberOfItems = maxNumberOfItems;
         items = new LinkedList<>();
         itemsChangedListener = (ev, sender, args) -> init(model);
         propertyChangedListener = (ev, sender, args) -> {
@@ -231,15 +238,21 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     }
 
     private AddRemoveRowPanel createAddRemoveRowPanel(boolean lastItem, V widget, Pair<T, V> item) {
-        boolean shouldCreateAddButton = lastItem && showAddButton;
-
         List<Button> buttons = new ArrayList<>(2);
         buttons.add(createMinusButton(item));
-        if (shouldCreateAddButton) {
+        if (shouldCreateAddButton(lastItem)) {
             buttons.add(createPlusButton(item));
         }
 
         return new AddRemoveRowPanel(widget, !usePatternFly, buttons.toArray(new Button[buttons.size()]));
+    }
+
+    private boolean shouldCreateAddButton(boolean lastItem) {
+        return lastItem && showAddButton && !maxNumberOfItemsExceeded();
+    }
+
+    private boolean maxNumberOfItemsExceeded() {
+        return items.size() >= this.maxNumberOfItems;
     }
 
     private void toggleEnabled(T value, V widget) {
@@ -306,11 +319,14 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
         //'plus' button is present only on last item. So if removing such, we need to return in onto newly-last item.
         boolean removalOfLastItem = item == lastItem();
+        boolean maxNumberOfItemsWasExceeded = maxNumberOfItemsExceeded();
+
 
         removeEntry(item);
         onRemove(value, widget);
 
-        if (removalOfLastItem && !items.isEmpty() && this.showAddButton) {
+        boolean shouldAddPlusButton = showAddButton && (removalOfLastItem || maxNumberOfItemsWasExceeded);
+        if (shouldAddPlusButton && !items.isEmpty()) {
             Pair<T, V> last = lastItem();
             V lastItemWidget = last.getSecond();
             getEntry(lastItemWidget).appendButton(createPlusButton(last));

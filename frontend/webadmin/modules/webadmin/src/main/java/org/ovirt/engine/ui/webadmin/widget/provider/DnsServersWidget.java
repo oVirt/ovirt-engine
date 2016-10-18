@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.dnsconfiguration.NameServerModel;
@@ -17,6 +18,7 @@ public class DnsServersWidget extends AddRemoveRowWidget<ListModel<NameServerMod
     }
 
     public DnsServersWidget() {
+        super(BusinessEntitiesDefinitions.MAX_SUPPORTED_DNS_CONFIGURATIONS);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
