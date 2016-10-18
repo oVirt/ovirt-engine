@@ -40,8 +40,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Versions of the API model and tools: -->
-    <metamodel.version>1.1.5</metamodel.version>
-    <model.version>4.1.14</model.version>
+    <metamodel.version>1.1.7</metamodel.version>
+    <model.version>4.1.15</model.version>
 
     <!-- Name of the product and engine as used in teh API documentation: -->
     <product.name>oVirt</product.name>
