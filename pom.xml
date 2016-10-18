@@ -91,7 +91,7 @@
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
     <c3p0.version>0.9.1.1</c3p0.version>
     <aopalliance.version>1.0</aopalliance.version>
-    <snmp4j.version>2.2.2</snmp4j.version>
+    <snmp4j.version>2.4.1</snmp4j.version>
     <!-- hystrix -->
     <hystrix.version>1.4.14</hystrix.version>
     <archaius.version>0.4.1</archaius.version>
