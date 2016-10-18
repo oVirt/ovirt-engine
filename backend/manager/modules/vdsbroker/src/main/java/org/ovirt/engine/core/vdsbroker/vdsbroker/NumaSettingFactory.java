@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -36,13 +37,13 @@ public class NumaSettingFactory {
         for (VmNumaNode node : vmNodes) {
             List<Integer> pinnedNodeIndexes = node.getVdsNumaNodeList();
             if (!pinnedNodeIndexes.isEmpty()) {
-                Set <Integer> totalPinnedVdsCpus = new LinkedHashSet<>();
+                Set<Integer> totalPinnedVdsCpus = new LinkedHashSet<>();
+
+                for (Integer pinnedVdsNode : pinnedNodeIndexes) {
+                    totalPinnedVdsCpus.addAll(vdsNumaNodeCpus.getOrDefault(pinnedVdsNode, Collections.emptyList()));
+                }
+
                 for (Integer vCpu : node.getCpuIds()) {
-                    for (Integer pinnedVdsNode : pinnedNodeIndexes) {
-                        if (vdsNumaNodeCpus.containsKey(pinnedVdsNode)) {
-                            totalPinnedVdsCpus.addAll(vdsNumaNodeCpus.get(pinnedVdsNode));
-                        }
-                    }
                     cpuPinDict.put(String.valueOf(vCpu), NumaUtils.buildStringFromListForNuma(totalPinnedVdsCpus));
                 }
             }
@@ -51,19 +52,40 @@ public class NumaSettingFactory {
     }
 
     public static Map<String, Object> buildVmNumatuneSetting(
-            NumaTuneMode numaTuneMode, List<VmNumaNode> vmNumaNodes) {
-        Map<String, Object> createNumaTune = new HashMap<>(2);
-        Set<Integer> vmNumaNodePinInfo = new HashSet<>();
+            NumaTuneMode numaTuneMode,
+            List<VmNumaNode> vmNumaNodes,
+            List<VdsNumaNode> vdsNumaNodes) {
+
+        List<Map<String, String>> memNodeList = new ArrayList<>();
         for (VmNumaNode node : vmNumaNodes) {
-            if (!node.getVdsNumaNodeList().isEmpty()) {
-                vmNumaNodePinInfo.addAll(node.getVdsNumaNodeList());
+            if (node.getVdsNumaNodeList().isEmpty()) {
+                continue;
             }
+
+            Map<String, String> memNode = new HashMap<>();
+            memNode.put(VdsProperties.NUMA_TUNE_VM_NODE_INDEX, String.valueOf(node.getIndex()));
+            memNode.put(VdsProperties.NUMA_TUNE_NODESET,
+                    NumaUtils.buildStringFromListForNuma(node.getVdsNumaNodeList()));
+
+            memNodeList.add(memNode);
         }
-        if (!vmNumaNodePinInfo.isEmpty()) {
-            createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
-                    NumaUtils.buildStringFromListForNuma(vmNumaNodePinInfo));
-            createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTuneMode.getValue());
+
+        // If no node is pinned, leave pinning implicit
+        if (memNodeList.isEmpty()) {
+            return Collections.emptyMap();
         }
+
+        Map<String, Object> createNumaTune = new HashMap<>();
+        createNumaTune.put(VdsProperties.NUMA_TUNE_MEMNODES, memNodeList);
+        createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTuneMode.getValue());
+
+        // Unpinned nodes can run on any host node
+        createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
+                NumaUtils.buildStringFromListForNuma(vdsNumaNodes.stream()
+                        .map(VdsNumaNode::getIndex)
+                        .collect(Collectors.toList())));
+
+
         return createNumaTune;
     }
 }

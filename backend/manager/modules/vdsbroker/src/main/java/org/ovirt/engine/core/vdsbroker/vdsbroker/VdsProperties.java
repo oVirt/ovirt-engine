@@ -83,6 +83,8 @@ public final class VdsProperties {
     public static final String NUMA_CPU_IDLE = "cpuIdle";
     public static final String NUMA_TUNE_MODE = "mode";
     public static final String NUMA_TUNE_NODESET = "nodeset";
+    public static final String NUMA_TUNE_MEMNODES = "memnodes";
+    public static final String NUMA_TUNE_VM_NODE_INDEX = "vmNodeIndex";
     public static final String VM_NUMA_NODE_MEM = "memory";
     public static final String NUMA_TUNE = "numaTune";
     public static final String VM_NUMA_NODES = "guestNumaNodes";
