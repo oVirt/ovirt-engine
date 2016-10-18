@@ -323,23 +323,32 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     }
 
     protected void doRemoveItem(Pair<T, V> item, T value, V widget) {
-        ListIterator<Pair<T, V>> last = items.listIterator(items.size());
-        if (!last.hasPrevious()) { // just a precaution; if there's no item, there should be no button
+        if (items.isEmpty()) { // just a precaution; if there's no item, there should be no button
             return;
         }
 
-        if (item == last.previous() && last.hasPrevious() && this.showAddButton) { // add plus button to previous item
-            Pair<T, V> previousItem = last.previous();
-            getEntry(previousItem.getSecond()).appendButton(createPlusButton(previousItem));
-        }
+        //'plus' button is present only on last item. So if removing such, we need to return in onto newly-last item.
+        boolean removalOfLastItem = item == lastItem();
 
         removeEntry(item);
         onRemove(value, widget);
+
+        if (removalOfLastItem && !items.isEmpty() && this.showAddButton) {
+            Pair<T, V> last = lastItem();
+            V lastItemWidget = last.getSecond();
+            getEntry(lastItemWidget).appendButton(createPlusButton(last));
+        }
+
+
 
         if (items.isEmpty() && this.showGhost) {
             Pair<T, V> ghostItem = addGhostEntry();
             onAdd(ghostItem.getFirst(), ghostItem.getSecond());
         }
+    }
+
+    private Pair<T, V> lastItem() {
+        return items.get(items.size() - 1);
     }
 
     /**
