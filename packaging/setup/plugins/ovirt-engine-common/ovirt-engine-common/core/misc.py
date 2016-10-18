@@ -22,6 +22,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
@@ -42,6 +43,9 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
         ].append(oengcommcons)
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ].append(oenginecons)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

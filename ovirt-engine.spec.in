@@ -988,8 +988,6 @@ fi
 %{engine_data}/firewalld/ovirt-engine/
 %{engine_data}/setup/bin/ovirt-engine-upgrade-check
 %{engine_data}/setup/dbutils/
-%{engine_data}/setup/ovirt_engine_setup/engine/
-%exclude %{engine_data}/setup/ovirt_engine_setup/engine/constants.py
 %{engine_data}/setup/plugins/*/ovirt-engine/
 
 %files setup-plugin-ovirt-engine-common
@@ -999,7 +997,7 @@ fi
 %{engine_data}/setup/ovirt_engine_setup/provisiondb/
 %{engine_data}/setup/plugins/*/ovirt-engine-common/
 %{engine_data}/firewalld/ovirt-common/
-%{engine_data}/setup/ovirt_engine_setup/engine/constants.py
+%{engine_data}/setup/ovirt_engine_setup/engine/
 
 
 %if %{ovirt_provides_jboss}

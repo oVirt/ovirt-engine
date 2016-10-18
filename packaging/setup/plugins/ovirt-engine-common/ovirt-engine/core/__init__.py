@@ -23,12 +23,10 @@ from otopi import util
 
 from . import engine
 from . import fence_kdump_listener
-from . import misc
 
 
 @util.export
 def createPlugins(context):
-    misc.Plugin(context=context)
     engine.Plugin(context=context)
     fence_kdump_listener.Plugin(context=context)
 
