@@ -42,8 +42,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected BaseImagesCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         imageId = parameters.getImageId();
-        if (parameters instanceof ImagesContainterParametersBase) {
-            initContainerDetails((ImagesContainterParametersBase) parameters);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        if (getParameters() instanceof ImagesContainterParametersBase) {
+            initContainerDetails((ImagesContainterParametersBase) getParameters());
         }
     }
 
@@ -51,9 +56,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         super(commandId);
     }
 
-    protected void initContainerDetails(ImagesContainterParametersBase parameters) {
+    private void initContainerDetails(ImagesContainterParametersBase parameters) {
         super.setVmId(parameters.getContainerId());
-        if (parameters.getStoragePoolId() != null) {
+        if (parameters.getStoragePoolId() != null && !Guid.Empty.equals(parameters.getStoragePoolId())) {
             setStoragePoolId(parameters.getStoragePoolId());
         } else if (getDiskImage() != null && getDiskImage().getStoragePoolId() != null) {
             setStoragePoolId(getDiskImage().getStoragePoolId());
