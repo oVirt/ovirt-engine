@@ -99,5 +99,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String bondSlaveAdAggregatorId(String nic, String adAggregatorId);
 
     String bondStatus(String status);
+
+    String bondActiveSlave(String activeSlave);
 }
 

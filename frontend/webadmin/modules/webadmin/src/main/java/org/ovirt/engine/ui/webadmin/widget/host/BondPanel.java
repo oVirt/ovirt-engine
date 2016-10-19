@@ -81,6 +81,9 @@ public class BondPanel extends HostInterfaceHorizontalPanel {
         if (InterfaceStatus.UP.equals(interfaceStatus) && isBond4) {
             bondProperties.append("\n").append(createActiveBondTooltipMessage(bond, lineModel));//$NON-NLS-1$
         }
+        if ((bond.getActiveSlave() != null) && (bond.getActiveSlave().length() > 0)) {
+            bondProperties.append("\n").append(messages.bondActiveSlave(bond.getActiveSlave()));//$NON-NLS-1$
+        }
         return new SafeHtmlBuilder().appendEscapedLines(bondProperties.toString()).toSafeHtml();
     }
 
