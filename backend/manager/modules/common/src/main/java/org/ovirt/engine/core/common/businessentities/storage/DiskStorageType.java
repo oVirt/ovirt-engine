@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 /**
@@ -7,18 +9,30 @@ import org.ovirt.engine.core.common.businessentities.Identifiable;
  * object instance.
  */
 public enum DiskStorageType implements Identifiable {
-    // FIXME add ids and remove the ordinal impl of getValue
-    IMAGE,
-    LUN,
-    CINDER;
+    IMAGE(0),
+    LUN(1),
+    CINDER(2);
+
+    private int value;
+
+    private static final HashMap<Integer, DiskStorageType> mappings = new HashMap<>();
+    static {
+        for (DiskStorageType storageType : values()) {
+            mappings.put(storageType.getValue(), storageType);
+        }
+    }
+
+    DiskStorageType(int value) {
+        this.value = value;
+    }
 
     @Override
     public int getValue() {
-        return this.ordinal();
+        return value;
     }
 
     public static DiskStorageType forValue(int value) {
-        return values()[value];
+        return mappings.get(value);
     }
 
     public boolean isInternal() {
