@@ -25,6 +25,7 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.utils.ArrayUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -266,6 +267,7 @@ public class BackendHostNicsResource
         HostNic nic = super.map(iface, template);
         if (iface.getBonded() != null && iface.getBonded()) {
             nic = addSlaveLinks(nic, getCollection(ifaces));
+            nic = addActiveSlaveLink(nic, iface, getCollection(ifaces));
         } else if (iface.getBondName() != null) {
             nic = addMasterLink(nic, iface.getBondName(), getCollection(ifaces));
         }
@@ -314,6 +316,22 @@ public class BackendHostNicsResource
         slave.setHost(null);
 
         return slave;
+    }
+
+    protected HostNic addActiveSlaveLink(HostNic nic, VdsNetworkInterface iface, List<VdsNetworkInterface> ifaces) {
+        if (iface instanceof Bond) {
+            Bond bond = (Bond) iface;
+            if(nic.getBonding() == null) {
+                nic.setBonding(new Bonding());
+            }
+            for (VdsNetworkInterface i : ifaces) {
+                if (i.getName().equals(bond.getActiveSlave())) {
+                    nic.getBonding().setActiveSlave(slave(i.getId().toString()));
+                    break;
+                }
+            }
+        }
+        return nic;
     }
 
     protected HostNic addMasterLink(HostNic nic, String bondName, List<VdsNetworkInterface> ifaces) {
