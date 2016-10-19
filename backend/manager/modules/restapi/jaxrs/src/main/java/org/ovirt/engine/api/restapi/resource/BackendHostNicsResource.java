@@ -310,7 +310,7 @@ public class BackendHostNicsResource
 
         slave.setHost(new Host());
         slave.getHost().setId(hostId);
-        slave = LinkHelper.addLinks(slave);
+        slave = LinkHelper.addLinks(slave, null, false);
         slave.setHost(null);
 
         return slave;
