@@ -35,7 +35,7 @@ You can also choose to run individual tests:
   $> mvn -D test=VdcOptionDAOTest test
 
 By default, this will run the tests using the JDBC implementation
-against a PostgreSQL database called 'engine-dao-tests' on the
+against a PostgreSQL database called 'engine_dao_tests' on the
 localhost using the username 'engine' and password 'engine'.
 
 You can change the database configuration in ~/.m2/settings.xml e.g.
