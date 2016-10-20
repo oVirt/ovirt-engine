@@ -1096,25 +1096,25 @@ public class VmMapper extends VmBaseMapper {
                 if (model.getNetworkConfiguration().getDns().isSetServers()
                         && model.getNetworkConfiguration().getDns().getServers().isSetHosts()
                         && !model.getNetworkConfiguration().getDns().getServers().getHosts().isEmpty()) {
-                    StringBuilder dnsServers = new StringBuilder();
+                    List<String> dnsServers = new ArrayList<>();
                     for (Host host : model.getNetworkConfiguration().getDns().getServers().getHosts()) {
                         if (host.isSetAddress()) {
-                            dnsServers.append(host.getAddress());
+                            dnsServers.add(host.getAddress());
                         }
                     }
-                    entity.setDnsServers(dnsServers.toString());
+                    entity.setDnsServers(String.join(" ", dnsServers));
                 }
 
                 if (model.getNetworkConfiguration().getDns().isSetSearchDomains()
                         && model.getNetworkConfiguration().getDns().getSearchDomains().isSetHosts()
                         && !model.getNetworkConfiguration().getDns().getSearchDomains().getHosts().isEmpty()) {
-                    StringBuilder searchDomains = new StringBuilder();
+                    List<String> searchDomains = new ArrayList<>();
                     for (Host host : model.getNetworkConfiguration().getDns().getSearchDomains().getHosts()) {
                         if (host.isSetAddress()) {
-                            searchDomains.append(host.getAddress());
+                            searchDomains.add(host.getAddress());
                         }
                     }
-                    entity.setDnsSearch(searchDomains.toString());
+                    entity.setDnsSearch(String.join(" ", searchDomains));
                 }
             }
         }
