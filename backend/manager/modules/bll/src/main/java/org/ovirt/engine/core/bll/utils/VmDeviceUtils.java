@@ -1215,7 +1215,8 @@ public class VmDeviceUtils {
                     if (hasRng) {
                         continue;
                     }
-                    if (!new VirtIoRngValidator().canAddRngDevice(cluster, new VmRngDevice(device)).isValid()) {
+                    if (!new VirtIoRngValidator().canAddRngDevice(
+                            cluster, new VmRngDevice(device), dstVmBase.getCustomCompatibilityVersion()).isValid()) {
                         continue;
                     }
                     specParams.putAll(device.getSpecParams());

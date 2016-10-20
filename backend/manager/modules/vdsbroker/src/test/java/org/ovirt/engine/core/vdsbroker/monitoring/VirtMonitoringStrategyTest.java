@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -121,7 +122,7 @@ public class VirtMonitoringStrategyTest {
     private VDS createBaseVds() {
         VDS vds = new VDS();
         vds.setSupportedEmulatedMachines("pc-1.0");
-        vds.getSupportedRngSources().add(VmRngDevice.Source.RANDOM);
+        vds.getSupportedRngSources().add(VmRngDevice.Source.URANDOM);
         vds.setStatus(VDSStatus.Up);
         return vds;
     }
@@ -151,6 +152,7 @@ public class VirtMonitoringStrategyTest {
         ClusterDao mock = mock(ClusterDao.class);
         cluster = new Cluster();
         cluster.setEmulatedMachine("pc-1.0");
+        cluster.setCompatibilityVersion(Version.getLast());
         when(mock.get(any(Guid.class))).thenReturn(cluster);
         return mock;
     }

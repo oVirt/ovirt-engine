@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
@@ -54,6 +55,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;
+
+    @Inject
+    private RngDeviceUtils rngDeviceUtils;
 
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
@@ -354,6 +358,31 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             params.setApplyChangesLater(true);
             runInternalAction(VdcActionType.UpdateVm, params);
         }
+    }
+
+    @Override
+    protected void updateRngDevice(Guid templateId) {
+        if (!getParameters().isUpdateRngDevice()) {
+            final Version newClusterVersion = getEffectiveCompatibilityVersion() != null
+                    ? getEffectiveCompatibilityVersion()
+                    : Version.getLast();
+            rngDeviceUtils.handleUrandomRandomChange(
+                    getParameters().getClusterLevelChangeFromVersion(),
+                    newClusterVersion,
+                    templateId,
+                    cloneContextAndDetachFromParent(),
+                    false);
+            return;
+        }
+        super.updateRngDevice(templateId);
+    }
+
+    protected Version getEffectiveCompatibilityVersion() {
+        return getParameters().getVmTemplateData().getCustomCompatibilityVersion() != null
+                ? getParameters().getVmTemplateData().getCustomCompatibilityVersion()
+                : getCluster() != null
+                        ? getCluster().getCompatibilityVersion()
+                        : null;
     }
 
     private void checkTrustedService() {

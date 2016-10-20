@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.Version;
 
 public class UpdateVmTemplateParameters extends VmTemplateManagementParameters implements HasVmIcon {
     private static final long serialVersionUID = 7250355162926369307L;
@@ -24,6 +25,11 @@ public class UpdateVmTemplateParameters extends VmTemplateManagementParameters i
      * If not null, {@code UpdateVmTemplateCommand} should update icon of the template to this value.
      */
     private String vmLargeIcon;
+
+    /**
+     * If non-null it indicates that cluster cluster level of current cluster was changed.
+     */
+    private Version clusterLevelChangeFromVersion;
 
     /**
      * @see #vmLargeIcon
@@ -66,4 +72,11 @@ public class UpdateVmTemplateParameters extends VmTemplateManagementParameters i
         this.consoleEnabled = consoleEnabled;
     }
 
+    public Version getClusterLevelChangeFromVersion() {
+        return clusterLevelChangeFromVersion;
+    }
+
+    public void setClusterLevelChangeFromVersion(Version clusterLevelChangeFromVersion) {
+        this.clusterLevelChangeFromVersion = clusterLevelChangeFromVersion;
+    }
 }

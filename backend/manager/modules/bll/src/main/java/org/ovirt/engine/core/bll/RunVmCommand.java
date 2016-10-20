@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
+import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -1030,15 +1031,29 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         List<VmDevice> rngDevs =
                 vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO.getName());
 
-        if (!rngDevs.isEmpty()) {
-            VmRngDevice rngDev = new VmRngDevice(rngDevs.get(0));
-
-            if (!getCluster().getRequiredRngSources().contains(rngDev.getSource())) {
-                return false;
-            }
+        if (rngDevs.isEmpty()) {
+            return true;
         }
 
-        return true;
+        VmRngDevice rngDevice = new VmRngDevice(rngDevs.get(0));
+        final VirtIoRngValidator.RngValidationResult rngValidationResult =
+                VirtIoRngValidator.validate(getCluster(), rngDevice, getVm().getCompatibilityVersion());
+        switch (rngValidationResult) {
+            case VALID:
+                return true;
+            case UNSUPPORTED_URANDOM_OR_RANDOM:
+                log.warn("Running VM {}({}) with rng source {} that is not supported in cluster {}.",
+                        getVm().getName(),
+                        getVm().getId(),
+                        rngDevice.getSource(),
+                        getCluster().getName());
+                return true;
+            case INVALID:
+                return false;
+            default:
+                throw new RuntimeException("Unknown enum constant " + rngValidationResult);
+        }
+
     }
 
     @Override

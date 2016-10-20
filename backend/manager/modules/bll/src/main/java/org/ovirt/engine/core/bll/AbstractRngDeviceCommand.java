@@ -103,4 +103,8 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
     public boolean isBlankTemplate() {
         return blankTemplate;
     }
+
+    public VmBase getCachedEntity() {
+        return cachedEntity;
+    }
 }

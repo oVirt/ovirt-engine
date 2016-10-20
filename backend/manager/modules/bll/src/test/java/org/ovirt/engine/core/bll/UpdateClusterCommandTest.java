@@ -64,6 +64,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -94,6 +95,8 @@ public class UpdateClusterCommandTest {
 
     @Mock
     private VmStaticDao vmStaticDao;
+    @Mock
+    private VmTemplateDao vmTemplateDao;
     @Mock
     private ClusterDao clusterDao;
     @Mock
@@ -499,7 +502,10 @@ public class UpdateClusterCommandTest {
 
     @Test
     public void vmsAreUpdatedByTheOrderOfTheirIds() {
-        createSimpleCommand();
+        final Cluster newerCluster = createDefaultCluster();
+        newerCluster.setCompatibilityVersion(new Version(1, 2));
+        createCommand(newerCluster);
+        cmd.init();
         VmStatic vm1 = new VmStatic();
         vm1.setId(VM_ID1);
         VmStatic vm2 = new VmStatic();

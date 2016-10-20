@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -100,6 +101,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private ResourceManager resourceManager;
     @Inject
     private InClusterUpgradeValidator clusterUpgradeValidator;
+    @Inject
+    private RngDeviceUtils rngDeviceUtils;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -283,35 +286,45 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean updateRngDevice() {
-        // do not update if this flag is not set
         if (getParameters().isUpdateRngDevice()) {
-            VdcQueryReturnValue query =
-                    runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
+            return changeRngDevice();
+        }
+        // if rng is not updated, check random <-> urandom change
+        rngDeviceUtils.handleUrandomRandomChange(
+                getParameters().getClusterLevelChangeFromVersion(),
+                getEffectiveCompatibilityVersion(),
+                getVmId(),
+                cloneContextAndDetachFromParent(),
+                true);
+        return true;
+    }
 
-            List<VmRngDevice> rngDevs = query.getReturnValue();
+    private boolean changeRngDevice() {
+        VdcQueryReturnValue query =
+                runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
 
-            VdcReturnValueBase rngCommandResult = null;
-            if (rngDevs.isEmpty()) {
-                if (getParameters().getRngDevice() != null) {
-                    RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
-                    rngCommandResult = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
-                }
-            } else {
-                if (getParameters().getRngDevice() == null) {
-                    RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), true);
-                    rngCommandResult = runInternalAction(VdcActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
-                } else {
-                    RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
-                    params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
-                    rngCommandResult = runInternalAction(VdcActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
-                }
+        List<VmRngDevice> rngDevs = query.getReturnValue();
+
+        VdcReturnValueBase rngCommandResult = null;
+        if (rngDevs.isEmpty()) {
+            if (getParameters().getRngDevice() != null) {
+                RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
+                rngCommandResult = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
             }
-
-            if (rngCommandResult != null && !rngCommandResult.getSucceeded()) {
-                return false;
+        } else {
+            if (getParameters().getRngDevice() == null) {
+                RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), true);
+                rngCommandResult = runInternalAction(VdcActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
+            } else {
+                RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
+                params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
+                rngCommandResult = runInternalAction(VdcActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
             }
         }
 
+        if (rngCommandResult != null && !rngCommandResult.getSucceeded()) {
+            return false;
+        }
         return true;
     }
 

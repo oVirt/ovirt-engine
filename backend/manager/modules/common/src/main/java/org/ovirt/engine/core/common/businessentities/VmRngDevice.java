@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -41,6 +42,23 @@ public class VmRngDevice extends VmDevice implements Serializable {
                 return URANDOM;
             }
             return RANDOM;
+        }
+
+        /**
+         * @param oldVersion old compatibility version
+         * @param newVersion new compatibility version
+         * @return whether or not update of random/urandom rng device is required;
+         *         false if some of the arguments is null
+         */
+        public static boolean urandomRandomUpdateRequired(Version oldVersion, Version newVersion) {
+            if (Objects.equals(oldVersion, newVersion)) {
+                return false;
+            }
+            if (oldVersion == null || newVersion == null) {
+                return false;
+            }
+            return newVersion.greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
+                    && oldVersion.less(VmRngDevice.Source.FIRST_URANDOM_VERSION);
         }
     }
 
@@ -102,6 +120,13 @@ public class VmRngDevice extends VmDevice implements Serializable {
         setIsPlugged(true);
         setIsManaged(true);
         setSpecParams(specPars);
+    }
+
+    public void updateSourceByVersion(Version clusterVersion) {
+        final Source source = getSource();
+        if (source == Source.URANDOM || source == Source.RANDOM) {
+            setSource(Source.getUrandomOrRandomFor(clusterVersion));
+        }
     }
 
     private static Map<String, Object> createSpecPars(Integer bytes, Integer period, Source source) {

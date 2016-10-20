@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
+@ValidateSupportsTransaction
 public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
     public AddRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
@@ -21,7 +22,8 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
         }
 
         if (getTemplateType() != VmEntityType.INSTANCE_TYPE && !isBlankTemplate()) {
-            if (!validate(getVirtioRngValidator().canAddRngDevice(getCluster(), getParameters().getRngDevice()))) {
+            if (!validate(getVirtioRngValidator().canAddRngDevice(
+                    getCluster(), getParameters().getRngDevice(), getCachedEntity().getCustomCompatibilityVersion()))) {
                 return false;
             }
         }

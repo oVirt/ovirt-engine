@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -44,7 +45,9 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -92,20 +95,37 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private NetworkCluster managementNetworkCluster;
 
     private List<VmStatic> vmsLockedForUpdate = Collections.emptyList();
+    private List<VmTemplate> templatesLockedForUpdate = Collections.emptyList();
 
     @Override
     protected void init() {
         updateMigrateOnError();
         oldCluster = clusterDao.get(getCluster().getId());
-        if (oldCluster != null && !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+        if (oldCluster != null
+                && !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
             vmsLockedForUpdate = filterVmsInClusterNeedUpdate();
+            templatesLockedForUpdate = filterTemplatesInClusterNeedUpdate();
         }
     }
 
+    /**
+     * Returns list of VMs that requires to be updated provided cluster compatibility version has changed.
+     */
     protected List<VmStatic> filterVmsInClusterNeedUpdate() {
         return vmStaticDao.getAllByCluster(getCluster().getId()).stream()
                 .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
-                .filter(vm -> vm.getCustomCompatibilityVersion() == null) // no need for VM device update
+                .filter(vm -> vm.getCustomCompatibilityVersion() == null)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    protected List<VmTemplate> filterTemplatesInClusterNeedUpdate() {
+        if (!VmRngDevice.Source.urandomRandomUpdateRequired(
+                oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+            return Collections.emptyList();
+        }
+        return vmTemplateDao.getAllForCluster(getCluster().getId()).stream()
+                .filter(template -> template.getCustomCompatibilityVersion() == null)
                 .sorted()
                 .collect(Collectors.toList());
     }
@@ -206,6 +226,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             setSucceeded(false);
             return;
         }
+        if (!updateTemplates()) {
+            setSucceeded(false);
+            return;
+        }
 
         setSucceeded(true);
     }
@@ -226,6 +250,27 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                     updateParams,
                     cloneContextAndDetachFromParent());
 
+            if (!result.getSucceeded()) {
+                propagateFailure(result);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean updateTemplates() {
+        for (VmTemplate template : templatesLockedForUpdate) {
+            // the object was loaded in before command execution started and thus the value may be outdated
+            template.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
+            final UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
+            // Locking by UpdateVmTemplate is disabled since templates are already locked in #getExclusiveLocks method.
+            parameters.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+            parameters.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
+
+            final VdcReturnValueBase result = runInternalAction(
+                    VdcActionType.UpdateVmTemplate,
+                    parameters,
+                    cloneContextAndDetachFromParent());
             if (!result.getSucceeded()) {
                 propagateFailure(result);
                 return false;
@@ -741,13 +786,26 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        final LockMessage lockMessage = createLockMessage();
+        return templatesLockedForUpdate.stream()
+                .collect(Collectors.toMap(
+                        template -> template.getId().toString(),
+                        template -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, lockMessage)));
+    }
+
+    @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        final LockMessage lockMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_BEING_UPDATED)
-                .with("clusterName", oldCluster.getName());
+        final LockMessage lockMessage = createLockMessage();
         return vmsLockedForUpdate.stream()
                 .collect(Collectors.toMap(
                         vm -> vm.getId().toString(),
                         vm -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, lockMessage)));
+    }
+
+    private LockMessage createLockMessage() {
+        return new LockMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_BEING_UPDATED)
+                .with("clusterName", oldCluster.getName());
     }
 
     @Override

@@ -115,7 +115,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     private String customSerialNumber;
 
     /**
-     * Set of rng sources that are required in addition to mandatory {@link VmRngDevice.Source.RANDOM}.
+     * Set of rng sources that are required in addition to mandatory {@link VmRngDevice.Source.RANDOM}
+     * or {@link VmRngDevice.Source.URANDOM}.
      */
     private Set<VmRngDevice.Source> additionalRngSources;
 
@@ -454,7 +455,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
      */
     public Set<VmRngDevice.Source> getRequiredRngSources() {
         final Set<VmRngDevice.Source> requiredRngSources = new HashSet<>(getAdditionalRngSources());
-        requiredRngSources.add(VmRngDevice.Source.RANDOM);
+        requiredRngSources.add(VmRngDevice.Source.getUrandomOrRandomFor(getCompatibilityVersion()));
         return Collections.unmodifiableSet(requiredRngSources);
     }
 
