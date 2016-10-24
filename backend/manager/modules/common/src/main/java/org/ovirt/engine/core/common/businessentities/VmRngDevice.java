@@ -104,7 +104,7 @@ public class VmRngDevice extends VmDevice implements Serializable {
     public static final String SOURCE_STRING = "source";
 
     public VmRngDevice() {
-        this(new VmDeviceId(null, null), createSpecPars(null, null, Source.RANDOM));
+        this(new VmDeviceId(null, null), createSpecPars(null, null, Source.URANDOM));
     }
 
     public VmRngDevice(VmDevice dev) {
@@ -173,13 +173,13 @@ public class VmRngDevice extends VmDevice implements Serializable {
         try {
             return Source.valueOf(((String) getSpecParams().get(SOURCE_STRING)).toUpperCase());
         } catch (Exception e) {
-            return Source.RANDOM;
+            return Source.URANDOM;
         }
     }
 
     public void setSource(Source source) {
         if (source == null) {
-            getSpecParams().put(SOURCE_STRING, Source.RANDOM.name().toLowerCase());
+            getSpecParams().put(SOURCE_STRING, Source.URANDOM.name().toLowerCase());
         } else {
             getSpecParams().put(SOURCE_STRING, source.name().toLowerCase());
         }

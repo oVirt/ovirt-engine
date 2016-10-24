@@ -407,6 +407,7 @@ public abstract class InstanceTypeManager {
                                 getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
                                 if (!rngDevices.isEmpty()) {
                                     VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                                    rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
                                     getModel().setRngDevice(rngDevice);
                                 }
                                 activate();

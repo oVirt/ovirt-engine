@@ -1378,10 +1378,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
                             public void onSuccess(VdcQueryReturnValue returnValue) {
-                                @SuppressWarnings("unchecked")
                                 List<VmRngDevice> devs = returnValue.getReturnValue();
                                 getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
-                                getModel().setRngDevice(devs.isEmpty() ? new VmRngDevice() : devs.get(0));
+                                final VmRngDevice rngDevice = devs.isEmpty()
+                                        ? new VmRngDevice()
+                                        : devs.get(0);
+                                rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
+                                getModel().setRngDevice(rngDevice);
                             }
                         }
                 ));
