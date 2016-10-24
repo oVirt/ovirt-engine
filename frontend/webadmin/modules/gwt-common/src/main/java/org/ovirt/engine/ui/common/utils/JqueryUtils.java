@@ -39,7 +39,7 @@ public class JqueryUtils {
      * Extract text from HTML. Returned string is never null.
      */
     public static native String getTextFromHtml(String html) /*-{
-        return $wnd.jQuery(html).text();
+        return $wnd.jQuery($wnd.jQuery.parseHTML(html)).text();
     }-*/;
 
 }
