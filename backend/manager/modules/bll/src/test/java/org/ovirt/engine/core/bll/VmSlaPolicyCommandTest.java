@@ -66,7 +66,6 @@ public class VmSlaPolicyCommandTest {
 
     @Before
     public void setUp() {
-        doReturn(vmDao).when(command).getVmDao();
         doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
 
         doAnswer(invocation -> {

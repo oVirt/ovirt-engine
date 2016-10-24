@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -256,12 +254,5 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         diskImage.setImageId(diskImageId);
 
         return diskImage;
-    }
-
-    /** Mock Daos */
-
-    @Before
-    public void mockVmDao() {
-        doReturn(vmDao).when(command).getVmDao();
     }
 }

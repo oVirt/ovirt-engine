@@ -284,7 +284,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
      */
     protected Map<Guid, KeyValuePairCompat<String, List<Guid>>> populateVmsMetadataForOvfUpdate(List<Guid> idsToProcess) {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata = new HashMap<>();
-        List<VM> vms = getVmDao().getVmsByIds(idsToProcess);
+        List<VM> vms = vmDao.getVmsByIds(idsToProcess);
         for (VM vm : vms) {
             if (VMStatus.ImageLocked != vm.getStatus()) {
                 updateVmDisksFromDb(vm);

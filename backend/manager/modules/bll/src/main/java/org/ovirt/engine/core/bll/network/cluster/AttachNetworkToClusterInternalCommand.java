@@ -132,7 +132,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
         if (network.getCluster().isDisplay()) {
             final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
                     getNetworkClusterDao(),
-                    getVmDao(),
+                    vmDao,
                     networkCluster,
                     network.getName(),
                     auditLogDirector);

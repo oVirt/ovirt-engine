@@ -206,6 +206,9 @@ public class AuditLogableBase extends TimeoutBase {
     @Inject
     protected SnapshotDao snapshotDao;
 
+    @Inject
+    protected VmDao vmDao;
+
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
      */
@@ -522,7 +525,7 @@ public class AuditLogableBase extends TimeoutBase {
     public VM getVm() {
         if (vm == null && vmId != null && !vmId.equals(Guid.Empty)) {
             try {
-                vm = getVmDao().get(vmId);
+                vm = vmDao.get(vmId);
 
                 // TODO: This is done for backwards compatibility with VMDao.getById(Guid)
                 // It should probably be removed, but some research is required
@@ -739,10 +742,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmTemplateDao getVmTemplateDao() {
         return getDbFacade().getVmTemplateDao();
-    }
-
-    public VmDao getVmDao() {
-        return getDbFacade().getVmDao();
     }
 
     public VmStaticDao getVmStaticDao() {

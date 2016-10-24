@@ -241,7 +241,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                  getVm().getClusterCompatibilityVersionOrigin().less(getVm().getClusterCompatibilityVersion()))) {
             // the snapshot was taken before cluster version change, call the UpdateVmCommand
             // vm_static of the getVm() is just updated by the previewed OVF config, so reload before UpdateVmCommand
-            VM vmFromDb = getVmDao().get(getVmId());
+            VM vmFromDb = vmDao.get(getVmId());
             if (!updateVm(vmFromDb, getVm().getClusterCompatibilityVersionOrigin())) {
                 return;
             }

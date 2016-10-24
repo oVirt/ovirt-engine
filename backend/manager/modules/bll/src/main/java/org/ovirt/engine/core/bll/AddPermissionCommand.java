@@ -92,7 +92,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
 
         // don't allow adding permissions to vms from pool externally
         if (!isInternalExecution() && perm.getObjectType() == VdcObjectType.VM) {
-            VM vm = getVmDao().get(perm.getObjectId());
+            VM vm = vmDao.get(perm.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_VM_IN_POOL);
                 return false;

@@ -366,7 +366,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private void updateOriginalTemplateNameOnDerivedVms() {
         if (!getParameters().isImportAsNewEntity()) {
             // in case it has been renamed
-            getVmDao().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
+            vmDao.updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
         }
     }
 

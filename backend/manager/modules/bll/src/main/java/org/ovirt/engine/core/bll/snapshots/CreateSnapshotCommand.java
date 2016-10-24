@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -148,7 +147,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         revertTasks();
 
         if (getDestinationDiskImage() != null
-                && !DbFacade.getInstance().getVmDao().getVmsListForDisk(getDestinationDiskImage().getId(), false).isEmpty()) {
+                && !vmDao.getVmsListForDisk(getDestinationDiskImage().getId(), false).isEmpty()) {
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getImageTemplateId())) {

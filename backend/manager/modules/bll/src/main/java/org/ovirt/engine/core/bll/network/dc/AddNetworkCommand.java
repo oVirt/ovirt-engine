@@ -33,9 +33,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> {
     @Inject
-    private VmDao vmDao;
-
-    @Inject
     NetworkFilterDao networkFilterDao;
 
     public AddNetworkCommand(T parameters, CommandContext cmdContext) {

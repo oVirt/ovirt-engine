@@ -122,7 +122,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
 
         doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
-        doReturn(vmDao).when(command).getVmDao();
 
         doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
         doReturn(diskValidator).when(command).getDiskValidator(disk);

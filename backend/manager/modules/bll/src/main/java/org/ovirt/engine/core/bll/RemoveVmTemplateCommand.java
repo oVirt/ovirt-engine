@@ -157,7 +157,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check no vms from this template on selected domains
-        List<VM> vms = getVmDao().getAllWithTemplate(vmTemplateId);
+        List<VM> vms = vmDao.getAllWithTemplate(vmTemplateId);
         List<String> problematicVmNames = new ArrayList<>();
         for (VM vm : vms) {
             problematicVmNames.add(vm.getName());

@@ -40,7 +40,7 @@ public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolP
         if (perm != null) {
             DbFacade.getInstance().getPermissionDao().remove(perm.getId());
             if (getParameters().getIsRestoreStateless()) {
-                VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId());
+                VM vm = vmDao.get(getParameters().getVmId());
                 if (vm != null) {
                     restoreVmFromBaseSnapshot(vm);
                 }

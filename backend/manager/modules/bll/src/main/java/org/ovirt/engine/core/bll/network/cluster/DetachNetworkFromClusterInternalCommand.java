@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.ClusterCommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
@@ -23,9 +21,6 @@ import org.ovirt.engine.core.dao.VmDao;
 @ValidateSupportsTransaction
 public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToClusterParameter>
         extends ClusterCommandBase<T> {
-
-    @Inject
-    private VmDao vmDao;
 
     public DetachNetworkFromClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -62,7 +62,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         // check if vm is from pool and detach it
         if (perms.getObjectType().equals(VdcObjectType.VM)
                 && perms.getRoleId().equals(PredefinedRoles.ENGINE_USER.getId())) {
-            VM vm = getVmDao().get(perms.getObjectId());
+            VM vm = vmDao.get(perms.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
                         new DetachUserFromVmFromPoolParameters(vm.getVmPoolId(), userId, vm.getId(), true));

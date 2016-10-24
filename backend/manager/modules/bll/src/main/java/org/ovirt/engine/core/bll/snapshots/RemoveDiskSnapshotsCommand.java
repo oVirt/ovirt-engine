@@ -93,7 +93,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             getParameters().setUseCinderCommandCallback(!ImagesHandler.filterDisksBasedOnCinder(getImages()).isEmpty());
 
             if (Guid.isNullOrEmpty(getParameters().getContainerId())) {
-                List<VM> listVms = getVmDao().getVmsListForDisk(representativeImage.getId(), false);
+                List<VM> listVms = vmDao.getVmsListForDisk(representativeImage.getId(), false);
                 if (!listVms.isEmpty()) {
                     VM vm = listVms.get(0);
                     setVm(vm);

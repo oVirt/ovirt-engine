@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.PauseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
 
@@ -36,7 +35,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
 
     private boolean canPauseVm(Guid vmId) {
         boolean retValue = true;
-        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
+        VM vm = vmDao.get(vmId);
         if (vm == null) {
             retValue = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);

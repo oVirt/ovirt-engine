@@ -210,7 +210,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
      */
     private List<VM> getVmsForDiskId() {
         if (listVms == null) {
-            listVms = getVmDao().getVmsListForDisk(getParameters().getDiskId(), true);
+            listVms = vmDao.getVmsListForDisk(getParameters().getDiskId(), true);
         }
         return listVms;
     }
@@ -253,7 +253,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private List<String> getNamesOfDerivedVmsFromTemplate(DiskImage diskImage) {
         List<String> result = new ArrayList<>();
-        for (VM vm : getVmDao().getAllWithTemplate(getVmTemplateId())) {
+        for (VM vm : vmDao.getAllWithTemplate(getVmTemplateId())) {
             for (Disk vmDisk : diskDao.getAllForVm(vm.getId())) {
                 if (vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage vmDiskImage = (DiskImage) vmDisk;

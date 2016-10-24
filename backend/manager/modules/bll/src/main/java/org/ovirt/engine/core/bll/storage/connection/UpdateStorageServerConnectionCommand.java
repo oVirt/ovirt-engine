@@ -131,7 +131,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             for (LUNs lun : getLuns()) {
                 Guid diskId = lun.getDiskId();
                 if (diskId != null) {
-                    Map<Boolean, List<VM>> vmsMap = getVmDao().getForDisk(diskId, true);
+                    Map<Boolean, List<VM>> vmsMap = vmDao.getForDisk(diskId, true);
                     List<VM> pluggedVms = vmsMap.get(Boolean.TRUE);
                     if (pluggedVms != null && !pluggedVms.isEmpty()) {
                         for (VM vm : pluggedVms) {

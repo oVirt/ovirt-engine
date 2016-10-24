@@ -18,7 +18,7 @@ public class DetachVmFromTagCommand<T extends AttachEntityToTagParameters> exten
         for (Guid vmGuid : getVmsList()) {
             if (getTagId() != null
                     && DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getTagId(), vmGuid) != null) {
-                VM vm = DbFacade.getInstance().getVmDao().get(vmGuid);
+                VM vm = vmDao.get(vmGuid);
                 if (vm != null) {
                     appendCustomCommaSeparatedValue("VmsNames", vm.getName());
                 }

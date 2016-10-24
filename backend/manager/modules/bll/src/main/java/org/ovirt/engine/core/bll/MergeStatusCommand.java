@@ -45,7 +45,7 @@ public class MergeStatusCommand<T extends MergeParameters>
 
     public void attemptResolution() {
         Set<Guid> images;
-        if (getVmDao().get(getParameters().getVmId()).isDown()) {
+        if (vmDao.get(getParameters().getVmId()).isDown()) {
             StoragePool pool = storagePoolDao.get(getParameters().getStoragePoolId());
             if (pool.getSpmVdsId() == null || pool.getStatus() != StoragePoolStatus.Up) {
                 log.info("VM down, waiting on SPM election to resolve Live Merge");

@@ -53,16 +53,17 @@ public class AuditLogableBaseTest {
     @Mock
     StoragePoolDao storagePoolDao;
 
+    @Mock
+    VmDao vmDao;
+
     @Spy
     @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
 
     @Before
     public void setUp() {
-        final VmDao vmDao = mock(VmDao.class);
         when(vmDao.get(GUID)).thenReturn(new VM());
         when(vmDao.get(GUID3)).thenThrow(new RuntimeException());
-        doReturn(vmDao).when(b).getVmDao();
 
         final VdsDao vdsDao = mock(VdsDao.class);
         final VDS vds1 = new VDS();

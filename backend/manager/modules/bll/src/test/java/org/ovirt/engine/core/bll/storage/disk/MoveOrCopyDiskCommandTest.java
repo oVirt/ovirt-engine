@@ -288,7 +288,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
 
         // Re-mock the vmDao to return this specific VM for it to be correlated with the vm list mocked by getVmsWithPlugInfo(..).
-        doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
         List<Pair<VM, VmDevice>> vmList = Collections.singletonList(new Pair<>(vm, vmDevice));
         when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
@@ -344,7 +343,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     protected void initializeCommand(Disk disk) {
-        doReturn(vmDao).when(command).getVmDao();
         when(diskDao.get(any(Guid.class))).thenReturn(disk);
 
         VM vm = new VM();

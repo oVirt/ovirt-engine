@@ -59,7 +59,6 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        doReturn(vmDaoMock).when(command).getVmDao();
         doReturn(vmDeviceDaoMock).when(command).getVmDeviceDao();
     }
 

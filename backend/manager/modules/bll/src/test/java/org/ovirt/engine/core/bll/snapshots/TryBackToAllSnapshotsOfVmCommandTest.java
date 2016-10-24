@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +51,6 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
         when(snapshotDao.get(cmd.getParameters().getDstSnapshotId())).thenReturn(snapshot);
 
         doNothing().when(cmd).updateVmDisksFromDb();
-        doReturn(vmDao).when(cmd).getVmDao();
     }
 
     @Test

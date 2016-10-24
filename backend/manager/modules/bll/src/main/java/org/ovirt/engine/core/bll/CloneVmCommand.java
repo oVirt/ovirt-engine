@@ -148,7 +148,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     @Override
     protected VM getSourceVmFromDb() {
         if (sourceVm == null) {
-            sourceVm = getVmDao().get(oldVmId);
+            sourceVm = vmDao.get(oldVmId);
         }
 
         return sourceVm;
@@ -157,7 +157,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     @Override
     public VM getVm() {
         if (vm == null) {
-            vm = getVmDao().get(oldVmId);
+            vm = vmDao.get(oldVmId);
             getVmDeviceUtils().setVmDevices(vm.getStaticData());
             VmHandler.updateDisksFromDb(vm);
             VmHandler.updateVmGuestAgentVersion(vm);

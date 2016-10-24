@@ -201,7 +201,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         vm.setId(vmId);
         vm.setStoragePoolId(spId);
         vm.setStatus(VMStatus.Down);
-        doReturn(vmDao).when(spyCommand).getVmDao();
         when(vmDao.get(vmId)).thenReturn(vm);
         return vm;
     }

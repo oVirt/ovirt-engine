@@ -736,7 +736,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     private void mockVmDaoGetVm() {
-        doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
     }
 

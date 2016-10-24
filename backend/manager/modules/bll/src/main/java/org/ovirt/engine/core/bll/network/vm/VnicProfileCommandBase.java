@@ -15,15 +15,11 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 
 public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> extends CommandBase<T> {
 
     private Network network;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private NetworkFilterDao networkFilterDao;

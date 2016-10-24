@@ -192,7 +192,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
      */
     protected VM getVmForNonShareableDiskImage(DiskImage disk) {
         if (!disk.isShareable()) {
-            List<VM> vms = getVmDao().getVmsListForDisk(disk.getId(), false);
+            List<VM> vms = vmDao.getVmsListForDisk(disk.getId(), false);
             if (!vms.isEmpty()) {
                 return vms.get(0);
             }

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -26,9 +24,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class RemoveProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
-
-    @Inject
-    private VmDao vmDao;
 
     private Provider<?> deletedProvider;
 

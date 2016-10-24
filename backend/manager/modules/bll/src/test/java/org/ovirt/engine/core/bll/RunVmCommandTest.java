@@ -295,7 +295,6 @@ public class RunVmCommandTest extends BaseCommandTest {
     private VM mockVm() {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         command.setCluster(new Cluster());
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd

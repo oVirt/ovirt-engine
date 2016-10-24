@@ -246,7 +246,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
         }
 
-        for (VM vm : getVmDao().getVmsListForDisk(getDiskImage().getId(), false)) {
+        for (VM vm : vmDao.getVmsListForDisk(getDiskImage().getId(), false)) {
             if (vm.getStatus() != VMStatus.Down) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
             }

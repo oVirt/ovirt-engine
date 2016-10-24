@@ -397,7 +397,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (result) {
-            vmList = getVmDao().getAllForCluster(oldCluster.getId());
+            vmList = vmDao.getAllForCluster(oldCluster.getId());
             hasVmOrHost = !vmList.isEmpty() || !allForCluster.isEmpty();
         }
 

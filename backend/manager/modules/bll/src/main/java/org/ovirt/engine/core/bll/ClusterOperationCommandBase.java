@@ -130,7 +130,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             }
         } else if (!alreadyInUpgradeMode && newCluster.isInUpgradeMode()) {
             final List<VDS> hosts = getVdsDao().getAllForCluster(getClusterId());
-            final List<VM> vms = getVmDao().getAllForCluster(getClusterId());
+            final List<VM> vms = vmDao.getAllForCluster(getClusterId());
             populateVMNUMAInfo(vms);
 
             if (!validate(getUpgradeValidator().isUpgradePossible(hosts, vms))) {

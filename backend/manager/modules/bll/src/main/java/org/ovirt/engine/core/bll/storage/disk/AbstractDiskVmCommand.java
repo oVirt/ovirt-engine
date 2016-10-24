@@ -58,9 +58,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private CinderBroker cinderBroker;
 
     @Inject
-    private VmDao vmDao;
-
-    @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
 
     protected AbstractDiskVmCommand(Guid commandId) {

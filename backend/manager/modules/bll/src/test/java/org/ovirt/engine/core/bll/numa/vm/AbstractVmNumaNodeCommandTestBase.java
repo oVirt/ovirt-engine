@@ -77,7 +77,6 @@ public abstract class AbstractVmNumaNodeCommandTestBase
         doReturn(dbFacade).when(command).getDbFacade();
         when(dbFacade.getVmNumaNodeDao()).thenReturn(vmNumaNodeDao);
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);
-        when(dbFacade.getVmDao()).thenReturn(vmDao);
         doReturn(numaValidator).when(command).getNumaValidator();
 
         vm = new VM();

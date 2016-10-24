@@ -60,9 +60,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     private ClusterDao clusterDao;
 
     @Inject
-    private VmDao vmDao;
-
-    @Inject
     private SyncNetworkParametersBuilder syncNetworkParametersBuilder;
 
     private Network oldNetwork;

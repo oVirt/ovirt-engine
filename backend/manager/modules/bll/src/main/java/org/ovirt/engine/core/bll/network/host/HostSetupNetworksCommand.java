@@ -77,7 +77,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -135,9 +134,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private VdsDao vdsDao;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private InterfaceDao interfaceDao;

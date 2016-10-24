@@ -109,7 +109,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
 
     private void mockVmDao() {
         when(vmDao.getAllRunningForVds(eq(FENCECD_HOST_ID))).thenReturn(new LinkedList<>());
-        when(dbFacade.getVmDao()).thenReturn(vmDao);
     }
 
     private void mockAuditLogDao() {

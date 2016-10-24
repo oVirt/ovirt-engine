@@ -329,7 +329,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         // get vms from db
-        List<VM> vmsToUpdate = getVmDao().getVmsListByInstanceType(getVmTemplateId());
+        List<VM> vmsToUpdate = vmDao.getVmsListByInstanceType(getVmTemplateId());
         for (VM vm : vmsToUpdate) {
             VmManagementParametersBase params = new VmManagementParametersBase(vm);
             params.setApplyChangesLater(true);
@@ -359,7 +359,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private void updateOriginalTemplateNameOnDerivedVms() {
         boolean templateNameChanged = !Objects.equals(oldTemplate.getName(), getVmTemplate().getName());
         if (templateNameChanged) {
-            getVmDao().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
+            vmDao.updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
         }
     }
 

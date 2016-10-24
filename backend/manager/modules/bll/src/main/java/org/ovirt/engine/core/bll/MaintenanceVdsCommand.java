@@ -91,7 +91,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     }
 
     protected void orderListOfRunningVmsOnVds(Guid vdsId) {
-        vms = getVmDao().getAllRunningForVds(vdsId);
+        vms = vmDao.getAllRunningForVds(vdsId);
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
     }
 

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.network.dc;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -19,14 +17,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends NetworkCommon<T> {
-
-    @Inject
-    private VmDao vmDao;
 
     private Network network;
     private Provider<?> provider;

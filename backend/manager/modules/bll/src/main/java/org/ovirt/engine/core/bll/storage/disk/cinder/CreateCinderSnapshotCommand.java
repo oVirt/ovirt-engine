@@ -182,7 +182,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     private boolean isDestinationImageExists(Guid destinationId) {
         return getDestinationDiskImage() != null
-                && !getVmDao().getVmsListForDisk(destinationId, false).isEmpty();
+                && !vmDao.getVmsListForDisk(destinationId, false).isEmpty();
     }
 
     @Override

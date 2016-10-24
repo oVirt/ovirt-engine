@@ -97,7 +97,6 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     private void prepareMocks() {
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
-        doReturn(vmDao).when(command).getVmDao();
     }
 
     protected StorageDomain createDomain() {

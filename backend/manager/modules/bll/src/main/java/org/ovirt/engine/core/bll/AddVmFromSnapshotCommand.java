@@ -65,7 +65,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     @Override
     protected void init() {
         super.init();
-        VM vm = getVmDao().get(getVmIdFromSnapshot());
+        VM vm = vmDao.get(getVmIdFromSnapshot());
         VmHandler.updateDisksFromDb(vm);
         boolean isCinderDisksExist = !ImagesHandler.filterDisksBasedOnCinder(vm.getDiskList()).isEmpty();
         getParameters().setUseCinderCommandCallback(isCinderDisksExist);
@@ -218,7 +218,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     @Override
     protected VM getSourceVmFromDb() {
         if (sourceVmFromDb == null) {
-            sourceVmFromDb = getVmDao().get(getVmIdFromSnapshot());
+            sourceVmFromDb = vmDao.get(getVmIdFromSnapshot());
         }
         return sourceVmFromDb;
     }

@@ -916,7 +916,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @OnTimerMethodAnnotation("updateVmVersion")
     public void updateVmVersion() {
-        for (Guid vmId : getVmDao().getVmIdsForVersionUpdate(getParameters().getBaseTemplateId())) {
+        for (Guid vmId : vmDao.getVmIdsForVersionUpdate(getParameters().getBaseTemplateId())) {
             // if the job was removed, stop executing, we probably have new version creation going on
             if (!updateVmsJobIdMap.containsKey(getParameters().getBaseTemplateId())) {
                 break;

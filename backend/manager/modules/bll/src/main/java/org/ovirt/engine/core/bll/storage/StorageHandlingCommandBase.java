@@ -156,10 +156,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
 
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
-        List<VM> vmRelatedToDomain = getVmDao().getAllForStorageDomain(storageDomain.getId());
+        List<VM> vmRelatedToDomain = vmDao.getAllForStorageDomain(storageDomain.getId());
         List<String> vmsInPreview = vmRelatedToDomain.stream().filter(vm -> !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()).map(VM::getName).collect(Collectors.toList());
 
-        List<VM> vmsWithDisksOnMultipleStorageDomain = getVmDao().getAllVMsWithDisksOnOtherStorageDomain(storageDomain.getId());
+        List<VM> vmsWithDisksOnMultipleStorageDomain = vmDao.getAllVMsWithDisksOnOtherStorageDomain(storageDomain.getId());
         vmRelatedToDomain.removeAll(vmsWithDisksOnMultipleStorageDomain);
         List<String> entitiesDeleteProtected = new ArrayList<>();
         List<String> vmsInPool = new ArrayList<>();
@@ -200,7 +200,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected void detachStorageDomainWithEntities(StorageDomain storageDomain) {
         // Check if we have entities related to the Storage Domain.
-        List<VM> vmsForStorageDomain = getVmDao().getAllForStorageDomain(storageDomain.getId());
+        List<VM> vmsForStorageDomain = vmDao.getAllForStorageDomain(storageDomain.getId());
         List<VmTemplate> vmTemplatesForStorageDomain = getVmTemplateDao().getAllForStorageDomain(storageDomain.getId());
         List<DiskImage> disksForStorageDomain = diskImageDao.getAllForStorageDomain(storageDomain.getId());
         removeEntitiesFromStorageDomain(vmsForStorageDomain, vmTemplatesForStorageDomain, disksForStorageDomain, storageDomain.getId());

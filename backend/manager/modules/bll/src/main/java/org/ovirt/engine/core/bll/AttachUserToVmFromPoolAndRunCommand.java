@@ -93,7 +93,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
         // check user isn't already attached to maximum number of vms from this pool
         if (returnValue) {
-            List<VM> vmsForUser = getVmDao().getAllForUser(getAdUserId());
+            List<VM> vmsForUser = vmDao.getAllForUser(getAdUserId());
 
             int vmCount = 0;
             for (VM vm : vmsForUser) {

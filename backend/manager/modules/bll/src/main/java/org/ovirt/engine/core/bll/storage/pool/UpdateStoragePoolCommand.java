@@ -39,7 +39,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -49,9 +48,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private ClusterDao clusterDao;

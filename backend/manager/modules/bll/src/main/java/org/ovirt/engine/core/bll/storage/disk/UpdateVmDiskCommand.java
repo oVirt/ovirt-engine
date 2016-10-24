@@ -847,7 +847,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     private void loadVmDiskAttachedToInfo() {
         if (getOldDisk() != null) {
-            List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDao().getVmsWithPlugInfo(getOldDisk().getId());
+            List<Pair<VM, VmDevice>> attachedVmsInfo = vmDao.getVmsWithPlugInfo(getOldDisk().getId());
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
                 vmsDiskOrSnapshotAttachedTo.add(vm);

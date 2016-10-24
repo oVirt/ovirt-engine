@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -61,7 +60,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
     private List<VM> getCachedVmsInPool() {
         if (cachedVmsInPool == null && getVmPoolId() != null) {
-            cachedVmsInPool = DbFacade.getInstance().getVmDao().getAllForVmPool(getVmPoolId());
+            cachedVmsInPool = vmDao.getAllForVmPool(getVmPoolId());
         }
         return cachedVmsInPool;
     }

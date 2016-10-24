@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.repoimage;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -49,8 +48,6 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         vm.setStatus(VMStatus.Down);
 
         when(vmDao.getVmsListForDisk(getDiskImageId(), Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
-
-        doReturn(vmDao).when(cmd).getVmDao();
     }
 
     @Test

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.provider.network;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -18,9 +16,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParameters> extends AddNetworkCommand<T> {
-
-    @Inject
-    private VmDao vmDao;
 
     private Provider<?> provider;
 

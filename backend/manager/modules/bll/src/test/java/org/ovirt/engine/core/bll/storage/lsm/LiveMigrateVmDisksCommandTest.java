@@ -94,7 +94,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     public void setupCommand() {
         initSpyCommand();
         initStoragePool();
-        mockDaos();
+        mockValidators();
     }
 
     private void initSpyCommand() {
@@ -367,15 +367,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     /** Mock Daos */
-
-    private void mockDaos() {
-        mockVmDao();
-        mockValidators();
-    }
-
-    private void mockVmDao() {
-        doReturn(vmDao).when(command).getVmDao();
-    }
 
     private void mockValidators() {
         doReturn(vmValidator).when(command).createVmValidator();
