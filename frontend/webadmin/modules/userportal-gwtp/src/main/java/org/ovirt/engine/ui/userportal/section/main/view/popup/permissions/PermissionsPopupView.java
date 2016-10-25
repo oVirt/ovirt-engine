@@ -46,4 +46,5 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<UserPorta
     public void cleanup() {
         driver.cleanup();
     }
+
 }
