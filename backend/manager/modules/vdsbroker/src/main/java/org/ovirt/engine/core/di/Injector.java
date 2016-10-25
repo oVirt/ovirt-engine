@@ -37,9 +37,9 @@ public class Injector {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> T injectMembers(T instance) {
-        AnnotatedType type = injector.manager.createAnnotatedType(instance.getClass());
-        InjectionTarget injectionTarget = injector.manager.createInjectionTarget(type);
-        injectionTarget.inject(instance, injector.manager.createCreationalContext(null));
+        AnnotatedType type = injector.getManager().createAnnotatedType(instance.getClass());
+        InjectionTarget injectionTarget = injector.getManager().createInjectionTarget(type);
+        injectionTarget.inject(instance, injector.getManager().createCreationalContext(null));
         injectionTarget.postConstruct(instance);
         return instance;
     }
@@ -66,7 +66,16 @@ public class Injector {
      */
     @SuppressWarnings("unchecked")
     public <T extends Object> T instanceOf(Class<T> clazz) {
-        Bean<?> bean = injector.manager.getBeans(clazz).iterator().next();
-        return (T) injector.manager.getReference(bean, clazz, injector.manager.createCreationalContext(bean));
+        Bean<?> bean = injector.getManager().getBeans(clazz).iterator().next();
+        return (T) injector.getManager().getReference(bean, clazz, injector.getManager().createCreationalContext(bean));
     }
+
+    /**
+     * Returns the {@link BeanManager} the {@code Injector} uses. This methods exists so it can be mocked away in the
+     * tests that need to ignore the manager.
+     */
+    public BeanManager getManager() {
+        return manager;
+    }
+
 }

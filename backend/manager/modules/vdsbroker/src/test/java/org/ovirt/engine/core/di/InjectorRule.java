@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.di;
 
+import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
+
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -16,6 +19,7 @@ public class InjectorRule extends TestWatcher {
 
     public InjectorRule() {
         mockedInjector = mock(Injector.class);
+        when(mockedInjector.getManager()).thenReturn(mock(BeanManager.class, RETURNS_MOCKS));
     }
 
     private void overrideInjector(Injector mockedInjector) {
