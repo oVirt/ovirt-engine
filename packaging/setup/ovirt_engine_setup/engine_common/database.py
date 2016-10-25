@@ -1040,7 +1040,7 @@ class OvirtUtils(base.Base):
                         "Use the following commands as an example:\n"
                         "\n"
                         "create role {user} with login encrypted password "
-                        "'{user}';\n"
+                        "'<password>';\n"
                         "create database {database} owner {user}\n"
                         " template template0\n"
                         " encoding 'UTF8' lc_collate 'en_US.UTF-8'\n"
