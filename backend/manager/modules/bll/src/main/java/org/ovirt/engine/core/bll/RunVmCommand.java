@@ -123,13 +123,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public RunVmCommand(T runVmParams, CommandContext commandContext) {
         super(runVmParams, commandContext);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
-        setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
     }
 
     @Override
     protected void init() {
         super.init();
         if (getVm() != null) {
+            setStoragePoolId(getVm().getStoragePoolId());
             // Load payload from Database (only if none was sent via the parameters)
             loadPayloadDevice();
             needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
