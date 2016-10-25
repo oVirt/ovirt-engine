@@ -49,7 +49,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     private StorageServerConnectionDao storageServerConnectionDao;
 
     private StorageServerConnectionParametersBase parameters =
-            new StorageServerConnectionParametersBase(null, Guid.newGuid());
+            new StorageServerConnectionParametersBase(null, Guid.newGuid(), false);
 
     @Spy
     @InjectMocks

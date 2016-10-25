@@ -30,7 +30,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
             VdcReturnValueBase returnValue = Backend
                     .getInstance()
                     .runInternalAction(VdcActionType.forValue(type),
-                            new StorageServerConnectionParametersBase(connection, vdsId));
+                            new StorageServerConnectionParametersBase(connection, vdsId, false));
             result = new Pair<>(returnValue.getSucceeded(), returnValue.getFault());
         } else {
             result = new Pair<>(false, null);

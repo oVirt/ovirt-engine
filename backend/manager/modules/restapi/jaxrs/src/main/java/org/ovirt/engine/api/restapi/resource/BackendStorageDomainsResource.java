@@ -247,7 +247,7 @@ public class BackendStorageDomainsResource
                         unit.getPassword(),
                         unit.getPort());
         performAction(VdcActionType.ConnectStorageToVds,
-                new StorageServerConnectionParametersBase(cnx, hostId));
+                new StorageServerConnectionParametersBase(cnx, hostId, false));
     }
 
     @Override
@@ -456,13 +456,13 @@ public class BackendStorageDomainsResource
 
     private String addStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
         return performAction(VdcActionType.AddStorageServerConnection,
-                new StorageServerConnectionParametersBase(cnx, hostId),
+                new StorageServerConnectionParametersBase(cnx, hostId, false),
                 String.class);
     }
 
     private String removeStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
         return performAction(VdcActionType.RemoveStorageServerConnection,
-                new StorageServerConnectionParametersBase(cnx, hostId),
+                new StorageServerConnectionParametersBase(cnx, hostId, false),
                 String.class);
     }
 

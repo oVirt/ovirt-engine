@@ -528,7 +528,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         // if create connection command was the one to fail and didn't create a connection
         // then the id of connection will be empty, and there's nothing to delete.
         if (connection.getId() != null && !connection.getId().equals("")) {  //$NON-NLS-1$
-            Frontend.getInstance().runAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
+            Frontend.getInstance().runAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId, false),
                 null, this);
         }
 
@@ -810,7 +810,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         if (fileConnection != null) {
             Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
-                new StorageServerConnectionParametersBase(fileConnection, hostId),
+                new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1112,7 +1112,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(posixModel.getAddStorageDomainVdcAction());
 
-        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId(), false));
         StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);
         parameter.setVdsId(host.getId());
         StoragePool dataCenter = model.getDataCenter().getSelectedItem();
@@ -1229,7 +1229,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
 
         StorageServerConnectionParametersBase parameters =
-                new StorageServerConnectionParametersBase(connection, hostId);
+                new StorageServerConnectionParametersBase(connection, hostId, false);
         Frontend.getInstance().runAction(VdcActionType.UpdateStorageServerConnection, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1286,13 +1286,13 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
         actionTypes.add(VdcActionType.DisconnectStorageServerConnection);
 
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
         tempVar2.setVdsId(host.getId());
         StoragePool dataCenter = model.getDataCenter().getSelectedItem();
         tempVar2.setStoragePoolId(dataCenter.getId());
         parameters.add(tempVar2);
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
             @Override
@@ -1455,7 +1455,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddLocalStorageDomain);
 
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
         tempVar2.setVdsId(host.getId());
         parameters.add(tempVar2);
@@ -1663,7 +1663,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         if (fileConnection != null) {
             // Clean nfs connection
             Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
-                new StorageServerConnectionParametersBase(fileConnection, hostId),
+                new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1729,7 +1729,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     public void importFileStorageConnect() {
-        Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId),
+        Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId, false),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
@@ -1827,7 +1827,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     public void postImportFileStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
         Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
-            new StorageServerConnectionParametersBase(fileConnection, hostId),
+            new StorageServerConnectionParametersBase(fileConnection, hostId, false),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {

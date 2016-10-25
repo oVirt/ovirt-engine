@@ -80,7 +80,7 @@ public class BackendStorageServerConnectionsResource
     }
 
     private StorageServerConnectionParametersBase getAddParams(StorageServerConnections entity, Guid hostId) {
-        StorageServerConnectionParametersBase params = new StorageServerConnectionParametersBase(entity, hostId);
+        StorageServerConnectionParametersBase params = new StorageServerConnectionParametersBase(entity, hostId, false);
         params.setVdsId(hostId);
         return params;
     }

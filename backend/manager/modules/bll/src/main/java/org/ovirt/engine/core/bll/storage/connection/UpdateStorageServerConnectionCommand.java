@@ -144,7 +144,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 Guid storageDomainId = lun.getStorageDomainId();
                 if (storageDomainId != null) {
                     StorageDomain domain = storageDomainDao.get(storageDomainId);
-                    if (!domain.getStorageDomainSharedStatus().equals(StorageDomainSharedStatus.Unattached)) {
+                    if (!domain.getStorageDomainSharedStatus().equals(StorageDomainSharedStatus.Unattached)
+                            && !getParameters().isForce()) {
                         for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
                             if (!map.getStatus().equals(StorageDomainStatus.Maintenance)) {
                                 String domainName = domain.getStorageName();
