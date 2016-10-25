@@ -34,64 +34,66 @@ public class ImageTransferUpdater {
         // TODO this lock might not be enough; analyze possible concurrent calls
         LockManager lockManager = LockManagerFactory.getLockManager();
         EngineLock lock = getEntityUpdateLock(commandId);
-        lockManager.acquireLockWait(lock);
+        try {
+            lockManager.acquireLockWait(lock);
 
-        ImageTransfer entity = imageTransferDao.get(commandId);
-        if (entity == null) {
-            log.error("Attempt to update non-existent ImageUpload entity");
-            return null;
+            ImageTransfer entity = imageTransferDao.get(commandId);
+            if (entity == null) {
+                log.error("Attempt to update non-existent ImageUpload entity");
+                return null;
+            }
+
+            entity.setLastUpdated(new java.util.Date());
+
+            if (updates != null) {
+                if (updates.getId() != null) {
+                    entity.setId(updates.getId());
+                }
+                if (updates.getPhase() != null) {
+                    String disk = entity.getDiskId() != null
+                            ? String.format(" (image %s)", entity.getDiskId().toString()) : "";
+                    String message = entity.getMessage() != null
+                            ? String.format(" (message: '%s')", entity.getMessage()) : "";
+                    log.info("Updating image upload {}{} phase to {}{}",
+                            commandId,
+                            disk,
+                            updates.getPhase(),
+                            message);
+                    entity.setPhase(updates.getPhase());
+                }
+                if (updates.getMessage() != null) {
+                    entity.setMessage(updates.getMessage());
+                }
+
+                if (updates.getVdsId() != null) {
+                    entity.setVdsId(updates.getVdsId());
+                }
+                if (updates.getDiskId() != null) {
+                    entity.setDiskId(updates.getDiskId());
+                }
+                if (updates.getImagedTicketId() != null || updates.isClearResourceId()) {
+                    entity.setImagedTicketId(updates.getImagedTicketId());
+                }
+                if (updates.getProxyUri() != null) {
+                    entity.setProxyUri(updates.getProxyUri());
+                }
+                if (updates.getSignedTicket() != null) {
+                    entity.setSignedTicket(updates.getSignedTicket());
+                }
+
+                if (updates.getBytesSent() != null) {
+                    entity.setBytesSent(updates.getBytesSent());
+                }
+                if (updates.getBytesTotal() != null) {
+                    entity.setBytesTotal(updates.getBytesTotal());
+                }
+            }
+
+            imageTransferDao.update(entity);
+            return entity;
+        } finally {
+            lockManager.releaseLock(lock);
         }
-
-        entity.setLastUpdated(new java.util.Date());
-
-        if (updates != null) {
-            if (updates.getId() != null) {
-                entity.setId(updates.getId());
-            }
-            if (updates.getPhase() != null) {
-                String disk = entity.getDiskId() != null
-                        ? String.format(" (image %s)", entity.getDiskId().toString()) : "";
-                String message = entity.getMessage() != null
-                        ? String.format(" (message: '%s')", entity.getMessage()) : "";
-                log.info("Updating image upload {}{} phase to {}{}",
-                        commandId,
-                        disk,
-                        updates.getPhase(),
-                        message);
-                entity.setPhase(updates.getPhase());
-            }
-            if (updates.getMessage() != null) {
-                entity.setMessage(updates.getMessage());
-            }
-
-            if (updates.getVdsId() != null) {
-                entity.setVdsId(updates.getVdsId());
-            }
-            if (updates.getDiskId() != null) {
-                entity.setDiskId(updates.getDiskId());
-            }
-            if (updates.getImagedTicketId() != null || updates.isClearResourceId()) {
-                entity.setImagedTicketId(updates.getImagedTicketId());
-            }
-            if (updates.getProxyUri() != null) {
-                entity.setProxyUri(updates.getProxyUri());
-            }
-            if (updates.getSignedTicket() != null) {
-                entity.setSignedTicket(updates.getSignedTicket());
-            }
-
-            if (updates.getBytesSent() != null) {
-                entity.setBytesSent(updates.getBytesSent());
-            }
-            if (updates.getBytesTotal() != null) {
-                entity.setBytesTotal(updates.getBytesTotal());
-            }
-        }
-
-        imageTransferDao.update(entity);
-
-        lockManager.releaseLock(lock);
-        return entity;
     }
 
     private EngineLock getEntityUpdateLock(Guid commandId) {
