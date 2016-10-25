@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.ExternalVariable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
-import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
@@ -125,7 +124,6 @@ import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.UserProfileDao;
 import org.ovirt.engine.core.dao.VdcOptionDao;
-import org.ovirt.engine.core.dao.VdsCpuStatisticsDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
@@ -234,7 +232,6 @@ public class DbFacade {
             put(DwhHistoryTimekeeping.class, DwhHistoryTimekeepingDao.class);
             put(IscsiBond.class, IscsiBondDao.class);
             put(VmInit.class, VmInitDao.class);
-            put(CpuStatistics.class, VdsCpuStatisticsDao.class);
             put(VdsNumaNode.class, VdsNumaNodeDao.class);
             put(VmNumaNode.class, VmNumaNodeDao.class);
             put(CommandEntity.class, CommandEntityDao.class);
@@ -1276,15 +1273,6 @@ public class DbFacade {
 
     public IscsiBondDao getIscsiBondDao() {
         return getDao(IscsiBondDao.class);
-    }
-
-    /**
-     * Returns the singleton instance of {@link VdsCpuStatisticsDao}.
-     *
-     * @return the dao instance
-     */
-    public VdsCpuStatisticsDao getVdsCpuStatisticsDao() {
-        return getDao(VdsCpuStatisticsDao.class);
     }
 
     /**

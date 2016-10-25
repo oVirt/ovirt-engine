@@ -8585,34 +8585,6 @@
         </row>
     </table>
 
-    <table name="vds_cpu_statistics">
-        <column>vds_cpu_id</column>
-        <column>vds_id</column>
-        <column>cpu_core_id</column>
-        <column>cpu_sys</column>
-        <column>cpu_user</column>
-        <column>cpu_idle</column>
-        <column>usage_cpu_percent</column>
-        <row>
-            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b519</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
-            <value>0</value>
-            <value>4.66</value>
-            <value>15.34</value>
-            <value>80.00</value>
-            <value>20</value>
-        </row>
-        <row>
-            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b51a</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
-            <value>1</value>
-            <value>4.66</value>
-            <value>15.34</value>
-            <value>80.00</value>
-            <value>20</value>
-        </row>
-    </table>
-
     <table name="numa_node_cpu_map">
         <column>id</column>
         <column>numa_node_id</column>

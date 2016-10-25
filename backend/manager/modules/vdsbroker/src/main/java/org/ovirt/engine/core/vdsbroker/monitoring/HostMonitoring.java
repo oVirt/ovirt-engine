@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -181,68 +180,8 @@ public class HostMonitoring {
                             return null;
                         });
             }
-            saveCpuStatisticsDataToDb();
             saveNumaStatisticsDataToDb();
         }
-    }
-
-    private void saveCpuStatisticsDataToDb() {
-        final List<CpuStatistics> cpuStatisticsToSave = new ArrayList<>();
-
-        cpuStatisticsToSave.addAll(vds.getStatisticsData().getCpuCoreStatistics());
-        if (!cpuStatisticsToSave.isEmpty()) {
-            List<CpuStatistics> dbCpuStats = getDbFacade().getVdsCpuStatisticsDao()
-                    .getAllCpuStatisticsByVdsId(vds.getId());
-            if (dbCpuStats.isEmpty()) {
-                TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                        () -> {
-                            getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
-                                    cpuStatisticsToSave, vds.getId());
-                            return null;
-                        });
-            }
-            else {
-                boolean needRemoveAndSave = isRemvoeAndSaveVdsCpuStatsNeeded(cpuStatisticsToSave, dbCpuStats);
-                if (needRemoveAndSave) {
-                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                            () -> {
-                                getDbFacade().getVdsCpuStatisticsDao().removeAllCpuStatisticsByVdsId(vds.getId());
-                                getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
-                                        cpuStatisticsToSave, vds.getId());
-                                return null;
-                            });
-                }
-                else {
-                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                            () -> {
-                                getDbFacade().getVdsCpuStatisticsDao().massUpdateCpuStatistics(
-                                        cpuStatisticsToSave, vds.getId());
-                                return null;
-                            });
-                }
-            }
-        }
-    }
-
-    private boolean isRemvoeAndSaveVdsCpuStatsNeeded(final List<CpuStatistics> cpuStatisticsToSave,
-            List<CpuStatistics> dbCpuStats) {
-        boolean needRemoveAndSave = false;
-        if (dbCpuStats.size() != cpuStatisticsToSave.size()) {
-            needRemoveAndSave = true;
-        }
-        else {
-            HashSet<Integer> vdsCpuStats = new HashSet<>();
-            for (CpuStatistics cpuStat : dbCpuStats) {
-                vdsCpuStats.add(cpuStat.getCpuId());
-            }
-            for (CpuStatistics cpuStat : cpuStatisticsToSave) {
-                if (!vdsCpuStats.contains(cpuStat.getCpuId())) {
-                    needRemoveAndSave = true;
-                    break;
-                }
-            }
-        }
-        return needRemoveAndSave;
     }
 
     private void saveNumaStatisticsDataToDb() {
