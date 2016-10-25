@@ -53,6 +53,26 @@ public class BackendVmGraphicsConsoleResource
         this.consoleId = consoleId;
     }
 
+    private VdcQueryReturnValue generateDescriptorResponse() throws Exception {
+        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType =
+            BackendGraphicsConsoleHelper.asGraphicsType(consoleId);
+
+        ConsoleOptions consoleOptions = new ConsoleOptions(graphicsType);
+        consoleOptions.setVmId(guid);
+        VdcQueryReturnValue configuredOptionsReturnValue = runQuery(
+            VdcQueryType.ConfigureConsoleOptions,
+            new ConfigureConsoleOptionsParams(consoleOptions, true)
+        );
+        if (!configuredOptionsReturnValue.getSucceeded()) {
+            throw new Exception(configuredOptionsReturnValue.getExceptionString());
+        }
+
+        return runQuery(
+            VdcQueryType.GetConsoleDescriptorFile,
+            new ConsoleOptionsParams(configuredOptionsReturnValue.getReturnValue())
+        );
+    }
+
     /**
      * A method handling GET requests with media type x-virt-viewer.
      * Returns a console representation usable by virt-viewer client (e.g. a .vv file)
@@ -62,34 +82,41 @@ public class BackendVmGraphicsConsoleResource
     @GET
     @Produces({ApiMediaType.APPLICATION_X_VIRT_VIEWER})
     public Response generateDescriptor() {
-        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType(consoleId);
-
-        ConsoleOptions consoleOptions = new ConsoleOptions(graphicsType);
-        consoleOptions.setVmId(guid);
-        VdcQueryReturnValue configuredOptionsReturnValue = runQuery(VdcQueryType.ConfigureConsoleOptions,
-                new ConfigureConsoleOptionsParams(consoleOptions, true));
-        if (!configuredOptionsReturnValue.getSucceeded()) {
-            return handleConfigureConsoleError(configuredOptionsReturnValue);
+        try {
+            VdcQueryReturnValue consoleDescriptorReturnValue = generateDescriptorResponse();
+            Response.ResponseBuilder builder;
+            if (consoleDescriptorReturnValue.getSucceeded() && consoleDescriptorReturnValue.getReturnValue() != null) {
+                builder = Response.ok(((String) consoleDescriptorReturnValue.getReturnValue())
+                        .getBytes(StandardCharsets.UTF_8), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
+            } else {
+                builder = Response.noContent();
+            }
+            return builder.build();
+        } catch (Exception ex) {
+            return handleConfigureConsoleError(ex.getMessage());
         }
-
-        VdcQueryReturnValue consoleDescriptorReturnValue = runQuery(VdcQueryType.GetConsoleDescriptorFile,
-                new ConsoleOptionsParams(configuredOptionsReturnValue.getReturnValue()));
-
-        Response.ResponseBuilder builder;
-        if (consoleDescriptorReturnValue.getSucceeded() && consoleDescriptorReturnValue.getReturnValue() != null) {
-            builder = Response.ok(((String) consoleDescriptorReturnValue.getReturnValue())
-                    .getBytes(StandardCharsets.UTF_8), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
-        } else {
-            builder = Response.noContent();
-        }
-
-        return builder.build();
     }
 
-    private Response handleConfigureConsoleError(VdcQueryReturnValue configuredOptionsReturnValue) {
-        log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, configuredOptionsReturnValue.getExceptionString()));
-        if (EngineMessage.USER_CANNOT_FORCE_RECONNECT_TO_VM.name()
-                .equals(configuredOptionsReturnValue.getExceptionString())) {
+    @Override
+    public Response remoteViewerConnectionFile(Action action) {
+        try {
+            VdcQueryReturnValue consoleDescriptorReturnValue = generateDescriptorResponse();
+            Response.ResponseBuilder builder;
+            if (consoleDescriptorReturnValue.getSucceeded() && consoleDescriptorReturnValue.getReturnValue() != null) {
+                action.setRemoteViewerConnectionFile(consoleDescriptorReturnValue.getReturnValue());
+                builder = Response.ok().entity(action);
+            } else {
+                builder = Response.noContent();
+            }
+            return builder.build();
+        } catch (Exception ex) {
+            return handleConfigureConsoleError(ex.getMessage());
+        }
+    }
+
+    private Response handleConfigureConsoleError(String exceptionMessage) {
+        log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, exceptionMessage));
+        if (EngineMessage.USER_CANNOT_FORCE_RECONNECT_TO_VM.name().equals(exceptionMessage)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         return Response.serverError().build();
