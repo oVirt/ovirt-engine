@@ -45,7 +45,9 @@ import org.slf4j.LoggerFactory;
                 PolicyUnitParameter.LOW_UTILIZATION,
                 PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
                 PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
-                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES
+                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES,
+                PolicyUnitParameter.ENABLE_AUTOMATIC_HOST_POWER_MANAGEMENT,
+                PolicyUnitParameter.HOSTS_IN_RESERVE
         }
 )
 public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
@@ -187,9 +189,10 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                                                                     List<VDS> pmMaintenanceHosts,
                                                                     List<VDS> emptyHosts,
                                                                     Map<String, String> parameters) {
-        final int requiredReserve = tryParseWithDefault(parameters.get("HostsInReserve"), Config
-                .<Integer> getValue(ConfigValues.HostsInReserve));
-        String enableAutoPMParameter = parameters.get("EnableAutomaticHostPowerManagement");
+        final int requiredReserve = tryParseWithDefault(parameters.get(PolicyUnitParameter.HOSTS_IN_RESERVE.getDbName()),
+                Config.<Integer> getValue(ConfigValues.HostsInReserve));
+        String enableAutoPMParameter = parameters.get(
+                PolicyUnitParameter.ENABLE_AUTOMATIC_HOST_POWER_MANAGEMENT.getDbName());
         Boolean enableAutoPM = enableAutoPMParameter == null ? null : Boolean.valueOf(enableAutoPMParameter);
         if (enableAutoPM == null) {
             enableAutoPM = Config.<Boolean> getValue(ConfigValues.EnableAutomaticHostPowerManagement);
