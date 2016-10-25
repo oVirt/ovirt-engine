@@ -54,7 +54,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
 
     @Override
     public void cleanup() {
-        super.cleanup();
         driver.cleanup();
     }
+
 }

@@ -245,12 +245,6 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     }
 
     @Override
-    public void cleanup() {
-        searchItems.cleanup();
-        searchButton.cleanup();
-    }
-
-    @Override
     public void focusInput() {
         searchStringEditor.setFocus(true);
     }
@@ -337,4 +331,5 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public void setLoadingState(LoadingState state) {
         searchItems.setLoadingState(state);
     }
+
 }

@@ -134,7 +134,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public ListModelListBoxEditor<HostNetworkQos> qosEditor;
 
     @UiField
-    UiCommandButton addQosButton;
+    public UiCommandButton addQosButton;
 
     @UiField(provided = true)
     @Ignore
@@ -154,7 +154,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     @Ignore
-    ExternalSubnetWidget subnetWidget;
+    public ExternalSubnetWidget subnetWidget;
 
     @UiField
     @Ignore
@@ -399,12 +399,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     @Override
-    public void cleanup() {
-        profilesEditor.cleanup();
-        subnetWidget.cleanup();
-    }
-
-    @Override
     public void toggleSubnetVisibility(boolean visible) {
         subnetTab.setVisible(visible);
     }
@@ -443,4 +437,5 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public DialogTabPanel getTabPanel() {
         return tabPanel;
     }
+
 }

@@ -52,7 +52,6 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
 
     @Override
     public void cleanup() {
-        super.cleanup();
         driver.cleanup();
     }
 
