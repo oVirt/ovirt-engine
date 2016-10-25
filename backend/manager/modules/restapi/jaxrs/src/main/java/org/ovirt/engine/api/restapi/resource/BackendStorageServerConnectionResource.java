@@ -54,7 +54,7 @@ public class BackendStorageServerConnectionResource extends
             hostId = getHostId(host);
         }
         StorageServerConnectionParametersBase parameters =
-                new StorageServerConnectionParametersBase(connection, hostId);
+                new StorageServerConnectionParametersBase(connection, hostId, false);
         return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
     }
 
@@ -89,7 +89,7 @@ public class BackendStorageServerConnectionResource extends
             if (incoming.getHost() != null) {
                hostId = getHostId(incoming.getHost());
             }
-            return new StorageServerConnectionParametersBase(connection, hostId);
+            return new StorageServerConnectionParametersBase(connection, hostId, isForce());
         }
 
         private Guid getHostId(Host host) {

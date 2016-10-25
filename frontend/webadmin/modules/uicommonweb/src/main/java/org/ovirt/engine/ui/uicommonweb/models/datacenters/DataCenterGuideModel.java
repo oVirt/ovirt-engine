@@ -721,7 +721,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddLocalStorageDomain);
 
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
         tempVar2.setVdsId(host.getId());
         parameters.add(tempVar2);
@@ -773,7 +773,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     private void cleanConnection(StorageServerConnections connection, Guid hostId) {
         Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
-                new StorageServerConnectionParametersBase(connection, hostId),
+                new StorageServerConnectionParametersBase(connection, hostId, false),
                 null,
                 this);
     }
@@ -857,11 +857,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
         actionTypes.add(VdcActionType.DisconnectStorageServerConnection);
 
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
         tempVar2.setVdsId(host.getId());
         parameters.add(tempVar2);
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
             @Override

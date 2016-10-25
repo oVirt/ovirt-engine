@@ -13,9 +13,12 @@ public class StorageServerConnectionParametersBase extends VdcActionParametersBa
 
     private Guid vdsId;
 
-    public StorageServerConnectionParametersBase(StorageServerConnections connection, Guid vdsId) {
+    private boolean force;
+
+    public StorageServerConnectionParametersBase(StorageServerConnections connection, Guid vdsId, boolean force) {
         setStorageServerConnection(connection);
         setVdsId(vdsId);
+        setForce(force);
     }
 
     public StorageServerConnectionParametersBase() {
@@ -35,5 +38,13 @@ public class StorageServerConnectionParametersBase extends VdcActionParametersBa
 
     public void setVdsId(Guid vdsId) {
         this.vdsId = vdsId;
+    }
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
     }
 }
