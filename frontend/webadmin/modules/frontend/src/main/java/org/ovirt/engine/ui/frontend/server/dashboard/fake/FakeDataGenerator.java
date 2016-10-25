@@ -66,6 +66,9 @@ public class FakeDataGenerator {
 
         result.setEvent(new InventoryStatus());
         createFakeValuesAlertErrorWarning(result.getEvent(), 169, random);
+
+        result.setVolume(new InventoryStatus());
+        createFakeValuesUpDownError(result.getVolume(), 95, random);
         return result;
     }
 

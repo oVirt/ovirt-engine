@@ -20,5 +20,9 @@ public enum GlusterStatus {
     /**
      * When the gluster status cannot be determined due to host being non-responsive
      */
-    UNKNOWN;
+    UNKNOWN,
+    /**
+     * When one or more bricks are down in the volume.
+     */
+    WARNING;
 }

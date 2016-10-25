@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.ovirt.engine.ui.frontend.server.dashboard.dao.ClusterEngineDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.dao.DataCenterDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.GlusterVolumeEngineDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.dao.HostEngineDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainEngineDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.dao.VmEngineDao;
@@ -66,6 +67,21 @@ public class InventoryHelper {
     public static InventoryStatus getVmInventorySummary(DataSource engineDataSource) throws DashboardDataException {
         VmEngineDao dao = new VmEngineDao(engineDataSource);
         return dao.getVmInventoryStatus();
+    }
+
+    /**
+     * Get the status information for Gluster Volumes.
+     * @param engineDataSource
+     *            The data source to use.
+     * @return An {@code InventoryStatus} object containing the status counts mapped from the original status to the
+     *         Up/Down/Warning status.
+     * @throws DashboardDataException
+     *             If there is a problem reading the query properties
+     */
+    public static InventoryStatus getGlusterVolumeInventorySummary(DataSource engineDataSource)
+            throws DashboardDataException {
+        GlusterVolumeEngineDao dao = new GlusterVolumeEngineDao(engineDataSource);
+        return dao.getVolumeInventoryStatus();
     }
 
 }

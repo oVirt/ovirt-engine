@@ -122,6 +122,7 @@ public class DashboardDataServlet extends HttpServlet {
         inventory.setHost(InventoryHelper.getHostInventoryStatus(engineDataSource));
         inventory.setStorage(InventoryHelper.getStorageInventoryStatus(engineDataSource));
         inventory.setVm(InventoryHelper.getVmInventorySummary(engineDataSource));
+        inventory.setVolume(InventoryHelper.getGlusterVolumeInventorySummary(engineDataSource));
         inventory.setEvent(EventHelper.getEventStatus(engineDataSource));
         return inventory;
     }

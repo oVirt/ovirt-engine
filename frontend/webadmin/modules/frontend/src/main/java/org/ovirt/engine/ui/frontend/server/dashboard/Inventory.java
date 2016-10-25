@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.ui.frontend.server.dashboard.maps.DcStatusMap;
+import org.ovirt.engine.ui.frontend.server.dashboard.maps.GlusterVolumeStatusMap;
 import org.ovirt.engine.ui.frontend.server.dashboard.maps.HostStatusMap;
 import org.ovirt.engine.ui.frontend.server.dashboard.maps.StorageStatusMap;
 import org.ovirt.engine.ui.frontend.server.dashboard.maps.VmStatusMap;
@@ -16,6 +17,7 @@ public class Inventory {
     private InventoryStatus storage;
     private InventoryStatus vm;
     private InventoryStatus event;
+    private InventoryStatus volume;
 
     public InventoryStatus getDc() {
         return dc;
@@ -82,5 +84,17 @@ public class Inventory {
             event.setStatusValues(severity.name().toLowerCase(), Arrays.asList(severity.name().toLowerCase()));
         }
         this.event = event;
+    }
+
+    public InventoryStatus getVolume() {
+        return volume;
+    }
+
+    public void setVolume(InventoryStatus volume) {
+        this.volume = volume;
+        for (GlusterVolumeStatusMap status : GlusterVolumeStatusMap.values()) {
+            List<String> statusValues = Arrays.asList(status.getStringValues());
+            volume.setStatusValues(status.name().toLowerCase(), statusValues);
+        }
     }
 }
