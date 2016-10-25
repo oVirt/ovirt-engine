@@ -8,11 +8,13 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.rpc.XsrfProtectedService;
 import com.google.gwt.user.server.rpc.NoXsrfProtect;
 
 @RemoteServiceRelativePath("GenericApiGWTService")
-public interface GenericApiGWTService extends XsrfProtectedRpcService {
+public interface GenericApiGWTService extends XsrfProtectedService {
 
     VdcQueryReturnValue runQuery(VdcQueryType search,
             VdcQueryParametersBase searchParameters);

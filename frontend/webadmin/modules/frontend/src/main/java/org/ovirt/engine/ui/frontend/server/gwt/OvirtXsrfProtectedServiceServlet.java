@@ -4,38 +4,38 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
+
 import com.google.gwt.user.client.rpc.RpcToken;
+import com.google.gwt.user.client.rpc.RpcTokenException;
 import com.google.gwt.user.client.rpc.XsrfToken;
 import com.google.gwt.user.server.Util;
 import com.google.gwt.user.server.rpc.NoXsrfProtect;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.XsrfProtect;
+import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
+import com.google.gwt.util.tools.shared.StringUtils;
 
-public abstract class AbstractXsrfProtectedRpcServlet extends RpcRemoteOracleServlet {
+public class OvirtXsrfProtectedServiceServlet extends XsrfProtectedServiceServlet {
 
-    /**
-     * Serial version UID for serialization.
-     */
-    static final long serialVersionUID = -7274292100456700624L;
+    private static final long serialVersionUID = 1802731419400198238L;
 
-    /**
-     * The default constructor used by service implementations that extend this class. The servlet will delegate AJAX
-     * requests to the appropriate method in the subclass.
-     */
-    public AbstractXsrfProtectedRpcServlet() {
-        super();
-    }
+    @Override
+    protected void validateXsrfToken(RpcToken token, Method method) {
+        if (token == null) {
+            throw new RpcTokenException("XSRF token missing"); //$NON-NLS-1$
+        }
+        String expectedToken;
+        HttpSession session = getThreadLocalRequest().getSession();
+        expectedToken = StringUtils.toHexString(
+                (byte[]) session.getAttribute(OvirtXsrfTokenServiceServlet.XSRF_TOKEN));
+        XsrfToken xsrfToken = (XsrfToken) token;
 
-    /**
-     * The wrapping constructor used by service implementations that are separate from this class. The servlet will
-     * delegate AJAX requests to the appropriate method in the given object.
-     *
-     * @param delegate
-     *            The delegate object.
-     */
-    public AbstractXsrfProtectedRpcServlet(Object delegate) {
-        super(delegate);
+        if (!expectedToken.equals(xsrfToken.getToken())) {
+            throw new RpcTokenException("Invalid XSRF token"); //$NON-NLS-1$
+        }
     }
 
     private XsrfToken extractTokenFromRequest() {
@@ -67,13 +67,4 @@ public abstract class AbstractXsrfProtectedRpcServlet extends RpcRemoteOracleSer
                 NoXsrfProtect.class, RpcToken.class);
     }
 
-    /**
-     * Override this method to perform XSRF token verification.
-     *
-     * @param token
-     *            {@link RpcToken} included with an RPC request.
-     * @param method
-     *            method being invoked via this RPC call.
-     */
-    protected abstract void validateXsrfToken(RpcToken token, Method method);
 }

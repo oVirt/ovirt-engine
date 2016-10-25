@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 
-public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements GenericApiGWTService {
+public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet implements GenericApiGWTService {
 
     private static final long serialVersionUID = 7395780289048030855L;
 
