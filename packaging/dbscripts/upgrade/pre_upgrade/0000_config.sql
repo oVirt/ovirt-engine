@@ -167,7 +167,8 @@ select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
 select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_64":"false","ppc64":"false"}', '3.6');
-select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"false"}', '4.1');
+select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"false"}', '4.0');
+select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86_64":"false","ppc64":"false"}', '4.1');
 select fn_db_add_config_value('HotPlugMemorySupported', '{"x86_64":"true","ppc64":"false"}', '3.6');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86_64":"false","ppc64":"false"}', '4.1');
@@ -776,6 +777,7 @@ select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','3.6');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','4.0');
 select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
+select fn_db_update_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');

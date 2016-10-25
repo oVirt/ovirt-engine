@@ -245,6 +245,8 @@ public interface OsRepository {
      */
     boolean isCpuSupported(int osId, Version version, String cpuId);
 
+    boolean isCpuHotplugSupported(int osId);
+
     /**
      * @return a map that contain an pair (OS id and version) with the sound device support.
      */

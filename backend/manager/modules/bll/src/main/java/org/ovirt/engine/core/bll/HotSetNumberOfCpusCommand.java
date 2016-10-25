@@ -69,6 +69,11 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
             if (!FeatureSupported.hotPlugCpu(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
                 valid = failValidation(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
+            } else if (!osRepository.isCpuHotplugSupported(getVm().getVmOsId())) {
+                valid = failValidation(
+                        EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED_FOR_GUEST_OS,
+                        String.format("$guestOS %1$s", osRepository.getOsName(getVm().getVmOsId())),
+                        String.format("$architecture %1$s", getVm().getClusterArch()));
             }
         } else if (!FeatureSupported.hotUnplugCpu(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
             valid = failValidation(EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);

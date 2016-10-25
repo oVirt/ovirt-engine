@@ -457,6 +457,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean isCpuHotplugSupported(int osId) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "cpu.hotplugSupport", null), true);
+    }
+
+    @Override
     public Map<Integer, Map<Version, Boolean>> getSoundDeviceSupportMap() {
         Map<Integer, Map<Version, Boolean>> soundDeviceSupportMap = new HashMap<>();
         Set<Version> versionsWithNull = new HashSet<>(Version.ALL);

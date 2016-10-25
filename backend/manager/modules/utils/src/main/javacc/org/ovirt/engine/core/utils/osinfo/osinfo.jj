@@ -32,6 +32,7 @@ void attribute() : {} {
     | (<FAMILY> stringValue())
     | ("cpuArchitecture" archValue())
     | (<CPU_UNSUPPORTED> stringValue())
+    | ("cpu.hotplugSupport" booleanValue())
     | ("bus" busValue())
     | (<SYSPREP_PATH> stringValue())
     | (<SYSPREP_FILENAME> stringValue())
