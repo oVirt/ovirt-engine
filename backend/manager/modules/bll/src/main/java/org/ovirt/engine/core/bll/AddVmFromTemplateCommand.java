@@ -82,10 +82,6 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
         vmStaticDao.update(getVm().getStaticData());
-        // if there are no tasks, we can end the command right away.
-        if (getTaskIdList().isEmpty()) {
-            endSuccessfully();
-        }
         checkTrustedService();
         logIfDisksHaveIllegalPassDiscard();
     }
@@ -229,7 +225,22 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return new ConcurrentChildCommandsExecutionCallback();
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        switch (getActionState()) {
+        case EXECUTE:
+            return AuditLogType.USER_ADD_VM_STARTED;
+
+        case END_SUCCESS:
+            return getSucceeded() ? AuditLogType.USER_ADD_VM_FINISHED_SUCCESS
+                    : AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
+
+        default:
+            return AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
+        }
     }
 
     private void logIfDisksHaveIllegalPassDiscard() {

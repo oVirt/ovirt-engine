@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
@@ -132,7 +131,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return isDataOperationsBySpm(getStorageDomain().getStorageStaticData());
     }
 
-    protected VDSReturnValue performImageVdsmOperation() {
+    protected boolean performImageVdsmOperation() {
         throw new UnsupportedOperationException();
     }
 

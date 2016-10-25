@@ -972,21 +972,51 @@ public final class ImagesHandler {
             Guid imageGroupID) {
         // We don't support Sparse-RAW volumes on block domains, therefore if the volume is RAW there is no
         // need to pass initial size (it can be only preallocated).
-        if (destFormat == VolumeFormat.COW &&
-                ImagesHandler.isImageInitialSizeSupported(
-                        DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageType())) {
+        if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
             //TODO: inspect if we can rely on the database to get the actual size.
             DiskImage imageInfoFromStorage = ImagesHandler.getVolumeInfoFromVdsm(storagePoolId,
                     srcDomain, imageGroupID, sourceImage.getId());
             // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
             // case in which we won't have enough space. If the source is already COW we don't need the additional
             // space.
-            return sourceImage.getVolumeFormat() == VolumeFormat.COW ?
-                    Double.valueOf(Math.ceil(imageInfoFromStorage.getActualSizeInBytes() /
-                            StorageConstants.QCOW_OVERHEAD_FACTOR)).longValue() :
-                    imageInfoFromStorage.getActualSizeInBytes();
+            return computeCowImageNeededSize(imageInfoFromStorage.getActualSizeInBytes());
         }
         return null;
+    }
+
+    private static long computeCowImageNeededSize(long actualSize) {
+        return Double.valueOf(Math.ceil(actualSize / StorageConstants.QCOW_OVERHEAD_FACTOR)).longValue();
+    }
+
+    /**
+     * This method is use to compute the initial size of a disk image based on the source disk image size,
+     * including all the existing snapshots.
+     * It is needed when copying/moving an existing image with collapse in order to create the destination disk image
+     * with the right size from the beginning, saving the process of extending the allocation.
+     *
+     * @param sourceImage The source disk image
+     * @param destFormat The volume format of the destination image (COW/RAW)
+     * @param dstDomain The storage domain where the disk image will be copied to
+     * @return the computed initial size in bytes or null if it is not needed/supported
+     */
+    public static Long determineTotalImageInitialSize(DiskImage sourceImage,
+            VolumeFormat destFormat,
+            Guid dstDomain) {
+
+        if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
+
+            double totalSizeForClonedDisk = ImagesHandler.getTotalSizeForClonedDisk(sourceImage,
+                    DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageStaticData());
+
+            return computeCowImageNeededSize(Double.valueOf(totalSizeForClonedDisk).longValue());
+        }
+        return null;
+    }
+
+    private static boolean isInitialSizeSupportedForFormat(VolumeFormat destFormat, Guid dstDomain) {
+        return destFormat == VolumeFormat.COW &&
+                ImagesHandler.isImageInitialSizeSupported(
+                        DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageType());
     }
 
     public static void prepareImage(Guid storagePoolId,

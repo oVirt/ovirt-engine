@@ -61,8 +61,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
             break;
         }
 
-        VDSReturnValue vdsReturnValue = performImageVdsmOperation();
-        return vdsReturnValue != null && vdsReturnValue.getSucceeded();
+        return performImageVdsmOperation();
     }
 
     @Override
@@ -91,7 +90,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     }
 
     @Override
-    protected VDSReturnValue performImageVdsmOperation() {
+    protected boolean performImageVdsmOperation() {
         VDSReturnValue vdsReturnValue = null;
         try {
             Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
@@ -124,6 +123,6 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
             getReturnValue().setFault(new EngineFault(e, e.getVdsError().getCode()));
             log.info("Image '{}' not exist in Irs", getDiskImage().getImageId());
         }
-        return vdsReturnValue;
+        return vdsReturnValue != null ? vdsReturnValue.getSucceeded() : false;
     }
 }

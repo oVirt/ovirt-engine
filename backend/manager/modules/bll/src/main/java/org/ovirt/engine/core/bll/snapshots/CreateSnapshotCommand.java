@@ -49,8 +49,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
 
     @Override
     protected void executeCommand() {
-        VDSReturnValue vdsReturnValue = performImageVdsmOperation();
-        if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
+        if (performImageVdsmOperation()) {
             TransactionSupport.executeInNewTransaction(() -> {
                 processOldImageFromDb();
                 addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
@@ -67,7 +66,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     @Override
-    protected VDSReturnValue performImageVdsmOperation() {
+    protected boolean performImageVdsmOperation() {
         setDestinationImageId(Guid.newGuid());
         newDiskImage = cloneDiskImage(getDestinationImageId());
         newDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(getDestinationStorageDomainId())));
@@ -79,12 +78,10 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         // storage team request
         newDiskImage.setVolumeType(VolumeType.Sparse);
         newDiskImage.setVolumeFormat(VolumeFormat.COW);
-        VDSReturnValue vdsReturnValue;
-
         try {
             Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
-            vdsReturnValue =
+            VDSReturnValue vdsReturnValue =
                     runVdsCommand(
                                     VDSCommandType.CreateSnapshot,
                                     new CreateSnapshotVDSCommandParameters(getStoragePoolId(),
@@ -98,7 +95,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             getDestinationImageId(),
                                             ""));
 
-            if (vdsReturnValue.getSucceeded()) {
+            if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                 getParameters().setVdsmTaskIds(new ArrayList<>());
                 getParameters().getVdsmTaskIds().add(
                         createTask(taskId,
@@ -113,6 +110,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 if (getDestinationImageId().equals(Guid.Empty)) {
                     throw new RuntimeException();
                 }
+                return true;
             }
         } catch (Exception e) {
             log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());
@@ -121,7 +119,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             throw new EngineException(EngineError.VolumeCreationError);
         }
 
-        return vdsReturnValue;
+        return false;
     }
 
     @Override

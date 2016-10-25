@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
@@ -37,6 +36,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     public CopyImageGroupWithDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
+        setStorageDomainId(getParameters().getDestDomain());
     }
 
     private void prepareParameters() {
@@ -103,15 +103,16 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         CreateVolumeContainerCommandParameters parameters = new CreateVolumeContainerCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getDestDomain(),
-                getParameters().getImageGroupID(),
-                getParameters().getImageId(),
+                Guid.Empty,
+                Guid.Empty,
                 getParameters().getDestImageGroupId(),
                 getParameters().getDestinationImageId(),
                 getParameters().getDestinationFormat(),
                 getParameters().getDescription(),
                 getDiskImage().getSize(),
-                Double.valueOf(Math.ceil(ImagesHandler.getTotalSizeForClonedDisk(getDiskImage(), getStorageDomain()
-                        .getStorageStaticData())) / StorageConstants.QCOW_OVERHEAD_FACTOR).longValue());
+                ImagesHandler.determineTotalImageInitialSize(getDiskImage(),
+                        getParameters().getDestinationFormat(),
+                        getParameters().getDestDomain()));
 
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
         parameters.setParentCommand(getActionType());

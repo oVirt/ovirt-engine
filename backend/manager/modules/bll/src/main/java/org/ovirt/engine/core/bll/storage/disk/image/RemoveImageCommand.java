@@ -76,7 +76,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             try {
                 Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
-                VDSReturnValue vdsReturnValue = performImageVdsmOperation();
+                VDSReturnValue vdsReturnValue = performDeleteImageVdsmOperation();
                 getTaskIdList().add(
                         createTask(taskId,
                                 vdsReturnValue.getCreationInfo(),
@@ -281,8 +281,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         }
     }
 
-    @Override
-    protected VDSReturnValue performImageVdsmOperation() {
+    protected VDSReturnValue performDeleteImageVdsmOperation() {
         if (getParameters().isShouldLockImage()) {
             // the image status should be set to ILLEGAL, so that in case compensation runs the image status will
             // be revert to be ILLEGAL, as we can't tell whether the task started on vdsm side or not.

@@ -6,8 +6,11 @@ import java.util.Arrays;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.CreateSnapshotFromTemplateCommand;
 import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
@@ -46,45 +49,69 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected VDSReturnValue performImageVdsmOperation() {
+    protected boolean performImageVdsmOperation() {
         setDestinationImageId(Guid.newGuid());
         newDiskImage = cloneDiskImage(getDestinationImageId());
         newDiskImage.setId(Guid.newGuid());
         Guid storagePoolID = newDiskImage.getStoragePoolId() != null ? newDiskImage
                 .getStoragePoolId() : Guid.Empty;
 
-        VDSReturnValue vdsReturnValue = null;
-        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
-        try {
-            vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
-                    PostZeroHandler.fixParametersWithPostZero(
-                            new CopyImageVDSCommandParameters(storagePoolID, getParameters().getStorageDomainId(),
-                                    getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
-                                    newDiskImage.getId(), getDestinationImageId(),
-                                    "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
-                                    newDiskImage.getVolumeFormat(), newDiskImage.getVolumeType(),
-                                    getDiskImage().isWipeAfterDelete(), false)));
+        if (isDataOperationsByHSM()) {
+            CopyImageGroupWithDataCommandParameters p = new CopyImageGroupWithDataCommandParameters(
+                    storagePoolID,
+                    getParameters().getStorageDomainId(),
+                    getDestinationStorageDomainId(),
+                    getDiskImage().getId(),
+                    getImage().getImageId(),
+                    newDiskImage.getId(),
+                    getDestinationImageId(),
+                    newDiskImage.getVolumeFormat(),
+                    true);
 
-        } catch (EngineException e) {
-            log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());
-            throw e;
+            p.setParentParameters(getParameters());
+            p.setParentCommand(getActionType());
+            p.setEndProcedure(VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
+            runInternalAction(VdcActionType.CopyImageGroupWithData, p);
+            return true;
+        } else {
+            Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
+            VDSReturnValue vdsReturnValue;
+            try {
+                vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
+                        PostZeroHandler.fixParametersWithPostZero(
+                                new CopyImageVDSCommandParameters(storagePoolID, getParameters().getStorageDomainId(),
+                                        getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
+                                        newDiskImage.getId(), getDestinationImageId(),
+                                        "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
+                                        newDiskImage.getVolumeFormat(), newDiskImage.getVolumeType(),
+                                        getDiskImage().isWipeAfterDelete(), false)));
+
+            } catch (EngineException e) {
+                log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());
+                throw e;
+            }
+
+            if (vdsReturnValue.getSucceeded()) {
+                getTaskIdList().add(
+                        createTask(taskId,
+                                vdsReturnValue.getCreationInfo(),
+                                VdcActionType.AddVmFromTemplate,
+                                VdcObjectType.Storage,
+                                getParameters().getStorageDomainId(),
+                                getDestinationStorageDomainId()));
+            }
+
+            return vdsReturnValue.getSucceeded();
         }
-
-        if (vdsReturnValue.getSucceeded()) {
-            getReturnValue().getInternalVdsmTaskIdList().add(
-                    createTask(taskId,
-                            vdsReturnValue.getCreationInfo(),
-                            VdcActionType.AddVmFromTemplate,
-                            VdcObjectType.Storage,
-                            getParameters().getStorageDomainId(),
-                            getDestinationStorageDomainId()));
-        }
-
-        return vdsReturnValue;
     }
 
     @Override
     protected AsyncTaskType getTaskType() {
-        return AsyncTaskType.copyImage;
+        return isDataOperationsByHSM() ? AsyncTaskType.notSupported : AsyncTaskType.copyImage;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return isDataOperationsByHSM() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 }
