@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -43,7 +44,7 @@ public class ImageTransferUpdater {
                 return null;
             }
 
-            entity.setLastUpdated(new java.util.Date());
+            entity.setLastUpdated(new Date());
 
             if (updates != null) {
                 if (updates.getId() != null) {
