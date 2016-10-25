@@ -433,7 +433,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void runFailedAutoStartVMs(List<Guid> vmIds) {
         for (Guid vmId : vmIds) {
             // Alert that the virtual machine failed:
-            AuditLogableBase event = new AuditLogableBase();
+            AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
             event.setVmId(vmId);
             auditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
 
@@ -447,7 +447,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void runColdRebootVms(List<Guid> vmIds) {
         for (Guid vmId : vmIds) {
-            AuditLogableBase event = new AuditLogableBase();
+            AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
             event.setVmId(vmId);
             auditLogDirector.log(event, AuditLogType.COLD_REBOOT_VM_DOWN);
 

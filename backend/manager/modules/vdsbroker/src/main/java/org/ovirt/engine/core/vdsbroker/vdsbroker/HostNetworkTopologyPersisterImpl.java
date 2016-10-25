@@ -32,6 +32,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -181,7 +182,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                     new DisplayInterfaceEqualityPredicate(engineDisplayInterface);
             if (vdsmDisplayInterface == null // the display interface is't on host anymore
                 || !displayIneterfaceEqualityPredicate.test(vdsmDisplayInterface)) {
-                final AuditLogableBase loggable = new AuditLogableBase(host.getId());
+                final AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase(host.getId()));
                 auditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
             }
         }
@@ -235,7 +236,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         }
 
         if (!networkNames.isEmpty()) {
-            AuditLogableBase logable = new AuditLogableBase(host.getId());
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(host.getId()));
             logable.addCustomValue("Networks", StringUtils.join(networkNames, ","));
             auditLogDirector.log(logable, AuditLogType.VDS_NETWORKS_OUT_OF_SYNC);
         }

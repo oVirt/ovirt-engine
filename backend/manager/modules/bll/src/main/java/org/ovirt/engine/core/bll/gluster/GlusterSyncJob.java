@@ -298,7 +298,7 @@ public class GlusterSyncJob extends GlusterJob {
                     runVdsCommand(VDSCommandType.AddGlusterServer,
                             new AddGlusterServerVDSParameters(upServerId, newServerName));
             if (!returnValue.getSucceeded()) {
-                AuditLogableBase logable = new AuditLogableBase(upServerId);
+                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(upServerId));
                 logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
                 auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
             }

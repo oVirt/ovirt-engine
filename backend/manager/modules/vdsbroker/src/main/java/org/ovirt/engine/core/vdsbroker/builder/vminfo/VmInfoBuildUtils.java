@@ -46,6 +46,7 @@ import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
@@ -447,7 +448,7 @@ public class VmInfoBuildUtils {
             return;
         }
 
-        AuditLogableBase event = new AuditLogableBase();
+        AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
         event.setVmId(vm.getId());
         event.setClusterId(vm.getClusterId());
         event.setCustomId(nic.getId().toString());

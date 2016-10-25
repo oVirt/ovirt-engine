@@ -251,11 +251,10 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         }
 
         if (!failedOvfDisks.isEmpty()) {
-            AuditLogableBase auditLogableBase = new AuditLogableBase();
-            auditLogableBase.addCustomValue("DataCenterName", getStoragePool().getName());
-            auditLogableBase.addCustomValue("StorageDomainName", getStorageDomain().getName());
-            auditLogableBase.addCustomValue("DisksIds", StringUtils.join(failedOvfDisks, ", "));
-            auditLogDirector.log(auditLogableBase, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
+            addCustomValue("DataCenterName", getStoragePool().getName());
+            addCustomValue("StorageDomainName", getStorageDomain().getName());
+            addCustomValue("DisksIds", StringUtils.join(failedOvfDisks, ", "));
+            auditLogDirector.log(this, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
         }
     }
 

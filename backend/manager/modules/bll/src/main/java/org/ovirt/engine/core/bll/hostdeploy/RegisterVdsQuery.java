@@ -34,6 +34,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -67,7 +68,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     public RegisterVdsQuery(P parameters) {
         super(parameters);
-        logable = new AuditLogableBase(parameters.getVdsId());
+        logable = Injector.injectMembers(new AuditLogableBase(parameters.getVdsId()));
     }
 
     protected String getStrippedVdsUniqueId() {
@@ -208,7 +209,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     private void reportClusterError() {
         log.error("No default or valid cluster was found, host registration failed.");
-        AuditLogableBase logableBase = new AuditLogableBase();
+        AuditLogableBase logableBase = Injector.injectMembers(new AuditLogableBase());
         logableBase.setVdsId(getParameters().getVdsId());
         auditLogDirector.log(logableBase, AuditLogType.HOST_REGISTRATION_FAILED_INVALID_CLUSTER);
     }

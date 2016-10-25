@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -186,7 +187,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
     protected abstract boolean isVmNeedsToBeAutoStarted(Guid vmId);
 
     private void logFailedAttemptToRestartVm(Guid vmId) {
-        AuditLogableBase event = new AuditLogableBase();
+        AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
         event.setVmId(vmId);
         auditLogDirector.log(event, getRestartFailedAuditLogType());
     }

@@ -512,7 +512,7 @@ public class VmHandler {
      */
     public static void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
         if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
-            AuditLogableBase logable = new AuditLogableBase();
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
             logable.setVmId(vm.getId());
             logable.addCustomValue("VmName", vm.getName());
             logable.addCustomValue("VmMemInMb", String.valueOf(vm.getMemSizeMb()));

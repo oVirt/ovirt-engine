@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 public class StorageDomainHelper {
 
@@ -22,7 +23,7 @@ public class StorageDomainHelper {
             long numOfLVs = DbFacade.getInstance().getStorageDomainDao().getNumberOfImagesInStorageDomain(storageDomainId);
             Integer maxNumOfLVs = Config.getValue(ConfigValues.AlertOnNumberOfLVs);
             if (numOfLVs >= maxNumOfLVs) {
-                AuditLogableBase logable = new AuditLogableBase();
+                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                 logable.addCustomValue("storageDomainName", domain.getStorageName());
                 logable.addCustomValue("maxNumOfLVs", maxNumOfLVs.toString());
                 logable.setStorageDomainId(storageDomainId);

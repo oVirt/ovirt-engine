@@ -947,7 +947,7 @@ public class VdsBrokerObjectsBuilder {
                 Long timeDrift =
                         TimeUnit.MILLISECONDS.toSeconds(Math.abs(hostDate.getTime() - System.currentTimeMillis()));
                 if (timeDrift > maxTimeDriftAllowed) {
-                    AuditLogableBase logable = new AuditLogableBase(vds.getId());
+                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
                     logable.addCustomValue("Actual", timeDrift.toString());
                     logable.addCustomValue("Max", maxTimeDriftAllowed.toString());
                     auditLogDirector.log(logable, AuditLogType.VDS_TIME_DRIFT_ALERT);
@@ -1874,7 +1874,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     protected static AuditLogableBase createHostNetworkAuditLog(String networkName, VDS vds) {
-        AuditLogableBase logable = new AuditLogableBase(vds.getId());
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
         logable.addCustomValue("NetworkName", networkName);
         return logable;
     }

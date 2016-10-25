@@ -33,6 +33,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -216,7 +217,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected void logSettingVmToDown(Guid vdsId, Guid vmId) {
-        AuditLogableBase logable = new AuditLogableBase(vdsId, vmId);
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsId, vmId));
         auditLogDirector.log(logable,
                 AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
     }

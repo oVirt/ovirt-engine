@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 import java.util.Objects;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
@@ -81,6 +83,9 @@ public class VmAnalyzerTest {
     private VDS vdsManagerVds;
     @Mock
     private ResourceManager resourceManager;
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Theory
     public void externalVMWhenMissingInDb(VmTestPairs data) {

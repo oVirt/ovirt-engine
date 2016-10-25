@@ -512,7 +512,7 @@ public class IrsProxy {
                     }
 
                     if (type != AuditLogType.UNASSIGNED) {
-                        AuditLogableBase logable = new AuditLogableBase();
+                        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                         logable.setStorageDomain(domainFromVdsm);
                         logable.setStoragePoolId(_storagePoolId);
                         logable.addCustomValue("DiskSpace", domainFromVdsm.getAvailableDiskSize().toString());
@@ -525,7 +525,7 @@ public class IrsProxy {
                 Set<EngineError> alerts = domainFromVdsm.getAlerts();
                 if (alerts != null && !alerts.isEmpty()) {
 
-                    AuditLogableBase logable = new AuditLogableBase();
+                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                     logable.setStorageDomain(domainFromVdsm);
                     domainFromVdsm.setStorageName(domainFromDb.getStorageName());
                     logable.setStoragePoolId(_storagePoolId);
@@ -576,7 +576,7 @@ public class IrsProxy {
                 () -> {
                     log.warn(logMessage);
 
-                    AuditLogableBase logable = new AuditLogableBase(currentVdsId);
+                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(currentVdsId));
                     logable.setStorageDomainId(masterDomainId);
                     new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
 
@@ -881,7 +881,7 @@ public class IrsProxy {
             setFencedIrs(null);
             returnValue = selectedVds.argvalue.getHostName();
             log.info("Initialize Irs proxy from vds: {}", returnValue);
-            AuditLogableBase logable = new AuditLogableBase(selectedVds.argvalue.getId());
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(selectedVds.argvalue.getId()));
             logable.addCustomValue("ServerIp", returnValue);
             new AuditLogDirector().log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
         }
@@ -1296,7 +1296,7 @@ public class IrsProxy {
     }
 
     private void logDelayedDomain(final Guid vdsId, VDSDomainsData tempData) {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.setVdsId(vdsId);
         logable.setStorageDomainId(tempData.getDomainId());
         logable.addCustomValue("Delay",

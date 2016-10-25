@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -286,7 +285,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         try {
             params = changeClusterParametersBuilder.buildParameters(getVdsId(), getSourceCluster().getId(), getTargetCluster().getId());
         } catch (EngineException e) {
-            auditLogDirector.log(new AuditLogableBase(getVdsId()),
+            auditLogDirector.log(this,
                     AuditLogType.CONFIGURE_NETWORK_BY_LABELS_WHEN_CHANGING_CLUSTER_FAILED);
             return;
         }

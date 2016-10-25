@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.groups.Default;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,12 +21,16 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QosRangeValidatorTest {
 
     public static final int OUT_OF_RANGE = 111;
     public static final int MAX_RANGE = 100;
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Rule
     public final MockConfigRule configRule = new MockConfigRule();

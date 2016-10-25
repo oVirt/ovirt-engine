@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
@@ -74,7 +75,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         // check if fencing in cluster is enabled
         Cluster cluster = clusterDao.get(vds.getClusterId());
         if (cluster != null && !cluster.getFencingPolicy().isFencingEnabled()) {
-            AuditLogableBase alb = new AuditLogableBase(vds.getId());
+            AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase(vds.getId()));
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
             return true;
@@ -171,7 +172,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
         if (restartVdsResult != null && restartVdsResult.isSkippedDueToFencingPolicy()) {
             // fencing was skipped, fire an alert and suppress standard command logging
-            AuditLogableBase alb = new AuditLogableBase(getVds().getId());
+            AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase(getVds().getId()));
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY);
             setSucceeded(false);
@@ -230,7 +231,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     private void logAlert(VDS host, int percents) {
-        AuditLogableBase auditLogable = new AuditLogableBase();
+        AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
         auditLogable.addCustomValue("Percents", String.valueOf(percents));
         auditLogable.setVdsId(host.getId());
         auditLogable.setRepeatable(true);

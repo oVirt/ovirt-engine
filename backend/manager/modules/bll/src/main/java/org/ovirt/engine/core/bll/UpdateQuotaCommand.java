@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
@@ -97,9 +96,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
                 getQuotaManager().isStorageQuotaExceeded(getQuota().getId());
 
         if (newSizeUnderCurrentConsumption) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.addCustomValue("QuotaName", getQuotaName());
-            auditLogDirector.log(logable, AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION);
+            auditLogDirector.log(this, AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION);
         }
     }
 

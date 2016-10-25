@@ -500,11 +500,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
         String vmName = vmStaticFromOvf.getName();
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("FieldName", fieldName);
-        logable.addCustomValue("VmName", vmName);
-        logable.addCustomValue("FieldValue", fieldValue);
-        auditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
+        addCustomValue("FieldName", fieldName);
+        addCustomValue("VmName", vmName);
+        addCustomValue("FieldValue", fieldValue);
+        auditLogDirector.log(this, AuditLogType.VM_IMPORT_INFO);
     }
 
     protected void addVmInterfaces() {

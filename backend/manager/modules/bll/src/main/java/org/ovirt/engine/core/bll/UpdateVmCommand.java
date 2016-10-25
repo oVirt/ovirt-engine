@@ -418,7 +418,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      */
     private void hotSetCpusLog(HotSetNumberOfCpusParameters params) {
         if (!setNumberOfCpusResult.isValid()) {
-            AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params, null);
+            AuditLogableBase logable = CommandsFactory.createCommand(VdcActionType.HotSetNumberOfCpus, params);
             List<String> validationMessages = getBackend().getErrorsTranslator().
                     translateErrorText(setNumberOfCpusResult.getValidationMessages());
             logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
@@ -432,7 +432,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      */
     private void hotSetMemlog(HotSetAmountOfMemoryParameters params, VdcReturnValueBase setAmountOfMemoryResult) {
         if (!setAmountOfMemoryResult.isValid()) {
-            AuditLogableBase logable = new HotSetAmountOfMemoryCommand<>(params, null);
+            AuditLogableBase logable = CommandsFactory.createCommand(VdcActionType.HotSetAmountOfMemory, params);
             List<String> validationMessages = getBackend().getErrorsTranslator().
                     translateErrorText(setAmountOfMemoryResult.getValidationMessages());
             logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
@@ -441,13 +441,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void checkTrustedService() {
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("VmName", getVmName());
         if (getParameters().getVm().isTrustedService() && !getCluster().supportsTrustedService()) {
-            auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(this, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getParameters().getVm().isTrustedService() && getCluster().supportsTrustedService()) {
-            auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(this, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

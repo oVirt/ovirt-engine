@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @InternalCommandAttribute
@@ -80,7 +79,7 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
                 VDSCommandType.RegisterLibvirtSecrets,
                 new RegisterLibvirtSecretsVDSParameters(getVdsId(), libvirtSecrets, clearUnusedSecrets));
         if (!returnValue.getSucceeded()) {
-            auditLogDirector.log(new AuditLogableBase(getVdsId()),
+            auditLogDirector.log(this,
                     AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
             log.error("Failed to register libvirt secret on vds {}.", getVds().getName());
             return false;

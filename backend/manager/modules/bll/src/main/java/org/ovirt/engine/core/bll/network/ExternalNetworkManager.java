@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * Utility class to help manage external networks, such as deallocate NICs.
@@ -65,7 +66,7 @@ public class ExternalNetworkManager {
             try {
                 providerProxy.deallocate(nic);
             } catch (EngineException e) {
-                AuditLogableBase removePortFailureEvent = new AuditLogableBase();
+                AuditLogableBase removePortFailureEvent = Injector.injectMembers(new AuditLogableBase());
                 removePortFailureEvent.addCustomValue("NicName", nic.getName());
                 removePortFailureEvent.addCustomValue("NicId", nic.getId().toString());
                 removePortFailureEvent.addCustomValue("ProviderName", provider.getName());

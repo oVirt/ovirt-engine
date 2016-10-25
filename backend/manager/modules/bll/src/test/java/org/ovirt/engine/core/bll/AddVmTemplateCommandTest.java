@@ -125,6 +125,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         vmDeviceUtils.init();
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
+        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         VmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.getMinimumRam(vm.getVmOsId(), Version.getLast())).thenReturn(0);

@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
@@ -329,9 +328,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 asyncTaskDao.getAsyncTaskIdsByEntity(getParameters().getStorageDomainId());
 
         if (!asyncTasks.isEmpty()) {
-            AuditLogableBase auditLogableBase = new AuditLogableBase();
-            auditLogableBase.setStorageDomain(getStorageDomain());
-            auditLogDirector.log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_TASKS_ERROR);
+            auditLogDirector.log(this, AuditLogType.STORAGE_DOMAIN_TASKS_ERROR);
         }
     }
 

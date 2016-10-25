@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @SuppressWarnings("serial")
 @InternalCommandAttribute
@@ -72,16 +71,14 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private void addAuditLogOnRemoveFailure() {
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
-        logable.addCustomValue("StorageDomainName", getStorageDomain().getStorageName());
-        logable.addCustomValue("UserName", getUserName());
+        addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
+        addCustomValue("StorageDomainName", getStorageDomain().getStorageName());
         AuditLogType logType = null;
         if (getActionState() == CommandActionState.END_SUCCESS) {
             logType = AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE;
         } else {
             logType = AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE;
         }
-        auditLogDirector.log(logable, logType);
+        auditLogDirector.log(this, logType);
     }
 }

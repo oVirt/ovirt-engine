@@ -185,7 +185,7 @@ public class VdsManager {
                 updateDynamicData(cachedVds.getDynamicData());
             }
             log.error("Could not find VDC Certificate file.");
-            AuditLogableBase logable = new AuditLogableBase(vdsId);
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsId));
             auditLogDirector.log(logable, AuditLogType.CERTIFICATE_FILE_NOT_FOUND);
         }
     }
@@ -368,7 +368,7 @@ public class VdsManager {
                     cachedVds.getName(),
                     StringUtils.defaultString(e.getMessage(), e.getCause().toString()));
             log.debug("Exception", e);
-            AuditLogableBase auditLog = new AuditLogableBase();
+            AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
             auditLog.setVds(cachedVds);
             auditLog.addCustomValue("Message", StringUtils.defaultString(e.getMessage(), e.getCause().toString()));
             auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
@@ -437,7 +437,7 @@ public class VdsManager {
         if (cachedVds.getStatus() != VDSStatus.Initializing && cachedVds.getStatus() != VDSStatus.NonOperational) {
             setStatus(VDSStatus.Initializing, cachedVds);
             vdsDynamicDao.updateStatus(cachedVds.getId(), VDSStatus.Initializing);
-            AuditLogableBase logable = new AuditLogableBase(cachedVds.getId());
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(cachedVds.getId()));
             logable.addCustomValue("ErrorMessage", ex.getMessage());
             logable.updateCallStackFromThrowable(ex);
             auditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
@@ -691,7 +691,7 @@ public class VdsManager {
                     Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
                     TimeUnit.MINUTES);
             auditLogDirector.log(
-                    new AuditLogableBase(vds.getId()).addCustomValue(
+                    Injector.injectMembers(new AuditLogableBase(vds.getId())).addCustomValue(
                             "Time",
                             Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString()),
                     AuditLogType.VDS_FAILED_TO_RUN_VMS);
@@ -725,7 +725,7 @@ public class VdsManager {
                 VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.GetHardwareInfo,
                         new VdsIdAndVdsVDSCommandParametersBase(vds));
                 if (!ret.getSucceeded()) {
-                    AuditLogableBase logable = new AuditLogableBase(vds.getId());
+                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
                     logable.updateCallStackFromThrowable(ret.getExceptionObject());
                     auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
                 }
@@ -735,7 +735,7 @@ public class VdsManager {
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)
                     || (vds.getClusterSupportsGlusterService()
                             && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE))) {
-                auditLogDirector.log(new AuditLogableBase(vds.getId()).addCustomValue("Mode",
+                auditLogDirector.log(Injector.injectMembers(new AuditLogableBase(vds.getId())).addCustomValue("Mode",
                         vds.getSELinuxEnforceMode() == null ? "UNKNOWN" : vds.getSELinuxEnforceMode().name()),
                         AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
                 if (vds.getSELinuxEnforceMode() != null) {
@@ -887,7 +887,7 @@ public class VdsManager {
                 TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
 
         AuditLogableBase logable;
-        logable = new AuditLogableBase(cachedVds.getId());
+        logable = Injector.injectMembers(new AuditLogableBase(cachedVds.getId()));
         logable.updateCallStackFromThrowable(ex);
         if (ex.getCause() instanceof java.net.UnknownHostException){
             auditLogDirector.log(logable, AuditLogType.VDS_UNKNOWN_HOST);
@@ -910,7 +910,7 @@ public class VdsManager {
             auditLogType = AuditLogType.VDS_HOST_NOT_RESPONDING;
             log.warn(msg, cachedVds.getName());
         }
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.setVdsId(cachedVds.getId());
         logable.addCustomValue("Seconds", Long.toString(TimeUnit.MILLISECONDS.toSeconds(timeoutToFence)));
         auditLogDirector.log(logable, auditLogType);
@@ -1012,7 +1012,7 @@ public class VdsManager {
 
         vmIds.forEach(vmId -> {
             // log VM transition to unknown status
-            AuditLogableBase logable = new AuditLogableBase();
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
             logable.setVmId(vmId);
             auditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
         });

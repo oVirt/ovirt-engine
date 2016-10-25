@@ -31,6 +31,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -271,7 +272,7 @@ public class FenceAgentExecutor {
                 AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED);
     }
     private AuditLogableBase createAuditLogObject(FenceActionType action, FenceAgent agent, VDS proxyHost) {
-        AuditLogableBase alb = new AuditLogableBase();
+        AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase());
         alb.addCustomValue("Action", action.name().toLowerCase());
         alb.addCustomValue("Host", fencedHost.getName() == null ? fencedHost.getId().toString() : fencedHost.getName());
         alb.addCustomValue("AgentType", agent.getType());

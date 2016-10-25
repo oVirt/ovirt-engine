@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 /**
  * This class adds a cloned VM from a template (Deep disk copy)
@@ -79,14 +78,11 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     }
 
     private void checkTrustedService() {
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("VmName", getVmName());
-        logable.addCustomValue("VmTemplateName", getVmTemplateName());
         if (getVmTemplate().isTrustedService() && !getVm().isTrustedService()) {
-            auditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(this, AuditLogType.USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getVmTemplate().isTrustedService() && getVm().isTrustedService()) {
-            auditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(this, AuditLogType.USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

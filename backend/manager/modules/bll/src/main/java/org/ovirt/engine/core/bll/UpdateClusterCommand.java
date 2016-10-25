@@ -496,9 +496,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                                                        // there
                             // are running VMs - but we should warn they
                             // cannot not be hibernated
-                            AuditLogableBase logable = new AuditLogableBase();
-                            logable.addCustomValue("Cluster", getParameters().getCluster().getName());
-                            auditLogDirector.log(logable,
+                            addCustomValue("Cluster", getParameters().getCluster().getName());
+                            auditLogDirector.log(this,
                                     AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
                         }
                     }

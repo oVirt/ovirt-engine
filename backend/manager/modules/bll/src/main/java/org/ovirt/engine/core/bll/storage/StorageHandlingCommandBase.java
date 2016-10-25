@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
@@ -524,7 +525,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                     ovfStoreDiskImages.remove(ovfDisk);
                 }
             }
-            AuditLogableBase logable = new AuditLogableBase();
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
             logable.setStorageDomainId(storageDomainId);
             auditLogDirector.log(logable, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
         } else {

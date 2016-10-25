@@ -143,9 +143,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         setSucceeded(initSucceeded);
 
         if (getSucceeded()) {
-            AuditLogableBase logable = new AuditLogableBase(getVds().getId());
-            logable.addCustomValue("HostStatus", getVds().getStatus().toString());
-            auditLogDirector.log(logable, AuditLogType.VDS_DETECTED);
+            addCustomValue("HostStatus", getVds().getStatus().toString());
+            auditLogDirector.log(this, AuditLogType.VDS_DETECTED);
         }
     }
 
@@ -390,9 +389,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (getVds().isPmEnabled() &&
                 getVds().isPmKdumpDetection() &&
                 getVds().getKdumpStatus() != KdumpStatus.ENABLED) {
-            AuditLogableBase base = new AuditLogableBase();
-            base.setVds(getVds());
-            auditLogDirector.log(base, AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
+            auditLogDirector.log(this, AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
         }
     }
 

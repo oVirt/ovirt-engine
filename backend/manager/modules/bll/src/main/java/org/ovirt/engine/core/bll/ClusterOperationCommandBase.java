@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
         ClusterCommandBase<T> {
@@ -210,7 +211,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     protected void alertIfFencingDisabled() {
         if (!getCluster().getFencingPolicy().isFencingEnabled()) {
-            AuditLogableBase alb = new AuditLogableBase();
+            AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase());
             alb.setClusterId(getCluster().getId());
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);

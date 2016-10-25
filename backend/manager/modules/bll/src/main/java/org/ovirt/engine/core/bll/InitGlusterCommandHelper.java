@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
@@ -221,7 +222,7 @@ public class InitGlusterCommandHelper {
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServersList,
                         new VdsIdVDSCommandParametersBase(upServerId));
         if (!returnValue.getSucceeded()) {
-            AuditLogableBase logable = new AuditLogableBase(upServerId);
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(upServerId));
             logable.addCustomValue("ErrorMessage", returnValue.getVdsError().getMessage());
             logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
             auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
@@ -236,7 +237,7 @@ public class InitGlusterCommandHelper {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.AddGlusterServer,
                     new AddGlusterServerVDSParameters(upServerId, newServerName));
             if (!returnValue.getSucceeded()) {
-                AuditLogableBase logable = new AuditLogableBase(vds.getId());
+                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
                 logable.addCustomValue("ErrorMessage", returnValue.getVdsError().getMessage());
                 logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
                 auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);

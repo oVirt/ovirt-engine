@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends VdsBrokerCommand<P> {
     /**
@@ -84,7 +85,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      *            The reason.
      */
     protected void alertPowerManagementStatusFailed(String reason) {
-        AuditLogableBase alert = new AuditLogableBase();
+        AuditLogableBase alert = Injector.injectMembers(new AuditLogableBase());
         alert.setVdsId(getParameters().getTargetVdsID());
         alert.addCustomValue("Reason", reason);
         auditLogDirector.log(alert, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
@@ -94,7 +95,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      * Alerts when power management stop was skipped because host is already down.
      */
     protected void alertActionSkippedAlreadyInStatus() {
-        AuditLogableBase auditLogable = new AuditLogableBase();
+        AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
         auditLogable.addCustomValue("HostName", getTargetVds().getName());
         auditLogable.addCustomValue("AgentStatus", getParameters().getAction().getValue());
         auditLogable.addCustomValue("Operation", getParameters().getAction().toString());

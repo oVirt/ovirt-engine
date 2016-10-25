@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -275,7 +276,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             VdsDynamic vdsDyn = vdsDynamicDao.get(vdsSt.getId());
             if (vdsDyn != null && vdsDyn.getKdumpStatus() != KdumpStatus.ENABLED) {
                 auditLogDirector.log(
-                        new AuditLogableBase(vdsSt.getId()),
+                        Injector.injectMembers(new AuditLogableBase(vdsSt.getId())),
                         AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS
                 );
             }

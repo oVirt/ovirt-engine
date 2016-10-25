@@ -8,6 +8,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.di.Injector;
 
 public final class DisplayNetworkClusterHelper {
 
@@ -51,7 +52,7 @@ public final class DisplayNetworkClusterHelper {
     }
 
     private AuditLogableBase createLoggable() {
-        AuditLogableBase loggable = new AuditLogableBase();
+        AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase());
         loggable.setClusterId(networkCluster.getClusterId());
         loggable.addCustomValue("NetworkName", networkName);
         return loggable;

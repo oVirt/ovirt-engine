@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     protected FenceValidator fenceValidator;
@@ -119,11 +118,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     private void audit(AuditLogType auditMessage) {
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("Action", getAction().name().toLowerCase());
-        logable.addCustomValue("VdsName", getVds().getName());
-        logable.setVdsId(getVdsId());
-        auditLogDirector.log(logable, auditMessage);
+        addCustomValue("Action", getAction().name().toLowerCase());
+        addCustomValue("VdsName", getVds().getName());
+        auditLogDirector.log(this, auditMessage);
     }
 
     private void handleResult(FenceOperationResult result) {

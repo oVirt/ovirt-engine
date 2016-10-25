@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -38,7 +37,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
             disconnectStorageByType(connectionToType.getKey(), connectionToType.getValue());
             Pair<Boolean, AuditLogType> result = StorageHelperDirector.getInstance().getItem(connectionToType.getKey()).disconnectHostFromStoragePoolServersCommandCompleted(getParameters());
             if (!result.getFirst()) {
-                auditLogDirector.log(new AuditLogableBase(getParameters().getVdsId()), result.getSecond());
+                auditLogDirector.log(this, result.getSecond());
             }
         }
 

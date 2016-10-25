@@ -15,6 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -170,7 +171,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         if (isPolicyResetMessage(getReturnStatus().message)) {
             return;
         }
-        AuditLogableBase auditLogableBase = new AuditLogableBase(vds.getId());
+        AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase(vds.getId()));
         auditLogableBase.setVds(vds);
         auditLogableBase.addCustomValue("message", getReturnStatus().message);
 

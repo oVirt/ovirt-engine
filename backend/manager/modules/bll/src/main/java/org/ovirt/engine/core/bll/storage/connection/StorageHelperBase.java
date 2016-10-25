@@ -28,6 +28,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 
 public abstract class StorageHelperBase implements IStorageHelper {
@@ -159,7 +160,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,
             List<StorageServerConnections> connections, LUNs lun) {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
 
         String connectionField = getConnectionDescription(connections, connection) +
                 (lun == null ? "" : " (LUN " + lun.getLUNId() + ")");

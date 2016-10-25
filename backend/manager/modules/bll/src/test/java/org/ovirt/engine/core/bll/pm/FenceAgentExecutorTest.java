@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,6 +39,9 @@ public class FenceAgentExecutorTest {
     private static Guid PROXY_HOST_ID = new Guid("44444444-4444-4444-4444-444444444444");
     private static Guid SECOND_PROXY_HOST_ID = new Guid("77777777-7777-7777-7777-777777777777");
     private static Guid FENCE_AGENT_ID = new Guid("55555555-5555-5555-5555-555555555555");
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @ClassRule
     public static MockConfigRule configRule =

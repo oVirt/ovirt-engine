@@ -166,7 +166,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                                                         volume.getName(),
                                                         currentSession.getUserName())));
                         if (succeeded) {
-                            auditLogDirector.log(AddBricksToGlusterVolumeCommand.this,
+                            auditLogDirector.log(this,
                                     AuditLogType.GLUSTER_SETUP_GEOREP_MOUNT_BROKER);
                         }
                     }
@@ -185,7 +185,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                                                     currentSession.getUserName())));
                 }
                 if (succeeded) {
-                    auditLogDirector.log(AddBricksToGlusterVolumeCommand.this, AuditLogType.SET_UP_PASSWORDLESS_SSH);
+                    auditLogDirector.log(this, AuditLogType.SET_UP_PASSWORDLESS_SSH);
                     succeeded =
                             evaluateReturnValue(errorType,
                                     runVdsCommand(VDSCommandType.CreateGlusterVolumeGeoRepSession,

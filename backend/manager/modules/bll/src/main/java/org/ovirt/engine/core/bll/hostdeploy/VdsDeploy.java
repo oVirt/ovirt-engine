@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.otopi.constants.Confirms;
 import org.ovirt.otopi.dialog.Event;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class VdsDeploy extends VdsDeployBase {
             if (type == null) {
                 log.debug(message);
             } else {
-                AuditLogableBase logable = new AuditLogableBase(getVds().getId());
+                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(getVds().getId()));
                 logable.setCorrelationId(getCorrelationId());
                 logable.addCustomValue("Message", message);
                 new AuditLogDirector().log(logable, _levelToType.get(level));

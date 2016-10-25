@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -141,10 +140,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     getParameters().getDiscoverIp()
             );
 
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.setVds(getParameters().getvds());
-            logable.addCustomValue("HostGroupName", getParameters().getHostGroup().getName());
-            auditLogDirector.log(logable, AuditLogType.VDS_PROVISION);
+            addCustomValue("HostGroupName", getParameters().getHostGroup().getName());
+            auditLogDirector.log(this, AuditLogType.VDS_PROVISION);
         }
 
         // set vds spm id
