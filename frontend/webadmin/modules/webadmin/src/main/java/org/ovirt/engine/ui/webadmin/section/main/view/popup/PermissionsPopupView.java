@@ -46,4 +46,5 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<AdElement
     public void cleanup() {
         driver.cleanup();
     }
+
 }

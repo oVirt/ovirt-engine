@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.binding;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.ovirt.engine.ui.common.editor.AbstractUiCommonModelEditorDriver;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.editor.UiCommonEventMap;
@@ -211,44 +214,90 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
     }
 
     private void writeCleanup() {
-        JClassType editorType = model.getEditorType();
-
         logger.log(Type.DEBUG, "Starting to write cleanup impl. for editor " //$NON-NLS-1$
-                + editorType.getQualifiedSourceName());
+                + model.getEditorType().getQualifiedSourceName());
 
         sw.println();
         sw.println("@Override"); //$NON-NLS-1$
         sw.println("public void cleanup() {"); //$NON-NLS-1$
         sw.indent();
 
-        sw.println("if (getObject() != null) {"); //$NON-NLS-1$
-        sw.indent();
+        // 1. clean up the edited Model object
+        Set<String> modelExpressions = getModelCleanupExpressions();
 
-        if (model.getProxyType().isAssignableTo(hasCleanupType)) {
-            sw.println("getObject().cleanup();"); //$NON-NLS-1$
+        if (!modelExpressions.isEmpty()) {
+            sw.println("if (getObject() != null) {"); //$NON-NLS-1$
+            sw.indent();
+
+            for (String expr : modelExpressions) {
+                sw.println(String.format("%s.cleanup();", expr)); //$NON-NLS-1$
+            }
+
+            sw.outdent();
+            sw.println("}"); //$NON-NLS-1$
         }
 
+        // 2. clean up the Editor instance
+        Set<String> editorFieldExpressions = getEditorFieldCleanupExpressions();
+
+        for (String expr : editorFieldExpressions) {
+            sw.println(String.format("if (%s != null) {", expr)); //$NON-NLS-1$
+            sw.indent();
+
+            sw.println(String.format("%s.cleanup();", expr)); //$NON-NLS-1$
+
+            sw.outdent();
+            sw.println("}"); //$NON-NLS-1$
+        }
+
+        sw.outdent();
+        sw.println("}"); //$NON-NLS-1$
+    }
+
+    private Set<String> getModelCleanupExpressions() {
+        Set<String> result = new LinkedHashSet<>();
+
+        // top-level Model
+        if (model.getProxyType().isAssignableTo(hasCleanupType)) {
+            result.add("getObject()"); //$NON-NLS-1$
+        }
+
+        // all Models edited through the top-level Model
         for (EditorData editorData : model.getEditorData()) {
             if (editorData.getPropertyOwnerType().isAssignableTo(hasCleanupType)) {
-                sw.println(String.format("getObject()%s.cleanup();", //$NON-NLS-1$
+                result.add(String.format(
+                        "getObject()%s", //$NON-NLS-1$
                         editorData.getBeanOwnerExpression()));
             }
         }
 
-        sw.outdent();
-        sw.println("}"); //$NON-NLS-1$
+        return result;
+    }
 
-        for (JField field : editorType.getFields()) {
-            JClassType fieldClassType = field.getType().isClassOrInterface();
-            if (fieldClassType != null && fieldClassType.isAssignableTo(hasCleanupType)
-                    && !field.getType().isClassOrInterface().isAssignableTo(baseModelType)) {
-                sw.println(String.format("getEditor().%s.cleanup();", //$NON-NLS-1$
-                        field.getName()));
+    private Set<String> getEditorFieldCleanupExpressions() {
+        Set<String> result = new LinkedHashSet<>();
+
+        for (JClassType typeCandidate : model.getEditorType().getFlattenedSupertypeHierarchy()) {
+            JClassType classType = typeCandidate.isClass();
+
+            if (classType != null) {
+                for (JField field : classType.getFields()) {
+                    JClassType fieldClassOrInterfaceType = field.getType().isClassOrInterface();
+
+                    if (fieldClassOrInterfaceType != null
+                            // field type assignable to HasCleanup ..
+                            && fieldClassOrInterfaceType.isAssignableTo(hasCleanupType)
+                            // .. but not assignable to Model
+                            && !fieldClassOrInterfaceType.isAssignableTo(baseModelType)) {
+                        result.add(String.format(
+                                "getEditor().%s", //$NON-NLS-1$
+                                field.getName()));
+                    }
+                }
             }
         }
 
-        sw.outdent();
-        sw.println("}"); //$NON-NLS-1$
+        return result;
     }
 
     private JClassType eraseType(JClassType classType) {

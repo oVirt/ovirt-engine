@@ -329,4 +329,5 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public void setLoadingState(LoadingState state) {
         searchItems.setLoadingState(state);
     }
+
 }
