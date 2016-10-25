@@ -31,6 +31,12 @@ public class InjectorRule extends TestWatcher {
     }
 
     @Override
+    protected void starting(Description description) {
+        super.starting(description);
+        overrideInjector(mockedInjector);
+    }
+
+    @Override
     protected void finished(Description description) {
         super.finished(description);
         overrideInjector(null);
@@ -38,7 +44,6 @@ public class InjectorRule extends TestWatcher {
     }
 
     public <T> void bind(Class<T> pureClsType, T instance) {
-        overrideInjector(mockedInjector);
         when(mockedInjector.instanceOf(pureClsType)).thenReturn(instance);
     }
 
