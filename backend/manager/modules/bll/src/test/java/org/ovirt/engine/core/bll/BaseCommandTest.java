@@ -9,6 +9,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
 import org.ovirt.engine.core.dao.EngineSessionDao;
+import org.ovirt.engine.core.di.InjectorRule;
 
 public abstract class BaseCommandTest {
 

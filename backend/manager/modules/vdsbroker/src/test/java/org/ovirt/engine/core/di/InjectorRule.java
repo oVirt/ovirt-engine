@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.di;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.ovirt.engine.core.di.Injector;
 
 public class InjectorRule extends TestWatcher {
 
