@@ -943,7 +943,10 @@ public class HostGeneralModel extends EntityModel<VDS> {
         else if (getEntity().getStatus() == VDSStatus.Maintenance) {
             setHasReinstallAlertMaintenance(true);
         }
-        if (getEntity().getClusterSupportsGlusterService() && getEntity().getGlusterPeerStatus() != PeerStatus.CONNECTED) {
+        if (getEntity().getClusterSupportsGlusterService()
+                && !(getEntity().getStatus() == VDSStatus.Installing
+                        || getEntity().getStatus() == VDSStatus.Initializing)
+                && getEntity().getGlusterPeerStatus() != PeerStatus.CONNECTED) {
             setHasGlusterDisconnectedAlert(true);
         }
 
