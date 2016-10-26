@@ -25,6 +25,11 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     public LabelNicCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         setVdsId(getNic() == null ? null : getNic().getVdsId());
     }
 
