@@ -26,6 +26,11 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
 
     public QosCommandBase(QosParametersBase<T> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         if (getQos() != null) {
             setStoragePoolId(getQos().getStoragePoolId());
             addCustomValue("QosName", getQos().getName());

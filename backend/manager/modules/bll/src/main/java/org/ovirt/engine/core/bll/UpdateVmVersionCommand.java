@@ -53,11 +53,16 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     public UpdateVmVersionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getParameters().getVmId()));
 
         if (getVm() != null) {
-            if (parameters.getNewTemplateVersion() != null) {
-                setVmTemplate(vmTemplateDao.get(parameters.getNewTemplateVersion()));
+            if (getParameters().getNewTemplateVersion() != null) {
+                setVmTemplate(vmTemplateDao.get(getParameters().getNewTemplateVersion()));
             } else {
                 setVmTemplate(vmTemplateDao.getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
             }

@@ -34,7 +34,11 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     public RunVmOnceCommand(T runVmParams, CommandContext commandContext) {
         super(runVmParams, commandContext);
+    }
 
+    @Override
+    protected void init() {
+        super.init();
         // Load payload if user didn't send via run-once
         if (getParameters().getVmPayload() == null) {
             loadPayload();

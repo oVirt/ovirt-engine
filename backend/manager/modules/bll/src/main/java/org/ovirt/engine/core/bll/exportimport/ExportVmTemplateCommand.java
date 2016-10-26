@@ -51,14 +51,19 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     public ExportVmTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        if (getVmTemplate() != null) {
-            setDescription(getVmTemplateName());
-            setStoragePoolId(getVmTemplate().getStoragePoolId());
-        }
     }
 
     public ExportVmTemplateCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        if (getVmTemplate() != null) {
+            setDescription(getVmTemplateName());
+            setStoragePoolId(getVmTemplate().getStoragePoolId());
+        }
     }
 
     @Override

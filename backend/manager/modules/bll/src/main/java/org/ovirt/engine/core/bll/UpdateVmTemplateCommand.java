@@ -62,7 +62,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     public UpdateVmTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        setVmTemplate(parameters.getVmTemplateData());
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        setVmTemplate(getParameters().getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
         setClusterId(getVmTemplate().getClusterId());
         oldTemplate =  vmTemplateDao.get(getVmTemplate().getId());
@@ -76,7 +81,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 ? Version.getLast() : CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster);
         if (getCluster() != null || isBlankTemplate()) {
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
-                    parameters.getVmTemplateData());
+                    getParameters().getVmTemplateData());
             if (oldTemplate != null) {
                 getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
                         oldTemplate);
@@ -84,7 +89,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         VmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData());
-        VmHandler.updateDefaultTimeZone(parameters.getVmTemplateData());
+        VmHandler.updateDefaultTimeZone(getParameters().getVmTemplateData());
         VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
                 getParameters().getVmTemplateData(),
                 getCluster(),

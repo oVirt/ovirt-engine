@@ -38,6 +38,11 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     public RemoveImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    public void init() {
+        super.init();
         initImage();
         initStoragePoolId();
         initStorageDomainId();

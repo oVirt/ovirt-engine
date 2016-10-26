@@ -16,7 +16,12 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
 
     public RemoveVmFromPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        setVmId(parameters.getVmId());
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        setVmId(getParameters().getVmId());
         if (getVm() != null) {
             setVmPoolId(getVm().getVmPoolId());
         }

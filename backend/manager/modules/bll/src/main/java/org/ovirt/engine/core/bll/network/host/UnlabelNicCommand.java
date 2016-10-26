@@ -23,6 +23,11 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
 
     public UnlabelNicCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         setVdsId(getNic() == null ? null : getNic().getVdsId());
     }
 

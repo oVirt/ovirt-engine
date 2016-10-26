@@ -50,11 +50,11 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     public AddClusterCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        setStoragePoolId(getCluster().getStoragePoolId());
     }
 
     @Override
     protected void init() {
+        setStoragePoolId(getCluster().getStoragePoolId());
         updateMigrateOnError();
     }
 

@@ -16,6 +16,11 @@ public class ResetDefaultGeoRepConfigCommand extends GeoRepSessionCommandBase<Gl
 
     public ResetDefaultGeoRepConfigCommand(GlusterVolumeGeoRepSessionConfigParameters params, CommandContext context) {
         super(params, context);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         setGlusterVolumeId(getGeoRepSession().getMasterVolumeId());
     }
 

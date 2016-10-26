@@ -24,6 +24,11 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
 
     public LabelNetworkCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         setStoragePoolId(getNetwork() == null ? null : getNetwork().getDataCenterId());
     }
 
