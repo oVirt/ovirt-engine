@@ -105,14 +105,14 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     public CreateAllSnapshotsFromVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
-        setSnapshotName(parameters.getDescription());
-        setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
     }
 
     @Override
     public void init() {
         getParameters().setUseCinderCommandCallback(isCinderDisksExist());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
+        setSnapshotName(getParameters().getDescription());
+        setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
     }
 
     @Override
