@@ -19,7 +19,11 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
 
     public MigrateVmToServerCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        setDestinationVdsId(parameters.getVdsId());
+    }
+
+    @Override
+    public void init() {
+        setDestinationVdsId(getParameters().getVdsId());
     }
 
     @Override
