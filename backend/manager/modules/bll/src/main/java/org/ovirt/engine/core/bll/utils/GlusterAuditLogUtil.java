@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster;
+package org.ovirt.engine.core.bll.utils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * Log Helper for gluster related audit logs. Provides convenience methods to create audit logs related to a gluster
@@ -49,7 +50,7 @@ public class GlusterAuditLogUtil {
             final AuditLogType logType,
             final Map<String, String> customValues) {
 
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.setVds(server);
         logable.setGlusterVolume(volume);
         logable.setClusterId(clusterId);
