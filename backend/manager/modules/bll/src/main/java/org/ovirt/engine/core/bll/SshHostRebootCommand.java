@@ -25,7 +25,12 @@ public class SshHostRebootCommand <T extends VdsActionParameters> extends VdsCom
     protected void executeCommand() {
         boolean result = executeSshReboot(getVds().getClusterCompatibilityVersion().toString());
         if (result) {
-            setVdsStatus(VDSStatus.Initializing);
+            // preserve maintenance status
+            if (getParameters().getPrevVdsStatus() != VDSStatus.Maintenance) {
+                setVdsStatus(VDSStatus.Initializing);
+            } else {
+                setVdsStatus(VDSStatus.Maintenance);
+            }
         }
         setSucceeded(result);
     }
