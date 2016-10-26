@@ -16,6 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.storage.StorageConnectionHelper;
 
 public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionManagementVDSParameters>
@@ -87,7 +88,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         }
 
         if (failedDomainNames.length() > 0) {
-            AuditLogableBase logable = new AuditLogableBase(getParameters().getVdsId());
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(getParameters().getVdsId()));
             logable.addCustomValue("failedStorageDomains", failedDomainNames.toString());
             auditLogDirector.log(logable, AuditLogType.VDS_STORAGES_CONNECTION_FAILED);
         }

@@ -340,7 +340,7 @@ public final class AsyncTaskManager {
         for (SPMTask task : _tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
-                AuditLogableBase logable = new AuditLogableBase();
+                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                 logable.addCustomValue("CommandName", task.getParameters().getDbAsyncTask().getActionType().toString());
                 logable.addCustomValue("Date", task.getParameters().getDbAsyncTask().getStartTime().toString());
 

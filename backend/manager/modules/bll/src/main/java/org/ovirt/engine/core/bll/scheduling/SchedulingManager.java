@@ -919,7 +919,7 @@ public class SchedulingManager implements BackendService {
                             haReservationHandling.checkHaReservationStatusForCluster(cluster, returnedFailedHosts);
                     if (!clusterHaStatus) {
                         // create Alert using returnedFailedHosts
-                        AuditLogableBase logable = new AuditLogableBase();
+                        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                         logable.setClusterId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
 
@@ -940,7 +940,7 @@ public class SchedulingManager implements BackendService {
 
                     // Create Alert if the status was changed from false to true
                     if (!clusterHaStatusFromPreviousCycle && clusterHaStatus) {
-                        AuditLogableBase logable = new AuditLogableBase();
+                        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                         logable.setClusterId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
                         AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN, auditLogDirector);

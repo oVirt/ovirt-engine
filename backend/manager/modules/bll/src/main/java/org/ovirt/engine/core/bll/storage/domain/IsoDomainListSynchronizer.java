@@ -51,6 +51,7 @@ import org.ovirt.engine.core.dao.RepoFileMetaDataDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -238,7 +239,7 @@ public class IsoDomainListSynchronizer implements BackendService {
                                 Config.<Integer> getValue(ConfigValues.GlanceImageListSize), totalListSize);
 
                         if (repoImages.size() >= totalListSize) {
-                            AuditLogableBase logable = new AuditLogableBase();
+                            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                             logable.addCustomValue("imageDomain", storageDomain.getName());
                             logable.addCustomValue("imageListSize", String.valueOf(repoImages.size()));
                             auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE);
@@ -839,7 +840,7 @@ public class IsoDomainListSynchronizer implements BackendService {
      *            - List of Iso domain names, which encounter problem fetching from VDSM.
      */
     private void addToAuditLogErrorMessage(String problematicRepoFilesList) {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
 
         // Get translated error by error code ,if no translation found (should not happened) ,
         // will set the error code instead.
@@ -851,7 +852,7 @@ public class IsoDomainListSynchronizer implements BackendService {
      * Add audit log message when fetch encounter problems.
      */
     private void addToAuditLogSuccessMessage(String IsoDomain, String imageType) {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.addCustomValue("imageDomains", String.format("%s (%s file type)", IsoDomain, imageType));
         auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
     }

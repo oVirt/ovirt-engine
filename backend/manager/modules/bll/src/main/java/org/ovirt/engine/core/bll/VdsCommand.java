@@ -139,7 +139,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            Operation name.
      */
     private void alert(AuditLogType logType, String operation) {
-        AuditLogableBase alert = new AuditLogableBase();
+        AuditLogableBase alert = Injector.injectMembers(new AuditLogableBase());
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
         alert.addCustomValue("Operation", op);
@@ -157,7 +157,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            Throwable object with exception details.
      */
     private void alert(AuditLogType logType, String operation, Throwable throwable) {
-        AuditLogableBase alert = new AuditLogableBase();
+        AuditLogableBase alert = Injector.injectMembers(new AuditLogableBase());
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
         alert.addCustomValue("Operation", op);

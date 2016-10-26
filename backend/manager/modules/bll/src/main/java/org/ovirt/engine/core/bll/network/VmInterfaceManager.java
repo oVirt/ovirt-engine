@@ -26,6 +26,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,7 +215,7 @@ public class VmInterfaceManager {
     }
 
     private AuditLogableBase createAuditLog(final VmNic iface) {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.setVmId(iface.getVmId());
         logable.addCustomValue("MACAddr", iface.getMacAddress());
         logable.addCustomValue("IfaceName", iface.getName());

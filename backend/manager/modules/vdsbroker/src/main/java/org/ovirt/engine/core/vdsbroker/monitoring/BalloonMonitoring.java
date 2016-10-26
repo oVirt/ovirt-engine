@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 @Singleton
 public class BalloonMonitoring {
@@ -53,7 +54,7 @@ public class BalloonMonitoring {
         } else {
             vmsWithUncontrolledBalloon.put(vmId, currentVal + 1);
             if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
-                AuditLogableBase auditLogable = new AuditLogableBase();
+                AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
                 auditLogable.setVmId(vmId);
                 auditLog(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
                 vmsWithUncontrolledBalloon.put(vmId, 0);
@@ -75,7 +76,7 @@ public class BalloonMonitoring {
         } else {
             vmsWithBalloonDriverProblem.put(vmId, currentVal + 1);
             if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
-                AuditLogableBase auditLogable = new AuditLogableBase();
+                AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
                 auditLogable.setVmId(vmId);
                 auditLog(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
                 vmsWithBalloonDriverProblem.put(vmId, 0);

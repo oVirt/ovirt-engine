@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
 /** A test case for {@link CommandBase} */
@@ -34,6 +35,10 @@ public class CommandBaseTest extends BaseCommandTest {
             mockConfig(ConfigValues.IsMultilevelAdministrationOn, false),
             mockConfig(ConfigValues.UserSessionTimeOutInterval, 60),
             mockConfig(ConfigValues.UserSessionHardLimit, 600));
+
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     protected String session = "someSession";
 

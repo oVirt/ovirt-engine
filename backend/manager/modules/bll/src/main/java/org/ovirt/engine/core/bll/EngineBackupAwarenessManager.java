@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.EngineBackupLogDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -90,7 +91,7 @@ public class EngineBackupAwarenessManager implements BackendService {
     }
 
     private void doBackupCheck() {
-        AuditLogableBase alert = new AuditLogableBase();
+        AuditLogableBase alert = Injector.injectMembers(new AuditLogableBase());
 
         //try to get last backup record
         EngineBackupLog lastDbBackup = getLastBackupByScope(BackupScope.DB);

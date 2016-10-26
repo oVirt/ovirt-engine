@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ public class ExternalSchedulerBrokerObjectBuilder {
     private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private static void auditLogPluginError(String pluginName, String errorMessage) {
-        AuditLogableBase loggable = new AuditLogableBase();
+        AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase());
 
         loggable.addCustomValue("PluginName", pluginName);
         loggable.addCustomValue("ErrorMessage", errorMessage);
@@ -27,7 +28,7 @@ public class ExternalSchedulerBrokerObjectBuilder {
     }
 
     private static void auditLogExternalSchedulerError(String errorMessage) {
-        AuditLogableBase loggable = new AuditLogableBase();
+        AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase());
         loggable.addCustomValue("ErrorMessage", errorMessage);
         auditLogDirector.log(loggable, AuditLogType.EXTERNAL_SCHEDULER_ERROR);
     }

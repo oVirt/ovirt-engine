@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     protected FenceQueryBase(P parameters) {
@@ -45,7 +46,7 @@ public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends Q
      *            The reason.
      */
     private void alert(AuditLogType logType, String reason) {
-        AuditLogableBase alert = new AuditLogableBase();
+        AuditLogableBase alert = Injector.injectMembers(new AuditLogableBase());
         alert.setVdsId(getVdsId());
         alert.addCustomValue("Reason", reason);
         AlertDirector.alert(alert, logType, auditLogDirector);

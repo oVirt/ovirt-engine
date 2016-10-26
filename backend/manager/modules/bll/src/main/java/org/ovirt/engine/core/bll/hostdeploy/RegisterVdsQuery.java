@@ -116,7 +116,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         hostName
                     )
                 );
-                AuditLogableBase logable = new AuditLogableBase();
+                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                 logable.addCustomValue("VdsHostName", hostName);
                 auditLogDirector.log(logable, AuditLogType.VDS_REGISTER_EMPTY_ID);
                 return false;

@@ -403,7 +403,7 @@ public class IrsProxy {
                                 storagePoolIsoMapDao.updateStatus(
                                         domain.getStoragePoolIsoMapData().getId(),
                                         StorageDomainStatus.Maintenance);
-                                AuditLogableBase auditLogableBase = new AuditLogableBase();
+                                AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase());
                                 auditLogableBase.addCustomValue("StorageDomainName", domain.getName());
                                 auditLogableBase.addCustomValue("StoragePoolName", pool.getName());
                                 new AuditLogDirector().log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);

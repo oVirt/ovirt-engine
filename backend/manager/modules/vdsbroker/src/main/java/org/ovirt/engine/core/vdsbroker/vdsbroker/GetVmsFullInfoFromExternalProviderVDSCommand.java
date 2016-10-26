@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromExternalProviderParameters>
         extends VdsBrokerCommand<T> {
@@ -61,7 +62,7 @@ public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromEx
     private void logNonDownVms(List<VM> notDownVms) {
         if (!notDownVms.isEmpty()) {
             if (shouldLogToAuditLog()) {
-                AuditLogableBase logable = new AuditLogableBase();
+                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
                 logable.addCustomValue("URL", getParameters().getUrl());
                 logable.addCustomValue("Vms", StringUtils.join(notDownVms, ","));
                 auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_EXTERNAL_VMS_NOT_IN_DOWN_STATUS);

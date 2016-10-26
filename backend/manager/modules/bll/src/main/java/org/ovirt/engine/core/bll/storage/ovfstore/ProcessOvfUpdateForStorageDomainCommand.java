@@ -49,7 +49,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.archivers.tar.InMemoryTar;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
@@ -421,15 +420,14 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        AuditLogableBase auditLogableBase = new AuditLogableBase();
-        auditLogableBase.addCustomValue("StorageDomainName", getStorageDomain().getName());
-        auditLogableBase.setUserName(getUserName());
+        this.addCustomValue("StorageDomainName", getStorageDomain().getName());
+        this.setUserName(getUserName());
         if (getActionState() == CommandActionState.EXECUTE) {
             if (!getSucceeded()) {
                 return AuditLogType.UPDATE_OVF_FOR_STORAGE_DOMAIN_FAILED;
             }
 
-            if (!SYSTEM_USER_NAME.equals(auditLogableBase.getUserName())) {
+            if (!SYSTEM_USER_NAME.equals(this.getUserName())) {
                 return AuditLogType.USER_UPDATE_OVF_STORE;
             }
         }

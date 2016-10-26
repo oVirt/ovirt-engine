@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
     @PostConstruct
     protected void wakeup() {
 
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         auditLogDirector.log(logable, AuditLogType.AFFINITY_RULES_ENFORCEMENT_MANAGER_START);
 
         scheduleJobs(getRegularInterval(), getInitialInterval());

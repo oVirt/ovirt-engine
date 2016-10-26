@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,6 +45,9 @@ public class AffinityRulesEnforcementManagerTest {
             mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1),
             mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1)
     );
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private AuditLogDirector auditLogDirector;

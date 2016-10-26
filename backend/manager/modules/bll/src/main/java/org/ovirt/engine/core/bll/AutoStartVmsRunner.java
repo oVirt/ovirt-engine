@@ -195,7 +195,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
     protected abstract AuditLogType getRestartFailedAuditLogType();
 
     private void logFailureToRestartVm(Guid vmId) {
-        AuditLogableBase event = new AuditLogableBase();
+        AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
         event.setVmId(vmId);
         auditLogDirector.log(event, getExceededMaxNumOfRestartsAuditLogType());
     }

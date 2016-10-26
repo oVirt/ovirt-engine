@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -428,7 +429,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     private AuditLogableBase createExternalMacsAuditLog(VM vm, Set<String> externalMacs) {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.setVmId(vm.getId());
         logable.setCustomCommaSeparatedValues("MACAddr", externalMacs);
         return logable;

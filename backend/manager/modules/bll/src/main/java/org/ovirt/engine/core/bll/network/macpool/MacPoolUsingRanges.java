@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public class MacPoolUsingRanges implements MacPool {
 
     private void logWhenMacPoolIsEmpty() {
         if (!macsStorage.availableMacExist()) {
-            AuditLogableBase logable = new AuditLogableBase();
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
             new AuditLogDirector().log(logable, AuditLogType.MAC_POOL_EMPTY);
         }
     }

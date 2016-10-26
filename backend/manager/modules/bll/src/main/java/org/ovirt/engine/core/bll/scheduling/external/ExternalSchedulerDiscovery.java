@@ -21,6 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ public class ExternalSchedulerDiscovery {
             log.debug("PolicyUnits updated for external broker.");
             dbUpdated = true;
         } else {
-            AuditLogableBase loggable = new AuditLogableBase();
+            AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase());
             new AuditLogDirector().log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
             log.warn("Discovery returned empty result when talking to broker. Disabling external units");
 

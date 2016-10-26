@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
@@ -32,6 +34,9 @@ public class MetadataDiskDescriptionHandlerTest {
 
     private DiskImage disk;
     private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private AuditLogDirector auditLogDirector;

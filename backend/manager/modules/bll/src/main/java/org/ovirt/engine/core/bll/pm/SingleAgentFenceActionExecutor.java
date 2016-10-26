@@ -233,7 +233,7 @@ public class SingleAgentFenceActionExecutor implements FenceActionExecutor{
     }
 
     protected void auditVerifyStatusRetryLimitExceeded(FenceActionType fenceAction) {
-        AuditLogableBase auditLogable = new AuditLogableBase();
+        AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
         auditLogable.addCustomValue("Host", fencedHost.getName());
         auditLogable.addCustomValue("Status", fenceAction.name().toLowerCase());
         auditLogable.setVdsId(fencedHost.getId());

@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -209,7 +210,7 @@ public class VmPoolMonitor implements BackendService {
         boolean prestartingVmSucceeded = vdcReturnValue.getSucceeded();
 
         if (!prestartingVmSucceeded) {
-            AuditLogableBase log = new AuditLogableBase();
+            AuditLogableBase log = Injector.injectMembers(new AuditLogableBase());
             log.addCustomValue("VmPoolName", poolName);
             new AuditLogDirector().log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
         }

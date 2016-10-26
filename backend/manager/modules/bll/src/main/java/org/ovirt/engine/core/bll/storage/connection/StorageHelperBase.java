@@ -226,7 +226,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     public static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.addCustomValue("StorageDomainName", storageDomainName);
         logable.addCustomValue("VdsName", vdsName);
         new AuditLogDirector().log(logable, auditLogType);

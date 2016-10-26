@@ -197,7 +197,7 @@ public class NetworkConfigurator {
     }
 
     private AuditLogableBase createEvent() {
-        final AuditLogableBase event = new AuditLogableBase();
+        final AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
         event.setVds(host);
         return event;
     }

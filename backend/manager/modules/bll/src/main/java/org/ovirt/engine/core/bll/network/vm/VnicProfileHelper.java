@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class VnicProfileHelper {
@@ -140,7 +141,7 @@ public class VnicProfileHelper {
 
     public void auditInvalidInterfaces(String entityName) {
         if (!invalidNetworkNames.isEmpty()) {
-            AuditLogableBase logable = new AuditLogableBase();
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
             logable.addCustomValue("EntityName", entityName);
             logable.addCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
             logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));

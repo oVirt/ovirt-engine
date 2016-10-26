@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
@@ -54,7 +53,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
@@ -284,7 +282,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             result.setSuccess(vdsStatsResults.getFirst());
             if (!result.isSuccess()) {
                 result.setResultData(vdsStatsResults.getSecond());
-                auditLogDirector.log(new AuditLogableBase(getVdsId()),
+                auditLogDirector.log(this,
                         AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
             }
         }
@@ -361,20 +359,19 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             }
 
             // PM alerts
-            AuditLogableBase logable = new AuditLogableBase(getVds().getId());
             // Check first if PM is enabled on the cluster level
             if (getVds().isFencingEnabled()) {
                 if (getVds().isPmEnabled()) {
                     if (!vdsProxyFound) {
-                        logable.addCustomValue("Reason",
+                        this.addCustomValue("Reason",
                                 auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
-                        AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                        AlertDirector.alert(this, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
                     } else if (!fenceSucceeded) {
-                        logable.addCustomValue("Reason", fenceStatusResult.getMessage());
-                        AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                        this.addCustomValue("Reason", fenceStatusResult.getMessage());
+                        AlertDirector.alert(this, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
                     }
                 } else {
-                    AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
+                    AlertDirector.alert(this, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
                 }
             }
         }

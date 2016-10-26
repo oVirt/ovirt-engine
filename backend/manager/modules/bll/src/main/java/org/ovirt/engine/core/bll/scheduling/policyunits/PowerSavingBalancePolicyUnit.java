@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     private void logAction(VDS vds, AuditLogType type) {
-        AuditLogableBase loggable = new AuditLogableBase();
+        AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase());
         loggable.addCustomValue("Host", vds.getName());
         new AuditLogDirector().log(loggable, type);
     }
