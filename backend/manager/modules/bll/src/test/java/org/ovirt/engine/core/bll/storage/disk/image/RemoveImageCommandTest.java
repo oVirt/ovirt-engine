@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
@@ -16,6 +15,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -69,28 +69,13 @@ public class RemoveImageCommandTest extends BaseCommandTest {
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
     /** The command to test */
-    private RemoveImageCommand<RemoveImageParameters> cmd;
+    @Spy
+    private RemoveImageCommand<RemoveImageParameters> cmd =
+            new RemoveImageCommand<>(new RemoveImageParameters(Guid.newGuid()), null);
 
     @SuppressWarnings("serial")
     @Before
     public void setUp() {
-        RemoveImageParameters params = new RemoveImageParameters(Guid.newGuid());
-        cmd = spy(new RemoveImageCommand<RemoveImageParameters>(params, null) {
-            @Override
-            protected void initImage() {
-                // Stub implementation for testing
-            }
-
-            @Override
-            protected void initStoragePoolId() {
-                // Stub implementation for testing
-            }
-
-            @Override
-            protected void initStorageDomainId() {
-                // Stub implementation for testing
-            }
-        });
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
             put(0, new VmIconIdSizePair(
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
