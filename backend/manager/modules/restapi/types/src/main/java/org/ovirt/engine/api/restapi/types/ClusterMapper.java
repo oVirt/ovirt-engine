@@ -122,13 +122,14 @@ public class ClusterMapper {
         }
         /*
          * For backward compatibility additional rng sources are presented in <required_rng_sources> together with
-         * implicit /dev/random source. <required_rng_sources> should be changed to <additional_rng_sources> during
-         * next api change.
+         * implicit /dev/urandom or /dev/random source. <required_rng_sources> should be changed to
+         * <additional_rng_sources> during next api change.
          */
         if (model.isSetRequiredRngSources()) {
             entity.getAdditionalRngSources().clear();
             entity.getAdditionalRngSources().addAll(RngDeviceMapper.mapRngSources(model.getRequiredRngSources().getRequiredRngSources()));
             entity.getAdditionalRngSources().remove(VmRngDevice.Source.RANDOM);
+            entity.getAdditionalRngSources().remove(VmRngDevice.Source.URANDOM);
         }
         if (model.isSetFencingPolicy()) {
             entity.setFencingPolicy(FencingPolicyMapper.map(model.getFencingPolicy(), null));
