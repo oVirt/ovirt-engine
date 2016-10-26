@@ -415,20 +415,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testMigratoinCanBeSetWhenVMUsesScsiReservation() {
-        prepareVmToPassValidate();
-        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
-        VmDevice device = createVmDevice();
-        device.setUsingScsiReservation(false);
-
-        mockVmDevice(device);
-        mockVmValidator();
-
-        command.initEffectiveCompatibilityVersion();
-        ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
-
-    @Test
     public void testBlockingHostedEngineEditing() {
         // given
         mcr.mockConfigValue(ConfigValues.AllowEditingHostedEngine, false);
