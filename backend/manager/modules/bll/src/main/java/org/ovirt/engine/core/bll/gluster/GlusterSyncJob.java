@@ -1018,6 +1018,7 @@ public class GlusterSyncJob extends GlusterJob {
         customValues.put(GlusterConstants.BRICK_PATH, brick.getQualifiedName());
         customValues.put(GlusterConstants.OPTION_OLD_VALUE, brick.getStatus().toString());
         customValues.put(GlusterConstants.OPTION_NEW_VALUE, fetchedStatus.toString());
+        customValues.put(GlusterConstants.SOURCE, GlusterConstants.SOURCE_CLI);
         logUtil.logAuditMessage(volume.getClusterId(),
                 volume.getClusterName(),
                 volume,

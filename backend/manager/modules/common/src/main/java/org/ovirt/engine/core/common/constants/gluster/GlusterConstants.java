@@ -63,4 +63,8 @@ public class GlusterConstants {
     public static final String CLUSTER_NAME = "ClusterName";
     public static final String GEOREP_CHECKPOINT_OPTION = "checkpoint";
     public static final String GEOREP_CHECKPOINT_VALUE = "now";
+    public static final String SOURCE = "source";
+    public static final String SOURCE_CLI = "cli";
+    public static final String SOURCE_EVENT = "gluster event";
+
 }

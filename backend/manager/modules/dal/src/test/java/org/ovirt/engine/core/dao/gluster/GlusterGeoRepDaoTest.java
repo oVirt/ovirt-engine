@@ -187,4 +187,12 @@ public class GlusterGeoRepDaoTest extends BaseDaoTestCase {
         assertNotNull(session);
         assertEquals(FixturesTool.GLUSTER_GEOREP_SESSION_ID, session.getId());
     }
+
+    @Test
+    public void testGetBySlaveHostNameAndVolume() {
+        GlusterGeoRepSession session = dao.getGeoRepSession(FixturesTool.GLUSTER_VOLUME_UUID1,
+                "192.168.122.17", "slave-replica");
+        assertNotNull(session);
+        assertEquals(FixturesTool.GLUSTER_GEOREP_SESSION_ID, session.getId());
+    }
 }

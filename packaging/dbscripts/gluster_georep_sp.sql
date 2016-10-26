@@ -238,6 +238,23 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionBySlaveHostNameAndVolume (
+    v_master_volume_id UUID,
+    v_slave_host_name VARCHAR(150),
+    v_slave_volume_name VARCHAR(150)
+    )
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM gluster_georep_sessions_view
+    WHERE master_volume_id = v_master_volume_id
+        AND slave_host_name = v_slave_host_name
+        AND slave_volume_name = v_slave_volume_name;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSession (
     v_session_id UUID,
     v_status VARCHAR(50),

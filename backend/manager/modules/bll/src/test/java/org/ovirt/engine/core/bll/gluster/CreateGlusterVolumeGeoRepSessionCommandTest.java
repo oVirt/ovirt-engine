@@ -94,7 +94,8 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(vds).when(command).getSlaveHost();
         doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
-        doReturn(new GlusterGeoRepSession()).when(geoRepDao).getGeoRepSession(any(), any(), any());
+        doReturn(Guid.newGuid()).when(vds).getId();
+        doReturn(new GlusterGeoRepSession()).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         assertFalse(command.validate());
     }
 

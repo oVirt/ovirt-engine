@@ -155,6 +155,15 @@ public class GlusterGeoRepDaoImpl extends MassOperationsGenericDao<GlusterGeoRep
     }
 
     @Override
+    public GlusterGeoRepSession getGeoRepSession(Guid masterVolumeId, String slaveHostName, String slaveVolumeName) {
+        return getCallsHandler().executeRead("GetGlusterGeoRepSessionBySlaveHostNameAndVolume", georepSessionRowMapper,
+                getCustomMapSqlParameterSource().addValue("master_volume_id", masterVolumeId)
+                .addValue("slave_host_name", slaveHostName)
+                .addValue("slave_volume_name", slaveVolumeName));
+    }
+
+
+    @Override
     public List<GlusterGeoRepSession> getGeoRepSessions(Guid masterVolumeId) {
         return getCallsHandler().executeReadList("GetGlusterGeoRepSessionsByVolumeId", georepSessionRowMapper,
                 getCustomMapSqlParameterSource().addValue("master_volume_id", masterVolumeId));
