@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -70,6 +71,7 @@ public class VdcActionParametersBase implements Serializable {
 
     private LockProperties lockProperties;
     private Integer lifeInMinutes;
+    private VDSStatus prevVdsStatus;
 
     public VdcActionParametersBase() {
         shouldbelogged = true;
@@ -81,6 +83,7 @@ public class VdcActionParametersBase implements Serializable {
         parentCommand = VdcActionType.Unknown;
         commandType = VdcActionType.Unknown;
         imagesParameters = new ArrayList<>();
+        prevVdsStatus = VDSStatus.Unassigned;
     }
 
     public VdcActionParametersBase(String engineSessionId) {
@@ -276,6 +279,14 @@ public class VdcActionParametersBase implements Serializable {
 
     public void setUseCinderCommandCallback(boolean useCinderCommandCallback) {
         this.useCinderCommandCallback = useCinderCommandCallback;
+    }
+
+    public VDSStatus getPrevVdsStatus() {
+        return prevVdsStatus;
+    }
+
+    public void setPrevVdsStatus(VDSStatus prevVdsStatus) {
+        this.prevVdsStatus = prevVdsStatus;
     }
 
     /**

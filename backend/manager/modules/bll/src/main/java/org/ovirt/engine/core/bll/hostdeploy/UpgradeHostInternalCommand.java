@@ -70,9 +70,11 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 Updateable upgradeManager = new HostUpgradeManager();
                 upgradeManager.update(getVds());
                 if (vdsType == VDSType.oVirtNode) {
+                    VdsActionParameters params = new VdsActionParameters(getVds().getId());
+                    params.setPrevVdsStatus(getVds().getStatus());
                     setVdsStatus(VDSStatus.Reboot);
                     runInternalAction(VdcActionType.SshHostReboot,
-                            new VdsActionParameters(getVds().getId()),
+                            params,
                             ExecutionHandler.createInternalJobContext());
                 }
             } catch (Exception e) {

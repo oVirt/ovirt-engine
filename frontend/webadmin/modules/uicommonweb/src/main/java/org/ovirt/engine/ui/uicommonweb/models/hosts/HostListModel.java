@@ -1459,7 +1459,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
-            list.add(new VdsActionParameters(vds.getId()));
+            VdsActionParameters params = new VdsActionParameters(vds.getId());
+            params.setPrevVdsStatus(vds.getStatus());
+            list.add(params);
         }
 
         model.startProgress();
