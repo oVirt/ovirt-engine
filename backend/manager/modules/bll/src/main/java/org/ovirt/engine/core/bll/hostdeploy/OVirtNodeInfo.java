@@ -27,14 +27,9 @@ public class OVirtNodeInfo {
 
     public static synchronized OVirtNodeInfo getInstance() {
         if (instance == null) {
-            instance = new OVirtNodeInfo();
-        }
-        else {
-            if (instance == null) {
-                synchronized(OVirtNodeInfo.class) {
-                    if (instance == null) {
-                        instance = new OVirtNodeInfo();
-                    }
+            synchronized(OVirtNodeInfo.class) {
+                if (instance == null) {
+                    instance = new OVirtNodeInfo();
                 }
             }
         }
