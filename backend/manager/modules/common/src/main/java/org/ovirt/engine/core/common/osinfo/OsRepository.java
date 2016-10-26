@@ -247,6 +247,8 @@ public interface OsRepository {
 
     boolean isCpuHotplugSupported(int osId);
 
+    boolean isCpuHotunplugSupported(int osId);
+
     /**
      * @return a map that contain an pair (OS id and version) with the sound device support.
      */

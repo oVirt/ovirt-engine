@@ -77,6 +77,11 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
             }
         } else if (!FeatureSupported.hotUnplugCpu(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
             valid = failValidation(EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);
+        } else if (!osRepository.isCpuHotunplugSupported(getVm().getVmOsId())) {
+            valid = failValidation(
+                    EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED_FOR_GUEST_OS,
+                    String.format("$guestOS %1$s", osRepository.getOsName(getVm().getVmOsId())),
+                    String.format("$architecture %1$s", getVm().getClusterArch()));
         }
 
         return valid;
