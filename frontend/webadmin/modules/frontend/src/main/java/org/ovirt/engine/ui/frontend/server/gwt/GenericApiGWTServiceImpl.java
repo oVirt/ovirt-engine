@@ -108,12 +108,9 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
         log.debug("Server: RunMultipleQuery invoked! [amount of queries: {}]", size); //$NON-NLS-1$
         ArrayList<VdcQueryReturnValue> ret = new ArrayList<>();
 
-        if (queryTypeList == null || queryParamsList == null) {
-            // TODO: LOG: "queryTypeList and/or queryParamsList is null."
-        } else if (queryTypeList.size() != queryParamsList.size()) {
-            // TODO: LOG:
-            // "queryTypeList and queryParamsList don't have the same amount of items."
-        } else {
+        if (queryTypeList != null
+                && queryParamsList != null
+                && queryTypeList.size() == queryParamsList.size()) {
             String correlationId = CorrelationIdTracker.getCorrelationId();
             for (int i = 0; i < queryTypeList.size(); i++) {
                 if (queryParamsList.get(i).getCorrelationId() == null) {
@@ -122,6 +119,13 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
                 debugQuery(queryTypeList.get(i), queryParamsList.get(i));
                 ret.add(runQuery(queryTypeList.get(i), queryParamsList.get(i)));
             }
+        } else {
+            log.error(
+                    "Wrong multi query usage: the query types and parameters must not be null " //$NON-NLS-1$
+                            + "or be equally long. Types length '{}' vs params length '{}'",    //$NON-NLS-1$
+                    queryTypeList == null ? 0 : queryTypeList.size(),
+                    queryParamsList == null ? 0 : queryParamsList.size()
+            );
         }
 
         for (VdcQueryReturnValue vqrv : ret) {
