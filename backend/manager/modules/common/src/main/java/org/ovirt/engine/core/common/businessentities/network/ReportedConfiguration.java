@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class ReportedConfiguration implements Serializable {
 
     private static final long serialVersionUID = 5723310765332966613L;
@@ -90,5 +92,15 @@ public class ReportedConfiguration implements Serializable {
                 expectedValue,
                 inSync
         );
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("actualValue", actualValue)
+                .append("expectedValue", expectedValue)
+                .append("inSync", inSync)
+                .append("type", type)
+                .build();
     }
 }
