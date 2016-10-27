@@ -17,9 +17,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.Image;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
@@ -48,28 +45,6 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     @Override
     public CommandCallback getCallback() {
         return new SerialChildCommandsExecutionCallback();
-    }
-
-    private Long determineImageInitialSize(Image sourceImage) {
-        // We don't support Sparse-RAW volumes on block domains, therefore if the volume is RAW there is no
-        // need to pass initial size (it can be only preallocated).
-        if (getParameters().getDestFormat() == VolumeFormat.COW &&
-                ImagesHandler.isImageInitialSizeSupported(getStorageDomainStatic(getParameters().getDestDomain())
-                        .getStorageType())) {
-            //TODO: inspect if we can rely on the database to get the actual size.
-            DiskImage imageInfoFromStorage = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
-                    getParameters()
-                    .getSrcDomain(), getParameters().getImageGroupID(), sourceImage.getId());
-            // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
-            // case in which we won't have enough space. If the source is already COW we don't need the additional
-            // space.
-            return sourceImage.getVolumeFormat() == VolumeFormat.COW ?
-                    Double.valueOf(Math.ceil(imageInfoFromStorage.getActualSizeInBytes() /
-                            StorageConstants.QCOW_OVERHEAD_FACTOR)).longValue() :
-                    imageInfoFromStorage.getActualSizeInBytes();
-        }
-
-        return null;
     }
 
     private StorageDomainStatic getStorageDomainStatic(Guid domainId) {
@@ -108,7 +83,12 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 getParameters().getDestFormat(),
                 getParameters().getDescription(),
                 image.getSize(),
-                determineImageInitialSize(image.getImage()));
+                ImagesHandler.determineImageInitialSize(image.getImage(),
+                        getParameters().getDestFormat(),
+                        getParameters().getStoragePoolId(),
+                        getParameters().getSrcDomain(),
+                        getParameters().getDestDomain(),
+                        getParameters().getImageGroupID()));
 
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());
