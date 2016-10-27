@@ -105,21 +105,6 @@
       <artifactId>snakeyaml</artifactId>
       <version>${snakeyaml.version}</version>
     </dependency>
-
-    <!--
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-client</artifactId>
-      <version>5.1.0.CR1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jbossall-client</artifactId>
-      <version>5.0.0.GA</version>
-      <scope>test</scope>
-    </dependency>
-    -->
   </dependencies>
 
   <build>
