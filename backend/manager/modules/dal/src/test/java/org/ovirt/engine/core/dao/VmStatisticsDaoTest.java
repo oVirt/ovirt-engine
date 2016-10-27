@@ -43,7 +43,13 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
     @Test
     public void testSave() {
         newVmStatistics.setId(NEW_VM_ID);
-        newVmStatistics.setMigrationProgressPercent(0);
+        newVmStatistics.setCpuSys(22D);
+        newVmStatistics.setCpuUser(35D);
+        newVmStatistics.setUsageCpuPercent(44);
+        newVmStatistics.setUsageMemPercent(67);
+        newVmStatistics.setDisksUsage("disk_usage");
+        newVmStatistics.setGuestMemoryBuffered(32L);
+        newVmStatistics.setGuestMemoryCached(34L);
         dao.save(newVmStatistics);
 
         VmStatistics stats = dao.get(NEW_VM_ID);
