@@ -26,6 +26,7 @@ public abstract class GetAllVmsQueryBase<P extends VdcQueryParametersBase> exten
         List<VM> vmsList = getVMs();
         for (VM vm : vmsList) {
             VmHandler.updateVmGuestAgentVersion(vm);
+            VmHandler.updateVmStatistics(vm);
         }
         getQueryReturnValue().setReturnValue(vmsList);
     }

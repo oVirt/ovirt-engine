@@ -31,5 +31,6 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
         VmHandler.updateNetworkInterfacesFromDb(vm);
         VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         VmHandler.updateNumaNodesFromDb(vm);
+        VmHandler.updateVmStatistics(vm);
     }
 }

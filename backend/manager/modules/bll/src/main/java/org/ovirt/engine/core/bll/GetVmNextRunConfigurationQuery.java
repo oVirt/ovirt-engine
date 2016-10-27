@@ -34,6 +34,7 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
             VmHandler.updateDisksFromDb(vm);
             VmHandler.updateVmGuestAgentVersion(vm);
             VmHandler.updateNetworkInterfacesFromDb(vm);
+            VmHandler.updateVmStatistics(vm);
 
             getQueryReturnValue().setReturnValue(vm);
         } else {
