@@ -290,7 +290,6 @@ public class SchedulingManager implements BackendService {
 
     }
 
-    @NotNull
     public Optional<Guid> schedule(@NotNull Cluster cluster,
             @NotNull VM vm,
             @NotNull List<Guid> hostBlackList,
