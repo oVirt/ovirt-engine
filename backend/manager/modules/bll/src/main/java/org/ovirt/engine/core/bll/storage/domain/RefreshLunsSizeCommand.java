@@ -158,7 +158,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
                 vdsList.add(vdsSizePair.getFirst());
                 if (size == -1) {
                     size = vdsSizePair.getSecond().getDeviceSize();
-                } else if (!size.equals(vdsSizePair.getSecond())) {
+                } else if (!size.equals(vdsSizePair.getSecond().getDeviceSize())) {
                         failed = true;
                 }
             }
