@@ -347,6 +347,11 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             addValidationMessage(
                     EngineMessage.VDS_CANNOT_MAINTENANCE_GLUSTER_QUORUM_CANNOT_BE_MET);
             addValidationMessageVariable("VolumesList", StringUtils.join(volumesWithoutQuorum, ","));
+            String hostList = vdssToMaintenance.values()
+                    .stream()
+                    .map(host -> host.getName())
+                    .collect(Collectors.joining(","));
+            addValidationMessageVariable("HostsList", hostList);
             result = false;
         }
 
