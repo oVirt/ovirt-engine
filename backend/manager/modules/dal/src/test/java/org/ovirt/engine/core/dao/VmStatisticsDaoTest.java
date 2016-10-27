@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -45,9 +44,6 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
     public void testSave() {
         newVmStatistics.setId(NEW_VM_ID);
         newVmStatistics.setMigrationProgressPercent(0);
-        newVmStatistics.setMemoryUsageHistory(Arrays.asList(2, 3, 4));
-        newVmStatistics.setCpuUsageHistory(Arrays.asList(5, 6, 7));
-        newVmStatistics.setNetworkUsageHistory(Collections.emptyList());
         dao.save(newVmStatistics);
 
         VmStatistics stats = dao.get(NEW_VM_ID);
