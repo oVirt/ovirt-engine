@@ -25,7 +25,7 @@ public class OVirtNodeInfo {
 
     private List<Entry> info;
 
-    public static synchronized OVirtNodeInfo getInstance() {
+    public static OVirtNodeInfo getInstance() {
         if (instance == null) {
             synchronized(OVirtNodeInfo.class) {
                 if (instance == null) {
