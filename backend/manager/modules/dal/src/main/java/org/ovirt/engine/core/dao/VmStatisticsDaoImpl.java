@@ -2,14 +2,11 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -51,12 +48,6 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
                         statistics.getUsageNetworkPercent())
                 .addValue("disks_usage",
                                 statistics.getDisksUsage())
-                .addValue("memory_usage_history",
-                        StringUtils.join(statistics.getMemoryUsageHistory(), ","))
-                .addValue("cpu_usage_history",
-                        StringUtils.join(statistics.getCpuUsageHistory(), ","))
-                .addValue("network_usage_history",
-                        StringUtils.join(statistics.getNetworkUsageHistory(), ","))
                 .addValue("guest_mem_buffered", statistics.getGuestMemoryBuffered())
                 .addValue("guest_mem_cached", statistics.getGuestMemoryCached())
                 .addValue("guest_mem_free", statistics.getGuestMemoryFree());
@@ -81,32 +72,12 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
             entity.setMigrationProgressPercent(rs.getInt("migration_progress_percent"));
             entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
             entity.setDisksUsage((String) rs.getObject("disks_usage"));
-            entity.setMemoryUsageHistory(asIntList((String) rs.getObject("memory_usage_history")));
-            entity.setCpuUsageHistory(asIntList((String) rs.getObject("cpu_usage_history")));
-            entity.setNetworkUsageHistory(asIntList((String) rs.getObject("network_usage_history")));
             entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
             entity.setGuestMemoryBuffered(getLong(rs, "guest_mem_buffered"));
             entity.setGuestMemoryCached(getLong(rs, "guest_mem_cached"));
             entity.setGuestMemoryFree(getLong(rs, "guest_mem_free"));
             return entity;
         }
-    }
-
-    private static List<Integer> asIntList(String str) {
-        if (str == null || "".equals(str)) {
-            return Collections.emptyList();
-        }
-
-        List<Integer> res = new ArrayList<>();
-        for (String s : StringUtils.split(str, ",")) {
-            try {
-                res.add(Integer.parseInt(s));
-            } catch (NumberFormatException e) {
-                // add nothing if malformed
-            }
-        }
-
-        return res;
     }
 
     protected static RowMapper<VmStatistics> getRowMapper() {

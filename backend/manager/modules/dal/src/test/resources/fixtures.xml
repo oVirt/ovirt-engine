@@ -4544,9 +4544,6 @@
         <column>usage_cpu_percent</column>
         <column>migration_progress_percent</column>
         <column>_update_date</column>
-        <column>memory_usage_history</column>
-        <column>cpu_usage_history</column>
-        <column>network_usage_history</column>
 
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -4558,9 +4555,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -4572,9 +4566,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -4586,9 +4577,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -4600,9 +4588,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -4614,9 +4599,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -4628,9 +4610,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -4642,9 +4621,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -4656,9 +4632,6 @@
             <value>17</value>
             <value>60</value>
             <null />
-            <value>1,2,3</value>
-            <value>1,2,3</value>
-            <value>1,2,3</value>
         </row>
     </table>
 
