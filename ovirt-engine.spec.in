@@ -234,7 +234,6 @@ Requires:	jakarta-commons-httpclient
 Requires:	java-openjdk >= 1:1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
-Requires:	ovirt-image-uploader >= 4.0.0
 Requires:	ovirt-iso-uploader >= 4.0.0
 Requires:	%{patternfly}
 Requires:	postgresql-jdbc >= 9.2.1002

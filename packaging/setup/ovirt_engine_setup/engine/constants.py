@@ -350,7 +350,6 @@ class Defaults(object):
     DEFAULT_ADDITIONAL_PACKAGES = (
         'ovirt-host-deploy'
         ',ovirt-engine-cli'
-        ',ovirt-image-uploader'
         ',ovirt-iso-uploader'
         ',ovirt-engine-dashboard'
     )

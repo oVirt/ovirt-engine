@@ -46,10 +46,6 @@ class Plugin(plugin.PluginBase):
             "section": "ISOUploader",
         },
         {
-            "dir": "{engine_sysconf}/imageuploader.conf.d",
-            "section": "ImageUploader",
-        },
-        {
             "dir": "{engine_sysconf}/logcollector.conf.d",
             "section": "LogCollector",
         },
