@@ -154,6 +154,9 @@ public class ClusterMapper {
             properties.putAll(customProperties);
         }
 
+        if (model.isSetGlusterTunedProfile()) {
+            entity.setGlusterTunedProfile(model.getGlusterTunedProfile());
+        }
         return entity;
     }
 
@@ -243,6 +246,9 @@ public class ClusterMapper {
                     .getClusterPolicyProperties()));
         }
 
+        if (entity.getGlusterTunedProfile() != null && !entity.getGlusterTunedProfile().isEmpty()) {
+            model.setGlusterTunedProfile(entity.getGlusterTunedProfile());
+        }
         return model;
     }
 
