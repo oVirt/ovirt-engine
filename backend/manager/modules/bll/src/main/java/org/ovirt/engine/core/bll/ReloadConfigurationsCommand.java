@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
+import org.ovirt.engine.core.common.config.Config;
 
 @NonTransactiveCommandAttribute
 public class ReloadConfigurationsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
@@ -19,7 +19,7 @@ public class ReloadConfigurationsCommand<T extends VdcActionParametersBase> exte
 
     @Override
     protected void executeCommand() {
-        DBConfigUtils.refreshReloadableConfigsInVdcOptionCache();
+        Config.refresh();
         setSucceeded(true);
     }
 

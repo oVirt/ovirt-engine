@@ -3,8 +3,9 @@ package org.ovirt.engine.core.utils;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,18 +94,20 @@ public class MockConfigRule extends TestWatcher {
     }
 
     private static <T> void mockConfigValue(ConfigValues value, String version, T returnValue) {
-        when(Config.getConfigUtils().getValue(value, version)).thenReturn(returnValue);
+        doReturn(returnValue).when(Config.getConfigUtils()).getValue(value, version);
     }
 
     @Override
     public void starting(Description description) {
         origConfUtils = Config.getConfigUtils();
-        IConfigUtilsInterface configUtils = mock(IConfigUtilsInterface.class);
+        ConfigUtilsBase configUtils = mock(ConfigUtilsBase.class);
+        doCallRealMethod().when(configUtils).getValue(any(VdcOption.class));
         doAnswer(invocationOnMock -> {
             VdcOption option = new VdcOption();
             option.setOptionName(((ConfigValues) invocationOnMock.getArguments()[0]).name());
             option.setVersion((String) invocationOnMock.getArguments()[1]);
-            return ConfigUtilsBase.getValue(option);
+            return configUtils.getValue(option);
+
         }).when(configUtils).getValue(any(ConfigValues.class), anyString());
         Config.setConfigUtils(configUtils);
 

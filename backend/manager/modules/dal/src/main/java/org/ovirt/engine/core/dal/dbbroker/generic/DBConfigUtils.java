@@ -21,17 +21,26 @@ public class DBConfigUtils extends ConfigUtilsBase {
     /**
      * Refreshes the VDC option cache.
      */
-    protected static void refreshVdcOptionCache(DbFacade db) {
+    public void refresh() {
         _vdcOptionCache.clear();
-        List<VdcOption> list = db.getVdcOptionDao().getAll();
-        list.forEach(DBConfigUtils::updateOption);
+        List<VdcOption> list = getVdcOptionDao().getAll();
+        for (VdcOption option : list) {
+            try {
+                if (!_vdcOptionCache.containsKey(option.getOptionName()) || isReloadable(option.getOptionName())) {
+                    updateOption(option);
+                }
+            } catch (NoSuchFieldException e) {
+                log.error("Not refreshing field '{}': does not exist in class {}.", option.getOptionName(),
+                        ConfigValues.class.getSimpleName());
+            }
+        }
     }
 
     /**
      * Initializes a new instance of the DBConfigUtils class.
      */
     public DBConfigUtils() {
-        refreshVdcOptionCache(DbFacade.getInstance());
+        refresh();
     }
 
     @SuppressWarnings("unchecked")
@@ -65,28 +74,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
         return returnValue;
     }
 
-    /**
-     * Refreshes only the reloadable configurations in the VDC option cache.
-     */
-    public static void refreshReloadableConfigsInVdcOptionCache() {
-        List<VdcOption> list = getVdcOptionDao().getAll();
-        for (VdcOption option : list) {
-            try {
-                if (isReloadable(option.getOptionName())) {
-                    updateOption(option);
-                }
-            } catch (NoSuchFieldException e) {
-                log.error("Not refreshing field '{}': does not exist in class {}.", option.getOptionName(),
-                        ConfigValues.class.getSimpleName());
-            }
-        }
-    }
-
     private static VdcOptionDao getVdcOptionDao() {
         return DbFacade.getInstance().getVdcOptionDao();
     }
 
-    private static void updateOption(VdcOption option) {
+    private void updateOption(VdcOption option) {
         Map<String, Object> values = _vdcOptionCache.get(option.getOptionName());
         if (values == null) {
             values = new HashMap<>();

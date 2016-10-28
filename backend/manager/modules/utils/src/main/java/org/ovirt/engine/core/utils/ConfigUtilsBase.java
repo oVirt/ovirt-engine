@@ -57,7 +57,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
     /**
      * Returns the typed value of the given option. returns default value if option.option_value is null
      */
-    protected static Object getValue(VdcOption option) {
+    protected Object getValue(VdcOption option) {
         Object result = option.getOptionValue();
         EnumValue enumValue = parseEnumValue(option.getOptionName());
         if (enumValue != null) {
@@ -89,16 +89,11 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
                         break;
                     case ValueDependent:
                         // get the config that this value depends on
-                        VdcOption dependsOption = new VdcOption();
-                        dependsOption.setOptionName(optionBehaviour.dependentOn().toString());
-                        dependsOption.setVersion(ConfigCommon.defaultConfigurationVersion);
-                        String prefix = (String) getValue(dependsOption);
+                        String prefix = getValue(optionBehaviour.dependentOn(), ConfigCommon.defaultConfigurationVersion);
                         // combine the prefix with the 'real value'
                         if (prefix != null) {
-                            VdcOption real = new VdcOption();
-                            real.setOptionName(String.format("%1$s%2$s", prefix, optionBehaviour.realValue()));
-                            real.setVersion(ConfigCommon.defaultConfigurationVersion);
-                            result = getValue(real);
+                            String realName = String.format("%1$s%2$s", prefix, optionBehaviour.realValue());
+                            result = getValue(ConfigValues.valueOf(realName), ConfigCommon.defaultConfigurationVersion);
                         }
                         break;
                     case CommaSeparatedVersionArray:

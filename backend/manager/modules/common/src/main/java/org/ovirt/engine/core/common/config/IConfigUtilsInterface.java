@@ -5,4 +5,5 @@ package org.ovirt.engine.core.common.config;
  */
 public interface IConfigUtilsInterface {
     <T> T getValue(ConfigValues configValue, String version);
+    void refresh();
 }

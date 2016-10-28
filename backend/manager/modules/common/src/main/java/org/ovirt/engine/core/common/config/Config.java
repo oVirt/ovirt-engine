@@ -22,6 +22,10 @@ public final class Config {
         return getConfigUtils().<T>getValue(value, version);
     }
 
+    public static void refresh() {
+        getConfigUtils().refresh();
+    }
+
     /**
      * Fetch the oVirtISOsRepositoryPath configuration value and, if it is not an absolute path, resolve it relative to
      * the DataDir configuration value.
