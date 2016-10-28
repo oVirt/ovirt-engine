@@ -21,6 +21,12 @@ public class FencingPolicyMapper {
                 entity.setHostsWithBrokenConnectivityThreshold(50);
             }
         }
+        if (model.isSetSkipIfGlusterBricksUp()) {
+            entity.setSkipFencingIfGlusterBricksUp(model.isSkipIfGlusterBricksUp());
+        }
+        if (model.isSetSkipIfGlusterQuorumNotMet()) {
+            entity.setSkipFencingIfGlusterQuorumNotMet(model.isSkipIfGlusterQuorumNotMet());
+        }
         return entity;
     }
 
@@ -35,6 +41,8 @@ public class FencingPolicyMapper {
         model.setEnabled(entity.isFencingEnabled());
         model.setSkipIfSdActive(skipIfSdActive);
         model.setSkipIfConnectivityBroken(skipIfConnBroken);
+        model.setSkipIfGlusterBricksUp(entity.isSkipFencingIfGlusterBricksUp());
+        model.setSkipIfGlusterQuorumNotMet(entity.isSkipFencingIfGlusterQuorumNotMet());
         return model;
     }
 }
