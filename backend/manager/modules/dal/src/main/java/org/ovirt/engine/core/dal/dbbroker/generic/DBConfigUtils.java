@@ -26,7 +26,9 @@ public class DBConfigUtils extends ConfigUtilsBase {
         List<VdcOption> list = getVdcOptionDao().getAll();
         for (VdcOption option : list) {
             try {
-                if (!_vdcOptionCache.containsKey(option.getOptionName()) || isReloadable(option.getOptionName())) {
+                if (!_vdcOptionCache.containsKey(option.getOptionName()) ||
+                        !_vdcOptionCache.get(option.getOptionName()).containsKey(option.getVersion()) ||
+                        isReloadable(option.getOptionName())) {
                     updateOption(option);
                 }
             } catch (NoSuchFieldException e) {
