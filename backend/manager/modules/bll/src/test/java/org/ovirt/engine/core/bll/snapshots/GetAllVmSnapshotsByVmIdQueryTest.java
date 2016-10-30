@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -11,13 +10,13 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
@@ -27,6 +26,9 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 public class GetAllVmSnapshotsByVmIdQueryTest
         extends AbstractUserQueryTest<IdQueryParameters,
         GetAllVmSnapshotsByVmIdQuery<IdQueryParameters>> {
+
+    @Mock
+    private SnapshotDao snapshotDaoMock;
 
     /** The ID of the VM the disks belong to */
     private Guid vmId;
@@ -45,13 +47,6 @@ public class GetAllVmSnapshotsByVmIdQueryTest
     }
 
     private void setUpDaoMocks() {
-
-        // Mock the Daos
-        DbFacade dbFacadeMock = getDbFacadeMockInstance();
-
-        // Disk Image Dao
-        SnapshotDao snapshotDaoMock = mock(SnapshotDao.class);
-        when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
         when(snapshotDaoMock.getAll(vmId, getUser().getId(), getQueryParameters().isFiltered()))
                 .thenReturn(Collections.singletonList(snapshot));
     }

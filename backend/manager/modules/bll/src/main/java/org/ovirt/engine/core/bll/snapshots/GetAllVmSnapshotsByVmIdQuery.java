@@ -2,9 +2,12 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
  * Return a list of all the snapshots for the given VM id.<br>
@@ -13,14 +16,17 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
  */
 public class GetAllVmSnapshotsByVmIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
+    @Inject
+    private SnapshotDao snapshotDao;
+
     public GetAllVmSnapshotsByVmIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        List<Snapshot> snapshotsList = getDbFacade().getSnapshotDao()
-                .getAll(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        List<Snapshot> snapshotsList =
+                snapshotDao.getAll(getParameters().getId(), getUserID(), getParameters().isFiltered());
         getQueryReturnValue().setReturnValue(snapshotsList);
     }
 }
