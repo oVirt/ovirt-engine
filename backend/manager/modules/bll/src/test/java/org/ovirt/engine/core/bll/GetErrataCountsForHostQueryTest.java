@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -49,14 +48,6 @@ public class GetErrataCountsForHostQueryTest
 
     @Mock
     private VdsStatic host;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        when(getDbFacadeMockInstance().getVdsStaticDao()).thenReturn(vdsStaticDao);
-        when(getDbFacadeMockInstance().getProviderDao()).thenReturn(providerDao);
-    }
 
     @Test
     public void hostDoesNotExist() {
