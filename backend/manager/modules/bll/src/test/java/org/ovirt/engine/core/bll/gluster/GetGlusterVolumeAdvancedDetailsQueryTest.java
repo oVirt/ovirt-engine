@@ -50,6 +50,8 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private static final String SERVER_NAME = "server1";
     private GlusterVolumeAdvancedDetails expectedVolumeAdvancedDetails;
     private GlusterUtil glusterUtils;
+
+    @Mock
     private VdsDao vdsDao;
 
     @Mock
@@ -154,8 +156,6 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
 
     private void setupMock() {
         glusterUtils = mock(GlusterUtil.class);
-        vdsDao = mock(VdsDao.class);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
 
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
         when(brickDao.getById(BRICK_ID)).thenReturn(getBrick());

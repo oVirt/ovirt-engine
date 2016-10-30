@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDetailsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
@@ -31,6 +34,9 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     private GlusterBrickEntity brick = null;
     private Guid clusterId = null;
     private boolean detailRequired = false;
+
+    @Inject
+    private VdsDao vdsDao;
 
     public GetGlusterVolumeAdvancedDetailsQuery(P params) {
         super(params);
@@ -132,7 +138,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
             return getRandomUpServerId(clusterId);
         }
 
-        VDS brickServer = getDbFacade().getVdsDao().get(brick.getServerId());
+        VDS brickServer = vdsDao.get(brick.getServerId());
         if (brickServer.getStatus() == VDSStatus.Up) {
             return brickServer.getId();
         }
