@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -9,6 +8,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -22,6 +22,9 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
 
     /** The mocked permissions the Dao should return */
     private List<Permission> mockedPermissions;
+
+    @Mock
+    private PermissionDao permissionDaoMock;
 
     @Before
     @Override
@@ -37,10 +40,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
 
     @Test
     public void testExecuteQueryWithDirectOnly() {
-        PermissionDao permissionDaoMock = mock(PermissionDao.class);
         when(permissionDaoMock.getAllForEntity(objectID, UNPRIVILEGED_USER_SESSION_ID, getQueryParameters().isFiltered(), false)).thenReturn(mockedPermissions);
-        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDaoMock);
-
         assertQueryDaoCall(true);
     }
 
@@ -49,12 +49,10 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
         VdcObjectType type = RandomUtils.instance().pickRandom(VdcObjectType.values());
         when(getQueryParameters().getVdcObjectType()).thenReturn(type);
 
-        PermissionDao permissionDaoMock = mock(PermissionDao.class);
         when(permissionDaoMock.getTreeForEntity(objectID,
                 type,
                 UNPRIVILEGED_USER_SESSION_ID,
                 getQueryParameters().isFiltered())).thenReturn(mockedPermissions);
-        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDaoMock);
 
         assertQueryDaoCall(false);
     }
