@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -9,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,6 +20,9 @@ import org.ovirt.engine.core.dao.VmDao;
  * The internal workings of the Dao are not tested.
  */
 public class GetVmsByDiskGuidQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByDiskGuidQuery<IdQueryParameters>> {
+    @Mock
+    private VmDao vmDaoMock;
+
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
@@ -28,9 +31,7 @@ public class GetVmsByDiskGuidQueryTest extends AbstractQueryTest<IdQueryParamete
 
         // Set up the Daos
         Map<Boolean, List<VM>> expected = Collections.singletonMap(true, Collections.singletonList(new VM()));
-        VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.getForDisk(imageGuid, true)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
 
         // Run the query
         GetVmsByDiskGuidQuery<IdQueryParameters> query = getQuery();
