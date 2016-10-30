@@ -26,12 +26,6 @@ public class GetIscsiBondByIdQueryTest extends
 
     Guid iscsiBondId = Guid.newGuid();
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        when(getDbFacadeMockInstance().getIscsiBondDao()).thenReturn(iscsiBondDao);
-    }
-
     @Test
     public void testExecuteQueryCommand() {
         IscsiBond iscsiBond = mockIscsiBond();
