@@ -32,7 +32,6 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        setUpDaoMocks();
         doReturn("config").when(getQuery()).generateOvfConfig(any(VM.class));
     }
 
@@ -42,10 +41,6 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
 
         vm.setDbGeneration(dbGeneration);
         return vm;
-    }
-
-    private void setUpDaoMocks() {
-        doReturn(vmDao).when(getQuery()).getVmDao();
     }
 
     @Test

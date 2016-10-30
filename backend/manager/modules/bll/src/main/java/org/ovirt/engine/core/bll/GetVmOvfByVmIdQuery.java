@@ -8,6 +8,8 @@ import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmDao vmDao;
 
     @Inject
     private OvfHelper ovfHelper;
@@ -18,7 +20,7 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
 
     @Override
     protected void executeQueryCommand() {
-        VM vm = getVmDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        VM vm = vmDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         if (vm == null || vm.getDbGeneration() != getParameters().getRequiredGeneration()) {
             getQueryReturnValue().setSucceeded(false);
             return;
@@ -32,10 +34,6 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
         }
 
         getQueryReturnValue().setReturnValue(ovfData);
-    }
-
-    protected VmDao getVmDao() {
-        return getDbFacade().getVmDao();
     }
 
     protected String generateOvfConfig(VM vm) {
