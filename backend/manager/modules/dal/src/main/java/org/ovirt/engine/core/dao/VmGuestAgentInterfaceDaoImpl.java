@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Named;
@@ -14,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class VmGuestAgentInterfaceDaoImpl extends BaseDao implements VmGuestAgentInterfaceDao{
+public class VmGuestAgentInterfaceDaoImpl extends BaseDao implements VmGuestAgentInterfaceDao {
 
     private static final String DELIMITER = ",";
 
@@ -39,9 +40,9 @@ public class VmGuestAgentInterfaceDaoImpl extends BaseDao implements VmGuestAgen
     }
 
     @Override
-    public void removeAllForVm(Guid vmId) {
-        getCallsHandler().executeModification("DeleteVmGuestAgentInterfacesByVmId",
-                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    public void removeAllForVms(Collection<Guid> vmIds) {
+        getCallsHandler().executeModification("DeleteVmGuestAgentInterfacesByVmIds",
+                getCustomMapSqlParameterSource().addValue("vm_ids", createArrayOfUUIDs(vmIds)));
     }
 
     protected MapSqlParameterSource createFullParametersMapper(VmGuestAgentInterface entity) {

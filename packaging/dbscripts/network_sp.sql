@@ -1197,12 +1197,12 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteVmGuestAgentInterfacesByVmId (v_vm_id UUID)
+CREATE OR REPLACE FUNCTION DeleteVmGuestAgentInterfacesByVmIds (v_vm_ids UUID[])
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     DELETE
     FROM vm_guest_agent_interfaces
-    WHERE vm_id = v_vm_id;
+    WHERE vm_id = ANY(v_vm_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

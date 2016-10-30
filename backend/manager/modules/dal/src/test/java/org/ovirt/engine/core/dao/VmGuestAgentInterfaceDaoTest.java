@@ -55,10 +55,10 @@ public class VmGuestAgentInterfaceDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void removeAllForVm() {
+    public void removeAllForVms() {
         List<VmGuestAgentInterface> interfaces = dao.getAllForVm(EXISTING_VM_ID);
         assertFalse(interfaces.isEmpty());
-        dao.removeAllForVm(EXISTING_VM_ID);
+        dao.removeAllForVms(Collections.singletonList(EXISTING_VM_ID));
         interfaces = dao.getAllForVm(EXISTING_VM_ID);
         assertTrue(interfaces.isEmpty());
     }

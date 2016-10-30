@@ -352,10 +352,10 @@ public class VmsMonitoring implements BackendService {
         }
 
         TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-            analyzersWithChangeGuestAgentNics.stream()
-                .map(VmAnalyzer::getVmId)
-                .distinct()
-                .forEach(vmId -> vmGuestAgentInterfaceDao.removeAllForVm(vmId));
+            List<Guid> vmIds = analyzersWithChangeGuestAgentNics.stream()
+                    .map(VmAnalyzer::getVmId)
+                    .collect(Collectors.toList());
+            vmGuestAgentInterfaceDao.removeAllForVms(vmIds);
 
             analyzersWithChangeGuestAgentNics.stream()
                 .map(VmAnalyzer::getVmGuestAgentNics)

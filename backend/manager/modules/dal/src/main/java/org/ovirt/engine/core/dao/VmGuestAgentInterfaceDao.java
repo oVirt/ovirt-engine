@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -32,11 +33,11 @@ public interface VmGuestAgentInterfaceDao extends Dao {
     List<VmGuestAgentInterface> getAllForVm(Guid vmId, Guid userId, boolean filtered);
 
     /**
-     * Removes all the VmGuestAgentInterfaces of the given VM
-     * @param vmId
-     *            the VM
+     * Removes all the VmGuestAgentInterfaces of the given VMs
+     * @param vmIds
+     *            the VMs' IDs
      */
-    void removeAllForVm(Guid vmId);
+    void removeAllForVms(Collection<Guid> vmIds);
 
     /**
      * Persists the given VmGuestAgentInterface
