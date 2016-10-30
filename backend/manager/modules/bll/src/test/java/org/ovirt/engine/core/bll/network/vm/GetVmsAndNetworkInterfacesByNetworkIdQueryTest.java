@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -9,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -31,6 +31,12 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
     private Guid vmId = Guid.newGuid();
     private VM vm = new VM();
     private VmNetworkInterface vmNetworkInterface = new VmNetworkInterface();
+
+    @Mock
+    private VmDao vmDaoMock;
+
+    @Mock
+    private VmNetworkInterfaceDao vmNetworkInterfaceDaoMock;
 
     @Test
     public void testExecuteQueryCommand() {
@@ -88,14 +94,10 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
     }
 
     private void setupVmDao(List<VM> expectedVms) {
-        VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.getAllForNetwork(networkId)).thenReturn(expectedVms);
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
     }
 
     private void setupVmNetworkInterfaceDao(List<VmNetworkInterface> expectedVmNetworkInterfaces) {
-        VmNetworkInterfaceDao vmNetworkInterfaceDaoMock = mock(VmNetworkInterfaceDao.class);
         when(vmNetworkInterfaceDaoMock.getAllForNetwork(networkId)).thenReturn(expectedVmNetworkInterfaces);
-        when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDaoMock);
     }
 }

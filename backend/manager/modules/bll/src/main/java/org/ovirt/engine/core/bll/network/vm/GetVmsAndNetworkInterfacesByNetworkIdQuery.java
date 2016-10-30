@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -11,22 +13,29 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /**
  * A query to retrieve all VM-Network Interface pairs that the given Network is attached to.
  */
 public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetworkInterfacesByNetworkIdParameters>
         extends QueriesCommandBase<P> {
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
     public GetVmsAndNetworkInterfacesByNetworkIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        List<VM> vmList = getDbFacade().getVmDao()
-                .getAllForNetwork(getParameters().getId());
-        List<VmNetworkInterface> vmNetworkInterfaceList = getDbFacade().getVmNetworkInterfaceDao()
-                .getAllForNetwork(getParameters().getId());
+        List<VM> vmList = vmDao.getAllForNetwork(getParameters().getId());
+        List<VmNetworkInterface> vmNetworkInterfaceList =
+                vmNetworkInterfaceDao.getAllForNetwork(getParameters().getId());
 
         final Map<Guid, VM> vmsById = Entities.businessEntitiesById(vmList);
 
