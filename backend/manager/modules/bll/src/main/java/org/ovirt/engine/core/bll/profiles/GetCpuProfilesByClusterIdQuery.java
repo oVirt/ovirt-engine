@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 public class GetCpuProfilesByClusterIdQuery extends QueriesCommandBase<IdQueryParameters> {
+    @Inject
+    private CpuProfileDao cpuProfileDao;
 
     /**
      *
@@ -20,7 +25,7 @@ public class GetCpuProfilesByClusterIdQuery extends QueriesCommandBase<IdQueryPa
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getCpuProfileDao()
+        getQueryReturnValue().setReturnValue(cpuProfileDao
                 .getAllForCluster(getParameters().getId(), getUserID(), getParameters().isFiltered(), ActionGroup.ASSIGN_CPU_PROFILE));
     }
 
