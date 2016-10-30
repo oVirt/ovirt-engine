@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
@@ -49,12 +48,6 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
     }
 
     private void setUpDaoMocks() {
-
-        // Mock the Daos
-        DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDao);
-        when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
-
         Guid snapshotId = Guid.newGuid();
         Snapshot snapshot = new Snapshot(snapshotId, SnapshotStatus.OK, Guid.newGuid(), null, SnapshotType.REGULAR,
                 snapshotDescription, new Date(), "");
