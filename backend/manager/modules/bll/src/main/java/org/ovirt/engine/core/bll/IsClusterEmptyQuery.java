@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 public class IsClusterEmptyQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private ClusterDao clusterDao;
 
     public IsClusterEmptyQuery(P parameters) {
         super(parameters);
@@ -10,7 +15,7 @@ public class IsClusterEmptyQuery<P extends IdQueryParameters> extends QueriesCom
 
     @Override
     protected void executeQueryCommand() {
-        Boolean isEmpty = getDbFacade().getClusterDao().getIsEmpty(getParameters().getId());
+        Boolean isEmpty = clusterDao.getIsEmpty(getParameters().getId());
 
         getQueryReturnValue().setReturnValue(isEmpty);
     }
