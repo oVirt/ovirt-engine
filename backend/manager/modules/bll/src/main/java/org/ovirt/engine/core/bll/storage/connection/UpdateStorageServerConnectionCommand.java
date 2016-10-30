@@ -118,7 +118,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected boolean isConnectionEditable(StorageServerConnections connection) {
         if (connection.getStorageType().isFileDomain()) {
-            boolean isConnectionEditable = isFileDomainInEditState(domains.get(0));
+            boolean isConnectionEditable = isFileDomainInEditState(domains.get(0)) || getParameters().isForce();
             if (!isConnectionEditable) {
                 addValidationMessageVariable("domainNames", domains.get(0).getStorageName());
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
