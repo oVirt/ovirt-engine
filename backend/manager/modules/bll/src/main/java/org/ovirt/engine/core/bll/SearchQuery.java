@@ -49,7 +49,24 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
+import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DbGroupDao;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.EngineSessionDao;
+import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SearchDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.NetworkViewDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
@@ -68,6 +85,57 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private DbUserDao dbUserDao;
+
+    @Inject
+    private DbGroupDao dbGroupDao;
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private AuditLogDao auditLogDao;
+
+    @Inject
+    private VmPoolDao vmPoolDao;
+
+    @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private QuotaDao quotaDao;
+
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
+
+    @Inject
+    private NetworkViewDao networkViewDao;
+
+    @Inject
+    private ProviderDao providerDao;
+
+    @Inject
+    private EngineSessionDao engineSessionDao;
+
+    @Inject
+    private ImageTransferDao imageTransferDao;
 
     public SearchQuery(P parameters) {
         super(parameters);
@@ -153,7 +221,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return Collections.emptyList();
         }
 
-        List<VM> vms = getDbFacade().getVmDao().getAllUsingQuery(data.getQuery());
+        List<VM> vms = vmDao.getAllUsingQuery(data.getQuery());
         for (VM vm : vms) {
             VmHandler.updateVmGuestAgentVersion(vm);
             VmHandler.updateVmLock(vm);
@@ -164,7 +232,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VDS> searchVDSsByDb() {
-        List<VDS> data = genericSearch(getDbFacade().getVdsDao(), true);
+        List<VDS> data = genericSearch(vdsDao, true);
         for (VDS vds : data) {
             vds.setCpuName(cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                     vds.getClusterCompatibilityVersion()));
@@ -221,23 +289,23 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<DbUser> searchDbUsers() {
-        return genericSearch(getDbFacade().getDbUserDao(), true);
+        return genericSearch(dbUserDao, true);
     }
 
     private List<DbGroup> searchDbGroups() {
-        return genericSearch(getDbFacade().getDbGroupDao(), true);
+        return genericSearch(dbGroupDao, true);
     }
 
     private List<VmTemplate> searchVmTemplates() {
-        return genericSearch(getDbFacade().getVmTemplateDao(), true);
+        return genericSearch(vmTemplateDao, true);
     }
 
     private List<VmTemplate> searchInstanceTypes() {
-        return genericSearch(getDbFacade().getVmTemplateDao(), true);
+        return genericSearch(vmTemplateDao, true);
     }
 
     private List<VmTemplate> searchImageTypes() {
-        return genericSearch(getDbFacade().getVmTemplateDao(), true);
+        return genericSearch(vmTemplateDao, true);
     }
 
     private <T extends IVdcQueryable> List<T> genericSearch(final SearchDao<T> dao,
@@ -252,55 +320,55 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<AuditLog> searchAuditLogEvents() {
-        return genericSearch(getDbFacade().getAuditLogDao(), false);
+        return genericSearch(auditLogDao, false);
     }
 
     private List<VmPool> searchVmPools() {
-        return genericSearch(getDbFacade().getVmPoolDao(), true);
+        return genericSearch(vmPoolDao, true);
     }
 
     private List<Cluster> searchClusters() {
-        return genericSearch(getDbFacade().getClusterDao(), true);
+        return genericSearch(clusterDao, true);
     }
 
     private List<StoragePool> searchStoragePool() {
-        return genericSearch(getDbFacade().getStoragePoolDao(), true);
+        return genericSearch(storagePoolDao, true);
     }
 
     private List<StorageDomain> searchStorageDomain() {
-        return genericSearch(getDbFacade().getStorageDomainDao(), true);
+        return genericSearch(storageDomainDao, true);
     }
 
     private List<Quota> searchQuota() {
-        List<Quota> quotaList = genericSearch(getDbFacade().getQuotaDao(), true);
+        List<Quota> quotaList = genericSearch(quotaDao, true);
         quotaManager.updateUsage(quotaList);
         return quotaList;
     }
 
     private List<Disk> searchDisk() {
-        return genericSearch(getDbFacade().getDiskDao(), true);
+        return genericSearch(diskDao, true);
     }
 
     private List<GlusterVolumeEntity> searchGlusterVolumes() {
-        return genericSearch(getDbFacade().getGlusterVolumeDao(), true);
+        return genericSearch(glusterVolumeDao, true);
     }
 
     private List<NetworkView> searchNetworks() {
-        return genericSearch(getDbFacade().getNetworkViewDao(), true);
+        return genericSearch(networkViewDao, true);
     }
 
     private List<Provider<?>> searchProviders() {
-        return genericSearch(getDbFacade().getProviderDao(), true);
+        return genericSearch(providerDao, true);
     }
 
     private List<UserSession> searchSessions() {
-        return genericSearch(getDbFacade().getEngineSessionDao(), false).stream().peek(this::injectSessionInfo)
+        return genericSearch(engineSessionDao, false).stream().peek(this::injectSessionInfo)
                 .map(UserSession::new)
                 .collect(Collectors.toList());
     }
 
     private List<ImageTransfer> searchImageTransfer() {
-        return genericSearch(getDbFacade().getImageTransferDao(), false);
+        return genericSearch(imageTransferDao, false);
     }
 
     private void injectSessionInfo(EngineSession engineSession) {

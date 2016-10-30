@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.matches;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.CommonConstants;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.QuotaDao;
@@ -59,6 +57,24 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     private QuotaManager quotaManager;
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    @Mock
+    private DiskDao diskDao;
+    @Mock
+    private QuotaDao quotaDao;
+    @Mock
+    private VmDao vmDao;
+    @Mock
+    private VmTemplateDao vmTemplateDao;
+    @Mock
+    private VdsDao vdsDao;
+    @Mock
+    private ClusterDao clusterDao;
+    @Mock
+    private StoragePoolDao storagePoolDao;
+    @Mock
+    private GlusterVolumeDao glusterVolumeDao;
+    @Mock
+    private NetworkViewDao networkViewDao;
 
     List<Disk> diskImageResultList = new ArrayList<>();
     List<Quota> quotaResultList = new ArrayList<>();
@@ -71,41 +87,6 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<>();
     List<NetworkView> networkResultList = new ArrayList<>();
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        DbFacade facadeMock = getDbFacadeMockInstance();
-        final DiskDao diskDao = mock(DiskDao.class);
-        final QuotaDao quotaDao = mock(QuotaDao.class);
-        final VmDao vmDao = mock(VmDao.class);
-        final VmTemplateDao vmTemplateDao = mock(VmTemplateDao.class);
-        final VdsDao vdsDao = mock(VdsDao.class);
-        final ClusterDao clusterDao = mock(ClusterDao.class);
-        final StoragePoolDao storagePoolDao = mock(StoragePoolDao.class);
-        final GlusterVolumeDao glusterVolumeDao = mock(GlusterVolumeDao.class);
-        final NetworkViewDao networkViewDao = mock(NetworkViewDao.class);
-
-        when(facadeMock.getDiskDao()).thenReturn(diskDao);
-        when(facadeMock.getQuotaDao()).thenReturn(quotaDao);
-        when(facadeMock.getVmDao()).thenReturn(vmDao);
-        when(facadeMock.getVmTemplateDao()).thenReturn(vmTemplateDao);
-        when(facadeMock.getVdsDao()).thenReturn(vdsDao);
-        when(facadeMock.getClusterDao()).thenReturn(clusterDao);
-        when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(facadeMock.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
-        when(facadeMock.getNetworkViewDao()).thenReturn(networkViewDao);
-        // mock Daos
-        mockDiskDao(diskDao);
-        mockQuotaDao(quotaDao);
-        mockVMDao(vmDao);
-        mockVMTemplateDao(vmTemplateDao);
-        mockVdsDao(vdsDao);
-        mockClusterDao(clusterDao);
-        mockStoragePoolDao(storagePoolDao);
-        mockGlusterVolumeDao(glusterVolumeDao);
-        mockNetworkDao(networkViewDao);
-    }
-
     /**
      * Mock disk Dao so that when getAllWithQuery will be called with the appropriate query string, a unique list will
      * be returned. <BR/>
@@ -114,13 +95,15 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param diskDao
      *            - The dao to be used
      */
-    private void mockDiskDao(final DiskDao diskDao) {
+    @Before
+    public void mockDiskDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(diskDao.getAllWithQuery(matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
     }
 
-    private void mockQuotaDao(final QuotaDao quotaDao) {
+    @Before
+    public void mockQuotaDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(quotaDao.getAllWithQuery(matches(getQuotaRegexString(search))))
                 .thenReturn(quotaResultList);
@@ -146,7 +129,8 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param clusterDao
      *            - The dao to be used
      */
-    private void mockClusterDao(final ClusterDao clusterDao) {
+    @Before
+    public void mockClusterDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(clusterDao.getAllWithQuery(matches(getClusterRegexString(search))))
                 .thenReturn(clusterResultList);
@@ -160,7 +144,8 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param storagePoolDao
      *            - The dao to be used
      */
-    private void mockStoragePoolDao(final StoragePoolDao storagePoolDao) {
+    @Before
+    public void mockStoragePoolDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(storagePoolDao.getAllWithQuery(matches(getStoragePoolRegexString(search))))
                 .thenReturn(storagePoolResultList);
@@ -174,13 +159,15 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param glusterVolumeDao
      *            - The dao to be used
      */
-    private void mockGlusterVolumeDao(final GlusterVolumeDao glusterVolumeDao) {
+    @Before
+    public void mockGlusterVolumeDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(glusterVolumeDao.getAllWithQuery(matches(getGlusterVolumeRegexString(search))))
                 .thenReturn(glusterVolumeList);
     }
 
-    private void mockNetworkDao(final NetworkViewDao networkViewDao) {
+    @Before
+    public void mockNetworkDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(networkViewDao.getAllWithQuery(matches(getNetworkRegexString(search))))
                 .thenReturn(networkResultList);
@@ -208,7 +195,8 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param diskImageDao
      *            - The dao to be used
      */
-    private void mockVdsDao(final VdsDao vdsDao) {
+    @Before
+    public void mockVdsDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(vdsDao.getAllWithQuery(matches(getVdsRegexString(search))))
                 .thenReturn(vdsResultList);
@@ -226,7 +214,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param vmDao
      *            - The dao to be used
      */
-    private void mockVMDao(final VmDao vmDao) {
+    public void mockVMDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(vmDao.getAllUsingQuery(matches(getVMRegexString(search))))
                 .thenReturn(vmResultList);
@@ -240,7 +228,8 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param vmTemplateDao
      *            - The dao to be used
      */
-    private void mockVMTemplateDao(final VmTemplateDao vmTemplateDao) {
+    @Before
+    public void mockVMTemplateDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(vmTemplateDao.getAllWithQuery(matches(getVMTemplateRegexString(search))))
                 .thenReturn(vmTemplateResultList);
