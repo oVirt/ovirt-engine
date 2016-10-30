@@ -79,7 +79,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         // storage team request
         newDiskImage.setVolumeType(VolumeType.Sparse);
         newDiskImage.setVolumeFormat(VolumeFormat.COW);
-        VDSReturnValue vdsReturnValue = null;
+        VDSReturnValue vdsReturnValue;
 
         try {
             Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
