@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 /**
@@ -34,6 +35,9 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
 
     @Inject
     private VdsDynamicDao hostDynamicDao;
+
+    @Inject
+    private VdsDao hostDao;
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);
@@ -192,7 +196,7 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
         VDS vds = null;
 
         if (vdsId != null) {
-            vds = getDbFacade().getVdsDao().get(vdsId);
+            vds = hostDao.get(vdsId);
         }
         return vds;
     }

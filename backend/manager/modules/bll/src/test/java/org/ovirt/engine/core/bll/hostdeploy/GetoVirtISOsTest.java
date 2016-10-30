@@ -7,7 +7,6 @@ import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -29,13 +28,6 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
 
     @Mock
     private VdsDao vdsDao;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
-    }
 
     @Test
     public void testQueryWithHostId() {
