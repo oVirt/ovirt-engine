@@ -5,16 +5,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 
 public class GetHostListFromExternalProviderQuery<P extends GetHostListFromExternalProviderParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private ProviderDao providerDao;
+
+    @Inject
+    private VdsDao vdsDao;
+
     public GetHostListFromExternalProviderQuery(P parameters) {
         super(parameters);
     }
@@ -54,11 +63,11 @@ public class GetHostListFromExternalProviderQuery<P extends GetHostListFromExter
     }
 
     protected List<VDS> getExistingHosts() {
-        return DbFacade.getInstance().getVdsDao().getAll();
+        return vdsDao.getAll();
     }
 
     protected Provider getProvider() {
-        return DbFacade.getInstance().getProviderDao().get(getParameters().getProviderId());
+        return providerDao.get(getParameters().getProviderId());
     }
 
 }
