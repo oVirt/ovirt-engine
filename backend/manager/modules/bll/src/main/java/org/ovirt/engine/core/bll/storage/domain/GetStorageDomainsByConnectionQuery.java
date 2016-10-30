@@ -2,11 +2,13 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /**
  * Query to retrieve the storage domains which use the given connection (if none then an empty list is returned) in a
@@ -14,6 +16,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  */
 public class GetStorageDomainsByConnectionQuery<P extends GetStorageDomainsByConnectionParameters>
         extends QueriesCommandBase<P> {
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
     public GetStorageDomainsByConnectionQuery(P parameters) {
         super(parameters);
     }
@@ -25,15 +31,9 @@ public class GetStorageDomainsByConnectionQuery<P extends GetStorageDomainsByCon
         List<StorageDomain> domainsList;
 
         if (storagePoolId != null) {
-            domainsList =
-                    DbFacade.getInstance()
-                            .getStorageDomainDao()
-                            .getAllByStoragePoolAndConnection(storagePoolId, connection);
+            domainsList = storageDomainDao.getAllByStoragePoolAndConnection(storagePoolId, connection);
         } else {
-            domainsList =
-                    DbFacade.getInstance()
-                            .getStorageDomainDao()
-                            .getAllForConnection(connection);
+            domainsList = storageDomainDao.getAllForConnection(connection);
         }
         getQueryReturnValue().setReturnValue(domainsList);
     }
