@@ -1,18 +1,22 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.TagDao;
 
 public class GetTagsByUserIdQuery<P extends GetTagsByUserIdParameters> extends
         QueriesCommandBase<P> {
+
+    @Inject
+    private TagDao tagDao;
+
     public GetTagsByUserIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getTagDao()
-                        .getAllForUsers(getParameters().getUserId()));
+        getQueryReturnValue().setReturnValue(tagDao.getAllForUsers(getParameters().getUserId()));
     }
 }
