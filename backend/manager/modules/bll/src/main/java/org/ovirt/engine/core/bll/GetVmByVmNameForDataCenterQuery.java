@@ -1,16 +1,22 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmByVmNameForDataCenterQuery<P extends GetVmByVmNameForDataCenterParameters> extends QueriesCommandBase<GetVmByVmNameForDataCenterParameters> {
+    @Inject
+    private VmDao vmDao;
+
     public GetVmByVmNameForDataCenterQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        VM vm = getDbFacade().getVmDao().getByNameForDataCenter(
+        VM vm = vmDao.getByNameForDataCenter(
                 getParameters().getDataCenterId(),
                 getParameters().getName(),
                 getUserID(),
