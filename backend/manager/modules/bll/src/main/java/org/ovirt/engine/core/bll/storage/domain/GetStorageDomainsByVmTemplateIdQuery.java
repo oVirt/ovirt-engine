@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.disk.GetVmTemplatesDisksQuery;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -13,10 +15,17 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
         extends GetVmTemplatesDisksQuery<P> {
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     private VmTemplate vmTemplate = null;
 
@@ -30,10 +39,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
 
     @Override
     protected void executeQueryCommand() {
-        vmTemplate =
-                DbFacade.getInstance()
-                        .getVmTemplateDao()
-                        .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        vmTemplate = vmTemplateDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         ArrayList<StorageDomain> result = new ArrayList<>();
 
         if (vmTemplate != null && vmTemplate.getStoragePoolId() != null) {
@@ -58,8 +64,6 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {
-        return DbFacade.getInstance()
-                .getStorageDomainDao()
-                .getForStoragePool(domainId, vmTemplate.getStoragePoolId());
+        return storageDomainDao.getForStoragePool(domainId, vmTemplate.getStoragePoolId());
     }
 }
