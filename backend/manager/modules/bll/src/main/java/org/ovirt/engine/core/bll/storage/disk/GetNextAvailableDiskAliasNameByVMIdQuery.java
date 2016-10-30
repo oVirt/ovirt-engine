@@ -3,14 +3,20 @@ package org.ovirt.engine.core.bll.storage.disk;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmDao vmDao;
+
 
     public GetNextAvailableDiskAliasNameByVMIdQuery(P parameters) {
         super(parameters);
@@ -22,7 +28,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends IdQueryParameter
         if (getParameters().getId() == null) {
             getQueryReturnValue().setReturnValue(suggestedDiskName);
         } else {
-            VM vm = getDbFacade().getVmDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+            VM vm = vmDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
             if (vm != null) {
                 updateDisksFromDb(vm);
                 suggestedDiskName = getSuggestedDiskName(vm);
