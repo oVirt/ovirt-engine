@@ -3,14 +3,24 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 
 public class GetUnusedGlusterBricksQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private StorageDeviceDao storageDeviceDao;
+
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
 
     public GetUnusedGlusterBricksQuery(P parameters) {
         super(parameters);
@@ -18,14 +28,12 @@ public class GetUnusedGlusterBricksQuery<P extends IdQueryParameters> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        List<StorageDevice> storageDevicesInHost =
-                getDbFacade().getStorageDeviceDao().getStorageDevicesInHost(getParameters().getId());
+        List<StorageDevice> storageDevicesInHost = storageDeviceDao.getStorageDevicesInHost(getParameters().getId());
         getQueryReturnValue().setReturnValue(getUnUsedBricks(storageDevicesInHost));
     }
 
     private List<StorageDevice> getUnUsedBricks(List<StorageDevice> storageDevicesInHost) {
-        List<GlusterBrickEntity> usedBricks =
-                getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getParameters().getId());
+        List<GlusterBrickEntity> usedBricks = glusterBrickDao.getGlusterVolumeBricksByServerId(getParameters().getId());
         return storageDevicesInHost.stream().filter
                 (storageDevice -> storageDevice.getMountPoint() != null
                     && !storageDevice.getMountPoint().isEmpty()
