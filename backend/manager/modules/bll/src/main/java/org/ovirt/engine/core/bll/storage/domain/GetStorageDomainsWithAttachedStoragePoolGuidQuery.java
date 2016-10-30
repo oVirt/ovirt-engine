@@ -21,6 +21,8 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends StorageDomainsAndStoragePoolIdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -28,6 +30,12 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
 
     @Inject
     private HostedEngineHelper hostedEngineHelper;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     public GetStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters) {
         super(parameters);
@@ -46,8 +54,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
         vdsId = getParameters().getVdsId();
         if (vdsId == null) {
             // Get a Host which is at UP state to connect to the Storage Domain.
-            List<VDS> hosts =
-                    getDbFacade().getVdsDao().getAllForStoragePoolAndStatus(getParameters().getId(), VDSStatus.Up);
+            List<VDS> hosts = vdsDao.getAllForStoragePoolAndStatus(getParameters().getId(), VDSStatus.Up);
             if (!hosts.isEmpty()) {
                 vdsId = hosts.get(new Random().nextInt(hosts.size())).getId();
                 log.info("vds id '{}' was chosen to fetch the Storage domain info", vdsId);
@@ -60,7 +67,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
 
     private boolean isDataCenterValidForAttachedStorageDomains() {
         if (getParameters().isCheckStoragePoolStatus()) {
-            StoragePool storagePool = getDbFacade().getStoragePoolDao().get(getParameters().getId());
+            StoragePool storagePool = storagePoolDao.get(getParameters().getId());
             if ((storagePool == null) || (storagePool.getStatus() != StoragePoolStatus.Up)) {
                 log.info("The Data Center is not in UP status.");
                 return false;

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -36,9 +35,13 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontendMock;
 
-    private StorageDomain storageDomain;
+    @Mock
+    private StoragePoolDao storagePoolDaoMock;
 
-    GetStorageDomainsWithAttachedStoragePoolGuidQuery query = getQuery();
+    @Mock
+    private VdsDao vdsDaoMock;
+
+    private StorageDomain storageDomain;
 
     @Override
     @Before
@@ -54,8 +57,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         listVds.add(vds);
         mockVdsDao(VDSStatus.Up, listVds);
 
-        VDSBrokerFrontend vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
         doReturn(Boolean.TRUE).when(getQuery()).connectStorageDomain(eq(storageDomain));
         doReturn(Boolean.TRUE).when(getQuery()).disconnectStorageDomain(eq(storageDomain));
 
@@ -64,7 +65,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testUninitializedStoragePool() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Uninitialized);
         mockStoragePoolDao(storagePool);
@@ -96,7 +96,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testStoragePoolIdReturnNullStoragePool() {
-        mockVdsCommand();
         mockStoragePoolDao(null);
 
         // Create parameters
@@ -126,7 +125,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testStoragePoolIsUninitializedButCheckBooleanIsFalse() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Uninitialized);
         mockStoragePoolDao(storagePool);
@@ -159,7 +157,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testAttachedStorageDomainQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -192,7 +189,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testUnattachedStorageDomainQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -222,7 +218,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testEmptyStorageDomainListQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -250,20 +245,11 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         assertEquals(returnedStorageDomainList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
-    private void mockVdsCommand() {
-        vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
-    }
-
     private void mockStoragePoolDao(StoragePool storagePool) {
-        StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
-        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
         when(storagePoolDaoMock.get(any(Guid.class))).thenReturn(storagePool);
     }
 
     private void mockVdsDao(VDSStatus vdsStatus, List<VDS> listVds) {
-        VdsDao vdsDaoMock = mock(VdsDao.class);
         when(vdsDaoMock.getAllForStoragePoolAndStatus(any(Guid.class), eq(vdsStatus))).thenReturn(listVds);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
     }
 }

@@ -36,6 +36,12 @@ public class GetBlockStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontendMock;
 
+    @Mock
+    private VdsDao vdsDaoMock;
+
+    @Mock
+    private StoragePoolDao storagePoolDaoMock;
+
     private StorageDomain storageDomain;
 
     @Override
@@ -48,11 +54,9 @@ public class GetBlockStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
-        VdsDao vdsDaoMock = mock(VdsDao.class);
         List<VDS> listVds = new ArrayList<>();
         listVds.add(vds);
         when(vdsDaoMock.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(listVds);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
     }
 
     @Test
@@ -178,8 +182,6 @@ public class GetBlockStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
     }
 
     private void mockStoragePoolDao(StoragePool storagePool) {
-        StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
-        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
         when(storagePoolDaoMock.get(any(Guid.class))).thenReturn(storagePool);
     }
 }
