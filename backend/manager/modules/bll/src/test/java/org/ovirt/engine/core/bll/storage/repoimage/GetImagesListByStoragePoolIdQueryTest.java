@@ -28,20 +28,15 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 public class GetImagesListByStoragePoolIdQueryTest
         extends AbstractUserQueryTest<GetImagesListByStoragePoolIdParameters, GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters>> {
 
-    private Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass;
     private ImageFileType expectedType;
     private Guid storageDomainId;
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]
-        { { GetImagesListByStoragePoolIdQuery.class, ImageFileType.ISO },
-                { GetImagesListByStoragePoolIdQuery.class, ImageFileType.Floppy } });
+        return Arrays.asList(new Object[][]{ { ImageFileType.ISO }, { ImageFileType.Floppy } });
     }
 
-    public GetImagesListByStoragePoolIdQueryTest(Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass,
-            ImageFileType expectedType) {
-        this.queryClass = queryClass;
+    public GetImagesListByStoragePoolIdQueryTest(ImageFileType expectedType) {
         this.expectedType = expectedType;
     }
 
@@ -64,11 +59,6 @@ public class GetImagesListByStoragePoolIdQueryTest
         RepoImage rfmd = new RepoImage();
         rfmd.setFileType(expectedType);
         doReturn(Collections.singletonList(rfmd)).when(getQuery()).getUserRequestForStorageDomainRepoFileList();
-    }
-
-    @Override
-    protected Class<? extends GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters>> getQueryType() {
-        return queryClass;
     }
 
     @Test
