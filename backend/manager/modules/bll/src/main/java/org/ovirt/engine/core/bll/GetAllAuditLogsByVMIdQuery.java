@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.AuditLogDao;
 
 /** A query to return all the Audit Logs according to a given VM ID */
 public class GetAllAuditLogsByVMIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private AuditLogDao auditLogDao;
 
     public GetAllAuditLogsByVMIdQuery(P parameters) {
         super(parameters);
@@ -13,7 +18,6 @@ public class GetAllAuditLogsByVMIdQuery<P extends IdQueryParameters> extends Que
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getAuditLogDao()
-                        .getAllByVMId(getParameters().getId(), getUserID(), getParameters().isFiltered()));
+                auditLogDao.getAllByVMId(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }
