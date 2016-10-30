@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetLatestTemplateInChainQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
     public GetLatestTemplateInChainQuery(P parameters) {
         super(parameters);
     }
@@ -12,7 +17,7 @@ public class GetLatestTemplateInChainQuery<P extends IdQueryParameters> extends 
     @Override
     protected void executeQueryCommand() {
         VmTemplate vmt;
-        vmt = DbFacade.getInstance().getVmTemplateDao().getTemplateWithLatestVersionInChain(getParameters().getId());
+        vmt = vmTemplateDao.getTemplateWithLatestVersionInChain(getParameters().getId());
         if (vmt != null) {
             VmTemplateHandler.updateDisksFromDb(vmt);
             VmHandler.updateVmInitFromDB(vmt, true);
