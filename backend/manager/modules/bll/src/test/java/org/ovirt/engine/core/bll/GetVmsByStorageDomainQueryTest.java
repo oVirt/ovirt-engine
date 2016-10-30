@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -18,7 +19,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByStorageDomainQuery<IdQueryParameters>> {
-    VmDao vmDao = mock(VmDao.class);
+    @Mock
+    VmDao vmDao;
     Guid domainId = Guid.newGuid();
     GetVmsByStorageDomainQuery<IdQueryParameters> query;
 
@@ -27,7 +29,6 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
     public void setUp() throws Exception {
         super.setUp();
         params = getQueryParameters();
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDao);
         when(params.getId()).thenReturn(domainId);
         query = getQuery();
     }
