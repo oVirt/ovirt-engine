@@ -1,8 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.dao.RoleDao;
 
 public class GetAllRolesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+    @Inject
+    private RoleDao roleDao;
+
     public GetAllRolesQuery(P parameters) {
         super(parameters);
     }
@@ -14,9 +20,9 @@ public class GetAllRolesQuery<P extends VdcQueryParametersBase> extends QueriesC
     @Override
     protected void executeQueryCommand() {
         if (!isAdminUser()) {
-            setReturnValue(getDbFacade().getRoleDao().getAllNonAdminRoles());
+            setReturnValue(roleDao.getAllNonAdminRoles());
         } else {
-            setReturnValue(getDbFacade().getRoleDao().getAll());
+            setReturnValue(roleDao.getAll());
         }
     }
 }
