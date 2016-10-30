@@ -292,7 +292,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             connection.setport(String.valueOf(model.getPort()));
 
             actionTypes.add(VdcActionType.ConnectStorageToVds);
-            parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+            parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
             callbacks.add(loginCallback);
         }
 

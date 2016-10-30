@@ -49,7 +49,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
                             .runInternalAction(
                                     VdcActionType.AddStorageServerConnection,
                                     new StorageServerConnectionParametersBase(getStorageDomain().getStorageStaticData()
-                                            .getConnection(), getVds().getId())).getActionReturnValue());
+                                            .getConnection(), getVds().getId(), false)).getActionReturnValue());
         }
         addStorageDomainInDb();
         updateStorageDomainDynamicFromIrs();

@@ -115,7 +115,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected boolean isConnectionEditable(StorageServerConnections connection) {
         if (connection.getstorage_type().isFileDomain()) {
-            boolean isConnectionEditable = isFileDomainInEditState(domains.get(0));
+            boolean isConnectionEditable = isFileDomainInEditState(domains.get(0)) || getParameters().isForce();
             if (!isConnectionEditable) {
                 addCanDoActionMessageVariable("domainNames", domains.get(0).getStorageName());
                 addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
@@ -141,7 +141,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 Guid storageDomainId = lun.getStorageDomainId();
                 if (storageDomainId != null) {
                     StorageDomain domain = getStorageDomainDao().get(storageDomainId);
-                    if (!domain.getStorageDomainSharedStatus().equals(StorageDomainSharedStatus.Unattached)) {
+                    if (!domain.getStorageDomainSharedStatus().equals(StorageDomainSharedStatus.Unattached)
+                            && !getParameters().isForce()) {
                         for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
                             if (!map.getStatus().equals(StorageDomainStatus.Maintenance)) {
                                 String domainName = domain.getStorageName();

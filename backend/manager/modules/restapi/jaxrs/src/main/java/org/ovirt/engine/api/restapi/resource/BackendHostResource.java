@@ -440,7 +440,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             cnx.setpassword(iscsiDetails.getPassword());
         }
 
-        StorageServerConnectionParametersBase connectionParms = new StorageServerConnectionParametersBase(cnx, guid);
+        StorageServerConnectionParametersBase connectionParms = new StorageServerConnectionParametersBase(cnx, guid, false);
         return doAction(VdcActionType.ConnectStorageToVds, connectionParms, action);
     }
 

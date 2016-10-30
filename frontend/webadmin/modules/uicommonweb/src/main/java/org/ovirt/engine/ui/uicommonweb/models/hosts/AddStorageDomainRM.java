@@ -134,7 +134,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             connection.setstorage_type(StorageType.LOCALFS);
             context.connection = connection;
             StorageServerConnectionParametersBase parameters =
-                    new StorageServerConnectionParametersBase(connection, context.host.getId());
+                    new StorageServerConnectionParametersBase(connection, context.host.getId(), false);
             parameters.setCorrelationId(getCorrelationId());
             Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection,
                     parameters,
@@ -196,7 +196,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
         if (returnValue == null || !returnValue.getSucceeded()) {
             StorageServerConnectionParametersBase parameter =
-                    new StorageServerConnectionParametersBase(context.connection, context.host.getId());
+                    new StorageServerConnectionParametersBase(context.connection, context.host.getId(), false);
             parameter.setCorrelationId(getCorrelationId());
             Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                     parameter,

@@ -81,7 +81,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
 
         for (StorageServerConnections storageConnection : getParameters().getStorageServerConnections()) {
             VdcReturnValueBase returnValue = executeConnectStorageToVds(
-                        new StorageServerConnectionParametersBase(storageConnection, getParameters().getVdsId()));
+                        new StorageServerConnectionParametersBase(storageConnection, getParameters().getVdsId(), false));
 
             if (returnValue.getSucceeded()) {
                 connectedTargets.add(storageConnection);
