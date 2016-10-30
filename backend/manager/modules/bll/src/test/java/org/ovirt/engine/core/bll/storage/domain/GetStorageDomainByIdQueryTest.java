@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -17,6 +17,9 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
  */
 public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStorageDomainByIdQuery<IdQueryParameters>> {
 
+    @Mock
+    private StorageDomainDao storageDoaminDaoMock;
+
     @Test
     public void testExecuteQuery() {
         // Create a storage domain for the test
@@ -27,9 +30,7 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQuery
         when(getQueryParameters().getId()).thenReturn(storageDomainId);
 
         // Mock the Daos
-        StorageDomainDao storageDoaminDaoMock = mock(StorageDomainDao.class);
         when(storageDoaminDaoMock.get(storageDomainId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
-        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDoaminDaoMock);
 
         getQuery().executeQueryCommand();
 
