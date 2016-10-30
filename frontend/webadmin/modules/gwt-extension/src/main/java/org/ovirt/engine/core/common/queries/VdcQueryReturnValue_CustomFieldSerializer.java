@@ -19,49 +19,34 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
         instance.setExceptionString(streamReader.readString());
 
         String type = streamReader.readString();
-        Object returnValue;
-        String deserializedAs = null;
 
         if (type == null) {
-            returnValue = null;
+            // a null return value
         } else if (type.equals("java.lang.String")) {
-            deserializedAs = "java.util.String";
             instance.setReturnValue(streamReader.readString());
         } else if (type.equals("java.lang.Integer")) {
-            deserializedAs = "java.lang.Integer";
             instance.setReturnValue(streamReader.readInt());
         } else if (type.equals("java.lang.Boolean")) {
-            deserializedAs = "java.lang.Boolean";
             instance.setReturnValue(streamReader.readBoolean());
         } else if (type.equals("java.lang.Double")) {
-            deserializedAs = "java.lang.Double";
             instance.setReturnValue(streamReader.readDouble());
         } else if (type.equals("java.lang.Float")) {
-            deserializedAs = "java.lang.Float";
             instance.setReturnValue(streamReader.readFloat());
         } else if (type.equals("java.lang.Character")) {
-            deserializedAs = "java.lang.Character";
             instance.setReturnValue(streamReader.readChar());
         } else if (type.equals("java.lang.Short")) {
-            deserializedAs = "java.lang.Short";
             instance.setReturnValue(streamReader.readShort());
         } else if (type.equals("java.lang.Byte")) {
-            deserializedAs = "java.lang.Byte";
             instance.setReturnValue(streamReader.readByte());
         } else if (type.equals("java.util.List")) {
-            deserializedAs = "java.util.List";
             instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("java.util.Map")) {
-            deserializedAs = "java.util.Map";
             instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("java.util.Set")) {
-            deserializedAs = "java.util.Set";
             instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("IVdcQueryable")) {
-            deserializedAs = "IVdcQueryable";
             instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("UNKNOWN")) {
-            deserializedAs = "UNKNOWN";
             instance.setReturnValue(streamReader.readObject());
         }
     }
