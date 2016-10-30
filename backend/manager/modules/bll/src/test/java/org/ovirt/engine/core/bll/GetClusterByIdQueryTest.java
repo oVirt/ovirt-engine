@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,6 +17,9 @@ import org.ovirt.engine.core.dao.ClusterDao;
 public class GetClusterByIdQueryTest
         extends AbstractUserQueryTest<IdQueryParameters, GetClusterByIdQuery<IdQueryParameters>> {
 
+    @Mock
+    private ClusterDao clusterDaoMock;
+
     @Test
     public void testExecuteQueryCommnad() {
         // Set up the expected data
@@ -28,9 +31,7 @@ public class GetClusterByIdQueryTest
         when(getQueryParameters().getId()).thenReturn(clusterID);
 
         // Mock the Daos
-        ClusterDao vdsGropDaoMock = mock(ClusterDao.class);
-        when(vdsGropDaoMock.get(clusterID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
-        when(getDbFacadeMockInstance().getClusterDao()).thenReturn(vdsGropDaoMock);
+        when(clusterDaoMock.get(clusterID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
 
         getQuery().executeQueryCommand();
 
