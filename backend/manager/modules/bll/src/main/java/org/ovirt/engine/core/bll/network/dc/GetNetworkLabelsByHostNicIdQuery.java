@@ -5,20 +5,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class GetNetworkLabelsByHostNicIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private InterfaceDao interfaceDao;
+
     public GetNetworkLabelsByHostNicIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        VdsNetworkInterface nic = getDbFacade().getInterfaceDao().get(getParameters().getId());
+        VdsNetworkInterface nic = interfaceDao.get(getParameters().getId());
         getQueryReturnValue().setReturnValue(nic == null || !NetworkUtils.isLabeled(nic) ? Collections.<NetworkLabel> emptyList()
                 : convertToNetworkLabels(nic.getLabels()));
     }
