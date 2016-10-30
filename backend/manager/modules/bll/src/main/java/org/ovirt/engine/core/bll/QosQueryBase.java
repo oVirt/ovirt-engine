@@ -1,13 +1,31 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.qos.CpuQosDao;
+import org.ovirt.engine.core.dao.qos.QosBaseDao;
 import org.ovirt.engine.core.dao.qos.QosDao;
-
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
 
 public abstract class QosQueryBase extends QueriesCommandBase<QosQueryParameterBase> {
-    private QosDao<?> qosDao;
+    @Inject
+    private QosBaseDao qosBaseDao;
+
+    @Inject
+    private StorageQosDao storageQosDao;
+
+    @Inject
+    private CpuQosDao cpuQosDao;
+
+    @Inject
+    private NetworkQoSDao networkQoSDao;
+
+    @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
 
     public QosQueryBase(QosQueryParameterBase parameters) {
         super(parameters);
@@ -16,26 +34,22 @@ public abstract class QosQueryBase extends QueriesCommandBase<QosQueryParameterB
     protected QosDao<?> getQosDao() {
         QosType qosType = getParameters().getQosType();
         if (qosType == null) {
-            return getDbFacade().getQosBaseDao();
+            return qosBaseDao;
         }
         switch (qosType) {
         case STORAGE:
-            qosDao = getDbFacade().getStorageQosDao();
-            break;
+            return storageQosDao;
         case CPU:
-            qosDao = getDbFacade().getCpuQosDao();
-            break;
+            return cpuQosDao;
         case NETWORK:
-            qosDao = getDbFacade().getNetworkQosDao();
-            break;
+            return networkQoSDao;
         case HOSTNETWORK:
-            qosDao = getDbFacade().getHostNetworkQosDao();
-            break;
+            return hostNetworkQosDao;
         default:
             log.debug("Not handled QoS type: '{}'", qosType);
             break;
         }
-        return qosDao;
+        return null;
     }
 
 }
