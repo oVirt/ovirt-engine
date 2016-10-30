@@ -4,23 +4,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.EventDao;
 
 public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
+
+    @Inject
+    private EventDao eventDao;
+
     public GetEventSubscribersBySubscriberIdGroupedQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        List<EventSubscriber> list = DbFacade
-                .getInstance()
-                .getEventDao()
-                .getAllForSubscriber(getParameters().getId());
+        List<EventSubscriber> list = eventDao.getAllForSubscriber(getParameters().getId());
         if (list.size() > 0) {
             HashMap<String, EventSubscriber> dic = new HashMap<>();
 
