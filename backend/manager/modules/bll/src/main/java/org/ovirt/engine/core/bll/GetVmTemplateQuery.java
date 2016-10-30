@@ -1,12 +1,21 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private ClusterDao clusterDao;
+
     public GetVmTemplateQuery(P parameters) {
         super(parameters);
     }
@@ -18,12 +27,10 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
         if (params.getName() != null) {
             Guid storagePoolId = getStoragePoolId(); // If no DC info available, the query will return the first
                                                      // Template with the given name found.
-            vmt = DbFacade.getInstance().getVmTemplateDao()
-                    .getByName(params.getName(), storagePoolId, getUserID(), params.isFiltered());
+            vmt = vmTemplateDao.getByName(params.getName(), storagePoolId, getUserID(), params.isFiltered());
         }
         else {
-            vmt = DbFacade.getInstance().getVmTemplateDao()
-                    .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+            vmt = vmTemplateDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         }
         if (vmt != null) {
             VmTemplateHandler.updateDisksFromDb(vmt);
@@ -39,7 +46,7 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
         if (params.getDataCenterId() != null) {
             result = params.getDataCenterId();
         } else if (params.getClusterId() != null) {
-            Cluster cluster = DbFacade.getInstance().getClusterDao().get(params.getClusterId());
+            Cluster cluster = clusterDao.get(params.getClusterId());
             if (cluster != null) {
                 result = cluster.getStoragePoolId();
             }
