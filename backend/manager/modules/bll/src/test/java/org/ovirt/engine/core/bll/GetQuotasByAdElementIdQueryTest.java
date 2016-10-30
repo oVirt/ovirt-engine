@@ -41,8 +41,6 @@ public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotas
      * Initialize Dao to be used in query.
      */
     private void mockDaoForQuery() {
-        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDao);
-
         returnedQuotas = new ArrayList<>();
         when(getQueryParameters().getAdElementId()).thenReturn(adElementId);
         when(getQueryParameters().getStoragePoolId()).thenReturn(storagePoolId);
