@@ -6,9 +6,11 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.vdshooks.VdsHooksParser;
 
 /**
@@ -17,6 +19,8 @@ import org.ovirt.engine.core.utils.vdshooks.VdsHooksParser;
  * property names and values
  */
 public class GetVdsHooksByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VdsDao vdsDao;
 
     public GetVdsHooksByIdQuery(P parameters) {
         super(parameters);
@@ -25,7 +29,7 @@ public class GetVdsHooksByIdQuery<P extends IdQueryParameters> extends QueriesCo
     @Override
     protected void executeQueryCommand() {
 
-        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getId());
+        VDS vds = vdsDao.get(getParameters().getId());
         Map<String, Object> result = new HashMap<>();
         if (vds != null) {
             result = VdsHooksParser.parseHooks(vds.getHooksStr());
