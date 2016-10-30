@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.DisableInMaintenanceMode;
@@ -30,10 +32,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -47,6 +51,22 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private List<VDS> _vdssByUniqueId;
 
     private static Object doubleRegistrationLock = new Object();
+
+    @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private VdsStatisticsDao vdsStatisticsDao;
+
     /**
      * 'z' has the highest ascii value from the acceptable characters, so the bit set size should be initiated to it.
      * the size is 'z'+1 so that each char will be represented in the BitSet with index which equals to it's char value.
@@ -88,7 +108,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     private List<VDS> getVdssByUniqueId() {
         if (_vdssByUniqueId == null) {
-            _vdssByUniqueId = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(getStrippedVdsUniqueId());
+            _vdssByUniqueId = vdsDao.getAllWithUniqueId(getStrippedVdsUniqueId());
         }
         return _vdssByUniqueId;
     }
@@ -159,7 +179,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     protected void executeRegisterVdsCommand() {
         synchronized (doubleRegistrationLock) {
-            List<VDS> hostsByHostName = DbFacade.getInstance().getVdsDao().getAllForHostname(getParameters().getVdsName());
+            List<VDS> hostsByHostName = vdsDao.getAllForHostname(getParameters().getVdsName());
             VDS provisionedVds = hostsByHostName.size() != 0 ? hostsByHostName.get(0) : null;
             if (provisionedVds != null && provisionedVds.getStatus() != VDSStatus.InstallingOS) {
                 // if not in InstallingOS status, this host is not provisioned.
@@ -226,7 +246,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
         if (Guid.isNullOrEmpty(clusterId)) {
             // try to get the default cluster id
-            ClusterDao clusterDao = getDbFacade().getClusterDao();
             Cluster cluster = clusterDao.getByName("Default");
             if (cluster != null) {
                 clusterId = cluster.getId();
@@ -374,8 +393,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         log.debug("RegisterVdsQuery::handleOldVdssWithSameHostName - Entering");
 
         boolean returnValue = true;
-        List<VDS> vdss_byHostName = DbFacade.getInstance().getVdsDao().getAllForHostname(
-                getParameters().getVdsHostName());
+        List<VDS> vdss_byHostName = vdsDao.getAllForHostname(getParameters().getVdsHostName());
         int lastIteratedIndex = 1;
         if (vdss_byHostName.size() > 0) {
             log.debug(
@@ -396,7 +414,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     for (int i = lastIteratedIndex; i <= 100; i++, lastIteratedIndex = i) {
                         try_host_name = String.format("hostname-was-%1$s-%2$s", getParameters()
                                 .getVdsHostName(), i);
-                        if (DbFacade.getInstance().getVdsDao().getAllForHostname(try_host_name).size() == 0) {
+                        if (vdsDao.getAllForHostname(try_host_name).size() == 0) {
                             unique = true;
                             break;
                         }
@@ -413,12 +431,12 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         }
 
                         // If host exists in InstallingOs status, remove it from DB and move on
-                        final VDS foundVds = DbFacade.getInstance().getVdsDao().getByName(parameters.getVdsStaticData().getName());
+                        final VDS foundVds = vdsDao.getByName(parameters.getVdsStaticData().getName());
                         if ((foundVds != null) && (foundVds.getDynamicData().getStatus() == VDSStatus.InstallingOS)) {
                             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                                getDbFacade().getVdsStatisticsDao().remove(foundVds.getId());
-                                getDbFacade().getVdsDynamicDao().remove(foundVds.getId());
-                                getDbFacade().getVdsStaticDao().remove(foundVds.getId());
+                                vdsStatisticsDao.remove(foundVds.getId());
+                                vdsDynamicDao.remove(foundVds.getId());
+                                vdsStaticDao.remove(foundVds.getId());
                                 return null;
                             });
                         }
@@ -470,7 +488,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private boolean handleOldVdssWithSameName(VDS hostToRegister) {
         log.debug("Entering");
         boolean returnValue = true;
-        VdsDao vdsDao = DbFacade.getInstance().getVdsDao();
         VDS storedHost = vdsDao.getByName(getParameters().getVdsName());
         List<String> allHostNames = getAllHostNames(vdsDao.getAll());
         boolean hostExistInDB = hostToRegister != null;
