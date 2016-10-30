@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.UserProfileDao;
 
 public class GetAllUserProfilesQuery <P extends VdcQueryParametersBase>
         extends QueriesCommandBase<P> {
+
+    @Inject
+    private UserProfileDao userProfileDao;
 
     public GetAllUserProfilesQuery(P parameters) {
         super(parameters);
@@ -18,8 +23,7 @@ public class GetAllUserProfilesQuery <P extends VdcQueryParametersBase>
            we need to block it for non-internal calls.
          */
         if (isInternalExecution()) {
-            getQueryReturnValue().setReturnValue(
-                    DbFacade.getInstance().getUserProfileDao().getAll());
+            getQueryReturnValue().setReturnValue(userProfileDao.getAll());
         }
     }
 }
