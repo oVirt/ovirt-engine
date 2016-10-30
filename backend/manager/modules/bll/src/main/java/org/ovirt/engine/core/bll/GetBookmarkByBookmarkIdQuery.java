@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.BookmarkDao;
 
 public class GetBookmarkByBookmarkIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private BookmarkDao bookmarkDao;
 
     public GetBookmarkByBookmarkIdQuery(P parameters) {
         super(parameters);
@@ -11,8 +15,7 @@ public class GetBookmarkByBookmarkIdQuery<P extends IdQueryParameters> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getBookmarkDao().get(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(bookmarkDao.get(getParameters().getId()));
     }
 
 }
