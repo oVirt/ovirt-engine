@@ -1,16 +1,21 @@
 package org.ovirt.engine.core.bll.network.template;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetTemplatesByVnicProfileIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
     public GetTemplatesByVnicProfileIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getVmTemplateDao()
-                .getAllForVnicProfile(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(vmTemplateDao.getAllForVnicProfile(getParameters().getId()));
     }
 }
