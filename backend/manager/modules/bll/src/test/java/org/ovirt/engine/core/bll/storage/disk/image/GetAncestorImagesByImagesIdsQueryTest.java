@@ -36,7 +36,6 @@ public class GetAncestorImagesByImagesIdsQueryTest extends
     public void setUp() throws Exception {
         super.setUp();
         initializeImages();
-        when(getDbFacadeMockInstance().getDiskImageDao()).thenReturn(diskImageDao);
         imagesIds = new ArrayList<>();
         when(getQueryParameters().getIds()).thenReturn(imagesIds);
     }
