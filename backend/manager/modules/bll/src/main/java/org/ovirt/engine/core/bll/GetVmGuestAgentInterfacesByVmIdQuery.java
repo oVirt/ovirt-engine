@@ -1,9 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 
 public class GetVmGuestAgentInterfacesByVmIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
+
+    @Inject
+    private VmGuestAgentInterfaceDao vmGuestAgentInterfaceDao;
 
     public GetVmGuestAgentInterfacesByVmIdQuery(P parameters) {
         super(parameters);
@@ -11,7 +17,7 @@ public class GetVmGuestAgentInterfacesByVmIdQuery<P extends IdQueryParameters>
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getVmGuestAgentInterfaceDao()
+        getQueryReturnValue().setReturnValue(vmGuestAgentInterfaceDao
                 .getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }
