@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -25,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -58,20 +55,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        prepareMocks();
-    }
-
-    private void prepareMocks() {
-        VDSBrokerFrontend vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
-
-        BackendInternal backendMock = mock(BackendInternal.class);
-        doReturn(backendMock).when(getQuery()).getBackend();
-
-        doReturn(storageDomainDao).when(getQuery()).getStorageDomainDao();
         doReturn(getExistingStorageDomains()).when(storageDomainDao).getAll();
-        doReturn(lunDao).when(getQuery()).getLunDao();
     }
 
     @Test

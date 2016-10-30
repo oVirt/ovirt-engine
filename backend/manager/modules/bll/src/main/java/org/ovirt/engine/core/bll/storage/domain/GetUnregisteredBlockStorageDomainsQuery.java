@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -33,6 +34,11 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBlockStorageDomainsParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private LunDao lunDao;
 
     public GetUnregisteredBlockStorageDomainsQuery(P parameters) {
         super(parameters);
@@ -149,7 +155,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
      * @return the filtered LUNs list
      */
     protected List<LUNs> filterLUNsThatBelongToExistingStorageDomains(List<LUNs> luns) {
-        List<StorageDomain> existingStorageDomains = getStorageDomainDao().getAll();
+        List<StorageDomain> existingStorageDomains = storageDomainDao.getAll();
         final Set<Guid> existingStorageDomainIDs =
                 existingStorageDomains.stream().map(StorageDomain::getId).collect(Collectors.toSet());
 
@@ -201,7 +207,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<StorageDomain> storageDomains = new ArrayList<>();
 
         // Get existing PhysicalVolumes.
-        Set<String> existingLunIds = getLunDao().getAll().stream().map(LUNs::getId).collect(Collectors.toSet());
+        Set<String> existingLunIds = lunDao.getAll().stream().map(LUNs::getId).collect(Collectors.toSet());
 
         for (String vgID : vgIDs) {
             VDSReturnValue returnValue;
@@ -262,19 +268,6 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         storageDomain.setStorageStaticData(storageDomainStatic);
 
         return storageDomain;
-    }
-
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
-    }
-
-    protected StorageDomainDao getStorageDomainDao() {
-        return getDbFacade().getStorageDomainDao();
-    }
-
-    protected LunDao getLunDao() {
-        return getDbFacade().getLunDao();
     }
 
     /* Execute wrappers (for testing/mocking necessities) */
