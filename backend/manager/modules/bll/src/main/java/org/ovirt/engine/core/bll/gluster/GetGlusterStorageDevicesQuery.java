@@ -5,13 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 
 public class GetGlusterStorageDevicesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private StorageDeviceDao storageDeviceDao;
 
     public GetGlusterStorageDevicesQuery(P parameters) {
         super(parameters);
@@ -20,8 +26,7 @@ public class GetGlusterStorageDevicesQuery<P extends IdQueryParameters> extends 
     @Override
     protected void executeQueryCommand() {
         // Get Device List
-        List<StorageDevice> storageDevices =
-                getDbFacade().getStorageDeviceDao().getStorageDevicesInHost(getParameters().getId());
+        List<StorageDevice> storageDevices = storageDeviceDao.getStorageDevicesInHost(getParameters().getId());
         getQueryReturnValue().setReturnValue(filterStorageDevices(storageDevices));
 
     }
