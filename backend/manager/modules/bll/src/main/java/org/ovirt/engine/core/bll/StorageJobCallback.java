@@ -37,6 +37,7 @@ public class StorageJobCallback implements CommandCallback {
         Guid vdsId = cmdParams.getVdsRunningOn();
         HostJobStatus jobStatus = null;
         VDS vds = getVdsDao().get(vdsId);
+        boolean jobsReportedByHost = false;
 
         if (vds.getStatus() == VDSStatus.Up) {
             try {
@@ -45,6 +46,7 @@ public class StorageJobCallback implements CommandCallback {
                     jobStatus = jobInfo.getStatus();
                     updateStepProgress(commandEntity.getStepId(), jobInfo.getProgress());
                 }
+                jobsReportedByHost = true;
             } catch (Exception e) {
                 // We shouldn't get an error when polling the host job (as it access the local storage only).
                 // If we got an error, it will usually be a network error - so the host will either move
@@ -58,10 +60,9 @@ public class StorageJobCallback implements CommandCallback {
                     commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
         }
 
-        // We need to poll the entity if the host isn't up or if the job wasn't return from the job polling on vdsm
-        // (it might have already been deleted from the vdsm job caching)
+        // If we couldn't determine job status by polling the host, we can try to determine it using different methods.
         if (jobStatus == null) {
-            jobStatus = pollEntityIfSupported(getCommand(cmdId));
+            jobStatus = handleUndeterminedJobStatus(getCommand(cmdId), jobsReportedByHost);
         }
 
         if (jobStatus == null) {
@@ -93,6 +94,10 @@ public class StorageJobCallback implements CommandCallback {
         return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 
+    private boolean isEntityPollingSupported(CommandBase<?> cmd) {
+        return cmd instanceof EntityPollingCommand;
+    }
+
     private HostJobInfo pollStorageJob(Guid jobId, Guid vdsId) {
         if (jobId == null) {
             return null;
@@ -105,14 +110,7 @@ public class StorageJobCallback implements CommandCallback {
         return ((Map<Guid, HostJobInfo>) returnValue.getReturnValue()).get(jobId);
     }
 
-    private HostJobStatus pollEntityIfSupported(CommandBase<?> cmd) {
-        if (!(cmd instanceof EntityPollingCommand)) {
-            log.error("Command {} id: '{}': entity polling isn't supported, will retry to poll the job soon",
-                    cmd.getActionType(),
-                    cmd.getCommandId());
-            return null;
-        }
-
+    private HostJobStatus pollEntity(CommandBase<?> cmd) {
         try {
             return ((EntityPollingCommand) cmd).poll();
         } catch (Exception e) {
@@ -121,6 +119,29 @@ public class StorageJobCallback implements CommandCallback {
                     cmd.getCommandId());
         }
 
+        return null;
+    }
+
+    private HostJobStatus handleUndeterminedJobStatus(CommandBase<?> cmd, boolean jobsReportedByHost) {
+        // If the command supports entity polling, we can use it in order to determine the status.
+        if (isEntityPollingSupported(cmd)) {
+            return pollEntity(cmd);
+        }
+
+        // if the job was cleared from the host job report we fail the operation so the command will end
+        // (as the command doesn't support entity polling - so we don't have any way to poll it).
+        if (jobsReportedByHost) {
+            log.error("Command {} id: '{}': entity polling isn't supported and the job isn't reported by the host," +
+                    "assuming it failed so that the command execution will end.",
+                    cmd.getActionType(),
+                    cmd.getCommandId());
+            return HostJobStatus.failed;
+        }
+
+        // if the job status couldn't have been determined because of a different reason, we'll retry to poll it.
+        log.error("Command {} id: '{}': entity polling isn't supported, will retry to poll the job soon",
+                cmd.getActionType(),
+                cmd.getCommandId());
         return null;
     }
 
