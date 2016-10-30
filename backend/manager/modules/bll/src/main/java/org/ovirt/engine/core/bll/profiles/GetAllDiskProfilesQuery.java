@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 
 public class GetAllDiskProfilesQuery extends QueriesCommandBase<VdcQueryParametersBase> {
+    @Inject
+    private DiskProfileDao diskProfileDao;
 
     public GetAllDiskProfilesQuery(VdcQueryParametersBase parameters) {
         super(parameters);
@@ -11,7 +16,7 @@ public class GetAllDiskProfilesQuery extends QueriesCommandBase<VdcQueryParamete
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getDiskProfileDao().getAll());
+        getQueryReturnValue().setReturnValue(diskProfileDao.getAll());
     }
 
 }
