@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,6 +20,9 @@ import org.ovirt.engine.core.dao.QuotaDao;
 public class GetQuotaStorageByQuotaIdQueryTest
         extends AbstractQueryTest<IdQueryParameters, GetQuotaStorageByQuotaIdQuery<IdQueryParameters>> {
 
+    @Mock
+    private QuotaDao quotaDao;
+
     @Test
     public void testExecuteQueryCommand() {
         // Mock the parameters
@@ -31,9 +34,7 @@ public class GetQuotaStorageByQuotaIdQueryTest
         group.setQuotaId(quotaId);
 
         // Mock the Dao
-        QuotaDao quotaDao = mock(QuotaDao.class);
         when(quotaDao.getQuotaStorageByQuotaGuidWithGeneralDefault(quotaId)).thenReturn(Collections.singletonList(group));
-        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDao);
 
         // Execute the query
         getQuery().executeQueryCommand();
