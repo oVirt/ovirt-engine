@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -13,6 +15,8 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 
 
 public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmDeviceDao dao;
 
     public GetVmPayloadQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
@@ -24,7 +28,6 @@ public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesComma
     @Override
     protected void executeQueryCommand() {
         if (MultiLevelAdministrationHandler.isAdminUser(getUser())) {
-            VmDeviceDao dao = getDbFacade().getVmDeviceDao();
             List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.DISK);
 
             for (VmDevice disk : disks) {
