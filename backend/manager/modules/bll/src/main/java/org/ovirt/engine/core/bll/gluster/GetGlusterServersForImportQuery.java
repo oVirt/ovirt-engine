@@ -4,12 +4,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.naming.AuthenticationException;
 
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 
 /**
@@ -27,6 +27,9 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
     // Currently we use only root user to authenticate with host
     private static final String USER = "root";
 
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
     public GetGlusterServersForImportQuery(P parameters) {
         super(parameters);
     }
@@ -34,8 +37,8 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
     @Override
     protected void executeQueryCommand() {
         // Check whether the given server is already part of the cluster
-        if (getVdsStaticDao().getByHostName(getParameters().getServerName()) != null
-                || getVdsStaticDao().getAllWithIpAddress(getParameters().getServerName()).size() > 0) {
+        if (vdsStaticDao.getByHostName(getParameters().getServerName()) != null
+                || vdsStaticDao.getAllWithIpAddress(getParameters().getServerName()).size() > 0) {
             throw new RuntimeException(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
         }
 
@@ -82,15 +85,11 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
      */
     private boolean validateServers(Set<String> serverNames) {
         for (String serverName : serverNames) {
-            if (getVdsStaticDao().getByHostName(serverName) != null
-                    || getVdsStaticDao().getAllWithIpAddress(serverName).size() > 0) {
+            if (vdsStaticDao.getByHostName(serverName) != null
+                    || vdsStaticDao.getAllWithIpAddress(serverName).size() > 0) {
                 return false;
             }
         }
         return true;
-    }
-
-    protected VdsStaticDao getVdsStaticDao() {
-        return DbFacade.getInstance().getVdsStaticDao();
     }
 }

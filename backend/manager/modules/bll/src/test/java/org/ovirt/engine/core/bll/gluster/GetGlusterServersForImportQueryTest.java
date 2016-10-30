@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -36,6 +37,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private static final String FINGER_PRINT1 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:31";
     private static final String FINGER_PRINT2 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:32";
 
+    @Mock
     private VdsStaticDao vdsStaticDao;
 
     @Rule
@@ -49,8 +51,6 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     }
 
     private void setupMock() throws AuthenticationException, IOException {
-        vdsStaticDao = mock(VdsStaticDao.class);
-        doReturn(vdsStaticDao).when(getQuery()).getVdsStaticDao();
         doReturn(getVdsStatic()).when(vdsStaticDao).getByHostName(EXISTING_SERVER);
 
         GlusterUtil glusterUtil = mock(GlusterUtil.class);
