@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,10 +16,14 @@ import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.di.Injector;
 
 public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExportDomainQueryParameters>
         extends QueriesCommandBase<P> {
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public GetAllFromExportDomainQuery(P parameters) {
         this(parameters, null);
@@ -37,7 +43,7 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
     }
 
     private StorageDomain getStorage() {
-        return getDbFacade().getStorageDomainDao().getForStoragePool(
+        return storageDomainDao.getForStoragePool(
                 getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
     }
