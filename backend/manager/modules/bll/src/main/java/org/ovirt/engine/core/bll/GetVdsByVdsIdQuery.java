@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetVdsByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsByVdsIdQuery(P parameters) {
@@ -12,21 +13,18 @@ public class GetVdsByVdsIdQuery<P extends IdQueryParameters> extends QueriesComm
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
+    @Inject
+    private VdsDao vdsDao;
+
     @Override
     protected void executeQueryCommand() {
-        VDS vds = getDbFacade()
-                .getVdsDao()
-                .get(getParameters().getId());
+        VDS vds = vdsDao.get(getParameters().getId());
 
         if (vds != null) {
-            vds.setCpuName(getCpuFlagsManagerHandler().findMaxServerCpuByFlags(vds.getCpuFlags(),
+            vds.setCpuName(cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                     vds.getClusterCompatibilityVersion()));
         }
 
         getQueryReturnValue().setReturnValue(vds);
-    }
-
-    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
-        return cpuFlagsManagerHandler;
     }
 }
