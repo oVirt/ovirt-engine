@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertNotSame;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.MockConfigDescriptor;
 
@@ -15,6 +15,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -26,14 +29,19 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
-    protected P params;
-    private Q query;
+    @Mock (answer = RETURNS_DEEP_STUBS)
+    protected DbUser dbUserMock;
+
+    protected P params = createMockQueryParameters();
+
+    @Spy
+    @InjectMocks
+    private Q query = createQuery();
 
     /** Sets up a mock user a spy query with it, and the generic query parameters */
     @Before
     public void setUp() throws Exception {
-        setUpMockQueryParameters();
-        setUpSpyQuery();
+        initQuery(getQuery());
         for (MockConfigDescriptor<?> mcd : getExtraConfigDescriptors()) {
             mcr.mockConfigValue(mcd);
         }
@@ -44,35 +52,28 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     }
 
     /** Sets up a mock for {@link #params} */
-    private void setUpMockQueryParameters() {
-        params = mock(getParameterType());
+    private P createMockQueryParameters() {
+        P params = mock(getParameterType());
         when(params.getSessionId()).thenReturn("test");
         when(params.getRefresh()).thenReturn(true);
+        return params;
     }
 
-    /** Sets up a mock for {@link #query} */
-    protected void setUpSpyQuery() throws Exception {
-        setUpSpyQuery(getQueryParameters());
-    }
-
-    protected Q setUpSpyQuery(P parameters) throws Exception {
-        DbFacade dbFacadeMock = mock(DbFacade.class);
-        DbUser dbUserMock = mock(DbUser.class);
-
-        sessionDataContainer.setUser(parameters.getSessionId(), dbUserMock);
-
-        Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType());
-        query = spy(con.newInstance(parameters));
-        doReturn(sessionDataContainer).when(query).getSessionDataContainer();
-        doReturn(dbFacadeMock).when(query).getDbFacade();
-        doReturn(dbUserMock).when(query).initUser();
-        initQuery(query);
-        query.postConstruct();
-        return query;
+    private Q createQuery() {
+        try {
+            Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType());
+            return con.newInstance(getQueryParameters());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /** Hook for initialization */
     protected void initQuery(Q query) {
+        sessionDataContainer.setUser(query.getParameters().getSessionId(), dbUserMock);
+        DbFacade dbFacadeMock = mock(DbFacade.class);
+        doReturn(dbFacadeMock).when(query).getDbFacade();
+        query.postConstruct();
     }
 
     /** Extract the {@link Class} object for the P generic parameter */
@@ -105,6 +106,11 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     /** @return The mock query parameters to use in the test */
     protected P getQueryParameters() {
         return params;
+    }
+
+    /** @return The mocked user to use in the test */
+    protected DbUser getUser() {
+        return dbUserMock;
     }
 
     @Test

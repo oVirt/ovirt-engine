@@ -33,9 +33,9 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     private static final String VM_NAME = "VmTESTNaME";
 
     @Override
-    protected void setUpSpyQuery() throws Exception {
-        super.setUpSpyQuery();
-        doNothing().when(getQuery()).updateDisksFromDb(any(VM.class));
+    protected void initQuery(GetNextAvailableDiskAliasNameByVMIdQuery<IdQueryParameters> query) {
+        super.initQuery(query);
+        doNothing().when(query).updateDisksFromDb(any(VM.class));
     }
 
     @Test

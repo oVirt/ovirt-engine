@@ -17,6 +17,7 @@ import org.ovirt.engine.core.dao.RoleDao;
 public class GetAllRolesQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetAllRolesQuery<VdcQueryParametersBase>> {
     @Override
     protected void initQuery(GetAllRolesQuery<VdcQueryParametersBase> query) {
+        super.initQuery(query);
         doReturn(Boolean.TRUE).when(query).isAdminUser();
     }
 

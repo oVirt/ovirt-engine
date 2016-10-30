@@ -35,9 +35,10 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQueryTest
     private List<Volume> volumes;
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        when(getQueryParameters().getId()).thenReturn(Guid.newGuid());
+    protected void initQuery(GetUnregisteredCinderDisksByStorageDomainIdQuery<IdQueryParameters> query) {
+        super.initQuery(query);
+        IdQueryParameters parameters = query.getParameters();
+        when(parameters.getId()).thenReturn(Guid.newGuid());
         setUpVolumes();
         setUpDisks();
     }
@@ -63,7 +64,7 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQueryTest
                 new ArrayList<>(CinderBroker.volumesToCinderDisks
                         (Collections.singletonList(existingVolume), getQueryParameters().getId()));
 
-        when(diskDao.getAllFromDisksByDiskStorageType(DiskStorageType.CINDER, null, false)).thenReturn(existingDisks);
+        when(diskDao.getAllFromDisksByDiskStorageType(DiskStorageType.CINDER, getUser().getId(), false)).thenReturn(existingDisks);
         when(getDbFacadeMockInstance().getDiskDao()).thenReturn(diskDao);
     }
 

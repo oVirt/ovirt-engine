@@ -54,11 +54,11 @@ public class GetImagesListByStoragePoolIdQueryTest
     }
 
     @Override
-    protected void setUpSpyQuery() throws Exception {
-        super.setUpSpyQuery();
+    protected void initQuery(GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters> query) {
+        super.initQuery(query);
         RepoImage rfmd = new RepoImage();
         rfmd.setFileType(expectedType);
-        doReturn(Collections.singletonList(rfmd)).when(getQuery()).getUserRequestForStorageDomainRepoFileList();
+        doReturn(Collections.singletonList(rfmd)).when(query).getUserRequestForStorageDomainRepoFileList();
     }
 
     @Test
