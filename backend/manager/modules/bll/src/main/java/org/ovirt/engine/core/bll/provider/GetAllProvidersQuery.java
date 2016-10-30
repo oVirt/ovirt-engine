@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll.provider;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class GetAllProvidersQuery<P extends GetAllProvidersParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private ProviderDao providerDao;
 
     public GetAllProvidersQuery(P parameters) {
         super(parameters);
@@ -15,9 +20,9 @@ public class GetAllProvidersQuery<P extends GetAllProvidersParameters> extends Q
         ProviderType[] providerTypes = getParameters().getProviderTypes();
 
         if (providerTypes == null) {
-            setReturnValue(getDbFacade().getProviderDao().getAll());
+            setReturnValue(providerDao.getAll());
         } else {
-            setReturnValue(getDbFacade().getProviderDao().getAllByTypes(providerTypes));
+            setReturnValue(providerDao.getAllByTypes(providerTypes));
         }
     }
 }
