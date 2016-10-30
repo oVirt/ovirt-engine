@@ -1,19 +1,23 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public class GetStorageServerConnectionByIdQuery<P extends StorageServerConnectionQueryParametersBase>
         extends QueriesCommandBase<P> {
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+
     public GetStorageServerConnectionByIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().
-                getStorageServerConnectionDao().get(getParameters().
-                                                                            getServerConnectionId()));
+        getQueryReturnValue().setReturnValue(storageServerConnectionDao.get(getParameters().getServerConnectionId()));
     }
 }
