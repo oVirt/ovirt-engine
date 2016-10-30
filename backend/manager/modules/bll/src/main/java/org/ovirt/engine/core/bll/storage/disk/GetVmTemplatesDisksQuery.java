@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -10,9 +12,16 @@ import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 
 public class GetVmTemplatesDisksQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+
     public GetVmTemplatesDisksQuery(P parameters) {
         super(parameters);
     }
@@ -31,12 +40,10 @@ public class GetVmTemplatesDisksQuery<P extends IdQueryParameters> extends Queri
     }
 
     protected List<Disk> getTemplateDisks() {
-        return DbFacade.getInstance()
-                .getDiskDao()
-                .getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        return diskDao.getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered());
     }
 
     private DiskVmElement getDiskVmElement(BaseDisk disk) {
-        return getDbFacade().getDiskVmElementDao().get(new VmDeviceId(disk.getId(), getParameters().getId()));
+        return diskVmElementDao.get(new VmDeviceId(disk.getId(), getParameters().getId()));
     }
 }
