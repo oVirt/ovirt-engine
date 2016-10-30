@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -22,6 +22,9 @@ public class GetVdsWithoutNetworkQueryTest
         extends AbstractQueryTest<IdQueryParameters,
         GetVdsWithoutNetworkQuery<IdQueryParameters>> {
 
+    @Mock
+    private VdsDao vdsDaoMock;
+
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
@@ -31,9 +34,7 @@ public class GetVdsWithoutNetworkQueryTest
         // Set up the Daos
         VDS vds = new VDS();
         List<VDS> expected = Collections.singletonList(vds);
-        VdsDao vdsDaoMock = mock(VdsDao.class);
         when(vdsDaoMock.getAllWithoutNetwork(networkId)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 
         // Run the query
         GetVdsWithoutNetworkQuery<IdQueryParameters> query = getQuery();
