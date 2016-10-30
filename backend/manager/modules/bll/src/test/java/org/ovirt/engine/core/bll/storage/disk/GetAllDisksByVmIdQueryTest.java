@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 
@@ -49,6 +47,9 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
     private DiskImage unpluggedDiskSnapshot;
 
     @Mock
+    private DiskDao diskDaoMock;
+
+    @Mock
     private DiskVmElementDao diskVmElementDao;
 
     @Before
@@ -67,9 +68,6 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
     }
 
     private void setUpDaoMocks() {
-        // Mock the Daos
-        DbFacade dbFacadeMock = getDbFacadeMockInstance();
-
         // Disk Image Dao
         List<Disk> returnArray = new ArrayList<>();
         returnArray.add(pluggedDisk);
@@ -77,11 +75,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         returnArray.add(pluggedDiskSnapshot);
         returnArray.add(unpluggedDiskSnapshot);
 
-        DiskDao diskDaoMock = mock(DiskDao.class);
-        when(dbFacadeMock.getDiskDao()).thenReturn(diskDaoMock);
         when(diskDaoMock.getAllForVm(vmID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(returnArray);
 
-        when(dbFacadeMock.getDiskVmElementDao()).thenReturn(diskVmElementDao);
         when(diskVmElementDao.get(any(VmDeviceId.class))).thenReturn(new DiskVmElement(new VmDeviceId()));
 
         // Snapshots

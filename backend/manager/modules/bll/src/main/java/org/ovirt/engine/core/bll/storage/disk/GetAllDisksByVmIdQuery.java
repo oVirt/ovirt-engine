@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -14,8 +16,15 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 
 public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     public GetAllDisksByVmIdQuery(P parameters) {
         super(parameters);
@@ -27,9 +36,7 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        List<Disk> allDisks =
-                getDbFacade().getDiskDao().getAllForVm
-                        (getParameters().getId(), getUserID(), getParameters().isFiltered());
+        List<Disk> allDisks = diskDao.getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered());
         List<Disk> disks = new ArrayList<>();
         for (Disk disk : allDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE
@@ -48,6 +55,6 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
     }
 
     private DiskVmElement getDiskVmElement(BaseDisk disk) {
-        return getDbFacade().getDiskVmElementDao().get(new VmDeviceId(disk.getId(), getParameters().getId()));
+        return diskVmElementDao.get(new VmDeviceId(disk.getId(), getParameters().getId()));
     }
 }
