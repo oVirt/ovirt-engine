@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 public class GetCpuProfilesByCpuQosIdQuery extends QueriesCommandBase<IdQueryParameters> {
+    @Inject
+    CpuProfileDao cpuProfileDao;
 
     public GetCpuProfilesByCpuQosIdQuery(IdQueryParameters parameters) {
         super(parameters);
@@ -10,8 +15,6 @@ public class GetCpuProfilesByCpuQosIdQuery extends QueriesCommandBase<IdQueryPar
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getCpuProfileDao()
-                .getAllForQos(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(cpuProfileDao.getAllForQos(getParameters().getId()));
     }
-
 }
