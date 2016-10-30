@@ -94,6 +94,7 @@ import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -489,12 +490,21 @@ public class VmHandler {
     }
 
     public static void updateOperationProgress(final VM vm) {
-        vm.setBackgroundOperationDescription(ResourceManager.getInstance().getVmManager(vm.getId()).getConvertOperationDescription());
-        vm.setBackgroundOperationProgress(ResourceManager.getInstance().getVmManager(vm.getId()).getConvertOperationProgress());
+        VmManager vmManager = ResourceManager.getInstance().getVmManager(vm.getId(), false);
+        if (vmManager != null) {
+            vm.setBackgroundOperationDescription(vmManager.getConvertOperationDescription());
+            vm.setBackgroundOperationProgress(vmManager.getConvertOperationProgress());
+        } else {
+            vm.setBackgroundOperationDescription(null);
+            vm.setBackgroundOperationProgress(-1);
+        }
     }
 
     public static void updateVmStatistics(final VM vm) {
-        vm.setStatisticsData(ResourceManager.getInstance().getVmManager(vm.getId()).getStatistics());
+        VmManager vmManager = ResourceManager.getInstance().getVmManager(vm.getId(), false);
+        if (vmManager != null) {
+            vm.setStatisticsData(vmManager.getStatistics());
+        }
     }
 
     protected static LockManager getLockManager() {

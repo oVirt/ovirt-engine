@@ -446,7 +446,11 @@ public class ResourceManager implements BackendService {
     }
 
     public VmManager getVmManager(Guid vmId) {
-        if (!vmManagers.containsKey(vmId)) {
+        return getVmManager(vmId, true);
+    }
+
+    public VmManager getVmManager(Guid vmId, boolean createIfAbsent) {
+        if (createIfAbsent && !vmManagers.containsKey(vmId)) {
             vmManagers.computeIfAbsent(vmId, guid -> Injector.injectMembers(new VmManager(guid)));
         }
         return vmManagers.get(vmId);
