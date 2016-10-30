@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * Returns true if
@@ -15,6 +17,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * Otherwise returns false
  */
 public class IsDisplayAddressConsistentInClusterQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VdsDao vdsDao;
 
     public IsDisplayAddressConsistentInClusterQuery(P parameters) {
         super(parameters);
@@ -22,10 +26,7 @@ public class IsDisplayAddressConsistentInClusterQuery<P extends IdQueryParameter
 
     @Override
     protected void executeQueryCommand() {
-        List<VDS> hosts =
-                DbFacade.getInstance()
-                        .getVdsDao()
-                        .getAllForCluster(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        List<VDS> hosts = vdsDao.getAllForCluster(getParameters().getId(), getUserID(), getParameters().isFiltered());
 
         getQueryReturnValue().setReturnValue(!isDisplayAddressPartiallyOverridden(hosts));
     }
