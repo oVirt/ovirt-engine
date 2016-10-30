@@ -1,10 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmDao vmDao;
+
     public GetVmByVmIdQuery(P parameters) {
         super(parameters);
     }
@@ -15,7 +21,7 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
 
     @Override
     protected void executeQueryCommand() {
-        VM vm = getDbFacade().getVmDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        VM vm = vmDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         if (vm != null) {
             // Note that retrieving the VM is already filtered, and if there are no permissions for it, null will be
             // returned.
