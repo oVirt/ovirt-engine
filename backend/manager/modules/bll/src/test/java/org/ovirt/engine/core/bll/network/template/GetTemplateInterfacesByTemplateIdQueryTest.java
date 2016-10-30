@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.network.template;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -19,6 +19,9 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
  * It does not test database implementation, but rather tests that the right delegations to the Dao occur.
  */
 public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetTemplateInterfacesByTemplateIdQuery<IdQueryParameters>> {
+    @Mock
+    private VmNetworkInterfaceDao vmNetworkInterfaceDaoMock;
+
     @Test
     public void testExecuteQuery() {
         Guid templateID = Guid.newGuid();
@@ -27,9 +30,7 @@ public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQuer
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(templateID);
 
-        VmNetworkInterfaceDao vmNetworkInterfaceDaoMock = mock(VmNetworkInterfaceDao.class);
         when(vmNetworkInterfaceDaoMock.getAllForTemplate(templateID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
-        when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDaoMock);
 
         getQuery().executeQueryCommand();
 
