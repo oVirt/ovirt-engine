@@ -81,7 +81,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
             for (GlusterVolumeTaskStatusForHost hostStatus : taskStatus.getHostwiseStatusDetails()) {
                 GlusterServer glusterServer = getGlusterServerDao().getByGlusterServerUuid(hostStatus.getHostUuid());
                 if (glusterServer != null) {
-                    VDS host = getVdsDao().get(glusterServer.getId());
+                    VDS host = getDbFacade().getVdsDao().get(glusterServer.getId());
                     if (host != null) {
                         hostStatus.setHostName(host.getName());
                         hostStatus.setHostId(host.getId());

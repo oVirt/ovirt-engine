@@ -49,11 +49,6 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
         super(parameters);
     }
 
-    @Override
-    public VdsDao getVdsDao() {
-        return vdsDao;
-    }
-
     InterfaceDao getInterfaceDao() {
         return interfaceDao;
     }
@@ -64,7 +59,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
 
     @Override
     protected void executeQueryCommand() {
-        List<VDS> vdsList = getVdsDao().getAllForNetwork(getParameters().getId());
+        List<VDS> vdsList = vdsDao.getAllForNetwork(getParameters().getId());
         List<VdsNetworkInterface> vdsNetworkInterfaceList =
                 getInterfaceDao().getVdsInterfacesByNetworkId(getParameters().getId());
         final Map<Guid, VDS> vdsById = Entities.businessEntitiesById(vdsList);

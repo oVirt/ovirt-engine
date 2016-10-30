@@ -208,7 +208,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         StepDao stepDao = mock(StepDao.class);
         GlusterTaskUtils taskUtils = mock(GlusterTaskUtils.class);
 
-        doReturn(vdsDao).when(getQuery()).getVdsDao();
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
         doReturn(clusterDao).when(getQuery()).getClusterDao();
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         doReturn(stepDao).when(getQuery()).getStepDao();

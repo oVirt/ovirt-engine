@@ -80,7 +80,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     }
 
     private void setupQuerySpy(){
-        doReturn(vdsDaoMocked).when(getQuery()).getVdsDao();
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMocked);
         doReturn(interfaceDaoMocked).when(getQuery()).getInterfaceDao();
         doReturn(networkDaoMocked).when(getQuery()).getNetworkDao();
         doReturn(networkImplementationDetailsUtils).when(getQuery()).getNetworkImplementationDetailsUtils();

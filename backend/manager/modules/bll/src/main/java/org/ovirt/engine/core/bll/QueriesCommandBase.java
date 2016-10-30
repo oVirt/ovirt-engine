@@ -24,7 +24,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
@@ -221,10 +220,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     protected DbFacade getDbFacade() {
         return DbFacade.getInstance();
-    }
-
-    public VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
     }
 
     protected BackendInternal getBackend() {

@@ -152,7 +152,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         volumeDao = mock(GlusterVolumeDao.class);
         GlusterBrickDao brickDao = mock(GlusterBrickDao.class);
 
-        doReturn(vdsDao).when(getQuery()).getVdsDao();
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
 
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());

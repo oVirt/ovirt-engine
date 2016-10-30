@@ -76,7 +76,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     }
 
     private Guid getProxyHostIdFromParameters() {
-        VDS vds = getVdsDao().get(getParameters().getProxyHostId());
+        VDS vds = getDbFacade().getVdsDao().get(getParameters().getProxyHostId());
         if (vds == null) {
             throw new IllegalArgumentException(
                     String.format("No VDS with the given ID '%s' exists", getParameters().getProxyHostId()));
@@ -92,7 +92,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
 
     private Guid pickProxyHostFromDataCenter() {
         Guid dataCenterId = getParameters().getDataCenterId();
-        List<VDS> vdss = getVdsDao().getAllForStoragePoolAndStatus(dataCenterId, VDSStatus.Up);
+        List<VDS> vdss = getDbFacade().getVdsDao().getAllForStoragePoolAndStatus(dataCenterId, VDSStatus.Up);
         if (vdss.isEmpty()) {
             logNoProxyAvailable(dataCenterId);
             throw new IllegalArgumentException();

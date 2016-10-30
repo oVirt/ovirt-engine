@@ -134,7 +134,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
             return getRandomUpServerId(clusterId);
         }
 
-        VDS brickServer = getVdsDao().get(brick.getServerId());
+        VDS brickServer = getDbFacade().getVdsDao().get(brick.getServerId());
         if (brickServer.getStatus() == VDSStatus.Up) {
             return brickServer.getId();
         }
