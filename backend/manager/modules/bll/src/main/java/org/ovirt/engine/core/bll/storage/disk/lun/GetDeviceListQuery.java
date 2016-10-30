@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.LunDao;
 
 public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private LunDao lunDao;
 
     public GetDeviceListQuery(P parameters) {
         super(parameters);
@@ -29,7 +34,7 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         List<LUNs> luns = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
 
         // Get LUNs from DB
-        List<LUNs> lunsFromDb = getDbFacade().getLunDao().getAll();
+        List<LUNs> lunsFromDb = lunDao.getAll();
         HashMap<String, LUNs> lunsFromDbById = new HashMap<>();
         for (LUNs lun : lunsFromDb) {
             lunsFromDbById.put(lun.getLUNId(), lun);

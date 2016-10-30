@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk.lun;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,6 +10,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -23,7 +22,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 
 public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQueryParameters, GetDeviceListQuery<GetDeviceListQueryParameters>> {
+    @Mock
     private LunDao lunDaoMock;
+
+    @Mock
     private VDSBrokerFrontend vdsBrokerFrontendMock;
 
     // LUNs list retrieved from DB
@@ -70,17 +72,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     }
 
     /**
-     * Mock the DbFacade/VDSBroker and the Daos
-     */
-    private void prepareMocks() {
-        vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
-
-        lunDaoMock = mock(LunDao.class);
-        when(getDbFacadeMockInstance().getLunDao()).thenReturn(lunDaoMock);
-    }
-
-    /**
      * Create the input list of LUNs
      */
     private void createInputLUNs() {
@@ -104,7 +95,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     public void setUp() throws Exception {
         super.setUp();
 
-        prepareMocks();
         createInputLUNs();
     }
 }
