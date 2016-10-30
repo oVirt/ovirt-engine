@@ -5,14 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public class GetAllDisksByStorageDomainIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public GetAllDisksByStorageDomainIdQuery(P parameters) {
         super(parameters);
@@ -24,13 +33,12 @@ public class GetAllDisksByStorageDomainIdQuery<P extends IdQueryParameters> exte
 
     @Override
     protected void executeQueryCommand() {
-        StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(getParameters().getId());
+        StorageDomain storageDomain = storageDomainDao.get(getParameters().getId());
         if (storageDomain.getStorageType().isCinderDomain()) {
-            List<DiskImage> diskImages = getDbFacade().getDiskImageDao().getAllForStorageDomain(getParameters().getId());
+            List<DiskImage> diskImages = diskImageDao.getAllForStorageDomain(getParameters().getId());
             getQueryReturnValue().setReturnValue(diskImages);
         } else {
-            List<DiskImage> diskImages =
-                    getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(getParameters().getId());
+            List<DiskImage> diskImages = diskImageDao.getAllSnapshotsForStorageDomain(getParameters().getId());
 
             Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
 
