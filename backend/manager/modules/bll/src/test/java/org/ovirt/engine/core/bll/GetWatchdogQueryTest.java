@@ -35,7 +35,6 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        when(getDbFacadeMockInstance().getVmDeviceDao()).thenReturn(vmDeviceDao);
         when(getQueryParameters().getId()).thenReturn(TEST_VM_ID);
     }
 
