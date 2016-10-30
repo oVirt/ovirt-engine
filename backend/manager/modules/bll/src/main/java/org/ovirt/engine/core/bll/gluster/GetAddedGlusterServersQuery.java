@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
@@ -76,10 +74,6 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     public GlusterUtil getGlusterUtils() {
         return GlusterUtil.getInstance();
-    }
-
-    public ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
     }
 
     @Override

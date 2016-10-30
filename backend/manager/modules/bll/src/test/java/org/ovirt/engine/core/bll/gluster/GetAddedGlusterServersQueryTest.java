@@ -33,14 +33,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlusterServersParameters, GetAddedGlusterServersQuery<AddedGlusterServersParameters>> {
     private List<VDS> serversList;
     private List<GlusterServerInfo> expectedServers;
     private AddedGlusterServersParameters params;
-    private ClusterDao clusterDaoMock;
 
     private static final String CLUSTER_NAME = "default";
     private static final String TEST_SERVER1 = "test_server1";
@@ -96,7 +94,6 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private void setupMock() throws Exception {
         VDSBrokerFrontend vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
         GlusterUtil glusterUtils = mock(GlusterUtil.class);
-        clusterDaoMock = mock(ClusterDao.class);
         GlusterDBUtils dbUtils = mock(GlusterDBUtils.class);
         BackendInternal backendInternal = mock(BackendInternal.class);
 
@@ -114,8 +111,6 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
                 any(VdcQueryParametersBase.class), any(EngineContext.class))).thenReturn(vdcReturnValue);
         doReturn(params.getClusterId()).when(getQueryParameters()).getClusterId();
         doReturn(true).when(getQueryParameters()).isServerKeyFingerprintRequired();
-
-        doReturn(clusterDaoMock).when(getQuery()).getClusterDao();
     }
 
     private VdcQueryReturnValue getVdcReturnValue() {
