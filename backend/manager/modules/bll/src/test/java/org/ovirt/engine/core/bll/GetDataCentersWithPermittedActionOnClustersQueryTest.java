@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -9,6 +8,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -20,6 +20,9 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 public class GetDataCentersWithPermittedActionOnClustersQueryTest
         extends AbstractGetEntitiesWithPermittedActionParametersQueryTest
         <GetDataCentersWithPermittedActionOnClustersParameters, GetDataCentersWithPermittedActionOnClustersQuery<GetDataCentersWithPermittedActionOnClustersParameters>> {
+
+    @Mock
+    private StoragePoolDao storagePoolDaoMock;
 
     @Override
     @Before
@@ -35,9 +38,7 @@ public class GetDataCentersWithPermittedActionOnClustersQueryTest
         StoragePool expected = new StoragePool();
 
         // Mock the Dao
-        StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
         when(storagePoolDaoMock.getDataCentersWithPermittedActionOnClusters(getUser().getId(), getActionGroup(), true, false)).thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
 
         getQuery().executeQueryCommand();
 
