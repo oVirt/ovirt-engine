@@ -3,23 +3,28 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.VmTemplateComparerByDiskSize;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetVmTemplatesFromStorageDomainQuery<P extends GetVmTemplatesFromStorageDomainParameters>
         extends QueriesCommandBase<P> {
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
     public GetVmTemplatesFromStorageDomainQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        List<VmTemplate> returnValue = DbFacade.getInstance()
-                .getVmTemplateDao()
-                        .getAllForStorageDomain(getParameters().getId(),
+        List<VmTemplate> returnValue =
+                vmTemplateDao.getAllForStorageDomain(getParameters().getId(),
                                 getUserID(),
                                 getParameters().isFiltered());
         if (getParameters().isWithDisks()) {
