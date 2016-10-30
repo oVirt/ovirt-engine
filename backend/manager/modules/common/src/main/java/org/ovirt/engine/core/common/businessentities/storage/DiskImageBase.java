@@ -45,6 +45,14 @@ public class DiskImageBase extends Disk {
         getImage().setVolumeFormat(volumeFormat);
     }
 
+    public QcowCompat getQcowCompat() {
+        return getImage().getQcowCompat();
+    }
+
+    public void setQcowCompat(QcowCompat qcowCompat) {
+        getImage().setQcowCompat(qcowCompat);
+    }
+
     @Override
     public long getSize() {
         return getImage().getSize();
@@ -76,6 +84,10 @@ public class DiskImageBase extends Disk {
     @Override
     public boolean isAllowSnapshot() {
         return !isShareable();
+    }
+
+    public boolean isQcowFormat() {
+        return getImage().getVolumeFormat().equals(VolumeFormat.COW);
     }
 
     @Override

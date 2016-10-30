@@ -43,6 +43,8 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
     @NotNull(message = "VALIDATION_VOLUME_FORMAT_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
 
+    private QcowCompat qcowCompat = QcowCompat.Undefined;
+
     private LeaseState leaseState;
 
     private Integer generation;
@@ -155,6 +157,14 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     public void setVolumeFormat(VolumeFormat volumeFormat) {
         this.volumeFormat = volumeFormat;
+    }
+
+    public QcowCompat getQcowCompat() {
+        return qcowCompat;
+    }
+
+    public void setQcowCompat(QcowCompat qcowCompat) {
+        this.qcowCompat = qcowCompat;
     }
 
     public VolumeClassification getVolumeClassification() {

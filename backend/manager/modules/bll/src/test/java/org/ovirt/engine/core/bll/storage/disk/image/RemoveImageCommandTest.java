@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -121,6 +122,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         disk.setId(Guid.newGuid());
         disk.setVolumeType(VolumeType.Sparse);
         disk.setVolumeFormat(VolumeFormat.COW);
+        disk.setQcowCompat(QcowCompat.QCOW2_V3);
         disk.setStoragePoolId(vm.getStoragePoolId());
         disk.setActive(Boolean.TRUE);
         disk.setPlugged(Boolean.TRUE);

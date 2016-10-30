@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -213,6 +214,9 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
                     .getInt("volume_type")));
             entity.setVolumeFormat(VolumeFormat.forValue(rs
                     .getInt("volume_format")));
+            if (entity.isQcowFormat()) {
+                entity.setQcowCompat(QcowCompat.forValue(rs.getInt("qcow_compat")));
+            }
             entity.setId(getGuidDefaultEmpty(rs, "image_group_id"));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setReadRate(rs.getInt("read_rate"));

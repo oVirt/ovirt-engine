@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -69,6 +70,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         newImage.setSnapshotId(EXISTING_SNAPSHOT_ID);
         newImage.setId(Guid.newGuid());
         newImage.setVolumeFormat(VolumeFormat.COW);
+        newImage.setQcowCompat(QcowCompat.QCOW2_V3);
         newImage.setVolumeType(VolumeType.Sparse);
         newImage.setDiskId(Guid.newGuid());
     }

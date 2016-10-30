@@ -5339,6 +5339,7 @@
         <column>vm_snapshot_id</column>
         <column>volume_type</column>
         <column>volume_format</column>
+        <column>qcow_compat</column>
         <column>image_group_id</column>
         <column>_create_date</column>
         <column>_update_date</column>
@@ -5355,6 +5356,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <null />
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5371,6 +5373,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5387,6 +5390,7 @@
             <null />
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
             <value>2010-11-18 11:11:45</value>
             <value>2010-12-01 14:13:47</value>
@@ -5403,6 +5407,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5420,6 +5425,7 @@
             <null/>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5436,6 +5442,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5452,6 +5459,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5468,6 +5476,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5484,6 +5493,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>fb26a52b-b60f-44cb-9f46-3ef333b04a3f</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5500,6 +5510,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5516,6 +5527,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5532,6 +5544,7 @@
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f11</value>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -5548,6 +5561,7 @@
             <null/>
             <value>2</value>
             <value>4</value>
+            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a45</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>

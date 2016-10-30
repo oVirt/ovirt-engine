@@ -264,6 +264,7 @@
         <include name="common/businessentities/storage/DiskImage.java" />
         <include name="common/businessentities/storage/DiskImageBase.java" />
         <include name="common/businessentities/storage/DiskImageDynamic.java" />
+        <include name="common/businessentities/storage/QcowCompat.java" />
         <include name="common/businessentities/storage/DiskInterface.java" />
         <include name="common/businessentities/storage/DiskLunMap.java" />
         <include name="common/businessentities/storage/DiskLunMapId.java" />

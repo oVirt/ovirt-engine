@@ -116,7 +116,8 @@ CREATE OR REPLACE FUNCTION UpdateImage (
     v_volume_format INT,
     v_image_group_id UUID,
     v_active BOOLEAN,
-    v_volume_classification SMALLINT
+    v_volume_classification SMALLINT,
+    v_qcow_compat INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -133,6 +134,7 @@ BEGIN
         volume_format = v_volume_format,
         active = v_active,
         volume_classification = v_volume_classification,
+        qcow_compat = v_qcow_compat,
         _update_date = LOCALTIMESTAMP
     WHERE image_guid = v_image_guid;
 END;$PROCEDURE$

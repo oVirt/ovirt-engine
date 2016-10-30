@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -60,6 +61,7 @@ public class ImageDaoImpl extends DefaultGenericDao<Image, Guid> implements Imag
                 .addValue("vm_snapshot_id", entity.getSnapshotId())
                 .addValue("volume_type", entity.getVolumeType())
                 .addValue("volume_format", entity.getVolumeFormat())
+                .addValue("qcow_compat", entity.getQcowCompat())
                 .addValue("image_group_id", entity.getDiskId())
                 .addValue("active", entity.isActive())
                 .addValue("volume_classification", entity.getVolumeClassification().getValue());
@@ -84,6 +86,9 @@ public class ImageDaoImpl extends DefaultGenericDao<Image, Guid> implements Imag
             entity.setSnapshotId(getGuidDefaultEmpty(rs, "vm_snapshot_id"));
             entity.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
             entity.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
+            if (entity.getVolumeFormat().equals(VolumeFormat.COW)) {
+                entity.setQcowCompat(QcowCompat.forValue(rs.getInt("qcow_compat")));
+            }
             entity.setDiskId(getGuidDefaultEmpty(rs, "image_group_id"));
             entity.setActive((Boolean) rs.getObject("active"));
             entity.setVolumeClassification(VolumeClassification.forValue(rs.getInt("volume_classification")));
