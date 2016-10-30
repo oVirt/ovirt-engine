@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,6 +16,9 @@ import org.ovirt.engine.core.dao.ClusterDao;
 /** A test case for {@link GetClustersByStoragePoolIdQuery} */
 public class GetClustersByStoragePoolIdQueryTest
         extends AbstractUserQueryTest<IdQueryParameters, GetClustersByStoragePoolIdQuery<IdQueryParameters>> {
+
+    @Mock
+    private ClusterDao clusterDaoMock;
 
     /** Tests the flow of {@link GetClustersByStoragePoolIdQuery#executeQueryCommand()} using mock objects */
     @Test
@@ -30,12 +33,10 @@ public class GetClustersByStoragePoolIdQueryTest
         when(getQueryParameters().getId()).thenReturn(storagePoolId);
 
         // Mock the Dao
-        ClusterDao clusterDaoMock = mock(ClusterDao.class);
         when(clusterDaoMock.getAllForStoragePool(storagePoolId,
                 getUser().getId(),
                 getQueryParameters().isFiltered())).
                 thenReturn(result);
-        when(getDbFacadeMockInstance().getClusterDao()).thenReturn(clusterDaoMock);
 
         // Execute the query
         getQuery().executeQueryCommand();
