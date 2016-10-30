@@ -14,9 +14,9 @@ public class GetGlusterHookByIdQuery<P extends GlusterHookQueryParameters> exten
 
     @Override
     protected void executeQueryCommand() {
-        GlusterHookEntity hookEntity = getGlusterHookDao().getById(getParameters().getHookId());
+        GlusterHookEntity hookEntity = glusterHooksDao.getById(getParameters().getHookId());
         if (hookEntity != null && getParameters().isIncludeServerHooks()) {
-            hookEntity.setServerHooks(getGlusterHookDao().getGlusterServerHooks(getParameters().getHookId()));
+            hookEntity.setServerHooks(glusterHooksDao.getGlusterServerHooks(getParameters().getHookId()));
         }
         getQueryReturnValue().setReturnValue(hookEntity);
     }

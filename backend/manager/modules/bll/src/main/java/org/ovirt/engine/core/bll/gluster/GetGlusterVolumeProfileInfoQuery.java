@@ -37,7 +37,7 @@ public class GetGlusterVolumeProfileInfoQuery<P extends GlusterVolumeProfilePara
     protected GlusterVolumeProfileInfo populateBrickNames(GlusterVolumeProfileInfo profileInfo) {
         List<BrickProfileDetails> brickProfiles= profileInfo.getBrickProfileDetails();
         for(BrickProfileDetails brickProfileDetails : brickProfiles) {
-            brickProfileDetails.setIdentity(getGlusterBrickDao().getById(brickProfileDetails.getBrickId()).getQualifiedName());
+            brickProfileDetails.setIdentity(glusterBrickDao.getById(brickProfileDetails.getBrickId()).getQualifiedName());
         }
         return profileInfo;
     }

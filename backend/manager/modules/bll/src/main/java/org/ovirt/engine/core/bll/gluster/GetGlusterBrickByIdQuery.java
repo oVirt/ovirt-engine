@@ -13,6 +13,6 @@ public class GetGlusterBrickByIdQuery<P extends IdQueryParameters> extends Glust
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getGlusterBrickDao().getById(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(glusterBrickDao.getById(getParameters().getId()));
     }
 }

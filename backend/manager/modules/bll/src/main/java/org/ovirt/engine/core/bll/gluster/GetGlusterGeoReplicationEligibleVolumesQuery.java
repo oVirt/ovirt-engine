@@ -27,7 +27,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
     @Override
     protected void executeQueryCommand() {
         Guid masterVolumeId = getParameters().getId();
-        GlusterVolumeEntity masterVolume = getGlusterVolumeDao().getById(masterVolumeId);
+        GlusterVolumeEntity masterVolume = glusterVolumeDao.getById(masterVolumeId);
         getQueryReturnValue().setReturnValue(getEligibleVolumes(masterVolume));
     }
 
@@ -39,14 +39,14 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
     }
 
     protected List<GlusterVolumeEntity> getAllGlusterVolumesWithMasterCompatibleVersion(Guid masterVolumeId) {
-        GlusterVolumeEntity masterVolume = getGlusterVolumeDao().getById(masterVolumeId);
-        Cluster masterCluster = getClusterDao().get(masterVolume.getClusterId());
-        List<Cluster> clusters = getClusterDao().getClustersByServiceAndCompatibilityVersion(true, false, masterCluster.getCompatibilityVersion().getValue());
+        GlusterVolumeEntity masterVolume = glusterVolumeDao.getById(masterVolumeId);
+        Cluster masterCluster = clusterDao.get(masterVolume.getClusterId());
+        List<Cluster> clusters = clusterDao.getClustersByServiceAndCompatibilityVersion(true, false, masterCluster.getCompatibilityVersion().getValue());
         List<GlusterVolumeEntity> volumes = new ArrayList<>();
         if(clusters != null) {
             for(Cluster currentCluster : clusters) {
                 if(!currentCluster.getId().equals(masterCluster.getId())) {
-                    volumes.addAll(getGlusterVolumeDao().getByClusterId(currentCluster.getId()));
+                    volumes.addAll(glusterVolumeDao.getByClusterId(currentCluster.getId()));
                 }
             }
         }

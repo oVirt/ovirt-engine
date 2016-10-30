@@ -60,7 +60,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mockVdsDbFacadeAndDao();
+        mockDependencies();
         setupExpectedGlusterVolumeOptionInfo();
         setupMock();
     }
@@ -81,11 +81,9 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
         return brick;
     }
 
-    private void mockVdsDbFacadeAndDao() {
+    private void mockDependencies() {
         doReturn(Collections.singletonList(getVds(VDSStatus.Up))).when(vdsDao).getAllForClusterWithStatus(CLUSTER_ID,
                 VDSStatus.Up);
-        doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
-        doReturn(brickDao).when(getQuery()).getGlusterBrickDao();
         doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
         doReturn("test-vol").when(getQuery()).getGlusterVolumeName(VOLUME_ID);

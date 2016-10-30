@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -16,6 +15,8 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 public class GetGlusterBrickByIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetGlusterBrickByIdQuery<IdQueryParameters>> {
 
     GlusterBrickEntity expected;
+
+    @Mock
     GlusterBrickDao glusterBrickDaoMock;
 
     @Before
@@ -36,9 +37,7 @@ public class GetGlusterBrickByIdQueryTest extends AbstractQueryTest<IdQueryParam
         when(getQueryParameters().getId()).thenReturn(expected.getId());
 
         // Mock the Dao
-        glusterBrickDaoMock = mock(GlusterBrickDao.class);
         when(glusterBrickDaoMock.getById(expected.getId())).thenReturn(expected);
-        doReturn(glusterBrickDaoMock).when(getQuery()).getGlusterBrickDao();
     }
 
     @Test

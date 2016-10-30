@@ -9,6 +9,6 @@ public class GetGlusterVolumeSnapshotScheduleByVolumeIdQuery<P extends IdQueryPa
 
     @Override
     public void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getGlusterVolumeSnapshotScheduleDao().getByVolumeId(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(glusterVolumeSnapshotScheduleDao.getByVolumeId(getParameters().getId()));
     }
 }

@@ -3,13 +3,13 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -25,6 +25,8 @@ public class GetGlusterHooksQueryTest extends
 
     List<GlusterHookEntity> expected;
     List<GlusterHookEntity> emptyList;
+
+    @Mock
     GlusterHooksDao glusterHookDaoMock;
 
     @Before
@@ -41,10 +43,6 @@ public class GetGlusterHooksQueryTest extends
 
         // Mock the query's parameters
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
-
-        // Mock the Dao
-        glusterHookDaoMock = mock(GlusterHooksDao.class);
-        doReturn(glusterHookDaoMock).when(getQuery()).getGlusterHookDao();
     }
 
     private List<GlusterHookEntity> getExpectedHooksList() {

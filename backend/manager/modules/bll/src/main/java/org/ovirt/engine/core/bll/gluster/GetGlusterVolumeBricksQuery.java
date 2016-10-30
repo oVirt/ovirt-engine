@@ -13,6 +13,6 @@ public class GetGlusterVolumeBricksQuery<P extends IdQueryParameters> extends Gl
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getGlusterBrickDao().getBricksOfVolume(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(glusterBrickDao.getBricksOfVolume(getParameters().getId()));
     }
 }

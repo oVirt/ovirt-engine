@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -10,7 +12,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
@@ -24,6 +25,36 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 
 public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
+    @Inject
+    protected GlusterVolumeDao glusterVolumeDao;
+
+    @Inject
+    protected GlusterBrickDao glusterBrickDao;
+
+    @Inject
+    protected GlusterHooksDao glusterHooksDao;
+
+    @Inject
+    protected GlusterServerServiceDao glusterServerServiceDao;
+
+    @Inject
+    protected GlusterClusterServiceDao glusterClusterServiceDao;
+
+    @Inject
+    protected GlusterGeoRepDao glusterGeoRepDao;
+
+    @Inject
+    protected GlusterVolumeSnapshotDao glusterVolumeSnapshotDao;
+
+    @Inject
+    protected GlusterVolumeSnapshotConfigDao glusterVolumeSnapshotConfigDao;
+
+    @Inject
+    protected GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
+
+    @Inject
+    protected ClusterDao clusterDao;
+
     protected GlusterQueriesCommandBase(P parameters) {
         super(parameters);
     }
@@ -32,49 +63,12 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         super(parameters, engineContext);
     }
 
-    protected GlusterVolumeDao getGlusterVolumeDao() {
-        return DbFacade.getInstance()
-                .getGlusterVolumeDao();
-    }
-
-    protected GlusterBrickDao getGlusterBrickDao() {
-        return DbFacade.getInstance().getGlusterBrickDao();
-    }
-
-    protected GlusterHooksDao getGlusterHookDao() {
-        return DbFacade.getInstance().getGlusterHooksDao();
-    }
-
-    protected GlusterServerServiceDao getGlusterServerServiceDao() {
-        return DbFacade.getInstance().getGlusterServerServiceDao();
-    }
-
-    protected GlusterClusterServiceDao getGlusterClusterServiceDao() {
-        return DbFacade.getInstance().getGlusterClusterServiceDao();
-    }
-
     protected String getGlusterVolumeName(Guid volumeId) {
-        return getGlusterVolumeDao().getById(volumeId).getName();
+        return glusterVolumeDao.getById(volumeId).getName();
     }
 
     protected GlusterUtil getGlusterUtils() {
         return GlusterUtil.getInstance();
-    }
-
-    protected GlusterGeoRepDao getGeoRepDao() {
-        return DbFacade.getInstance().getGlusterGeoRepDao();
-    }
-
-    protected GlusterVolumeSnapshotDao getGlusterVolumeSnapshotDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotDao();
-    }
-
-    protected GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotConfigDao();
-    }
-
-    protected GlusterVolumeSnapshotScheduleDao getGlusterVolumeSnapshotScheduleDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotScheduleDao();
     }
 
     protected Guid getUpServerId(Guid clusterId) {
@@ -83,10 +77,6 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
             throw new RuntimeException("No up server found");
         }
         return vds.getId();
-    }
-
-    protected ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
     }
 
     protected Guid getRandomUpServerId(Guid clusterId) {

@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -16,6 +15,8 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 public class GetGlusterVolumeByIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetGlusterVolumeByIdQuery<IdQueryParameters>> {
 
     GlusterVolumeEntity expected;
+
+    @Mock
     GlusterVolumeDao glusterVolumeDaoMock;
 
     @Before
@@ -36,9 +37,7 @@ public class GetGlusterVolumeByIdQueryTest extends AbstractQueryTest<IdQueryPara
         when(getQueryParameters().getId()).thenReturn(expected.getId());
 
         // Mock the Dao
-        glusterVolumeDaoMock = mock(GlusterVolumeDao.class);
         when(glusterVolumeDaoMock.getById(expected.getId())).thenReturn(expected);
-        doReturn(glusterVolumeDaoMock).when(getQuery()).getGlusterVolumeDao();
     }
 
     @Test

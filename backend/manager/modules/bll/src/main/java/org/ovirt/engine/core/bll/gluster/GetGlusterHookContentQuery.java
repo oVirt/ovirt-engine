@@ -21,17 +21,17 @@ public class GetGlusterHookContentQuery<P extends GlusterHookContentQueryParamet
 
     @Override
     protected void executeQueryCommand() {
-        GlusterHookEntity hook = getGlusterHookDao().getById(getParameters().getGlusterHookId());
+        GlusterHookEntity hook = glusterHooksDao.getById(getParameters().getGlusterHookId());
         String content = "";
 
         if (getParameters().getGlusterServerId() == null) {
             if (hook.getContentType().equals(GlusterHookContentType.TEXT)) {
-                content = getGlusterHookDao().getGlusterHookContent(getParameters().getGlusterHookId());
+                content = glusterHooksDao.getGlusterHookContent(getParameters().getGlusterHookId());
             }
         }
         else {
             GlusterServerHook serverHook =
-                    getGlusterHookDao().getGlusterServerHook(hook.getId(), getParameters().getGlusterServerId());
+                    glusterHooksDao.getGlusterServerHook(hook.getId(), getParameters().getGlusterServerId());
 
             if (serverHook != null && serverHook.getContentType() == GlusterHookContentType.TEXT) {
                 VDSReturnValue returnValue =

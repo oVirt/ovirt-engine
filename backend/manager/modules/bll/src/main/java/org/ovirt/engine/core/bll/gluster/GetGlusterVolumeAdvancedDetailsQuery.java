@@ -44,7 +44,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
         detailRequired = getParameters().isDetailRequired();
         volumeId = getParameters().getVolumeId();
         if (volumeId != null) {
-            GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
+            GlusterVolumeEntity volume = glusterVolumeDao.getById(volumeId);
             if (volume == null) {
                 throw new RuntimeException(EngineMessage.GLUSTER_VOLUME_ID_INVALID.toString());
             }
@@ -69,7 +69,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     }
 
     private GlusterBrickEntity getBrick(Guid brickId) {
-        return (brickId == null) ? null : getGlusterBrickDao().getById(brickId);
+        return (brickId == null) ? null : glusterBrickDao.getById(brickId);
     }
 
     /**
@@ -180,7 +180,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     }
 
     private List<GlusterVolumeEntity> getReplicateAndNfsVolumes(Guid clusterId, List<GlusterVolumeType> volumeTypes) {
-        return getGlusterVolumeDao().getVolumesByStatusTypesAndOption(clusterId,
+        return glusterVolumeDao.getVolumesByStatusTypesAndOption(clusterId,
                 GlusterStatus.UP,
                 volumeTypes,
                 OPTION_KEY_NFS_DISABLE,
@@ -188,14 +188,14 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     }
 
     private List<GlusterVolumeEntity> getNfsVolumes(Guid clusterId) {
-        return getGlusterVolumeDao().getVolumesByOption(clusterId,
+        return glusterVolumeDao.getVolumesByOption(clusterId,
                 GlusterStatus.UP,
                 OPTION_KEY_NFS_DISABLE,
                 OPTION_VALUE_OFF);
     }
 
     private List<GlusterVolumeEntity> getReplicateVolumes(Guid clusterId, List<GlusterVolumeType> volumeTypes) {
-        return getGlusterVolumeDao().getVolumesByStatusAndTypes(clusterId,
+        return glusterVolumeDao.getVolumesByStatusAndTypes(clusterId,
                 GlusterStatus.UP,
                 volumeTypes);
     }

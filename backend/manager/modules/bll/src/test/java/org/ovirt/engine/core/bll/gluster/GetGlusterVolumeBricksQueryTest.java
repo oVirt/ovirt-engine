@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -10,6 +8,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -21,8 +20,10 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 public class GetGlusterVolumeBricksQueryTest extends
 AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParameters>> {
 
-    GlusterVolumeEntity expected;
+    @Mock
     GlusterBrickDao glusterBrickDaoMock;
+
+    GlusterVolumeEntity expected;
     GlusterBrickEntity brickEntity;
     List<GlusterBrickEntity> bricks = new ArrayList<>();
 
@@ -51,9 +52,7 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
         when(getQueryParameters().getId()).thenReturn(expected.getId());
 
         // Mock the Dao
-        glusterBrickDaoMock = mock(GlusterBrickDao.class);
         when(glusterBrickDaoMock.getBricksOfVolume(expected.getId())).thenReturn(bricks);
-        doReturn(glusterBrickDaoMock).when(getQuery()).getGlusterBrickDao();
     }
 
     @Test

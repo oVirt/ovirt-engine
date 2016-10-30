@@ -13,6 +13,6 @@ public class GetGlusterVolumeByTaskIdQuery<P extends IdQueryParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getGlusterVolumeDao().getVolumeByGlusterTask(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(glusterVolumeDao.getVolumeByGlusterTask(getParameters().getId()));
     }
 }

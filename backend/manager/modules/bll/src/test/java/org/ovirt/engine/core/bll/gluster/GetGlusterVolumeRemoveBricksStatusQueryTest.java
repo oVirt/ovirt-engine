@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -57,7 +58,13 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     private static final Guid SERVER_UUID_1 = Guid.newGuid();
     private GlusterVolumeTaskStatusEntity expectedVolumeStatusDetails;
     private VdsDao vdsDao;
+
+    @Mock
     private GlusterVolumeDao volumeDao;
+
+    @Mock
+    private ClusterDao clusterDao;
+
     private GlusterUtil glusterUtils;
 
     @Before
@@ -202,15 +209,11 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     private void setupMock() {
         glusterUtils = mock(GlusterUtil.class);
         vdsDao = mock(VdsDao.class);
-        ClusterDao clusterDao = mock(ClusterDao.class);
-        volumeDao = mock(GlusterVolumeDao.class);
         GlusterServerDao glusterServerDao = mock(GlusterServerDao.class);
         StepDao stepDao = mock(StepDao.class);
         GlusterTaskUtils taskUtils = mock(GlusterTaskUtils.class);
 
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
-        doReturn(clusterDao).when(getQuery()).getClusterDao();
-        doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         doReturn(stepDao).when(getQuery()).getStepDao();
         doReturn(glusterServerDao).when(getQuery()).getGlusterServerDao();
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();

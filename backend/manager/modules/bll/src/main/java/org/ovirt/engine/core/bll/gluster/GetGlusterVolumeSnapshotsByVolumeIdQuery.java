@@ -9,6 +9,6 @@ public class GetGlusterVolumeSnapshotsByVolumeIdQuery<P extends IdQueryParameter
 
     @Override
     public void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getGlusterVolumeSnapshotDao().getAllByVolumeId(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(glusterVolumeSnapshotDao.getAllByVolumeId(getParameters().getId()));
     }
 }

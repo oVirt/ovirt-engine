@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 
@@ -30,7 +28,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
     @Override
     public void executeQueryCommand() {
         clusterId = getParameters().getClusterId();
-        volume = getGlusterVolumeDao().getById(getParameters().getVolumeId());
+        volume = glusterVolumeDao.getById(getParameters().getVolumeId());
         if (volume == null) {
             throw new RuntimeException(EngineMessage.GLUSTER_VOLUME_ID_INVALID.toString());
         }
@@ -69,11 +67,6 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
 
     public GlusterTaskUtils getGlusterTaskUtils() {
         return GlusterTaskUtils.getInstance();
-    }
-
-    @Override
-    public ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
     }
 
     private void updateHostIP(GlusterVolumeTaskStatusEntity taskStatus) {
@@ -121,7 +114,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
             if (stepsList != null && !stepsList.isEmpty() && stepsList.get(0).getEndTime() != null) {
                 asyncTask.setStatus(status.getStatusSummary().getStatus());
                 asyncTask.setMessage(GlusterTaskUtils.getInstance().getSummaryMessage(status.getStatusSummary()));
-                getGlusterTaskUtils().updateSteps(getClusterDao().get(clusterId), asyncTask, stepsList);
+                getGlusterTaskUtils().updateSteps(clusterDao.get(clusterId), asyncTask, stepsList);
 
                 // release the volume lock if the task is completed
                 if (getGlusterTaskUtils().hasTaskCompleted(asyncTask)) {

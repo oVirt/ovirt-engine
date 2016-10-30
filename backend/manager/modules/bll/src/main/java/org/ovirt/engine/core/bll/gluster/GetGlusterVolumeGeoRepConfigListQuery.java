@@ -13,8 +13,8 @@ public class GetGlusterVolumeGeoRepConfigListQuery<P extends IdQueryParameters> 
 
     @Override
     protected void executeQueryCommand() {
-        List<GlusterGeoRepSessionConfiguration> configs = getGeoRepDao().getGeoRepSessionConfig(getParameters().getId());
-        configs.addAll(getGeoRepDao().getGlusterGeoRepSessionUnSetConfig(getParameters().getId()));
+        List<GlusterGeoRepSessionConfiguration> configs = glusterGeoRepDao.getGeoRepSessionConfig(getParameters().getId());
+        configs.addAll(glusterGeoRepDao.getGlusterGeoRepSessionUnSetConfig(getParameters().getId()));
         getQueryReturnValue().setReturnValue(configs);
     }
 

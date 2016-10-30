@@ -32,15 +32,15 @@ public class GetGlusterVolumeSnapshotConfigQuery<P extends GlusterVolumeQueriesP
     @Override
     public void executeQueryCommand() {
         List<GlusterVolumeSnapshotConfig> configs =
-                getGlusterVolumeSnapshotConfigDao().getConfigByClusterId(getParameters().getClusterId());
+                glusterVolumeSnapshotConfigDao.getConfigByClusterId(getParameters().getClusterId());
 
         if (configs != null && configs.size() > 0) {
             getQueryReturnValue().setReturnValue(getConfigPair(configs));
         } else {
             GlusterSnapshotSyncJob.getInstance()
-                    .refreshSnapshotConfigInCluster(getClusterDao().get(getParameters().getClusterId()));
+                    .refreshSnapshotConfigInCluster(clusterDao.get(getParameters().getClusterId()));
             // fetch the configuration again after sync
-            configs = getGlusterVolumeSnapshotConfigDao().getConfigByClusterId(getParameters().getClusterId());
+            configs = glusterVolumeSnapshotConfigDao.getConfigByClusterId(getParameters().getClusterId());
             getQueryReturnValue().setReturnValue(getConfigPair(configs));
         }
     }

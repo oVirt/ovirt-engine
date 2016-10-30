@@ -16,9 +16,9 @@ public class GetGlusterServerServicesByClusterIdQuery<P extends GlusterServiceQu
         List<GlusterServerService> serviceList = null;
 
         if(getParameters().getServiceType() == null) {
-            serviceList = getGlusterServerServiceDao().getByClusterId(getParameters().getId());
+            serviceList = glusterServerServiceDao.getByClusterId(getParameters().getId());
         } else {
-            serviceList = getGlusterServerServiceDao().getByClusterIdAndServiceType(getParameters().getId(), getParameters().getServiceType());
+            serviceList = glusterServerServiceDao.getByClusterIdAndServiceType(getParameters().getId(), getParameters().getServiceType());
         }
 
         getQueryReturnValue().setReturnValue(serviceList);

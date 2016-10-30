@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -50,7 +51,12 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private GlusterVolumeAdvancedDetails expectedVolumeAdvancedDetails;
     private GlusterUtil glusterUtils;
     private VdsDao vdsDao;
+
+    @Mock
     private GlusterVolumeDao volumeDao;
+
+    @Mock
+    private GlusterBrickDao brickDao;
 
     @Before
     @Override
@@ -149,15 +155,9 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private void setupMock() {
         glusterUtils = mock(GlusterUtil.class);
         vdsDao = mock(VdsDao.class);
-        volumeDao = mock(GlusterVolumeDao.class);
-        GlusterBrickDao brickDao = mock(GlusterBrickDao.class);
-
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
 
-        doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
-
-        doReturn(brickDao).when(getQuery()).getGlusterBrickDao();
         when(brickDao.getById(BRICK_ID)).thenReturn(getBrick());
 
         // Mock the query's parameters. Note that the brick id is

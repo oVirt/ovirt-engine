@@ -19,8 +19,8 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQuery<P extends Glu
 
     @Override
     protected void executeQueryCommand() {
-        GlusterVolumeEntity masterVolume = getGlusterVolumeDao().getById(getParameters().getId());
-        GlusterVolumeEntity slaveVolume = getGlusterVolumeDao().getById(getParameters().getSlaveVolumeId());
+        GlusterVolumeEntity masterVolume = glusterVolumeDao.getById(getParameters().getId());
+        GlusterVolumeEntity slaveVolume = glusterVolumeDao.getById(getParameters().getSlaveVolumeId());
         getQueryReturnValue().setReturnValue(getNonEligibilityReasons(masterVolume, slaveVolume));
     }
 

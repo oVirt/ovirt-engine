@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<P>{
 
@@ -18,15 +17,14 @@ public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> ex
 
     @Override
     protected void executeQueryCommand() {
-        GlusterGeoRepDao geoRepDao = getGeoRepDao();
-        List<GlusterGeoRepSession> geoRepSessions = geoRepDao.getGeoRepSessions(getParameters().getId());
+        List<GlusterGeoRepSession> geoRepSessions = glusterGeoRepDao.getGeoRepSessions(getParameters().getId());
         /*
          * If master volume has sessions, update the master server names in accordance with masterBrickId in sessionDetails.
          */
         if (geoRepSessions != null) {
             for (GlusterGeoRepSession currentSession : geoRepSessions) {
                 // For each session get corresponding session details.
-                List<GlusterGeoRepSessionDetails> geoRepSessionDetails = geoRepDao.getGeoRepSessionDetails(currentSession.getId());
+                List<GlusterGeoRepSessionDetails> geoRepSessionDetails = glusterGeoRepDao.getGeoRepSessionDetails(currentSession.getId());
                 /*
                  * Session details could be null, if they are not yet synced. possible if session detail command failed for some unexpected reason
                  * such as network failure even though the sessions in the cluster are synced(sessionListCommand)
@@ -46,8 +44,7 @@ public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> ex
                     if(currentMasterBrickId == null) {
                         continue;
                     }
-                    GlusterBrickEntity currentBrick =
-                            getGlusterBrickDao().getById(currentMasterBrickId);
+                    GlusterBrickEntity currentBrick = glusterBrickDao.getById(currentMasterBrickId);
                     if (currentBrick != null) {
                         currentDetail.setMasterBrickHostName(currentBrick.getServerName());
                     }

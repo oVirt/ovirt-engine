@@ -14,7 +14,7 @@ public class GetGlusterHooksQuery<P extends GlusterParameters> extends GlusterQu
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getGlusterHookDao().getByClusterId(getParameters().getClusterId()));
+        getQueryReturnValue().setReturnValue(glusterHooksDao.getByClusterId(getParameters().getClusterId()));
         getQueryReturnValue().setSucceeded(true);
     }
 

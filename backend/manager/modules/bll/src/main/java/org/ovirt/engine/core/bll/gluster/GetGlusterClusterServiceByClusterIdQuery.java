@@ -17,10 +17,10 @@ public class GetGlusterClusterServiceByClusterIdQuery<P extends GlusterServiceQu
         List<GlusterClusterService> serviceList = null;
 
         if(getParameters().getServiceType() == null) {
-            serviceList = getGlusterClusterServiceDao().getByClusterId(getParameters().getId());
+            serviceList = glusterClusterServiceDao.getByClusterId(getParameters().getId());
         } else {
             serviceList = new ArrayList<>();
-            serviceList.add(getGlusterClusterServiceDao().getByClusterIdAndServiceType(getParameters().getId(),
+            serviceList.add(glusterClusterServiceDao.getByClusterIdAndServiceType(getParameters().getId(),
                         getParameters().getServiceType()));
         }
 
