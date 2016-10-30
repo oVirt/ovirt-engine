@@ -14,6 +14,9 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
     @Inject
     protected SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
+    @Inject
+    private SnapshotDao snapshotDao;
+
     public GetVmNextRunConfigurationQuery(P parameters) {
         super(parameters);
     }
@@ -24,7 +27,7 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        Snapshot snapshot = getSnapshotDao().get(getParameters().getId(), Snapshot.SnapshotType.NEXT_RUN, getUserID(), getParameters().isFiltered());
+        Snapshot snapshot = snapshotDao.get(getParameters().getId(), Snapshot.SnapshotType.NEXT_RUN, getUserID(), getParameters().isFiltered());
 
         if (snapshot != null) {
             VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
@@ -42,9 +45,4 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
             super.executeQueryCommand();
         }
     }
-
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
-    }
-
 }
