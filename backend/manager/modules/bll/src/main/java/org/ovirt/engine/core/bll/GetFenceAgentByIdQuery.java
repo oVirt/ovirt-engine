@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 
 public class GetFenceAgentByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private FenceAgentDao fenceAgentDao;
 
     public GetFenceAgentByIdQuery(P parameters) {
         super(parameters);
@@ -11,6 +15,6 @@ public class GetFenceAgentByIdQuery<P extends IdQueryParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getFenceAgentDao().get(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(fenceAgentDao.get(getParameters().getId()));
     }
 }
