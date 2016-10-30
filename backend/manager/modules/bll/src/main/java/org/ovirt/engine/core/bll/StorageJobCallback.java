@@ -40,13 +40,9 @@ public class StorageJobCallback implements CommandCallback {
         boolean jobsReportedByHost = false;
 
         if (vds.getStatus() == VDSStatus.Up) {
+            HostJobInfo jobInfo;
             try {
-                HostJobInfo jobInfo = pollStorageJob(job, vdsId);
-                if (jobInfo != null) {
-                    jobStatus = jobInfo.getStatus();
-                    updateStepProgress(commandEntity.getStepId(), jobInfo.getProgress());
-                }
-                jobsReportedByHost = true;
+                jobInfo = pollStorageJob(job, vdsId);
             } catch (Exception e) {
                 // We shouldn't get an error when polling the host job (as it access the local storage only).
                 // If we got an error, it will usually be a network error - so the host will either move
@@ -55,6 +51,12 @@ public class StorageJobCallback implements CommandCallback {
                         commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
                 return;
             }
+
+            if (jobInfo != null) {
+                jobStatus = jobInfo.getStatus();
+                updateStepProgress(commandEntity.getStepId(), jobInfo.getProgress());
+            }
+            jobsReportedByHost = true;
         } else {
             log.warn("Command {} id: '{}': can't poll the job '{}' as host '{}' (id: '{}') isn't in status UP",
                     commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
