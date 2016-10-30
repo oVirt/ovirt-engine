@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -20,15 +20,16 @@ public class GetClustersWithPermittedActionQueryTest
         extends AbstractGetEntitiesWithPermittedActionParametersQueryTest
         <GetEntitiesWithPermittedActionParameters, GetClustersWithPermittedActionQuery<GetEntitiesWithPermittedActionParameters>> {
 
+    @Mock
+    private ClusterDao clusterDaoMock;
+
     @Test
     public void testQueryExecution() {
         // Set up the expected data
         Cluster expected = new Cluster();
 
         // Mock the Dao
-        ClusterDao clusterDaoMock = mock(ClusterDao.class);
         when(clusterDaoMock.getClustersWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getClusterDao()).thenReturn(clusterDaoMock);
 
         getQuery().executeQueryCommand();
 
