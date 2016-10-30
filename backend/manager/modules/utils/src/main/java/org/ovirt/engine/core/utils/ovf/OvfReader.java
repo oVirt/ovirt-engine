@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -149,6 +150,15 @@ public abstract class OvfReader implements IOvfBuilder {
             }
             else {
                 image.setVolumeFormat(VolumeFormat.Unassigned);
+            }
+
+            if (image.isQcowFormat()) {
+                if (node.attributes.get("ovf:qcow-compat") != null &&
+                        StringUtils.isNotEmpty(node.attributes.get("ovf:qcow-compat").getValue())) {
+                    image.setQcowCompat(QcowCompat.valueOf(node.attributes.get("ovf:qcow-compat").getValue()));
+                } else {
+                    image.setQcowCompat(QcowCompat.QCOW2_V2);
+                }
             }
             if (node.attributes.get("ovf:volume-type") != null) {
                 if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
