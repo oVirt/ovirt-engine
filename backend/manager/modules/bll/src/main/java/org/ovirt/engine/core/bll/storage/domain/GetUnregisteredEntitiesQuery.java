@@ -9,8 +9,11 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 
 public abstract class GetUnregisteredEntitiesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
 
     @Inject
     private OvfHelper ovfHelper;
@@ -20,11 +23,7 @@ public abstract class GetUnregisteredEntitiesQuery<P extends IdQueryParameters> 
     }
 
     protected List<OvfEntityData> getOvfEntityList(VmEntityType vmEntityType) {
-        List<OvfEntityData> entityList =
-                getDbFacade().getUnregisteredOVFDataDao().getAllForStorageDomainByEntityType(
-                        getParameters().getId(), vmEntityType);
-
-        return entityList;
+        return unregisteredOVFDataDao.getAllForStorageDomainByEntityType(getParameters().getId(), vmEntityType);
     }
 
     protected OvfHelper getOvfHelper() {

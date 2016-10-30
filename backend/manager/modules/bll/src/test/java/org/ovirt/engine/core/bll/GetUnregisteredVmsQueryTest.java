@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,6 +21,8 @@ import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /** A test case for the {@link GetUnregisteredVmsQuery} class. */
 public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParameters, GetUnregisteredVmsQuery<? extends IdQueryParameters>> {
+    @Mock
+    private UnregisteredOVFDataDao unregisteredOVFDataDaoMock;
 
     Guid storageDomainId = Guid.newGuid();
     VmEntityType entityType = VmEntityType.VM;
@@ -85,8 +88,6 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
         expectedResultQuery2.add(ovfEntityData);
 
         // Mock the Daos
-        UnregisteredOVFDataDao unregisteredOVFDataDaoMock = mock(UnregisteredOVFDataDao.class);
-        when(getDbFacadeMockInstance().getUnregisteredOVFDataDao()).thenReturn(unregisteredOVFDataDaoMock);
         when(unregisteredOVFDataDaoMock.getAllForStorageDomainByEntityType(storageDomainId, entityType)).thenReturn(expectedResult);
         when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmGuid2, storageDomainId)).thenReturn(expectedResultQuery2);
         when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmGuid, storageDomainId)).thenReturn(expectedResultQuery1);
