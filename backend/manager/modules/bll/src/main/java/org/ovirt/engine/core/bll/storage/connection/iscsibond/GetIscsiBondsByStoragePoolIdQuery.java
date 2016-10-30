@@ -2,12 +2,17 @@ package org.ovirt.engine.core.bll.storage.connection.iscsibond;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.IscsiBondDao;
 
 public class GetIscsiBondsByStoragePoolIdQuery <P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private IscsiBondDao iscsiBondDao;
 
     public GetIscsiBondsByStoragePoolIdQuery(P parameters) {
         super(parameters);
@@ -15,13 +20,13 @@ public class GetIscsiBondsByStoragePoolIdQuery <P extends IdQueryParameters> ext
 
     @Override
     protected void executeQueryCommand() {
-        List<IscsiBond> iscsiBonds = getDbFacade().getIscsiBondDao().getAllByStoragePoolId(getParameters().getId());
+        List<IscsiBond> iscsiBonds = iscsiBondDao.getAllByStoragePoolId(getParameters().getId());
 
         for (IscsiBond iscsiBond : iscsiBonds) {
-            List<Guid> networkIds = getDbFacade().getIscsiBondDao().getNetworkIdsByIscsiBondId(iscsiBond.getId());
+            List<Guid> networkIds = iscsiBondDao.getNetworkIdsByIscsiBondId(iscsiBond.getId());
             iscsiBond.setNetworkIds(networkIds);
 
-            List<String> connectionIds = getDbFacade().getIscsiBondDao().getStorageConnectionIdsByIscsiBondId(iscsiBond.getId());
+            List<String> connectionIds = iscsiBondDao.getStorageConnectionIdsByIscsiBondId(iscsiBond.getId());
             iscsiBond.setStorageConnectionIds(connectionIds);
         }
 
