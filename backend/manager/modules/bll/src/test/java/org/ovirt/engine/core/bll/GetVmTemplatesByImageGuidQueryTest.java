@@ -3,13 +3,13 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Map;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,6 +21,9 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
  * The internal workings of the Dao are not tested.
  */
 public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmTemplatesByImageGuidQuery<IdQueryParameters>> {
+    @Mock
+    private VmTemplateDao vmTemplateDaoMock;
+
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
@@ -30,9 +33,7 @@ public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<IdQuer
         // Set up the Daos
         Map<Boolean, VmTemplate> expected =
                 Collections.singletonMap(true, new VmTemplate());
-        VmTemplateDao vmTemplateDaoMock = mock(VmTemplateDao.class);
         when(vmTemplateDaoMock.getAllForImage(imageGuid)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDaoMock);
 
         // Mock away the handler
         doNothing().when(getQuery()).updateDisksFromDb(any(VmTemplate.class));
