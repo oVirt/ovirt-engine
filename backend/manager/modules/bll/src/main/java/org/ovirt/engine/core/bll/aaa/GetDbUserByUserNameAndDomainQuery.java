@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DbUserDao;
 
 public class GetDbUserByUserNameAndDomainQuery<P extends GetDbUserByUserNameAndDomainQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private DbUserDao dbUserDao;
 
     public GetDbUserByUserNameAndDomainQuery(P parameters) {
         super(parameters);
@@ -12,8 +17,7 @@ public class GetDbUserByUserNameAndDomainQuery<P extends GetDbUserByUserNameAndD
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                .getDbUserDao()
-                .getByUsernameAndDomain(getParameters().getUserName(), getParameters().getDomainName()));
+        getQueryReturnValue().setReturnValue(
+                dbUserDao.getByUsernameAndDomain(getParameters().getUserName(), getParameters().getDomainName()));
     }
 }
