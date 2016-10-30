@@ -48,7 +48,6 @@ public class GetAllExternalNetworksOnProviderQueryTest
     @SuppressWarnings("unchecked")
     public void testExecuteQueryCommand() {
         when(params.getId()).thenReturn(mock(Guid.class));
-        when(getDbFacadeMockInstance().getProviderDao()).thenReturn(providerDao);
         when((Provider<AdditionalProperties>) providerDao.get(any(Guid.class))).thenReturn(networkProvider);
         when(getQuery().getProviderProxyFactory()).thenReturn(providerProxyFactory);
         when(providerProxyFactory.create(networkProvider)).thenReturn(client);
@@ -60,7 +59,6 @@ public class GetAllExternalNetworksOnProviderQueryTest
         when(providerNetwork.getExternalId()).thenReturn("");
 
         Guid id = mock(Guid.class);
-        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(dcDao);
         when(dcDao.getDcIdByExternalNetworkId(any(String.class))).thenReturn(Collections.singletonList(id));
 
         Map<Network, Set<Guid>> expected = new HashMap<>();
