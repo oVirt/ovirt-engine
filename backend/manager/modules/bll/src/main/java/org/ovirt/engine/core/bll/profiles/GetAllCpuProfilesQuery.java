@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 public class GetAllCpuProfilesQuery extends QueriesCommandBase<VdcQueryParametersBase> {
+    @Inject
+    private CpuProfileDao cpuProfileDao;
 
     public GetAllCpuProfilesQuery(VdcQueryParametersBase parameters) {
         super(parameters);
@@ -11,7 +16,7 @@ public class GetAllCpuProfilesQuery extends QueriesCommandBase<VdcQueryParameter
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getCpuProfileDao().getAll());
+        getQueryReturnValue().setReturnValue(cpuProfileDao.getAll());
     }
 
 }
