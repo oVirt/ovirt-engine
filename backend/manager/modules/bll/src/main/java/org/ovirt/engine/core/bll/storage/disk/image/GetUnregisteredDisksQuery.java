@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -18,8 +20,15 @@ import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public GetUnregisteredDisksQuery(P parameters) {
         super(parameters);
@@ -32,7 +41,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
 
     @Override
     protected void executeQueryCommand() {
-        StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(getStorageDomainId());
+        StorageDomain storageDomain = storageDomainDao.get(getStorageDomainId());
         if (storageDomain == null) {
             getQueryReturnValue().setExceptionString(EngineMessage.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
             getQueryReturnValue().setSucceeded(false);
@@ -54,7 +63,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
         List<Guid> imagesList = (List<Guid>) imagesListResult.getReturnValue();
 
         // fromDao is a list of all disk images on the domain from the Dao
-        List<DiskImage> fromDao = getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(getStorageDomainId());
+        List<DiskImage> fromDao = diskImageDao.getAllSnapshotsForStorageDomain(getStorageDomainId());
 
         // then, compare the list of all images on the domain with the list oVirt recognizes
         // if the ID in imagesList is recognized by oVirt, remove from list

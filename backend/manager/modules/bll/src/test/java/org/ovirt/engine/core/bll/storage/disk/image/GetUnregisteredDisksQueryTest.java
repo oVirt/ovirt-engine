@@ -15,6 +15,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -31,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
@@ -39,6 +39,15 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 public class GetUnregisteredDisksQueryTest
         extends
         AbstractQueryTest<GetUnregisteredDisksQueryParameters, GetUnregisteredDisksQuery<GetUnregisteredDisksQueryParameters>> {
+
+    @Mock
+    private StorageDomainDao storageDomainDaoMock;
+
+    @Mock
+    private DiskImageDao diskImageDaoMock;
+
+    @Mock
+    private VDSBrokerFrontend vdsBroker;
 
     private Guid importDiskId;
     private Guid existingDiskId;
@@ -64,9 +73,6 @@ public class GetUnregisteredDisksQueryTest
 
     @Test
     public void testGetUnregisteredDisks() {
-        DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
-        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDaoMock);
         StorageDomain storageDomain = new StorageDomain();
         when(storageDomainDaoMock.get(storageDomainId)).thenReturn(storageDomain);
 
@@ -81,11 +87,10 @@ public class GetUnregisteredDisksQueryTest
     }
 
     /**
-     * Mock the DbFacade/VDSBroker and the Daos
+     * Mock the VDSBroker and the Daos
      */
     private void prepareMocks() {
         BackendInternal backendMock = mock(BackendInternal.class);
-        VDSBrokerFrontend vdsBroker = mock(VDSBrokerFrontend.class);
 
         DiskImage existingDiskImage = mock(DiskImage.class);
         when(existingDiskImage.getId()).thenReturn(existingDiskId);
@@ -114,18 +119,11 @@ public class GetUnregisteredDisksQueryTest
         doReturn(storagePoolId).when(getQuery()).getStoragePoolId();
         doReturn(storageDomainId).when(getQuery()).getStorageDomainId();
 
-        DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        DiskImageDao diskImageDaoMock = mock(DiskImageDao.class);
-        StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
         when(diskImageDaoMock.getAllSnapshotsForStorageDomain(eq(storageDomainId))).thenReturn(existingDiskImages);
-        when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDaoMock);
         StorageDomain storageDomain = new StorageDomain();
         when(storageDomainDaoMock.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
         // Return the mocked backend when getBackend() is called on the query
         doReturn(backendMock).when(getQuery()).getBackend();
-
-        // Return the mocked vdsBroker when getVDSBroker() is called on the query
-        doReturn(vdsBroker).when(getQuery()).getVdsBroker();
     }
 }
