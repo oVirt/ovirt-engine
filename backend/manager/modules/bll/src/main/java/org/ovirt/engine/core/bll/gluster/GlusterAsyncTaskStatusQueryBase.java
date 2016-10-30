@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
@@ -15,11 +17,21 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 
 public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQueriesParameters> extends GlusterQueriesCommandBase<P> {
     protected Guid clusterId;
     protected GlusterVolumeEntity volume;
+
+    @Inject
+    protected StepDao stepDao;
+
+    @Inject
+    protected GlusterServerDao glusterServerDao;
+
+    @Inject
+    protected VdsDao vdsDao;
 
     public GlusterAsyncTaskStatusQueryBase(P params) {
         super(params);
@@ -41,14 +53,6 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
     }
 
     protected abstract GlusterVolumeTaskStatusEntity fetchTaskStatusDetails();
-
-    public StepDao getStepDao() {
-        return getDbFacade().getStepDao();
-    }
-
-    public GlusterServerDao getGlusterServerDao() {
-        return getDbFacade().getGlusterServerDao();
-    }
 
     protected GlusterVolumeTaskStatusEntity updateStatusEntity(GlusterVolumeTaskStatusEntity status) {
         // Set the volume remove bricks start time
@@ -72,9 +76,9 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
     private void updateHostIP(GlusterVolumeTaskStatusEntity taskStatus) {
         if (taskStatus != null) {
             for (GlusterVolumeTaskStatusForHost hostStatus : taskStatus.getHostwiseStatusDetails()) {
-                GlusterServer glusterServer = getGlusterServerDao().getByGlusterServerUuid(hostStatus.getHostUuid());
+                GlusterServer glusterServer = glusterServerDao.getByGlusterServerUuid(hostStatus.getHostUuid());
                 if (glusterServer != null) {
-                    VDS host = getDbFacade().getVdsDao().get(glusterServer.getId());
+                    VDS host = vdsDao.get(glusterServer.getId());
                     if (host != null) {
                         hostStatus.setHostName(host.getName());
                         hostStatus.setHostId(host.getId());
@@ -91,7 +95,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
 
         GlusterAsyncTask asyncTask = volume.getAsyncTask();
         if (asyncTask != null && asyncTask.getTaskId() != null) {
-            List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
+            List<Step> stepsList = stepDao.getStepsByExternalId(asyncTask.getTaskId());
             if (stepsList != null && !stepsList.isEmpty()) {
                 status.setStartTime(stepsList.get(0).getStartTime());
                 status.setStopTime(stepsList.get(0).getEndTime());
@@ -109,7 +113,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
             taskParameters.setVolumeName(volume.getName());
             asyncTask.setTaskParameters(taskParameters);
 
-            List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
+            List<Step> stepsList = stepDao.getStepsByExternalId(asyncTask.getTaskId());
             // if step has already ended, do not update status.
             if (stepsList != null && !stepsList.isEmpty() && stepsList.get(0).getEndTime() != null) {
                 asyncTask.setStatus(status.getStatusSummary().getStatus());
