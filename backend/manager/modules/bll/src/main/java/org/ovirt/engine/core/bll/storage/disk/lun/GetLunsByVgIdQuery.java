@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -14,11 +16,22 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 /**
  * A query for retrieving the LUNs composing a storage domain.
  */
 public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private LunDao lunDao;
+
+    @Inject
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     public GetLunsByVgIdQuery(P parameters) {
         super(parameters);
@@ -26,7 +39,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
     @Override
     protected void executeQueryCommand() {
-        List<LUNs> luns = getLunsForVgId(getVgId());
+        List<LUNs> luns = lunDao.getAllForVolumeGroup(getVgId());
         List<LUNs> nonDummyLuns = new ArrayList<>(luns.size());
         StorageType storageType = getStorageType(luns);
         Map<String, LUNs> lunsFromDeviceMap = getLunsFromDeviceMap(storageType);
@@ -39,8 +52,8 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
             nonDummyLuns.add(lun);
 
             // Update LUN's connections
-            for (LUNStorageServerConnectionMap map : getLunConnections(lun.getLUNId())) {
-                addConnection(lun, getConnection(map.getStorageServerConnection()));
+            for (LUNStorageServerConnectionMap map : storageServerConnectionLunMapDao.getAll(lun.getLUNId())) {
+                addConnection(lun, storageServerConnectionDao.get(map.getStorageServerConnection()));
             }
 
             // Update LUN's 'PathsDictionary' by 'lunsFromDeviceList'
@@ -60,11 +73,11 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
         if (!luns.isEmpty()) {
             LUNs lun = luns.get(0);
-            List<LUNStorageServerConnectionMap> lunConnections = getLunConnections(lun.getLUNId());
+            List<LUNStorageServerConnectionMap> lunConnections = storageServerConnectionLunMapDao.getAll(lun.getLUNId());
 
             if (!lunConnections.isEmpty()) {
                 StorageServerConnections connection =
-                        getConnection(lunConnections.get(0).getStorageServerConnection());
+                        storageServerConnectionDao.get(lunConnections.get(0).getStorageServerConnection());
                 storageType = connection.getStorageType();
             } else {
                 storageType = StorageType.FCP;
@@ -80,10 +93,6 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
     protected String getVgId() {
         return getParameters().getVgId();
-    }
-
-    protected List<LUNs> getLunsForVgId(String vgId) {
-        return getDbFacade().getLunDao().getAllForVolumeGroup(vgId);
     }
 
     protected Map<String, LUNs> getLunsFromDeviceMap(StorageType storageType) {
@@ -102,14 +111,6 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
         }
 
         return lunsMap;
-    }
-
-    protected List<LUNStorageServerConnectionMap> getLunConnections(String lunId) {
-        return getDbFacade().getStorageServerConnectionLunMapDao().getAll(lunId);
-    }
-
-    protected StorageServerConnections getConnection(String cnxId) {
-        return getDbFacade().getStorageServerConnectionDao().get(cnxId);
     }
 
     protected void addConnection(LUNs lun, StorageServerConnections cnx) {

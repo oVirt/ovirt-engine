@@ -4,15 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
@@ -46,6 +43,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private static final String[] IQNS = { ADDRESS + ":1", ADDRESS + ":2", ADDRESS + ":3" };
     private static final String PHYSICAL_DEVICE_FIELD = "sda";
     private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX+"89871115-e64d-4754-bacd-556cc249761b";
+    @Mock
     private VDSBrokerFrontend vdsBrokerFrontendMock;
     @Mock
     private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
@@ -53,13 +51,6 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private StorageServerConnectionDao storageServerConnectionDao;
     @Mock
     private LunDao lunDao;
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareMocks();
-    }
 
     @Test
     public void testQuery() {
@@ -85,15 +76,6 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         getQuery().executeQueryCommand();
 
         checkReturnValue();
-    }
-
-    private void prepareMocks() {
-        vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
-
-        when(getDbFacadeMockInstance().getStorageServerConnectionDao()).thenReturn(storageServerConnectionDao);
-        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDao()).thenReturn(storageServerConnectionLunMapDao);
-        when(getDbFacadeMockInstance().getLunDao()).thenReturn(lunDao);
     }
 
     private void expectGetLunsForVg(String vgId, boolean withDummyLun) {
