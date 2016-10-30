@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.repoimage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -14,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -27,6 +27,11 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 @RunWith(Parameterized.class)
 public class GetImagesListByStoragePoolIdQueryTest
         extends AbstractUserQueryTest<GetImagesListByStoragePoolIdParameters, GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters>> {
+    @Mock
+    private StorageDomainDao storageDomainDaoMock;
+
+    @Mock
+    private StoragePoolDao storagePoolDaoMock;
 
     private ImageFileType expectedType;
     private Guid storageDomainId;
@@ -65,10 +70,8 @@ public class GetImagesListByStoragePoolIdQueryTest
     public void testGetStorageDomainIdWithPermissions() {
         mockStoragePoolDao(new StoragePool());
 
-        StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
         when(storageDomainDaoMock.getIsoStorageDomainIdForPool(getQueryParameters().getStoragePoolId(),
                 StorageDomainStatus.Active)).thenReturn(storageDomainId);
-        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDaoMock);
 
         assertEquals("wrong storage domain id", storageDomainId, getQuery().getStorageDomainIdForQuery());
     }
@@ -90,11 +93,9 @@ public class GetImagesListByStoragePoolIdQueryTest
             pool.setId(storagePoolId);
         }
 
-        StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
         when(storagePoolDaoMock.get(
                 storagePoolId,
                 getUser().getId(),
                 getQueryParameters().isFiltered())).thenReturn(pool);
-        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
     }
 }
