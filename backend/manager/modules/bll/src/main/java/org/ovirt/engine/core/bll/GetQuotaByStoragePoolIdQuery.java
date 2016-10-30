@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 public class GetQuotaByStoragePoolIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private QuotaDao quotaDao;
 
     public GetQuotaByStoragePoolIdQuery(P parameters) {
         super(parameters);
@@ -11,8 +15,6 @@ public class GetQuotaByStoragePoolIdQuery<P extends IdQueryParameters> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                .getQuotaDao()
-                .getQuotaByStoragePoolGuid(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(quotaDao.getQuotaByStoragePoolGuid(getParameters().getId()));
     }
 }
