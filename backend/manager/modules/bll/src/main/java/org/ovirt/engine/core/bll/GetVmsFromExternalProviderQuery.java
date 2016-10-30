@@ -13,15 +13,19 @@ import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParam
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 
 public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProviderQueryParameters>
         extends QueriesCommandBase<T> {
 
     @Inject
-    private DbFacade dbFacade;
+    private StoragePoolDao storagePoolDao;
+
+    @Inject
+    private VdsDao vdsDao;
 
     public GetVmsFromExternalProviderQuery(T parameters) {
         this(parameters, null);
@@ -76,7 +80,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     }
 
     private Guid getProxyHostIdFromParameters() {
-        VDS vds = getDbFacade().getVdsDao().get(getParameters().getProxyHostId());
+        VDS vds = vdsDao.get(getParameters().getProxyHostId());
         if (vds == null) {
             throw new IllegalArgumentException(
                     String.format("No VDS with the given ID '%s' exists", getParameters().getProxyHostId()));
@@ -92,7 +96,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
 
     private Guid pickProxyHostFromDataCenter() {
         Guid dataCenterId = getParameters().getDataCenterId();
-        List<VDS> vdss = getDbFacade().getVdsDao().getAllForStoragePoolAndStatus(dataCenterId, VDSStatus.Up);
+        List<VDS> vdss = vdsDao.getAllForStoragePoolAndStatus(dataCenterId, VDSStatus.Up);
         if (vdss.isEmpty()) {
             logNoProxyAvailable(dataCenterId);
             throw new IllegalArgumentException();
@@ -109,13 +113,13 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
 
     private void logNoProxyAvailable(Guid dataCenterId) {
         AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        String dcName = getDbFacade().getStoragePoolDao().get(dataCenterId).getName();
+        String dcName = storagePoolDao.get(dataCenterId).getName();
         logable.addCustomValue("StoragePoolName", dcName);
         auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC);
     }
 
     private boolean isGetNamesOfVmsFromExternalProviderSupported() {
-        return FeatureSupported.isGetNamesOfVmsFromExternalProviderSupported(dbFacade.getStoragePoolDao()
+        return FeatureSupported.isGetNamesOfVmsFromExternalProviderSupported(storagePoolDao
                 .get(getParameters().getDataCenterId())
                 .getCompatibilityVersion());
     }
