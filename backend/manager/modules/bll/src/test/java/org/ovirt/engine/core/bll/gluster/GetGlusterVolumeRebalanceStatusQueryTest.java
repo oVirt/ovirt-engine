@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
@@ -167,14 +166,12 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     private void setupMock() {
         glusterUtils = mock(GlusterUtil.class);
         vdsDao = mock(VdsDao.class);
-        ClusterDao clusterDao = mock(ClusterDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
         GlusterServerDao glusterServerDao = mock(GlusterServerDao.class);
         StepDao stepDao = mock(StepDao.class);
         GlusterTaskUtils taskUtils = mock(GlusterTaskUtils.class);
 
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
-        doReturn(clusterDao).when(getQuery()).getClusterDao();
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         doReturn(stepDao).when(getQuery()).getStepDao();
         doReturn(glusterServerDao).when(getQuery()).getGlusterServerDao();
