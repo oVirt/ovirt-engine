@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
@@ -14,8 +16,11 @@ import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.DbUserDao;
 
 public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private DbUserDao dbUserDao;
 
     public GetAuthzGroupsByUserIdQuery(P parameters) {
         super(parameters);
@@ -23,7 +28,7 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDirectoryUser(getDbFacade().getDbUserDao().get(getParameters().getId())));
+        getQueryReturnValue().setReturnValue(getDirectoryUser(dbUserDao.get(getParameters().getId())));
     }
 
     private Collection<AuthzGroup> getDirectoryUser(DbUser dbUser) {
