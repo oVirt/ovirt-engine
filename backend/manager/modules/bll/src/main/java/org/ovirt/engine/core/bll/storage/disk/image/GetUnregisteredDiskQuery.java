@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
@@ -19,8 +21,11 @@ import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseV
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public GetUnregisteredDiskQuery(P parameters) {
         super(parameters);
@@ -35,7 +40,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         Guid storagePoolId = getParameters().getStoragePoolId();
         Guid storageDomainId = getParameters().getStorageDomainId();
         Guid diskId = getParameters().getDiskId();
-        StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(storageDomainId);
+        StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
         if (storageDomain == null) {
             getQueryReturnValue().setExceptionString(EngineMessage.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
             getQueryReturnValue().setSucceeded(false);
