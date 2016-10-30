@@ -1,14 +1,20 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import com.woorea.openstack.cinder.model.Volume;
 
 public class GetUnregisteredCinderDiskByIdAndStorageDomainIdQuery<P extends GetCinderEntityByStorageDomainIdParameters>
         extends CinderQueryBase<P> {
+
+    @Inject
+    private DiskDao diskDao;
 
     public GetUnregisteredCinderDiskByIdAndStorageDomainIdQuery(P parameters) {
         this(parameters, null);
@@ -20,7 +26,7 @@ public class GetUnregisteredCinderDiskByIdAndStorageDomainIdQuery<P extends GetC
 
     @Override
     protected void executeQueryCommand() {
-        Disk diskFromDao = getDbFacade().getDiskDao().get(getParameters().getEntityId());
+        Disk diskFromDao = diskDao.get(getParameters().getEntityId());
         if (diskFromDao != null) {
             log.info("The disk already exist in the DB, hence, should not be fetched from Cinder. ID: '{}', Alias: '{}'",
                     diskFromDao.getId(), diskFromDao.getDiskAlias());
