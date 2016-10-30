@@ -146,27 +146,4 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
             streamWriter.writeObject(instance.getReturnValue());
         }
     }
-
-    private static String dumpTypeInfo(boolean serialize, String serializedAs,
-            Object obj) {
-        StringBuffer dumpInfo = new StringBuffer();
-
-        if (serialize) {
-            dumpInfo.append("Serialize: ");
-        } else {
-            dumpInfo.append("Deserialize: ");
-        }
-
-        dumpInfo.append("VdcQueryReturnValue: '" + obj + "' serialized as ["
-                + serializedAs + "] ");
-
-        if (obj != null) {
-            dumpInfo.append("class: [" + obj.getClass().getName() + "]");
-        } else {
-            dumpInfo.append(" - Value is null");
-        }
-
-        return dumpInfo.toString();
-    }
-
 }
