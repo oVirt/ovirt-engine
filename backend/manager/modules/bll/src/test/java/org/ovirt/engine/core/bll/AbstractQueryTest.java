@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertNotSame;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -16,13 +15,11 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.RandomUtils;
 
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends BaseCommandTest {
 
@@ -61,9 +58,6 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     protected Q setUpSpyQuery(P parameters) throws Exception {
         DbFacade dbFacadeMock = mock(DbFacade.class);
         DbUser dbUserMock = mock(DbUser.class);
-
-        when(engineSessionDao.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
-        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
 
         sessionDataContainer.setUser(parameters.getSessionId(), dbUserMock);
 
