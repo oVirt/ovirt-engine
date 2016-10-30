@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -14,11 +16,14 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainsListVDSComma
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
 @Logged(executionLevel = LogLevel.INFO)
 public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomainListParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public GetExistingStorageDomainListQuery(P parameters) {
         super(parameters);
@@ -37,7 +42,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
             ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
             HashSet<Guid> guidsFromDb = new HashSet<>();
             if (guidsFromIrs.size() > 0) {
-                List<StorageDomain> domainsInDb = getDbFacade().getStorageDomainDao().getAll();
+                List<StorageDomain> domainsInDb = storageDomainDao.getAll();
                 for (StorageDomain domain : domainsInDb) {
                     guidsFromDb.add(domain.getId());
                 }
