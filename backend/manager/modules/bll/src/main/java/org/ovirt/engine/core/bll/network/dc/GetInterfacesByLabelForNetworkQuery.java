@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -13,15 +15,27 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class GetInterfacesByLabelForNetworkQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
+
     public GetInterfacesByLabelForNetworkQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        Network network = getDbFacade().getNetworkDao().get(getParameters().getId());
+        Network network = networkDao.get(getParameters().getId());
         Set<VdsNetworkInterface> interfacesByLabelForNetwork = new HashSet<>();
 
         if (network == null) {
@@ -29,7 +43,7 @@ public class GetInterfacesByLabelForNetworkQuery<P extends IdQueryParameters> ex
             return;
         }
 
-        List<NetworkCluster> clusters = getDbFacade().getNetworkClusterDao().getAllForNetwork(network.getId());
+        List<NetworkCluster> clusters = networkClusterDao.getAllForNetwork(network.getId());
 
         if (clusters.isEmpty()) {
             getQueryReturnValue().setReturnValue(interfacesByLabelForNetwork);
@@ -38,8 +52,8 @@ public class GetInterfacesByLabelForNetworkQuery<P extends IdQueryParameters> ex
 
         List<VdsNetworkInterface> labeledNics = new ArrayList<>();
         for (NetworkCluster networkCluster : clusters) {
-            labeledNics.addAll(getDbFacade().getInterfaceDao()
-                    .getAllInterfacesByLabelForCluster(networkCluster.getClusterId(), network.getLabel()));
+            labeledNics.addAll(
+                    interfaceDao.getAllInterfacesByLabelForCluster(networkCluster.getClusterId(), network.getLabel()));
         }
 
         if (labeledNics.isEmpty()) {
@@ -47,8 +61,7 @@ public class GetInterfacesByLabelForNetworkQuery<P extends IdQueryParameters> ex
             return;
         }
 
-        List<VdsNetworkInterface> networkNics =
-                getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(network.getId());
+        List<VdsNetworkInterface> networkNics = interfaceDao.getVdsInterfacesByNetworkId(network.getId());
         Map<String, VdsNetworkInterface> labeledNicsByName = Entities.entitiesByName(labeledNics);
 
         for (VdsNetworkInterface networkNic : networkNics) {
