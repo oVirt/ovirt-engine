@@ -3,19 +3,25 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGroupsParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmDao vmDao;
+
     public GetUserVmsByUserIdAndGroupsQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        List<VM> vmList = getDbFacade().getVmDao().getAllForUserWithGroupsAndUserRoles(getUserID());
+        List<VM> vmList = vmDao.getAllForUserWithGroupsAndUserRoles(getUserID());
         for (VM vm : vmList) {
             updateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {
