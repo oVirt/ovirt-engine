@@ -65,7 +65,6 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQueryTest
                         (Collections.singletonList(existingVolume), getQueryParameters().getId()));
 
         when(diskDao.getAllFromDisksByDiskStorageType(DiskStorageType.CINDER, getUser().getId(), false)).thenReturn(existingDisks);
-        when(getDbFacadeMockInstance().getDiskDao()).thenReturn(diskDao);
     }
 
     @Test
