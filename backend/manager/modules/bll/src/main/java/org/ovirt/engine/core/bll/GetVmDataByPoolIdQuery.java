@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -8,10 +10,12 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmPoolDao;
 
 
 public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmPoolDao vmPoolDao;
 
     public GetVmDataByPoolIdQuery(P parameters) {
         super(parameters);
@@ -19,9 +23,7 @@ public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        VM vm = DbFacade.getInstance()
-                .getVmPoolDao()
-                .getVmDataFromPoolByPoolGuid(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        VM vm = vmPoolDao.getVmDataFromPoolByPoolGuid(getParameters().getId(), getUserID(), getParameters().isFiltered());
 
         if (vm != null) {
             boolean isLatestLoad = vm.isUseLatestVersion();
