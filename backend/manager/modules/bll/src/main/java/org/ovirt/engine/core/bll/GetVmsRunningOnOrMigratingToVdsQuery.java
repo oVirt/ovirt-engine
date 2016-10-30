@@ -2,17 +2,23 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmsRunningOnOrMigratingToVdsQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmDao vmDao;
+
     public GetVmsRunningOnOrMigratingToVdsQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        List<VM> allRunningOnOrMigratingToVds = getDbFacade().getVmDao().getAllRunningOnOrMigratingToVds(getParameters().getId());
+        List<VM> allRunningOnOrMigratingToVds = vmDao.getAllRunningOnOrMigratingToVds(getParameters().getId());
         updateStatistics(allRunningOnOrMigratingToVds);
 
         getQueryReturnValue().setReturnValue(

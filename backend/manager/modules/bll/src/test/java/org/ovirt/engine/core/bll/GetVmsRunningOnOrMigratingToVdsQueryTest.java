@@ -2,13 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,6 +22,9 @@ public class GetVmsRunningOnOrMigratingToVdsQueryTest
         extends AbstractQueryTest<IdQueryParameters,
         GetVmsRunningOnOrMigratingToVdsQuery<IdQueryParameters>> {
 
+    @Mock
+    private VmDao vmDaoMock;
+
     @Test
     public void testQueryExecution() {
         Guid vmGuid = Guid.newGuid();
@@ -30,9 +33,7 @@ public class GetVmsRunningOnOrMigratingToVdsQueryTest
         vm.setId(vmGuid);
 
         List<VM> expected = Collections.singletonList(vm);
-        VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.getAllRunningOnOrMigratingToVds(vmGuid)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
 
         doNothing().when(getQuery()).updateStatistics(expected);
 
