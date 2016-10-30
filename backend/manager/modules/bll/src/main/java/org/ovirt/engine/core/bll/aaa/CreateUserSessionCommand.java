@@ -37,7 +37,9 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
 
     private DbUser buildUser(T params, String authzName) {
         DbUser user = dbUserDao.getByExternalId(authzName, params.getPrincipalId());
+        boolean newUser = false;
         if (user == null) {
+            newUser = true;
             user = new DbUser();
             user.setId(Guid.newGuid());
             user.setExternalId(params.getPrincipalId());
@@ -55,6 +57,9 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
             }
         }
         user.setGroupIds(groupIds);
+        if (newUser) {
+            dbUserDao.save(user);
+        }
         return user;
     }
 
