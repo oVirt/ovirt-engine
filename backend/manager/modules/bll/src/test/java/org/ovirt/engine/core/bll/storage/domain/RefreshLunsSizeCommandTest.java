@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,13 +27,17 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
 public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
@@ -37,6 +45,9 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     private Guid sdId = Guid.newGuid();
     private StorageDomain sd;
     private Guid spId;
+
+    @Rule
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Spy
     @InjectMocks
@@ -160,5 +171,32 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         lun2.setStorageDomainId(sdId);
         when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(Arrays.asList(lun1, lun2));
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
+    }
+
+    @Test
+    public void validateLunSizeSimilarOnAllHostsSucceeds() {
+        assertTrue(cmd.getFailedLuns(createLunMap(true)).isEmpty());
+    }
+
+    @Test
+    public void validateLunSizeDifferentOnOneHostFails() {
+        assertFalse(cmd.getFailedLuns(createLunMap(false)).isEmpty());
+    }
+
+    private Map<String, List<Pair<VDS, LUNs>>> createLunMap(boolean sameLunSizesPerHost) {
+        RandomUtils rnd = RandomUtils.instance();
+        String lunId = rnd.nextString(34);
+        int lunSize = rnd.nextInt();
+
+        List<Pair<VDS, LUNs>> lunList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            LUNs lun = new LUNs();
+            if (!sameLunSizesPerHost) {
+                lunSize++;
+            }
+            lun.setDeviceSize(lunSize);
+            lunList.add(new Pair<>(new VDS(), lun));
+        }
+        return Collections.singletonMap(lunId, lunList);
     }
 }

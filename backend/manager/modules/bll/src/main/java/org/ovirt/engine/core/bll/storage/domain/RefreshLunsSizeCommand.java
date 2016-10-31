@@ -148,7 +148,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         return lunToVds;
     }
 
-    private Map<String, List<VDS>> getFailedLuns(Map<String, List<Pair<VDS, LUNs>>> lunToVds) {
+    protected Map<String, List<VDS>> getFailedLuns(Map<String, List<Pair<VDS, LUNs>>> lunToVds) {
         Map<String, List<VDS>> failedVds = new HashMap<>();
         for (Map.Entry<String, List<Pair<VDS, LUNs>>> entry : lunToVds.entrySet()) {
             List<VDS> vdsList = new ArrayList<>();
