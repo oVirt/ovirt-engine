@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -369,6 +371,16 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     // Set volume type/format before updating DB in the 'finally' branch
                     getDestinationDiskImage().getImage().setVolumeType(newImageIRS.getVolumeType());
                     getDestinationDiskImage().getImage().setVolumeFormat(newImageIRS.getVolumeFormat());
+                    if (newImageIRS.getVolumeFormat().equals(VolumeFormat.COW)) {
+                        QemuImageInfo qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+                                newStorageDomainID,
+                                newImageGroupId,
+                                newImageId,
+                                true);
+                        if (qemuImageInfo != null) {
+                            getDestinationDiskImage().getImage().setQcowCompat(qemuImageInfo.getQcowCompat());
+                        }
+                    }
                 }
             } catch (EngineException e) {
                 // Logging only
