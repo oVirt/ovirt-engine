@@ -37,6 +37,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
+
+    @Inject
+    private LockManager lockManager;
 
     private VmPool vmPoolCached;
 
@@ -239,18 +244,32 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         // and any newer update should be preffered to this one.
         Snapshot runSnap = getSnapshotDao().get(getVmId(), SnapshotType.NEXT_RUN);
         if (runSnap != null) {
-            getSnapshotDao().remove(runSnap.getId());
-            Date originalCreationDate = getVm().getVmCreationDate();
-            new SnapshotsManager().updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
-            // override creation date because the value in the config is the creation date of the config, not the vm
-            getVm().setVmCreationDate(originalCreationDate);
+            log.debug("Attempt to apply NEXT_RUN snapshot for VM '{}'", getVmId());
 
-            VdcReturnValueBase result = runInternalAction(VdcActionType.UpdateVm, createUpdateVmParameters());
-            if (result.getActionReturnValue() != null && result.getActionReturnValue()
-                    .equals(VdcActionType.UpdateVmVersion)) { // Template-version changed
-                templateVersionChanged = true;
+            EngineLock updateVmLock = createUpdateVmLock();
+            if (lockManager.acquireLock(updateVmLock).getFirst()) {
+                getSnapshotDao().remove(runSnap.getId());
+                Date originalCreationDate = getVm().getVmCreationDate();
+                new SnapshotsManager().updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
+                // override creation date because the value in the config is the creation date of the config, not the vm
+                getVm().setVmCreationDate(originalCreationDate);
+
+                VdcReturnValueBase result = runInternalAction(VdcActionType.UpdateVm, createUpdateVmParameters(),
+                        ExecutionHandler.createInternalJobContext(updateVmLock));
+                if (result.getActionReturnValue() != null && result.getActionReturnValue()
+                        .equals(VdcActionType.UpdateVmVersion)) { // Template-version changed
+                    templateVersionChanged = true;
+                }
+            } else {
+                log.warn("Could not acquire lock for UpdateVmCommand to apply Next Run Config of VM '{}'", getVmId());
             }
         }
+    }
+
+    private EngineLock createUpdateVmLock() {
+        return new EngineLock(
+                UpdateVmCommand.getExclusiveLocksForUpdateVm(getVm()),
+                UpdateVmCommand.getSharedLocksForUpdateVm(getVm()));
     }
 
     private VmManagementParametersBase createUpdateVmParameters() {
