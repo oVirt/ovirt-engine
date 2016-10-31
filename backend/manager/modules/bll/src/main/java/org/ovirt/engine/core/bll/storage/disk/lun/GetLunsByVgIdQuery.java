@@ -88,7 +88,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     }
 
     protected List<LUNs> getLunsForVgId(String vgId) {
-        return getDbFacade().getLunDao().getAllForVolumeGroup(getVgId());
+        return getDbFacade().getLunDao().getAllForVolumeGroup(vgId);
     }
 
     protected Map<String, LUNs> getLunsFromDeviceMap(StorageType storageType) {
