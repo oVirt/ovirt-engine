@@ -21,6 +21,8 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     private DiskInterface diskInterface;
 
+    private boolean usingScsiReservation;
+
     /**
      * This field is transient and is taken from the corresponding VM device.
      * It is used solely for UI/API purposes and is not persisted or updated through DiskVmElement.
@@ -69,6 +71,14 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     public void setDiskInterface(DiskInterface diskInterface) {
         this.diskInterface = diskInterface;
+    }
+
+    public boolean isUsingScsiReservation() {
+        return usingScsiReservation;
+    }
+
+    public void setUsingScsiReservation(boolean usingScsiReservation) {
+        this.usingScsiReservation = usingScsiReservation;
     }
 
     public boolean isPlugged() {
@@ -125,11 +135,12 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
         DiskVmElement that = (DiskVmElement) o;
         return boot == that.boot &&
                 diskInterface == that.diskInterface &&
+                usingScsiReservation == that.usingScsiReservation &&
                 id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, boot, diskInterface);
+        return Objects.hash(id, boot, diskInterface, usingScsiReservation);
     }
 }

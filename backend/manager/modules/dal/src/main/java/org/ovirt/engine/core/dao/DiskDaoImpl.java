@@ -171,9 +171,6 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
         disk.setPlugged(rs.getBoolean("is_plugged"));
         disk.setReadOnly(rs.getBoolean("is_readonly"));
         disk.setLogicalName(rs.getString("logical_name"));
-        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
-            ((LunDisk) disk).setUsingScsiReservation(rs.getBoolean("is_using_scsi_reservation"));
-        }
         return disk;
     };
 

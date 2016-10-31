@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -139,9 +140,9 @@ public class DiskValidatorTest {
     public void testIsUsingScsiReservationValidWhenSgioIsUnFiltered() {
         setupForLun();
 
-        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED, true);
+        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED);
 
-        assertThat(lunValidator.isUsingScsiReservationValid(createVM(), lunDisk1),
+        assertThat(lunValidator.isUsingScsiReservationValid(createVM(), createDiskVmElementUsingScsiReserevation(), lunDisk1),
                 isValid());
     }
 
@@ -149,9 +150,9 @@ public class DiskValidatorTest {
     public void testIsUsingScsiReservationValidWhenSgioIsFiltered() {
         setupForLun();
 
-        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.FILTERED, true);
+        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.FILTERED);
 
-        assertThat(lunValidator.isUsingScsiReservationValid(createVM(), lunDisk1),
+        assertThat(lunValidator.isUsingScsiReservationValid(createVM(), createDiskVmElementUsingScsiReserevation(), lunDisk1),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED));
     }
 
@@ -159,9 +160,9 @@ public class DiskValidatorTest {
     public void testIsUsingScsiReservationValidWhenAddingFloatingDisk() {
         setupForLun();
 
-        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED, true);
+        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED);
 
-        assertThat(lunValidator.isUsingScsiReservationValid(null, lunDisk1),
+        assertThat(lunValidator.isUsingScsiReservationValid(null, createDiskVmElementUsingScsiReserevation(), lunDisk1),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK));
     }
 
@@ -214,11 +215,18 @@ public class DiskValidatorTest {
         assertThat(validator.isDiskAttachedToVm(vm), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM, expectedReplacements));
     }
 
-    private LunDisk createLunDisk(ScsiGenericIO sgio, boolean isUsingScsiReservation) {
+    private LunDisk createLunDisk(ScsiGenericIO sgio) {
         LunDisk lunDisk = createLunDisk();
         lunDisk.setSgio(sgio);
-        lunDisk.setUsingScsiReservation(isUsingScsiReservation);
 
         return lunDisk;
     }
+
+    private static DiskVmElement createDiskVmElementUsingScsiReserevation() {
+        DiskVmElement dve = new DiskVmElement();
+        dve.setUsingScsiReservation(true);
+        return dve;
+    }
+
+
 }

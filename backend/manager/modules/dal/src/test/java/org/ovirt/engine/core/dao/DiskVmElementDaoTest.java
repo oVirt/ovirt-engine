@@ -84,6 +84,18 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
         assertTrue(allDves.stream().noneMatch(dve -> dve.getDiskId().equals(FixturesTool.FLOATING_DISK_ID)));
     }
 
+    @Test
+    public void testUpdateVmDeviceUsingScsiReservationProperty() {
+        DiskVmElement dve = dao.get(getExistingEntityId());
+        boolean usingScsiReservation = !dve.isUsingScsiReservation();
+        dve.setUsingScsiReservation(usingScsiReservation);
+        dao.update(dve);
+        DiskVmElement dveFromDb = dao.get(getExistingEntityId());
+        assertEquals(dveFromDb.isUsingScsiReservation(), usingScsiReservation);
+    }
+
+
+
     @Override
     protected VmDeviceId getExistingEntityId() {
         return new VmDeviceId(PLUGGED_DISK_ID, FixturesTool.VM_RHEL5_POOL_57);

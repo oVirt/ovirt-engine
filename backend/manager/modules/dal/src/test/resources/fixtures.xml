@@ -5642,35 +5642,41 @@
         <column>vm_id</column>
         <column>is_boot</column>
         <column>disk_interface</column>
+        <column>is_using_scsi_reservation</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>false</value>
             <value>VirtIO</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>false</value>
             <value>VirtIO</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>false</value>
             <value>VirtIO</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>true</value>
             <value>VirtIO</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a41</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>false</value>
             <value>VirtIO</value>
+            <value>false</value>
         </row>
     </table>
 
@@ -7444,7 +7450,6 @@
         <column>custom_properties</column>
         <column>snapshot_id</column>
         <column>logical_name</column>
-        <column>is_using_scsi_reservation</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -7460,7 +7465,6 @@
             <null />
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>52058975-3d5e-484a-80c1-01c31207f579</value>
@@ -7477,7 +7481,6 @@
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <null />
             <value>logicalname</value>
-            <value>false</value>
         </row>
 
         <row>
@@ -7495,7 +7498,6 @@
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>e14ed6f0-3b12-11e1-b614-63d00126418d</value>
@@ -7512,7 +7514,6 @@
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
@@ -7529,7 +7530,6 @@
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>52058975-3d5e-484a-80c1-01c31207f578</value>
@@ -7546,7 +7546,6 @@
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
@@ -7563,7 +7562,6 @@
             <value>{}</value>
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfa</value>
@@ -7580,7 +7578,6 @@
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c0000</value>
@@ -7597,7 +7594,6 @@
             <value>{ "prop1" : "true" }</value>
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfb</value>
@@ -7614,7 +7610,6 @@
             <null />
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
@@ -7631,7 +7626,6 @@
             <null />
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a41</value>
@@ -7648,7 +7642,6 @@
             <null />
             <null />
             <value>logical_name</value>
-            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a42</value>
@@ -7665,7 +7658,6 @@
             <null />
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a43</value>
@@ -7682,7 +7674,6 @@
             <null />
             <null />
             <null />
-            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a44</value>
@@ -7699,7 +7690,6 @@
             <null />
             <null />
             <null />
-            <value>false</value>
         </row>
      </table>
 

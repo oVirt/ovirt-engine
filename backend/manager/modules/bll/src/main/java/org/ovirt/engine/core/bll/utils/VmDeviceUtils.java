@@ -596,8 +596,7 @@ public class VmDeviceUtils {
             plugged,
             false,
             address,
-            null,
-            false);
+            null);
     }
 
     private boolean canPlugInterface(VmNic iface) {
@@ -933,29 +932,28 @@ public class VmDeviceUtils {
      * Add a new disk device to the VM.
      */
     public VmDevice addDiskDevice(Guid vmId, Guid deviceId) {
-        return addDiskDevice(vmId, deviceId, true, false, "", false);
+        return addDiskDevice(vmId, deviceId, true, false, "");
     }
 
     /**
      * Add a new disk device to the VM.
      */
     public VmDevice addDiskDevice(Guid vmId, Guid deviceId, String address) {
-        return addDiskDevice(vmId, deviceId, true, false, address, false);
+        return addDiskDevice(vmId, deviceId, true, false, address);
+    }
+
+    /**
+     * Add a new disk device to the VM.
+     */
+    public VmDevice addDiskDevice(Guid vmId, Guid deviceId, Boolean isPlugged, Boolean isReadOnly) {
+        return addDiskDevice(vmId, deviceId, isPlugged, isReadOnly, "");
     }
 
     /**
      * Add a new disk device to the VM.
      */
     public VmDevice addDiskDevice(Guid vmId, Guid deviceId, Boolean isPlugged, Boolean isReadOnly,
-                                         boolean isUsingScsiReservation) {
-        return addDiskDevice(vmId, deviceId, isPlugged, isReadOnly, "", isUsingScsiReservation);
-    }
-
-    /**
-     * Add a new disk device to the VM.
-     */
-    public VmDevice addDiskDevice(Guid vmId, Guid deviceId, Boolean isPlugged, Boolean isReadOnly,
-                                         String address, boolean isUsingScsiReservation) {
+                                         String address) {
         return addManagedDevice(
                 new VmDeviceId(deviceId, vmId),
                 VmDeviceGeneralType.DISK,
@@ -964,8 +962,7 @@ public class VmDeviceUtils {
                 isPlugged,
                 isReadOnly,
                 address,
-                null,
-                isUsingScsiReservation);
+                null);
     }
 
     /**
@@ -1372,7 +1369,7 @@ public class VmDeviceUtils {
                                             Map<String, Object> specParams,
                                             boolean isPlugged,
                                             Boolean isReadOnly) {
-        return addManagedDevice(id, generalType, type, specParams, isPlugged, isReadOnly, "", null, false);
+        return addManagedDevice(id, generalType, type, specParams, isPlugged, isReadOnly, "", null);
     }
 
     /**
@@ -1396,8 +1393,7 @@ public class VmDeviceUtils {
                                             Boolean isPlugged,
                                             Boolean isReadOnly,
                                             String address,
-                                            Map<String, String> customProps,
-                                            boolean isUsingScsiReservation) {
+                                            Map<String, String> customProps) {
         VmDevice managedDevice =
                 new VmDevice(
                         id,
@@ -1412,8 +1408,7 @@ public class VmDeviceUtils {
                         "",
                         customProps,
                         null,
-                        null,
-                        isUsingScsiReservation);
+                        null);
         vmDeviceDao.save(managedDevice);
 
         // If we've added Disk/Interface/CD/Floppy, we have to recalculate boot order

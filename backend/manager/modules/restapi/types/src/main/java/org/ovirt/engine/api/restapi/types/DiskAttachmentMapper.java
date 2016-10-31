@@ -40,6 +40,9 @@ public class DiskAttachmentMapper {
         if (model.isSetInterface()) {
             entity.setDiskInterface(DiskMapper.mapInterface(model.getInterface()));
         }
+        if (model.isSetUsesScsiReservation()) {
+            entity.setUsingScsiReservation(model.isUsesScsiReservation());
+        }
         return entity;
     }
 
@@ -63,6 +66,7 @@ public class DiskAttachmentMapper {
         model.setInterface(DiskMapper.mapInterface(entity.getDiskInterface()));
         model.setActive(entity.isPlugged());
         model.setLogicalName(entity.getLogicalName());
+        model.setUsesScsiReservation(entity.isUsingScsiReservation());
         return model;
     }
 }

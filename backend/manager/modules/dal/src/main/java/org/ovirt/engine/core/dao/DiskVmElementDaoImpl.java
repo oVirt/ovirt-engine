@@ -26,7 +26,8 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
     protected MapSqlParameterSource createFullParametersMapper(DiskVmElement entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("is_boot", entity.isBoot())
-                .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()));
+                .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()))
+                .addValue("is_using_scsi_reservation", entity.isUsingScsiReservation());
     }
 
     @Override
@@ -52,6 +53,7 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
         }
         dve.setPlugged(rs.getBoolean("is_plugged"));
         dve.setLogicalName(rs.getString("logical_name"));
+        dve.setUsingScsiReservation(rs.getBoolean("is_using_scsi_reservation"));
         return dve;
     };
 

@@ -588,21 +588,22 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void testIscsiLunCanBeAdded() {
         LunDisk disk = createISCSILunDisk();
         command.getParameters().setDiskInfo(disk);
+        command.getParameters().getDiskVmElement().setUsingScsiReservation(false);
         assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
     }
 
-    private LunDisk createISCSILunDisk(ScsiGenericIO sgio, boolean isUsingScsiReservation) {
+    private LunDisk createISCSILunDisk(ScsiGenericIO sgio) {
         LunDisk disk = createISCSILunDisk();
         disk.setSgio(sgio);
-        disk.setUsingScsiReservation(isUsingScsiReservation);
         return disk;
     }
 
     @Test
     public void testIscsiLunCannotBeAddedIfSgioIsFilteredAndScsiReservationEnabled() {
-        LunDisk disk = createISCSILunDisk(ScsiGenericIO.FILTERED, true);
+        LunDisk disk = createISCSILunDisk(ScsiGenericIO.FILTERED);
         command.getParameters().setDiskInfo(disk);
+        command.getParameters().getDiskVmElement().setUsingScsiReservation(true);
         mockVm();
         mockInterfaceList();
         assertFalse("Lun disk added successfully WHILE sgio is filtered and scsi reservation is enabled",
@@ -612,8 +613,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testIscsiLunCanBeAddedIfScsiPassthroughEnabledAndScsiReservationEnabled() {
-        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED, true);
+        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED);
         command.getParameters().setDiskInfo(disk);
+        command.getParameters().getDiskVmElement().setUsingScsiReservation(true);
         mockVm();
         mockInterfaceList();
         assertTrue("Failed to add Lun disk when scsi passthrough and scsi reservation are enabled",
@@ -622,8 +624,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testIscsiLunCannotBeAddedIfAddingFloatingDisk() {
-        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED, true);
+        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED);
         command.getParameters().setDiskInfo(disk);
+        command.getParameters().getDiskVmElement().setUsingScsiReservation(true);
         assertFalse("Floating disk with SCSI reservation set successfully added",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         verifyValidationMessagesContainMessage(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK);

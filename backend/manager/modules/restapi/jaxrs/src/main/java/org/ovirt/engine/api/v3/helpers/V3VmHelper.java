@@ -177,6 +177,9 @@ public class V3VmHelper {
                         if (attachment.isSetActive()) {
                             disk.setActive(attachment.isActive());
                         }
+                        if (attachment.isSetUsesScsiReservation()) {
+                            disk.setUsesScsiReservation(attachment.isUsesScsiReservation());
+                        }
                     }
                     catch (WebApplicationException exception) {
                         // If an application exception is generated while retrieving the details of the disk attachment

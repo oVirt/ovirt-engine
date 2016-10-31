@@ -647,8 +647,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 "alias",
                 new HashMap<>(),
                 Guid.newGuid(),
-                "logical",
-                true);
+                "logical");
     }
 
     private void prepareVmToPassValidate() {

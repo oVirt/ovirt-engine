@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,6 +37,9 @@ public class VmValidatorTest extends DbDependentTestBase {
 
     @Mock
     VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Mock
+    DiskVmElementDao diskVmElementDao;
 
     @Before
     public void setUp() {
@@ -90,6 +94,34 @@ public class VmValidatorTest extends DbDependentTestBase {
         assertThat(validator.vmNotHavingPassthroughVnics(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
 
+    }
+
+    @Test
+    public void testVmHasPluggedDisksUsingScsiReservation() {
+        validateVMPluggedDisksWithReservationStatus(true);
+    }
+
+    @Test
+    public void testVmHasNoPluggedDisksUsingScsiReservation() {
+        validateVMPluggedDisksWithReservationStatus(false);
+    }
+
+    private void validateVMPluggedDisksWithReservationStatus(boolean vmHasDisksPluggedWithReservation) {
+        DiskVmElement dve = new DiskVmElement(null, vm.getId());
+        dve.setUsingScsiReservation(vmHasDisksPluggedWithReservation);
+
+        when(DbFacade.getInstance().getDiskVmElementDao()).thenReturn(diskVmElementDao);
+        when(diskVmElementDao.getAllPluggedToVm(vm.getId())).thenReturn(
+                Collections.singletonList(dve));
+
+        if (vmHasDisksPluggedWithReservation) {
+            // If the VM has plugged disks using ISCSI reservation the validation should fail
+            assertThat(validator.isVmPluggedDiskNotUsingScsiReservation(),
+                    failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION));
+        }
+        else {
+            assertThat(validator.isVmPluggedDiskNotUsingScsiReservation(), isValid());
+        }
     }
 
     private void vmNotHavingPassthroughVnicsCommon(Guid vmId, int numOfPassthroughVnic, int numOfRegularVnics) {

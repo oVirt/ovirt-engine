@@ -2,7 +2,8 @@ Create or replace FUNCTION InsertDiskVmElement(
     v_disk_id UUID,
     v_vm_id UUID,
     v_is_boot boolean,
-    v_disk_interface VARCHAR(32))
+    v_disk_interface VARCHAR(32),
+    v_is_using_scsi_reservation boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -10,12 +11,14 @@ BEGIN
         disk_id,
         vm_id,
         is_boot,
-        disk_interface)
+        disk_interface,
+        is_using_scsi_reservation)
     VALUES (
         v_disk_id,
         v_vm_id,
         v_is_boot,
-        v_disk_interface);
+        v_disk_interface,
+        v_is_using_scsi_reservation);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -25,14 +28,16 @@ CREATE OR REPLACE FUNCTION UpdateDiskVmElement(
     v_disk_id UUID,
     v_vm_id UUID,
     v_is_boot boolean,
-    v_disk_interface VARCHAR(32))
+    v_disk_interface VARCHAR(32),
+    v_is_using_scsi_reservation boolean)
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE disk_vm_element
     SET disk_id = v_disk_id,
         vm_id = v_vm_id,
         is_boot = v_is_boot,
-        disk_interface = v_disk_interface
+        disk_interface = v_disk_interface,
+        is_using_scsi_reservation = v_is_using_scsi_reservation
     WHERE disk_id = v_disk_id
         AND vm_id = v_vm_id;
 END;$PROCEDURE$

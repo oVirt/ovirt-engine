@@ -59,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -401,7 +400,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                         updateQuota(cinderDisk);
                         break;
                     case LUN:
-                        updateLunProperties((LunDisk)getNewDisk());
+                        // No specific update for LUN disk
                         break;
                 }
 
@@ -425,13 +424,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                                 getDiskVmElement().getDiskInterface() == DiskInterface.IDE))) {
                     vmDeviceForVm.setAddress("");
                     vmDeviceDao.clearDeviceAddress(getOldDisk().getId());
-                }
-            }
-
-            private void updateLunProperties(LunDisk lunDisk) {
-                if (updateIsUsingScsiReservationRequested(lunDisk)) {
-                    vmDeviceForVm.setUsingScsiReservation(lunDisk.isUsingScsiReservation());
-                    vmDeviceDao.update(vmDeviceForVm);
                 }
             }
         });
@@ -528,6 +520,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
         dveToUpdate.setBoot(getDiskVmElement().isBoot());
         dveToUpdate.setDiskInterface(getDiskVmElement().getDiskInterface());
+        dveToUpdate.setUsingScsiReservation(getDiskVmElement().isUsingScsiReservation());
     }
 
     protected void reloadDisks() {
@@ -778,12 +771,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     protected boolean updateReadOnlyRequested() {
         Boolean readOnlyNewValue = getNewDisk().getReadOnly();
         return readOnlyNewValue != null && !getVmDeviceForVm().getIsReadOnly().equals(readOnlyNewValue);
-    }
-
-    private boolean updateIsUsingScsiReservationRequested(LunDisk lunDisk) {
-        Boolean isUsingScsiReservationNewValue = lunDisk.isUsingScsiReservation();
-        return isUsingScsiReservationNewValue != null &&
-               getVmDeviceForVm().isUsingScsiReservation() != isUsingScsiReservationNewValue;
     }
 
     protected boolean updateWipeAfterDeleteRequested() {

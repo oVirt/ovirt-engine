@@ -62,6 +62,7 @@ public class EditDiskModel extends AbstractDiskModel {
                 getStorageType().setIsAvailable(false);
                 getSize().setEntity(lunDisk.getLun().getDeviceSize());
                 getSizeExtend().setIsAvailable(false);
+                getIsUsingScsiReservation().setEntity(getDiskVmElement().isUsingScsiReservation());
                 break;
             case CINDER:
                 CinderDisk cinderDisk = (CinderDisk) getDisk();
@@ -92,7 +93,6 @@ public class EditDiskModel extends AbstractDiskModel {
             getDiskStorageType().setEntity(DiskStorageType.LUN);
             getSize().setEntity(lunDisk.getLun().getDeviceSize());
             getSizeExtend().setIsAvailable(false);
-            getIsUsingScsiReservation().setEntity(lunDisk.isUsingScsiReservation());
         }
     }
 

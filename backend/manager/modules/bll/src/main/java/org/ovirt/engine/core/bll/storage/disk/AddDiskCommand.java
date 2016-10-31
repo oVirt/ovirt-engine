@@ -226,7 +226,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             }
         }
 
-        if (!validate(diskValidator.isUsingScsiReservationValid(getVm(), lunDisk))) {
+        if (!validate(diskValidator.isUsingScsiReservationValid(getVm(), getDiskVmElement(), lunDisk))) {
             return false;
         }
 
@@ -464,7 +464,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 // The disk VM element has to be added before the VM device since as a part of the VM device creation the
                 // boot order is determined so the VM device creation depends on the existance of the disk VM element
                 addDiskVmElementForDisk(getDiskVmElement());
-                addManagedDeviceForDisk(getParameters().getDiskInfo().getId(), ((LunDisk) getParameters().getDiskInfo()).isUsingScsiReservation());
+                addManagedDeviceForDisk(getParameters().getDiskInfo().getId());
             }
             return null;
         });
@@ -473,17 +473,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setSucceeded(true);
     }
 
-    private VmDevice addManagedDeviceForDisk(Guid diskId, Boolean isUsingScsiReservation) {
+    protected VmDevice addManagedDeviceForDisk(Guid diskId) {
         return  getVmDeviceUtils().addDiskDevice(
                 getVmId(),
                 diskId,
                 shouldDiskBePlugged(),
-                Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
-                Boolean.TRUE.equals(isUsingScsiReservation));
-    }
-
-    protected VmDevice addManagedDeviceForDisk(Guid diskId) {
-        return addManagedDeviceForDisk(diskId, false);
+                Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()));
     }
 
     protected DiskVmElement addDiskVmElementForDisk(DiskVmElement diskVmElement) {

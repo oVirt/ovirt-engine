@@ -976,11 +976,15 @@ public abstract class AbstractDiskModel extends DiskModel {
                     lunDisk.setSgio(!getIsScsiPassthrough().getEntity() ? null :
                             getIsSgIoUnfiltered().getEntity() ?
                                     ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
-                    lunDisk.setUsingScsiReservation(getIsUsingScsiReservation().getEntity());
+                    if (!getIsFloating()) {
+                        getDiskVmElement().setUsingScsiReservation(getIsUsingScsiReservation().getEntity());
+                    }
                 } else {
                     getIsScsiPassthrough().setEntity(false);
                     lunDisk.setSgio(null);
-                    lunDisk.setUsingScsiReservation(false);
+                    if (!getIsFloating()) {
+                        getDiskVmElement().setUsingScsiReservation(false);
+                    }
                 }
                 setDisk(lunDisk);
                 break;

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -95,13 +96,13 @@ public class DiskValidator {
                     StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS.equals(disk.getDiskAlias());
     }
 
-    public ValidationResult isUsingScsiReservationValid(VM vm, LunDisk lunDisk) {
+    public ValidationResult isUsingScsiReservationValid(VM vm, DiskVmElement dve, LunDisk lunDisk) {
         // this operation is valid only when attaching disk to VMs
-        if (vm == null && Boolean.TRUE.equals(lunDisk.isUsingScsiReservation())) {
+        if (vm == null && dve.isUsingScsiReservation()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK);
         }
         // scsi reservation can be enabled only when sgio is unfiltered
-        if (Boolean.TRUE.equals(lunDisk.isUsingScsiReservation()) && lunDisk.getSgio() == ScsiGenericIO.FILTERED) {
+        if (dve.isUsingScsiReservation() && lunDisk.getSgio() == ScsiGenericIO.FILTERED) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
         }
 

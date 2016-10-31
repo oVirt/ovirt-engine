@@ -69,7 +69,6 @@ public class ReadOnlyDiskModel extends AbstractDiskModel {
             LunDisk lunDisk = (LunDisk) getDisk();
             getDiskStorageType().setEntity(DiskStorageType.LUN);
             getSize().setEntity(lunDisk.getLun().getDeviceSize());
-            getIsUsingScsiReservation().setEntity(lunDisk.isUsingScsiReservation());
         }
     }
 

@@ -84,9 +84,6 @@ public class DiskMapper {
             if (disk.isSetLunStorage()) {
                 ((LunDisk) engineDisk).setLun(StorageLogicalUnitMapper.map(disk.getLunStorage(), null));
             }
-            if (disk.isSetUsesScsiReservation()) {
-                ((LunDisk) engineDisk).setUsingScsiReservation(disk.isUsesScsiReservation());
-            }
             if (disk.isSetSgio()) {
                 engineDisk.setSgio(map(disk.getSgio(), null));
             }
@@ -154,7 +151,6 @@ public class DiskMapper {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {
             model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new HostStorage()));
-            model.setUsesScsiReservation(((LunDisk) entity).isUsingScsiReservation());
             if (entity.getSgio() != null) {
                 model.setSgio(map(entity.getSgio(), null));
             }

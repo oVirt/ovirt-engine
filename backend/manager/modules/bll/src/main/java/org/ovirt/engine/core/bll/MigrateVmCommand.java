@@ -531,7 +531,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return false;
         }
 
-        VmValidator vmValidator = new VmValidator(vm);
+        VmValidator vmValidator = getVmValidator();
         if (!validate(vmValidator.isVmPluggedDiskNotUsingScsiReservation())) {
             return false;
         }
@@ -707,5 +707,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     public void onPowerringUp() {
         // nothing to do
+    }
+
+    protected VmValidator getVmValidator() {
+        return new VmValidator(getVm());
     }
 }
