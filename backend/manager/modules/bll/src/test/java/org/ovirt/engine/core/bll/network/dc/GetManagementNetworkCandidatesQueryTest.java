@@ -11,17 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-public class GetManagementNetworkCandidatesQueryTest extends BaseCommandTest {
-
+public class GetManagementNetworkCandidatesQueryTest extends
+        AbstractQueryTest<IdQueryParameters, GetManagementNetworkCandidatesQuery<IdQueryParameters>> {
     public static final Guid DC_ID = Guid.newGuid();
 
     @Mock
@@ -33,27 +32,26 @@ public class GetManagementNetworkCandidatesQueryTest extends BaseCommandTest {
     @Mock
     private Network mockManagementNetworkCandidate;
 
-    private GetManagementNetworkCandidatesQuery underTest;
     private List<Network> dcNetworks = new ArrayList<>();
 
-    @Before
-    public void setUp() throws Exception {
+    @Override
+    protected void initQuery(GetManagementNetworkCandidatesQuery<IdQueryParameters> query) {
+        super.initQuery(query);
+
+        when(query.getParameters().getId()).thenReturn(DC_ID);
+
         when(mockNetworkPredicate.test(mockExternalNetwork)).thenReturn(false);
         when(mockNetworkPredicate.test(mockManagementNetworkCandidate)).thenReturn(true);
         when(mockNetworkDao.getAllForDataCenter(DC_ID)).thenReturn(dcNetworks);
-
-        final IdQueryParameters params = new IdQueryParameters(DC_ID);
-
-        underTest = new TestGetManagementNetworkCandidatesQuery(params);
     }
 
     @Test
     public void testExecuteQueryCommand() {
         dcNetworks.addAll(Arrays.asList(mockExternalNetwork, mockManagementNetworkCandidate));
 
-        underTest.executeQueryCommand();
+        getQuery().executeQueryCommand();
 
-        final List<Network> actual = underTest.getQueryReturnValue().getReturnValue();
+        final List<Network> actual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(actual);
         assertThat(actual, hasSize(1));
@@ -63,28 +61,10 @@ public class GetManagementNetworkCandidatesQueryTest extends BaseCommandTest {
     @Test
     public void testExecuteQueryCommandNoNetworksDefined() {
 
-        underTest.executeQueryCommand();
+        getQuery().executeQueryCommand();
 
-        final List<Network> actual = underTest.getQueryReturnValue().getReturnValue();
+        final List<Network> actual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertTrue(actual.isEmpty());
-    }
-
-    private class TestGetManagementNetworkCandidatesQuery
-            extends GetManagementNetworkCandidatesQuery<IdQueryParameters> {
-
-        private TestGetManagementNetworkCandidatesQuery(IdQueryParameters params) {
-            super(params);
-        }
-
-        @Override
-        NetworkDao getNetworkDao() {
-            return mockNetworkDao;
-        }
-
-        @Override
-        public Predicate<Network> getManagementNetworkCandidatePredicate() {
-            return mockNetworkPredicate;
-        }
     }
 }
