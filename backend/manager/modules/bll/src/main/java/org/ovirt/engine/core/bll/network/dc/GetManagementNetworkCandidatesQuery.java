@@ -27,17 +27,9 @@ public class GetManagementNetworkCandidatesQuery<P extends IdQueryParameters> ex
 
     @Override
     protected void executeQueryCommand() {
-        final List<Network> allDcNetworks = getNetworkDao().getAllForDataCenter(getParameters().getId());
+        final List<Network> allDcNetworks = networkDao.getAllForDataCenter(getParameters().getId());
         final List<Network> managementNetworkCandidates =
-                allDcNetworks.stream().filter(getManagementNetworkCandidatePredicate()).collect(Collectors.toList());
+                allDcNetworks.stream().filter(managementNetworkCandidatePredicate).collect(Collectors.toList());
         getQueryReturnValue().setReturnValue(managementNetworkCandidates);
-    }
-
-    NetworkDao getNetworkDao() {
-        return networkDao;
-    }
-
-    public Predicate<Network> getManagementNetworkCandidatePredicate() {
-        return managementNetworkCandidatePredicate;
     }
 }
