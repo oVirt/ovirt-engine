@@ -1051,24 +1051,32 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return super.getVmId();
     }
 
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+    public static Map<String, Pair<String, String>> getExclusiveLocksForUpdateVm(VM vm) {
         // When updating, please also update UpdateClusterCommand#getExclusiveLocks
-        if (!StringUtils.isBlank(getParameters().getVm().getName())) {
-            return Collections.singletonMap(getParameters().getVm().getName(),
+        if (!StringUtils.isBlank(vm.getName())) {
+            return Collections.singletonMap(vm.getName(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED));
         }
         return null;
     }
 
-    @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
+    public static Map<String, Pair<String, String>> getSharedLocksForUpdateVm(VM vm) {
         // When updating, please also update UpdateClusterCommand#getSharedLocks
         return Collections.singletonMap(
-                getVmId().toString(),
+                vm.getId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.VM,
                         EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED));
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return getExclusiveLocksForUpdateVm(getParameters().getVm());
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return getSharedLocksForUpdateVm(getParameters().getVm());
     }
 
     @Override
