@@ -6,8 +6,8 @@ import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 /**
- * UiCommon specific flavor of {@link SimpleBeanEditorDriver} interface to be used with
- * GWT Editor framework.
+ * UiCommon specific flavor of {@link SimpleBeanEditorDriver} interface to be used
+ * with GWT Editor framework.
  *
  * <pre>
  * public class MyView {
@@ -31,7 +31,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
  *          return driver.flush();
  *      }
  *
- *      public void cleanupModelAndView() {
+ *      public void cleanupViewAndModel() {
  *          driver.cleanup();
  *      }
  *
@@ -45,12 +45,12 @@ public interface UiCommonEditorDriver<T extends IModel, E extends Editor<? super
         extends SimpleBeanEditorDriver<T, E> {
 
     /**
-     * Clean up the edited Model object as well as the Editor instance.
+     * Clean up the Editor instance as well as the edited Model object.
+     * <p>
      * The generated implementation calls the {@code cleanup} method on following objects:
      * <ul>
-     * <li>the associated top-level Model
-     * <li>all Models edited through the top-level Model
      * <li>non-Model Editor fields that implement {@code HasCleanup} interface
+     * <li>associated top-level Model and all Models edited through the top-level Model
      * </ul>
      *
      * @see org.ovirt.engine.ui.uicommonweb.HasCleanup
