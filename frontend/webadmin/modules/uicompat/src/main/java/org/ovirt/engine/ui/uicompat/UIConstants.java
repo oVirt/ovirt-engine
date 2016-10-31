@@ -1391,8 +1391,6 @@ public interface UIConstants extends Constants {
 
     String liveStorageMigrationWarning();
 
-    String liveStorageMigrationStorageFilteringNote();
-
     String cannotRemoveBricksReplicateVolume();
 
     String cannotRemoveBricksDistributedReplicateVolume();
