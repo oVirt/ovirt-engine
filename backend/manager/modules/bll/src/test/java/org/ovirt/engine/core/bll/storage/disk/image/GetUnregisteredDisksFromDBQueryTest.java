@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAnd
 
     private void mockQueryParameters() {
         // Mock the Query Parameters
-        doReturn(unregisteredDisksDaoMock).when(getQuery()).getUnregisteredDisksDao();
         when(getQueryParameters().getId()).thenReturn(storageDomainId);
         when(getQueryParameters().isFilterResult()).thenReturn(true);
     }

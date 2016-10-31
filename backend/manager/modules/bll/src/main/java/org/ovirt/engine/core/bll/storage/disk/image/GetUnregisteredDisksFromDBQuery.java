@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 
 public class GetUnregisteredDisksFromDBQuery<P extends IdAndBooleanQueryParameters> extends QueriesCommandBase<P> {
-
     public GetUnregisteredDisksFromDBQuery(P parameters) {
         super(parameters);
     }
@@ -23,7 +22,7 @@ public class GetUnregisteredDisksFromDBQuery<P extends IdAndBooleanQueryParamete
     protected void executeQueryCommand() {
         List<UnregisteredDisk> unregDisksToReturnList = new ArrayList<>();
         List<UnregisteredDisk> unregisteredDisksList =
-                getUnregisteredDisksDao().getByDiskIdAndStorageDomainId(null, getParameters().getId());
+                unregisteredDisksDao.getByDiskIdAndStorageDomainId(null, getParameters().getId());
         if (getParameters().isFilterResult()) {
             for (UnregisteredDisk unregDisk : unregisteredDisksList) {
                 if (unregDisk.getVms().isEmpty()) {
@@ -35,9 +34,5 @@ public class GetUnregisteredDisksFromDBQuery<P extends IdAndBooleanQueryParamete
         }
         getQueryReturnValue().setSucceeded(true);
         getQueryReturnValue().setReturnValue(unregDisksToReturnList);
-    }
-
-    public UnregisteredDisksDao getUnregisteredDisksDao() {
-        return unregisteredDisksDao;
     }
 }
