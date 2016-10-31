@@ -836,7 +836,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 powerManagementControlledByPolicy,
                 kdumpStatus,
                 selinuxEnforceMode,
-                numaNodeList,
                 autoNumaBalancing,
                 numaSupport,
                 additionalFeatures,
@@ -910,7 +909,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && kdumpStatus == other.kdumpStatus
                 && Objects.equals(selinuxEnforceMode, other.selinuxEnforceMode)
-                && Objects.equals(numaNodeList, other.numaNodeList)
                 && autoNumaBalancing.getValue() == other.autoNumaBalancing.getValue()
                 && numaSupport == other.numaSupport
                 && Objects.equals(supportedEmulatedMachines, other.supportedEmulatedMachines)
