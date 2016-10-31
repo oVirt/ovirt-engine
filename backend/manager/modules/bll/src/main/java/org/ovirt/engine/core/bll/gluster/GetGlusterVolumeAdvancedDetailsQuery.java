@@ -31,7 +31,6 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
                     GlusterVolumeType.REPLICATE, GlusterVolumeType.DISTRIBUTED_REPLICATE });
     private GlusterBrickEntity brick = null;
     private Guid clusterId = null;
-    private Guid volumeId = null;
     private boolean detailRequired = false;
 
     public GetGlusterVolumeAdvancedDetailsQuery(P params) {
@@ -42,7 +41,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     protected void executeQueryCommand() {
         clusterId = getParameters().getClusterId();
         detailRequired = getParameters().isDetailRequired();
-        volumeId = getParameters().getVolumeId();
+        Guid volumeId = getParameters().getVolumeId();
         if (volumeId != null) {
             GlusterVolumeEntity volume = glusterVolumeDao.getById(volumeId);
             if (volume == null) {
