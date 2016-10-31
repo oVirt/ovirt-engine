@@ -27,7 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -141,8 +140,6 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             });
             updateProblematicDisk(diskModel);
         }
-
-        setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationStorageFilteringNote());
     }
 
     private void updateProblematicDisk(DiskModel diskModel) {
