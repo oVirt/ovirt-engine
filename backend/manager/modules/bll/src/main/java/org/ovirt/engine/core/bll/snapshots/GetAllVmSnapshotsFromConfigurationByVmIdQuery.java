@@ -28,7 +28,7 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQuery<P extends IdQueryPara
     @Override
     protected void executeQueryCommand() {
         SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = getSnapshotVmConfigurationHelper();
-        List<Snapshot> snapshots = getSnapshotDao().getAllWithConfiguration(getParameters().getId());
+        List<Snapshot> snapshots = snapshotDao.getAllWithConfiguration(getParameters().getId());
         for (Snapshot snapshot : snapshots) {
             VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
                     snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
@@ -37,10 +37,6 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQuery<P extends IdQueryPara
             }
         }
         getQueryReturnValue().setReturnValue(snapshots);
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return snapshotDao;
     }
 
     protected SnapshotVmConfigurationHelper getSnapshotVmConfigurationHelper() {

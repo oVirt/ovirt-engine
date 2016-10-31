@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +15,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -33,6 +33,7 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQueryTest extends AbstractU
         GetAllVmSnapshotsFromConfigurationByVmIdQuery<IdQueryParameters>> {
 
     /** The {@link org.ovirt.engine.core.dao.SnapshotDao} mocked for the test */
+    @Mock
     private SnapshotDao snapshotDaoMock;
 
     /** The ID of the VM the disks belong to */
@@ -62,8 +63,6 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQueryTest extends AbstractU
     }
 
     private void setUpDaoMocks() {
-        snapshotDaoMock = mock(SnapshotDao.class);
-        doReturn(snapshotDaoMock).when(getQuery()).getSnapshotDao();
         when(snapshotDaoMock.getAllWithConfiguration(vmId)).thenReturn(Collections.singletonList(snapshot));
     }
 
