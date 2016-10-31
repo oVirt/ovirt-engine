@@ -59,6 +59,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
@@ -613,6 +614,9 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         }
         else if (model.getCurrentStorageItem() instanceof LocalStorageModel) {
             saveLocalStorage();
+        }
+        else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
+            savePosixStorage();
         }
         else {
             saveSanStorage();
@@ -1446,6 +1450,126 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                 }, this);
     }
 
+    private void savePosixStorage() {
+
+        if (getWindow().getProgress() != null) {
+            return;
+        }
+
+        getWindow().startProgress();
+
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SavePosix"}))).run(); //$NON-NLS-1$
+    }
+
+    private void savePosixStorage(final TaskContext context) {
+        this.context = context;
+        StorageModel model = (StorageModel) getWindow();
+        boolean isNew = model.getStorage() == null;
+
+        storageModel = model.getCurrentStorageItem();
+        PosixStorageModel posixModel = (PosixStorageModel) storageModel;
+        path = posixModel.getPath().getEntity();
+
+        storageDomain = new StorageDomainStatic();
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
+        storageDomain.setStorageName(model.getName().getEntity());
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+
+        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(
+                        new AsyncCallback<List<StorageDomain>>() {
+                            @Override
+                            public void onSuccess(List<StorageDomain> storages) {
+                                if (storages != null && storages.size() > 0) {
+                                    String storageName = storages.get(0).getStorageName();
+                                    onFinish(context, false, storageModel,
+                                            ConstantsManager.getInstance()
+                                                    .getMessages()
+                                                    .createOperationFailedDcGuideMsg(storageName));
+                                }
+                                else {
+                                    saveNewPosixStorage();
+                                }
+
+                            }
+                        }),
+                null,
+                path);
+    }
+
+    private void saveNewPosixStorage() {
+        StorageModel model = (StorageModel) getWindow();
+        PosixStorageModel posixModel = (PosixStorageModel) model.getCurrentStorageItem();
+        VDS host = model.getHost().getSelectedItem();
+        hostId = host.getId();
+
+        // Create storage connection.
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setConnection(path);
+        connection.setStorageType(posixModel.getType());
+        connection.setVfsType(posixModel.getVfsType().getEntity());
+        connection.setMountOptions(posixModel.getMountOptions().getEntity());
+        this.connection = connection;
+
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+
+        actionTypes.add(VdcActionType.AddStorageServerConnection);
+        actionTypes.add(posixModel.getAddStorageDomainVdcAction());
+
+        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId(), false));
+        StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);
+        parameter.setVdsId(host.getId());
+        StoragePool dataCenter = model.getDataCenter().getSelectedItem();
+        parameter.setStoragePoolId(dataCenter.getId());
+        parameters.add(parameter);
+
+        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                dataCenterGuideModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+                dataCenterGuideModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+
+            }
+        };
+
+        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                dataCenterGuideModel.storageId = vdcReturnValueBase.getActionReturnValue();
+
+                // Attach storage to data center as necessary.
+                StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
+                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
+                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                    dataCenterGuideModel.attachStorageToDataCenter(dataCenterGuideModel.storageId, dataCenter.getId());
+                }
+
+                dataCenterGuideModel.onFinish(dataCenterGuideModel.context, true, dataCenterGuideModel.storageModel);
+            }
+        };
+
+        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                dataCenterGuideModel.cleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
+                dataCenterGuideModel.onFinish(dataCenterGuideModel.context, false, dataCenterGuideModel.storageModel);
+            }
+        };
+
+        Frontend.getInstance().runMultipleActions(actionTypes,
+                parameters,
+                new ArrayList<>(Arrays.asList(new IFrontendActionAsyncCallback[]{callback1, callback2})),
+                failureCallback,
+                this);
+    }
+
+
     public void postOnAddHost(VdcReturnValueBase returnValue) {
         HostModel model = (HostModel) getWindow();
 
@@ -1560,6 +1684,9 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         else if ("SaveLocal".equals(key)) { //$NON-NLS-1$
             saveLocalStorage(context);
 
+        }
+        else if ("SavePosix".equals(key)) { //$NON-NLS-1$
+            savePosixStorage(context);
         }
         else if ("SaveSan".equals(key)) { //$NON-NLS-1$
             saveSanStorage(context);
