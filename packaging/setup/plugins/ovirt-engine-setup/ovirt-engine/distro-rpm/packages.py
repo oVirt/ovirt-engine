@@ -55,10 +55,6 @@ class Plugin(plugin.PluginBase):
             oenginecons.Const.ENGINE_PACKAGE_SETUP_NAME
         )
         self.environment.setdefault(
-            oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP,
-            oenginecons.Const.UPGRADE_YUM_GROUP_NAME
-        )
-        self.environment.setdefault(
             oenginecons.RPMDistroEnv.ADDITIONAL_PACKAGES,
             oenginecons.Defaults.DEFAULT_ADDITIONAL_PACKAGES
         )
@@ -113,9 +109,6 @@ class Plugin(plugin.PluginBase):
                 osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
             ].append(
                 {
-                    'group': self.environment[
-                        oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP
-                    ],
                     'packages': (
                         tolist(
                             self.environment[

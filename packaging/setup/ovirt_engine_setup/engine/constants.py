@@ -401,8 +401,6 @@ class Const(object):
         ENGINE_URI,
     )
 
-    UPGRADE_YUM_GROUP_NAME = 'ovirt-engine-4.0'
-
     ENGINE_DB_BACKUP_PREFIX = 'engine'
 
     @classproperty
@@ -749,7 +747,6 @@ class ConfigEnv(object):
 class RPMDistroEnv(object):
     ENGINE_PACKAGES = 'OVESETUP_RPMDISTRO/enginePackages'
     ENGINE_SETUP_PACKAGES = 'OVESETUP_RPMDISTRO/engineSetupPackages'
-    UPGRADE_YUM_GROUP = 'OVESETUP_RPMDISTRO/upgradeYumGroup'
     ADDITIONAL_PACKAGES = 'OVESETUP_RPMDISTRO/additionalPackages'
 
     ENGINE_AAA_JDBC_PACKAGE = 'OVESETUP_RPMDISTRO/aaaJdbcPackage'
