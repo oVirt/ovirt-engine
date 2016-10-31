@@ -29,13 +29,6 @@ public class IsBalloonEnabledQueryTest extends AbstractQueryTest<IdQueryParamete
     public void setUp() throws Exception {
         super.setUp();
         vmID = Guid.newGuid();
-        setUpDaoMocks();
-    }
-
-    private void setUpDaoMocks() {
-        // Mock the Daos
-        when(getQuery().getVmDeviceDao()).thenReturn(vmDeviceDaoMock);
-        when(getQuery().getSnapshotDao()).thenReturn(snapshotDaoMock);
     }
 
     @Test

@@ -28,7 +28,7 @@ public class IsBalloonEnabledQuery <P extends IdQueryParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        Snapshot snapshot = getSnapshotDao().get(
+        Snapshot snapshot = snapshotDao.get(
                 getParameters().getId(), Snapshot.SnapshotType.NEXT_RUN, getUserID(), getParameters().isFiltered());
 
         if (snapshot != null) {
@@ -37,16 +37,7 @@ public class IsBalloonEnabledQuery <P extends IdQueryParameters> extends Queries
             getQueryReturnValue().setReturnValue(
                     VmDeviceCommonUtils.isVmDeviceExists(vm.getManagedVmDeviceMap(), VmDeviceType.MEMBALLOON));
         } else {
-            getQueryReturnValue().setReturnValue(getVmDeviceDao().isMemBalloonEnabled(getParameters().getId()));
+            getQueryReturnValue().setReturnValue(vmDeviceDao.isMemBalloonEnabled(getParameters().getId()));
         }
     }
-
-    protected SnapshotDao getSnapshotDao() {
-        return snapshotDao;
-    }
-
-    protected VmDeviceDao getVmDeviceDao() {
-        return vmDeviceDao;
-    }
-
 }
