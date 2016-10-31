@@ -222,7 +222,20 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
         sw.println("public void cleanup() {"); //$NON-NLS-1$
         sw.indent();
 
-        // 1. clean up the edited Model object
+        // 1. clean up the Editor instance
+        Set<String> editorFieldExpressions = getEditorFieldCleanupExpressions();
+
+        for (String expr : editorFieldExpressions) {
+            sw.println(String.format("if (%s != null) {", expr)); //$NON-NLS-1$
+            sw.indent();
+
+            sw.println(String.format("%s.cleanup();", expr)); //$NON-NLS-1$
+
+            sw.outdent();
+            sw.println("}"); //$NON-NLS-1$
+        }
+
+        // 2. clean up the edited Model object
         Set<String> modelExpressions = getModelCleanupExpressions();
 
         if (!modelExpressions.isEmpty()) {
@@ -232,19 +245,6 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
             for (String expr : modelExpressions) {
                 sw.println(String.format("%s.cleanup();", expr)); //$NON-NLS-1$
             }
-
-            sw.outdent();
-            sw.println("}"); //$NON-NLS-1$
-        }
-
-        // 2. clean up the Editor instance
-        Set<String> editorFieldExpressions = getEditorFieldCleanupExpressions();
-
-        for (String expr : editorFieldExpressions) {
-            sw.println(String.format("if (%s != null) {", expr)); //$NON-NLS-1$
-            sw.indent();
-
-            sw.println(String.format("%s.cleanup();", expr)); //$NON-NLS-1$
 
             sw.outdent();
             sw.println("}"); //$NON-NLS-1$
