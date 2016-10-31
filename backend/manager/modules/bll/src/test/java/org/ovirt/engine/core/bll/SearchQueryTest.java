@@ -1,11 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.matches;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -16,6 +13,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -47,7 +45,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class SearchQueryTest extends DbDependentTestBase {
+public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQuery<SearchParameters>> {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -56,6 +54,11 @@ public class SearchQueryTest extends DbDependentTestBase {
             mockConfig(ConfigValues.DBSearchTemplate,
                     "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
             );
+
+    @Mock
+    private QuotaManager quotaManager;
+    @Mock
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     List<Disk> diskImageResultList = new ArrayList<>();
     List<Quota> quotaResultList = new ArrayList<>();
@@ -69,8 +72,9 @@ public class SearchQueryTest extends DbDependentTestBase {
     List<NetworkView> networkResultList = new ArrayList<>();
 
     @Before
-    public void setup() {
-        DbFacade facadeMock = DbFacade.getInstance();
+    public void setUp() throws Exception {
+        super.setUp();
+        DbFacade facadeMock = getDbFacadeMockInstance();
         final DiskDao diskDao = mock(DiskDao.class);
         final QuotaDao quotaDao = mock(QuotaDao.class);
         final VmDao vmDao = mock(VmDao.class);
@@ -350,30 +354,19 @@ public class SearchQueryTest extends DbDependentTestBase {
         return query.toString();
     }
 
-    private void mockInjections(SearchQuery<SearchParameters> searchQuery) {
-        QuotaManager quotaManager = mock(QuotaManager.class);
-        doNothing().when(quotaManager).updateUsage(anyListOf(Quota.class));
-        when(searchQuery.getQuotaManager()).thenReturn(quotaManager);
-
-        CpuFlagsManagerHandler cpuFlagsManagerHandler = mock(CpuFlagsManagerHandler.class);
+    @Before
+    public void mockCpuFlagsManagerHandler() {
         ServerCpu resultCpu = new ServerCpu();
         resultCpu.setCpuName("cpu");
         when(cpuFlagsManagerHandler.findMaxServerCpuByFlags("flag", Version.getLast())).thenReturn(resultCpu);
-        when(searchQuery.getCpuFlagsManagerHandler()).thenReturn(cpuFlagsManagerHandler);
-    }
-
-    private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<>(searchParam));
-        mockInjections(searchQuery);
-        return searchQuery;
     }
 
     @Test
     public void testGetAllMultiDiskImageSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Disks" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Disk);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(diskImageResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Disks" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Disk);
+        getQuery().executeQueryCommand();
+        assertEquals(diskImageResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -381,53 +374,53 @@ public class SearchQueryTest extends DbDependentTestBase {
         // The query Should be used is : "SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY disk_name ASC ) as RowNum
         // FROM (SELECT * FROM vm_images_view WHERE ( image_guid IN (SELECT vm_images_view.image_guid FROM
         // vm_images_view ))) as T1 ) as T2"
-        SearchParameters searchParam = new SearchParameters("Disk" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Disk);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(diskImageResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Disk" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Disk);
+        getQuery().executeQueryCommand();
+        assertEquals(diskImageResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllVMSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("VM" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VM);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(vmResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("VM" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VM);
+        getQuery().executeQueryCommand();
+        assertEquals(vmResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllVMTemplatesSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Template" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VmTemplate);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(vmTemplateResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Template" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VmTemplate);
+        getQuery().executeQueryCommand();
+        assertEquals(vmTemplateResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
 
     @Test
     public void testGetAllMultiVmSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("VMs" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VM);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(vmResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("VMs" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VmTemplate);
+        getQuery().executeQueryCommand();
+        assertEquals(vmResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllVdsSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Host" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VDS);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(vdsResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Host" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VDS);
+        getQuery().executeQueryCommand();
+        assertEquals(vdsResultList, getQuery().getQueryReturnValue().getReturnValue());
         assertEquals(1, vdsResultList.size());
         assertEquals("cpu", vdsResultList.get(0).getCpuName().getCpuName());
     }
 
     @Test
     public void testGetAllMultiVdsSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Hosts" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VDS);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(vdsResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Hosts" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VDS);
+        getQuery().executeQueryCommand();
+        assertEquals(vdsResultList, getQuery().getQueryReturnValue().getReturnValue());
         assertEquals(1, vdsResultList.size());
         assertEquals("cpu", vdsResultList.get(0).getCpuName().getCpuName());
     }
@@ -437,10 +430,10 @@ public class SearchQueryTest extends DbDependentTestBase {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
         // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM
         // cluster_storage_domain ))) as T1 ) as T2
-        SearchParameters searchParam = new SearchParameters("Cluster" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(clusterResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Cluster" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Cluster);
+        getQuery().executeQueryCommand();
+        assertEquals(clusterResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -448,51 +441,51 @@ public class SearchQueryTest extends DbDependentTestBase {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
         // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM
         // cluster_storage_domain ))) as T1 ) as T2
-        SearchParameters searchParam = new SearchParameters("Clusters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(clusterResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Clusters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Cluster);
+        getQuery().executeQueryCommand();
+        assertEquals(clusterResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllStoragePoolSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Datacenter" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.StoragePool);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(storagePoolResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Datacenter" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.StoragePool);
+        getQuery().executeQueryCommand();
+        assertEquals(storagePoolResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     // TODO: Search using search text "Datacenters:" is not supported.
     @Ignore
     @Test
     public void testGetAllMultiStoragePoolSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Datacenters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.StoragePool);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(storagePoolResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Datacenters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.StoragePool);
+        getQuery().executeQueryCommand();
+        assertEquals(storagePoolResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllGlusterVolumesSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Volumes" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.GlusterVolume);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(glusterVolumeList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Volumes" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.GlusterVolume);
+        getQuery().executeQueryCommand();
+        assertEquals(glusterVolumeList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllQuotaSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Quota" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Quota);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(quotaResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Quota" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Quota);
+        getQuery().executeQueryCommand();
+        assertEquals(quotaResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllNetworkSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Network" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Network);
-        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
-        searchQuery.executeQueryCommand();
-        assertEquals(networkResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        when(getQueryParameters().getSearchPattern()).thenReturn("Network" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
+        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Network);
+        getQuery().executeQueryCommand();
+        assertEquals(networkResultList, getQuery().getQueryReturnValue().getReturnValue());
     }
 }

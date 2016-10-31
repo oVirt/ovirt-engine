@@ -166,7 +166,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     private List<VDS> searchVDSsByDb() {
         List<VDS> data = genericSearch(getDbFacade().getVdsDao(), true);
         for (VDS vds : data) {
-            vds.setCpuName(getCpuFlagsManagerHandler().findMaxServerCpuByFlags(vds.getCpuFlags(),
+            vds.setCpuName(cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                     vds.getClusterCompatibilityVersion()));
         }
         return data;
@@ -271,17 +271,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getStorageDomainDao(), true);
     }
 
-    public QuotaManager getQuotaManager() {
-        return quotaManager;
-    }
-
-    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
-        return cpuFlagsManagerHandler;
-    }
-
     private List<Quota> searchQuota() {
         List<Quota> quotaList = genericSearch(getDbFacade().getQuotaDao(), true);
-        getQuotaManager().updateUsage(quotaList);
+        quotaManager.updateUsage(quotaList);
         return quotaList;
     }
 
