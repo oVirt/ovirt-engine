@@ -27,8 +27,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     private static final String OPTION_KEY_NFS_DISABLE = "nfs.disable";
     private static final String OPTION_VALUE_OFF = "off";
     private static final List<GlusterVolumeType> replicateVolumeTypes =
-            Arrays.asList(new GlusterVolumeType[] {
-                    GlusterVolumeType.REPLICATE, GlusterVolumeType.DISTRIBUTED_REPLICATE });
+            Arrays.asList(GlusterVolumeType.REPLICATE, GlusterVolumeType.DISTRIBUTED_REPLICATE);
     private GlusterBrickEntity brick = null;
     private Guid clusterId = null;
     private boolean detailRequired = false;
