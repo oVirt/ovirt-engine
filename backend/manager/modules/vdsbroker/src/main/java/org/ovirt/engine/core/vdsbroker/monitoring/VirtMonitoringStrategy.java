@@ -157,7 +157,15 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     }
 
     private boolean hostCompliesWithRngDeviceSources(VDS vds, Cluster cluster) {
-        return vds.getSupportedRngSources().containsAll(cluster.getRequiredRngSources());
+        /*
+         * For purpose of this method 'random' and 'urandom' are considered to be equivalent. It's because vdsm can't
+         * report 'urandom' yet.
+         * This 'hack' can be removed when engine will not be required to work with vdsm that doesn't report 'urandom',
+         * i.e. when engine 4.0 will not be supported.
+         */
+        return vds.getSupportedRngSources().containsAll(cluster.getAdditionalRngSources())
+                && (vds.getSupportedRngSources().contains(VmRngDevice.Source.URANDOM)
+                || vds.getSupportedRngSources().contains(VmRngDevice.Source.RANDOM));
     }
 
     @Override
