@@ -246,7 +246,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
     private void handleTransferring(final StateContext context) {
         // While the transfer is in progress, we're responsible for keeping the transfer
-        // session alive.  The polling interval is user-configurable and grows exponentially,
+        // session alive. The polling interval is user-configurable and grows exponentially,
         // make sure to set it with time to spare.
         if (context.iterationTimestamp
                 >= getParameters().getSessionExpiration() - getHostTicketRefreshAllowance()) {
