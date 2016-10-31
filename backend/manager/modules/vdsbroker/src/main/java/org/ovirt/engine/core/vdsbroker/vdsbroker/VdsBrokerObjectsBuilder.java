@@ -434,9 +434,6 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.acpiEnable)) {
             vm.setAcpiEnable(Boolean.parseBoolean((String) xmlRpcStruct.get(VdsProperties.acpiEnable)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.win2kHackEnable)) {
-            vm.setWin2kHackEnable(Boolean.parseBoolean((String) xmlRpcStruct.get(VdsProperties.win2kHackEnable)));
-        }
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
             vm.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
         }

@@ -1397,14 +1397,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmStatic.setCreatedByUserId(value);
     }
 
-    public boolean isWin2kHackEnable() {
-        return getDynamicData().getWin2kHackEnable();
-    }
-
-    public void setWin2kHackEnable(boolean value) {
-        getDynamicData().setWin2kHackEnable(value);
-    }
-
     /**
      * Check if two Vms are Equal. Current equality rule is: Two Vms are equal when them points to same object or have
      * same vm_guid property

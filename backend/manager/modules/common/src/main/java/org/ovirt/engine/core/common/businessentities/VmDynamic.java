@@ -56,7 +56,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private int guestAgentNicsHash;
     @UnchangeableByVdsm
     private String exitMessage;
-    private boolean win2kHackEnabled;
     private Long lastWatchdogEvent;
     private String lastWatchdogAction;
     @UnchangeableByVdsm
@@ -103,7 +102,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 lastVdsRunOn,
                 exitMessage,
                 exitStatus,
-                win2kHackEnabled,
                 migratingToVds,
                 pauseStatus,
                 runOnVds,
@@ -162,7 +160,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(lastVdsRunOn, other.lastVdsRunOn)
                 && Objects.equals(exitMessage, other.exitMessage)
                 && exitStatus == other.exitStatus
-                && win2kHackEnabled == other.win2kHackEnabled
                 && Objects.equals(migratingToVds, other.migratingToVds)
                 && pauseStatus == other.pauseStatus
                 && Objects.equals(runOnVds, other.runOnVds)
@@ -220,20 +217,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         this.guestAgentNicsHash = guestAgentNicsHash;
     }
 
-    public boolean getWin2kHackEnable() {
-        return win2kHackEnabled;
-    }
-
-    public void setWin2kHackEnable(boolean value) {
-        win2kHackEnabled = value;
-    }
-
     public VmDynamic() {
         id = Guid.Empty;
         status = VMStatus.Down;
         pauseStatus = VmPauseStatus.NONE;
         exitStatus = VmExitStatus.Normal;
-        win2kHackEnabled = false;
         acpiEnabled = true;
         kvmEnable = true;
         session = SessionState.Unknown;
@@ -281,7 +269,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         pauseStatus = template.getPauseStatus();
         guestAgentNicsHash = template.getGuestAgentNicsHash();
         exitMessage = template.getExitMessage();
-        win2kHackEnabled = template.getWin2kHackEnable();
         lastWatchdogEvent = template.getLastWatchdogEvent();
         lastWatchdogAction = template.getLastWatchdogAction();
         runOnce = template.isRunOnce();
@@ -712,7 +699,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setKvmEnable(vm.getKvmEnable());
         setAcpiEnable(vm.getAcpiEnable());
         setGuestCurrentUserName(vm.getGuestCurrentUserName());
-        setWin2kHackEnable(vm.getWin2kHackEnable());
         setUtcDiff(vm.getUtcDiff());
         setExitStatus(vm.getExitStatus());
         setExitMessage(vm.getExitMessage());

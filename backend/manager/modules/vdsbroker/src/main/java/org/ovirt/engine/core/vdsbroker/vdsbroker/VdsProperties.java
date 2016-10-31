@@ -275,7 +275,6 @@ public final class VdsProperties {
     public static final String kvmEnable = "kvmEnable"; // Optional
     public static final String acpiEnable = "acpiEnable"; // Optional
     public static final String BOOT_MENU_ENABLE = "bootMenuEnable";
-    public static final String win2kHackEnable = "win2kHackEnable"; // Optional
     public static final String spiceFileTransferEnable = "fileTransferEnable";
     public static final String spiceCopyPasteEnable = "copyPasteEnable";
     public static final String hypervEnable = "hypervEnable";
