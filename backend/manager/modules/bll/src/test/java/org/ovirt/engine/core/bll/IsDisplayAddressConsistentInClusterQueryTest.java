@@ -2,14 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -20,9 +18,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 // this class contains only tests for the isDisplayAddressPartiallyOverridden method
 @RunWith(Theories.class)
-public class IsDisplayAddressConsistentInClusterQueryTest {
-
-    private IsDisplayAddressConsistentInClusterQuery<IdQueryParameters> command;
+public class IsDisplayAddressConsistentInClusterQueryTest extends
+        AbstractUserQueryTest<IdQueryParameters, IsDisplayAddressConsistentInClusterQuery<IdQueryParameters>> {
 
     // create data point with 1,2,3 and many VDS (all has overridden console address)
     @DataPoints
@@ -42,31 +39,24 @@ public class IsDisplayAddressConsistentInClusterQueryTest {
             new DefaultConsoleAddress(20),
     };
 
-    @SuppressWarnings("unchecked")
-    @Before
-    public void setup() {
-        command = mock(IsDisplayAddressConsistentInClusterQuery.class);
-        when(command.isDisplayAddressPartiallyOverridden(any(List.class))).thenCallRealMethod();
-    }
-
     @Test
     public void nullHostsAreNotMismatched() {
-        assertThat(command.isDisplayAddressPartiallyOverridden(null), is(false));
+        assertThat(getQuery().isDisplayAddressPartiallyOverridden(null), is(false));
     }
 
     @Test
     public void emptyHostsAreNotMismatched() {
-        assertThat(command.isDisplayAddressPartiallyOverridden(new ArrayList<>()), is(false));
+        assertThat(getQuery().isDisplayAddressPartiallyOverridden(new ArrayList<>()), is(false));
     }
 
     @Theory
     public void whenAllHostsAreDefaultTheyAreNotMismatched(DefaultConsoleAddress defaultAddress) {
-        assertThat(command.isDisplayAddressPartiallyOverridden(defaultAddress.getAllVds()), is(false));
+        assertThat(getQuery().isDisplayAddressPartiallyOverridden(defaultAddress.getAllVds()), is(false));
     }
 
     @Theory
     public void whenAllHostsAreOverriddenTheyAreNotMismatched(OverriddenConsoleAddress overriddenAddress) {
-        assertThat(command.isDisplayAddressPartiallyOverridden(overriddenAddress.getAllVds()), is(false));
+        assertThat(getQuery().isDisplayAddressPartiallyOverridden(overriddenAddress.getAllVds()), is(false));
     }
 
     @Theory
@@ -74,7 +64,7 @@ public class IsDisplayAddressConsistentInClusterQueryTest {
         List<VDS> mergedAddresses = new ArrayList<>();
         mergedAddresses.addAll(defaultAddress.getAllVds());
         mergedAddresses.addAll(overriddenAddress.getAllVds());
-        assertThat(command.isDisplayAddressPartiallyOverridden(mergedAddresses), is(true));
+        assertThat(getQuery().isDisplayAddressPartiallyOverridden(mergedAddresses), is(true));
     }
 
 }
