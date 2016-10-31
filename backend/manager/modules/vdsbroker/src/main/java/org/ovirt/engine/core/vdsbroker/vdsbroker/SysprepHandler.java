@@ -171,7 +171,7 @@ public final class SysprepHandler {
         String content = "";
         fileName = ConfigUtil.resolvePath(getSysprepDir(), fileName);
         Path path = Paths.get(fileName);
-        if (Files.exists(path)) {
+        if (path.toFile().exists()) {
             try {
                 content = new String(Files.readAllBytes(path));
             } catch (Exception e) {

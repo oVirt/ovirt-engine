@@ -152,7 +152,7 @@ public class IconLoader {
         for (IconValidator.FileType fileType : IconValidator.FileType.values()) {
             for (String extension : fileType.getExtensions()) {
                 final Path iconPath = dir.resolve(osName + "." + extension);
-                if (Files.exists(iconPath)) {
+                if (iconPath.toFile().exists()) {
                     return new ResolvedIcon(iconPath, fileType);
                 }
             }
