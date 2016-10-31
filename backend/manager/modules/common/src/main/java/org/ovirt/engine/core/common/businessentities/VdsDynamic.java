@@ -839,7 +839,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (powerManagementControlledByPolicy ? 0 : 1);
         result = prime * result + (kdumpStatus == null ? 0 : kdumpStatus.hashCode());
         result = prime * result + (selinuxEnforceMode == null ? 0 : selinuxEnforceMode.hashCode());
-        result = prime * result + (numaNodeList == null ? 0 : numaNodeList.hashCode());
         result = prime * result + autoNumaBalancing.getValue();
         result = prime * result + (numaSupport ? 0 : 1);
         result = prime * result + (liveSnapshotSupport ? 0 : 1);
@@ -914,7 +913,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && kdumpStatus == other.kdumpStatus
                 && ObjectUtils.objectsEqual(selinuxEnforceMode, other.selinuxEnforceMode)
-                && ObjectUtils.objectsEqual(numaNodeList, other.numaNodeList)
                 && autoNumaBalancing.getValue() == other.autoNumaBalancing.getValue()
                 && numaSupport == other.numaSupport)
                 && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines)
