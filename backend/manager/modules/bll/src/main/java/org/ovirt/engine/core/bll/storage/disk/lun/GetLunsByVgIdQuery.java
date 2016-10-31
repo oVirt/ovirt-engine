@@ -25,11 +25,6 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     }
 
     @Override
-    protected void executeCommand() {
-        super.executeCommand();
-    }
-
-    @Override
     protected void executeQueryCommand() {
         List<LUNs> luns = getLunsForVgId(getVgId());
         List<LUNs> nonDummyLuns = new ArrayList<>(luns.size());

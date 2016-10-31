@@ -7,7 +7,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,9 +82,8 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         expectGetConnections();
 
         getQuery().setInternalExecution(true);
-        getQuery().executeCommand();
+        getQuery().executeQueryCommand();
 
-        checkSucceeded(getQuery(), true);
         checkReturnValue();
     }
 
