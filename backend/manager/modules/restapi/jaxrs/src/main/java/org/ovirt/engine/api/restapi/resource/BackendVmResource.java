@@ -647,10 +647,6 @@ public class BackendVmResource
         }
     }
 
-    private Cluster lookupCluster(Guid id) {
-        return getEntity(Cluster.class, VdcQueryType.GetClusterByClusterId, new IdQueryParameters(id), "GetClusterByClusterId");
-    }
-
     private Guid lookupInstanceTypeId(Template template) {
         return template.isSetId() ? asGuid(template.getId()) : lookupInstanceTypeByName(template).getId();
     }
