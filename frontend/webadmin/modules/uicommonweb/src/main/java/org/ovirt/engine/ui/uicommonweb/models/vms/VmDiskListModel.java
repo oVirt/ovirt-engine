@@ -393,14 +393,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             return;
         }
 
-        VM vm = getEntity();
-
         MoveDiskModel model = new MoveDiskModel();
         setWindow(model);
-        if (vm.isRunningAndQualifyForDisksMigration()) {
-            model.setWarningAvailable(true);
-            model.setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationWarning());
-        }
 
         model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
         model.setHelpTag(HelpTag.move_disk);

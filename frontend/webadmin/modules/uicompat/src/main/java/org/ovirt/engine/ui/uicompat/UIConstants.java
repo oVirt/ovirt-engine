@@ -1393,8 +1393,6 @@ public interface UIConstants extends Constants {
 
     String shareableDiskNotSupportedByConfiguration();
 
-    String liveStorageMigrationWarning();
-
     String cannotRemoveBricksReplicateVolume();
 
     String cannotRemoveBricksDistributedReplicateVolume();
