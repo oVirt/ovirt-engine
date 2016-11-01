@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetAllPoolVmsQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetAllPoolVmsQuery<P extends IdQueryParameters> extends GetAllVmsQueryBase<P> {
     public GetAllPoolVmsQuery(P parameters) {
         super(parameters);
     }
@@ -16,12 +16,7 @@ public class GetAllPoolVmsQuery<P extends IdQueryParameters> extends QueriesComm
     }
 
     @Override
-    protected void executeQueryCommand() {
-        List<VM> vmsList = getDbFacade()
-                .getVmDao().getAllForVmPool(getParameters().getId());
-        for (VM vm : vmsList) {
-            VmHandler.updateVmGuestAgentVersion(vm);
-        }
-        getQueryReturnValue().setReturnValue(vmsList);
+    protected List<VM> getVMs() {
+        return vmDao.getAllForVmPool(getParameters().getId());
     }
 }

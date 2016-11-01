@@ -1,0 +1,34 @@
+package org.ovirt.engine.core.bll;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.dao.VmDao;
+
+public abstract class GetAllVmsQueryBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+    @Inject
+    protected VmDao vmDao;
+
+    public GetAllVmsQueryBase(P parameters) {
+        super(parameters);
+    }
+
+    public GetAllVmsQueryBase(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
+    }
+
+    @Override
+    protected void executeQueryCommand() {
+        List<VM> vmsList = getVMs();
+        for (VM vm : vmsList) {
+            VmHandler.updateVmGuestAgentVersion(vm);
+        }
+        getQueryReturnValue().setReturnValue(vmsList);
+    }
+
+    protected abstract List<VM> getVMs();
+}

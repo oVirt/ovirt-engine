@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
-public class GetAllVmsForUserQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetAllVmsForUserQuery<P extends VdcQueryParametersBase> extends GetAllVmsQueryBase<P> {
     public GetAllVmsForUserQuery(P parameters) {
         super(parameters);
     }
@@ -16,12 +16,7 @@ public class GetAllVmsForUserQuery<P extends VdcQueryParametersBase> extends Que
     }
 
     @Override
-    protected void executeQueryCommand() {
-        List<VM> vmsList = getDbFacade()
-                .getVmDao().getAllForUser(getUserID());
-        for (VM vm : vmsList) {
-            VmHandler.updateVmGuestAgentVersion(vm);
-        }
-        getQueryReturnValue().setReturnValue(vmsList);
+    protected List<VM> getVMs() {
+        return vmDao.getAllForUser(getUserID());
     }
 }
