@@ -23,6 +23,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
         setHashName("new_vnic_profile"); //$NON-NLS-1$
         getPortMirroring().setEntity(false);
         getPassthrough().setEntity(false);
+        getMigratable().setEntity(true);
     }
 
     public NewVnicProfileModel(IModel sourceModel, Version dcCompatibilityVersion, Guid dcId) {

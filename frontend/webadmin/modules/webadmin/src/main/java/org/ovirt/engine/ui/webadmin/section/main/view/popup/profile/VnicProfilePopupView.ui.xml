@@ -45,6 +45,11 @@
                     </b:Row>
                     <b:Row>
                         <b:Column size="LG_12">
+                            <ge:EntityModelCheckBoxEditor ui:field="migratableEditor" label="{constants.migratableVnicProfile}" usePatternFly="true" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="LG_12">
                             <ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" label="{constants.portMirroringVnicProfile}" usePatternFly="true" />
                         </b:Column>
                     </b:Row>

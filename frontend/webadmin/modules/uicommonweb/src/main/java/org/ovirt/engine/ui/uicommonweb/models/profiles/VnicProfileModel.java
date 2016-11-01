@@ -47,6 +47,7 @@ public abstract class VnicProfileModel extends Model {
     private EntityModel<String> name;
     private EntityModel<Boolean> portMirroring;
     private EntityModel<Boolean> passthrough;
+    private EntityModel<Boolean> migratable;
     private KeyValueModel customPropertySheet;
     private EntityModel<Boolean> publicUse;
     private EntityModel<String> description;
@@ -83,6 +84,14 @@ public abstract class VnicProfileModel extends Model {
 
     public void setPassthrough(EntityModel<Boolean> value) {
         passthrough = value;
+    }
+
+    public EntityModel<Boolean> getMigratable() {
+        return migratable;
+    }
+
+    public void setMigratable(EntityModel<Boolean> migratable) {
+        this.migratable = migratable;
     }
 
     public KeyValueModel getCustomPropertySheet() {
@@ -155,7 +164,8 @@ public abstract class VnicProfileModel extends Model {
         setNetworkQoS(new ListModel<NetworkQoS>());
         setNetworkFilter(new ListModel<NetworkFilter>());
         setPortMirroring(new EntityModel<Boolean>());
-        setPassthrough(new EntityModel<Boolean>());
+        setPassthrough(new EntityModel<Boolean>(false));
+        setMigratable(new EntityModel<Boolean>(false));
         setCustomPropertySheet(new KeyValueModel());
         EntityModel<Boolean> publicUse = new EntityModel<>();
         publicUse.setEntity(true);
@@ -239,6 +249,9 @@ public abstract class VnicProfileModel extends Model {
                 ? networkFilter.getId() : null);
         vnicProfile.setPortMirroring(getPortMirroring().getEntity());
         vnicProfile.setPassthrough(getPassthrough().getEntity());
+        if (vnicProfile.isPassthrough()) {
+            vnicProfile.setMigratable(getMigratable().getEntity());
+        }
 
         if (customPropertiesVisible) {
             vnicProfile.setCustomProperties(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
@@ -350,10 +363,19 @@ public abstract class VnicProfileModel extends Model {
                             .networkFilterNotChangedIfPassthrough());
                     getNetworkFilter().setIsChangeable(false);
                     getNetworkFilter().setSelectedItem(EMPTY_FILTER);
+                    getMigratable().setIsChangeable(true);
                 } else {
                     getPortMirroring().setIsChangeable(true);
                     getNetworkQoS().setIsChangeable(true);
                     getNetworkFilter().setIsChangeable(true);
+                    getMigratable().setIsChangeable(false);
+
+                    /*
+                     * if passthrough is false, then all vnicprofiles are considered to be migratable. Migratable flag
+                     * then has no meaning and it's unmodifiable. We're setting it to true, to indicate user, that
+                     * !passthrough means that vnicprofile is always considered migratable.
+                     * */
+                    getMigratable().setEntity(true);
                 }
             }
         });

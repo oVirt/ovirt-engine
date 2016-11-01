@@ -1004,6 +1004,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String passthorughVnicProfile();
 
+    String migratableVnicProfile();
+
     String portMirroringVnicProfile();
 
     String publicUseVnicProfile();

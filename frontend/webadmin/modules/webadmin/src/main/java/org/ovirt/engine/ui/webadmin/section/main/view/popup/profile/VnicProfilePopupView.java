@@ -66,6 +66,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     protected EntityModelCheckBoxEditor passthroughEditor;
 
     @UiField(provided = true)
+    @Path("migratable.entity")
+    @WithElementId("migratable")
+    protected EntityModelCheckBoxEditor migratableEditor;
+
+    @UiField(provided = true)
     @Path("portMirroring.entity")
     @WithElementId("portMirroring")
     protected EntityModelCheckBoxEditor portMirroringEditor;
@@ -91,6 +96,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         super(eventBus);
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         passthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        migratableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         portMirroringEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());

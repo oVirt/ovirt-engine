@@ -35,6 +35,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
         getName().setEntity(profile.getName());
         getDescription().setEntity(profile.getDescription());
         getPassthrough().setEntity(getProfile().isPassthrough());
+        getMigratable().setEntity(!getProfile().isPassthrough() || getProfile().isMigratable());
         getPortMirroring().setEntity(getProfile().isPortMirroring());
         getPublicUse().setIsAvailable(false);
 
