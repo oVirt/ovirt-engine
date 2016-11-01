@@ -3,13 +3,13 @@ package org.ovirt.engine.core.bll.storage.pool;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -24,8 +24,11 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
  */
 public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStoragePoolByIdQuery<IdQueryParameters>> {
 
-    private StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
-    private ClusterDao clusterDaoMock = mock(ClusterDao.class);
+    @Mock
+    private StoragePoolDao storagePoolDaoMock;
+
+    @Mock
+    private ClusterDao clusterDaoMock;
 
     @Test
     public void testExecuteQueryWhenAllClustersHaveSameMacPoolAssigned() {
@@ -62,12 +65,5 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryPa
         StoragePool result = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong storage pool returned", expectedResult, result);
         assertThat(result.getMacPoolId(), allClustersUsesSamePool ? is(cluster1Guid) : CoreMatchers.nullValue());
-    }
-
-    @Override
-    protected void initQuery(GetStoragePoolByIdQuery<IdQueryParameters> query) {
-        super.initQuery(query);
-        query.storagePoolDao = this.storagePoolDaoMock;
-        query.clusterDao = this.clusterDaoMock;
     }
 }
