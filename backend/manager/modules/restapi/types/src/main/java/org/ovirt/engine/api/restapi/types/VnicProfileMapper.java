@@ -41,6 +41,10 @@ public class VnicProfileMapper {
         }
         if (model.isSetPassThrough() && model.getPassThrough().isSetMode()) {
             entity.setPassthrough(map(model.getPassThrough().getMode()));
+
+            if (entity.isPassthrough() && model.isSetMigratable()) {
+                entity.setMigratable(model.isMigratable());
+            }
         }
         if (model.isSetNetworkFilter()) {
             if (model.getNetworkFilter().isSetId()) {
@@ -86,6 +90,10 @@ public class VnicProfileMapper {
         if (entity.getNetworkFilterId() != null){
             model.setNetworkFilter(new NetworkFilter());
             model.getNetworkFilter().setId(entity.getNetworkFilterId().toString());
+        }
+
+        if (entity.isPassthrough()) {
+            model.setMigratable(entity.isMigratable());
         }
         return model;
     }
