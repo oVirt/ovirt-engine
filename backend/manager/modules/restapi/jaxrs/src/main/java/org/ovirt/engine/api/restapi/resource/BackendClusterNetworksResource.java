@@ -33,7 +33,7 @@ public class BackendClusterNetworksResource
         validateParameters(network, "id|name");
 
         String networkName = null;
-        List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getNetworks(clusterId);
+        List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getNetworks();
 
         if (network.isSetId()) {
             org.ovirt.engine.core.common.businessentities.network.Network net =
@@ -118,7 +118,7 @@ public class BackendClusterNetworksResource
         return inject(new BackendClusterNetworkResource(id, this));
     }
 
-    private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks(String clusterId) {
+    private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks() {
         Guid dataCenterId =
                 getEntity(Cluster.class,
                         VdcQueryType.GetClusterById,
