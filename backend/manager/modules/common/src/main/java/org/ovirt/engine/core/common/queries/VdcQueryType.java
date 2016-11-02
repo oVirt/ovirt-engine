@@ -477,7 +477,6 @@ public enum VdcQueryType implements Serializable {
     // Labels
     GetAllLabels,
     GetLabelById,
-    GetLabelsByIds,
     GetLabelByEntityId,
 
     // Default type instead of having to null check
