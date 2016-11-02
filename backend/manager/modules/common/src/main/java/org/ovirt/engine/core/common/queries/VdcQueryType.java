@@ -256,7 +256,6 @@ public enum VdcQueryType implements Serializable {
     GetConfigurationValue(VdcQueryAuthType.User),
     GetConfigurationValues(VdcQueryAuthType.User),
     GetFenceConfigurationValue(VdcQueryAuthType.User),
-    GetDefaultTimeZone(VdcQueryAuthType.User),
     GetAvailableStoragePoolVersions(VdcQueryAuthType.User),
     GetAvailableClusterVersionsByStoragePool(VdcQueryAuthType.User),
 
