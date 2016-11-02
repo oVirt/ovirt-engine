@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.nio.charset.StandardCharsets;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.ProxyTicket;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -27,13 +27,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BackendVmGraphicsConsoleResource
-    extends BackendGraphicsConsoleResource
+    extends BackendResource
     implements VmGraphicsConsoleResource {
 
     private static final Logger log = LoggerFactory.getLogger(BackendVmGraphicsConsoleResource.class);
 
+    private BackendVmGraphicsConsolesResource parent;
+    private Guid guid;
+    private String consoleId;
+
     public BackendVmGraphicsConsoleResource(BackendVmGraphicsConsolesResource parent, Guid vmGuid, String consoleId) {
-        super(parent, vmGuid, consoleId);
+        this.parent = parent;
+        this.guid = vmGuid;
+        this.consoleId = consoleId;
     }
 
     /**
@@ -45,10 +51,11 @@ public class BackendVmGraphicsConsoleResource
     @GET
     @Produces({ApiMediaType.APPLICATION_X_VIRT_VIEWER})
     public Response generateDescriptor() {
-        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType();
+        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType =
+            BackendGraphicsConsoleHelper.asGraphicsType(this, consoleId);
 
         ConsoleOptions consoleOptions = new ConsoleOptions(graphicsType);
-        consoleOptions.setVmId(getGuid());
+        consoleOptions.setVmId(guid);
         VdcQueryReturnValue configuredOptionsReturnValue = runQuery(VdcQueryType.ConfigureConsoleOptions,
                 new ConfigureConsoleOptionsParams(consoleOptions, true));
         if (!configuredOptionsReturnValue.getSucceeded()) {
@@ -80,7 +87,7 @@ public class BackendVmGraphicsConsoleResource
 
     @Override
     public Response proxyTicket(Action action) {
-        final String plainConsoleId = HexUtils.hex2string(getConsoleId());
+        final String plainConsoleId = HexUtils.hex2string(consoleId);
         final GraphicsType graphicsTypeModel = GraphicsType.fromValue(plainConsoleId);
         final org.ovirt.engine.core.common.businessentities.GraphicsType graphicsTypeEntity =
                 VmMapper.map(graphicsTypeModel, null);
@@ -95,7 +102,7 @@ public class BackendVmGraphicsConsoleResource
 
     private String getTicket(org.ovirt.engine.core.common.businessentities.GraphicsType graphicsTypeEntity) {
         final GetSignedWebsocketProxyTicketParams params =
-                new GetSignedWebsocketProxyTicketParams(getGuid(), graphicsTypeEntity);
+                new GetSignedWebsocketProxyTicketParams(guid, graphicsTypeEntity);
         final VdcQueryReturnValue ticketQueryReturnValue =
                 runQuery(VdcQueryType.GetSignedWebsocketProxyTicket, params);
         if (!ticketQueryReturnValue.getSucceeded()) {
@@ -111,5 +118,15 @@ public class BackendVmGraphicsConsoleResource
     @Override
     public ActionResource getActionResource(String action, String oid) {
         return inject(new BackendActionResource(action, oid));
+    }
+
+    @Override
+    public GraphicsConsole get() {
+        return BackendGraphicsConsoleHelper.get(parent::list, consoleId);
+    }
+
+    @Override
+    public Response remove() {
+        return BackendGraphicsConsoleHelper.remove(this, guid, consoleId);
     }
 }

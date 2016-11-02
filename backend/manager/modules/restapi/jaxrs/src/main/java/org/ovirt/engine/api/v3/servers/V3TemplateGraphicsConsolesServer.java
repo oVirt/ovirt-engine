@@ -24,14 +24,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
+import org.ovirt.engine.api.resource.TemplateGraphicsConsolesResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3GraphicsConsole;
 import org.ovirt.engine.api.v3.types.V3GraphicsConsoles;
 
 @Produces({"application/xml", "application/json"})
-public class V3VmGraphicsConsolesServer extends V3Server<VmGraphicsConsolesResource> {
-    public V3VmGraphicsConsolesServer(VmGraphicsConsolesResource delegate) {
+public class V3TemplateGraphicsConsolesServer extends V3Server<TemplateGraphicsConsolesResource> {
+    public V3TemplateGraphicsConsolesServer(TemplateGraphicsConsolesResource delegate) {
         super(delegate);
     }
 
@@ -47,7 +47,7 @@ public class V3VmGraphicsConsolesServer extends V3Server<VmGraphicsConsolesResou
     }
 
     @Path("{id}")
-    public V3VmGraphicsConsoleServer getConsoleResource(@PathParam("id") String id) {
-        return new V3VmGraphicsConsoleServer(getDelegate().getConsoleResource(id));
+    public V3TemplateGraphicsConsoleServer getConsoleResource(@PathParam("id") String id) {
+        return new V3TemplateGraphicsConsoleServer(getDelegate().getConsoleResource(id));
     }
 }

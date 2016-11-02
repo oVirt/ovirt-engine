@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -12,10 +11,10 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.TemplateCdromsResource;
 import org.ovirt.engine.api.resource.TemplateDiskAttachmentsResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
+import org.ovirt.engine.api.resource.TemplateGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.TemplateNicsResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplateWatchdogsResource;
@@ -209,7 +208,7 @@ public class BackendTemplateResource
     }
 
     @Override
-    public GraphicsConsolesResource getGraphicsConsolesResource() {
+    public TemplateGraphicsConsolesResource getGraphicsConsolesResource() {
         return inject(new BackendTemplateGraphicsConsolesResource(guid));
     }
 

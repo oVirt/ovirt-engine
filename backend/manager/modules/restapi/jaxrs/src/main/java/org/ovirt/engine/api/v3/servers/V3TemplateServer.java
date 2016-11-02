@@ -82,8 +82,8 @@ public class V3TemplateServer extends V3Server<TemplateResource> {
     }
 
     @Path("graphicsconsoles")
-    public V3GraphicsConsolesServer getGraphicsConsolesResource() {
-        return new V3GraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
+    public V3TemplateGraphicsConsolesServer getGraphicsConsolesResource() {
+        return new V3TemplateGraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
     }
 
     @Path("cdroms")

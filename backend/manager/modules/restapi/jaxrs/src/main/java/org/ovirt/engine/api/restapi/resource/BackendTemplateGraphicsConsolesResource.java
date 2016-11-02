@@ -1,53 +1,77 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.GraphicsConsole;
+import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.resource.GraphicsConsoleResource;
+import org.ovirt.engine.api.resource.TemplateGraphicsConsolesResource;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateGraphicsConsolesResource
-        extends BackendGraphicsConsolesResource<VmTemplate> {
+    extends AbstractBackendCollectionResource<GraphicsConsole, VmTemplate>
+    implements TemplateGraphicsConsolesResource {
+
+    private final Guid guid;
 
     public BackendTemplateGraphicsConsolesResource(Guid guid) {
-        super(guid, VmTemplate.class);
+        super(GraphicsConsole.class, VmTemplate.class);
+        this.guid = guid;
     }
 
     @Override
-    protected Map<GraphicsType, GraphicsInfo> extractGraphicsInofs(VmTemplate vm) {
-        // no runtime info for template
-        return new HashMap<>();
+    public GraphicsConsoles list() {
+        GraphicsConsoles consoles = new GraphicsConsoles();
+        VmTemplate entity = loadEntity();
+
+        BackendGraphicsConsoleHelper.list(this, guid).entrySet()
+            .forEach(graphicsInfo ->
+                consoles.getGraphicsConsoles().add(addLinks(populate(VmMapper.map(graphicsInfo, null), entity)))
+            );
+
+        return consoles;
     }
 
     @Override
+    public Response add(GraphicsConsole console) {
+        GraphicsDevice device = getMapper(GraphicsConsole.class, GraphicsDevice.class).map(console, null);
+        device.setVmId(guid);
+        VdcReturnValueBase res = doCreateEntity(VdcActionType.AddGraphicsDevice, createAddGraphicsDeviceParams(device));
+
+        if (res != null && res.getSucceeded()) {
+            return BackendGraphicsConsoleHelper.find(console, this::list);
+        }
+
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
+    }
+
     protected VmTemplate loadEntity() {
         return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate,
-                new GetVmTemplateParameters(getGuid()), getGuid().toString(), true);
+                new GetVmTemplateParameters(guid), guid.toString(), true);
     }
 
-    @Override
     protected GraphicsParameters createAddGraphicsDeviceParams(GraphicsDevice device) {
-        return super.createAddGraphicsDeviceParams(device).setVm(false);
+        return new GraphicsParameters(device).setVm(false);
     }
 
     @Override
-    public GraphicsConsoleResource getConsoleResource(String id) {
-        return inject(new BackendGraphicsConsoleResource(this, getGuid(), id));
+    public BackendTemplateGraphicsConsoleResource getConsoleResource(String id) {
+        return inject(new BackendTemplateGraphicsConsoleResource(this, guid, id));
     }
 
     @Override
     protected GraphicsConsole addParents(GraphicsConsole model) {
         model.setTemplate(new Template());
-        model.getTemplate().setId(getGuid().toString());
+        model.getTemplate().setId(guid.toString());
         return model;
     }
 }

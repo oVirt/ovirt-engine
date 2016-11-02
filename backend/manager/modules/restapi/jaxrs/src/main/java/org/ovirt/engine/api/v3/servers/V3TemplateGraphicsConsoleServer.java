@@ -21,13 +21,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.GraphicsConsoleResource;
+import org.ovirt.engine.api.resource.TemplateGraphicsConsoleResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3GraphicsConsole;
 
 @Produces({"application/xml", "application/json"})
-public class V3GraphicsConsoleServer extends V3Server<GraphicsConsoleResource> {
-    public V3GraphicsConsoleServer(GraphicsConsoleResource delegate) {
+public class V3TemplateGraphicsConsoleServer extends V3Server<TemplateGraphicsConsoleResource> {
+    public V3TemplateGraphicsConsoleServer(TemplateGraphicsConsoleResource delegate) {
         super(delegate);
     }
 

@@ -62,8 +62,8 @@ public class V3InstanceTypeServer extends V3Server<InstanceTypeResource> {
     }
 
     @Path("graphicsconsoles")
-    public V3GraphicsConsolesServer getGraphicsConsolesResource() {
-        return new V3GraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
+    public V3InstanceTypeGraphicsConsolesServer getGraphicsConsolesResource() {
+        return new V3InstanceTypeGraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
     }
 
     @Path("creation_status/{oid}")

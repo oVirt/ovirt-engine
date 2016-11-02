@@ -23,7 +23,7 @@ import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.GraphicsConsolesResource;
+import org.ovirt.engine.api.resource.InstanceTypeGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.InstanceTypeNicsResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.InstanceTypeWatchdogsResource;
@@ -131,7 +131,7 @@ public class BackendInstanceTypeResource
     }
 
     @Override
-    public GraphicsConsolesResource getGraphicsConsolesResource() {
+    public InstanceTypeGraphicsConsolesResource getGraphicsConsolesResource() {
         return inject(new BackendInstanceTypeGraphicsConsolesResource(guid));
     }
 
