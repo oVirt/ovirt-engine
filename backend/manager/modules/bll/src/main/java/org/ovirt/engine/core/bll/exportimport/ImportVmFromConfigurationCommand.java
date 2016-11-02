@@ -40,13 +40,13 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
-    VM vmFromConfiguration;
+    private VM vmFromConfiguration;
 
     @Inject
     private OvfHelper ovfHelper;
 
     @Inject
-    ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
 
     @Inject
     private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;

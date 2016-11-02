@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportedNetworkInfoUpdaterTest {
@@ -37,12 +39,13 @@ public class ImportedNetworkInfoUpdaterTest {
     private NetworkDao mockNetworkDao;
 
     @Mock
-    private TargetVnicProfileFinder mockTargetVnicProfileFinder;
+    private VnicProfileDao mockVnicProfileDao;
+
+    @Mock
+    private ExternalVnicProfileMappingFinder mockExternalVnicProfileMappingFinder;
 
     @Mock
     private VmNetworkInterface mockVmNetworkInterface;
-
-    private VnicProfile vnicProfile;
 
     private List<ExternalVnicProfileMapping> externalVnicProfileMappings;
     private Network targetNetwork;
@@ -50,7 +53,7 @@ public class ImportedNetworkInfoUpdaterTest {
     @Before
     public void setUp() {
         externalVnicProfileMappings = new ArrayList<>();
-        vnicProfile = new VnicProfile();
+        VnicProfile vnicProfile = new VnicProfile();
         vnicProfile.setId(VNIC_PROFILE_ID);
         vnicProfile.setName(VNIC_PROFILE_NAME);
         vnicProfile.setNetworkId(TARGET_NETWORK_ID);
@@ -60,13 +63,20 @@ public class ImportedNetworkInfoUpdaterTest {
 
         when(mockVmNetworkInterface.getNetworkName()).thenReturn(EXTERNAL_NETWORK_NAME);
         when(mockVmNetworkInterface.getVnicProfileName()).thenReturn(VNIC_PROFILE_NAME);
+        when(mockVnicProfileDao.get(VNIC_PROFILE_ID)).thenReturn(vnicProfile);
     }
 
     @Test
     public void testUpdateNetworkInfoMappingNotFound() {
+        when(mockExternalVnicProfileMappingFinder.findMappingEntry(
+                EXTERNAL_NETWORK_NAME,
+                VNIC_PROFILE_NAME,
+                externalVnicProfileMappings))
+                .thenReturn(Optional.empty());
+
         underTest.updateNetworkInfo(mockVmNetworkInterface, externalVnicProfileMappings);
 
-        verify(mockTargetVnicProfileFinder).findTargetVnicProfile(EXTERNAL_NETWORK_NAME,
+        verify(mockExternalVnicProfileMappingFinder).findMappingEntry(EXTERNAL_NETWORK_NAME,
                 VNIC_PROFILE_NAME,
                 externalVnicProfileMappings);
         verify(mockVmNetworkInterface, never()).setVnicProfileId(any());
@@ -76,20 +86,42 @@ public class ImportedNetworkInfoUpdaterTest {
 
     @Test
     public void testUpdateNetworkInfo() {
-        when(mockTargetVnicProfileFinder.findTargetVnicProfile(
+        when(mockExternalVnicProfileMappingFinder.findMappingEntry(
                 EXTERNAL_NETWORK_NAME,
                 VNIC_PROFILE_NAME,
                 externalVnicProfileMappings))
-                .thenReturn(vnicProfile);
+                .thenReturn(Optional.of(createMappingEntry(VNIC_PROFILE_ID)));
         when(mockNetworkDao.get(TARGET_NETWORK_ID)).thenReturn(targetNetwork);
 
         underTest.updateNetworkInfo(mockVmNetworkInterface, externalVnicProfileMappings);
 
-        verify(mockTargetVnicProfileFinder).findTargetVnicProfile(EXTERNAL_NETWORK_NAME,
+        verify(mockExternalVnicProfileMappingFinder).findMappingEntry(EXTERNAL_NETWORK_NAME,
                 VNIC_PROFILE_NAME,
                 externalVnicProfileMappings);
         verify(mockVmNetworkInterface).setVnicProfileId(VNIC_PROFILE_ID);
         verify(mockVmNetworkInterface).setVnicProfileName(VNIC_PROFILE_NAME);
         verify(mockVmNetworkInterface).setNetworkName(TARGET_NETWORK_NAME);
+    }
+
+    @Test
+    public void testUpdateNetworkInfoMappedToEmpty() {
+        when(mockExternalVnicProfileMappingFinder.findMappingEntry(
+                EXTERNAL_NETWORK_NAME,
+                VNIC_PROFILE_NAME,
+                externalVnicProfileMappings))
+                .thenReturn(Optional.of(createMappingEntry(null)));
+
+        underTest.updateNetworkInfo(mockVmNetworkInterface, externalVnicProfileMappings);
+
+        verify(mockExternalVnicProfileMappingFinder).findMappingEntry(EXTERNAL_NETWORK_NAME,
+                VNIC_PROFILE_NAME,
+                externalVnicProfileMappings);
+        verify(mockVmNetworkInterface).setVnicProfileId(null);
+        verify(mockVmNetworkInterface).setVnicProfileName(null);
+        verify(mockVmNetworkInterface).setNetworkName(null);
+    }
+
+    private ExternalVnicProfileMapping createMappingEntry(Guid vnicProfileId) {
+        return new ExternalVnicProfileMapping(null, null, vnicProfileId);
     }
 }
