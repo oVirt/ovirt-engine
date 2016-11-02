@@ -135,6 +135,8 @@ class ConfigEnv(object):
     VMCONSOLE_PROXY_PORT = \
         'OVESETUP_VMCONSOLE_PROXY_CONFIG/vmconsoleProxyPort'
 
+    VMCONSOLE_PROXY_STOP_NEEDED = 'OVESETUP_CONFIG/vmconsoleProxyStopNeeded'
+
     @osetupattrs(
         answerfile=True,
         summary=True,
@@ -151,5 +153,6 @@ class ConfigEnv(object):
 class SystemEnv(object):
     USER_VMCONSOLE = 'OVESETUP_SYSTEM/userVmConsole'
     GROUP_VMCONSOLE = 'OVESETUP_SYSTEM/groupVmConsole'
+
 
 # vim: expandtab tabstop=4 shiftwidth=4

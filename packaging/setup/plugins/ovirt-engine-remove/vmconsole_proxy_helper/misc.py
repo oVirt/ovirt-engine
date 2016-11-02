@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2015 Red Hat, Inc.
+# Copyright (C) 2013-2016 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,28 +16,20 @@
 #
 
 
-"""vmconsole proxy plugin."""
+"""VMConsole proxy plugin."""
 
-
-import gettext
 
 from otopi import plugin
 from otopi import util
+
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
 
 
-def _(m):
-    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
-
-
 @util.export
 class Plugin(plugin.PluginBase):
-    """vmconsole proxy configuration plugin."""
-
-    def __init__(self, context):
-        super(Plugin, self).__init__(context=context)
+    """vmconsole helper plugin."""
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -49,29 +41,33 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        after=(
+            osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        ),
     )
-    def _setup(self):
-        self.environment[
-            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-        ].append(ovmpcons)
+    def _customization(self):
+        if self.environment[
+            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+        ]:
+            self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_STOP_NEEDED
+            ] = True
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
-        condition=lambda self: not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ] and self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_STOP_NEEDED
-        ],
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: (
+            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] and
+            self.environment[ovmpcons.ConfigEnv.VMCONSOLE_PROXY_STOP_NEEDED]
+        ),
     )
-    def _transactionBegin(self):
+    def _misc(self):
         if self.services.exists(
-            name=ovmpcons.Const.VMCONSOLE_PROXY_SERVICE_NAME,
+            name=ovmpcons.Const.VMCONSOLE_PROXY_SERVICE_NAME
         ):
-            self.logger.info(_('Stopping vmconsole-proxy service'))
-            self.services.state(
+            self.services.startup(
                 name=ovmpcons.Const.VMCONSOLE_PROXY_SERVICE_NAME,
-                state=False
+                state=False,
             )
 
 

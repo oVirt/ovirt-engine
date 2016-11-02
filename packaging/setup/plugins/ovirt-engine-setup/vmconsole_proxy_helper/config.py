@@ -124,6 +124,12 @@ class Plugin(plugin.PluginBase):
                     prompt=True,
                     default=True,
                 )
+            if self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+            ]:
+                self.environment[
+                    ovmpcons.ConfigEnv.VMCONSOLE_PROXY_STOP_NEEDED
+                ] = True
         else:
             self.logger.info(_(
                 'Deploying VM Console Proxy on a separate '
