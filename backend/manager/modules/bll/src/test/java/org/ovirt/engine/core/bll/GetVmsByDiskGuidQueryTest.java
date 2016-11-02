@@ -19,7 +19,7 @@ import org.ovirt.engine.core.dao.VmDao;
  * It tests that flow (i.e., that the query delegates properly to the Dao}).
  * The internal workings of the Dao are not tested.
  */
-public class GetVmsByImageGuidQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByDiskGuidQuery<IdQueryParameters>> {
+public class GetVmsByDiskGuidQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByDiskGuidQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
