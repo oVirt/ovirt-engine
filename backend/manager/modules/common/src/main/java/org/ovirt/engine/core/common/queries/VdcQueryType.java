@@ -287,7 +287,6 @@ public enum VdcQueryType implements Serializable {
     // Multi Level Administration queries
     GetAllRoles(VdcQueryAuthType.User),
     GetRoleById(VdcQueryAuthType.User),
-    GetRoleByName,
     GetPermissionById(VdcQueryAuthType.User),
     GetPermissionByRoleId,
     HasAdElementReconnectPermission(VdcQueryAuthType.User),
