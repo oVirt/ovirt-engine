@@ -74,6 +74,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -431,8 +432,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
-    public static boolean checkCpuSockets(int num_of_sockets, int cpu_per_socket, int threadsPerCpu,
-                                          String compatibility_version, List<String> validationMessages) {
+    public static boolean checkCpuSockets(VmBase vmBase, String compatibility_version, List<String> validationMessages) {
+        int num_of_sockets = vmBase.getNumOfSockets();
+        int cpu_per_socket = vmBase.getCpuPerSocket();
+        int threadsPerCpu = vmBase.getThreadsPerCpu();
+
         if ((num_of_sockets * cpu_per_socket * threadsPerCpu) >
                 Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, compatibility_version)) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU.toString());
@@ -763,8 +767,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean checkCpuSockets() {
-        return AddVmCommand.checkCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
-                getParameters().getVmStaticData().getCpuPerSocket(), getParameters().getVmStaticData().getThreadsPerCpu(),
+        return AddVmCommand.checkCpuSockets(getParameters().getVmStaticData(),
                 getEffectiveCompatibilityVersion().toString(), getReturnValue().getValidationMessages());
     }
 

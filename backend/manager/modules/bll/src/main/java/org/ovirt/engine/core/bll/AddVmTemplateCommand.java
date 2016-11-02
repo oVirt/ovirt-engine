@@ -449,8 +449,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
-                getParameters().getMasterVm().getCpuPerSocket(), getParameters().getMasterVm().getThreadsPerCpu(),
+        return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm(),
                 getVm().getCompatibilityVersion().toString(), getReturnValue().getValidationMessages());
     }
 

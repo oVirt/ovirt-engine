@@ -66,9 +66,7 @@ public class ChangeVmClusterValidator {
 
             // Check if VM static parameters are compatible for new cluster.
             boolean isCpuSocketsValid = AddVmCommand.checkCpuSockets(
-                    vm.getStaticData().getNumOfSockets(),
-                    vm.getStaticData().getCpuPerSocket(),
-                    vm.getStaticData().getThreadsPerCpu(),
+                    vm.getStaticData(),
                     vmCompatibilityVersion.getValue(),
                     parentCommand.getReturnValue().getValidationMessages());
             if (!isCpuSocketsValid) {

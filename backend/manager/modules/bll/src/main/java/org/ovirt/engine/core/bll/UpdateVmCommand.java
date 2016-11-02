@@ -744,9 +744,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!AddVmCommand.checkCpuSockets(
-                vmFromParams.getNumOfSockets(),
-                vmFromParams.getCpuPerSocket(),
-                vmFromParams.getThreadsPerCpu(),
+                vmFromParams.getStaticData(),
                 getEffectiveCompatibilityVersion().toString(),
                 getReturnValue().getValidationMessages())) {
             return false;
