@@ -39,16 +39,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     @Test
     public void testGeneralQuotaLimitations() throws Exception {
         // Set new Quota definition.
-        Quota quota = new Quota();
-        Guid quotaId = Guid.newGuid();
-        quota.setId(quotaId);
-        quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
-        quota.setQuotaName("Watson");
-        quota.setDescription("General quota");
-        quota.setThresholdClusterPercentage(80);
-        quota.setThresholdStoragePercentage(80);
-        quota.setGraceClusterPercentage(20);
-        quota.setGraceStoragePercentage(20);
+        Quota quota = createGeneralQuota();
         setQuotaGlobalLimitations(quota);
         quota.setQuotaClusters(getQuotaCluster(null));
         quota.setQuotaStorages(getQuotaStorage(null));
@@ -65,18 +56,9 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     @Test
     public void testSpecificQuotaLimitations() throws Exception {
         // Set new Quota definition.
-        Quota quota = new Quota();
-        Guid quotaId = Guid.newGuid();
-        quota.setId(quotaId);
-        quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
-        quota.setQuotaName("Watson");
-        quota.setDescription("Specific quota");
-        quota.setThresholdClusterPercentage(80);
-        quota.setThresholdStoragePercentage(80);
-        quota.setGraceClusterPercentage(20);
-        quota.setGraceStoragePercentage(20);
-        quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quotaId)));
-        quota.setQuotaStorages(getQuotaStorage(getSpecificQuotaStorage(quotaId)));
+        Quota quota = createGeneralQuota();
+        quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quota.getId())));
+        quota.setQuotaStorages(getQuotaStorage(getSpecificQuotaStorage(quota.getId())));
         dao.save(quota);
 
         Quota quotaEntity = dao.getById(quota.getId());
@@ -87,17 +69,8 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     @Test
     public void testSpecificAndGeneralQuotaLimitations() throws Exception {
         // Set new Quota definition.
-        Quota quota = new Quota();
-        Guid quotaId = Guid.newGuid();
-        quota.setId(quotaId);
-        quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
-        quota.setQuotaName("Watson");
-        quota.setDescription("General and specific quota");
-        quota.setThresholdClusterPercentage(80);
-        quota.setThresholdStoragePercentage(80);
-        quota.setGraceClusterPercentage(20);
-        quota.setGraceStoragePercentage(20);
-        quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quotaId)));
+        Quota quota = createGeneralQuota();
+        quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quota.getId())));
         quota.setQuotaStorages(getQuotaStorage(null));
         quota.setGlobalQuotaStorage(new QuotaStorage(null, null, null, 10000L, 0d));
         dao.save(quota);
@@ -601,5 +574,19 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
         quota.setGlobalQuotaStorage(quotaStorage);
         quota.setGlobalQuotaCluster(quotaCluster);
+    }
+
+    private static Quota createGeneralQuota() {
+        Quota quota = new Quota();
+        Guid quotaId = Guid.newGuid();
+        quota.setId(quotaId);
+        quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
+        quota.setQuotaName("Watson");
+        quota.setDescription("General quota");
+        quota.setThresholdClusterPercentage(80);
+        quota.setThresholdStoragePercentage(80);
+        quota.setGraceClusterPercentage(20);
+        quota.setGraceStoragePercentage(20);
+        return quota;
     }
 }
