@@ -5,12 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -25,11 +26,18 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * the Daos, and just tests the flow of the query itself.
  */
 public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {
+    @Mock
     private SnapshotDao snapshotDaoMock;
     private Guid existingSnapshotId = Guid.newGuid();
     private Guid existingVmId = Guid.newGuid();
     private Snapshot existingSnapshot;
+
+    @Spy
+    @InjectMocks
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
+
+    @Mock
+    private SnapshotsManager snapshotsManager;
 
     private static final String EXISTING_VM_NAME = "Dummy configuration";
 
@@ -40,10 +48,6 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
 
         existingSnapshot = createSnapshot(existingSnapshotId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration
-        snapshotVmConfigurationHelper = spy(new SnapshotVmConfigurationHelper());
-        when(getQuery().getSnapshotVmConfigurationHelper()).thenReturn(snapshotVmConfigurationHelper);
-        SnapshotsManager snapshotsManager = mock(SnapshotsManager.class);
-        when(snapshotVmConfigurationHelper.getSnapshotManager()).thenReturn(snapshotsManager);
         setUpDaoMocks();
     }
 
@@ -56,8 +60,6 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     }
 
     private void setUpDaoMocks() {
-        snapshotDaoMock = mock(SnapshotDao.class);
-        doReturn(snapshotDaoMock).when(getQuery()).getSnapshotDao();
         when(snapshotDaoMock.get(existingSnapshotId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(existingSnapshot);
     }
 

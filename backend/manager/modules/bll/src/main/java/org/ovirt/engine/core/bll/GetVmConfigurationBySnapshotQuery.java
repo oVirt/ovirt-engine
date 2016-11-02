@@ -30,8 +30,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> exte
 
     @Override
     protected void executeQueryCommand() {
-        SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = getSnapshotVmConfigurationHelper();
-        Snapshot snapshot = getSnapshotDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        Snapshot snapshot = snapshotDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         VM vm = null;
 
         if (snapshot == null) {
@@ -44,13 +43,4 @@ public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> exte
 
         getQueryReturnValue().setReturnValue(vm);
     }
-
-    protected SnapshotDao getSnapshotDao() {
-        return snapshotDao;
-    }
-
-    protected SnapshotVmConfigurationHelper getSnapshotVmConfigurationHelper() {
-        return snapshotVmConfigurationHelper;
-    }
-
 }
