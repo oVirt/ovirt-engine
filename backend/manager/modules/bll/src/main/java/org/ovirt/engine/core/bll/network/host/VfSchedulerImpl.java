@@ -177,7 +177,7 @@ public class VfSchedulerImpl implements VfScheduler {
                 usedVfsByNic = new ArrayList<>();
                 nicToUsedVfs.put(nic.getId(), usedVfsByNic);
             }
-            usedVfsByNic.add(freeVf.getDeviceName());       //TODO MMUCHA: Dear code reviewer! this seems inconsistent. Here we're using 'freeVf.getDeviceName()' (note: which will get into skipVfs collection on line #154), while on #122 we use: 'skipVfs.add(freeVf.getName());' Is it correct / shouldn't we use always the same method? Please advise.
+            usedVfsByNic.add(freeVf.getName());
 
             return freeVf;
         }

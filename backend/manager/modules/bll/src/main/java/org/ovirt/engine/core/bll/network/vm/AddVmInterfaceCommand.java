@@ -65,7 +65,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             });
 
             if (getInterface().isPlugged()) {
-                succeeded = activateOrDeactivateNewNic(getInterface(), PlugAction.PLUG);
+                succeeded = activateNewNic(getInterface());
             } else {
                 succeeded = true;
             }
@@ -75,6 +75,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 macPool.freeMac(getMacAddress());
             }
         }
+    }
+
+    private boolean activateNewNic(VmNic vmNic) {
+        return activateOrDeactivateNic(vmNic, PlugAction.PLUG, true);
     }
 
     private void addInterfaceDeviceToDb() {

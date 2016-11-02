@@ -142,6 +142,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         return true;
     }
 
+    private boolean activateOrDeactivateExistingNic(VmNic nic, PlugAction plugAction) {
+        return activateOrDeactivateNic(nic, plugAction, false);
+    }
+
     private boolean propertiesRequiringVmUpdateDeviceWereUpdated() {
         return !Objects.equals(oldIface.getVnicProfileId(), getInterface().getVnicProfileId())
                 || oldIface.isLinked() != getInterface().isLinked();

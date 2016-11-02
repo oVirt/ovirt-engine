@@ -26,23 +26,15 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
-    public AbstractVmInterfaceCommand(T parameters, CommandContext cmdContext) {
+    protected AbstractVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
-    public AbstractVmInterfaceCommand(Guid commandId) {
+    protected AbstractVmInterfaceCommand(Guid commandId) {
         super(commandId);
     }
 
-    protected boolean activateOrDeactivateNewNic(VmNic nic, PlugAction plugAction) {
-        return activateOrDeactivateNic(nic, plugAction, true);
-    }
-
-    protected boolean activateOrDeactivateExistingNic(VmNic nic, PlugAction plugAction) {
-        return activateOrDeactivateNic(nic, plugAction, false);
-    }
-
-    private boolean activateOrDeactivateNic(VmNic nic, PlugAction plugAction, boolean newNic) {
+    protected boolean activateOrDeactivateNic(VmNic nic, PlugAction plugAction, boolean newNic) {
         ActivateDeactivateVmNicParameters parameters = new ActivateDeactivateVmNicParameters(nic, plugAction, newNic);
         parameters.setVmId(getParameters().getVmId());
 

@@ -94,11 +94,12 @@ public class SchedulingManager implements BackendService {
     private NetworkDeviceHelper networkDeviceHelper;
     @Inject
     private HostDeviceManager hostDeviceManager;
-
-    private PendingResourceManager pendingResourceManager;
-
     @Inject
     private ExternalSchedulerBroker externalBroker;
+    @Inject
+    private VfScheduler vfScheduler;
+
+    private PendingResourceManager pendingResourceManager;
 
     /**
      * [policy id, policy] map
@@ -329,20 +330,17 @@ public class SchedulingManager implements BackendService {
 
             Optional<Guid> bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
             if (bestHost.isPresent()) {
-                getPendingResourceManager().addPending(new PendingCpuCores(bestHost.get(), vm, vm.getNumOfCpus()));
+                Guid bestHostId = bestHost.get();
+                getPendingResourceManager().addPending(new PendingCpuCores(bestHostId, vm, vm.getNumOfCpus()));
 
-                VDS bestHostEntity = vdsList.stream().filter(vds -> vds.getId().equals(bestHost.get())).findFirst().get();
+                VDS bestHostEntity = vdsList.stream().filter(vds -> vds.getId().equals(bestHostId)).findFirst().get();
 
-                getPendingResourceManager().addPending(new PendingMemory(bestHost.get(), vm, bestHostEntity.getGuestOverhead()));
-                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHost.get(), vm, vm.getMemSizeMb()));
-                getPendingResourceManager().addPending(new PendingVM(bestHost.get(), vm));
-                getPendingResourceManager().notifyHostManagers(bestHost.get());
+                getPendingResourceManager().addPending(new PendingMemory(bestHostId, vm, bestHostEntity.getGuestOverhead()));
+                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHostId, vm, vm.getMemSizeMb()));
+                getPendingResourceManager().addPending(new PendingVM(bestHostId, vm));
+                getPendingResourceManager().notifyHostManagers(bestHostId);
 
-                VfScheduler vfScheduler = Injector.get(VfScheduler.class);
-                Map<Guid, String> passthroughVnicToVfMap = vfScheduler.getVnicToVfMap(vm.getId(), bestHost.get());
-                if (passthroughVnicToVfMap != null && !passthroughVnicToVfMap.isEmpty()) {
-                    markVfsAsUsedByVm(bestHost.get(), vm.getId(), passthroughVnicToVfMap);
-                }
+                markVfsAsUsedByVm(vm, bestHostId);
             }
 
             return bestHost;
@@ -372,12 +370,17 @@ public class SchedulingManager implements BackendService {
         clusterLockMap.putIfAbsent(cluster, new Semaphore(1));
     }
 
-    private void markVfsAsUsedByVm(Guid hostId, Guid vmId, Map<Guid, String> passthroughVnicToVfMap) {
+    private void markVfsAsUsedByVm(@NotNull VM vm, Guid bestHostId) {
+        Map<Guid, String> passthroughVnicToVfMap = vfScheduler.getVnicToVfMap(vm.getId(), bestHostId);
+        if (passthroughVnicToVfMap == null || passthroughVnicToVfMap.isEmpty()) {
+            return;
+        }
+
         try {
-            hostDeviceManager.acquireHostDevicesLock(hostId);
-            networkDeviceHelper.setVmIdOnVfs(hostId, vmId, new HashSet<>(passthroughVnicToVfMap.values()));
+            hostDeviceManager.acquireHostDevicesLock(bestHostId);
+            networkDeviceHelper.setVmIdOnVfs(bestHostId, vm.getId(), new HashSet<>(passthroughVnicToVfMap.values()));
         } finally {
-            hostDeviceManager.releaseHostDevicesLock(hostId);
+            hostDeviceManager.releaseHostDevicesLock(bestHostId);
         }
     }
 
