@@ -119,11 +119,7 @@ public class BackendClusterNetworksResource
     }
 
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks() {
-        Guid dataCenterId =
-                getEntity(Cluster.class,
-                        VdcQueryType.GetClusterById,
-                        new IdQueryParameters(asGuid(clusterId)),
-                        null).getStoragePoolId();
+        Guid dataCenterId = getCluster().getStoragePoolId();
         IdQueryParameters params = new IdQueryParameters(dataCenterId);
         return getBackendCollection(VdcQueryType.GetAllNetworks, params);
     }

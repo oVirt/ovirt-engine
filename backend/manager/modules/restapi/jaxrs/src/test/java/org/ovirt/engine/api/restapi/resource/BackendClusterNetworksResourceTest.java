@@ -29,7 +29,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
@@ -58,7 +57,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpClusterExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
@@ -83,7 +81,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         model.setName("orcus");
         model.setDescription(DESCRIPTIONS[0]);
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpClusterExpectations(CLUSTER_ID);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
@@ -101,7 +98,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         Network model = new Network();
         model.setId("11111111-1111-1111-1111-111111111111");
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpClusterExpectations(CLUSTER_ID);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
@@ -141,6 +137,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     protected Cluster setUpClusterExpectations(Guid id) {
         Cluster group = mock(Cluster.class);
         when(group.getId()).thenReturn(id);
+        when(group.getStoragePoolId()).thenReturn(GUIDS[2]);
 
         setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                                      IdQueryParameters.class,
@@ -158,19 +155,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                          new Object[] { GUIDS[2] },
                                          getEntityList(),
                                          failure);
-        }
-    }
-
-    protected void setUpGetClusterExpectations(int times) {
-        while (times-- > 0) {
-            Cluster cluster = new Cluster();
-            cluster.setStoragePoolId(GUIDS[2]);
-            setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { CLUSTER_ID },
-                    cluster,
-                    null);
         }
     }
 
