@@ -1807,7 +1807,7 @@ notify_engine() {
 	local port="$3"
 	local database="$4"
 	local status="$5"
-	local message="$6"
+	local message="engine-backup: $6"
 
 	message="$(printf "%s" "${message}" | sed "s/'/''/g")"
 
@@ -1815,7 +1815,8 @@ notify_engine() {
 
 	do_notify() {
 		local scope="$1"
-		pg_cmd psql -t -c "SELECT LogEngineBackupEvent('${scope}', now(), ${status}, '${message}', '${ENGINE_FQDN}', '${logpath}');" \
+		local msg="${message}, scope=${scope}, log=${logpath}"
+		pg_cmd psql -t -c "SELECT LogEngineBackupEvent('${scope}', now(), ${status}, '${msg}', '${ENGINE_FQDN}', '${logpath}');" \
 			>> "${LOG}"  2>&1 \
 			|| logdie "Failed notifying engine"
 	}
