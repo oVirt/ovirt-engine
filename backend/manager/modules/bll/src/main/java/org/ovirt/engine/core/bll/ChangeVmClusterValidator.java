@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -65,12 +66,10 @@ public class ChangeVmClusterValidator {
             }
 
             // Check if VM static parameters are compatible for new cluster.
-            boolean isCpuSocketsValid = AddVmCommand.checkCpuSockets(
-                    vm.getStaticData(),
-                    vmCompatibilityVersion.getValue(),
-                    parentCommand.getReturnValue().getValidationMessages());
-            if (!isCpuSocketsValid) {
-                return false;
+            ValidationResult isCpuSocketsValid = VmValidator.validateCpuSockets(vm.getStaticData(),
+                    vmCompatibilityVersion.getValue());
+            if (!isCpuSocketsValid.isValid()) {
+                return parentCommand.validate(isCpuSocketsValid);
             }
 
             // Check that the USB policy is legal

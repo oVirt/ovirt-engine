@@ -74,7 +74,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -432,43 +431,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
-    public static boolean checkCpuSockets(VmBase vmBase, String compatibility_version, List<String> validationMessages) {
-        int num_of_sockets = vmBase.getNumOfSockets();
-        int cpu_per_socket = vmBase.getCpuPerSocket();
-        int threadsPerCpu = vmBase.getThreadsPerCpu();
-
-        if ((num_of_sockets * cpu_per_socket * threadsPerCpu) >
-                Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, compatibility_version)) {
-            validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU.toString());
-            return false;
-        }
-        if (num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
-            validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS.toString());
-            return false;
-        }
-        if (cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
-            validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET.toString());
-            return false;
-        }
-        if (threadsPerCpu > Config.<Integer> getValue(ConfigValues.MaxNumOfThreadsPerCpu, compatibility_version)) {
-            validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU.toString());
-            return false;
-        }
-        if (cpu_per_socket < 1) {
-            validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET.toString());
-            return false;
-        }
-        if (num_of_sockets < 1) {
-            validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS.toString());
-            return false;
-        }
-        if (threadsPerCpu < 1) {
-            validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU.toString());
-            return false;
-        }
-        return true;
-    }
-
     @Override
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateVm.class);
@@ -647,7 +609,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_TYPE_DOES_NOT_EXIST);
         }
 
-        if (!checkCpuSockets()){
+        if (!validate(VmValidator.validateCpuSockets(getParameters().getVmStaticData(),
+                getEffectiveCompatibilityVersion().toString()))){
             return false;
         }
 
@@ -764,11 +727,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         }
         return true;
-    }
-
-    protected boolean checkCpuSockets() {
-        return AddVmCommand.checkCpuSockets(getParameters().getVmStaticData(),
-                getEffectiveCompatibilityVersion().toString(), getReturnValue().getValidationMessages());
     }
 
     protected boolean buildAndCheckDestStorageDomains() {

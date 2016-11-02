@@ -124,7 +124,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockUninterestingMethods();
         mockDisplayTypes(vm.getOs());
         mockGraphicsDevices(vm.getId());
-        doReturn(true).when(cmd).checkCpuSockets();
 
         cmd.getParameters().setVirtioScsiEnabled(true);
         when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(true);

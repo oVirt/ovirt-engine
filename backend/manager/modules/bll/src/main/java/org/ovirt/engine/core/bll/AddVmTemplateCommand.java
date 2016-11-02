@@ -36,6 +36,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -449,8 +450,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm(),
-                getVm().getCompatibilityVersion().toString(), getReturnValue().getValidationMessages());
+        return imagesRelatedChecks() && validate(VmValidator.validateCpuSockets(getParameters().getMasterVm(),
+                getVm().getCompatibilityVersion().toString()));
     }
 
     @Override

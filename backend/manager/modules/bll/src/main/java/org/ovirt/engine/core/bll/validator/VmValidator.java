@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -29,6 +30,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -304,6 +307,35 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    public static ValidationResult validateCpuSockets(VmBase vmBase, String compatibility_version) {
+        int num_of_sockets = vmBase.getNumOfSockets();
+        int cpu_per_socket = vmBase.getCpuPerSocket();
+        int threadsPerCpu = vmBase.getThreadsPerCpu();
+
+        if ((num_of_sockets * cpu_per_socket * threadsPerCpu) >
+                Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, compatibility_version)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU);
+        }
+        if (num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
+        }
+        if (cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
+        }
+        if (threadsPerCpu > Config.<Integer> getValue(ConfigValues.MaxNumOfThreadsPerCpu, compatibility_version)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU);
+        }
+        if (cpu_per_socket < 1) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET);
+        }
+        if (num_of_sockets < 1) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS);
+        }
+        if (threadsPerCpu < 1) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU);
+        }
+        return ValidationResult.VALID;
+    }
 
     public DiskVmElementDao getDiskVmElementDao() {
         return DbFacade.getInstance().getDiskVmElementDao();

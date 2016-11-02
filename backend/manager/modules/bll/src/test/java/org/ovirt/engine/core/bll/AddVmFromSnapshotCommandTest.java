@@ -139,7 +139,6 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
     @Override
     protected void mockUninterestingMethods() {
         super.mockUninterestingMethods();
-        doReturn(true).when(cmd).checkCpuSockets();
         doReturn(null).when(cmd).getVmFromConfiguration();
     }
 

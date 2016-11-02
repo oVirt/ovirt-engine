@@ -218,10 +218,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (returnValue) {
-            returnValue = AddVmCommand.checkCpuSockets(
-                    getParameters().getVmTemplateData(),
-                    getVmTemplate().getCompatibilityVersion().toString(),
-                    getReturnValue().getValidationMessages());
+            returnValue = validate(VmValidator.validateCpuSockets(getParameters().getVmTemplateData(),
+                    getVmTemplate().getCompatibilityVersion().toString()));
         }
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
