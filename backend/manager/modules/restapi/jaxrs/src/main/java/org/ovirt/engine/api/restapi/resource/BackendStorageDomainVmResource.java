@@ -127,13 +127,10 @@ public class BackendStorageDomainVmResource
         if (!mapping.isSetSourceNetworkProfileName()) {
             badRequest("vNic profile mapping is missing source network profile name.");
         }
-        if (!mapping.isSetTargetVnicProfile()) {
-            badRequest("vNic profile mapping is missing target vNic profile.");
+        if (mapping.isSetTargetVnicProfile()
+                && mapping.getTargetVnicProfile().isSetId()) {
+            asGuid(mapping.getTargetVnicProfile().getId());
         }
-        if (!mapping.getTargetVnicProfile().isSetId()) {
-            badRequest("vNic profile mapping is missing target vNic profile id.");
-        }
-        asGuid(mapping.getTargetVnicProfile().getId());
     }
 
     private boolean getReassignBadMacs(Action action) {

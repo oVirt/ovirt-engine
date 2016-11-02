@@ -36,6 +36,12 @@ public class ExternalVnicProfileMappingMapper {
     private static ExternalVnicProfileMapping mapSingleMappingEntry(VnicProfileMapping model) {
         return new ExternalVnicProfileMapping(model.getSourceNetworkName(),
                 model.getSourceNetworkProfileName(),
-                Guid.createGuidFromString(model.getTargetVnicProfile().getId()));
+                getTargetVnicProfileId(model));
+    }
+
+    private static Guid getTargetVnicProfileId(VnicProfileMapping model) {
+        return model.isSetTargetVnicProfile()
+                ? Guid.createGuidFromString(model.getTargetVnicProfile().getId())
+                : null;
     }
 }
