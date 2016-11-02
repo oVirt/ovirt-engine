@@ -391,7 +391,7 @@ public class BackendTemplatesResourceTest
     public void testAddWithClusterName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},

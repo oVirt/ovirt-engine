@@ -108,7 +108,7 @@ public class BackendClusterNetworksResource
 
     protected Cluster getCluster() {
         return getEntity(Cluster.class,
-                         VdcQueryType.GetClusterByClusterId,
+                         VdcQueryType.GetClusterById,
                          new IdQueryParameters(asGuid(clusterId)),
                          clusterId);
     }

@@ -139,7 +139,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         when(group.getId()).thenReturn(id);
         when(group.getStoragePoolId()).thenReturn(GUIDS[2]);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { id },

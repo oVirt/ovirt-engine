@@ -145,7 +145,7 @@ public class BackendClusterNetworkResourceTest
         Cluster group = mock(Cluster.class);
         when(group.getId()).thenReturn(id);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { id },

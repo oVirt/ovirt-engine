@@ -623,7 +623,7 @@ public class BackendVmsResource extends
     }
 
     private Cluster lookupCluster(Guid id) {
-        return getEntity(Cluster.class, VdcQueryType.GetClusterByClusterId, new IdQueryParameters(id), "GetClusterByClusterId");
+        return getEntity(Cluster.class, VdcQueryType.GetClusterById, new IdQueryParameters(id), "GetClusterById");
     }
 
     protected boolean namedCluster(Vm vm) {

@@ -160,7 +160,7 @@ public class BackendTemplatesResource
     }
 
     private Cluster lookupCluster(Guid id) {
-        return getEntity(Cluster.class, VdcQueryType.GetClusterByClusterId, new IdQueryParameters(id), "GetClusterByClusterId");
+        return getEntity(Cluster.class, VdcQueryType.GetClusterById, new IdQueryParameters(id), "GetClusterById");
     }
 
     protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {

@@ -147,7 +147,6 @@ public enum VdcQueryType implements Serializable {
     // Cluster
     GetVdsCertificateSubjectByVmId(VdcQueryAuthType.User),
     GetAllClusters(VdcQueryAuthType.User),
-    GetClusterByClusterId(VdcQueryAuthType.User), // needed when updating VM
     GetClusterById(VdcQueryAuthType.User),
     GetClusterByName(VdcQueryAuthType.User),
     GetClustersByStoragePoolId(VdcQueryAuthType.User),

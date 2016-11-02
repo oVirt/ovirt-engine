@@ -149,7 +149,7 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(0);
         setUpGetVmOvfExpectations(0);
         setUpGetCertuficateExpectations(1, 0);
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -207,7 +207,7 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -322,7 +322,7 @@ public class BackendVmsResourceTest
 
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(false);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -365,7 +365,7 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -450,7 +450,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -491,7 +491,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -590,7 +590,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -921,7 +921,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -1031,7 +1031,7 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[2] },
@@ -1088,7 +1088,7 @@ public class BackendVmsResourceTest
                                      new String[]{"Id"},
                                      new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-                                     setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+                                     setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[]{"Id"},
                                      new Object[]{GUIDS[2]},
@@ -1227,7 +1227,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1);
         setUpGetRngDeviceExpectations(1);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
