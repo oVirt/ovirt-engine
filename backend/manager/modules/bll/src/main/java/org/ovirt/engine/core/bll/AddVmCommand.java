@@ -124,10 +124,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     private String cachedDiskSharedLockMessage;
-    protected Guid imageTypeId;
-    protected ImageType imageType;
+    private Guid imageTypeId;
+    private ImageType imageType;
     private Guid vmInterfacesSourceId;
-    protected VmTemplate vmDisksSource;
+    private VmTemplate vmDisksSource;
     private Guid vmDevicesSourceId;
     private List<StorageDomain> poolDomains;
 
@@ -686,21 +686,21 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return getParameters().getVmStaticData().getOrigin() == OriginType.EXTERNAL;
     }
 
-    protected Guid getSmallIconId() {
+    private Guid getSmallIconId() {
         if (getParameters().getVmStaticData() != null) {
             return getParameters().getVmStaticData().getSmallIconId();
         }
         return null;
     }
 
-    protected Guid getLargeIconId() {
+    private Guid getLargeIconId() {
         if (getParameters().getVmStaticData() != null) {
             return getParameters().getVmStaticData().getLargeIconId();
         }
         return null;
     }
 
-    protected boolean setAndValidateDiskProfiles() {
+    private boolean setAndValidateDiskProfiles() {
         if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
             Map<DiskImage, Guid> map = new HashMap<>();
             List<DiskImage> diskImages = DisksFilter.filterImageDisks(diskInfoDestinationMap.values(),
@@ -796,7 +796,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return poolDomains;
     }
 
-    protected void fillImagesMapBasedOnTemplate() {
+    private void fillImagesMapBasedOnTemplate() {
         ImagesHandler.fillImagesMapBasedOnTemplate(vmDisksSource,
                 getPoolDomains(),
                 diskInfoDestinationMap,
@@ -898,7 +898,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      * After the copy of the images, copy the properties of the disk VM elements of the source disks to new
      * disk VM elements for the created destination disks and save them
      */
-    protected void copyDiskVmElements() {
+    private void copyDiskVmElements() {
         for (Map.Entry<Guid, Guid> srcToDst : getSrcDiskIdToTargetDiskIdMapping().entrySet()) {
             DiskVmElement srcDve = getImagesToCheckDestinationStorageDomains().
                     stream().
@@ -935,7 +935,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
 
-    protected void addVmWatchdog() {
+    private void addVmWatchdog() {
         VmWatchdog vmWatchdog = getParameters().getWatchdog();
         if (vmWatchdog != null) {
             VdcActionType actionType = getVmDeviceUtils().hasWatchdog(getVmTemplateId()) ?
@@ -968,7 +968,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
 
-    protected void addVmPayload() {
+    private void addVmPayload() {
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null) {
@@ -1013,7 +1013,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         );
     }
 
-    protected boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
+    private boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
         Cluster cluster = clusterDao.get(clusterId);
         boolean legalClusterId = cluster != null;
@@ -1064,7 +1064,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
 
-    protected void addVmNumaNodes() {
+    private void addVmNumaNodes() {
         List<VmNumaNode> numaNodes = getParameters().getVm().getvNumaNodeList();
         if (numaNodes.isEmpty()) {
             return;
@@ -1077,11 +1077,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
 
-    protected void addVmInit() {
+    private void addVmInit() {
         VmHandler.addVmInitToDB(getParameters().getVmStaticData());
     }
 
-    protected void addVmStatic() {
+    private void addVmStatic() {
         VmStatic vmStatic = getParameters().getVmStaticData();
 
         if (vmStatic.getOrigin() == null) {
@@ -1108,7 +1108,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         vmStatic.setOriginalTemplateName(getVmTemplate().getName());
     }
 
-    void addVmDynamic() {
+    private void addVmDynamic() {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(getVmId());
         vmDynamic.setStatus(VMStatus.Down);
@@ -1120,7 +1120,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         getCompensationContext().snapshotNewEntity(vmDynamic);
     }
 
-    void addVmStatistics() {
+    private void addVmStatistics() {
         VmStatistics stats = new VmStatistics(getVmId());
         vmStatisticsDao.save(stats);
         getCompensationContext().snapshotNewEntity(stats);
@@ -1181,7 +1181,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return tempVar;
     }
 
-    protected void createAndSaveNewDiskVmElement(Guid newDiskImageId, Guid newVmId, DiskVmElement oldDve) {
+    private void createAndSaveNewDiskVmElement(Guid newDiskImageId, Guid newVmId, DiskVmElement oldDve) {
         DiskVmElement newDve = DiskVmElement.copyOf(oldDve, newDiskImageId, newVmId);
         diskVmElementDao.save(newDve);
     }
@@ -1396,7 +1396,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
 
-    protected void addVmPermission() {
+    private void addVmPermission() {
         UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
         if (isMakeCreatorExplicitOwner()) {
             permissionsToAdd.addPermission(getCurrentUser().getId(), PredefinedRoles.VM_OPERATOR.getId(),
@@ -1442,7 +1442,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     }
 
-    protected void addDiskPermissions() {
+    private void addDiskPermissions() {
         List<Guid> newDiskImageIds = new ArrayList<>(srcDiskIdToTargetDiskIdMapping.values());
         Permission[] permsArray = new Permission[newDiskImageIds.size()];
 
@@ -1461,7 +1461,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return diskOperatorIdFromParams != null ? diskOperatorIdFromParams : getCurrentUser().getId();
     }
 
-    protected void addActiveSnapshot() {
+    private void addActiveSnapshot() {
         _vmSnapshotId = Guid.newGuid();
         getSnapshotsManager().addActiveSnapshot(_vmSnapshotId, getVm(), getCompensationContext());
     }
@@ -1544,7 +1544,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         getEffectiveCompatibilityVersion());
     }
 
-    protected boolean hasWatchdog() {
+    private boolean hasWatchdog() {
         return getParameters().getWatchdog() != null;
     }
 
@@ -1556,7 +1556,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      * This method override vm values with the instance type values
      * in case instance type is selected for this vm
      */
-    protected void updateVmObject() {
+    private void updateVmObject() {
         updateParametersVmFromInstanceType();
 
         // set vm interface source id to be the instance type, vm interface are taken from it
@@ -1600,12 +1600,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getEffectiveCompatibilityVersion());
     }
 
-    protected boolean isTemplateInValidDc() {
+    private boolean isTemplateInValidDc() {
         return VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVmTemplateId())
                 || getVmTemplate().getStoragePoolId().equals(getStoragePoolId());
     }
 
-    protected void updateProfileOnNic(VmNic iface) {
+    private void updateProfileOnNic(VmNic iface) {
         Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
         if (network != null && !NetworkHelper.isNetworkInCluster(network, getClusterId())) {
             iface.setVnicProfileId(null);
@@ -1632,7 +1632,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      *     <li>Otherwise (at least one icon id is null) both icon ids are copied from template.</li>
      * </ul>
      */
-    public void setIconIds(VmStatic vmStatic) {
+    private void setIconIds(VmStatic vmStatic) {
         if (getParameters().getVmLargeIcon() != null){
             final VmIconIdSizePair iconIds =
                     IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
@@ -1652,7 +1652,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 
-    protected InClusterUpgradeValidator getClusterUpgradeValidator() {
+    private InClusterUpgradeValidator getClusterUpgradeValidator() {
         return clusterUpgradeValidator;
     }
 
