@@ -22,7 +22,7 @@ public class SsoSession implements Serializable {
     private String appUrl;
     private String authorizationCode;
     private String accessToken;
-    private int validTo;
+    private long validTo;
     private String userId;
     private String scope;
     private List<String> scopeAsList;
@@ -107,11 +107,11 @@ public class SsoSession implements Serializable {
         this.appUrl = appUrl;
     }
 
-    public int getValidTo() {
+    public long getValidTo() {
         return validTo;
     }
 
-    public void setValidTo(int validTo) {
+    public void setValidTo(long validTo) {
         this.validTo = validTo;
     }
 
