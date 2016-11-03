@@ -99,11 +99,11 @@
       </custom-handler>
 
       <formatter name="DEFAULT">
-        <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+        <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSSX} %-5p [%c] (%t) %s%E%n"/>
       </formatter>
 
       <formatter name="WITH_CORRELATION_ID">
-        <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
+        <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSSX} %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
       </formatter>
 
       <!-- All the application server messages go here: -->
