@@ -3599,6 +3599,12 @@ actions:
 - name: /storageconnections/{storageconnection:id}|rel=update
   description: update the specified storage connection in the system
   request:
+    urlparams:
+      force:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     body:
       parameterType: StorageConnection
       signatures:
