@@ -279,6 +279,7 @@ public class AuthenticationUtils {
                 .filter(a -> (a.getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L)
                         & capability) != 0)
                 .map(AuthenticationUtils::getProfileName)
+                .sorted()
                 .collect(Collectors.toList());
     }
 
