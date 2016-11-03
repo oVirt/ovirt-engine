@@ -2,9 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,15 +30,6 @@ public class VdcActionTypeTest {
 
     @Test
     public void testCommandClassExistence() {
-        List<VdcActionType> missingCommands = new ArrayList<>();
-        for (VdcActionType vat : VdcActionType.values()) {
-            if (vat != VdcActionType.Unknown) {
-                if (CommandsFactory.getCommandClass(vat.name()) == null){
-                    missingCommands.add(vat);
-                }
-            }
-        }
-        assertTrue("VdcActionType contains the following values that does not correspond to an existing command class: " + missingCommands,
-                missingCommands.isEmpty());
+        CommandEnumTestUtils.testCommandsExist(VdcActionType.class, vat -> CommandsFactory.getCommandClass(vat.name()));
     }
 }
