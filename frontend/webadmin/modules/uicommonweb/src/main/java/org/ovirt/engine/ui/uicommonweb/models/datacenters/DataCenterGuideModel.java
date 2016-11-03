@@ -1583,7 +1583,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(posixModel.getAddStorageDomainVdcAction());
 
-        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId()));
+        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId(), false));
         StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);
         parameter.setVdsId(host.getId());
         StoragePool dataCenter = model.getDataCenter().getSelectedItem();
