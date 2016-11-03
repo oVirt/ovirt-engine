@@ -5,12 +5,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,11 +24,13 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmValidatorTest extends DbDependentTestBase {
@@ -34,6 +38,19 @@ public class VmValidatorTest extends DbDependentTestBase {
     private VmValidator validator;
 
     private VM vm;
+
+    private static final String COMPAT_VERSION_FOR_CPU_SOCKET_TEST = "4.0";
+    private static final int MAX_NUM_CPUS = 16;
+    private static final int MAX_NUM_SOCKETS = 4;
+    private static final int MAX_NUM_CPUS_PER_SOCKET = 3;
+    private static final int MAX_NUM_THREADS_PER_CPU = 2;
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaxNumOfVmCpus, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_CPUS),
+            mockConfig(ConfigValues.MaxNumOfVmSockets, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_SOCKETS),
+            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_CPUS_PER_SOCKET),
+            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_THREADS_PER_CPU));
 
     @Mock
     VmNetworkInterfaceDao vmNetworkInterfaceDao;
@@ -53,6 +70,12 @@ public class VmValidatorTest extends DbDependentTestBase {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         return vm;
+    }
+
+    private void setVmCpuValues(int numOfSockets, int cpuPerSocket, int threadsPerCpu) {
+        vm.setNumOfSockets(numOfSockets);
+        vm.setCpuPerSocket(cpuPerSocket);
+        vm.setThreadsPerCpu(threadsPerCpu);
     }
 
     @Test
@@ -104,6 +127,61 @@ public class VmValidatorTest extends DbDependentTestBase {
     @Test
     public void testVmHasNoPluggedDisksUsingScsiReservation() {
         validateVMPluggedDisksWithReservationStatus(false);
+    }
+
+    @Test
+    public void testVmPassesCpuSocketValidation() {
+        setVmCpuValues(1, 1, 1);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST), isValid());
+    }
+
+    @Test
+    public void testVmExceedsMaxNumOfVmCpus() {
+        setVmCpuValues(2, 3, 3);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU));
+    }
+
+    @Test
+    public void testVmExceedsMaxNumOfSockets() {
+        setVmCpuValues(MAX_NUM_SOCKETS + 1, 1, 1);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS));
+    }
+
+    @Test
+    public void testVmExceedsMaxNumOfCpusPerSocket() {
+        setVmCpuValues(1, MAX_NUM_CPUS_PER_SOCKET + 1, 1);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET));
+    }
+
+    @Test
+    public void testVmExceedsMaxThreadsPerCpu() {
+        setVmCpuValues(1, 1, MAX_NUM_THREADS_PER_CPU + 1);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU));
+    }
+
+    @Test
+    public void testVmUnderMinNumOfSockets() {
+        setVmCpuValues(1, -2, 1);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET));
+    }
+
+    @Test
+    public void testVmUnderMinNumOfCpusPerSocket() {
+        setVmCpuValues(-2, 1, 1);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS));
+    }
+
+    @Test
+    public void testVmUnderMinNumOfThreadsPerCpu() {
+        setVmCpuValues(1, 1, -2);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU));
     }
 
     private void validateVMPluggedDisksWithReservationStatus(boolean vmHasDisksPluggedWithReservation) {
