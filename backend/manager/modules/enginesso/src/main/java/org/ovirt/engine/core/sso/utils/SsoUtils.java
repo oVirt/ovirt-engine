@@ -400,7 +400,7 @@ public class SsoUtils {
         ssoSession.setUserId(getUserId(principalRecord));
         try {
             ssoSession.setValidTo(validTo == null ?
-                    Integer.MAX_VALUE : (int) new SimpleDateFormat("yyyyMMddHHmmssZ").parse(validTo).getTime());
+                    Long.MAX_VALUE : new SimpleDateFormat("yyyyMMddHHmmssZ").parse(validTo).getTime());
         } catch (Exception ex) {
             log.error("Unable to parse Auth Record valid_to value: {}", ex.getMessage());
             log.debug("Exception", ex);
