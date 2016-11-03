@@ -45,24 +45,19 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
 
     @Override
     protected void perform() {
-        try {
-            // Send the log on command to the virtual machine:
-            final DbUser currentUser = getCurrentUser();
-            final String password = SsoUtils.getPassword(
-                    sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()));
-            final String domainController = currentUser != null ? currentUser.getDomain() : "";
-            final boolean sentToVM = runVdsCommand(
-                    VDSCommandType.VmLogon,
-                    new VmLogonVDSCommandParameters(
-                            getVdsId(),
-                            getVm().getId(),
-                            domainController,
-                            getUserName(),
-                            password)).getSucceeded();
-            setSucceeded(sentToVM);
-        } catch (Exception ex) {
-            log.error("Unable to execute VmLogon with message {}", ex.getMessage());
-            log.debug("Exception", ex);
-        }
+        // Send the log on command to the virtual machine:
+        final DbUser currentUser = getCurrentUser();
+        final String password = SsoUtils.getPassword(
+                sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()));
+        final String domainController = currentUser != null ? currentUser.getDomain() : "";
+        final boolean sentToVM = runVdsCommand(
+                VDSCommandType.VmLogon,
+                new VmLogonVDSCommandParameters(
+                        getVdsId(),
+                        getVm().getId(),
+                        domainController,
+                        getUserName(),
+                        password)).getSucceeded();
+        setSucceeded(sentToVM);
     }
 }

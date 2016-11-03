@@ -17,13 +17,7 @@ public class IsPasswordDelegationPossibleQuery<P extends VdcQueryParametersBase>
 
     @Override
     protected void executeQueryCommand() {
-        String password = null;
-        try {
-            password = SsoUtils.getPassword(sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()));
-        } catch(Exception ex) {
-            log.error("Unable to execute IsPasswordDelegationPossibleQuery with message {}", ex.getMessage());
-            log.debug("Exception", ex);
-        }
+        String password = SsoUtils.getPassword(sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()));
         getQueryReturnValue().setReturnValue(password != null);
         getQueryReturnValue().setSucceeded(true);
     }

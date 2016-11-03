@@ -77,7 +77,7 @@ public class SsoUtils {
         return engineSessionId;
     }
 
-    public static String getPassword(String token) throws Exception {
+    public static String getPassword(String token) {
         if (StringUtils.isEmpty(token)) {
             throw new RuntimeException("Sso access token is null.");
         }
@@ -87,13 +87,16 @@ public class SsoUtils {
         FiltersHelper.isStatusOk(response);
         final Map<String, Object> ovirt = (HashMap<String, Object>) response.get("ovirt");
         String password = (String) ovirt.get("password");
-        // passwords can be empty so we check for null
-        if (password == null) {
-            throw new RuntimeException("Unable to retrieve user password for session.");
+        try {
+            password = password == null ? null : new String(
+                    EnvelopeEncryptDecrypt.decrypt(EngineEncryptionUtils.getPrivateKeyEntry(), password),
+                    StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            log.error("Unable to decrypt user password for session {}.", ex.getMessage());
+            log.debug("Exception", ex);
+            password = null;
         }
-        return new String(
-                EnvelopeEncryptDecrypt.decrypt(EngineEncryptionUtils.getPrivateKeyEntry(), password),
-                StandardCharsets.UTF_8);
+        return password;
     }
 
 }
