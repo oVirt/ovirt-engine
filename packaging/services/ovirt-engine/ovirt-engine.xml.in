@@ -98,11 +98,19 @@
         <level name="ALL"/>
       </custom-handler>
 
+      <formatter name="DEFAULT">
+        <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+      </formatter>
+
+      <formatter name="WITH_CORRELATION_ID">
+        <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
+      </formatter>
+
       <!-- All the application server messages go here: -->
       <file-handler name="SERVER">
         <level name="INFO"/>
         <formatter>
-          <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+          <named-formatter name="DEFAULT"/>
         </formatter>
         <file path="{{ config.get('ENGINE_LOG') }}/server.log"/>
         <append value="true"/>
@@ -112,7 +120,7 @@
       <file-handler name="ENGINE" autoflush="true">
         <level name="ALL"/>
         <formatter>
-          <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
+          <named-formatter name="WITH_CORRELATION_ID"/>
         </formatter>
         <file path="{{ config.get('ENGINE_LOG') }}/engine.log"/>
         <append value="true"/>
@@ -122,7 +130,7 @@
       <file-handler name="UI" autoflush="true">
         <level name="ALL"/>
         <formatter>
-          <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
+          <named-formatter name="WITH_CORRELATION_ID"/>
         </formatter>
         <file path="{{ config.get('ENGINE_LOG') }}/ui.log"/>
         <append value="true"/>
@@ -132,7 +140,7 @@
       <console-handler name="CONSOLE" autoflush="true">
         <level name="ALL"/>
         <formatter>
-          <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
+          <named-formatter name="WITH_CORRELATION_ID"/>
         </formatter>
       </console-handler>
 
