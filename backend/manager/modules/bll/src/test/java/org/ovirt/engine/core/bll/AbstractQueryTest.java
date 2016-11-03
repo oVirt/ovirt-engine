@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertNotSame;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.MockConfigDescriptor;
@@ -21,7 +20,6 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends BaseCommandTest {
@@ -71,8 +69,6 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     /** Hook for initialization */
     protected void initQuery(Q query) {
         sessionDataContainer.setUser(query.getParameters().getSessionId(), dbUserMock);
-        DbFacade dbFacadeMock = mock(DbFacade.class);
-        doReturn(dbFacadeMock).when(query).getDbFacade();
         query.postConstruct();
     }
 
@@ -91,11 +87,6 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
                 (ParameterizedType) getClass().getGenericSuperclass();
         ParameterizedType queryParameterizedType = (ParameterizedType) parameterizedType.getActualTypeArguments()[1];
         return (Class<? extends Q>) queryParameterizedType.getRawType();
-    }
-
-    /** Power-Mocks {@link DbFacade#getInstance()} and returns a mock for it */
-    protected DbFacade getDbFacadeMockInstance() {
-        return getQuery().getDbFacade();
     }
 
     /** @return The spied query to use in the test */

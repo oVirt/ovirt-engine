@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.log.Logged;
@@ -226,10 +225,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
             throw new RuntimeException("No sessionId found for query " + getClass().getName());
         }
         return getSessionDataContainer().getEngineSessionSeqId(engineContext.getSessionId());
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     protected BackendInternal getBackend() {
