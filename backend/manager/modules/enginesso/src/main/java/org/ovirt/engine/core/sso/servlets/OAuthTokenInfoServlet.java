@@ -137,7 +137,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         payload.put(SsoConstants.JSON_USER_ID, String.format("%s@%s", ssoSession.getUserId(),
                 ssoSession.getProfile()));
         payload.put(SsoConstants.JSON_SCOPE, StringUtils.isEmpty(ssoSession.getScope()) ? "" : ssoSession.getScope());
-        payload.put(SsoConstants.JSON_EXPIRES_IN, ssoSession.getValidTo());
+        payload.put(SsoConstants.JSON_EXPIRES_IN, ssoSession.getValidTo().toString());
 
         Map<String, Object> ovirt = new HashMap<>();
         ovirt.put("version", SsoConstants.OVIRT_SSO_VERSION);

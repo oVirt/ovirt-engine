@@ -223,7 +223,7 @@ public class OAuthTokenServlet extends HttpServlet {
         Map<String, Object> payload = new HashMap<>();
         payload.put(SsoConstants.JSON_ACCESS_TOKEN, ssoSession.getAccessToken());
         payload.put(SsoConstants.JSON_SCOPE, StringUtils.isEmpty(ssoSession.getScope()) ? "" : ssoSession.getScope());
-        payload.put(SsoConstants.JSON_EXPIRES_IN, ssoSession.getValidTo());
+        payload.put(SsoConstants.JSON_EXPIRES_IN, ssoSession.getValidTo().toString());
         payload.put(SsoConstants.JSON_TOKEN_TYPE, "bearer");
         return payload;
     }
