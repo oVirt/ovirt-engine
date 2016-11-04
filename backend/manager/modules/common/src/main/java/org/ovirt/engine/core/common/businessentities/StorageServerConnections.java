@@ -5,6 +5,7 @@ import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnections implements BusinessEntity<String> {
     private static final long serialVersionUID = 5444293590307760809L;
@@ -27,7 +28,8 @@ public class StorageServerConnections implements BusinessEntity<String> {
             String mountOptions,
             NfsVersion nfsVersion,
             Short nfsRetrans,
-            Short nfsTimeo) {
+            Short nfsTimeo,
+            Guid glusterVolumeId) {
         setConnection(connection);
         setId(id);
         setIqn(iqn);
@@ -41,6 +43,7 @@ public class StorageServerConnections implements BusinessEntity<String> {
         setNfsVersion(nfsVersion);
         setNfsRetrans(nfsRetrans);
         setNfsTimeo(nfsTimeo);
+        setGlusterVolumeId(glusterVolumeId);
     }
 
     public StorageServerConnections(String connection,
@@ -51,7 +54,7 @@ public class StorageServerConnections implements BusinessEntity<String> {
             String userName,
             String port,
             String portal) {
-        this(connection, id, iqn, password, storageType, userName, port, portal, null, null, null, null, null);
+        this(connection, id, iqn, password, storageType, userName, port, portal, null, null, null, null, null, null);
     }
 
     private String connection;
@@ -201,6 +204,16 @@ public class StorageServerConnections implements BusinessEntity<String> {
         this.netIfaceName = netIfaceName;
     }
 
+    private Guid glusterVolumeId;
+
+    public Guid getGlusterVolumeId() {
+        return glusterVolumeId;
+    }
+
+    public void setGlusterVolumeId(Guid glusterVolumeId) {
+        this.glusterVolumeId = glusterVolumeId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
@@ -234,7 +247,8 @@ public class StorageServerConnections implements BusinessEntity<String> {
                 ssc.mountOptions,
                 ssc.nfsVersion,
                 ssc.nfsRetrans,
-                ssc.nfsTimeo);
+                ssc.nfsTimeo,
+                ssc.glusterVolumeId);
     }
 
     @Override

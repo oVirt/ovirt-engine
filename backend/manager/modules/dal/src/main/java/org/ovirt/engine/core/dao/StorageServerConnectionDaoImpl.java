@@ -155,7 +155,8 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                 .addValue("vfs_type", connection.getVfsType())
                 .addValue("nfs_version", (connection.getNfsVersion() != null) ? connection.getNfsVersion().getValue() : null)
                 .addValue("nfs_timeo", connection.getNfsTimeo())
-                .addValue("nfs_retrans", connection.getNfsRetrans());
+                .addValue("nfs_retrans", connection.getNfsRetrans())
+                .addValue("gluster_volume_id", connection.getGlusterVolumeId());
     }
 
     private static final RowMapper<StorageServerConnections> mapper = (rs, rowNum) -> {
@@ -174,6 +175,7 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                 NfsVersion.forValue(rs.getString("nfs_version")) : null);
         entity.setNfsRetrans(getShort(rs, "nfs_retrans"));
         entity.setNfsTimeo(getShort(rs, "nfs_timeo"));
+        entity.setGlusterVolumeId(getGuid(rs, "gluster_volume_id"));
         return entity;
     };
 

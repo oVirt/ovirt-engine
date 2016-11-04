@@ -344,7 +344,8 @@ CREATE OR REPLACE FUNCTION Insertstorage_server_connections (
     v_vfs_type VARCHAR(128),
     v_nfs_version VARCHAR(4),
     v_nfs_timeo SMALLINT,
-    v_nfs_retrans SMALLINT
+    v_nfs_retrans SMALLINT,
+    v_gluster_volume_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -361,7 +362,8 @@ BEGIN
         vfs_type,
         nfs_version,
         nfs_timeo,
-        nfs_retrans
+        nfs_retrans,
+        gluster_volume_id
         )
     VALUES (
         v_connection,
@@ -376,7 +378,8 @@ BEGIN
         v_vfs_type,
         v_nfs_version,
         v_nfs_timeo,
-        v_nfs_retrans
+        v_nfs_retrans,
+        v_gluster_volume_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -394,7 +397,8 @@ CREATE OR REPLACE FUNCTION Updatestorage_server_connections (
     v_vfs_type VARCHAR(128),
     v_nfs_version VARCHAR(4),
     v_nfs_timeo SMALLINT,
-    v_nfs_retrans SMALLINT
+    v_nfs_retrans SMALLINT,
+    v_gluster_volume_id UUID
     )
 RETURNS VOID
     --The [storage_server_connections] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -412,7 +416,8 @@ BEGIN
         vfs_type = v_vfs_type,
         nfs_version = v_nfs_version,
         nfs_timeo = v_nfs_timeo,
-        nfs_retrans = v_nfs_retrans
+        nfs_retrans = v_nfs_retrans,
+        gluster_volume_id = v_gluster_volume_id
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

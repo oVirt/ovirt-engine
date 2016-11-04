@@ -237,6 +237,7 @@
         <column>nfs_version</column>
         <column>nfs_timeo</column>
         <column>nfs_retrans</column>
+        <column>gluster_volume_id</column>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c2981</value>
             <value>10.35.64.25:/export/nfs1</value>
@@ -251,6 +252,7 @@
             <value>auto</value>
             <value>42</value>
             <value>7</value>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c2982</value>
@@ -266,6 +268,7 @@
             <value>auto</value>
             <value>42</value>
             <value>7</value>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c2983</value>
@@ -281,6 +284,7 @@
             <value>auto</value>
             <value>42</value>
             <value>7</value>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
@@ -293,6 +297,7 @@
             <value>3</value>
             <value>rw</value>
             <value>nfs</value>
+            <null/>
             <null/>
             <null/>
             <null/>
@@ -311,6 +316,7 @@
             <null/>
             <null/>
             <null/>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297d</value>
@@ -326,6 +332,7 @@
             <null/>
             <null/>
             <null/>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297c</value>
@@ -341,6 +348,7 @@
             <null/>
             <null/>
             <null/>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297b</value>
@@ -356,6 +364,7 @@
             <null/>
             <null/>
             <null/>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297a</value>
@@ -371,6 +380,7 @@
             <null/>
             <null/>
             <null/>
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c2979</value>
@@ -386,6 +396,7 @@
             <null/>
             <null/>
             <null/>
+            <null />
         </row>
         <row>
             <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
@@ -401,6 +412,7 @@
             <null/>
             <null/>
             <null/>
+            <null />
         </row>
     </table>
 

@@ -36,7 +36,7 @@ BEGIN
             WHERE connection = v_connection
             ) THEN
         -- Insert storage server connection info
-        perform Insertstorage_server_connections(v_connection, cast(v_connection_id AS VARCHAR(250)), NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL);
+        perform Insertstorage_server_connections(v_connection, cast(v_connection_id AS VARCHAR(250)), NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
         -- Insert storage domain static info
         perform Insertstorage_domain_static(v_storage_domain_id, cast(v_connection_id AS VARCHAR(250)), v_name, v_name, '', 1, 2, '0', 0, FALSE, FALSE, CAST(NULL AS VARCHAR(100)), CAST(NULL AS VARCHAR(100)), CAST(NULL AS INT), CAST(NULL AS INT));
 
