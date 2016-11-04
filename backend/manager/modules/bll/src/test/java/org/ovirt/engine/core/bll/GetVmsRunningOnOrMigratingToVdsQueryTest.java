@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +33,9 @@ public class GetVmsRunningOnOrMigratingToVdsQueryTest
         VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.getAllRunningOnOrMigratingToVds(vmGuid)).thenReturn(expected);
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
+
+        doNothing().when(getQuery()).updateStatistics(expected);
+
         // Set up the query parameters
         when(getQueryParameters().getId()).thenReturn(vmGuid);
 
