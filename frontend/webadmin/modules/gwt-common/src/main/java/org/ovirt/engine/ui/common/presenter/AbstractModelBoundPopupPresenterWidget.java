@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
@@ -12,6 +15,7 @@ import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent.AsyncOperationCompleteHandler;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent.AsyncOperationStartedHandler;
+import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -68,6 +72,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         void init(T model);
 
     }
+
+    private static final List<HasCleanup> popupResourcesToCleanup = new ArrayList<>();
 
     private final ModelBoundPopupHandler<T> popupHandler;
 
@@ -272,12 +278,22 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     public void hideAndUnbind() {
         super.hideAndUnbind();
 
-        getView().cleanup();
+        // Clear the model reference
+        model = null;
 
-        if (this.model != null) {
-            this.model.cleanup();
-            this.model = null;
+        // Clean up all popup resources
+        if (getActivePopupCount() == 0) {
+            cleanupPopupResources();
         }
+    }
+
+    void cleanupPopupResources() {
+        for (HasCleanup res : popupResourcesToCleanup) {
+            if (res != null) {
+                res.cleanup();
+            }
+        }
+        popupResourcesToCleanup.clear();
     }
 
     /**
@@ -290,6 +306,10 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     @Override
     protected void onReveal() {
         super.onReveal();
+
+        // Mark popup resources for future cleanup
+        popupResourcesToCleanup.add(getView());
+        popupResourcesToCleanup.add(model);
 
         // Try to focus some popup input widget
         getView().focusInput();

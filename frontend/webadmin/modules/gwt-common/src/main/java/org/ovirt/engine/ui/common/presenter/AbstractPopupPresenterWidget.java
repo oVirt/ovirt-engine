@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.presenter;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -38,6 +39,9 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
         void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
 
     }
+
+    // Number of popups currently active (visible)
+    private static int activePopups = 0;
 
     // Indicates whether the handlers registered by the popup have been released
     private boolean destroyed = false;
@@ -85,6 +89,22 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
                 }
             }
         }));
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        activePopups++;
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        activePopups--;
+    }
+
+    protected int getActivePopupCount() {
+        return activePopups;
     }
 
     /**
