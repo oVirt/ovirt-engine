@@ -403,6 +403,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeRaw(String.valueOf(vmBase.isSpiceCopyPasteEnabled()));
         _writer.writeEndElement();
 
+        _writer.writeStartElement(OvfProperties.ALLOW_CONSOLE_RECONNECT);
+        _writer.writeRaw(String.valueOf(vmBase.isAllowConsoleReconnect()));
+        _writer.writeEndElement();
+
         if (vmBase.getAutoConverge() != null) {
             _writer.writeStartElement(OvfProperties.IS_AUTO_CONVERGE);
             _writer.writeRaw(String.valueOf(vmBase.getAutoConverge()));

@@ -71,6 +71,7 @@ public class OvfProperties {
     static final String IS_BOOT_MENU_ENABLED = "IsBootMenuEnabled";
     static final String IS_SPICE_FILE_TRANSFER_ENABLED = "IsSpiceFileTransferEnabled";
     static final String IS_SPICE_COPY_PASTE_ENABLED = "IsSpiceCopyPasteEnabled";
+    static final String ALLOW_CONSOLE_RECONNECT = "AllowConsoleReconnect";
     static final String COMMENT = "Comment";
     static final String IS_AUTO_CONVERGE = "IsAutoConverge";
     static final String IS_MIGRATE_COMPRESSED = "IsMigrateCompressed";

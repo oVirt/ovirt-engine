@@ -717,6 +717,11 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setSpiceCopyPasteEnabled(Boolean.parseBoolean(node.innerText));
         }
 
+        node = selectSingleNode(content, OvfProperties.ALLOW_CONSOLE_RECONNECT);
+        if (node != null) {
+            vmBase.setAllowConsoleReconnect(Boolean.parseBoolean(node.innerText));
+        }
+
         node = selectSingleNode(content, OvfProperties.IS_AUTO_CONVERGE);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
