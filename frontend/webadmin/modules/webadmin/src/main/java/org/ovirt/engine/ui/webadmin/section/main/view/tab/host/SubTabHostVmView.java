@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
+import java.util.Comparator;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,8 +23,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVm
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ColumnResizeTableLineChartProgressBar;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 import com.google.gwt.core.client.GWT;
@@ -97,32 +100,48 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         fqdnColumn.makeSortable();
         getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$
 
-        AbstractPercentColumn<VM> memColumn = new AbstractPercentColumn<VM>() {
-            @Override
-            public Integer getProgressValue(VM object) {
-                return object.getUsageMemPercent();
-            }
-        };
-        memColumn.makeSortable();
-        getTable().addColumn(memColumn, constants.memoryVm(), "120px"); //$NON-NLS-1$
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+                getTable(),
+                new ResourceConsumptionComparator() {
 
-        AbstractPercentColumn<VM> cpuColumn = new AbstractPercentColumn<VM>() {
+                    @Override
+                    protected Integer extractValue(VM vm) {
+                        return vm.getUsageMemPercent();
+                    }
+                }) {
             @Override
-            public Integer getProgressValue(VM object) {
-                return object.getUsageCpuPercent();
+            protected List<Integer> getProgressValues(VM object) {
+                return object.getMemoryUsageHistory();
             }
-        };
-        cpuColumn.makeSortable();
-        getTable().addColumn(cpuColumn, constants.cpuVm(), "120px"); //$NON-NLS-1$
+        }, constants.memoryVm(), "120px"); //$NON-NLS-1$
 
-        AbstractPercentColumn<VM> netColumn = new AbstractPercentColumn<VM>() {
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+                getTable(),
+                new ResourceConsumptionComparator() {
+                    @Override
+                    protected Integer extractValue(VM vm) {
+                        return vm.getUsageCpuPercent();
+                    }
+                }) {
             @Override
-            public Integer getProgressValue(VM object) {
-                return object.getUsageNetworkPercent();
+            protected List<Integer> getProgressValues(VM object) {
+                return object.getCpuUsageHistory();
             }
-        };
-        netColumn.makeSortable();
-        getTable().addColumn(netColumn, constants.networkVm(), "120px"); //$NON-NLS-1$
+        }, constants.cpuVm(), "120px"); //$NON-NLS-1$
+
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+                getTable(),
+                new ResourceConsumptionComparator() {
+                    @Override
+                    protected Integer extractValue(VM vm) {
+                        return vm.getUsageNetworkPercent();
+                    }
+                }) {
+            @Override
+            protected List<Integer> getProgressValues(VM object) {
+                return object.getNetworkUsageHistory();
+            }
+        }, constants.networkVm(), "120px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
@@ -218,4 +237,15 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         });
     }
 
+    abstract class ResourceConsumptionComparator implements Comparator<VM> {
+
+        @Override
+        public int compare(VM vm1, VM vm2) {
+            Integer val1 = extractValue(vm1) != null ? extractValue(vm1) : 0;
+            Integer val2 = extractValue(vm2) != null ? extractValue(vm2) : 0;
+            return val1.compareTo(val2);
+        }
+
+        protected abstract Integer extractValue(VM vm);
+    }
 }

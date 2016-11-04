@@ -31,8 +31,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMac
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractLineChartProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ColumnResizeTableLineChartProgressBar;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ImportProgressColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
@@ -142,36 +142,32 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         dcColumn.makeSortable(VmConditionFieldAutoCompleter.DATACENTER);
         getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
-        ColumnResizeTableLineChartProgressBar memoryColumn = new ColumnResizeTableLineChartProgressBar() {
-
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+                getTable(),
+                VmConditionFieldAutoCompleter.MEM_USAGE) {
             @Override
             protected List<Integer> getProgressValues(VM object) {
                 return object.getMemoryUsageHistory();
             }
-        };
-        memoryColumn.makeSortable(VmConditionFieldAutoCompleter.MEM_USAGE);
-        getTable().addColumn(memoryColumn, constants.memoryVm(), "80px"); //$NON-NLS-1$
+        }, constants.memoryVm(), "80px"); //$NON-NLS-1$
 
-        ColumnResizeTableLineChartProgressBar cpuColumn = new ColumnResizeTableLineChartProgressBar() {
-
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+                getTable(),
+                VmConditionFieldAutoCompleter.CPU_USAGE) {
             @Override
             protected List<Integer> getProgressValues(VM object) {
                 return object.getCpuUsageHistory();
             }
-        };
-        cpuColumn.makeSortable(VmConditionFieldAutoCompleter.CPU_USAGE);
-        getTable().addColumn(cpuColumn, constants.cpuVm(), "80px"); //$NON-NLS-1$
+        }, constants.cpuVm(), "80px"); //$NON-NLS-1$
 
-        ColumnResizeTableLineChartProgressBar networkColumn = new ColumnResizeTableLineChartProgressBar() {
-
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+                getTable(),
+                VmConditionFieldAutoCompleter.NETWORK_USAGE) {
             @Override
             protected List<Integer> getProgressValues(VM object) {
                 return object.getNetworkUsageHistory();
             }
-        };
-
-        networkColumn.makeSortable(VmConditionFieldAutoCompleter.NETWORK_USAGE);
-        getTable().addColumn(networkColumn, constants.networkVm(), "80px"); //$NON-NLS-1$
+        }, constants.networkVm(), "80px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> graphicsColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override
@@ -471,13 +467,5 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getGuideCommand();
             }
         });
-    }
-
-    abstract class ColumnResizeTableLineChartProgressBar extends AbstractLineChartProgressBarColumn<VM> {
-
-        @Override
-        protected String getActualWidth() {
-            return getTable().getColumnWidth(this);
-        }
     }
 }
