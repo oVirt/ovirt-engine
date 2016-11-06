@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -49,7 +49,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T>
+public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> extends VmTemplateManagementCommand<T>
         implements QuotaStorageDependent {
 
     private List<DiskImage> imageTemplates;
@@ -140,7 +140,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         for (Guid domainId : getParameters().getStorageDomainsList()) {
             if (!validate(VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
                     domainId,
-                    getParameters().getCheckDisksExists(),
+                    getParameters().isCheckDisksExists(),
                     true,
                     false,
                     true,

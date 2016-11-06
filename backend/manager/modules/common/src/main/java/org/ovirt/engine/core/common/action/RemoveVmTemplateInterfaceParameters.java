@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveVmTemplateInterfaceParameters extends VmTemplateParametersBase {
+public class RemoveVmTemplateInterfaceParameters extends VmTemplateParameters {
 
     private static final long serialVersionUID = 3492037768582415400L;
     private Guid interfaceId;

@@ -141,7 +141,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Test
     // When Template by the same name already exists in the datacenter - fail.
     public void testValidateDuplicateTemplateName() {
-        doReturn(true).when(cmd).isVmTemlateWithSameNameExist("templateName", vm.getStoragePoolId());
+        doReturn(true).when(cmd).isVmTemplateWithSameNameExist("templateName", vm.getStoragePoolId());
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 

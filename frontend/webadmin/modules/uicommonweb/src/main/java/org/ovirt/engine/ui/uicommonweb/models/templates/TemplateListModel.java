@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -524,7 +524,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VmTemplate a = (VmTemplate) item;
-            list.add(new VmTemplateParametersBase(a.getId()));
+            list.add(new VmTemplateManagementParameters(a.getId()));
         }
 
         model.startProgress();

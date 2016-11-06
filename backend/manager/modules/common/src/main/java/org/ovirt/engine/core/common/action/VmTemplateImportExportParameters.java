@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements Serializable {
+public class VmTemplateImportExportParameters extends VmTemplateManagementParameters implements Serializable {
     private static final long serialVersionUID = -3811237640112907464L;
     private Guid privateStorageDomainId;
 

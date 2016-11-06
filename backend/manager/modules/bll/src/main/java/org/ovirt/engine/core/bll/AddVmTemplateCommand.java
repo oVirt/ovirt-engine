@@ -96,7 +96,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T>
+public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateManagementCommand<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
     @Inject
@@ -454,8 +454,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
-        if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
-                .getValidationMessages())) {
+        if (!VmHandler.isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(),
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -471,7 +471,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             } else {
-                if (isVmTemlateWithSameNameExist(getVmTemplateName(), getCluster().getStoragePoolId())) {
+                if (isVmTemplateWithSameNameExist(getVmTemplateName(), getCluster().getStoragePoolId())) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             }

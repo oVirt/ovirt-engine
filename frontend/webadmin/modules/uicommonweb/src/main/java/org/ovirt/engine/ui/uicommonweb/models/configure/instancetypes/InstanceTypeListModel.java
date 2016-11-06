@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -293,14 +293,16 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         Guid instanceTypeId = getSelectedItem().getId();
 
-        Frontend.getInstance().runAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(instanceTypeId),
+        Frontend.getInstance().runAction(VdcActionType.RemoveVmTemplate,
+                new VmTemplateManagementParameters(instanceTypeId),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
                         model.stopProgress();
                         cancel();
                     }
-                }, this);
+                },
+                this);
     }
 
     private void createWindow(VmModelBehaviorBase<UnitVmModel> behavior, String hashName, String onOkAction, boolean isNew, String title, HelpTag helpTag) {
@@ -375,7 +377,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         }
     }
 
-    private void setVmWatchdogToParams(final UnitVmModel model, VmTemplateParametersBase updateVmParams) {
+    private void setVmWatchdogToParams(final UnitVmModel model, VmTemplateManagementParameters updateVmParams) {
         VmWatchdogType wdModel = model.getWatchdogModel().getSelectedItem();
         updateVmParams.setUpdateWatchdog(true);
         if (wdModel != null) {
@@ -386,7 +388,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         }
     }
 
-    private void setRngDeviceToParams(UnitVmModel model, VmTemplateParametersBase parameters) {
+    private void setRngDeviceToParams(UnitVmModel model, VmTemplateManagementParameters parameters) {
         parameters.setUpdateRngDevice(true);
         parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }

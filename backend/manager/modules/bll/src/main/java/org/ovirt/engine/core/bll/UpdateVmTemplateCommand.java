@@ -49,7 +49,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
-public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
+public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateManagementCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
 
     @Inject
@@ -129,7 +129,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                         return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     }
                 } else {
-                    if (isVmTemlateWithSameNameExist(getVmTemplateName(), isBlankTemplate ? null
+                    if (isVmTemplateWithSameNameExist(getVmTemplateName(), isBlankTemplate ? null
                             : getCluster().getStoragePoolId())) {
                         return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     }
@@ -137,8 +137,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
-                .getValidationMessages()) && checkDomain()) {
+        if (VmHandler.isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(),
+                getReturnValue().getValidationMessages()) && checkDomain()) {
             returnValue = VmTemplateHandler.isUpdateValid(oldTemplate, getVmTemplate());
             if (!returnValue) {
                 addValidationMessage(EngineMessage.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
@@ -278,6 +278,32 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getReturnValue().getValidationMessages());
         }
         return true;
+    }
+
+    /**
+     * Determines whether the specified domain name is legal.
+     *
+     * @param domainName
+     *            Name of the domain.
+     * @param reasons
+     *            The reasons in case of failure (output parameter).
+     * @return <code>true</code> if domain name is legal; otherwise, <code>false</code>.
+     */
+    private static boolean isDomainLegal(String domainName, ArrayList<String> reasons) {
+        boolean result = true;
+        char[] illegalChars = new char[] { '&' };
+        if (StringUtils.isNotEmpty(domainName)) {
+            for (char c : illegalChars) {
+                if (domainName.contains(Character.toString(c))) {
+                    result = false;
+                    reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DOMAIN_NAME.toString());
+                    reasons.add(String.format("$Domain %1$s", domainName));
+                    reasons.add(String.format("$Char %1$s", c));
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     protected boolean hasWatchdog(Guid templateId) {

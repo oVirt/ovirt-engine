@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
@@ -24,7 +24,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
  */
 
 @InternalCommandAttribute
-public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T> {
+public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateManagementParameters> extends VmTemplateManagementCommand<T> {
     public RemoveAllVmTemplateImageTemplatesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         super.setVmTemplateId(parameters.getVmTemplateId());

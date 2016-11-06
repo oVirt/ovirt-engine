@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -58,7 +58,7 @@ public class BackendTemplateResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(guid));
+        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateManagementParameters(guid));
     }
 
     @Override

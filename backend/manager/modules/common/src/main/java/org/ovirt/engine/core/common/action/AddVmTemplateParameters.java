@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmTemplateParameters extends VmTemplateParametersBase implements HasVmIcon {
+public class AddVmTemplateParameters extends VmTemplateManagementParameters implements HasVmIcon {
 
     private static final long serialVersionUID = 2114985552063499069L;
 

@@ -738,7 +738,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!VmTemplateCommand.isVmPriorityValueLegal(vmFromParams.getPriority(),
+        if (!VmHandler.isVmPriorityValueLegal(vmFromParams.getPriority(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }

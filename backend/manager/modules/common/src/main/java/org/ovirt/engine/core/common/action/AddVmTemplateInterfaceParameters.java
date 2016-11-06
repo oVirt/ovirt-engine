@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmTemplateInterfaceParameters extends VmTemplateParametersBase {
+public class AddVmTemplateInterfaceParameters extends VmTemplateParameters {
     private static final long serialVersionUID = 5177618608953713542L;
 
     @Valid

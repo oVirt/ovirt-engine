@@ -208,10 +208,30 @@ public class VmHandler {
                 reasons.add(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }
             returnValue = false;
-        } else if (!VmTemplateCommand.isVmPriorityValueLegal(vmPriority, reasons)) {
+        } else if (!isVmPriorityValueLegal(vmPriority, reasons)) {
             returnValue = false;
         }
         return returnValue;
+    }
+
+    /**
+     * Determines whether VM priority value is in the correct range.
+     *
+     * @param value
+     *            The value.
+     * @param reasons
+     *            The reasons in case of failure (output parameter).
+     * @return <code>true</code> if VM priority value is in the correct range; otherwise, <code>false</code>.
+     */
+    public static boolean isVmPriorityValueLegal(int value, List<String> reasons) {
+        boolean res = false;
+        if (value >= 0 && value <= Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)) {
+            res = true;
+        } else {
+            reasons.add(EngineMessage.VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE.toString());
+            reasons.add(String.format("$MaxValue %1$s", Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)));
+        }
+        return res;
     }
 
     /**

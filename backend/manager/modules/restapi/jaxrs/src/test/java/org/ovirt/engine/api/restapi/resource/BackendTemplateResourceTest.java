@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -248,7 +248,7 @@ public class BackendTemplateResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
-                VmTemplateParametersBase.class,
+                VmTemplateManagementParameters.class,
                 new String[] { "VmTemplateId" },
                 new Object[] { GUIDS[0] },
                 true,
@@ -287,7 +287,7 @@ public class BackendTemplateResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
-                VmTemplateParametersBase.class,
+                VmTemplateManagementParameters.class,
                 new String[] { "VmTemplateId" },
                 new Object[] { GUIDS[0] },
                 valid,
