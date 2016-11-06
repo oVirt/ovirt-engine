@@ -58,6 +58,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         List<String> reasons = new ArrayList<>();
         initCommandMethods();
         cmd.init();
+
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain())));
@@ -136,6 +137,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         setupCanAddPpcTest();
         cmd.getParameters().setBalloonEnabled(true);
         when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
+        cmd.init();
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
     }
@@ -144,6 +146,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     public void refuseSoundDeviceOnPPC() {
         setupCanAddPpcTest();
         cmd.getParameters().setSoundDeviceEnabled(true);
+        cmd.init();
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
     }
@@ -179,6 +182,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         cmd.getParameters().getVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
         cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.getParameters().getVm().setVmOs(OsType.Other.ordinal());
+        cmd.init();
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
     }

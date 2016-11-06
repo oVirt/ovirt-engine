@@ -199,6 +199,11 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         }
     }
 
+    @Override
+    protected boolean isDisksVolumeFormatValid() {
+        return true;
+    }
+
     private Guid retrieveDestinationDomainForDisk(Guid id) {
         return diskInfoDestinationMap.get(id).getStorageIds().get(0);
     }
