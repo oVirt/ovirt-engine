@@ -40,8 +40,10 @@ SELECT sse.entity_id, SUM(s.progress*sse.step_entity_weight/100) AS progress
 FROM step_subject_entity sse
 INNER JOIN step s
     ON s.step_id = sse.step_id
+INNER JOIN job j
+    ON s.job_id = j.job_id
 WHERE sse.step_entity_weight IS NOT NULL
-    AND s.status = 'STARTED'
+    AND j.status = 'STARTED'
     AND s.progress IS NOT NULL
 GROUP BY sse.entity_id;
 
