@@ -14,6 +14,12 @@ if git show --pretty="format:" --name-only | egrep \
 fi
 
 SUFFIX=".git$(git rev-parse --short HEAD)"
+
+if [ -d /root/.m2/repository/org/ovirt ]; then
+    echo "Deleting ovirt folder from maven cache"
+    rm -rf /root/.m2/repository/org/ovirt
+fi
+
 MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
     -Dgwt.compiler.localWorkers=1 \
