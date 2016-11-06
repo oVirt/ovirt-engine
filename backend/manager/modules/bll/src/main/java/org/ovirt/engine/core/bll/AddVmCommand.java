@@ -91,6 +91,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -513,6 +514,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_EXISTS_IN_CURRENT_DC);
         }
 
+        if (!isDisksVolumeFormatValid()) {
+            return false;
+        }
+
         // A VM cannot be added in a cluster without a defined architecture
         if (getCluster().getArchitecture() == ArchitectureType.undefined) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
@@ -717,6 +722,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
+    protected boolean isDisksVolumeFormatValid() {
+        if (diskInfoDestinationMap.values().stream()
+                .anyMatch(d -> d.getVolumeFormat() != VolumeFormat.COW)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_THIN_TEMPLATE_DISKS_SHOULD_ONLY_BE_COW);
+        }
+        return true;
+    }
     private boolean isExternalVM() {
         return getParameters().getVmStaticData().getOrigin() == OriginType.EXTERNAL;
     }

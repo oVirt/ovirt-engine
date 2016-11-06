@@ -87,6 +87,11 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     }
 
     @Override
+    protected boolean isDisksVolumeFormatValid() {
+        return true;
+    }
+
+    @Override
     protected List<DiskVmElement> getDiskVmElements() {
         return Collections.emptyList();
     }

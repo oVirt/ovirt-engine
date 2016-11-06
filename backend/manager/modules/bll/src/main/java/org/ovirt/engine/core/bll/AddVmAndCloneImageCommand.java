@@ -435,6 +435,11 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 VmDeviceUtils.canCopyHostDevices(getSourceVmId(), getVm().getStaticData()));
     }
 
+    @Override
+    protected boolean isDisksVolumeFormatValid() {
+        return true;
+    }
+
     protected abstract VM getVmFromConfiguration();
 
     @Override
