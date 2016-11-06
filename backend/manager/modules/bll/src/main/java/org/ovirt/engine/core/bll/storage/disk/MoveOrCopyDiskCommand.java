@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -48,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -348,7 +350,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (!getParameters().getImagesParameters().isEmpty()) {
             getBackend().endAction(getImagesActionType(),
                     getParameters().getImagesParameters().get(0),
-                    getContext().clone().withoutCompensationContext().withoutLock());
+                    ExecutionHandler.createDefaultContextForTasks(getContext()));
         }
         setSucceeded(true);
     }
@@ -448,6 +450,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setDiskProfileId(getImage().getDiskProfileId());
+        parameters.setJobWeight(Job.MAX_WEIGHT);
         return parameters;
     }
 

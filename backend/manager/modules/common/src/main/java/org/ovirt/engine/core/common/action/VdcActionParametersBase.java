@@ -2,7 +2,9 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -58,7 +60,6 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
     private EndProcedure endProcedure = EndProcedure.PARENT_MANAGED;
 
     private boolean useCinderCommandCallback;
-
     /**
      * A cross system identifier of the executed action
      */
@@ -69,6 +70,18 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
 
     private Guid jobId;
     private Guid stepId;
+
+    /**
+     * The weight of the command in the job (if present)
+     */
+    private Integer jobWeight;
+
+    /**
+     * The weight of each operation performed by the command in the job. For example - if a command is executing few
+     * child commands, it may calculate the weight of each child command and when executing it pass the weight in the
+     * jobWeight parameter (if present).
+     */
+    private Map<String, Integer> operationsJobWeight = Collections.emptyMap();
 
     private LockProperties lockProperties;
     private Integer lifeInMinutes;
@@ -334,5 +347,21 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
 
     public void setEndProcedure(EndProcedure endProcedure) {
         this.endProcedure = endProcedure;
+    }
+
+    public Integer getJobWeight() {
+        return jobWeight;
+    }
+
+    public void setJobWeight(Integer jobWeight) {
+        this.jobWeight = jobWeight;
+    }
+
+    public Map<String, Integer> getOperationsJobWeight() {
+        return operationsJobWeight;
+    }
+
+    public void setOperationsJobWeight(Map<String, Integer> operationsJobWeight) {
+        this.operationsJobWeight = operationsJobWeight;
     }
 }

@@ -104,6 +104,11 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
      */
     private transient boolean isAsyncJob;
 
+    /**
+     * Maximum job weight
+     */
+    public static final int MAX_WEIGHT = 100;
+
     public Job() {
         status = JobExecutionStatus.STARTED;
         autoCleared = true;

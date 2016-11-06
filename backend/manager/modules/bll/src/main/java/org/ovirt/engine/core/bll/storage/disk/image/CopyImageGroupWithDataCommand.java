@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -37,8 +39,20 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         setStoragePoolId(getParameters().getStoragePoolId());
     }
 
+    private void prepareParameters() {
+        if (getParameters().getJobWeight() != null) {
+            Map<String, Integer> weights = new HashMap<>();
+            int createWeight = Long.valueOf(Math.round(getParameters().getJobWeight() / 10d)).intValue();
+            weights.put(CopyStage.DEST_CREATION.name(), createWeight);
+            weights.put(CopyStage.DATA_COPY.name(), getParameters().getJobWeight() - createWeight);
+            getParameters().setOperationsJobWeight(weights);
+        }
+    }
+
     @Override
     protected void executeCommand() {
+        prepareParameters();
+        persistCommandIfNeeded();
         if (getParameters().isCollapse()) {
             createVolume();
         } else {
@@ -61,6 +75,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         p.setParentParameters(getParameters());
         p.setParentCommand(getActionType());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        p.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
         runInternalAction(VdcActionType.CloneImageGroupVolumesStructure, p);
     }
 
@@ -98,6 +113,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 Double.valueOf(Math.ceil(ImagesHandler.getTotalSizeForClonedDisk(getDiskImage(), getStorageDomain()
                         .getStorageStaticData())) / StorageConstants.QCOW_OVERHEAD_FACTOR).longValue());
 
+        parameters.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
@@ -108,6 +124,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     public boolean performNextOperation(int completedChildCount) {
         if (getParameters().getStage() == CopyStage.DEST_CREATION) {
             updateStage(CopyStage.DATA_COPY);
+            Integer weight = getParameters().getOperationsJobWeight().get(CopyStage.DATA_COPY.name());
             if (getParameters().isCollapse()) {
                 CopyDataCommandParameters parameters = new CopyDataCommandParameters(getParameters().getStoragePoolId(),
                         buildImageLocationInfo(getParameters().getSrcDomain(), getParameters().getImageGroupID(),
@@ -118,6 +135,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
                 parameters.setParentCommand(getActionType());
                 parameters.setParentParameters(getParameters());
+                parameters.setJobWeight(weight);
                 runInternalAction(VdcActionType.CopyData, parameters);
             } else {
                 CopyImageGroupVolumesDataCommandParameters p = new CopyImageGroupVolumesDataCommandParameters(
@@ -129,6 +147,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                         getParameters()
                 );
                 p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+                p.setJobWeight(weight);
                 runInternalAction(VdcActionType.CopyImageGroupVolumesData, p);
             }
             return true;

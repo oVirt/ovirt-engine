@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -71,6 +72,16 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
             getTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
             setSucceeded(true);
         }
+    }
+
+    @Override
+    public List<StepSubjectEntity> getCommandStepSubjectEntities() {
+        if (getParameters().getJobWeight() != null) {
+            return Collections.singletonList(new StepSubjectEntity(VdcObjectType.Disk,
+                    getParameters().getImageGroupID(), getParameters().getJobWeight()));
+        }
+
+        return super.getCommandStepSubjectEntities();
     }
 }
 

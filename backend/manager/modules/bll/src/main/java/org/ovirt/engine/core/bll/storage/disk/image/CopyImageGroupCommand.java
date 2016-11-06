@@ -112,6 +112,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             p.setParentParameters(getParameters());
             p.setParentCommand(getActionType());
             p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+            p.setJobWeight(getParameters().getJobWeight());
             runInternalAction(VdcActionType.CopyImageGroupWithData, p);
             return true;
         } else {
