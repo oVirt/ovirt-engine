@@ -10,30 +10,31 @@ import org.ovirt.engine.core.compat.Guid;
 public interface VfScheduler {
     /**
      * Validates whether the VM interfaces have suitable virtual functions on the specified host. If the host has
-     * suitable VFs, the <code>vmToHostToVnicToVfMap</vmToHostToVnicToVfMap> is updated
-     * with mapping between the VM interfaces to the virtual functions.
+     * suitable VFs, the mappings belonging to given <code>vmId</code> (obtainable from {@link #getVnicToVfMap}) are
+     * updated with mapping between the VM interfaces to the virtual functions.
      * If not, the problematic VM interface's names are returned.
+     *
+     * @param vmId id of VM
+     * @param hostId id of host
+     * @param allVmNics All {@link VmNetworkInterface} for given <code>vmId</code>
      *
      * @return the names of the problematic vm interfaces
      */
-    public List<String> validatePassthroughVnics(Guid vmId, Guid hostId, List<VmNetworkInterface> vnics);
+    public List<String> validatePassthroughVnics(Guid vmId, Guid hostId, List<VmNetworkInterface> allVmNics);
 
     /**
-     * Return the name of a free suitable vf. If there is no one, return null.
-     *
      * @return the name of a free suitable vf. If there is no one, return null.
      */
     public String findFreeVfForVnic(Guid hostId, Network vnicNetwork, Guid vmId);
 
     /**
-     * Returns the mapping between the VM interfaces to the virtual functions.
-     *
-     * @return the mapping between the VM interfaces to the virtual functions.
+     * @return the mapping between the VM interfaces to the virtual functions. Null is returned if there are no data for
+     * given <code>vmId</code> and <code>hostId</code>
      */
     public Map<Guid, String> getVnicToVfMap(Guid vmId, Guid hostId);
 
     /**
-     * Cleans the all the <code>vnicToVf</code> maps of the specified vm.
+     * Cleans all mappings of the specified vm (obtainable using {@link #getVnicToVfMap}).
      */
     public void cleanVmData(Guid vmId);
 }

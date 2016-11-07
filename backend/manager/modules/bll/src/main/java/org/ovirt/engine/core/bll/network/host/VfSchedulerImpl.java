@@ -52,10 +52,9 @@ public class VfSchedulerImpl implements VfScheduler {
     }
 
     @Override
-    public List<String> validatePassthroughVnics(Guid vmId, Guid hostId,
-            List<VmNetworkInterface> vnics) {
+    public List<String> validatePassthroughVnics(Guid vmId, Guid hostId, List<VmNetworkInterface> allVmNics) {
 
-        List<VmNetworkInterface> pluggedPassthroughVnics = getPluggedPassthroughVnics(vnics);
+        List<VmNetworkInterface> pluggedPassthroughVnics = getPluggedPassthroughVnics(allVmNics);
 
         if (pluggedPassthroughVnics.isEmpty()) {
             return Collections.emptyList();
@@ -77,8 +76,7 @@ public class VfSchedulerImpl implements VfScheduler {
         hostToVnicToVfMap.put(hostId, vnicToVfMap);
 
         for (final VmNetworkInterface vnic : pluggedPassthroughVnics) {
-            String freeVf = null;
-            freeVf = findFreeVfForVnic(vfsConfigs,
+            String freeVf = findFreeVfForVnic(vfsConfigs,
                     nicToUsedVfs,
                     fetchedNics,
                     vnic.getNetworkName() == null ? null : networkDao.getByName(vnic.getNetworkName()),
@@ -114,6 +112,14 @@ public class VfSchedulerImpl implements VfScheduler {
         return vnics.stream().filter(vnic -> vnic.isPassthrough() && vnic.isPlugged()).collect(Collectors.toList());
     }
 
+    /*
+     * @param nicToUsedVfs used to calculate all used VFs by given nic.
+     * Mapped by nic id. Map<Guid, List<String>> nicToUsedVfs = new HashMap<>();
+     * This collection is changed as side-effect of calling this method.
+     * @param fetchedNics caching. This collection is changed as side-effect of calling this method.
+     * Not to query same nic multiple times from db.
+     * Mapped by VdsNetworkInterface.getId() Map<Guid, VdsNetworkInterface> fetchedNics = new HashMap<>();
+     */
    private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,
             Map<Guid, List<String>> nicToUsedVfs,
             Map<Guid, VdsNetworkInterface> fetchedNics,
@@ -171,7 +177,7 @@ public class VfSchedulerImpl implements VfScheduler {
                 usedVfsByNic = new ArrayList<>();
                 nicToUsedVfs.put(nic.getId(), usedVfsByNic);
             }
-            usedVfsByNic.add(freeVf.getDeviceName());
+            usedVfsByNic.add(freeVf.getDeviceName());       //TODO MMUCHA: Dear code reviewer! this seems inconsistent. Here we're using 'freeVf.getDeviceName()' (note: which will get into skipVfs collection on line #154), while on #122 we use: 'skipVfs.add(freeVf.getName());' Is it correct / shouldn't we use always the same method? Please advise.
 
             return freeVf;
         }

@@ -55,8 +55,7 @@ public interface NetworkDeviceHelper {
      * Retrieves all the HostDevices of the specified host, adds <code>maxNumOfVfs</code> and <code>numOfVfs</code> info
      * to each <code>HostDevice</code>
      *
-     * @return all the HostDevices of the specified host, adds <code>maxNumOfVfs</code> and <code>numOfVfs</code> info
-     *         to each <code>HostDevice</code>
+     * @return updated HostDevices of the specified host.
      */
     List<HostNicVfsConfig> getHostNicVfsConfigsWithNumVfsDataByHostId(Guid hostId);
 
@@ -98,8 +97,9 @@ public interface NetworkDeviceHelper {
     String getPciDeviceNameByNic(VdsNetworkInterface nic);
 
     /**
-     * This method updated the DB to reflect the specified VFs are attached the specified VM. Passing <code>null</code>
-     * as <code>vmId</code> means the VF should not be attached to any VM.
+     * This method updates the DB to reflect that the specified VFs are attached to the specified VM. Such VFs will be
+     * considered as used. Passing <code>null</code> as <code>vmId</code> means the VF should not be attached to any VM,
+     * and will be considered by system as free to use.
      */
     void setVmIdOnVfs(Guid hostId, Guid vmId, final Set<String> vfsNames);
 
