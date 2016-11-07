@@ -1436,7 +1436,7 @@ INNER JOIN vm_static
 
 CREATE OR REPLACE VIEW vms_with_tags AS
 
-SELECT vms.vm_name,
+SELECT DISTINCT vms.vm_name,
     vms.mem_size_mb,
     vms.num_of_io_threads,
     vms.nice_level,
@@ -1520,7 +1520,7 @@ SELECT vms.vm_name,
     vms.exit_status,
     vms.exit_message,
     vms.min_allocated_mem,
-    storage_domain_static.id AS storage_id,
+    image_storage_domain_map.storage_domain_id AS storage_id,
     vms.quota_id AS quota_id,
     vms.quota_name AS quota_name,
     vms.tunnel_migration AS tunnel_migration,
@@ -1587,10 +1587,9 @@ LEFT JOIN images
     ON images.image_group_id = vm_device.device_id
 LEFT JOIN image_storage_domain_map
     ON image_storage_domain_map.image_id = images.image_guid
-LEFT JOIN storage_domain_static
-    ON storage_domain_static.id = image_storage_domain_map.storage_domain_id
-WHERE images.active IS NULL
-    OR images.active = TRUE;
+WHERE (vm_device.device='disk' AND
+    (images.active IS NULL OR images.active = TRUE)) OR
+    vms.vm_guid NOT IN (SELECT DISTINCT vm_id FROM vm_device WHERE device='disk');
 
 CREATE OR REPLACE VIEW server_vms AS
 
