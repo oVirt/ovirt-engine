@@ -22,13 +22,11 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<VmInterfaceModel> {
@@ -43,17 +41,6 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     interface ViewIdHandler extends ElementIdHandler<NetworkInterfacePopupWidget> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    protected interface Style extends CssResource {
-        String statusEditorContent();
-
-        String statusRadioContent();
-
-        String checkBox();
-    }
-
-    @UiField
-    protected Style style;
 
     @UiField
     @Path("name.entity")
@@ -71,9 +58,6 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     ListModelListBoxEditor<VmInterfaceType> nicTypeEditor;
 
     @UiField
-    protected HorizontalPanel linkStateSelectionPanel;
-
-    @UiField
     @Path(value = "linked.entity")
     public ListModelListBoxEditor<Boolean> linkStateEditor;
 
@@ -84,9 +68,6 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @UiField(provided = true)
     @Path(value = "unlinked_IsSelected.entity")
     public EntityModelRadioButtonEditor unlinkedEditor;
-
-    @UiField
-    protected HorizontalPanel cardStatusSelectionPanel;
 
     @UiField
     @Path(value = "plugged.entity")
@@ -124,18 +105,14 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
-        applyStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        MACEditor.hideLabel();
+        linkStateEditor.asListBox().setVisible(false);
+        cardStatusEditor.asListBox().setVisible(false);
         driver.initialize(this);
     }
 
     private void localize() {
-        nameEditor.setLabel(constants.nameNetworkInterfacePopup());
-        profileEditor.setLabel(constants.profileNetworkInterfacePopup());
-        nicTypeEditor.setLabel(constants.typeNetworkInterfacePopup());
-        enableManualMacCheckbox.setLabel(constants.customMacNetworkInterfacePopup());
-
-        cardStatusEditor.setLabel(constants.cardStatusNetworkInterface());
         pluggedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.pluggedNetworkImage())
                         .getHTML()),
@@ -145,7 +122,6 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
                         .getHTML()),
                         constants.unpluggedNetworkInterface()));
 
-        linkStateEditor.setLabel(constants.linkStateNetworkInterface());
         linkedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.linkedNetworkImage())
                         .getHTML()),
@@ -206,17 +182,5 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    private void applyStyles() {
-        cardStatusEditor.addContentWidgetContainerStyleName(style.statusEditorContent());
-        pluggedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
-        unpluggedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
-
-        linkStateEditor.addContentWidgetContainerStyleName(style.statusEditorContent());
-        linkedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
-        unlinkedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
-
-        enableManualMacCheckbox.addContentWidgetContainerStyleName(style.checkBox());
     }
 }

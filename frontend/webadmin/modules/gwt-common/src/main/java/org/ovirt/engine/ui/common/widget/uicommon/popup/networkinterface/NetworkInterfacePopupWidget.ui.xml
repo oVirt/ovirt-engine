@@ -1,92 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
-	xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile">
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface.NetworkInterfacePopupWidget.Style">
-		.macExample {
-			color: gray;
-			float: left;
-		}
+    <ui:style>
+        .macExample {
+            color: gray;
+        }
 
-		.macExamplePanel {
-			float: right;
-    		width: 243px;
-    		padding: 0 5px;
-		}
-
-		.statusEditorContent  {
-			display: none;
-		}
-
-		.statusRadioContent  {
-			top: 0 !important;
-			width: 100%;
-			float: right !important;
-		}
-
-		.statusPanel {
-			float: left;
-			width: 100%;
-			table-layout: fixed;
-		}
-
-        .expandedPanel {
-			float: right;
-			width: 96%;
+        .statusEditorContent  {
+            display: none;
         }
 
         .expander {
             margin-top:15px;
         }
 
-		.checkBox {
-			padding: 0px;
-			margin-top: -4px;
-		}
+        .container {
+            width: 100%;
+        }
 
-		.contentWidget {
-			float: right;
-			line-height: 30px;
-			padding: 0 5px 0 0;
-			width: 245px;
-		}
-	</ui:style>
+        .topElement {
+            padding-top: 15px;
+        }
+    </ui:style>
 
-	<g:FlowPanel>
-		<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-		<p:ProfileEditor ui:field="profileEditor" />
-		<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
-		<g:HorizontalPanel width="100%">
-			<ge:EntityModelCheckBoxEditor ui:field="enableManualMacCheckbox" />
-			<ge:StringEntityModelTextBoxEditor ui:field="MACEditor" />
-		</g:HorizontalPanel>
-		<g:SimplePanel addStyleNames="{style.macExamplePanel}">
-			<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
-		</g:SimplePanel>
-		<g:HorizontalPanel ui:field="linkStateSelectionPanel" width="100%">
-			<e:ListModelListBoxEditor ui:field="linkStateEditor" />
-			<g:SimplePanel addStyleNames="{style.contentWidget}">
-				<g:VerticalPanel addStyleNames="{style.statusPanel}">
-					<ge:EntityModelRadioButtonEditor ui:field="linkedEditor"/>
-					<ge:EntityModelRadioButtonEditor ui:field="unlinkedEditor"/>
-				</g:VerticalPanel>
-			</g:SimplePanel>
-		</g:HorizontalPanel>
-		<g:HorizontalPanel ui:field="cardStatusSelectionPanel" width="100%">
-			<e:ListModelListBoxEditor ui:field="cardStatusEditor" />
-			<g:SimplePanel addStyleNames="{style.contentWidget}">
-				<g:VerticalPanel addStyleNames="{style.statusPanel}">
-					<ge:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
-					<ge:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
-				</g:VerticalPanel>
-			</g:SimplePanel>
-		</g:HorizontalPanel>
-	</g:FlowPanel>
+    <g:FlowPanel>
+        <b:Container addStyleNames="{style.container}">
+            <b:Row addStyleNames="{style.topElement}">
+                <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameNetworkInterfacePopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+            </b:Row>
+            <b:Row>
+                <p:ProfileEditor ui:field="profileEditor" label="{constants.profileNetworkInterfacePopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+            </b:Row>
+            <b:Row>
+                <e:ListModelListBoxEditor ui:field="nicTypeEditor" label="{constants.typeNetworkInterfacePopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_6">
+                    <ge:EntityModelCheckBoxEditor ui:field="enableManualMacCheckbox" label="{constants.customMacNetworkInterfacePopup}" usePatternFly="true" />
+                </b:Column>
+                <b:Column size="SM_6">
+                    <ge:StringEntityModelTextBoxEditor ui:field="MACEditor" usePatternFly="true" />
+                    <g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
+                </b:Column>
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_6">
+                    <e:ListModelListBoxEditor ui:field="linkStateEditor" label="{constants.linkStateNetworkInterface}" usePatternFly="true" />
+                </b:Column>
+                <b:Column size="SM_6">
+                    <g:FlowPanel>
+                        <ge:EntityModelRadioButtonEditor ui:field="linkedEditor" removeFormGroup="true" usePatternFly="true" />
+                        <ge:EntityModelRadioButtonEditor ui:field="unlinkedEditor" removeFormGroup="true" usePatternFly="true" />
+                    </g:FlowPanel>
+                </b:Column>
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_6">
+                    <e:ListModelListBoxEditor ui:field="cardStatusEditor" label="{constants.cardStatusNetworkInterface}" usePatternFly="true"  />
+                </b:Column>
+                <b:Column size="SM_6">
+                    <g:FlowPanel>
+                        <ge:EntityModelRadioButtonEditor ui:field="pluggedEditor" removeFormGroup="true" usePatternFly="true" />
+                        <ge:EntityModelRadioButtonEditor ui:field="unpluggedEditor" removeFormGroup="true" usePatternFly="true" />
+                    </g:FlowPanel>
+                </b:Column>
+            </b:Row>
+        </b:Container>
+    </g:FlowPanel>
 </ui:UiBinder>
