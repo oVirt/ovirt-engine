@@ -227,7 +227,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                     cloneContextAndDetachFromParent());
 
             if (!result.getSucceeded()) {
-                getReturnValue().setFault(result.getFault());
+                propagateFailure(result);
                 return false;
             }
         }
