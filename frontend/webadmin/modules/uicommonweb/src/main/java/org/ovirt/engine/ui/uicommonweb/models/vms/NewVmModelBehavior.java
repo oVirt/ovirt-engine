@@ -408,4 +408,19 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public void setCustomCompatibilityVersionChangeInProgress(boolean isCustomCompatibilityVersionChangeInProgress) {
         this.isCustomCompatibilityVersionChangeInProgress = isCustomCompatibilityVersionChangeInProgress;
     }
+
+    @Override
+    protected TemplateWithVersion computeTemplateWithVersionToSelect(
+            List<TemplateWithVersion> newItems,
+            Guid previousTemplateId, boolean useLatest, boolean addLatest) {
+        if (previousTemplateId == null) {
+            return computeNewTemplateWithVersionToSelect(newItems, addLatest);
+        }
+        TemplateWithVersion oldTemplateToSelect = Linq.firstOrNull(
+                newItems,
+                new Linq.TemplateWithVersionPredicateForNewVm(previousTemplateId, useLatest));
+        return oldTemplateToSelect != null
+                ? oldTemplateToSelect
+                : computeNewTemplateWithVersionToSelect(newItems, addLatest);
+    }
 }

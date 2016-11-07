@@ -282,7 +282,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getTemplateWithVersion().setItems(templatesWithVersion, templateToSelect);
     }
 
-    private static TemplateWithVersion computeTemplateWithVersionToSelect(
+    protected TemplateWithVersion computeTemplateWithVersionToSelect(
             List<TemplateWithVersion> newItems,
             Guid previousTemplateId, boolean useLatest, boolean addLatest) {
         if (previousTemplateId == null) {
@@ -300,7 +300,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * It prefers to select second element (usually [Blank-1]) to the first one (usually [Blank-latest]).
      * If the latest has not been added, just return the first one
      */
-    private static TemplateWithVersion computeNewTemplateWithVersionToSelect(List<TemplateWithVersion> newItems, boolean addLatest) {
+    protected static TemplateWithVersion computeNewTemplateWithVersionToSelect(List<TemplateWithVersion> newItems, boolean addLatest) {
         if (newItems.isEmpty()) {
             return null;
         }

@@ -684,8 +684,8 @@ public final class Linq {
     }
 
     public static class TemplateWithVersionPredicate implements IPredicate<TemplateWithVersion> {
-        private final Guid id;
-        private boolean useLatest;
+        protected final Guid id;
+        protected boolean useLatest;
 
         public TemplateWithVersionPredicate(Guid id, boolean useLatest) {
             this.id = id;
@@ -696,6 +696,23 @@ public final class Linq {
         public boolean match(TemplateWithVersion templateWithVersion) {
             if (useLatest) {
                 return templateWithVersion.getTemplateVersion() instanceof LatestVmTemplate;
+            } else {
+                return id.equals(templateWithVersion.getTemplateVersion().getId())
+                        && !(templateWithVersion.getTemplateVersion() instanceof LatestVmTemplate);
+            }
+        }
+    }
+
+    public static class TemplateWithVersionPredicateForNewVm extends TemplateWithVersionPredicate {
+        public TemplateWithVersionPredicateForNewVm(Guid id, boolean useLatest) {
+            super(id, useLatest);
+        }
+
+        @Override
+        public boolean match(TemplateWithVersion templateWithVersion) {
+            if (useLatest) {
+                return id.equals(templateWithVersion.getTemplateVersion().getId())
+                        && templateWithVersion.getTemplateVersion() instanceof LatestVmTemplate;
             } else {
                 return id.equals(templateWithVersion.getTemplateVersion().getId())
                         && !(templateWithVersion.getTemplateVersion() instanceof LatestVmTemplate);
