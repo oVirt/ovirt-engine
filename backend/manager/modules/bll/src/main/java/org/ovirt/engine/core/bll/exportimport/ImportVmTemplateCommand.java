@@ -101,6 +101,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         super.init();
         setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
         ImportUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
+        ImportUtils.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
     }
 
     public ImportVmTemplateCommand(Guid commandId) {

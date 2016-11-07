@@ -17,8 +17,10 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.junit.After;
@@ -33,6 +35,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -259,6 +262,10 @@ public class RunVmValidatorTest {
     private void mockOsRepository() {
         OsRepository osRepository = mock(OsRepository.class);
         when(osRepository.get64bitOss()).thenReturn(Collections.singletonList(_64_BIT_OS));
+        final Map<Integer, ArchitectureType> osArchitectures = new HashMap<Integer, ArchitectureType>() {{
+            put(_64_BIT_OS, ArchitectureType.x86_64);
+        }};
+        when(osRepository.getOsArchitectures()).thenReturn(Collections.unmodifiableMap(osArchitectures));
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 

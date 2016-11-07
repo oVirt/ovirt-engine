@@ -917,6 +917,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (!validate(VmHandler.validateMaxMemorySize(
+                getParameters().getVmStaticData(),
+                getEffectiveCompatibilityVersion()))) {
+            return false;
+        }
+
         return true;
     }
 

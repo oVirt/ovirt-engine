@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -626,6 +627,10 @@ public class SnapshotsManager {
             // if the required dedicated host is invalid -> use current VM dedicated host
             if (!vmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData(), null)) {
                 vm.setDedicatedVmForVdsList(oldVmStatic.getDedicatedVmForVdsList());
+            }
+            if (vm.getMaxMemorySizeMb() == 0) {
+                // ovf didn't contain a value
+                vm.setMaxMemorySizeMb(VmCommonUtils.maxMemorySizeWithHotplugInMb(vm.getOs(), vm.getCompatibilityVersion()));
             }
             validateQuota(vm);
             return true;

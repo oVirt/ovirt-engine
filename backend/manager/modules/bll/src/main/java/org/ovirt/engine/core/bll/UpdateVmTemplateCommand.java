@@ -179,6 +179,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             );
         }
 
+        if (!validate(VmHandler.validateMaxMemorySize(
+                getParameters().getVmTemplateData(),
+                CompatibilityVersionUtils.getEffective(getParameters().getVmTemplateData(), this::getCluster)))) {
+            return false;
+        }
+
         if (!isInstanceType && !isBlankTemplate && returnValue) {
             return doClusterRelatedChecks();
         } else {

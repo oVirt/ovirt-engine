@@ -540,6 +540,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
+        if (!validate(VmHandler.validateMaxMemorySize(
+                getParameters().getMasterVm(),
+                CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), this::getCluster)))) {
+            return false;
+        }
+
+
         if (isInstanceType) {
             return true;
         } else {

@@ -675,6 +675,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         }
 
+        if (!validate(VmHandler.validateMaxMemorySize(
+                getParameters().getVmStaticData(),
+                getEffectiveCompatibilityVersion()))) {
+            return false;
+        }
+
         return true;
     }
 

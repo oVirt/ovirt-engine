@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.compat.Version;
 
 public class VmCommonUtils {
 
@@ -41,20 +42,37 @@ public class VmCommonUtils {
     }
 
     /**
-     * Return total maximum possible memory size for the given VM, including hotplugged memory.
+     * Note: backend only
      *
-     * @param vm current configuration of the VM
-     * @return the total possible memory size with hotplug
+     * @see #maxMemorySizeWithHotplugInMb(int, Version)
      */
     public static int maxMemorySizeWithHotplugInMb(VM vm) {
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-        if (osRepository.get64bitOss().contains(vm.getOs())) {
-            ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
-                ConfigValues.VMPpc64BitMaxMemorySizeInMB :
-                ConfigValues.VM64BitMaxMemorySizeInMB;
-            return Config.getValue(config, vm.getCompatibilityVersion().getValue());
-        }
-        return Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB);
+        return maxMemorySizeWithHotplugInMb(vm.getOs(), vm.getCompatibilityVersion());
     }
+
+    /**
+     * Return total maximum possible memory size for the given VM, including hotplugged memory.
+     *
+     * <p>Note: backend only</p>
+     *
+     * @param osId id of operating system
+     * @param compatibilityVersion version of config value to query
+     * @return the total possible memory size with hotplug
+     */
+    public static int maxMemorySizeWithHotplugInMb(int osId, Version compatibilityVersion) {
+        final ConfigValues configValue = getMaxMemConfigValueByOsId(osId);
+        return compatibilityVersion != null
+                ? Config.<Integer>getValue(configValue, compatibilityVersion.getValue())
+                : Config.<Integer>getValue(configValue);
+    }
+
+    private static ConfigValues getMaxMemConfigValueByOsId(int osId) {
+         OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+         return osRepository.get64bitOss().contains(osId)
+                 ? (osRepository.getOsArchitectures().get(osId).getFamily() == ArchitectureType.ppc
+                        ? ConfigValues.VMPpc64BitMaxMemorySizeInMB
+                        : ConfigValues.VM64BitMaxMemorySizeInMB)
+                 : ConfigValues.VM32BitMaxMemorySizeInMB;
+     }
 
 }

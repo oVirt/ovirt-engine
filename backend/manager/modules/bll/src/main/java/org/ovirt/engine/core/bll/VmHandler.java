@@ -80,6 +80,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
@@ -101,6 +102,7 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -1198,5 +1200,21 @@ public class VmHandler implements BackendService {
             }
         }
         return false;
+    }
+
+    public static ValidationResult validateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
+        if (vmBase.getMaxMemorySizeMb() < vmBase.getMemSizeMb()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE,
+                    ReplacementUtils.createSetVariableString("maxMemory", vmBase.getMaxMemorySizeMb()),
+                    ReplacementUtils.createSetVariableString("memory", vmBase.getMemSizeMb()));
+        }
+        final int maxMemoryUpperBound = VmCommonUtils.maxMemorySizeWithHotplugInMb(
+                vmBase.getOsId(), effectiveCompatibilityVersion);
+        if (vmBase.getMaxMemorySizeMb() > maxMemoryUpperBound) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_EXCEED_PLATFORM_LIMIT,
+                    ReplacementUtils.createSetVariableString("maxMemory", vmBase.getMaxMemorySizeMb()),
+                    ReplacementUtils.createSetVariableString("platformLimit", maxMemoryUpperBound));
+        }
+        return ValidationResult.VALID;
     }
 }

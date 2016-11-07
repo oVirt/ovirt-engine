@@ -786,6 +786,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = selectSingleNode(content, OvfProperties.MAX_MEMORY_SIZE_MB);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setMaxMemorySizeMb(Integer.parseInt(node.innerText));
+            }
+        }
+
         vmBase.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(
                 vmBase.getPredefinedProperties(), vmBase.getUserDefinedProperties()));
 
