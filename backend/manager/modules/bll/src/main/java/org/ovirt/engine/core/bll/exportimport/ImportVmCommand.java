@@ -569,7 +569,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
             Set<Guid> domainsId = domains.stream().map(StorageDomain::getId).collect(Collectors.toSet());
 
-            if (Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
+            if (!domainsId.isEmpty() && Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
