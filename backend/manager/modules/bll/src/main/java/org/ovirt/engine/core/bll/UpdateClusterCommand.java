@@ -258,7 +258,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private void addOrUpdateAddtionalClusterFeatures() {
         Set<SupportedAdditionalClusterFeature> featuresInDb =
-                getClusterFeatureDao().getSupportedFeaturesByClusterId(getCluster().getId());
+                clusterFeatureDao.getSupportedFeaturesByClusterId(getCluster().getId());
         Map<Guid, SupportedAdditionalClusterFeature> featuresEnabled = new HashMap<>();
 
         for (SupportedAdditionalClusterFeature feature : getCluster().getAddtionalFeaturesSupported()) {
@@ -269,17 +269,17 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             if (featureInDb.isEnabled() && !featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
                 // Disable the features which are not selected in update cluster
                 featureInDb.setEnabled(false);
-                getClusterFeatureDao().updateSupportedClusterFeature(featureInDb);
+                clusterFeatureDao.updateSupportedClusterFeature(featureInDb);
             } else if (!featureInDb.isEnabled() && featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
                 // Enable the features which are selected in update cluster
                 featureInDb.setEnabled(true);
-                getClusterFeatureDao().updateSupportedClusterFeature(featureInDb);
+                clusterFeatureDao.updateSupportedClusterFeature(featureInDb);
             }
             featuresEnabled.remove(featureInDb.getFeature().getId());
         }
         // Add the newly add cluster features
         if (CollectionUtils.isNotEmpty(featuresEnabled.values())) {
-            getClusterFeatureDao().addAllSupportedClusterFeature(featuresEnabled.values());
+            clusterFeatureDao.addAllSupportedClusterFeature(featuresEnabled.values());
         }
 
     }
@@ -596,7 +596,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         // Lets not modify the existing collection. Hence creating a new hashset.
         Set<SupportedAdditionalClusterFeature> featuresSupported =
                 new HashSet<>(getCluster().getAddtionalFeaturesSupported());
-        featuresSupported.removeAll(getClusterFeatureDao().getSupportedFeaturesByClusterId(getCluster().getId()));
+        featuresSupported.removeAll(clusterFeatureDao.getSupportedFeaturesByClusterId(getCluster().getId()));
         return featuresSupported;
     }
 
@@ -608,7 +608,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         for (VDS vds : vdss) {
-            Set<String> featuresSupportedByVds = getHostFeatureDao().getSupportedHostFeaturesByHostId(vds.getId());
+            Set<String> featuresSupportedByVds = hostFeatureDao.getSupportedHostFeaturesByHostId(vds.getId());
             if (!featuresSupportedByVds.containsAll(featuresNamesEnabled)) {
                 return false;
             }
@@ -725,14 +725,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 interfaceDao,
                 networkDao,
                 managementNetworkCluster);
-    }
-
-    public SupportedHostFeatureDao getHostFeatureDao() {
-        return hostFeatureDao;
-    }
-
-    public ClusterFeatureDao getClusterFeatureDao() {
-        return clusterFeatureDao;
     }
 
     @Override

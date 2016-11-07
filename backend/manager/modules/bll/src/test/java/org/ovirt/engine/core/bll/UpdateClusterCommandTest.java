@@ -587,8 +587,6 @@ public class UpdateClusterCommandTest {
         doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
         doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
-        doReturn(clusterFeatureDao).when(cmd).getClusterFeatureDao();
-        doReturn(hostFeatureDao).when(cmd).getHostFeatureDao();
         doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
         doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any(VDS.class));
 
