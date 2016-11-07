@@ -123,18 +123,12 @@ public class VfSchedulerImpl implements VfScheduler {
         for (HostNicVfsConfig vfsConfig : vfsConfigs) {
             if (vfsConfig.getNumOfVfs() != 0 && isNetworkInVfsConfig(vnicNetwork, vfsConfig)) {
                 List<String> skipVfs = new ArrayList<>();
-                HostDevice freeVf =
-                        getFreeVf(vfsConfig, nicToUsedVfs, fetchedNics, vmId, shouldCheckDirectlyAttachedVmDevices, skipVfs);
+                HostDevice freeVf = getFreeVf(vfsConfig, nicToUsedVfs, fetchedNics, skipVfs);
                 while (freeVf != null && (isSharingIommuGroup(freeVf)
                         || (shouldCheckDirectlyAttachedVmDevices
                                 && shouldBeDirectlyAttached(freeVf.getName(), vmId)))) {
                     skipVfs.add(freeVf.getName());
-                    freeVf = getFreeVf(vfsConfig,
-                            nicToUsedVfs,
-                            fetchedNics,
-                            vmId,
-                            shouldCheckDirectlyAttachedVmDevices,
-                            skipVfs);
+                    freeVf = getFreeVf(vfsConfig, nicToUsedVfs, fetchedNics, skipVfs);
                 }
                 if (freeVf != null) {
                     return freeVf.getName();
@@ -160,8 +154,6 @@ public class VfSchedulerImpl implements VfScheduler {
     private HostDevice getFreeVf(HostNicVfsConfig hostNicVfsConfig,
             Map<Guid, List<String>> nicToUsedVfs,
             Map<Guid, VdsNetworkInterface> fetchedNics,
-            Guid vmId,
-            boolean shouldCheckDirectlyAttachedVmDevices,
             List<String> skipVfs) {
         VdsNetworkInterface nic = getNic(hostNicVfsConfig.getNicId(), fetchedNics);
         List<String> usedVfsByNic = nicToUsedVfs.get(nic.getId());
