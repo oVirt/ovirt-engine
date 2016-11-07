@@ -212,7 +212,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         if (changing) {
             return;
         } else if (value == null) {
-            updateCurrentValue(null, false);
+            updateCurrentValue(null, fireEvents);
         } else {
             boolean found = false;
             for (T listItem: this.valueList) {
