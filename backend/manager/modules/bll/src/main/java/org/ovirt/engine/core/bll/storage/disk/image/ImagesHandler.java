@@ -453,22 +453,13 @@ public final class ImagesHandler {
     }
 
     public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId) {
-        return isImagesExists(images, storagePoolId, new ArrayList<>());
-    }
-
-    private static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, ArrayList<DiskImage> irsImages) {
-        boolean returnValue = true;
-
         for (DiskImage image : images) {
             DiskImage fromIrs = isImageExist(storagePoolId, image);
             if (fromIrs == null) {
-                returnValue = false;
-                break;
+                return false;
             }
-
-            irsImages.add(fromIrs);
         }
-        return returnValue;
+        return true;
     }
 
     private static DiskImage isImageExist(Guid storagePoolId, DiskImage image) {
