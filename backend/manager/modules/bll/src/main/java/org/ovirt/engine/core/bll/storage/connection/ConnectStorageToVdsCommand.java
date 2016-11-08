@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.connection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +16,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -28,6 +31,8 @@ import org.ovirt.engine.core.utils.StringMapUtils;
 @InternalCommandAttribute
 public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParametersBase> extends
         StorageServerConnectionCommandBase<T> {
+    private static final String KEY_VALUE_SEPARATOR = "=";
+
     public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -105,7 +110,8 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
         if (storageType == StorageType.GLUSTERFS) {
             StorageConnectionValidator validator = new StorageConnectionValidator(conn);
-            if (!validate(validator.canVDSConnectToGlusterfs(getVds()))) {
+            if (!validate(validateVolumeIdAndUpdatePath(conn))
+                    || !validate(validator.canVDSConnectToGlusterfs(getVds()))) {
                 return false;
             }
         }
@@ -115,6 +121,30 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         }
 
         return true;
+    }
+
+    private ValidationResult validateVolumeIdAndUpdatePath(StorageServerConnections connection) {
+        if (connection.getGlusterVolumeId() != null) {
+            GlusterVolumeEntity glusterVolume = glusterVolumeDao.getById(connection.getGlusterVolumeId());
+            if (glusterVolume == null || glusterVolume.getBricks().isEmpty()) {
+                return new ValidationResult(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_GLUSTER_VOLUME);
+            }
+            Set<String> addressSet = new LinkedHashSet<>();
+            glusterVolume.getBricks().stream().forEach(
+                    brick -> addressSet.add(brick.getNetworkId() != null && !brick.getNetworkAddress().isEmpty()
+                            ? brick.getNetworkAddress() : brick.getServerName()));
+            String firstHost = (String) addressSet.toArray()[0];
+            connection.setConnection(firstHost + StorageConstants.GLUSTER_VOL_SEPARATOR + glusterVolume.getName());
+            String mountOptions = StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION
+                    + KEY_VALUE_SEPARATOR + StringUtils.join(addressSet.toArray(), ':');
+            if (StringUtils.isBlank(connection.getMountOptions())) {
+                connection.setMountOptions(mountOptions);
+            } else if (!connection.getMountOptions().contains(StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION)) {
+                mountOptions = connection.getMountOptions().concat("," + mountOptions);
+                connection.setMountOptions(mountOptions);
+            }
+        }
+        return ValidationResult.VALID;
     }
 
     private static final List<String> NFS_MANAGED_OPTIONS = Arrays.asList("timeo", "retrans", "vfs_type", "protocol_version", "nfsvers", "vers", "minorversion", "addr", "clientaddr");
