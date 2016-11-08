@@ -185,6 +185,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     @Override
     protected void executeVmCommand() {
         boolean isNicToBePlugged = getParameters().getAction() == PlugAction.PLUG;
+        boolean isNicToBeUnplugged = getParameters().getAction() == PlugAction.UNPLUG;
+
         if (isNicToBePlugged){
             clearAddressIfPciSlotIsDuplicated(vmDevice);
         }
@@ -219,17 +221,16 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                             vmDevice));
 
                 if (returnValue.getSucceeded()) {
-                    boolean passthroughHotPlug = vfToUse != null;     //TODO MMUCHA: Dear code reviewer! this is testing of 'transitive/implied state'. Shoulnd't here be 'boolean passthroughHotPlug = shouldAcquireVF'? Please advise.
-                    boolean passthroughHotUnplug = isPassthrough() && getParameters().getAction() == PlugAction.UNPLUG;
+                    if (isPassthrough()) {
+                        if (isNicToBeUnplugged) {
+                            networkDeviceHelper.setVmIdOnVfs(getVdsId(),
+                                    null,
+                                    new HashSet<>(Arrays.asList(vmDevice.getHostDevice())));
+                        }
 
-                    if (passthroughHotUnplug) {
-                        networkDeviceHelper.setVmIdOnVfs(getVdsId(),
-                                null,
-                                new HashSet<>(Arrays.asList(vmDevice.getHostDevice())));
-                    }
-
-                    if (passthroughHotPlug || passthroughHotUnplug) {
-                        runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
+                        if (isNicToBePlugged || isNicToBeUnplugged) {
+                            runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
+                        }
                     }
                 } else {
                     clearPassthroughData(vfToUse);
