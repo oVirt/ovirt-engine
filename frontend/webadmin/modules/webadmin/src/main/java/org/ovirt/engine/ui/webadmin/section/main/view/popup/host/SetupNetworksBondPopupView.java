@@ -23,7 +23,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class SetupNetworksBondPopupView extends AbstractModelBoundPopupView<SetupNetworksBondModel> implements SetupNetworksBondPopupPresenterWidget.ViewDef {
@@ -47,10 +46,6 @@ public class SetupNetworksBondPopupView extends AbstractModelBoundPopupView<Setu
     @Path(value = "customBondEditor.entity")
     StringEntityModelTextBoxEditor customBondEditor;
 
-    @UiField
-    @Ignore
-    VerticalPanel mainPanel;
-
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -73,9 +68,6 @@ public class SetupNetworksBondPopupView extends AbstractModelBoundPopupView<Setu
         });
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
-        // Set Styles
-        mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Localize
         bondSuggestEditor.setLabel(constants.bondNameHostPopup() + ":"); //$NON-NLS-1$
@@ -118,11 +110,11 @@ public class SetupNetworksBondPopupView extends AbstractModelBoundPopupView<Setu
     private void updateBondOptions(ListModel<Map.Entry<String, EntityModel<String>>> list) {
         Map.Entry<String, EntityModel<String>> pair = list.getSelectedItem();
         if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
-            customBondEditor.setVisible(true);
+            customBondEditor.setEnabled(true);
             String entity = pair.getValue().getEntity();
             customBondEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity); //$NON-NLS-1$
         } else {
-            customBondEditor.setVisible(false);
+            customBondEditor.setEnabled(false);
         }
     }
 }
