@@ -42,6 +42,8 @@ public interface GlusterVolumeDao extends Dao, SearchDao<GlusterVolumeEntity>, M
             GlusterStatus status,
             List<GlusterVolumeType> volumeTypes);
 
+    public List<GlusterVolumeEntity> getVolumesSupportedAsStorageDomain();
+
     @Override
     public List<GlusterVolumeEntity> getAllWithQuery(String query);
 
