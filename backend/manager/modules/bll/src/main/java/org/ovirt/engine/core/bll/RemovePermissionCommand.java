@@ -44,6 +44,12 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         } else if (p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
             addValidationMessage(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
             returnValue = false;
+        } else if (
+            Objects.equals(p.getObjectId(), MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID) &&
+            Objects.equals(p.getAdElementId(), MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID)
+        ) {
+            addValidationMessage(EngineMessage.SYSTEM_PERMISSIONS_CANT_BE_REMOVED_FROM_EVERYONE);
+            returnValue = false;
         }
         if(!Objects.equals(p.getAdElementId(), getParameters().getTargetId())
             && dbUserDao.get(getParameters().getTargetId()) != null) {
