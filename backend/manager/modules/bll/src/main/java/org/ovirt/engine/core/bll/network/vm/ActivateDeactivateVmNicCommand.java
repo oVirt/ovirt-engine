@@ -182,26 +182,34 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Override
     protected void executeVmCommand() {
-        boolean isNicToBePlugged = getParameters().getAction() == PlugAction.PLUG;
-        boolean isNicToBeUnplugged = getParameters().getAction() == PlugAction.UNPLUG;
-
-        if (isNicToBePlugged){
-            clearAddressIfPciSlotIsDuplicated(vmDevice);
+        switch (getParameters().getAction()) {
+        case PLUG:
+            plugNic();
+            break;
+        case UNPLUG:
+            unplugNic();
+            break;
+        default:
+            throw new RuntimeException("Coding error: unknown enum value");
         }
+
+        // In any case, the device is updated
+        TransactionSupport.executeInNewTransaction(updateDevice());
+        setSucceeded(true);
+    }
+
+    private void plugNic() {
+        clearAddressIfPciSlotIsDuplicated(vmDevice);
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
-            boolean externalNetworkIsPlugged = isNicToBePlugged
-                    && getNetwork() != null
-                    && getNetwork().isExternal();
-
+            boolean externalNetworkIsPlugged = getNetwork() != null && getNetwork().isExternal();
             if (externalNetworkIsPlugged) {
                 plugToExternalNetwork();
             }
 
             String vfToUse = null;
             try {
-                boolean shouldAcquireVF = isNicToBePlugged && isPassthrough();
-                if (shouldAcquireVF) {
+                if (isPassthrough()) {
                     vfToUse = acquireVF();
                     if (vfToUse == null) {
                         failValidationCannotPlugPassthroughVnicNoSuitableVf();
@@ -212,21 +220,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                     vmDevice.setHostDevice(vfToUse);
                 }
 
-                VDSReturnValue returnValue = runVdsCommand(getParameters().getAction().getCommandType(),
-                    new VmNicDeviceVDSParameters(getVdsId(),
-                            getVm(),
-                            getParameters().getNic(),
-                            vmDevice));
-
-                if (returnValue.getSucceeded()) {
+                if (executePlugOrUnplug(PlugAction.PLUG)) {
                     if (isPassthrough()) {
-                        if (isNicToBeUnplugged) {
-                            clearPassthroughData(vmDevice.getHostDevice());
-                        }
-
-                        if (isNicToBePlugged || isNicToBeUnplugged) {
-                            runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
-                        }
+                        runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
                     }
                 } else {
                     clearPassthroughData(vfToUse);
@@ -237,13 +233,30 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 }
 
                 clearPassthroughData(vfToUse);
-
                 throw e;
             }
         }
-        // In any case, the device is updated
-        TransactionSupport.executeInNewTransaction(updateDevice());
-        setSucceeded(true);
+    }
+
+    private void unplugNic() {
+        if (hotPlugVmNicRequired(getVm().getStatus())) {
+            if (executePlugOrUnplug(PlugAction.UNPLUG)) {
+                if (isPassthrough()) {
+                    clearPassthroughData(vmDevice.getHostDevice());
+                    runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
+                }
+            }
+        }
+    }
+
+    private boolean executePlugOrUnplug(PlugAction action) {
+        VDSReturnValue vdsReturnValue = runVdsCommand(action.getCommandType(),
+                new VmNicDeviceVDSParameters(getVdsId(),
+                        getVm(),
+                        getParameters().getNic(),
+                        vmDevice));
+
+        return vdsReturnValue.getSucceeded();
     }
 
     private String acquireVF() {
