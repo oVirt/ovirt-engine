@@ -193,32 +193,25 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             boolean externalNetworkIsPlugged = isNicToBePlugged
                     && getNetwork() != null
                     && getNetwork().isExternal();
+
             if (externalNetworkIsPlugged) {
                 plugToExternalNetwork();
             }
 
             String vfToUse = null;
             try {
-                if (isNicToBePlugged) {
-
-                    if (isPassthrough()) {
-                        try {
-                            hostDeviceManager.acquireHostDevicesLock(getVdsId());
-                            vfToUse = findFreeVf();
-                            if (vfToUse == null) {
-                                failValidationCannotPlugPassthroughVnicNoSuitableVf();
-                                return;
-                            }
-
-                            networkDeviceHelper.setVmIdOnVfs(getVdsId(),
-                                    getVmId(),
-                                    Collections.singleton(vfToUse));
-                            vmDevice.setHostDevice(vfToUse);
-                        } finally {
-                            hostDeviceManager.releaseHostDevicesLock(getVdsId());
-                        }
+                boolean shouldAcquireVF = isNicToBePlugged && isPassthrough();
+                if (shouldAcquireVF) {
+                    vfToUse = acquireVF();
+                    if (vfToUse == null) {
+                        failValidationCannotPlugPassthroughVnicNoSuitableVf();
+                        return;
                     }
+
+                    networkDeviceHelper.setVmIdOnVfs(getVdsId(), getVmId(), Collections.singleton(vfToUse));
+                    vmDevice.setHostDevice(vfToUse);
                 }
+
                 VDSReturnValue returnValue = runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
@@ -226,7 +219,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                             vmDevice));
 
                 if (returnValue.getSucceeded()) {
-                    boolean passthroughHotPlug = vfToUse != null;
+                    boolean passthroughHotPlug = vfToUse != null;     //TODO MMUCHA: Dear code reviewer! this is testing of 'transitive/implied state'. Shoulnd't here be 'boolean passthroughHotPlug = shouldAcquireVF'? Please advise.
                     boolean passthroughHotUnplug = isPassthrough() && getParameters().getAction() == PlugAction.UNPLUG;
 
                     if (passthroughHotUnplug) {
@@ -254,6 +247,15 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         // In any case, the device is updated
         TransactionSupport.executeInNewTransaction(updateDevice());
         setSucceeded(true);
+    }
+
+    private String acquireVF() {
+        try {
+            hostDeviceManager.acquireHostDevicesLock(getVdsId());
+            return findFreeVf();
+        } finally {
+            hostDeviceManager.releaseHostDevicesLock(getVdsId());
+        }
     }
 
     private void clearPassthroughData(String vfToUse) {
