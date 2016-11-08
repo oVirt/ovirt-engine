@@ -203,6 +203,16 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetGlusterVolumesSupportedAsStorageDomain ()
+RETURNS SETOF gluster_volumes_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM gluster_volumes_view
+    WHERE replica_count = 3;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetGlusterVolumesByOption (
     v_cluster_id UUID,
     v_status VARCHAR(32),
