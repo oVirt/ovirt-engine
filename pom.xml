@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
-  <version>3.6.10</version>
+  <version>3.6.10.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ovirt-root</name>
   <description>oVirt Engine Root Project</description>
@@ -43,7 +43,7 @@
     <animal.sniffer.signature>java17</animal.sniffer.signature>
 
     <!-- oVirt extentions versions -->
-    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
+    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
 
     <!-- Dependencies Versions -->
     <junit.version>4.11</junit.version>
@@ -614,7 +614,7 @@
         <plugin>
           <groupId>org.ovirt.engine</groupId>
           <artifactId>jboss-modules-maven-plugin</artifactId>
-          <version>1.2</version>
+          <version>1.2-SNAPSHOT</version>
           <executions>
             <execution>
               <phase>package</phase>
