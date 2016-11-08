@@ -57,6 +57,7 @@ WHERE length(memory_volume) != 0
         SELECT memory_volume
         FROM snapshots
         WHERE snapshot_type != 'ACTIVE'
+            AND length(memory_volume) > 0
         );
 
 CREATE FUNCTION _temp_getVirtualMemoryQuantity(text) RETURNS int AS $$
