@@ -21,7 +21,7 @@ FIX_RELEASE=10
 # - master
 # - <none>
 #
-MILESTONE=master
+MILESTONE=
 
 # RPM release is manually specified,
 # For pre-release:
@@ -32,4 +32,4 @@ MILESTONE=master
 # RPM_RELEASE=N
 # while N is incremented each re-release
 #
-RPM_RELEASE=0.0.$(MILESTONE).$(shell date -u +%Y%m%d%H%M%S)
+RPM_RELEASE=1

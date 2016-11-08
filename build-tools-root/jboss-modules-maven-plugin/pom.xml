@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.ovirt.engine</groupId>
     <artifactId>build-tools-root</artifactId>
-    <version>3.6.10-SNAPSHOT</version>
+    <version>3.6.10</version>
   </parent>
 
   <name>oVirt JBoss Modules Maven Plugin</name>
@@ -21,7 +21,7 @@
   </description>
 
   <artifactId>jboss-modules-maven-plugin</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <packaging>maven-plugin</packaging>
 
   <dependencies>

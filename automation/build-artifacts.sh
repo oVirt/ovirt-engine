@@ -1,7 +1,6 @@
 #!/bin/bash -xe
 
-BUILD_UT=0
-SUFFIX=".git$(git rev-parse --short HEAD)"
+BUILD_UT=1
 MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
     -XX:MaxPermSize=1G \
@@ -53,7 +52,6 @@ make dist
 rpmbuild \
     -D "_srcrpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
-    -D "release_suffix ${SUFFIX}" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     -ts ./*.gz
 
@@ -71,7 +69,6 @@ fi
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
-    -D "release_suffix ${SUFFIX}" \
     -D "ovirt_build_ut $BUILD_UT" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     --rebuild output/*.src.rpm
