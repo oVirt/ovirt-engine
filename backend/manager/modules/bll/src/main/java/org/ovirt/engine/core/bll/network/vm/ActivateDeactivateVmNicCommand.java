@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -223,9 +221,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 if (returnValue.getSucceeded()) {
                     if (isPassthrough()) {
                         if (isNicToBeUnplugged) {
-                            networkDeviceHelper.setVmIdOnVfs(getVdsId(),
-                                    null,
-                                    new HashSet<>(Arrays.asList(vmDevice.getHostDevice())));
+                            clearPassthroughData(vmDevice.getHostDevice());
                         }
 
                         if (isNicToBePlugged || isNicToBeUnplugged) {
