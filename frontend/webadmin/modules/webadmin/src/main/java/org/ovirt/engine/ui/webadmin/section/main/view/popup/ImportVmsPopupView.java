@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 
+import org.gwtbootstrap3.client.ui.Alert;
+import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.AlertType;
 import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -45,13 +48,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsModel> implements ImportVmsPopupPresenterWidget.ViewDef {
@@ -63,13 +64,6 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmsPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    protected interface Style extends CssResource {
-        String contentWithQuestionMarkLabel();
-    }
-
-    @UiField
-    protected Style style;
 
     @UiField(provided = true)
     @Path("dataCenters.selectedItem")
@@ -236,19 +230,11 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     @UiField
     @Ignore
-    FlowPanel errorPanel;
+    Row errorRow;
 
     @UiField
     @Ignore
-    FlowPanel warningPanel;
-
-    @UiField
-    @Ignore
-    Label errorMessage;
-
-    @UiField
-    @Ignore
-    Label warningMessage;
+    Alert errorMessage;
 
     @UiField
     @Path("exportPath")
@@ -327,21 +313,18 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
         vmwareDatacenterEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel label = new EnableableFormLabel();
-        label.setPaddingLeft(5);
         label.setText(constants.vmwareDataCenter());
         vmwareDatacenterEditorWithInfo = new EntityModelWidgetWithInfo(label, vmwareDatacenterEditor);
         vmwareDatacenterEditorWithInfo.setExplanation(templates.italicText(constants.dataCenterInfo()));
 
         xenUriEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel xenUriLabel = new EnableableFormLabel();
-        xenUriLabel.setPaddingLeft(5);
         xenUriLabel.setText(constants.xenUri());
         xenUriWithInfo = new EntityModelWidgetWithInfo(xenUriLabel, xenUriEditor);
         xenUriWithInfo.setExplanation(templates.xenUriInfo());
 
         kvmUriEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel kvmUriLabel = new EnableableFormLabel();
-        kvmUriLabel.setPaddingLeft(5);
         kvmUriLabel.setText(constants.kvmUri());
         kvmUriWithInfo = new EntityModelWidgetWithInfo(kvmUriLabel, kvmUriEditor);
         kvmUriWithInfo.setExplanation(templates.kvmUriInfo());
@@ -357,44 +340,6 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables();
 
-        dataCentersEditor.setLabel(constants.dataCenter());
-        importSourcesEditor.setLabel(constants.importSource());
-        vmwareProvidersEditor.setLabel(constants.externalProviderLabel());
-        vmwareDatacenterEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
-
-        exportDomainName.setLabel(constants.nameLabel());
-        exportDomainPath.setLabel(constants.pathStorageGeneral());
-        exportDomainDescription.setLabel(constants.descriptionLabel());
-
-        esxEditor.setLabel(constants.esxi());
-        vCenterEditor.setLabel(constants.vCenter());
-        vmwareClusterEditor.setLabel(constants.vmwareCluster());
-        verifyEditor.setLabel(constants.vmwareVerifyServerSslCert());
-        usernameEditor.setLabel(constants.usernameProvider());
-        passwordEditor.setLabel(constants.passwordProvider());
-        proxyHostsEditor.setLabel(constants.proxyHost());
-
-        hostsEditor.setLabel(constants.ovaHost());
-        ovaPathEditor.setLabel(constants.ovaPath());
-
-        xenUriEditor.setLabel(constants.xenUri());
-        xenUriEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
-        xenProxyHostsEditor.setLabel(constants.proxyHost());
-        xenProvidersEditor.setLabel(constants.externalProviderLabel());
-
-        kvmUriEditor.setLabel(constants.kvmUri());
-        kvmUriEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
-        kvmRequiresAuthenticationEditor.setLabel(constants.requiresAuthenticationProvider());
-        kvmUsernameEditor.setLabel(constants.usernameProvider());
-        kvmPasswordEditor.setLabel(constants.passwordProvider());
-        kvmProxyHostsEditor.setLabel(constants.proxyHost());
-        kvmProvidersEditor.setLabel(constants.externalProviderLabel());
-
-        loadVmsFromExportDomainButton.setLabel(constants.loadLabel());
-        loadVmsFromVmwareButton.setLabel(constants.loadLabel());
-        loadOvaButton.setLabel(constants.loadLabel());
-        loadXenButton.setLabel(constants.loadLabel());
-        loadKvmButton.setLabel(constants.loadLabel());
         driver.initialize(this);
     }
 
@@ -471,19 +416,18 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     }
 
     private void updateErrorAndWarning(ImportVmsModel model) {
-        errorPanel.setVisible(false);
-        warningPanel.setVisible(false);
+        errorRow.setVisible(false);
         String message = model.getProblemDescription().getEntity();
         if (message == null) {
             return;
         }
         if (model.getProblemDescription().getIsValid()) {
-            warningMessage.setText(message);
-            warningPanel.setVisible(true);
+            errorMessage.setType(AlertType.WARNING);
         } else {
-            errorMessage.setText(message);
-            errorPanel.setVisible(true);
+            errorMessage.setType(AlertType.DANGER);
         }
+        errorMessage.setText(message);
+        errorRow.setVisible(true);
     }
 
     private void updatePanelsVisibility(ImportVmsModel model) {

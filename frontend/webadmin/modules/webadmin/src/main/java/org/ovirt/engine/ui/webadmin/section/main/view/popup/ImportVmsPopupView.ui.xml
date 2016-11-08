@@ -1,156 +1,182 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView.Style">
-		.sourcePropertyStyle {
-			width: 390px;
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+    <ui:style>
+        .loadButtonStyle {
+            margin-top: 15px;
+            margin-right: 20px;
+            float: right;
+        }
 
-		.checkBoxSourcePropertyStyle {
-			margin-bottom: 10px;
-			width: 390px;
-		}
+        .container {
+           width: 100%;
+        }
 
-		.contentWithQuestionMarkLabel {
-			display: inline-block;
-			float: right;
-		}
+        .nopadding {
+            padding: 0px;
+        }
 
-		.generalSectionStyle {
-			margin-bottom: 5px;
-			width: 100%;
-			background-color: #e5e5e5;
-			border: 2px solid #d3d3d3;
-		}
+        .topElement {
+            padding-top: 15px;
+        }
 
-		.vmwareSectionStyle {
-			margin-top: 5px;
-			height: 165px;
-		}
+        .headerElement {
+            background-color: #E5E5E5;
+        }
 
-		.exportSectionStyle, .ovaSectionStyle, .xenSectionStyle, .kvmSectionStyle {
-			margin-top: 5px;
-			width: 390px;
-			height: 165px;
-		}
+        .headerBottom {
+            margin-bottom: 5px;
+        }
 
-		.messageSectionStyle {
-			height: 20px;
-		}
+        .errorMessage {
+            margin-top: 15px;
+        }
+    </ui:style>
 
-		.floatLeft {
-			float: left;
-		}
-
-		.errorStyle {
-			color: red;
-			vertical-align: bottom;
-			line-height: 15px;
-			margin-left: 3px;
-		}
-
-		.warningStyle {
-			vertical-align: bottom;
-			line-height: 15px;
-			margin-left: 3px;
-		}
-
-		.loadButtonStyle {
-			margin-top: 15px;
-			margin-right: 20px;
-			float: right;
-		}
-
-	</ui:style>
-
-	<d:SimpleDialogPanel width="800px" height="660px">
-		<d:content>
-			<g:VerticalPanel width="100%">
-				<g:FlowPanel addStyleNames="{style.generalSectionStyle}">
-					<e:ListModelListBoxEditor ui:field="dataCentersEditor" addStyleNames="{style.sourcePropertyStyle}" />
-					<g:HorizontalPanel>
-						<e:ListModelListBoxEditor  ui:field="importSourcesEditor" addStyleNames="{style.sourcePropertyStyle}" />
-						<e:ListModelListBoxEditor ui:field="vmwareProvidersEditor" addStyleNames="{style.sourcePropertyStyle}" />
-						<e:ListModelListBoxEditor ui:field="kvmProvidersEditor" addStyleNames="{style.sourcePropertyStyle}" />
-						<e:ListModelListBoxEditor ui:field="xenProvidersEditor" addStyleNames="{style.sourcePropertyStyle}" />
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-
-				<g:FlowPanel ui:field="exportPanel" visible="false" addStyleNames="{style.exportSectionStyle}">
-					<ge:StringEntityModelLabelEditor ui:field="exportDomainName"/>
-					<ge:StringEntityModelLabelEditor ui:field="exportDomainPath"/>
-					<ge:StringEntityModelLabelEditor ui:field="exportDomainDescription"/>
-					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
-						<w:UiCommandButton ui:field="loadVmsFromExportDomainButton"/>
-			        </g:FlowPanel>
-			    </g:FlowPanel>
-
-				<g:FlowPanel ui:field="vmwarePanel" visible="false" addStyleNames="{style.vmwareSectionStyle}">
-					<g:HorizontalPanel>
-					    <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" addStyleNames="{style.sourcePropertyStyle}" />
-					    <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" addStyleNames="{style.sourcePropertyStyle}" />
-					</g:HorizontalPanel>
-					<g:HorizontalPanel>
-					    <w:EntityModelWidgetWithInfo ui:field="vmwareDatacenterEditorWithInfo" addStyleNames="{style.sourcePropertyStyle}"/>
-					    <ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-				    </g:HorizontalPanel>
-				    <g:HorizontalPanel>
-					    <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-					    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-				    </g:HorizontalPanel>
-					<ge:EntityModelCheckBoxEditor ui:field="verifyEditor" addStyleNames="{style.checkBoxSourcePropertyStyle}"/>
-					<e:ListModelListBoxEditor ui:field="proxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
-						<w:UiCommandButton ui:field="loadVmsFromVmwareButton"/>
-			        </g:FlowPanel>
-				</g:FlowPanel>
-
-				<g:FlowPanel ui:field="ovaPanel" visible="false" addStyleNames="{style.ovaSectionStyle}">
-					<e:ListModelListBoxEditor ui:field="hostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-					<ge:StringEntityModelTextBoxEditor ui:field="ovaPathEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
-						<w:UiCommandButton ui:field="loadOvaButton"/>
-			        </g:FlowPanel>
-			    </g:FlowPanel>
-
-                <g:FlowPanel ui:field="xenPanel" visible="false" addStyleNames="{style.xenSectionStyle}">
-                    <w:EntityModelWidgetWithInfo ui:field="xenUriWithInfo" addStyleNames="{style.sourcePropertyStyle}" />
-                    <e:ListModelListBoxEditor ui:field="xenProxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-                    <g:FlowPanel addStyleNames="{style.loadButtonStyle}">
-                        <w:UiCommandButton ui:field="loadXenButton"/>
+    <d:SimpleDialogPanel width="800px" height="660px">
+        <d:content>
+            <g:ScrollPanel>
+                <b:Container addStyleNames="{style.container}">
+                    <b:Row addStyleNames="{style.topElement} {style.headerElement}">
+                        <e:ListModelListBoxEditor ui:field="dataCentersEditor" label="{constants.dataCenter}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                    </b:Row>
+                    <b:Row addStyleNames="{style.headerElement} {style.headerBottom}">
+                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                            <e:ListModelListBoxEditor  ui:field="importSourcesEditor" label="{constants.importSource}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                        </b:Column>
+                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                            <e:ListModelListBoxEditor ui:field="vmwareProvidersEditor" label="{constants.externalProviderLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            <e:ListModelListBoxEditor ui:field="kvmProvidersEditor" label="{constants.externalProviderLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            <e:ListModelListBoxEditor ui:field="xenProvidersEditor" label="{constants.externalProviderLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                        </b:Column>
+                    </b:Row>
+                    <g:FlowPanel ui:field="exportPanel" visible="false">
+                        <b:Row>
+                            <ge:StringEntityModelLabelEditor ui:field="exportDomainName" label="{constants.nameLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <ge:StringEntityModelLabelEditor ui:field="exportDomainPath" label="{constants.pathStorageGeneral}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <ge:StringEntityModelLabelEditor ui:field="exportDomainDescription" label="{constants.descriptionLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadVmsFromExportDomainButton"/>
+                            </b:Column>
+                        </b:Row>
                     </g:FlowPanel>
-                </g:FlowPanel>
-
-                <g:FlowPanel ui:field="kvmPanel" visible="false" addStyleNames="{style.kvmSectionStyle}">
-                    <w:EntityModelWidgetWithInfo ui:field="kvmUriWithInfo" addStyleNames="{style.sourcePropertyStyle}"/>
-					<ge:EntityModelCheckBoxEditor ui:field="kvmRequiresAuthenticationEditor" addStyleNames="{style.checkBoxSourcePropertyStyle}" />
-                    <ge:StringEntityModelTextBoxEditor ui:field="kvmUsernameEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-                    <ge:StringEntityModelPasswordBoxEditor ui:field="kvmPasswordEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-                    <e:ListModelListBoxEditor ui:field="kvmProxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-                    <g:FlowPanel addStyleNames="{style.loadButtonStyle}">
-                        <w:UiCommandButton ui:field="loadKvmButton"/>
+                    <g:FlowPanel ui:field="vmwarePanel" visible="false">
+                        <b:Row>
+                            <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                                <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" label="{constants.vCenter}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            </b:Column>
+                            <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                                <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" label="{constants.esxi}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            </b:Column>
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                                <w:EntityModelWidgetWithInfo ui:field="vmwareDatacenterEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            </b:Column>
+                            <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                                <ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" label="{constants.vmwareCluster}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            </b:Column>
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                                <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" label="{constants.usernameProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            </b:Column>
+                            <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                                <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" label="{constants.passwordProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            </b:Column>
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <ge:EntityModelCheckBoxEditor ui:field="verifyEditor" label="{constants.vmwareVerifyServerSslCert}" usePatternFly="true" removeFormGroup="true" />
+                            </b:Column>
+                        </b:Row>
+                        <b:Row>
+                            <e:ListModelListBoxEditor ui:field="proxyHostsEditor" label="{constants.proxyHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadVmsFromVmwareButton"/>
+                            </b:Column>
+                        </b:Row>
                     </g:FlowPanel>
-                </g:FlowPanel>
-
-				<g:FlowPanel addStyleNames="{style.messageSectionStyle}">
-					<g:FlowPanel ui:field="errorPanel" visible="false">
-						<g:Image resource='{resources.logErrorImage}' addStyleNames="{style.floatLeft}" />
-						<g:Label ui:field="errorMessage" addStyleNames="{style.errorStyle} {style.floatLeft}" />
-					</g:FlowPanel>
-					<g:FlowPanel ui:field="warningPanel" visible="false">
-						<g:Image resource='{resources.logWarningImage}' addStyleNames="{style.floatLeft}" />
-						<g:Label ui:field="warningMessage" addStyleNames="{style.warningStyle} {style.floatLeft}" />
-					</g:FlowPanel>
-				</g:FlowPanel>
-				<w:VerticalSplitTable ui:field="vmsTable" />
-			</g:VerticalPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+                    <g:FlowPanel ui:field="ovaPanel" visible="false">
+                        <b:Row>
+                            <e:ListModelListBoxEditor ui:field="hostsEditor" label="{constants.ovaHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <ge:StringEntityModelTextBoxEditor ui:field="ovaPathEditor" label="{constants.ovaPath}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadOvaButton"/>
+                            </b:Column>
+                        </b:Row>
+                    </g:FlowPanel>
+                    <g:FlowPanel ui:field="xenPanel" visible="false">
+                        <b:Row>
+                            <w:EntityModelWidgetWithInfo ui:field="xenUriWithInfo" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <e:ListModelListBoxEditor ui:field="xenProxyHostsEditor" label="{constants.proxyHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadXenButton"/>
+                            </b:Column>
+                        </b:Row>
+                    </g:FlowPanel>
+                    <g:FlowPanel ui:field="kvmPanel" visible="false">
+                        <b:Row>
+                            <w:EntityModelWidgetWithInfo ui:field="kvmUriWithInfo" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <ge:EntityModelCheckBoxEditor ui:field="kvmRequiresAuthenticationEditor" label="{constants.requiresAuthenticationProvider}" usePatternFly="true" removeFormGroup="true" />
+                            </b:Column>
+                        </b:Row>
+                        <b:Row>
+                            <ge:StringEntityModelTextBoxEditor ui:field="kvmUsernameEditor" label="{constants.usernameProvider}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <ge:StringEntityModelPasswordBoxEditor ui:field="kvmPasswordEditor" label="{constants.passwordProvider}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <e:ListModelListBoxEditor ui:field="kvmProxyHostsEditor" label="{constants.proxyHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadKvmButton"/>
+                            </b:Column>
+                        </b:Row>
+                    </g:FlowPanel>
+                    <b:Row ui:field="errorRow">
+                        <b:Column size="SM_12">
+                            <b:Alert ui:field="errorMessage" type="DANGER" text="{constants.advancedOptionsLabel}" addStyleNames="{style.errorMessage}"/>
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_12">
+                            <w:VerticalSplitTable ui:field="vmsTable" />
+                        </b:Column>
+                    </b:Row>
+                </b:Container>
+            </g:ScrollPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

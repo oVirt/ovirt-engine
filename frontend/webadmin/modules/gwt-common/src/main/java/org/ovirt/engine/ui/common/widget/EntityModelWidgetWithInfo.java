@@ -77,7 +77,7 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
     }
 
     public void setWidgetColSize(ColumnSize size) {
-        contentWidget.addStyleName(size.getCssName());
+        contentWidgetContainer.addStyleName(size.getCssName());
         switchToBootstrapMode();
     }
 
