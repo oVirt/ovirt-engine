@@ -1207,9 +1207,9 @@ public class AsyncDataProvider {
         return uniqueOsNames;
     }
 
-    public void getAAAProfilesList(AsyncQuery<List<String>> aQuery) {
-        convertAAAProfilesResult(aQuery, false);
-        Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
+    public void getAuthzExtensionsNames(AsyncQuery<List<String>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetDomainList, new VdcQueryParametersBase(), aQuery);
     }
 
     public void getAAANamespaces(AsyncQuery<Map<String, List<String>>> aQuery) {

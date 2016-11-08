@@ -939,7 +939,7 @@ public abstract class RunOnceModel extends Model {
 
     private void updateDomainList() {
         // Update Domain list
-        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
+        AsyncDataProvider.getInstance().getAuthzExtensionsNames(new AsyncQuery<>(new AsyncCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> domains) {
                 String oldDomain = getSysPrepDomainName().getSelectedItem();

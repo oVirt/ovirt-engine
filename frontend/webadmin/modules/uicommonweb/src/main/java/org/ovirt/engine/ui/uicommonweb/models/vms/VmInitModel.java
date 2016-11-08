@@ -1076,7 +1076,7 @@ public class VmInitModel extends Model {
         // Can't use domain since onSuccess is async call and it have
         // a different stack call.
         currentDomain = domain;
-        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
+        AsyncDataProvider.getInstance().getAuthzExtensionsNames(new AsyncQuery<>(new AsyncCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> domains) {
                 getSysprepDomain().setItems(domains);
