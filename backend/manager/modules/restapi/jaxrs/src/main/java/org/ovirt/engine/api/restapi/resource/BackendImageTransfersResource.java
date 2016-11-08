@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.ImageTransfers;
 import org.ovirt.engine.api.resource.ImageTransferResource;
 import org.ovirt.engine.api.resource.ImageTransfersResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
+import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -27,10 +27,10 @@ public class BackendImageTransfersResource
 
     @Override
     public Response add(ImageTransfer imageTransfer) {
-        UploadDiskImageParameters params = new UploadDiskImageParameters();
+        TransferDiskImageParameters params = new TransferDiskImageParameters();
         params.setImageId(GuidUtils.asGuid(imageTransfer.getImage().getId()));
         params.setKeepaliveInterval(ConfigurationValues.UploadImageUiInactivityTimeoutInSeconds.getValue());
-        return performCreate(VdcActionType.UploadDiskImage, params, new QueryIdResolver<Guid>(VdcQueryType.GetImageTransferById,
+        return performCreate(VdcActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(VdcQueryType.GetImageTransferById,
                 IdQueryParameters.class));
     }
 

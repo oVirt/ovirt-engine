@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
-import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
+import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
+import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -499,8 +499,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
         startProgress(null);
         setProgressStr("Initiating new upload"); //$NON-NLS-1$
 
-        final UploadDiskImageParameters parameters = createInitParams();
-        Frontend.getInstance().runAction(VdcActionType.UploadDiskImage, parameters,
+        final TransferDiskImageParameters parameters = createInitParams();
+        Frontend.getInstance().runAction(VdcActionType.TransferDiskImage, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -522,7 +522,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 }, this);
     }
 
-    private UploadDiskImageParameters createInitParams() {
+    private TransferDiskImageParameters createInitParams() {
         Disk newDisk = diskModel.getDisk();
         AddDiskParameters diskParameters = new AddDiskParameters(newDisk);
 
@@ -531,11 +531,11 @@ public class UploadImageModel extends Model implements ICommandTarget {
             diskParameters.setStorageDomainId(getDiskModel().getStorageDomain().getSelectedItem().getId());
         }
 
-        UploadDiskImageParameters parameters = new UploadDiskImageParameters(
+        TransferDiskImageParameters parameters = new TransferDiskImageParameters(
                 diskParameters.getStorageDomainId(),
                 AsyncDataProvider.getInstance().getUploadImageUiInactivityTimeoutInSeconds(),
                 diskParameters);
-        parameters.setUploadSize(getImageSize());
+        parameters.setTransferSize(getImageSize());
 
         return parameters;
     }
@@ -544,10 +544,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
         startProgress(null);
         setProgressStr("Resuming upload"); //$NON-NLS-1$
 
-        final UploadImageStatusParameters parameters = new UploadImageStatusParameters();
+        final TransferImageStatusParameters parameters = new TransferImageStatusParameters();
         parameters.setDiskId(getDiskModel().getDisk().getId());
 
-        Frontend.getInstance().runAction(VdcActionType.UploadImageStatus, parameters,
+        Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -576,10 +576,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.RESUMING);
 
-            final UploadImageStatusParameters parameters = new UploadImageStatusParameters(rv.getId());
+            final TransferImageStatusParameters parameters = new TransferImageStatusParameters(rv.getId());
             parameters.setUpdates(updates);
 
-            Frontend.getInstance().runAction(VdcActionType.UploadImageStatus, parameters,
+            Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -621,7 +621,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             @Override
             public boolean execute() {
                 log.info("Polling for status"); //$NON-NLS-1$
-                UploadImageStatusParameters statusParameters = new UploadImageStatusParameters(getCommandId());
+                TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId());
 
                 // TODO: temp updates from UI until updates from VDSM are implemented
                 ImageTransfer updates = new ImageTransfer();
@@ -629,7 +629,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 updates.setMessage(getMessage() != null ? getMessage() : getProgressStr());
                 statusParameters.setUpdates(updates);
 
-                Frontend.getInstance().runAction(VdcActionType.UploadImageStatus, statusParameters,
+                Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
@@ -747,7 +747,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
 
         ImageTransfer updates = new ImageTransfer();
-        UploadImageStatusParameters statusParameters = new UploadImageStatusParameters(getCommandId(), updates);
+        TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId(), updates);
 
         if (getUploadState() == UploadState.SUCCESS) {
             setProgressStr("Finalizing success..."); //$NON-NLS-1$
@@ -765,7 +765,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
 
         log.info("Updating status to {}", statusParameters.getUpdates().getPhase()); //$NON-NLS-1$
-        Frontend.getInstance().runAction(VdcActionType.UploadImageStatus, statusParameters,
+        Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1132,13 +1132,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
         for (DiskImage image : images) {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.CANCELLED);
-            UploadImageStatusParameters parameters = new UploadImageStatusParameters();
+            TransferImageStatusParameters parameters = new TransferImageStatusParameters();
             parameters.setUpdates(updates);
             parameters.setDiskId(image.getId());
             list.add(parameters);
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.UploadImageStatus, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.TransferImageStatus, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1154,12 +1154,12 @@ public class UploadImageModel extends Model implements ICommandTarget {
         for (DiskImage image : images) {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.PAUSED_USER);
-            UploadImageStatusParameters parameters = new UploadImageStatusParameters();
+            TransferImageStatusParameters parameters = new TransferImageStatusParameters();
             parameters.setUpdates(updates);
             parameters.setDiskId(image.getId());
             list.add(parameters);
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.UploadImageStatus, list);
+        Frontend.getInstance().runMultipleAction(VdcActionType.TransferImageStatus, list);
     }
 
     public static boolean isCancelAllowed(List<? extends Disk> disks) {

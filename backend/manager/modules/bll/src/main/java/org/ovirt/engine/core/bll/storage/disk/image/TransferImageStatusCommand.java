@@ -11,13 +11,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
+import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 
-public class UploadImageStatusCommand<T extends UploadImageStatusParameters> extends CommandBase<T> {
+public class TransferImageStatusCommand<T extends TransferImageStatusParameters> extends CommandBase<T> {
 
     @Inject
     private ImageTransferDao imageTransferDao;
@@ -25,7 +25,7 @@ public class UploadImageStatusCommand<T extends UploadImageStatusParameters> ext
     @Inject
     private ImageTransferUpdater imageTransferUpdater;
 
-    public UploadImageStatusCommand(T parameters, CommandContext cmdContext) {
+    public TransferImageStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
@@ -36,15 +36,15 @@ public class UploadImageStatusCommand<T extends UploadImageStatusParameters> ext
 
     @Override
     protected void executeCommand() {
-        if (getParameters().getUploadImageCommandId() == null
+        if (getParameters().getTransferImageCommandId() == null
                 && getParameters().getDiskId() == null) {
             log.error("Invalid parameters: command or disk id must be specified");
             setSucceeded(false);
         }
 
         ImageTransfer entity;
-        if (getParameters().getUploadImageCommandId() != null) {
-            entity = imageTransferDao.get(getParameters().getUploadImageCommandId());
+        if (getParameters().getTransferImageCommandId() != null) {
+            entity = imageTransferDao.get(getParameters().getTransferImageCommandId());
         } else {
             entity = imageTransferDao.getByDiskId(getParameters().getDiskId());
         }
@@ -56,16 +56,16 @@ public class UploadImageStatusCommand<T extends UploadImageStatusParameters> ext
             // Missing entity; this isn't unusual as the UI will poll until the entity is gone
             // due to upload completion or failure.  Instead of an error, we'll return an entity
             // with phase "UNKNOWN" and the UI will know what to do.
-            if (getParameters().getUploadImageCommandId() != null) {
-                log.info("UploadImageStatus request for missing or removed entity, command id {}",
-                        getParameters().getUploadImageCommandId());
+            if (getParameters().getTransferImageCommandId() != null) {
+                log.info("TransferImageStatus request for missing or removed entity, command id {}",
+                        getParameters().getTransferImageCommandId());
             } else {
-                log.info("UploadImageStatus request for missing or removed entity, disk id {}",
+                log.info("TransferImageStatus request for missing or removed entity, disk id {}",
                         getParameters().getDiskId());
             }
 
             entity = new ImageTransfer();
-            entity.setId(getParameters().getUploadImageCommandId());
+            entity.setId(getParameters().getTransferImageCommandId());
             entity.setPhase(ImageTransferPhase.UNKNOWN);
         }
 

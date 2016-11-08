@@ -4,31 +4,31 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UploadImageStatusParameters extends VdcActionParametersBase {
+public class TransferImageStatusParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = 8404863745376386682L;
-    private Guid uploadImageCommandId;
+    private Guid transferImageCommandId;
     private Guid diskId;
     private ImageTransfer updates;
     private AuditLogType auditLogType;
 
-    public UploadImageStatusParameters(Guid uploadImageCommandId, ImageTransfer updates) {
-        this.uploadImageCommandId = uploadImageCommandId;
+    public TransferImageStatusParameters(Guid transferImageCommandId, ImageTransfer updates) {
+        this.transferImageCommandId = transferImageCommandId;
         this.updates = updates;
     }
 
-    public UploadImageStatusParameters(Guid uploadImageCommandId) {
-        this.uploadImageCommandId = uploadImageCommandId;
+    public TransferImageStatusParameters(Guid transferImageCommandId) {
+        this.transferImageCommandId = transferImageCommandId;
     }
 
-    public UploadImageStatusParameters() {
+    public TransferImageStatusParameters() {
     }
 
-    public Guid getUploadImageCommandId() {
-        return uploadImageCommandId;
+    public Guid getTransferImageCommandId() {
+        return transferImageCommandId;
     }
 
-    public void setUploadImageCommandId(Guid uploadImageCommandId) {
-        this.uploadImageCommandId = uploadImageCommandId;
+    public void setTransferImageCommandId(Guid transferImageCommandId) {
+        this.transferImageCommandId = transferImageCommandId;
     }
 
     public Guid getDiskId() {

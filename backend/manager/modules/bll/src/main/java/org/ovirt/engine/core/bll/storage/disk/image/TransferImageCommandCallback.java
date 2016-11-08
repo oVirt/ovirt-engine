@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.UploadImageParameters;
+import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UploadImageCommandCallback implements CommandCallback {
+public class TransferImageCommandCallback implements CommandCallback {
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).proceedCommandExecution(childCmdIds.isEmpty() ? null : childCmdIds.get(0));
@@ -25,7 +25,7 @@ public class UploadImageCommandCallback implements CommandCallback {
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
-    private UploadImageCommand<UploadImageParameters> getCommand(Guid cmdId) {
+    private TransferImageCommand<TransferImageParameters> getCommand(Guid cmdId) {
         return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 

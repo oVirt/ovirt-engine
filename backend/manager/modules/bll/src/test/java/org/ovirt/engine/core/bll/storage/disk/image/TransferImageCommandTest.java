@@ -23,15 +23,15 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
-import org.ovirt.engine.core.common.action.UploadImageParameters;
+import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
+import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UploadImageCommandTest extends BaseCommandTest{
+public class TransferImageCommandTest extends BaseCommandTest{
 
     @Mock
     ImageTransferDao imageTransferDao;
@@ -43,26 +43,26 @@ public class UploadImageCommandTest extends BaseCommandTest{
     ImageTransferUpdater imageTransferUpdater;
 
     @Spy @InjectMocks
-    protected UploadImageCommand<? extends UploadImageParameters> uploadImageCommand = spyCommand();
+    protected TransferImageCommand<? extends TransferImageParameters> transferImageCommand = spyCommand();
 
     @Before
     public void setUp() {
         initCommand();
     }
 
-    protected UploadDiskImageCommand spyCommand() {
-        return new UploadDiskImageCommand(new UploadDiskImageParameters(), null);
+    protected TransferDiskImageCommand spyCommand() {
+        return new TransferDiskImageCommand(new TransferDiskImageParameters(), null);
     }
 
     protected void initCommand() {
-        doNothing().when(uploadImageCommand).createImage();
-        doNothing().when(uploadImageCommand).persistCommand(any(), anyBoolean());
-        doNothing().when(uploadImageCommand).lockImage();
-        doReturn(true).when(uploadImageCommand).startImageTransferSession();
+        doNothing().when(transferImageCommand).createImage();
+        doNothing().when(transferImageCommand).persistCommand(any(), anyBoolean());
+        doNothing().when(transferImageCommand).lockImage();
+        doReturn(true).when(transferImageCommand).startImageTransferSession();
         doReturn(null).when(imageTransferUpdater).updateEntity(any(), any(), anyBoolean());
     }
 
-    protected void initSuppliedImage(UploadImageCommand<? extends UploadImageParameters> command) {
+    protected void initSuppliedImage(TransferImageCommand<? extends TransferImageParameters> command) {
         Guid imageId = Guid.newGuid();
         command.getParameters().setImageId(imageId);
     }
@@ -88,19 +88,19 @@ public class UploadImageCommandTest extends BaseCommandTest{
      ************/
     @Test
     public void testValidationCallOnCreateImage() {
-        doReturn(true).when(uploadImageCommand).validateCreateImage();
-        uploadImageCommand.validate();
-        verify(uploadImageCommand, times(1)).validateCreateImage();
+        doReturn(true).when(transferImageCommand).validateCreateImage();
+        transferImageCommand.validate();
+        verify(transferImageCommand, times(1)).validateCreateImage();
     }
 
     @Test
     public void testValidationCallOnSuppliedImage() {
         Guid imageId = Guid.newGuid();
-        uploadImageCommand.getParameters().setImageId(imageId);
-        doReturn(true).when(uploadImageCommand).validateUploadToImage(imageId);
+        transferImageCommand.getParameters().setImageId(imageId);
+        doReturn(true).when(transferImageCommand).validateImageTransfer(imageId);
 
-        uploadImageCommand.validate();
-        verify(uploadImageCommand, times(1)).validateUploadToImage(imageId);
+        transferImageCommand.validate();
+        verify(transferImageCommand, times(1)).validateImageTransfer(imageId);
     }
 
     /*****************
@@ -108,27 +108,27 @@ public class UploadImageCommandTest extends BaseCommandTest{
      *****************/
     @Test
     public void testCreatingImageIfNotSupplied() {
-        uploadImageCommand.executeCommand();
+        transferImageCommand.executeCommand();
 
         // Make sure an image is created.
-        verify(uploadImageCommand, times(1)).createImage();
+        verify(transferImageCommand, times(1)).createImage();
 
         // Make sure that a transfer session won't start yet.
-        verify(uploadImageCommand, never()).handleImageIsReadyForUpload(any());
+        verify(transferImageCommand, never()).handleImageIsReadyForTransfer(any());
     }
 
     @Test
     public void testNotCreatingImageIfSupplied() {
         Guid suppliedImageId = Guid.newGuid();
-        doNothing().when(uploadImageCommand).handleImageIsReadyForUpload(suppliedImageId);
-        uploadImageCommand.getParameters().setImageId(suppliedImageId);
-        uploadImageCommand.executeCommand();
+        doNothing().when(transferImageCommand).handleImageIsReadyForTransfer(suppliedImageId);
+        transferImageCommand.getParameters().setImageId(suppliedImageId);
+        transferImageCommand.executeCommand();
 
         // Make sure no image is created if an image Guid is supplied.
-        verify(uploadImageCommand, never()).createImage();
+        verify(transferImageCommand, never()).createImage();
 
         // Make sure that a transfer session will start.
-        verify(uploadImageCommand, times(1)).handleImageIsReadyForUpload(suppliedImageId);
+        verify(transferImageCommand, times(1)).handleImageIsReadyForTransfer(suppliedImageId);
     }
 
     /*********************************
@@ -138,33 +138,33 @@ public class UploadImageCommandTest extends BaseCommandTest{
     public void testParamsUpdated() {
         DiskImage readyImage = initReadyImageForUpload();
 
-        uploadImageCommand.handleImageIsReadyForUpload(readyImage.getImageId());
+        transferImageCommand.handleImageIsReadyForTransfer(readyImage.getImageId());
 
-        assertTrue(uploadImageCommand.getParameters().getImageId().equals(readyImage.getImageId()));
-        assertTrue(uploadImageCommand.getParameters().getStorageDomainId().equals(readyImage.getStorageIds().get(0)));
-        assertTrue(uploadImageCommand.getParameters().getUploadSize() == readyImage.getSize());
+        assertTrue(transferImageCommand.getParameters().getImageId().equals(readyImage.getImageId()));
+        assertTrue(transferImageCommand.getParameters().getStorageDomainId().equals(readyImage.getStorageIds().get(0)));
+        assertTrue(transferImageCommand.getParameters().getTransferSize() == readyImage.getSize());
     }
 
     @Test
     public void testCommandPersistedWithParamUpdates() {
         DiskImage readyImage = initReadyImageForUpload();
 
-        UploadDiskImageParameters params = mock(UploadDiskImageParameters.class);
-        doReturn(params).when(uploadImageCommand).getParameters();
+        TransferDiskImageParameters params = mock(TransferDiskImageParameters.class);
+        doReturn(params).when(transferImageCommand).getParameters();
 
-        uploadImageCommand.handleImageIsReadyForUpload(readyImage.getImageId());
+        transferImageCommand.handleImageIsReadyForTransfer(readyImage.getImageId());
 
         // Verify that persistCommand is being called after each of the params changes.
-        InOrder inOrder = inOrder(params, uploadImageCommand);
+        InOrder inOrder = inOrder(params, transferImageCommand);
         inOrder.verify(params).setStorageDomainId(any());
-        inOrder.verify(uploadImageCommand).persistCommand(any(), anyBoolean());
+        inOrder.verify(transferImageCommand).persistCommand(any(), anyBoolean());
 
-        inOrder = inOrder(params, uploadImageCommand);
+        inOrder = inOrder(params, transferImageCommand);
         inOrder.verify(params).setImageId(any());
-        inOrder.verify(uploadImageCommand).persistCommand(any(), anyBoolean());
+        inOrder.verify(transferImageCommand).persistCommand(any(), anyBoolean());
 
-        inOrder = inOrder(params, uploadImageCommand);
-        inOrder.verify(params).setUploadSize(anyLong());
-        inOrder.verify(uploadImageCommand).persistCommand(any(), anyBoolean());
+        inOrder = inOrder(params, transferImageCommand);
+        inOrder.verify(params).setTransferSize(anyLong());
+        inOrder.verify(transferImageCommand).persistCommand(any(), anyBoolean());
     }
 }

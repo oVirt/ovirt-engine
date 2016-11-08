@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.UploadImageParameters;
+import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -39,10 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
-public abstract class UploadImageCommand<T extends UploadImageParameters> extends BaseImagesCommand<T> {
+public abstract class TransferImageCommand<T extends TransferImageParameters> extends BaseImagesCommand<T> {
 
     // Logger used by static updateEntity() method
-    private static final Logger staticLog = LoggerFactory.getLogger(UploadImageCommand.class);
+    private static final Logger staticLog = LoggerFactory.getLogger(TransferImageCommand.class);
 
     // Some token/"claim" names are from RFC 7519 on JWT
     private static final String TOKEN_NOT_BEFORE = "nbf";
@@ -69,7 +69,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         Guid childCmdId;
     }
 
-    public UploadImageCommand(T parameters, CommandContext cmdContext) {
+    public TransferImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
@@ -80,15 +80,15 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         entity.setCommandType(getActionType());
         entity.setPhase(ImageTransferPhase.INITIALIZING);
         entity.setLastUpdated(new Date());
-        entity.setBytesTotal(getParameters().getUploadSize());
+        entity.setBytesTotal(getParameters().getTransferSize());
         imageTransferDao.save(entity);
 
         // If an image was not created yet, create it.
         if (Guid.isNullOrEmpty(getParameters().getImageId())) {
-            log.info("Creating {} image", getUploadType());
+            log.info("Creating {} image", getImageType());
             createImage();
         } else {
-            handleImageIsReadyForUpload(getParameters().getImageId());
+            handleImageIsReadyForTransfer(getParameters().getImageId());
         }
 
         setActionReturnValue(getCommandId());
@@ -98,20 +98,20 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     public void proceedCommandExecution(Guid childCmdId) {
         ImageTransfer entity = imageTransferDao.get(getCommandId());
         if (entity == null || entity.getPhase() == null) {
-            log.error("Image Upload status entity corrupt or missing from database"
+            log.error("Image transfer status entity corrupt or missing from database"
                          + " for image transfer command '{}'", getCommandId());
             setCommandStatus(CommandStatus.FAILED);
             return;
         }
         if (entity.getDiskId() != null) {
-            // Make the disk id available for all states below.  If the upload is still
+            // Make the disk id available for all states below.  If the transfer is still
             // initializing, this may be set below in the INITIALIZING block instead.
             setImage((DiskImage) diskDao.get(entity.getDiskId()));
         }
 
-        // Check conditions for pausing the upload (ie UI is MIA)
+        // Check conditions for pausing the transfer (ie UI is MIA)
         long ts = System.currentTimeMillis() / 1000;
-        if (pauseUploadIfNecessary(entity, ts)) {
+        if (pauseTransferIfNecessary(entity, ts)) {
             return;
         }
 
@@ -170,13 +170,13 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
             case NOT_STARTED:
             case ACTIVE:
                 log.info("Waiting for {} to be added for image transfer command '{}'",
-                        getUploadType(), getCommandId());
+                        getImageType(), getCommandId());
                 return;
             case SUCCEEDED:
                 break;
             default:
                 log.error("Failed to add {} for image transfer command '{}'",
-                        getUploadType(), getCommandId());
+                        getImageType(), getCommandId());
                 setCommandStatus(CommandStatus.FAILED);
                 return;
         }
@@ -184,17 +184,17 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         VdcReturnValueBase addDiskRetVal = CommandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
         if (addDiskRetVal == null || !addDiskRetVal.getSucceeded()) {
             log.error("Failed to add {} (command status was success, but return value was failed)"
-                    + " for image transfer command '{}'", getUploadType(), getCommandId());
+                    + " for image transfer command '{}'", getImageType(), getCommandId());
             setReturnValue(addDiskRetVal);
             setCommandStatus(CommandStatus.FAILED);
             return;
         }
 
         Guid createdId = addDiskRetVal.getActionReturnValue();
-        handleImageIsReadyForUpload(createdId);
+        handleImageIsReadyForTransfer(createdId);
     }
 
-    protected void handleImageIsReadyForUpload(Guid imageGuid) {
+    protected void handleImageIsReadyForTransfer(Guid imageGuid) {
         DiskImage image = (DiskImage) diskDao.get(imageGuid);
         Guid domainId = image.getStorageIds().get(0);
 
@@ -202,8 +202,8 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         getParameters().setImageId(imageGuid);
 
         // ovirt-imageio-daemon must know the boundaries of the target image for writing permissions.
-        if (getParameters().getUploadSize() == 0) {
-            getParameters().setUploadSize(image.getSize());
+        if (getParameters().getTransferSize() == 0) {
+            getParameters().setTransferSize(image.getSize());
         }
 
         persistCommand(getParameters().getParentCommand(), true);
@@ -211,13 +211,13 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         setStorageDomainId(domainId);
 
         log.info("Successfully added {} for image transfer command '{}'",
-                getUploadDescription(), getCommandId());
+                getTransferDescription(), getCommandId());
 
         ImageTransfer updates = new ImageTransfer();
         updates.setDiskId(imageGuid);
         updateEntity(updates);
 
-        // The image will remain locked until the upload command has completed.
+        // The image will remain locked until the transfer command has completed.
         lockImage();
         boolean initSessionSuccess = startImageTransferSession();
         updateEntityPhase(initSessionSuccess ? ImageTransferPhase.TRANSFERRING
@@ -233,9 +233,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
         boolean resumeSessionSuccess = startImageTransferSession();
         if (resumeSessionSuccess) {
-            log.info("Resuming upload session for {}", getUploadDescription());
+            log.info("Resuming session for {}", getTransferDescription());
         } else {
-            log.error("Failed to resume upload session for {}", getUploadDescription());
+            log.error("Failed to resume session for {}", getTransferDescription());
         }
         updateEntityPhase(resumeSessionSuccess ? ImageTransferPhase.TRANSFERRING
                 : ImageTransferPhase.PAUSED_SYSTEM);
@@ -249,10 +249,10 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         // make sure to set it with time to spare.
         if (context.iterationTimestamp
                 >= getParameters().getSessionExpiration() - getHostTicketRefreshAllowance()) {
-            log.info("Renewing transfer ticket for {}", getUploadDescription());
+            log.info("Renewing transfer ticket for {}", getTransferDescription());
             extendImageTransferSession(context.entity);
         } else {
-            log.debug("Not yet renewing transfer ticket for {}", getUploadDescription());
+            log.debug("Not yet renewing transfer ticket for {}", getTransferDescription());
         }
 
         resetPeriodicPauseLogTime(0);
@@ -267,17 +267,17 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     }
 
     private void handleCancelled() {
-        log.info("Upload cancelled for {}", getUploadDescription());
+        log.info("Transfer cancelled for {}", getTransferDescription());
         setAuditLogTypeFromPhase(ImageTransferPhase.CANCELLED);
         updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
     }
 
     private void handleFinalizingSuccess(final StateContext context) {
-        log.info("Finalizing successful upload to {}", getUploadDescription());
+        log.info("Finalizing successful transfer for {}", getTransferDescription());
 
-        // If stopping the session did not succeed, don't change the upload state.
+        // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
-            // We want to use the transferring vds for image actions for having a coherent log when uploading.
+            // We want to use the transferring vds for image actions for having a coherent log when transfering.
             Guid transferingVdsId = context.entity.getVdsId();
             if (verifyImage(transferingVdsId)) {
                 setVolumeLegalityInStorage(LEGAL_IMAGE);
@@ -305,26 +305,26 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
             getBackend().getResourceManager().runVdsCommand(VDSCommandType.VerifyUntrustedVolume,
                     parameters);
         } catch (RuntimeException e) {
-            log.error("Failed to verify uploaded image: {}", e);
+            log.error("Failed to verify transferred image: {}", e);
             return false;
         }
         return true;
     }
 
     private void handleFinalizingFailure(final StateContext context) {
-        log.error("Finalizing failed upload to {}", getUploadDescription());
+        log.error("Finalizing failed transfer. {}", getTransferDescription());
         stopImageTransferSession(context.entity);
         setImageStatus(ImageStatus.ILLEGAL);
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
     }
 
     private void handleFinishedSuccess() {
-        log.info("Upload to {} was successful", getUploadDescription());
+        log.info("Transfer was successful. {}", getTransferDescription());
         setCommandStatus(CommandStatus.SUCCEEDED);
     }
 
     private void handleFinishedFailure() {
-        log.error("Upload to {} failed", getUploadDescription());
+        log.error("Transfer failed. {}", getTransferDescription());
         setCommandStatus(CommandStatus.FAILED);
     }
 
@@ -341,10 +341,10 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     }
 
     /**
-     * Verify conditions for continuing the upload, pausing it if necessary.
-     * @return true if upload was paused
+     * Verify conditions for continuing the transfer, pausing it if necessary.
+     * @return true if transfer was paused
      */
-    private boolean pauseUploadIfNecessary(ImageTransfer entity, long ts) {
+    private boolean pauseTransferIfNecessary(ImageTransfer entity, long ts) {
         // If a keepalive interval was set by the client, then it needs to respond
         // within that interval during INITIALIZING and TRANSFERRING states.
         if (getParameters().getKeepaliveInterval() > 0
@@ -352,9 +352,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
                     entity.getPhase() == ImageTransferPhase.TRANSFERRING)
                 && (entity.getLastUpdated().getTime() / 1000) +
                     getParameters().getKeepaliveInterval() < ts) {
-            log.warn("Upload to {} paused due to no updates in {} seconds",
-                    getUploadDescription(),
-                    ts - (entity.getLastUpdated().getTime() / 1000));
+            log.warn("Transfer paused due to no updates in {} seconds. {}",
+                    ts - (entity.getLastUpdated().getTime() / 1000),
+                    getTransferDescription());
             updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
             return true;
         }
@@ -370,8 +370,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
     private void periodicPauseLog(ImageTransfer entity, long ts) {
         if (ts >= getParameters().getLastPauseLogTime() + getPauseLogInterval()) {
-            log.info("Upload to {} was paused by {}", getUploadDescription(),
-                    entity.getPhase() == ImageTransferPhase.PAUSED_SYSTEM ? "system" : "user");
+            log.info("Transfer was paused by {}. {}",
+                    entity.getPhase() == ImageTransferPhase.PAUSED_SYSTEM ? "system" : "user",
+                    getTransferDescription());
             resetPeriodicPauseLogTime(ts);
         }
     }
@@ -411,7 +412,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
         AddImageTicketVDSCommandParameters
                 transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
-                        imagedTicketId, operations, timeout, getParameters().getUploadSize(), imagePath);
+                        imagedTicketId, operations, timeout, getParameters().getTransferSize(), imagePath);
 
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
@@ -465,13 +466,13 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     protected boolean validate() {
         Guid imageId = getParameters().getImageId();
         if (!Guid.isNullOrEmpty(imageId)) {
-            return validateUploadToImage(imageId);
+            return validateImageTransfer(imageId);
         } else {
             return validateCreateImage();
         }
     }
 
-    protected abstract boolean validateUploadToImage(Guid imageId);
+    protected abstract boolean validateImageTransfer(Guid imageId);
 
     protected abstract boolean validateCreateImage();
 
@@ -576,7 +577,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
                     getClientTicketLifetime()
             ).encode(payload);
         } catch (Exception e) {
-            log.error("Failed to encode ticket for image upload", e);
+            log.error("Failed to encode ticket for image transfer", e);
             return null;
         }
 
@@ -632,11 +633,11 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         }
 
         if (phase == ImageTransferPhase.FINISHED_SUCCESS) {
-            getParameters().setAuditLogType(AuditLogType.UPLOAD_IMAGE_SUCCEEDED);
+            getParameters().setAuditLogType(AuditLogType.TRANSFER_IMAGE_SUCCEEDED);
         } else if (phase == ImageTransferPhase.CANCELLED) {
-            getParameters().setAuditLogType(AuditLogType.UPLOAD_IMAGE_CANCELLED);
+            getParameters().setAuditLogType(AuditLogType.TRANSFER_IMAGE_CANCELLED);
         } else if (phase == ImageTransferPhase.FINISHED_FAILURE) {
-            getParameters().setAuditLogType(AuditLogType.UPLOAD_IMAGE_FAILED);
+            getParameters().setAuditLogType(AuditLogType.TRANSFER_IMAGE_FAILED);
         }
     }
 
@@ -644,48 +645,48 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("DiskAlias", getImageAlias());
         return getActionState() == CommandActionState.EXECUTE
-                ? AuditLogType.UPLOAD_IMAGE_INITIATED : getParameters().getAuditLogType();
+                ? AuditLogType.TRANSFER_IMAGE_INITIATED : getParameters().getAuditLogType();
     }
 
     // Return an alias for the image usable in logs (this may
     // be called before the new image is successfully created).
     protected abstract String getImageAlias();
 
-    protected abstract String getUploadType();
+    protected abstract String getImageType();
 
     private String getImageIdNullSafe() {
         return getParameters().getImageId() != null ?
                 getParameters().getImageId().toString() : "(null)";
     }
 
-    // Return a string describing the upload, safe for use before the new image
+    // Return a string describing the transfer, safe for use before the new image
     // is successfully created; e.g. "disk 'NewDisk' (id '<uuid>')".
-    protected String getUploadDescription() {
+    protected String getTransferDescription() {
         return String.format("%s '%s' (id '%s')",
-                getUploadType(), getImageAlias(), getImageIdNullSafe());
+                getImageType(), getImageAlias(), getImageIdNullSafe());
     }
 
 
     public void onSucceeded() {
         updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
-        log.debug("Removing ImageUpload id {}", getCommandId());
+        log.debug("Removing ImageTransfer id {}", getCommandId());
         imageTransferDao.remove(getCommandId());
         endSuccessfully();
-        log.info("Successfully uploaded {} (command id '{}')",
-                getUploadDescription(), getCommandId());
+        log.info("Successfully transferred. {} (command id '{}')",
+                getTransferDescription(), getCommandId());
     }
 
     public void onFailed() {
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
-        log.debug("Removing ImageUpload id {}", getCommandId());
+        log.debug("Removing ImageTransfer id {}", getCommandId());
         imageTransferDao.remove(getCommandId());
         endWithFailure();
-        log.error("Failed to upload {} (command id '{}')",
-                getUploadDescription(), getCommandId());
+        log.error("Failed to transfer. {} (command id '{}')",
+                getTransferDescription(), getCommandId());
     }
 
     @Override
     public CommandCallback getCallback() {
-        return new UploadImageCommandCallback();
+        return new TransferImageCommandCallback();
     }
 }

@@ -3,25 +3,25 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UploadImageParameters extends ImagesActionsParametersBase {
+public class TransferImageParameters extends ImagesActionsParametersBase {
     private static final long serialVersionUID = -3924328349293932142L;
 
     private int keepaliveInterval;
-    private long uploadSize;
+    private long transferSize;
 
     // Members used to persist data during command execution
     long sessionExpiration;
     AuditLogType auditLogType;
     long lastPauseLogTime;
 
-    public UploadImageParameters() {
+    public TransferImageParameters() {
     }
 
-    public UploadImageParameters(Guid storageDomainId, int keepaliveInterval) {
+    public TransferImageParameters(Guid storageDomainId, int keepaliveInterval) {
         this(storageDomainId, keepaliveInterval, Guid.Empty);
     }
 
-    public UploadImageParameters(Guid storageDomainId, int keepaliveInterval, Guid suppliedImageGuid) {
+    public TransferImageParameters(Guid storageDomainId, int keepaliveInterval, Guid suppliedImageGuid) {
         setStorageDomainId(storageDomainId);
         setKeepaliveInterval(keepaliveInterval);
     }
@@ -34,12 +34,12 @@ public class UploadImageParameters extends ImagesActionsParametersBase {
         this.keepaliveInterval = keepaliveInterval;
     }
 
-    public long getUploadSize() {
-        return uploadSize;
+    public long getTransferSize() {
+        return transferSize;
     }
 
-    public void setUploadSize(long uploadSize) {
-        this.uploadSize = uploadSize;
+    public void setTransferSize(long transferSize) {
+        this.transferSize = transferSize;
     }
 
     public long getSessionExpiration() {

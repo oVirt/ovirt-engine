@@ -16,7 +16,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
+import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -30,11 +30,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturnForXmlRpc;
 
 @NonTransactiveCommandAttribute
-public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends UploadImageCommand<T> implements QuotaStorageDependent {
+public class TransferDiskImageCommand<T extends TransferDiskImageParameters> extends TransferImageCommand<T> implements QuotaStorageDependent {
 
     private static final String FILE_URL_SCHEME = "file://";
 
-    public UploadDiskImageCommand(T parameters, CommandContext cmdContext) {
+    public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
@@ -60,7 +60,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
     }
 
     @Override
-    protected boolean validateUploadToImage(Guid imageId) {
+    protected boolean validateImageTransfer(Guid imageId) {
         DiskImage diskImage = (DiskImage) diskDao.get(imageId);
         DiskValidator diskValidator = getDiskValidator(diskImage);
         DiskImagesValidator diskImagesValidator = getDiskImagesValidator(diskImage);
@@ -98,7 +98,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
             // Invoke log method directly rather than relying on infra, because teardown
             // failure may occur during command execution, e.g. if the upload is paused.
             addCustomValue("DiskAlias", image != null ? image.getDiskAlias() : "(unknown)");
-            auditLogDirector.log(this, AuditLogType.UPLOAD_IMAGE_TEARDOWN_FAILED);
+            auditLogDirector.log(this, AuditLogType.TRANSFER_IMAGE_TEARDOWN_FAILED);
         }
     }
 
@@ -127,7 +127,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
     }
 
     @Override
-    protected String getUploadType() {
+    protected String getImageType() {
         return "disk";
     }
 

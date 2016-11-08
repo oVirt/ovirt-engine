@@ -13,12 +13,12 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
-import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
+import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UploadDiskImageCommandTest extends UploadImageCommandTest{
+public class TransferDiskImageCommandTest extends TransferImageCommandTest {
 
     @Mock
     DiskValidator diskValidator;
@@ -27,8 +27,8 @@ public class UploadDiskImageCommandTest extends UploadImageCommandTest{
     DiskImagesValidator diskImagesValidator;
 
     @Override
-    protected UploadDiskImageCommand spyCommand() {
-        return new UploadDiskImageCommand(new UploadDiskImageParameters(), null);
+    protected TransferDiskImageCommand spyCommand() {
+        return new TransferDiskImageCommand(new TransferDiskImageParameters(), null);
     }
 
     @Before
@@ -37,7 +37,7 @@ public class UploadDiskImageCommandTest extends UploadImageCommandTest{
     }
 
     protected void initializeSuppliedImage() {
-        super.initSuppliedImage(uploadImageCommand);
+        super.initSuppliedImage(transferImageCommand);
 
         DiskImage diskImage = new DiskImage();
         doReturn(diskImage).when(diskDao).get(any());
@@ -122,7 +122,7 @@ public class UploadDiskImageCommandTest extends UploadImageCommandTest{
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
     }
 
-    private UploadDiskImageCommand getCommand() {
-        return (UploadDiskImageCommand) uploadImageCommand;
+    private TransferDiskImageCommand getCommand() {
+        return (TransferDiskImageCommand) transferImageCommand;
     }
 }
