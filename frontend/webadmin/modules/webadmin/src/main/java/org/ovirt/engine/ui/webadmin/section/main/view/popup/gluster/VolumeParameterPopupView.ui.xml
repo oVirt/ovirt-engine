@@ -12,12 +12,11 @@
         .description textarea{
             height: 130px;
         }
+
         .topElement {
             padding-top: 20px;
         }
-        .container {
-            width: 100%;
-        }
+
         .messageLabel {
             color: #FF0000;
             left: 10px;
@@ -28,7 +27,7 @@
 
     <d:SimpleDialogPanel width="450px" height="345px">
         <d:content>
-            <b:Container addStyleNames="{style.container}">
+            <b:Container fluid="true">
                 <b:Row addStyleNames="{style.topElement}">
                     <e:ListModelTypeAheadChangeableListBoxEditor ui:field="keyListBoxEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
                 </b:Row>

@@ -387,9 +387,9 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
     @Override
     protected void populateTabMap() {
-        getTabNameMapping().put(TabName.GENERAL_TAB, generalTab);
+        getTabNameMapping().put(TabName.GENERAL_TAB, generalTab.getTabListItem());
         getTabNameMapping().put(TabName.OPTIMIZATION_TAB,
-                optimizationTab);
+                optimizationTab.getTabListItem());
     }
 
 }

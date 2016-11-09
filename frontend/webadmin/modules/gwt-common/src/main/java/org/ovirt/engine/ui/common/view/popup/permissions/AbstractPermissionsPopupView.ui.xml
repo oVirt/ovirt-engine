@@ -44,12 +44,12 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="900px" height="505px">
+    <d:SimpleDialogPanel width="900px" height="545px">
         <d:content>
-            <b:Container>
+            <b:Container fluid="true">
                 <b:Row>
                     <g:FlowPanel addStyleNames="{style.radioButtonPanel}">
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                             <g:RadioButton name="everyoneOrSpecific" ui:field="specificUserRadio" text="{constants.user}" />
                             <g:RadioButton name="everyoneOrSpecific" ui:field="specificGroupRadio" text="{constants.group}" />
                             <g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio" text="{constants.everyonePermission}" />
@@ -58,35 +58,35 @@
                     </g:FlowPanel>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="LG_3">
+                    <b:Column size="SM_3">
                         <e:ListModelListBoxEditor ui:field="profileSelection" label="{constants.searchPermissionsPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="LG_3">
+                    <b:Column size="SM_3">
                         <e:ListModelListBoxEditor ui:field="namespaceSelection" label="{constants.namespacePermissionsPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="LG_3">
+                    <b:Column size="SM_3">
                         <e:TextBoxChanger ui:field="searchStringEditor" addStyleNames="{style.alignBottomSearch} form-control" />
                     </b:Column>
-                    <b:Column size="LG_2">
+                    <b:Column size="SM_2">
                         <w:UiCommandButton ui:field="searchButton" addStyleNames="{style.alignBottomGo}" />
                     </b:Column>
                 </b:Row>
                 <b:Row addStyleNames="{style.gridRow}">
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                         <g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
                             <e:EntityModelCellTable ui:field="searchItems" />
                         </g:ScrollPanel>
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="LG_3">
+                    <b:Column size="SM_3">
                         <g:FlowPanel ui:field="roleSelectionPanel">
                             <e:ListModelListBoxEditor ui:field="roleSelection" label="{constants.roleToAssignPermissionsPopup}" usePatternFly="true" />
                         </g:FlowPanel>
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                         <g:Label ui:field="errorMessage" addStyleNames="{style.errorLabel}" />
                     </b:Column>
                 </b:Row>

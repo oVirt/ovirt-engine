@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.base.helper.StyleHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -11,6 +13,7 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -46,6 +49,16 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
         this.enabledClassNames = enabledClassNames;
         this.disabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML());
         this.disabledClassNames = disabledClassNames;
+    }
+
+    public AbstractImageButtonCell(HasCssName iconType, String enabledClassNames, String disabledClassNames) {
+        super();
+        this.enabledClassNames = enabledClassNames;
+        Icon icon = new Icon();
+        StyleHelper.addEnumStyleName(icon, iconType);
+        this.enabledHtml = SafeHtmlUtils.fromSafeConstant(icon.toString());
+        this.disabledClassNames = disabledClassNames;
+        this.disabledHtml = enabledHtml;
     }
 
     /**

@@ -3,12 +3,18 @@ package org.ovirt.engine.ui.common.widget.dialog.tab;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.shared.event.TabShownEvent;
+import org.gwtbootstrap3.client.shared.event.TabShownHandler;
+import org.gwtbootstrap3.client.ui.NavTabs;
+import org.gwtbootstrap3.client.ui.TabContent;
+import org.gwtbootstrap3.client.ui.TabListItem;
+import org.gwtbootstrap3.client.ui.TabPane;
+import org.gwtbootstrap3.client.ui.TabPanel;
+import org.gwtbootstrap3.client.ui.constants.Styles;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiConstructor;
@@ -24,83 +30,122 @@ public class DialogTabPanel extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
+    interface DialogTabStyle extends CssResource {
+        String headerSeparator();
+    }
+
     @UiField
-    SimplePanel tabHeaderContainer;
+    DialogTabStyle style;
+
+    @UiField
+    NavTabs navTabs;
+
+    @UiField
+    TabContent tabContent;
+
+    @UiField
+    TabPanel tabPanel;
 
     @UiField
     FlowPanel tabContainer;
 
     @UiField
-    SimplePanel tabContentContainer;
+    SimplePanel tabHeaderContainer;
 
-    private DialogTab activeTab;
+    private TabListItem activeTab;
 
-    private static final int SPACE_KEY_CODE = 32;
+    private final String height;
 
     @UiConstructor
     public DialogTabPanel(String height) {
+        this.height = height;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        getWidget().setHeight(height);
+        removeTabClasses();
     }
 
     @UiChild(tagname = "header", limit = 1)
     public void setHeader(Widget widget) {
         tabHeaderContainer.getElement().getStyle().setDisplay(Display.BLOCK);
-        tabHeaderContainer.add(widget);
+        tabHeaderContainer.setWidget(widget);
+        tabHeaderContainer.addStyleName(style.headerSeparator());
     }
 
     @UiChild(tagname = "tab")
     public void addTab(final DialogTab tab) {
-        tabContainer.add(tab);
+        navTabs.add(tab.getTabListItem());
+        tab.getTabListItem().addStyleName(Styles.LIST_GROUP_ITEM);
+        String tabId = "tab" + navTabs.getWidgetCount(); //$NON-NLS-1$
+        tab.getTabListItem().setDataTarget(tabId);
+        tab.getTabListItem().addShownHandler(new TabShownHandler() {
 
-        tab.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
-                switchTab(tab);
+            public void onShown(TabShownEvent event) {
+                switchTab(event.getTab());
             }
         });
 
-        tab.addKeyUpHandler(new KeyUpHandler() {
-            @Override
-            public void onKeyUp(KeyUpEvent event) {
-                if (SPACE_KEY_CODE == event.getNativeKeyCode()) {
-                    switchTab(tab);
-                }
-            }
-        });
+        TabPane pane = new TabPane();
+        FlowPanel panel = new FlowPanel();
+        panel.add(tab.getContent());
+        pane.add(panel);
+        pane.setId(tabId);
+        tabContent.add(pane);
 
         // Switch to first tab automatically
-        if (tabContainer.getWidgetCount() == 1) {
+        if (tabContent.getWidgetCount() == 1) {
             switchTab(tab);
         }
     }
 
-    public void switchTab(DialogTab tab) {
-        setActiveTab(tab);
-        setTabContent(tab.getContent());
-    }
-
-    void setActiveTab(DialogTab tab) {
-        if (activeTab != null) {
-            activeTab.deactivate();
-        }
-
-        if (tab != null) {
-            tab.activate();
-        }
-
-        activeTab = tab;
-    }
-
-    void setTabContent(Widget content) {
-        tabContentContainer.setWidget(content);
+    private void removeTabClasses() {
+        tabPanel.removeStyleName(Styles.TABBABLE);
+        navTabs.removeStyleName(Styles.NAV);
+        navTabs.removeStyleName(Styles.NAV_TABS);
     }
 
     public void setBarStyle(String styleName) {
         tabContainer.addStyleName(styleName);
     }
 
-    public DialogTab getActiveTab() {
+    public void setContentStyle(String styleName) {
+        tabContent.addStyleName(styleName);
+    }
+
+    public void setNavStyle(String styleName) {
+        navTabs.addStyleName(styleName);
+    }
+
+    public void switchTab(DialogTab tab) {
+        switchTab(tab.getTabListItem());
+    }
+
+    public void switchTab(TabListItem tabItem) {
+        boolean found = false;
+        for (int i = 0; i < navTabs.getWidgetCount(); i++) {
+            if (tabItem.getText().equals(((TabListItem) navTabs.getWidget(i)).getText())) {
+                ((TabListItem) navTabs.getWidget(i)).showTab();
+                TabPane tabPane = (TabPane) tabContent.getWidget(i);
+                ((FlowPanel) tabPane.getWidget(0)).insert(tabHeaderContainer, 0);
+                tabPane.getWidget(0).setHeight(height);
+                tabPane.setActive(true);
+                activeTab = (TabListItem) navTabs.getWidget(i);
+                found = true;
+            } else {
+                TabPane tabPane = (TabPane) tabContent.getWidget(i);
+                ((FlowPanel) tabPane.getWidget(0)).remove(tabHeaderContainer);
+                tabPane.setActive(false);
+            }
+        }
+        // If not found, set first active.
+        if (!found && navTabs.getWidgetCount() > 0) {
+            ((TabListItem) navTabs.getWidget(0)).showTab();
+            TabPane tabPane = (TabPane) tabContent.getWidget(0);
+            ((FlowPanel) tabPane.getWidget(0)).insert(tabHeaderContainer, 0);
+            tabPane.setActive(true);
+        }
+    }
+
+    public TabListItem getActiveTab() {
         return activeTab;
     }
 
@@ -110,17 +155,17 @@ public class DialogTabPanel extends Composite {
         } else {
             tabHeaderContainer.getElement().getStyle().setDisplay(Display.NONE);
         }
-
     }
 
-    public List<DialogTab> getTabs() {
-        List<DialogTab> tabs = new ArrayList<>();
-        for (int i = 0; i < tabContainer.getWidgetCount(); i++) {
-            Widget tab = tabContainer.getWidget(i);
-            if (tab instanceof DialogTab) {
-                tabs.add((DialogTab) tab);
+    public List<OvirtTabListItem> getTabs() {
+        List<OvirtTabListItem> tabs = new ArrayList<>();
+        for (int i = 0; i < navTabs.getWidgetCount(); i++) {
+            Widget tab = navTabs.getWidget(i);
+            if (tab instanceof OvirtTabListItem) {
+                tabs.add((OvirtTabListItem) tab);
             }
         }
         return tabs;
     }
+
 }

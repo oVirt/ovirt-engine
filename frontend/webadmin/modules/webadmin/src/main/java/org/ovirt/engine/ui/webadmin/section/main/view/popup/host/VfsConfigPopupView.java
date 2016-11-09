@@ -32,7 +32,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -56,19 +55,6 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
     }
 
     private final Driver driver = GWT.create(Driver.class);
-
-    interface WidgetStyle extends CssResource {
-        String valueWidth();
-
-        String labelsTitle();
-
-        String labelEditorContent();
-
-        String labelEditorWrapper();
-    }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     @Ignore
@@ -131,34 +117,14 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
 
-        labelsWidget.setLabelEditorStyle(style.labelEditorContent());
-        labelsWidget.setEditorWrapperStyle(style.labelEditorWrapper());
-
         initExpander(constants);
-        localize(constants);
         driver.initialize(this);
-        addStyles();
     }
 
     private void initExpander(ApplicationConstants constants) {
         numVfsExpander.initWithContent(numVfsExpanderContent.getElement());
         numVfsExpander.setTitleWhenExpanded(constants.numOfVfsSetting());
         numVfsExpander.setTitleWhenCollapsed(constants.numOfVfsSetting());
-    }
-
-    private void localize(ApplicationConstants constants) {
-        numOfVfs.setLabel(constants.numOfVfs());
-        allowedNetworksLabel.setText(constants.allowedNetworks());
-        selectNetworksLabel.setText(constants.selectNetworks());
-    }
-
-    protected void addStyles() {
-        numOfVfs.addContentWidgetContainerStyleName(style.valueWidth());
-        labelsWidget.titleLabel.addStyleName(style.labelsTitle());
-    }
-
-    interface Style extends CssResource {
-        String valueBox();
     }
 
     @Override

@@ -49,10 +49,6 @@
             width: 100%;
         }
 
-        .container {
-            width: 100%;
-        }
-
         .topElement {
             padding-top: 15px;
         }
@@ -78,7 +74,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="hostPopupGeneralTab" label="{constants.hostPopupGeneralTabLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="LG_12">
                                         <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
@@ -135,7 +131,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="hostedEngineTab" label="{constants.hostedEngineLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="LG_12">
                                         <g:Label ui:field="hostedEngineWarningLabel"

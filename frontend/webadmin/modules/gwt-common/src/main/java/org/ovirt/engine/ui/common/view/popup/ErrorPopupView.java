@@ -13,7 +13,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> implements ErrorPopupPresenterWidget.ViewDef {
@@ -21,9 +20,6 @@ public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ErrorPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    @UiField
-    Label titleLabel;
 
     @UiField
     HTML messageLabel;
@@ -41,7 +37,6 @@ public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     }
 
     void localize() {
-        titleLabel.setText(constants.errorPopupCaption());
         closeButton.setText(constants.closeButtonLabel());
     }
 

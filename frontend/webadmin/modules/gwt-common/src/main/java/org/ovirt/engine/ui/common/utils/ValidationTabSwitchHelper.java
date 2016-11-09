@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.TabbedView;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent.ValidationCompleteEventHandler;
@@ -43,7 +43,7 @@ public final class ValidationTabSwitchHelper {
                     //Get the invalid tab names from the model.
                     Set<TabName> invalidTabs = presenterWidget.getModel().getInvalidTabs();
                     //Get the tab names to dialog tab widget map from the view.
-                    Map<TabName, DialogTab> mapping = view.getTabNameMapping();
+                    Map<TabName, OvirtTabListItem> mapping = view.getTabNameMapping();
                     markTabs(invalidTabs, mapping);
                     //Check if the current active tab is invalid, if so don't do anything.
                     for (TabName invalidTabName: invalidTabs) {
@@ -64,8 +64,8 @@ public final class ValidationTabSwitchHelper {
      * @param invalidTabs The set of invalid tab names.
      * @param mapping The TabName to DialogTab mapping.
      */
-    private static void markTabs(Set<TabName> invalidTabs, Map<TabName, DialogTab> mapping) {
-        for (Map.Entry<TabName, DialogTab> entry: mapping.entrySet()) {
+    private static void markTabs(Set<TabName> invalidTabs, Map<TabName, OvirtTabListItem> mapping) {
+        for (Map.Entry<TabName, OvirtTabListItem> entry: mapping.entrySet()) {
             if (invalidTabs.contains(entry.getKey())) {
                 entry.getValue().markAsInvalid(null);
             } else {
@@ -81,10 +81,10 @@ public final class ValidationTabSwitchHelper {
      * @param mapping The TabName to DialogTab mapping.
      * @param view The {@code TabbedView} containing the tabs.
      */
-    private static void switchTab(Set<TabName> invalidTabs, Map<TabName, DialogTab> mapping, TabbedView view) {
+    private static void switchTab(Set<TabName> invalidTabs, Map<TabName, OvirtTabListItem> mapping, TabbedView view) {
         int lowestIndex = Integer.MAX_VALUE;
         //Get all the tabs from the view.
-        List<DialogTab> allTabs = view.getTabPanel().getTabs();
+        List<OvirtTabListItem> allTabs = view.getTabPanel().getTabs();
         //For each invalid tab find the index, and the lowest index will be the best fit.
         for (TabName invalidTabName: invalidTabs) {
             if (allTabs.indexOf(mapping.get(invalidTabName)) < lowestIndex) {

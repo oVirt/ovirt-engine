@@ -6,26 +6,16 @@
 
     <ui:style type="org.ovirt.engine.ui.common.widget.AddRemoveRowWidget.WidgetStyle">
         .mainPanel {
-            height: 100%;
             width: 100%;
         }
 
         .buttonStyle {
             margin-left: 2px;
         }
-
-        .labelStyle {
-            margin-top: 5px;
-            margin-left: 5px;
-            font-weight: bold;
-        }
     </ui:style>
 
-    <g:FlowPanel addStyleNames="{style.mainPanel} nlw_mainPanel_pfly_fix" >
-        <g:Label ui:field="titleLabel" text="{constants.labelsVfsConfigPopup}" addStyleNames="{style.labelStyle}" />
-        <g:ScrollPanel ui:field="scrollPanel" height="370px" width="99%">
-            <g:FlowPanel ui:field="contentPanel" />
-        </g:ScrollPanel>
+    <g:FlowPanel addStyleNames="{style.mainPanel}">
+        <g:FlowPanel ui:field="contentPanel" />
     </g:FlowPanel>
 
 </ui:UiBinder>

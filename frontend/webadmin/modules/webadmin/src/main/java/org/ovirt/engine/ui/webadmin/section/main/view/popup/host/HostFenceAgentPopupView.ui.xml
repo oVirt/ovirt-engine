@@ -10,6 +10,7 @@
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostFenceAgentPopupView.Style">
         .container {
+            width: 100%;
             padding-top: 10px !important;
         }
 

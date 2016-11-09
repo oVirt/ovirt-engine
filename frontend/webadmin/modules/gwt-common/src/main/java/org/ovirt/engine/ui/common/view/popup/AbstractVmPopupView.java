@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -18,17 +18,20 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupView<UnitVmModel> implements
-    AbstractVmBasedPopupPresenterWidget.ViewDef {
+public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupView<UnitVmModel> implements AbstractVmBasedPopupPresenterWidget.ViewDef {
 
     private VmPopupStyle style;
 
     @Inject
     public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget, VmPopupResources resources) {
-        this(eventBus, popupWidget, "880px", "640px", resources); //$NON-NLS-1$ //$NON-NLS-2$
+        this(eventBus, popupWidget, "960px", "712px", resources); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget, String width, String height, VmPopupResources resources) {
+    public AbstractVmPopupView(EventBus eventBus,
+            AbstractVmPopupWidget popupWidget,
+            String width,
+            String height,
+            VmPopupResources resources) {
         super(eventBus, popupWidget, width, height);
         style = resources.createStyle();
         style.ensureInjected();
@@ -88,7 +91,7 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     }
 
     @Override
-    public Map<TabName, DialogTab> getTabNameMapping() {
+    public Map<TabName, OvirtTabListItem> getTabNameMapping() {
         return ((AbstractVmPopupWidget) getContentWidget()).getTabNameMapping();
     }
 

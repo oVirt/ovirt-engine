@@ -1,152 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
     <ui:style type="org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel.Style">
-        .header {
-            position: absolute;
-            top: 5px;
-            left: 0px;
-            right: 0px;
-        }
-
-        .headerRightPanel {
-            position: absolute;
-            right: 5px;
-        }
-
-        @external obrand_dialogHeaderLeftPanel;
-        .obrand_dialogHeaderLeftPanel {
-        }
-
-        @external obrand_dialogHeaderCenterPanel;
-        .obrand_dialogHeaderCenterPanel {
-        }
-
-        @external obrand_dialogHeaderTitle;
-        .obrand_dialogHeaderTitle {
-        }
-
-        .content {
-            border: 1px solid #CED8DF;
-            position: absolute;
-            padding: 0px;
-            top: 34px;
-            bottom: 42px;
-            left: 6px;
-            right: 6px;
-        }
-
-        .footer {
-            position: absolute;
-            right: 16px;
-            bottom: 9px;
-            width: 97%;
-        }
-
         .footerButton {
-            float: right;
-            font-size: 12px;
-            margin-left: 4px;
-            cursor: pointer;
+             float: right;
+             font-size: 12px;
+             margin-left: 4px;
+             cursor: pointer;
         }
 
-        .contentWidget {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-        }
-
-        .helpIconButton {
-            background: transparent;
-            border: none;
-            vertical-align: middle;
-            padding: 1px;
-            cursor: pointer;
-            z-index: 1;
-            float: left;
+        .iconPosition {
             position: relative;
-            top: -2px !important;
-        }
-
-        .closeIconButton {
-            position: absolute;
-            background: transparent;
-            border: 1px solid transparent;
-            line-height: 30px;
-            vertical-align: middle;
-            top: 0px;
-            right: 6px;
-            padding: 1px;
-            cursor: pointer;
-            z-index: 1;
-        }
-
-        .logoPanel {
-            float: left;
-            position: relative;
-            left: -5px;
-        }
-
-        @external obrand_dialogHeaderRightPanel;
-        .obrand_dialogHeaderRightPanel {
-        }
-
-        @external obrand_dialogLogoImageWrapper;
-        .obrand_dialogLogoImageWrapper {
-        }
-
-        @external obrand_dialogHeaderTitleContainer;
-        .obrand_dialogHeaderTitleContainer {
-        }
-
-        @external obrand_dialogLogoImage;
-        .obrand_dialogLogoImage {
-        }
-
-        @external obrand_dialogHeaderTitleElement;
-        .obrand_dialogHeaderTitleElement {
+            left: 5px;
         }
     </ui:style>
 
-    <g:FlowPanel>
-        <g:FlowPanel addStyleNames="{style.header}">
-            <g:Image styleName="obrand_dialogHeaderLeftPanel" url="clear.cache.gif" />
-            <g:FlowPanel addStyleNames="{style.obrand_dialogHeaderCenterPanel}" >
-                <g:SimplePanel ui:field="logoPanel" addStyleNames="{style.logoPanel}">
-                    <g:Image styleName="obrand_dialogLogoImage" url="clear.cache.gif" />
-                </g:SimplePanel>
-                <g:FlowPanel addStyleNames="{style.obrand_dialogHeaderTitleContainer}">
-                    <g:FlowPanel ui:field="headerTitlePanel">
-                        <t:WidgetTooltip ui:field="helpIconButtonTooltip">
-                            <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
-                                <g:upFace image='{resources.dialogIconHelp}' />
-                                <g:downFace image='{resources.dialogIconHelpDown}' />
-                                <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
-                            </g:PushButton>
-                        </t:WidgetTooltip>
-                    </g:FlowPanel>
-                </g:FlowPanel>
-            </g:FlowPanel>
-            <g:SimplePanel addStyleNames="{style.headerRightPanel}">
-                <g:FlowPanel>
-                    <g:Image styleName='obrand_dialogHeaderRightPanel' url="clear.cache.gif" />
-                    <g:Image styleName='obrand_dialogHeaderRightPanelDecoration' url="clear.cache.gif" />
-                    <g:PushButton ui:field='closeIconButton' addStyleNames="{style.closeIconButton} closeIconButton_fix">
-                        <g:upFace image='{resources.dialogIconClose}' />
-                        <g:downFace image='{resources.dialogIconCloseDown}' />
-                        <g:upHoveringFace image='{resources.dialogIconCloseRollover}' />
-                    </g:PushButton>
-                </g:FlowPanel>
-            </g:SimplePanel>
+    <g:FlowPanel addStyleNames="modal-content">
+        <g:FlowPanel ui:field="header" addStyleNames="modal-header">
+            <t:WidgetTooltip ui:field="helpIconButtonTooltip">
+                <b:Anchor ui:field="infoAnchor" icon="QUESTION_CIRCLE" addStyleNames="{style.iconPosition}" visible="false" />
+            </t:WidgetTooltip>
+            <g:Button ui:field="closeButton" addStyleNames="close"><span class="pficon pficon-close" /></g:Button>
         </g:FlowPanel>
-
-        <g:SimplePanel ui:field="contentPanel" addStyleNames="{style.content} contentPanel_pfly_fix" />
-
-        <g:HTMLPanel addStyleNames="{style.footer}">
+        <g:ScrollPanel ui:field="contentScrollPanel">
+            <g:SimplePanel ui:field="contentPanel" addStyleNames="modal-body" />
+        </g:ScrollPanel>
+        <g:HTMLPanel addStyleNames="modal-footer wizard-pf-footer">
             <g:FlowPanel ui:field="footerButtonPanel" />
             <g:FlowPanel ui:field="footerStatusPanel" />
             <div style="clear: both;" />

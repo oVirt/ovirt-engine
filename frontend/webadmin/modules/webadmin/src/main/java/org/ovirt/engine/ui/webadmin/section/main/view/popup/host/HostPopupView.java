@@ -463,6 +463,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         passwordEditor.hideLabel();
         publicKeyEditor.hideLabel();
         consoleAddress.hideLabel();
+        kernelCmdlineText.hideLabel();
     }
 
     private void initInfoIcon() {
@@ -1042,12 +1043,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @Override
     protected void populateTabMap() {
-        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab);
-        getTabNameMapping().put(TabName.POWER_MANAGEMENT_TAB, this.powerManagementTab);
-        getTabNameMapping().put(TabName.NETWORK_PROVIDER_TAB, this.networkProviderTab);
-        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
-        getTabNameMapping().put(TabName.SPM_TAB, this.spmTab);
-        getTabNameMapping().put(TabName.KERNEL_TAB, this.kernelTab);
+        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab.getTabListItem());
+        getTabNameMapping().put(TabName.POWER_MANAGEMENT_TAB, this.powerManagementTab.getTabListItem());
+        getTabNameMapping().put(TabName.NETWORK_PROVIDER_TAB, this.networkProviderTab.getTabListItem());
+        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab.getTabListItem());
+        getTabNameMapping().put(TabName.SPM_TAB, this.spmTab.getTabListItem());
+        getTabNameMapping().put(TabName.KERNEL_TAB, this.kernelTab.getTabListItem());
     }
 
     @Override

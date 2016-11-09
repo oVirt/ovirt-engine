@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import com.google.gwt.core.client.Scheduler;
@@ -17,7 +17,7 @@ public abstract class AbstractTabbedModelBoundPopupView<T extends Model> extends
     /**
      * The map containing the mapping between the {@code TabName} and {@code TabDialog}s.
      */
-    private final Map<TabName, DialogTab> tabMap = new HashMap<>();
+    private final Map<TabName, OvirtTabListItem> tabMap = new HashMap<>();
 
     /**
      * Constructor that calls populateTabMap.
@@ -41,7 +41,7 @@ public abstract class AbstractTabbedModelBoundPopupView<T extends Model> extends
     protected abstract void populateTabMap();
 
     @Override
-    public final Map<TabName, DialogTab> getTabNameMapping() {
+    public final Map<TabName, OvirtTabListItem> getTabNameMapping() {
         return tabMap;
     }
 }

@@ -1,54 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-	<ui:style  type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmMakeTemplatePopupWidget.WidgetStyle">
-		.editorLabel {
-			width: 100%;
-		}
+    <ui:style>
+        .messagePanel {
+            color: #CD2127;
+        }
+    </ui:style>
 
-		.messagePanel {
-			color: #CD2127;
-			height: 30px;
-            overflow-y: auto;
-            padding: 5px;
-		}
-
-		.disksAllocationPanel {
-			width: 100%;
-			height: 170px;
-			float: right;
-		}
-
-		.generalExpanderContent {
-			padding-left: 15px;
-		}
-	</ui:style>
-
-	<g:FlowPanel>
-		<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-		<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-		<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
-		<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
-		<e:ListModelListBoxEditor ui:field="cpuProfilesEditor" />
-		<e:ListModelListBoxEditor ui:field="quotaEditor" />
-		<ge:EntityModelCheckBoxEditor ui:field="isSubTemplateEditor"/>
-		<g:FlowPanel ui:field="subTemplateExpanderContent" addStyleNames="{style.generalExpanderContent}">
-			<e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor" />
-			<ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" />
-		</g:FlowPanel>
-		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="145px" listWidth="585px" addStyleNames="{style.disksAllocationPanel}" />
-		<g:FlowPanel>
-			<ge:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
-            <ge:EntityModelCheckBoxEditor ui:field="copyVmPermissions" />
-			<ge:EntityModelCheckBoxEditor ui:field="sealTemplateEditor" label="{constants.sealTemplate}" />
-			<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
-		</g:FlowPanel>
-	</g:FlowPanel>
-
+    <b:Container fluid="true">
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.makeTemplatePopupNameLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.makeTemplatePopupDescriptionLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+        </b:Row>
+        <b:Row>
+            <e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" label="{constants.makeTemplateClusterLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+        </b:Row>
+        <b:Row>
+            <e:ListModelListBoxEditor ui:field="cpuProfilesEditor" label="{constants.cpuProfileLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+        </b:Row>
+        <b:Row>
+            <e:ListModelListBoxEditor ui:field="quotaEditor" label="{constants.makeTemplateQuotaLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+        </b:Row>
+        <b:Row>
+            <ge:EntityModelCheckBoxEditor ui:field="isSubTemplateEditor" label="{constants.createAsSubTemplate}" usePatternFly="true" widgetColSize="SM_12" />
+        </b:Row>
+        <g:FlowPanel ui:field="subTemplateExpanderContent">
+            <b:Row>
+                <e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor" label="{constants.rootTemplate}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+            </b:Row>
+            <b:Row>
+                <ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" label="{constants.templateVersionName}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+            </b:Row>
+        </g:FlowPanel>
+        <b:Row>
+            <b:Column size="SM_12">
+                <w:DisksAllocationView ui:field="disksAllocationView" usePatternFly="true" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <ge:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" label="{constants.makeTemplateIsTemplatePublicEditorLabel}" usePatternFly="true" widgetColSize="SM_12" />
+        </b:Row>
+        <b:Row>
+            <ge:EntityModelCheckBoxEditor ui:field="copyVmPermissions" label="{constants.copyVmPermissions}" usePatternFly="true" widgetColSize="SM_12" />
+        </b:Row>
+        <b:Row>
+            <ge:EntityModelCheckBoxEditor ui:field="sealTemplateEditor" label="{constants.sealTemplate}" usePatternFly="true" widgetColSize="SM_12" />
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <b:Alert type="WARNING" ui:field="messagePanel" visible="false" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
 </ui:UiBinder>

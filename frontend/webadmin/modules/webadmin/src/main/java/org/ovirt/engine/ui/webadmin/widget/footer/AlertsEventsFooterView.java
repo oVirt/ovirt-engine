@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
+import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
@@ -619,7 +620,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             extends AbstractImageButtonCell<AuditLog> {
 
         public DismissAuditLogImageButtonCell(T modelProvider) {
-            super(resources.dialogIconClose(), "", resources.dialogIconClose(), ""); //$NON-NLS-1$ //$NON-NLS-2$
+            super(PatternflyIconType.PF_CLOSE, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         @Override

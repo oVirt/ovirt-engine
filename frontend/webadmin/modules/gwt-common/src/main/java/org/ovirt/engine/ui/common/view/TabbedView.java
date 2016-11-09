@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.common.view;
 
 import java.util.Map;
 
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 
 /**
@@ -20,5 +20,5 @@ public interface TabbedView {
      * Get a mapping between the tab names and the {@code DialogTab}s.
      * @return A {@code Map} between the names and the {@code DialogTab}s.
      */
-    Map<TabName, DialogTab> getTabNameMapping();
+    Map<TabName, OvirtTabListItem> getTabNameMapping();
 }

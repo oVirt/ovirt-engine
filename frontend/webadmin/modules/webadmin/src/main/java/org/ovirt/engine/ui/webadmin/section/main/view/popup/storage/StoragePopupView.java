@@ -159,7 +159,6 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initAdvancedParametersExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        asWidget().enableResizeSupport(true);
         localize();
         driver.initialize(this);
     }

@@ -7,35 +7,11 @@
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
-    <ui:style>
-        .content {
-            height: 270px;
-            overflow: auto;
-        }
-
-        @external obrand_dialogLogoErrorImage;
-        .obrand_dialogLogoErrorImage {
-        }
-
-        .content {
-            padding: 10px;
-        }
-    </ui:style>
-
-    <d:SimpleDialogPanel width="500px" height="400px">
-        <d:header>
-            <g:Label ui:field="titleLabel" addStyleNames="epv_titleLabel_pfly_fix"/>
-        </d:header>
-
-        <d:logo>
-            <g:Image styleName='obrand_dialogLogoErrorImage' url="clear.cache.gif" />
-        </d:logo>
-
+    <d:SimpleDialogPanel header="{constants.errorPopupCaption}" width="500px" height="400px">
         <d:content>
-            <g:SimplePanel addStyleNames="{style.content}">
-                <g:HTML ui:field="messageLabel" />
-            </g:SimplePanel>
+            <g:HTML ui:field="messageLabel" />
         </d:content>
 
         <d:footerButton>

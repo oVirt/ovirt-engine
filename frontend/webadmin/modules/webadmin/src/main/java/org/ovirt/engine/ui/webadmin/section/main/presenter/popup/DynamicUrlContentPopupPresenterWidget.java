@@ -17,7 +17,7 @@ public class DynamicUrlContentPopupPresenterWidget extends AbstractPopupPresente
 
     public interface ViewDef extends AbstractPopupPresenterWidget.ViewDef {
 
-        void init(String title, String width, String height, boolean resizeEnabled, boolean closeIconVisible);
+        void init(String title, String width, String height, boolean closeIconVisible);
 
         void setContentUrl(String contentUrl);
 
@@ -66,10 +66,10 @@ public class DynamicUrlContentPopupPresenterWidget extends AbstractPopupPresente
     }
 
     public void init(String dialogToken, String title, String width, String height,
-            boolean resizeEnabled, boolean closeIconVisible, boolean closeOnEscKey) {
+            boolean closeIconVisible, boolean closeOnEscKey) {
         this.dialogToken = dialogToken;
         this.closeOnEscKey = closeOnEscKey;
-        getView().init(title, width, height, resizeEnabled, closeIconVisible);
+        getView().init(title, width, height, closeIconVisible);
     }
 
     public void setContentUrl(String contentUrl) {

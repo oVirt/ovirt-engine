@@ -11,7 +11,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class DynamicUrlContentPopupView extends AbstractPopupView<SimpleDialogPanel> implements DynamicUrlContentPopupPresenterWidget.ViewDef {
@@ -21,10 +20,10 @@ public class DynamicUrlContentPopupView extends AbstractPopupView<SimpleDialogPa
     }
 
     @UiField
-    Label titleLabel;
+    IFrameElement iframeElement;
 
     @UiField
-    IFrameElement iframeElement;
+    SimpleDialogPanel dialogPanel;
 
     @Inject
     public DynamicUrlContentPopupView(EventBus eventBus) {
@@ -49,11 +48,10 @@ public class DynamicUrlContentPopupView extends AbstractPopupView<SimpleDialogPa
 
     @Override
     public void init(String title, String width, String height,
-            boolean resizeEnabled, boolean closeIconVisible) {
-        titleLabel.setText(title);
+            boolean closeIconVisible) {
+        dialogPanel.setTitle(title);
         asWidget().setWidth(width);
         asWidget().setHeight(height);
-        asWidget().enableResizeSupport(resizeEnabled);
         asWidget().setCloseIconButtonVisible(closeIconVisible);
     }
 

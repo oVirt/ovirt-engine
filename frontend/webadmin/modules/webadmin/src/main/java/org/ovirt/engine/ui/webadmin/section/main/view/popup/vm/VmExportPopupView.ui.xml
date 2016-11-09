@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" 
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label" >
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.messagePanel {
-			color: #CD2127;
-			position: absolute;
-			left: 10px;
-			top: 15px;
-		}
-		
-		.scrollPanel {
-			height: 90px;
-			width: 100%;
-		}
-	</ui:style>
-	
-	<d:SimpleDialogPanel width="440px" height="270px">
-		<d:content>
-			<g:FlowPanel>
-				<ge:EntityModelCheckBoxEditor ui:field="forceOverride"/>
-				<ge:EntityModelCheckBoxEditor ui:field="collapseSnapshots"/>
-				<g:ScrollPanel addStyleNames="{style.scrollPanel}" >
-				    <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" >
-				    </g:FlowPanel >
-				</g:ScrollPanel>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <ui:style>
+        .messagePanel {
+            color: #CD2127;
+        }
+
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="440px" height="285px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="forceOverride" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="collapseSnapshots" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

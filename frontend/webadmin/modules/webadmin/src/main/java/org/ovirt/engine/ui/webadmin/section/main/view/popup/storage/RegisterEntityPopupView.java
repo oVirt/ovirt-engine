@@ -71,8 +71,6 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         this.driver.initialize(this);
-
-        asWidget().enableResizeSupport(true);
     }
 
     protected abstract void createEntityTable(M model);

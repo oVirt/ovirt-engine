@@ -271,7 +271,7 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="900px" height="615px">
+    <d:SimpleDialogPanel width="900px" height="685px">
         <d:content>
             <g:HTMLPanel>
                 <f:StatusPanel ui:field="statusPanel" />

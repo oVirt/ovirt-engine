@@ -68,7 +68,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     public EntityModelCheckBoxEditor diskAllocationTargetEnabled;
 
     @Ignore
-    EntityModelCellTable<ListModel> listHeader;
+    EntityModelCellTable<ListModel<DisksAllocationModel>> listHeader;
 
     boolean showVolumeType;
     boolean showSource;
@@ -102,34 +102,34 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     void updateListHeader() {
         String width = calculateColumnWidthPercentage() + "%"; //$NON-NLS-1$
-        listHeader = new EntityModelCellTable(false, (Resources) GWT.create(
+        listHeader = new EntityModelCellTable<>(false, (Resources) GWT.create(
                 PopupSimpleTableResources.class), true);
-        listHeader.addColumn(new EmptyColumn(), constants.aliasDisk(), width);
-        listHeader.addColumn(new EmptyColumn(), constants.provisionedSizeDisk(), width);
+        listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.aliasDisk(), width);
+        listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.provisionedSizeDisk(), width);
 
         if (showVolumeType) {
-            listHeader.addColumn(new EmptyColumn(), constants.allocationDisk(), width);
+            listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.allocationDisk(), width);
         }
 
         if (showVolumeFormat) {
-            listHeader.addColumn(new EmptyColumn(), constants.formatDisk(), width);
+            listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.formatDisk(), width);
         }
 
         if (showSource) {
-            listHeader.addColumn(new EmptyColumn(), constants.sourceDisk(), width);
+            listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.sourceDisk(), width);
         }
 
         if (showTarget) {
-            listHeader.addColumn(new EmptyColumn(), constants.targetDisk(), width);
+            listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.targetDisk(), width);
         }
 
-        listHeader.addColumn(new EmptyColumn(), constants.diskProfile(), width);
+        listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.diskProfile(), width);
 
         if (showQuota) {
-            listHeader.addColumn(new EmptyColumn(), constants.quotaDisk(), width);
+            listHeader.addColumn(new EmptyColumn<DisksAllocationModel>(), constants.quotaDisk(), width);
         }
 
-        listHeader.setRowData(new ArrayList());
+        listHeader.setRowData(new ArrayList<DisksAllocationModel>());
         listHeader.setWidth("100%", true); //$NON-NLS-1$
 
         diskListHeaderPanel.setWidget(listHeader);
@@ -259,9 +259,11 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     }
 
     @Override
-    public void setUsePatternFly(boolean use) {
-        if (use) {
+    public void setUsePatternFly(boolean usePatternFly) {
+        diskAllocationTargetEnabled.setUsePatternFly(usePatternFly);
+        if (usePatternFly) {
             diskListPanel.removeStyleName(style.diskListPanel());
+            diskAllocationTargetEnabled.setRemoveFormGroup(true);
         }
     }
 

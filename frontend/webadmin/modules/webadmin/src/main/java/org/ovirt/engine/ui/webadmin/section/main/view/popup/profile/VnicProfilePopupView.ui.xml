@@ -24,42 +24,47 @@
             <g:ScrollPanel>
                 <b:Container addStyleNames="{style.container}">
                     <b:Row addStyleNames="{style.firstRow}">
-                        <e:ListModelListBoxEditor ui:field="networkEditor" label="{constants.networkVnicProfile}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <e:ListModelListBoxEditor ui:field="networkEditor" label="{constants.networkVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameVnicProfile}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionVnicProfile}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                        <e:ListModelListBoxEditor ui:field="networkQoSEditor" label="{constants.profileQoSInstanceTypeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <e:ListModelListBoxEditor ui:field="networkQoSEditor" label="{constants.profileQoSInstanceTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                        <e:ListModelListBoxEditor ui:field="networkFilterEditor" label="{constants.profileNetworkFilterLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <e:ListModelListBoxEditor ui:field="networkFilterEditor" label="{constants.profileNetworkFilterLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                             <ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" label="{constants.passthorughVnicProfile}" usePatternFly="true" />
                         </b:Column>
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                             <ge:EntityModelCheckBoxEditor ui:field="migratableEditor" label="{constants.migratableVnicProfile}" usePatternFly="true" />
                         </b:Column>
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                             <ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" label="{constants.portMirroringVnicProfile}" usePatternFly="true" />
                         </b:Column>
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
+                            <g:Label text="{constants.customPropertiesVnicProfile}" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_12">
                             <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true" />
                         </b:Column>
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                             <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" label="{constants.publicUseVnicProfile}" usePatternFly="true" />
                         </b:Column>
                     </b:Row>

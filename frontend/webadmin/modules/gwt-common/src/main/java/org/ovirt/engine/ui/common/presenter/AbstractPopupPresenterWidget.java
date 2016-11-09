@@ -27,17 +27,17 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
     public interface ViewDef extends PopupView {
 
         /**
-         * @return Button used to hide the popup view (can be {@code null}).
+         * @return Button used to hide the pop-up view (can be {@code null}).
          */
         HasClickHandlers getCloseButton();
 
         /**
-         * @return Icon button used to hide the popup view (can be {@code null}).
+         * @return The header button (X) that can close the pop-up view.
          */
         HasClickHandlers getCloseIconButton();
 
         /**
-         * Used to handle native key press events that occur within popups.
+         * Used to handle native key press events that occur within pop-ups.
          */
         void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
 

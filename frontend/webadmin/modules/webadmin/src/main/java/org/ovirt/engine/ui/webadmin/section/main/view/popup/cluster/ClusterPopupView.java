@@ -534,12 +534,12 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     @Override
     protected void populateTabMap() {
-        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab);
-        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
-        getTabNameMapping().put(TabName.CLUSTER_POLICY_TAB, this.clusterPolicyTab);
-        getTabNameMapping().put(TabName.OPTIMIZATION_TAB, this.optimizationTab);
-        getTabNameMapping().put(TabName.MIGRATION_TAB, this.migrationTab);
-        getTabNameMapping().put(TabName.MAC_POOL_TAB, macPoolTab);
+        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab.getTabListItem());
+        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab.getTabListItem());
+        getTabNameMapping().put(TabName.CLUSTER_POLICY_TAB, this.clusterPolicyTab.getTabListItem());
+        getTabNameMapping().put(TabName.OPTIMIZATION_TAB, this.optimizationTab.getTabListItem());
+        getTabNameMapping().put(TabName.MIGRATION_TAB, this.migrationTab.getTabListItem());
+        getTabNameMapping().put(TabName.MAC_POOL_TAB, macPoolTab.getTabListItem());
     }
 
     private void addStyles() {

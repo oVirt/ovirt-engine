@@ -1020,6 +1020,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String portMirroringVnicProfile();
 
+    String customPropertiesVnicProfile();
+
     String publicUseVnicProfile();
 
     String vnicProfileVmSubTabLabel();

@@ -8,12 +8,12 @@
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
     <ui:style>
         .topDecorator {
-            background-color: #D3D3D3;
+            border-bottom: 1px solid #D1D1D1;
         }
 
         .specificStorageTypePanel {
@@ -46,82 +46,80 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="760px" height="665px">
+    <d:SimpleDialogPanel width="760px" height="765px">
         <d:content>
-            <g:ScrollPanel height="594px">
-                <b:Container addStyleNames="{style.container}">
-                    <b:Row addStyleNames="{style.topDecorator} {style.topElement}">
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <g:FlowPanel>
-                                <b:Column size="SM_5">
-                                    <g:Label addStyleNames="{style.floatLeft} control-label labelEnabled" text="{constants.storagePopupDataCenterLabel}" />
-                                    <b:Icon type="EXCLAMATION" ui:field="datacenterAlertIcon" visible="false" addStyleNames="{style.floatLeft} {style.iconPadding}" />
-                                </b:Column>
-                                <e:ListModelListBoxEditor ui:field="datacenterListEditor" usePatternFly="true" widgetColSize="SM_7" />
+            <b:Container addStyleNames="{style.container}">
+                <b:Row addStyleNames="{style.topElement}">
+                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                        <g:FlowPanel>
+                            <b:Column size="SM_6">
+                                <g:Label addStyleNames="{style.floatLeft} control-label labelEnabled" text="{constants.storagePopupDataCenterLabel}" />
+                                <b:Icon type="EXCLAMATION" ui:field="datacenterAlertIcon" visible="false" addStyleNames="{style.floatLeft} {style.iconPadding}" />
+                            </b:Column>
+                            <e:ListModelListBoxEditor ui:field="datacenterListEditor" usePatternFly="true" widgetColSize="SM_6" />
+                        </g:FlowPanel>
+                    </b:Column>
+                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.storagePopupNameLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                        <e:ListModelListBoxEditor ui:field="domainFunctionListEditor" label="{constants.storagePopupDomainFunctionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Column>
+                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.storagePopupDescriptionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                        <e:ListModelListBoxEditor ui:field="storageTypeListEditor" label="{constants.storagePopupStorageTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Column>
+                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                        <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.topDecorator}">
+                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                        <e:ListModelListBoxEditor ui:field="hostListEditor" label="{constants.storagePopupHostLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:FlowPanel>
+                            <d:AdvancedParametersExpander ui:field="advancedParametersExpander"/>
+                            <g:FlowPanel ui:field="advancedParametersExpanderContent">
+                                <b:Row>
+                                    <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowSpaceIndicatorEditor" label="{constants.warningLowSpaceIndicatorUnits}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_9">
+                                        <g:Label ui:field="warningLowSpaceSizeLabel"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor" label="{constants.criticalSpaceActionBlockerUnits}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="formatListEditor" label="{constants.storagePopupFormatTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" label="{constants.wipeAfterDelete}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:EntityModelCheckBoxEditor ui:field="discardAfterDeleteEditor" label="{constants.discardAfterDelete}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" label="{constants.activateDomainLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
                             </g:FlowPanel>
-                        </b:Column>
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.storagePopupNameLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row addStyleNames="{style.topDecorator}">
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <e:ListModelListBoxEditor ui:field="domainFunctionListEditor" label="{constants.storagePopupDomainFunctionLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                        </b:Column>
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.storagePopupDescriptionLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row addStyleNames="{style.topDecorator}">
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <e:ListModelListBoxEditor ui:field="storageTypeListEditor" label="{constants.storagePopupStorageTypeLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                        </b:Column>
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row addStyleNames="{style.topDecorator}">
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <e:ListModelListBoxEditor ui:field="hostListEditor" label="{constants.storagePopupHostLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <g:FlowPanel>
-                                <d:AdvancedParametersExpander ui:field="advancedParametersExpander"/>
-                                <g:FlowPanel ui:field="advancedParametersExpanderContent">
-                                    <b:Row>
-                                        <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowSpaceIndicatorEditor" label="{constants.warningLowSpaceIndicatorUnits}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                    <b:Row>
-                                        <b:Column size="SM_9">
-                                            <g:Label ui:field="warningLowSpaceSizeLabel"/>
-                                        </b:Column>
-                                    </b:Row>
-                                    <b:Row>
-                                        <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor" label="{constants.criticalSpaceActionBlockerUnits}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                    <b:Row>
-                                        <e:ListModelListBoxEditor ui:field="formatListEditor" label="{constants.storagePopupFormatTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                    <b:Row>
-                                        <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" label="{constants.wipeAfterDelete}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                    <b:Row>
-                                        <ge:EntityModelCheckBoxEditor ui:field="discardAfterDeleteEditor" label="{constants.discardAfterDelete}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
-                                    </b:Row>
-                                    <b:Row>
-                                        <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" label="{constants.activateDomainLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                </g:FlowPanel>
-                            </g:FlowPanel>
-                        </b:Column>
-                    </b:Row>
-                </b:Container>
-            </g:ScrollPanel>
+                        </g:FlowPanel>
+                    </b:Column>
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

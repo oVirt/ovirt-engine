@@ -17,7 +17,7 @@ public class CloneVmPopupView extends AbstractModelBoundWidgetPopupView<CloneVmM
 
     @Inject
     public CloneVmPopupView(EventBus eventBus) {
-        super(eventBus, new CloneVmWidget(), "400px", "170px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, new CloneVmWidget(), "400px", "270px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

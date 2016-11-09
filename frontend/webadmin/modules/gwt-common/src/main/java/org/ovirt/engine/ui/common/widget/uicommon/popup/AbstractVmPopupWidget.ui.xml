@@ -18,10 +18,8 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style>
-
       .sectionLabel {
         font-weight: bold;
-        margin-top: 10px;
         margin-bottom: 5px;
       }
 
@@ -33,7 +31,7 @@
 
       .infoIcon {
         float: left;
-        padding-left: 2px;
+        padding-left: 10px;
         line-height: 30px;
       }
 
@@ -45,12 +43,8 @@
       }
 
       .container {
-        width: 100%;
+        margin-top: 15px;
       }
-
-     .generalTabTopDecorator {
-       background-color: #D3D3D3;
-     }
 
      .prestartedLabel {
        float: left;
@@ -81,94 +75,94 @@
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
         <t:header>
-            <b:Container addStyleNames="{style.container}">
-              <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
-                 <e:GroupedListModelListBoxEditor ui:field="dataCenterWithClusterEditor" label="{constants.hostClusterVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <b:Container addStyleNames="{style.container}" fluid="true">
+              <b:Row>
+                 <e:GroupedListModelListBoxEditor ui:field="dataCenterWithClusterEditor" label="{constants.hostClusterVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
-              <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                  <e:ListModelTypeAheadListBoxEditor ui:field="quotaEditor" label="{constants.quotaVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+              <b:Row>
+                  <e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor" label="{constants.basedOnTemplateVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
-              <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                  <e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor" label="{constants.basedOnTemplateVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+              <b:Row>
+                  <e:ListModelTypeAheadListBoxEditor ui:field="templateWithVersionEditor" label="{constants.template}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
-              <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                  <e:ListModelTypeAheadListBoxEditor ui:field="templateWithVersionEditor" label="{constants.template}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+              <b:Row>
+                  <e:ListModelListBoxEditor ui:field="oSTypeEditor" label="{constants.osVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
-              <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                  <e:ListModelListBoxEditor ui:field="oSTypeEditor" label="{constants.osVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+              <b:Row>
+                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableInstanceTypesEditor" label="{constants.instanceType}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
               </b:Row>
-              <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableInstanceTypesEditor" label="{constants.instanceType}" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_6" />
+              <b:Row>
+                  <e:ListModelListBoxEditor ui:field="vmTypeEditor" label="{constants.optimizedFor}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
-              <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                  <e:ListModelListBoxEditor ui:field="vmTypeEditor" label="{constants.optimizedFor}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+              <b:Row>
+                  <e:ListModelTypeAheadListBoxEditor ui:field="quotaEditor" label="{constants.quotaVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
             </b:Container>
         </t:header>
         <t:tab>
             <t:DialogTab ui:field="generalTab" label="{constants.GeneralVmPopup}">
                 <t:content>
-                    <b:Container addStyleNames="{style.container}">
+                    <b:Container addStyleNames="{style.container}" fluid="true">
                       <b:Row>
-                        <b:Column size="LG_6">
+                        <b:Column size="SM_6">
                           <g:Label ui:field="nameLabel" addStyleNames="{style.floatLeft} labelEnabled" text="{constants.nameVmPopup}" />
                           <d:InfoIcon ui:field="poolNameIcon" addStyleNames="{style.infoIcon}" />
                         </b:Column>
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" widgetColSize="SM_6" />
                       </b:Row>
                       <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" label="{constants.templateVersionName}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" label="{constants.templateVersionName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="vmIdEditor" label="{constants.vmIdPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="vmIdEditor" label="{constants.vmIdPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <b:Row>
-                        <e:ListModelMultipleSelectListBoxEditor ui:field="labelEditor" label="{constants.affinityLabels}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <e:ListModelMultipleSelectListBoxEditor ui:field="labelEditor" label="{constants.affinityLabels}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <!-- New VM Pool -->
                       <b:Row>
-                        <ge:EntityModelTextBoxEditor ui:field="numOfVmsEditor" label="{constants.numOfVmsPoolPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:EntityModelTextBoxEditor ui:field="numOfVmsEditor" label="{constants.numOfVmsPoolPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                       </b:Row>
                       <b:Row ui:field="newPoolEditVmsRow">
-                        <b:Column size="LG_6">
+                        <b:Column size="SM_6">
                           <g:Label ui:field="prestartedLabel" addStyleNames="{style.floatLeft} labelEnabled" text="{constants.prestartedPoolPopup}" />
                           <d:InfoIcon ui:field="newPoolPrestartedVmsIcon" addStyleNames="{style.infoIcon}" />
                         </b:Column>
-                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" usePatternFly="true" widgetColSize="LG_6" label="{constants.prestartedVms}" />
+                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" usePatternFly="true" widgetColSize="SM_6" label="{constants.prestartedVms}" />
                       </b:Row>
                       <b:Row ui:field="newPoolEditMaxAssignedVmsPerUserRow">
-                        <b:Column size="LG_6">
+                        <b:Column size="SM_6">
                           <g:Label addStyleNames="{style.floatLeft} labelEnabled" text="{constants.maxAssignedVmsPerUser}" />
                           <d:InfoIcon ui:field="newPoolMaxAssignedVmsPerUserIcon" addStyleNames="{style.infoIcon}" />
                         </b:Column>
-                        <ge:EntityModelTextBoxOnlyEditor ui:field="maxAssignedVmsPerUserEditor" usePatternFly="true" widgetColSize="LG_6" />
+                        <ge:EntityModelTextBoxOnlyEditor ui:field="maxAssignedVmsPerUserEditor" usePatternFly="true" widgetColSize="SM_6" />
                       </b:Row>
                       <!-- Edit VM Pool -->
                       <b:Row ui:field="editPoolEditVmsRow">
-                        <b:Column size="LG_6">
+                        <b:Column size="SM_6">
                           <g:Label ui:field="editPrestartedVmsLabel" addStyleNames="{style.prestartedLabel} labelEnabled" text="{constants.prestartedVms}" />
                           <d:InfoIcon ui:field="editPoolPrestartedVmsIcon" addStyleNames="{style.infoIcon}" />
                         </b:Column>
-                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" usePatternFly="true" widgetColSize="LG_6" unitString="{constants.vms}"/>
+                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" usePatternFly="true" widgetColSize="SM_6" unitString="{constants.vms}"/>
                       </b:Row>
                       <b:Row ui:field="editPoolIncreaseNumOfVmsRow">
-                        <ge:EntityModelTextBoxEditor ui:field="increaseNumOfVmsEditor" label="{constants.increaseNumberOfVMsInPoolBy}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" unitString="{constants.vms}" />
+                        <ge:EntityModelTextBoxEditor ui:field="increaseNumOfVmsEditor" label="{constants.increaseNumberOfVMsInPoolBy}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" unitString="{constants.vms}" />
                       </b:Row>
                       <b:Row ui:field="editPoolEditMaxAssignedVmsPerUserRow">
-                        <b:Column size="LG_6">
+                        <b:Column size="SM_6">
                           <g:Label addStyleNames="{style.floatLeft} labelEnabled" text="{constants.maxAssignedVmsPerUser}" />
                           <d:InfoIcon ui:field="editPoolMaxAssignedVmsPerUserIcon" addStyleNames="{style.infoIcon}" />
                         </b:Column>
-                        <ge:EntityModelTextBoxOnlyEditor ui:field="editMaxAssignedVmsPerUserEditor" usePatternFly="true" widgetColSize="LG_6" unitString="{constants.vms}" />
+                        <ge:EntityModelTextBoxOnlyEditor ui:field="editMaxAssignedVmsPerUserEditor" usePatternFly="true" widgetColSize="SM_6" unitString="{constants.vms}" />
                       </b:Row>
                       <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                           <ge:EntityModelCheckBoxEditor ui:field="isStatelessEditor" label="{constants.statelessVmPopup}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
                           <ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" label="{constants.runAndPauseVmPopup}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
                           <ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" label="{constants.deleteProtectionPopup}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
@@ -177,12 +171,12 @@
                         </b:Column>
                       </b:Row>
                       <b:Row ui:field="logicalNetworksEditorRow">
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                           <p:ProfilesInstanceTypeEditor ui:field="profilesInstanceTypeEditor" usePatternFly="true"/>
                         </b:Column>
                       </b:Row>
                       <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_12">
                           <b:Alert type="WARNING" ui:field="generalWarningMessage" visible="false" />
                         </b:Column>
                       </b:Row>
@@ -193,56 +187,56 @@
         <t:tab>
             <t:DialogTab ui:field="systemTab" label="{constants.systemVmPopup}">
                 <t:content>
-                  <b:Container addStyleNames="{style.container}">
+                  <b:Container addStyleNames="{style.container}" fluid="true">
                     <b:Row>
-                      <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableMemSizeEditor" label="{constants.memSizeVmPopup}" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_6" />
+                      <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableMemSizeEditor" label="{constants.memSizeVmPopup}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                      <w:EntityModelDetachableWidgetWithInfo ui:field="detachableMaxMemorySizeEditor" usePatternFly="true" labelColSize="LG_5"/>
-                      <ge:MemorySizeEntityModelTextBoxEditor ui:field="maxMemorySizeEditor" usePatternFly="true" widgetColSize="LG_6" />
+                      <w:EntityModelDetachableWidgetWithInfo ui:field="detachableMaxMemorySizeEditor" usePatternFly="true" labelColSize="SM_5"/>
+                      <ge:MemorySizeEntityModelTextBoxEditor ui:field="maxMemorySizeEditor" usePatternFly="true" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                      <w:EntityModelDetachableWidgetWithInfo ui:field="totalvCPUsEditorWithInfoIcon" usePatternFly="true" labelColSize="LG_5"/>
-                      <ge:StringEntityModelTextBoxOnlyEditor ui:field="totalvCPUsEditor" label="{constants.numOfVCPUs}" removeFormGroup="true" usePatternFly="true" widgetColSize="LG_6" />
+                      <w:EntityModelDetachableWidgetWithInfo ui:field="totalvCPUsEditorWithInfoIcon" usePatternFly="true" labelColSize="SM_5"/>
+                      <ge:StringEntityModelTextBoxOnlyEditor ui:field="totalvCPUsEditor" label="{constants.numOfVCPUs}" removeFormGroup="true" usePatternFly="true" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                      <b:Column size="LG_12">
+                      <b:Column size="SM_12">
                         <g:FlowPanel>
                             <d:AdvancedParametersExpander ui:field="vcpusAdvancedParameterExpander"/>
                             <g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent">
                                 <b:Row>
-                                    <ge:EntityModelDetachableWidgetWithLabel ui:field="numOfSocketsEditorWithDetachable" label="{constants.numOfSockets}" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_6" />
+                                    <ge:EntityModelDetachableWidgetWithLabel ui:field="numOfSocketsEditorWithDetachable" label="{constants.numOfSockets}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:EntityModelDetachableWidgetWithLabel ui:field="corePerSocketEditorWithDetachable" label="{constants.coresPerSocket}" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_6" />
+                                    <ge:EntityModelDetachableWidgetWithLabel ui:field="corePerSocketEditorWithDetachable" label="{constants.coresPerSocket}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <w:EntityModelDetachableWidgetWithInfo ui:field="threadsPerCoreEditorWithInfoIcon" usePatternFly="true" labelColSize="LG_5" />
-                                    <e:ListModelListBoxOnlyEditor ui:field="threadsPerCoreEditor" usePatternFly="true" widgetColSize="LG_6" />
+                                    <w:EntityModelDetachableWidgetWithInfo ui:field="threadsPerCoreEditorWithInfoIcon" usePatternFly="true" labelColSize="SM_5" />
+                                    <e:ListModelListBoxOnlyEditor ui:field="threadsPerCoreEditor" usePatternFly="true" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" label="{constants.cpuModelLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" label="{constants.cpuModelLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="customCompatibilityVersionEditor" label="{constants.customCompatibilityVersionLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <e:ListModelListBoxEditor ui:field="customCompatibilityVersionEditor" label="{constants.customCompatibilityVersionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                             </g:FlowPanel>
                         </g:FlowPanel>
                       </b:Column>
                     </b:Row>
                     <b:Row>
-                      <b:Column size="LG_12">
+                      <b:Column size="SM_12">
                         <g:Label ui:field="generalLabel" addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
                       </b:Column>
                    </b:Row>
                     <b:Row>
-                      <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                      <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                    </b:Row>
                     <b:Row>
-                      <b:Column size="LG_12">
+                      <b:Column size="SM_12">
                         <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" usePatternFly="true" />
                       </b:Column>
                     </b:Row>
@@ -253,12 +247,12 @@
         <t:tab>
             <t:DialogTab ui:field="poolTab" label="{constants.poolVmPopup}">
                 <t:content>
-                  <b:Container addStyleNames="{style.container}">
+                  <b:Container addStyleNames="{style.container}" fluid="true">
                     <b:Row>
-                      <e:ListModelListBoxEditor ui:field="poolTypeEditor" label="{constants.poolTypeVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                      <e:ListModelListBoxEditor ui:field="poolTypeEditor" label="{constants.poolTypeVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                      <ge:EntityModelCheckBoxEditor ui:field="poolStatefulEditor" label="{constants.poolStatefulLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                      <ge:EntityModelCheckBoxEditor ui:field="poolStatefulEditor" label="{constants.poolStatefulLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                   </b:Container>
                 </t:content>
@@ -267,9 +261,9 @@
         <t:tab>
             <t:DialogTab ui:field="initialRunTab" label="{constants.initialRunVmPopup}">
               <t:content>
-                <b:Container addStyleNames="{style.container}">
+                <b:Container addStyleNames="{style.container}" fluid="true">
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <ge:EntityModelCheckBoxEditor ui:field="vmInitEnabledEditor" label="{constants.cloudInitOrSysprep}" removeFormGroup="true" usePatternFly="true" />
                       <vm:VmPopupVmInitWidget ui:field="vmInitEditor" usePatternFly="true" />
                     </b:Column>
@@ -281,104 +275,104 @@
         <t:tab>
           <t:DialogTab ui:field="consoleTab" label="{constants.consoleVmPopup}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <g:Label addStyleNames="{style.sectionLabel}" text="{constants.graphicalConsoleOptionsVmPopup}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="isHeadlessModeEnabledEditor" label="{constants.headlessModeVmPopup}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}" />
                     <d:InfoIcon ui:field="isHeadlessModeEnabledInfoIcon" addStyleNames="{style.infoIcon}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="displayTypeEditor" label="{constants.videoType}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="displayTypeEditor" label="{constants.videoType}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="graphicsTypeEditor" label="{constants.graphicsProtocol}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="graphicsTypeEditor" label="{constants.graphicsProtocol}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" label="{constants.vncKeyboardLayoutVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" label="{constants.vncKeyboardLayoutVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="usbSupportEditor" label="{constants.usbPolicyVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="usbSupportEditor" label="{constants.usbPolicyVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="consoleDisconnectActionEditor" label="{constants.consoleDisconnectActionVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="consoleDisconnectActionEditor" label="{constants.consoleDisconnectActionVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row ui:field="monitors">
-                  <b:Column size="LG_6">
+                  <b:Column size="SM_6">
                     <l:EnableableFormLabel ui:field="monitorsLabel" text="{constants.monitors}" />
                   </b:Column>
-                  <b:Column size="LG_2">
+                  <b:Column size="SM_2">
                     <e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" usePatternFly="true" />
                   </b:Column>
-                  <b:Column size="LG_3">
+                  <b:Column size="SM_3">
                     <ge:EntityModelCheckBoxEditor ui:field="isSingleQxlEnabledEditor" label="{constants.singleQxlEnabled}" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" label="{constants.smartcardVmPopup}" removeFormGroup="true" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <l:EnableableFormLabel ui:field="ssoMethodLabel" text="{constants.ssoMethod}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelRadioButtonEditor ui:field="ssoMethodNone" label="{constants.none}" removeFormGroup="true" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelRadioButtonEditor ui:field="ssoMethodGuestAgent" label="{constants.guestAgent}" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <d:AdvancedParametersExpander ui:field="expander"/>
                 <g:FlowPanel ui:field="expanderContent">
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <b:Alert type="WARNING" text="{constants.advancedOptionsLabel}" />
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <ge:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" label="{constants.allowConsoleReconnect}" usePatternFly="true" removeFormGroup="true" />
                     </b:Column>
                   </b:Row>
                 </g:FlowPanel>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" label="{constants.soundcardEnabled}" usePatternFly="true" removeFormGroup="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxOnlyEditor ui:field="spiceProxyOverrideEnabledEditor" addStyleNames="{style.floatLeft} {style.patternFlyRadioNoLeft}" usePatternFly="true" />
                     <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" label="{constants.overriddenSpiceProxyAddress}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" label="{constants.overriddenSpiceProxyAddress}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" label="{constants.spiceFileTransferEnabled}" usePatternFly="true" removeFormGroup="true" />
                     <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" label="{constants.spiceCopyPasteEnabled}" usePatternFly="true" removeFormGroup="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <g:Label ui:field="serialConsoleOptionsVmPopupLabel" addStyleNames="{style.sectionLabel}" text="{constants.serialConsoleOptionsVmPopup}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" label="{constants.consoleDeviceEnabled}" usePatternFly="true" removeFormGroup="true"/>
                   </b:Column>
                 </b:Row>
@@ -389,94 +383,94 @@
         <t:tab>
           <t:DialogTab ui:field="hostTab" label="{constants.hostVmPopup}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <g:FlowPanel ui:field="startRunningOnPanel">
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor" label="{constants.anyHostInClusterVmPopup}" usePatternFly="true" removeFormGroup="true" />
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <b:Column size="LG_6">
+                    <b:Column size="SM_6">
                       <ge:EntityModelRadioButtonEditor ui:field="specificHost" label="{constants.specificVmPopup}" usePatternFly="true" removeFormGroup="true" />
                     </b:Column>
-                    <b:Column size="LG_6">
+                    <b:Column size="SM_6">
                       <e:ListModelMultipleSelectListBoxEditor ui:field="defaultHostEditor" usePatternFly="true" />
                     </b:Column>
                   </b:Row>
                 </g:FlowPanel>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_5">
+                  <b:Column size="SM_5">
                     <g:Label addStyleNames="{style.floatLeft}" text="{constants.migrationMode}" />
                     <d:InfoIcon ui:field="migrationSelectInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
-                  <b:Column size="LG_1">
+                  <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" usePatternFly="true"/>
                   </b:Column>
-                  <b:Column size="LG_6">
+                  <b:Column size="SM_6">
                     <e:ListModelListBoxEditor ui:field="migrationModeEditor" usePatternFly="true"/>
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_5">
+                  <b:Column size="SM_5">
                     <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationPolicyEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.overrideMigrationPolicyLabel}" />
                     <d:InfoIcon ui:field="migrationPolicyInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
-                  <b:Column size="LG_1">
+                  <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="overrideMigrationPolicyEditorWithDetachable" usePatternFly="true" />
                   </b:Column>
-                  <b:Column size="LG_6">
+                  <b:Column size="SM_6">
                     <e:ListModelListBoxOnlyEditor ui:field="migrationPolicyEditor" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_5">
+                  <b:Column size="SM_5">
                     <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.overrideMigrationDowntimeLabel}" />
                     <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
-                  <b:Column size="LG_1">
+                  <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" usePatternFly="true" />
                   </b:Column>
-                  <b:Column size="LG_6">
+                  <b:Column size="SM_6">
                     <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" label="{constants.passThroughHostCpu}" usePatternFly="true"/>
                   </b:Column>
                 </b:Row>
                 <g:FlowPanel ui:field="numaPanel">
                   <b:Row>
-                    <b:Column size="LG_6">
+                    <b:Column size="SM_6">
                       <g:Label addStyleNames="{style.floatLeft} labelEnabled {style.sectionLabel}" text="{constants.numaSectionLabel}" />
                       <d:InfoIcon ui:field="numaInfoIcon" addStyleNames="{style.infoIcon}" />
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <ge:IntegerEntityModelTextBoxEditor ui:field="numaNodeCount" label="{constants.numaNodeCountLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="numaNodeCount" label="{constants.numaNodeCountLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <e:ListModelListBoxEditor ui:field="numaTuneMode" label="{constants.numaTunaModeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <e:ListModelListBoxEditor ui:field="numaTuneMode" label="{constants.numaTunaModeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <w:UiCommandButton ui:field="numaSupportButton" label="{constants.numaSupportButtonLabel}" />
                     </b:Column>
                   </b:Row>
@@ -488,36 +482,36 @@
         <t:tab>
           <t:DialogTab ui:field="highAvailabilityTab" label="{constants.highAvailVmPopup}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
-                  <b:Column size="LG_5">
+                  <b:Column size="SM_5">
                     <ge:EntityModelCheckBoxEditor ui:field="isHighlyAvailableEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.highlyAvailableVmPopup}" />
                   </b:Column>
-                  <b:Column size="LG_1">
+                  <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="isHighlyAvailableEditorWithDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="leaseEditor" label="{constants.leaseStorageDomain}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="leaseEditor" label="{constants.leaseStorageDomain}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_6">
+                  <b:Column size="SM_6">
                     <g:Label text="{constants.priorForRunMigrationQueueVmPopup}" addStyleNames="{style.sectionLabel}"/>
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachablePriorityEditor" label="{constants.priorityVm}" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_6" />
+                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachablePriorityEditor" label="{constants.priorityVm}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <g:Label text="{constants.watchdog}" addStyleNames="{style.sectionLabel}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="watchdogModelEditor" label="{constants.watchdogModel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="watchdogModelEditor" label="{constants.watchdogModel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="watchdogActionEditor" label="{constants.watchdogAction}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="watchdogActionEditor" label="{constants.watchdogAction}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
               </b:Container>
             </t:content>
@@ -526,96 +520,96 @@
         <t:tab>
           <t:DialogTab ui:field="resourceAllocationTab" label="{constants.resourceAllocVmPopup}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <g:FlowPanel ui:field="cpuAllocationPanel">
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <g:Label text="{constants.cpuAllocVmPopup}" addStyleNames="{style.sectionLabel}" />
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <e:ListModelListBoxEditor ui:field="cpuProfilesEditor" label="{constants.cpuProfileLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <e:ListModelListBoxEditor ui:field="cpuProfilesEditor" label="{constants.cpuProfileLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row ui:field="cpuSharesEditorRow">
-                    <b:Column size="LG_6">
+                    <b:Column size="SM_6">
                       <g:Label text="{constants.cpuShares}" />
                     </b:Column>
-                    <b:Column size="LG_4">
+                    <b:Column size="SM_4">
                       <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor" usePatternFly="true"/>
                     </b:Column>
-                    <b:Column size="LG_2">
+                    <b:Column size="SM_2">
                       <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" usePatternFly="true" />
                     </b:Column>
                   </b:Row>
                   <b:Row ui:field="cpuPinningRow">
-                    <b:Column size="LG_6">
+                    <b:Column size="SM_6">
                       <g:Label ui:field="cpuPinningLabel" addStyleNames="{style.floatLeft} labelEnabled" text="{constants.cpuPinningLabel}" />
                       <d:InfoIcon ui:field="cpuPinningInfo" addStyleNames="{style.infoIcon}" />
                     </b:Column>
-                    <ge:StringEntityModelTextBoxOnlyEditor ui:field="cpuPinning" usePatternFly="true" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxOnlyEditor ui:field="cpuPinning" usePatternFly="true" widgetColSize="SM_6" />
                   </b:Row>
                 </g:FlowPanel>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <g:Label text="{constants.memAllocVmPopup}" addStyleNames="{style.sectionLabel}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableMinAllocatedMemoryEditor" label="{constants.physMemGuarVmPopup}" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_6" />
+                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableMinAllocatedMemoryEditor" label="{constants.physMemGuarVmPopup}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_5">
+                  <b:Column size="SM_5">
                     <ge:EntityModelCheckBoxEditor ui:field="isMemoryBalloonDeviceEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.memoryBalloonDeviceEnabled}" />
                   </b:Column>
-                  <b:Column size="LG_1">
+                  <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="isMemoryBalloonDeviceEnabledDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <g:Label text="{constants.ioThreadsVmPopup}" addStyleNames="{style.sectionLabel}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_5">
+                  <b:Column size="SM_5">
                     <ge:EntityModelCheckBoxEditor ui:field="isIoThreadsEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.ioThreadsEnabled}" />
                   </b:Column>
-                  <b:Column size="LG_1">
+                  <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="isIoThreadsEnabledDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <ge:IntegerEntityModelTextBoxEditor ui:field="numOfIoThreadsEditor" label="{constants.numOfIoThreadsVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <ge:IntegerEntityModelTextBoxEditor ui:field="numOfIoThreadsEditor" label="{constants.numOfIoThreadsVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <g:FlowPanel ui:field="storageAllocationPanel">
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <g:Label addStyleNames="{style.sectionLabel} {style.floatLeft}" text="{constants.storageAllocVmPopup}" />
                       <g:Label addStyleNames="{style.sectionComment}" text="{constants.availOnlyTemplSelectedVmPopup}" />
                     </b:Column>
                   </b:Row>
                   <g:FlowPanel ui:field="provisionSelectionPanel">
                     <b:Row>
-                      <b:Column size="LG_12">
+                      <b:Column size="SM_12">
                         <ge:EntityModelRadioButtonEditor ui:field="provisioningThinEditor" label="{constants.thinVmPopup}" usePatternFly="true" removeFormGroup="true" />
                       </b:Column>
                     </b:Row>
                     <b:Row>
-                      <b:Column size="LG_12">
+                      <b:Column size="SM_12">
                         <ge:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor" label="{constants.cloneVmPopup}" usePatternFly="true" removeFormGroup="true" />
                       </b:Column>
                     </b:Row>
                   </g:FlowPanel>
                 </g:FlowPanel>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="isVirtioScsiEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.isVirtioScsiEnabled}" />
                     <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                 </b:Row>
                 <g:FlowPanel ui:field="disksAllocationPanel">
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <g:FlowPanel ui:field="disksPanel">
                         <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="629" showVolumeType="true" usePatternFly="true" />
                       </g:FlowPanel>
@@ -629,50 +623,50 @@
         <t:tab>
           <t:DialogTab ui:field="bootOptionsTab" label="{constants.bootOptionsVmPopup}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <g:Label addStyleNames="{style.sectionLabel}" text="{constants.bootSequenceVmPopup}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="firstBootDeviceEditor" label="{constants.firstDeviceVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="firstBootDeviceEditor" label="{constants.firstDeviceVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="secondBootDeviceEditor" label="{constants.secondDeviceVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <e:ListModelListBoxEditor ui:field="secondBootDeviceEditor" label="{constants.secondDeviceVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row ui:field="attachCdRow">
-                  <b:Column size="LG_6">
+                  <b:Column size="SM_6">
                     <ge:EntityModelCheckBoxEditor label="{constants.attachCdVmPopup}" ui:field="cdAttachedEditor" removeFormGroup="true" usePatternFly="true" />
                   </b:Column>
-                  <b:Column size="LG_5">
+                  <b:Column size="SM_5">
                     <e:ListModelListBoxEditor ui:field="cdImageEditor" usePatternFly="true" />
                   </b:Column>
-                  <b:Column size="LG_1">
+                  <b:Column size="SM_1">
                     <g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton}">
                       <g:upFace image='{resources.refreshButtonImage}' />
                     </g:PushButton>
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <g:FlowPanel ui:field="linuxBootOptionsPanel" visible="false">
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <g:Label addStyleNames="{style.sectionLabel}" text="{constants.linuxBootOptionsVmPopup}" />
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="kernel_pathEditor" label="{constants.kernelPathVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="kernel_pathEditor" label="{constants.kernelPathVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="initrd_pathEditor" label="{constants.initrdPathVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="initrd_pathEditor" label="{constants.initrdPathVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="kernel_parametersEditor" label="{constants.kernelParamsVmPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="kernel_parametersEditor" label="{constants.kernelParamsVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                 </g:FlowPanel>
               </b:Container>
@@ -682,33 +676,33 @@
         <t:tab>
           <t:DialogTab ui:field="rngDeviceTab" label="{constants.rngDeviceTab}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="isRngEnabledEditor" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.rngDevEnabled}" />
                     <d:InfoIcon ui:field="isRngEnabledInfoIcon" addStyleNames="{style.infoIcon}" />
                   </b:Column>
                 </b:Row>
                 <g:FlowPanel ui:field="rngPanel">
                   <b:Row>
-                    <ge:IntegerEntityModelTextBoxEditor ui:field="rngPeriodEditor" label="{constants.rngPeriod}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="rngPeriodEditor" label="{constants.rngPeriod}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <ge:IntegerEntityModelTextBoxEditor ui:field="rngBytesEditor" label="{constants.rngBytes}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="rngBytesEditor" label="{constants.rngBytes}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <g:Label text="{constants.deviceSource}" addStyleNames="{style.sectionLabel}" />
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <ge:EntityModelRadioButtonEditor ui:field="rngSourceUrandom" label="{constants.rngSourceUrandomOrRandom}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}" />
                       <d:InfoIcon ui:field="rngSourceUrandomInfoIcon" styleName="{style.infoIcon}"/>
                     </b:Column>
                   </b:Row>
                   <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                       <ge:EntityModelRadioButtonEditor ui:field="rngSourceHwrng" label="{constants.rngSourceHwrng}" removeFormGroup="true" usePatternFly="true" />
                     </b:Column>
                   </b:Row>
@@ -720,9 +714,9 @@
         <t:tab>
           <t:DialogTab ui:field="customPropertiesTab" label="{constants.customPropsVmPopup}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
@@ -733,9 +727,9 @@
         <t:tab>
           <t:DialogTab ui:field="iconTab" label="{constants.iconTabVmPopup}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
-                  <b:Column size="LG_7">
+                  <b:Column size="SM_7">
                     <e:IconEditorWidget ui:field="iconEditorWidget" />
                   </b:Column>
                 </b:Row>
@@ -746,9 +740,9 @@
         <t:tab>
           <t:DialogTab ui:field="foremanTab" label="{constants.foremanLabel}">
             <t:content>
-              <b:Container addStyleNames="{style.container}">
+              <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="providersEditor" labelColSize="LG_6" widgetColSize="LG_6" usePatternFly="true"/>
+                  <e:ListModelListBoxEditor ui:field="providersEditor" labelColSize="SM_6" widgetColSize="SM_6" usePatternFly="true"/>
                 </b:Row>
               </b:Container>
             </t:content>

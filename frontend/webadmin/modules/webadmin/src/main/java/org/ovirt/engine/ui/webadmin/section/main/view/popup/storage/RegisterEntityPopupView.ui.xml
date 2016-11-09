@@ -19,11 +19,16 @@
             left: 0px;
             right: 0px;
         }
+
+        .splitLayout {
+            height: 509px;
+            width: 100%;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="930px" height="650px">
         <d:content>
-            <g:SplitLayoutPanel ui:field="splitLayoutPanel" width="100%">
+            <g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.splitLayout}">
                 <g:center>
                     <g:SimplePanel addStyleNames="{style.containerPanel}">
                         <g:FlowPanel addStyleNames="{style.containerPanelInner}">

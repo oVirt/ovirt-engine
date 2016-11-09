@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
 import java.util.Set;
 
+import org.gwtbootstrap3.client.ui.TabListItem;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
@@ -44,7 +45,7 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
             widget.setVisible(widgetConfiguration.get(widget).isCurrentlyVisible(advanced, createInstanceMode));
         }
 
-        DialogTab activeTab = ((DialogTabPanel) getWidget()).getActiveTab();
+        TabListItem activeTab = ((DialogTabPanel) getWidget()).getActiveTab();
 
         // select the first tab if the selected tab has been hidden
         if (!advanced && widgetConfiguration.getVisibleInAdvanceMode().keySet().contains(activeTab)) {

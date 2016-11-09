@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAlias
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -74,7 +73,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
     @UiField(provided = true)
     @Ignore
-    EntityModelCellTable<ListModel> previewTable;
+    EntityModelCellTable<ListModel<SnapshotModel>> previewTable;
 
     @UiField(provided = true)
     SplitLayoutPanel splitLayoutPanel;
@@ -91,7 +90,6 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final Driver driver = GWT.create(Driver.class);
 

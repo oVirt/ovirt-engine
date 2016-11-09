@@ -1,10 +1,11 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.gwtbootstrap3.client.ui.Alert;
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -25,10 +26,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
@@ -37,7 +36,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     interface Driver extends UiCommonEditorDriver<UnitVmModel, VmMakeTemplatePopupWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, VmMakeTemplatePopupWidget> {
+    interface ViewUiBinder extends UiBinder<Container, VmMakeTemplatePopupWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -116,36 +115,19 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     @UiField
     @Ignore
-    FlowPanel messagePanel;
-
-    interface WidgetStyle extends CssResource {
-        String editorLabel();
-    }
-
-    @UiField
-    WidgetStyle style;
+    Alert messagePanel;
 
     private final Driver driver = GWT.create(Driver.class);
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmMakeTemplatePopupWidget() {
         initListBoxEditors();
         initCheckBoxEditors();
         disksAllocationView = new DisksAllocationView();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-        addStyle();
-    }
-
-    void addStyle() {
-        isTemplatePublicEditor.setContentWidgetContainerStyleName(style.editorLabel());
-        copyVmPermissions.setContentWidgetContainerStyleName(style.editorLabel());
-        sealTemplateEditor.setContentWidgetContainerStyleName(style.editorLabel());
-        isSubTemplateEditor.setContentWidgetContainerStyleName(style.editorLabel());
     }
 
     void initListBoxEditors() {
@@ -207,20 +189,6 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         copyVmPermissions = new EntityModelCheckBoxEditor(Align.RIGHT);
         sealTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSubTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-    }
-
-    void localize() {
-        nameEditor.setLabel(constants.makeTemplatePopupNameLabel());
-        descriptionEditor.setLabel(constants.makeTemplatePopupDescriptionLabel());
-        commentEditor.setLabel(constants.commentLabel());
-        clusterEditor.setLabel(constants.makeTemplateClusterLabel());
-        quotaEditor.setLabel(constants.makeTemplateQuotaLabel());
-        isTemplatePublicEditor.setLabel(constants.makeTemplateIsTemplatePublicEditorLabel());
-        copyVmPermissions.setLabel(constants.copyVmPermissions());
-        isSubTemplateEditor.setLabel(constants.createAsSubTemplate());
-        baseTemplateEditor.setLabel(constants.rootTemplate());
-        templateVersionNameEditor.setLabel(constants.templateVersionName());
-        cpuProfilesEditor.setLabel(constants.cpuProfileLabel());
     }
 
     @Override

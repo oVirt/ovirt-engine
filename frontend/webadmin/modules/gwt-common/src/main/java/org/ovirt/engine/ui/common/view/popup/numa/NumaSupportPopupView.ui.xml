@@ -53,7 +53,7 @@
 
     <d:SimpleDialogPanel width="1200px" height="700px">
         <d:content>
-            <g:SplitLayoutPanel ui:field="horizontalSplitLayoutPanel">
+            <g:SplitLayoutPanel ui:field="horizontalSplitLayoutPanel" height="570px">
                 <g:center>
                     <g:ScrollPanel>
                         <g:FlowPanel ui:field="groupPanel">

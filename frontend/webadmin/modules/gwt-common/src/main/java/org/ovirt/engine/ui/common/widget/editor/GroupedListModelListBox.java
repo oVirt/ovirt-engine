@@ -50,7 +50,6 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
             }
         });
         groupLabelContainer = new FlowPanel();
-        groupLabelContainer.addStyleName(Styles.INPUT_GROUP_ADDON);
         groupLabelContainer.addStyleName(style.labelContainer());
         groupLabel = new EnableableFormLabel();
         groupLabel.addStyleName(style.label());

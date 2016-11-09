@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -47,6 +48,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -60,14 +62,12 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -79,15 +79,14 @@ import com.google.inject.Inject;
 
 public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupView<ImportVmFromExportDomainModel> implements ImportVmFromExportDomainPopupPresenterWidget.ViewDef {
 
+    private static final String EMPTY_STYLE = "";
+
     interface Driver extends UiCommonEditorDriver<ImportVmFromExportDomainModel, ImportVmFromExportDomainPopupView> {
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmFromExportDomainPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
@@ -106,7 +105,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     @UiField
     @Ignore
-    Label message;
+    Alert message;
 
     @Ignore
     ListModelObjectCellTable<Object, ImportVmFromExportDomainModel> table;
@@ -520,7 +519,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         allocationTypes.add(constants.preallocatedAllocation());
 
         customSelectionCellFormatType = new CustomSelectionCell(allocationTypes);
-        customSelectionCellFormatType.setStyle(style.cellSelectBox());
+        customSelectionCellFormatType.setStyle(EMPTY_STYLE);
 
         AbstractColumn<DiskImage, String> allocationColumn = new AbstractColumn<DiskImage, String>(
                 customSelectionCellFormatType) {
@@ -563,7 +562,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     private void addStorageDomainsColumn() {
         CustomSelectionCell customSelectionCellStorageDomain = new CustomSelectionCell(new ArrayList<String>());
-        customSelectionCellStorageDomain.setStyle(style.cellSelectBox());
+        customSelectionCellStorageDomain.setStyle(EMPTY_STYLE);
 
         Column<DiskImage, String> storageDomainsColumn = new Column<DiskImage, String>(customSelectionCellStorageDomain) {
             @Override
@@ -618,7 +617,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         }
 
         CustomSelectionCell customSelectionCellQuota = new CustomSelectionCell(new ArrayList<String>());
-        customSelectionCellQuota.setStyle(style.cellSelectBox());
+        customSelectionCellQuota.setStyle(EMPTY_STYLE);
 
         quotaColumn = new Column<DiskImage, String>(customSelectionCellQuota) {
             @Override
@@ -682,12 +681,13 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.equals(object.ON_DISK_LOAD)) {
+                if (ImportVmFromExportDomainModel.ON_DISK_LOAD.equals(args.propertyName)) {
                     addStorageQuotaColumn();
                     table.redraw();
                     diskTable.asEditor().edit(object.getImportDiskListModel());
                 } else if (args.propertyName.equals("Message")) { //$NON-NLS-1$
                     message.setText(object.getMessage());
+                    message.setVisible(StringUtils.isNotEmpty(object.getMessage()));
                 }
                 else if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
                     table.redraw();
@@ -744,14 +744,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    interface WidgetStyle extends CssResource {
-        String checkboxEditor();
-
-        String collapseEditor();
-
-        String cellSelectBox();
     }
 
 }

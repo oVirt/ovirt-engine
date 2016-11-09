@@ -28,10 +28,6 @@
             font-style: italic;
         }
 
-        .container {
-            width: 100%;
-        }
-
         .topElement {
             padding-top: 15px;
         }
@@ -39,7 +35,7 @@
 
     <d:SimpleDialogPanel width="500px" height="620px">
         <d:content>
-            <b:Container addStyleNames="{style.container}">
+            <b:Container fluid="true">
                 <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
                     <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>

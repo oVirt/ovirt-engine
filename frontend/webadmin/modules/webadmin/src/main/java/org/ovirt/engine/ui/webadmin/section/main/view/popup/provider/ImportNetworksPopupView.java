@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.HorizontalSplitTable;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -36,7 +37,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
 public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImportNetworksModel> implements ImportNetworksPopupPresenterWidget.ViewDef {
@@ -164,8 +164,8 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
                     public void render(Context context, SafeHtmlBuilder sb) {
                         super.render(context, sb);
                         sb.append(ImportNetworksPopupView.templates.tableHeaderInlineImage(
-                                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.dialogIconHelp())
-                                .getHTML())));
+                                SafeHtmlUtils.fromTrustedString(new InfoIcon(
+                                        SafeHtmlUtils.EMPTY_SAFE_HTML).toString())));
                     }
 
                     @Override

@@ -18,11 +18,11 @@
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView.Style">
         .generalTabTopDecorator {
-            background-color: #D3D3D3;
+            border-bottom: 1px solid #D1D1D1;
         }
 
         .topElement {
-            padding-top: 20px;
+            padding-top: 15px;
         }
 
         .headerLabel {
@@ -60,10 +60,6 @@
         .sourceLabel {
             font-size: 13px;
             padding: 0 5px;
-        }
-
-        .container {
-            width: auto;
         }
 
         .proxyListBox {
@@ -199,11 +195,11 @@
                 <t:tab>
                     <t:DialogTab ui:field="generalTab">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
+                            <b:Container fluid="true">
+                                <b:Row>
                                     <e:GroupedListModelListBoxEditor ui:field="clusterEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                <b:Row>
                                     <b:Column size="SM_6">
                                         <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor" usePatternFly="true"/>
                                     </b:Column>
@@ -211,19 +207,19 @@
                                         <e:ListModelListBoxEditor ui:field="providersEditor" usePatternFly="true"/>
                                     </b:Column>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                <b:Row>
                                     <b:Column size="SM_11" offset="SM_1" ui:field="discoveredHostSection" >
                                         <ge:EntityModelRadioButtonEditor ui:field="rbDiscoveredHost" label="{constants.discoveredHostsLabel}" addStyleNames="{style.floatLeft}" />
                                         <d:InfoIcon ui:field="discoveredHostInfoIcon" addStyleNames="{style.infoIcon}" />
                                     </b:Column>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                <b:Row>
                                     <b:Column size="SM_11" offset="SM_1" ui:field="provisionedHostSection" >
                                         <ge:EntityModelRadioButtonEditor ui:field="rbProvisionedHost" label="{constants.provisionedHostsLabel}" addStyleNames="{style.floatLeft}" />
                                         <d:InfoIcon ui:field="provisionedHostInfoIcon" addStyleNames="{style.infoIcon}" />
                                     </b:Column>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}" ui:field="searchProviderRow">
+                                <b:Row ui:field="searchProviderRow">
                                         <e:ListModelListBoxEditor ui:field="externalHostNameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                         <b:Column size="SM_6">
                                             <l:EnableableFormLabel ui:field="providerSearchFilterLabel" addStyleNames="{style.floatLeft}" />
@@ -234,17 +230,18 @@
                                             <g:Image ui:field="updateHostsButton" addStyleNames="{style.icon} {style.searchButton}" />
                                         </b:Column>
                                 </b:Row>
-                                <g:FlowPanel addStyleNames="{style.generalTabTopDecorator}" ui:field="discoveredHostPanel">
-                                    <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                <g:FlowPanel ui:field="discoveredHostPanel">
+                                    <b:Row>
                                         <e:ListModelTypeAheadListBoxEditor ui:field="externalDiscoveredHostsEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                     </b:Row>
-                                    <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <b:Row>
                                         <e:ListModelTypeAheadListBoxEditor ui:field="externalHostGroupsEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                     </b:Row>
-                                    <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <b:Row>
                                         <e:ListModelTypeAheadListBoxEditor ui:field="externalComputeResourceEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                     </b:Row>
                                 </g:FlowPanel>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}" />
                                 <b:Row addStyleNames="{style.topElement}">
                                     <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
@@ -304,7 +301,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="powerManagementTab">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="SM_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="pmEnabledEditor" usePatternFly="true" removeFormGroup="true"/>
@@ -340,7 +337,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="spmTab">
                         <t:content>
-                            <b:Container ui:field="spmContainer" addStyleNames="{style.container}">
+                            <b:Container ui:field="spmContainer" fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="SM_12">
                                       <g:Label text="{commonConstants.spmPriority}" />
@@ -353,7 +350,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="consoleTab">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="SM_6">
                                         <ge:EntityModelCheckBoxEditor ui:field="consoleAddressEnabled" addStyleNames="{style.floatLeft}" label="{constants.enableConsoleAddressOverride}" usePatternFly="true" removeFormGroup="true" />
@@ -370,7 +367,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="networkProviderTab">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <p:HostNetworkProviderWidget ui:field="networkProviderWidget" usePatternFly="true" addStyleNames="{style.topElement}" />
                             </b:Container>
                         </t:content>
@@ -379,7 +376,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="kernelTab" label="{constants.hostKernelTabLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row>
                                     <b:Column size="SM_12">
                                         <g:Label text="{constants.kernelCmdlineBootParamsLabel}" addStyleNames="{style.headerLabel}" />
@@ -442,13 +439,13 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <g:Label text="{constants.kernelCmdlineLabel}" addStyleNames="form-group {style.floatLeft}" />
+                                        <g:Label text="{constants.kernelCmdlineLabel}" addStyleNames="{style.floatLeft}" />
                                         <d:InfoIcon ui:field="kernelCmdlineInfoIcon" addStyleNames="{style.patternFlyRadio} {style.inline}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <ge:StringEntityModelLabelEditor ui:field="kernelCmdlineText" addStyleNames="{style.monospace}"/>
+                                        <ge:StringEntityModelLabelEditor ui:field="kernelCmdlineText" addStyleNames="{style.monospace}" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
@@ -463,7 +460,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="hostedEngineTab"  label="{constants.hostedEngineLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="SM_12">
                                         <g:Label ui:field="hostedEngineWarningLabel" addStyleNames="{style.warningLabel}"/>
@@ -475,10 +472,7 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="hostedEngineDeployActionsEditor"
-                                                              usePatternFly="true"
-                                                              labelColSize="SM_6"
-                                                              widgetColSize="SM_6" />
+                                    <e:ListModelListBoxEditor ui:field="hostedEngineDeployActionsEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>

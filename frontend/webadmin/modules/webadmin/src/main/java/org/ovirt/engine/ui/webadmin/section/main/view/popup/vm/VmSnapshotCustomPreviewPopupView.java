@@ -19,6 +19,5 @@ public class VmSnapshotCustomPreviewPopupView extends AbstractModelBoundWidgetPo
     public VmSnapshotCustomPreviewPopupView(EventBus eventBus) {
         super(eventBus, new VmSnapshotCustomPreviewPopupWidget(), "900px", "600px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        asWidget().enableResizeSupport(true);
     }
 }

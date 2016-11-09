@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style>
         .messagePanel {
             color: #CD2127;
-            height: 30px;
-            padding: 15px 5px;
-            width: 100%
         }
     </ui:style>
 
-    <g:FlowPanel>
-        <ge:StringEntityModelTextBoxEditor ui:field="cloneNameEditor" label="{constants.clonedVmName}" />
-        <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
-    </g:FlowPanel>
+    <b:Container fluid="true">
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="cloneNameEditor" label="{constants.clonedVmName}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
 
 </ui:UiBinder>

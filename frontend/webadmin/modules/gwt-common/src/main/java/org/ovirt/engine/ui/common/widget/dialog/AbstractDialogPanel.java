@@ -4,9 +4,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AbstractDialogPanel extends DialogBoxWithKeyHandlers {
+public abstract class AbstractDialogPanel extends OVirtBootstrapModal {
 
-    public abstract void setHeader(Widget header);
+    public abstract void setHeader(String headerTitle);
 
     public abstract Widget getContent();
 

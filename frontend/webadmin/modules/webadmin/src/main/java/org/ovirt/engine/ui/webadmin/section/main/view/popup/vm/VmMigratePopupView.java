@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
@@ -75,7 +74,6 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
@@ -100,10 +98,8 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     }
 
     void localize() {
-        selectHostAutomaticallyEditor.setLabel(constants.vmMigratePopupSelectHostAutomaticallyLabel());
-        selectDestinationHostEditor.setLabel(constants.vmMigratePopupSelectDestinationHostLabel());
-        hostsListEditor.setLabel(constants.vmMigratePopupHostsListLabel());
-        clustersEditor.setLabel(constants.hostClusterVmPopup());
+        // TODO: these are not 'messages' in the GWT sense, but constants, move these parameterless messages to
+        // constants.
         message1.setText(messages.migrateHostDisabledVMsInServerClusters());
         message2.setText(messages.migrateSomeVmsAlreadyRunningOnHost());
         message3.setText(messages.migrateNoAvailableHost());

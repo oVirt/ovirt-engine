@@ -44,33 +44,11 @@ public interface CommonApplicationResources extends ClientBundle {
     ImageResource expanderDownImage();
 
     // Dialogs
-
-    @Source("css/DialogBox.css")
-    CssResource dialogBoxStyle();
-
     @Source("images/dialog/progress.gif")
     ImageResource dialogProgressImage();
 
     @Source("images/dialog/progress_dots.gif")
     ImageResource progressDotsImage();
-
-    @Source("images/icon_help.png")
-    ImageResource dialogIconHelp();
-
-    @Source("images/icon_help_down.png")
-    ImageResource dialogIconHelpDown();
-
-    @Source("images/icon_help_rollover.png")
-    ImageResource dialogIconHelpRollover();
-
-    @Source("images/but_close.png")
-    ImageResource dialogIconClose();
-
-    @Source("images/but_close_down.png")
-    ImageResource dialogIconCloseDown();
-
-    @Source("images/but_close_over.png")
-    ImageResource dialogIconCloseRollover();
 
     @Source("images/arrows/tri_down_normal.png")
     ImageResource arrowDownNormal();

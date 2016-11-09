@@ -24,7 +24,7 @@
         }
 
         .actionButtonContent {
-            min-width: 415px;
+            min-width: 395px;
             text-align: left;
         }
 
@@ -45,13 +45,10 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="450px" height="400px">
-        <d:logo>
-            <g:Image styleName='obrand_dialogLogoGuideImage' url="clear.cache.gif" />
-        </d:logo>
-
+    <d:SimpleDialogPanel width="450px" height="425px">
         <d:content>
             <g:FlowPanel addStyleNames="gpv_flowPanel_pfly_fix">
+                <!-- TODO: rework this to use bootstrap layout -->
                 <g:VerticalPanel addStyleNames="{style.infoPanel}">
                     <g:Label ui:field="infoLabel"/>
                     <g:Label ui:field="noteLabel" addStyleNames="{style.noteLabel}"/>

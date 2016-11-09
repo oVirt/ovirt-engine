@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -38,7 +39,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
@@ -55,7 +55,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     }
 
     @UiField
-    FlowPanel messagePanel;
+    Alert messagePanel;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
@@ -104,23 +104,11 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
         super(eventBus);
 
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
-        dataCenterEditor.setLabel(constants.dataCenter());
-
         clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
-        clusterEditor.setLabel(constants.makeTemplateClusterLabel());
-
         storageDomainEditor = new ListModelListBoxEditor<>(new NameRenderer<StorageDomain>());
-        storageDomainEditor.setLabel(constants.domainNameStorage());
-
         quotaEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
-        quotaEditor.setLabel(constants.quota());
-
         importAsTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        importAsTemplateEditor.setLabel(constants.importAsTemplate());
-
         templateNameEditor = new StringEntityModelTextBoxEditor();
-        templateNameEditor.setLabel(constants.importTemplateName());
-
         imageListPanel = new SimplePanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -162,7 +150,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 }
                 return constants.unknown();
             }
-        }, constants.fileNameIso(), "150px"); //$NON-NLS-1$
+        }, constants.fileNameIso(), "100%"); //$NON-NLS-1$
         if (model.isImportModel()) {
             imageList.addColumn(new DiskAliasTextColumn(new DiskAliasFieldUpdater()),
                     templates.sub(constants.diskSnapshotAlias(), constants.clickToEdit()), "150px"); //$NON-NLS-1$
@@ -177,7 +165,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 }
                 return constants.unknown();
             }
-        }, constants.typeIso(), "100px"); //$NON-NLS-1$
+        }, constants.typeIso(), "75px"); //$NON-NLS-1$
         imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.BYTES) {
             @Override
             protected Long getRawValue(EntityModel object) {
@@ -188,7 +176,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 }
                 return null;
             }
-        }, constants.actualSizeTemplate(), "100px"); //$NON-NLS-1$
+        }, constants.actualSizeTemplate(), "75px"); //$NON-NLS-1$
 
         imageList.setWidth("100%", true); //$NON-NLS-1$
         imageListPanel.setWidget(imageList);

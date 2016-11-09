@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -11,21 +12,12 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.inject.Inject;
 
 public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksAllocationModel> implements DisksAllocationPopupPresenterWidget.ViewDef {
@@ -40,42 +32,26 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     final Driver driver = GWT.create(Driver.class);
 
     @UiField
-    WidgetStyle style;
-
-    SafeHtml warningImage;
-
-    @UiField
-    FlowPanel messagePanel;
-
-    @UiField
-    HorizontalPanel warningPanel;
-
-    @UiField(provided = true)
-    @Path(value = "dynamicWarning.entity")
-    StringEntityModelTextAreaLabelEditor dynamicWarningLabel;
+    Alert warningMessage;
 
     @UiField(provided = true)
     @Ignore
     DisksAllocationView disksAllocationView;
 
-    DisksAllocationModel disksAllocationModel;
+    @UiField
+    @Path(value = "dynamicWarning.entity")
+    StringEntityModelTextAreaLabelEditor dynamicWarningLabel;
 
-    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
-    private static final ApplicationResources resources = AssetProvider.getResources();
+    DisksAllocationModel disksAllocationModel;
 
     @Inject
     public DisksAllocationPopupView(EventBus eventBus) {
         super(eventBus);
 
-        warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
-                resources.logWarningImage()).getHTML());
-
         disksAllocationView = new DisksAllocationView();
-        dynamicWarningLabel = new StringEntityModelTextAreaLabelEditor();
-
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        disksAllocationView.setUsePatternFly(true);
 
-        addStyles();
         driver.initialize(this);
     }
 
@@ -93,15 +69,10 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
 
                 if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
-                    warningPanel.setVisible(ownerModel.getIsAvailable());
+                    warningMessage.setVisible(ownerModel.getIsAvailable());
                 }
             }
         });
-    }
-
-    private void addStyles() {
-        dynamicWarningLabel.setCustomStyle(style.dynamicWarningTextArea());
-        dynamicWarningLabel.hideLabel();
     }
 
     @Override
@@ -120,10 +91,10 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
         super.setMessage(message);
 
         if (message != null && !message.isEmpty()) {
-            messagePanel.add(new HTML(templates.iconWithText(warningImage, message)));
+            warningMessage.setText(message);
         }
 
-        messagePanel.setVisible(messagePanel.iterator().hasNext());
+        warningMessage.setVisible(message != null && !message.isEmpty());
     }
 
     interface WidgetStyle extends CssResource {

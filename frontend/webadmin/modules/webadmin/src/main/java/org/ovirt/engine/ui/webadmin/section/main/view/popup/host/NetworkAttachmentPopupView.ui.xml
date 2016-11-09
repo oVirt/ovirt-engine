@@ -19,32 +19,23 @@
             float: left;
         }
 
-        .container {
-            width: 100%;
+        .containerMargin {
+            margin-top: 15px;
         }
 
         .infoIcon {
             float: left;
             padding-left: 2px;
         }
-
-        .generalTabTopDecorator {
-            background-color: #D3D3D3;
-        }
-
-        .topElement {
-            padding-top: 15px;
-        }
-
     </ui:style>
 
     <d:SimpleDialogPanel width="700px" height="450px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%" >
                 <t:header>
-                    <b:Container addStyleNames="{style.container}">
-                        <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
-                            <b:Column size="LG_12">
+                    <b:Container fluid="true">
+                        <b:Row>
+                            <b:Column size="SM_12">
                                 <ge:EntityModelCheckBoxEditor ui:field="isToSync" label="{constants.syncNetwork}" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" />
                                 <d:InfoIcon ui:field="isToSyncInfo" addStyleNames="{style.infoIcon}" />
                             </b:Column>
@@ -54,25 +45,25 @@
                 <t:tab>
                     <t:DialogTab ui:field="ipv4Tab" label="{constants.ipv4TabLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container addStyleNames="{style.containerMargin}" fluid="true">
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <l:EnableableFormLabel ui:field="ipv4BootProtocolLabel" text="{constants.bootProtocolHostPopup}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <e:EnumRadioEditor ui:field="ipv4BootProtocol" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv4Address" label="{constants.ipHostPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv4Address" label="{constants.ipHostPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv4Subnet" label="{constants.subnetMaskHostPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv4Subnet" label="{constants.subnetMaskHostPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv4Gateway" label="{constants.gwHostPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv4Gateway" label="{constants.gwHostPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>
@@ -81,25 +72,25 @@
                 <t:tab>
                     <t:DialogTab ui:field="ipv6Tab" label="{constants.ipv6TabLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container addStyleNames="{style.containerMargin}" fluid="true">
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <l:EnableableFormLabel ui:field="ipv6BootProtocolLabel" text="{constants.bootProtocolHostPopup}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <e:EnumRadioEditor ui:field="ipv6BootProtocol" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv6Address" label="{constants.ipHostPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv6Address" label="{constants.ipHostPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:IntegerEntityModelTextBoxEditor ui:field="ipv6Prefix" label="{constants.subnetPrefixHostPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:IntegerEntityModelTextBoxEditor ui:field="ipv6Prefix" label="{constants.subnetPrefixHostPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv6Gateway" label="{constants.gwHostPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="ipv6Gateway" label="{constants.gwHostPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>
@@ -108,9 +99,9 @@
                 <t:tab>
                     <t:DialogTab ui:field="qosTab" label="{constants.qosTabLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container addStyleNames="{style.containerMargin}" fluid="true">
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="qosOverridden" label="{constants.qosOverrideLabel}" usePatternFly="true" removeFormGroup="true" />
                                     </b:Column>
                                 </b:Row>
@@ -122,14 +113,14 @@
                 <t:tab>
                     <t:DialogTab ui:field="customPropertiesTab" label="{constants.customPropertiesTabLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container addStyleNames="{style.containerMargin}" fluid="true">
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <l:EnableableFormLabel ui:field="customPropertiesLabel" text="{constants.customPropertiesHostPopup}" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <k:KeyValueWidget ui:field="customPropertiesWidget" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>

@@ -10,8 +10,6 @@ import java.util.ListIterator;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
@@ -61,8 +59,6 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     @UiField
     public WidgetStyle style;
-
-    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     protected final List<Pair<T, V>> items;
     private final IEventListener<EventArgs> itemsChangedListener;

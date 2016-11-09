@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.view;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -19,13 +17,10 @@ import com.gwtplatform.mvp.client.PopupViewImpl;
  */
 public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewImpl implements AbstractPopupPresenterWidget.ViewDef {
 
-    private static final CommonApplicationResources resources = AssetProvider.getResources();
-
     public static final String POPUP_CONTENT_STYLE_NAME = "popup-content"; //$NON-NLS-1$
 
     public AbstractPopupView(EventBus eventBus) {
         super(eventBus);
-        resources.dialogBoxStyle().ensureInjected();
     }
 
     @Override
@@ -43,7 +38,6 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
         widget.setGlassEnabled(true);
 
         // Add popup widget style
-        widget.addStyleName(resources.dialogBoxStyle().getName());
         widget.addStyleName(POPUP_CONTENT_STYLE_NAME);
     }
 

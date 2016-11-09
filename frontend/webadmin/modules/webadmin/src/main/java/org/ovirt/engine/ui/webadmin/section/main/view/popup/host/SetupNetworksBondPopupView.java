@@ -57,19 +57,13 @@ public class SetupNetworksBondPopupView extends AbstractModelBoundPopupView<Setu
                 String key = pair.getKey();
                 String value = pair.getValue().getEntity();
                 if ("custom".equals(key)) { //$NON-NLS-1$
-                    return constants.customHostPopup() + ": " + value; //$NON-NLS-1$
+                    return constants.customHostPopup() + " " + value; //$NON-NLS-1$
                 }
                 return value;
             }
         });
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
-        // Localize
-        bondSuggestEditor.setLabel(constants.bondNameHostPopup() + ":"); //$NON-NLS-1$
-        bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
-        customBondEditor.setLabel(constants.customModeHostPopup() + ":"); //$NON-NLS-1$
-
         driver.initialize(this);
     }
 

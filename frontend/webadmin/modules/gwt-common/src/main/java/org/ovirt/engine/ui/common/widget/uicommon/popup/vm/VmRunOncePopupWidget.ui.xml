@@ -46,10 +46,6 @@
         margin-bottom: 5px;
     }
 
-    .container {
-        width: 100%;
-    }
-
     .floatLeft {
         float: left;
     }
@@ -70,7 +66,7 @@
     <g:ScrollPanel>
         <g:FlowPanel>
             <g:DisclosurePanel ui:field="generalBootOptionsPanel" label="{constants.runOncePopupBootOptionsLabel}" addStyleNames="{style.panelStyle}">
-                <b:Container ui:field="generalBootOptionsContainer" addStyleNames="{style.container}">
+                <b:Container ui:field="generalBootOptionsContainer" fluid="true">
                     <b:Row>
                         <b:Column size="LG_6">
                             <ge:EntityModelCheckBoxEditor ui:field="attachFloppyEditor" label="{constants.runOncePopupAttachFloppyLabel}" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
@@ -125,7 +121,7 @@
                 </b:Container>
             </g:DisclosurePanel>
             <g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
-                <b:Container ui:field="linuxBootOptionsContainer" addStyleNames="{style.container}">
+                <b:Container ui:field="linuxBootOptionsContainer" fluid="true">
                     <b:Row>
                         <b:Column size="LG_5">
                             <g:Label text="{constants.runOncePopupKernelPathLabel}" />
@@ -148,7 +144,7 @@
                 </b:Container>
             </g:DisclosurePanel>
             <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
-                <b:Container ui:field="initialRunContainer" addStyleNames="{style.container}">
+                <b:Container ui:field="initialRunContainer" fluid="true">
                     <b:Row>
                         <b:Column size="LG_12">
                             <ge:EntityModelCheckBoxEditor ui:field="cloudInitEnabledEditor" label="{constants.runOncePopupCloudInitLabel}" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
@@ -187,7 +183,7 @@
                 </b:Container>
             </g:DisclosurePanel>
             <g:DisclosurePanel ui:field="systemPanel" label="{constants.systemVmPopup}" addStyleNames="{style.panelStyle}">
-                <b:Container ui:field="systemContainer" addStyleNames="{style.container}">
+                <b:Container ui:field="systemContainer" fluid="true">
                     <b:Row>
                         <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                     </b:Row>
@@ -197,7 +193,7 @@
                 </b:Container>
             </g:DisclosurePanel>
             <g:DisclosurePanel ui:field="hostPanel" label="{constants.hostVmPopup}" addStyleNames="{style.panelStyle}">
-                <b:Container ui:field="hostContainer" addStyleNames="{style.container}">
+                <b:Container ui:field="hostContainer" fluid="true">
                     <b:Row>
                         <b:Column size="LG_12">
                             <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
@@ -220,7 +216,7 @@
               </b:Container>
         </g:DisclosurePanel>
         <g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.consoleVmPopup}" addStyleNames="{style.panelStyle}">
-            <b:Container ui:field="displayProtocolContainer" addStyleNames="{style.container}">
+            <b:Container ui:field="displayProtocolContainer" fluid="true">
                 <b:Row>
                     <b:Column size="LG_12">
                         <ge:EntityModelRadioButtonEditor ui:field="runOnceHeadlessModeEditor" label="{constants.headlessModeVmPopup}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}"/>
@@ -253,7 +249,7 @@
             </b:Container>
         </g:DisclosurePanel>
         <g:DisclosurePanel ui:field="customPropertiesPanel" label="{constants.customPropsVmPopup}" addStyleNames="{style.panelStyle}">
-            <b:Container ui:field="customPropertiesContainer" addStyleNames="{style.container}">
+            <b:Container ui:field="customPropertiesContainer" fluid="true">
                 <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true" />
             </b:Container>
         </g:DisclosurePanel>

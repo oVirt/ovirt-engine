@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -74,7 +73,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
      */
     @Override
     public void setTitle(String title) {
-        asWidget().setHeader(new Label(title));
+        asWidget().setHeader(title);
     }
 
     /**

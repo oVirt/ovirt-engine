@@ -46,7 +46,7 @@
         }
     </ui:style>
 
-    <g:SplitLayoutPanel ui:field="splitLayoutPanel" width="100%">
+    <g:SplitLayoutPanel ui:field="splitLayoutPanel" width="100%" height="470px">
         <g:center>
             <g:SimplePanel addStyleNames="{style.containerPanel}">
                 <g:FlowPanel addStyleNames="{style.containerPanelInner}">

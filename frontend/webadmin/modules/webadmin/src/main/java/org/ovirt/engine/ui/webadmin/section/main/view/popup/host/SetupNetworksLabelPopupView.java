@@ -5,9 +5,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,12 +27,10 @@ public class SetupNetworksLabelPopupView extends AbstractModelBoundPopupView<Set
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public SetupNetworksLabelPopupView(EventBus eventBus, ApplicationConstants constants) {
+    public SetupNetworksLabelPopupView(EventBus eventBus) {
         super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
-        label.setLabel(constants.setupNetworksNewLabel());
-        label.getContentWidgetContainer().getElement().getStyle().setWidth(120, Unit.PX);
     }
 
     @Override

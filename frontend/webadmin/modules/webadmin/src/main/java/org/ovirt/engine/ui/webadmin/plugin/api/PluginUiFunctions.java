@@ -208,7 +208,6 @@ public class PluginUiFunctions implements HasHandlers {
         // Create and initialize the popup
         DynamicUrlContentPopupPresenterWidget popup = dynamicUrlContentPopupPresenterWidgetProvider.get();
         popup.init(dialogToken, title, width, height,
-                options.getResizeEnabled(),
                 options.getCloseIconVisible(),
                 options.getCloseOnEscKey());
         popup.setContentUrl(contentUrl);

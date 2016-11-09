@@ -141,10 +141,10 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
 
     @Override
     protected void populateTabMap() {
-        getTabNameMapping().put(TabName.IPV4_TAB, this.ipv4Tab);
-        getTabNameMapping().put(TabName.IPV6_TAB, this.ipv6Tab);
-        getTabNameMapping().put(TabName.QOS_TAB, this.qosTab);
-        getTabNameMapping().put(TabName.CUSTOM_PROPERTIES_TAB, this.customPropertiesTab);
+        getTabNameMapping().put(TabName.IPV4_TAB, this.ipv4Tab.getTabListItem());
+        getTabNameMapping().put(TabName.IPV6_TAB, this.ipv6Tab.getTabListItem());
+        getTabNameMapping().put(TabName.QOS_TAB, this.qosTab.getTabListItem());
+        getTabNameMapping().put(TabName.CUSTOM_PROPERTIES_TAB, this.customPropertiesTab.getTabListItem());
     }
 
     @Override

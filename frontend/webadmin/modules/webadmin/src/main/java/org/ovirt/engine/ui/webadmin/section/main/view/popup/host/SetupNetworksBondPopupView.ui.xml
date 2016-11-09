@@ -7,17 +7,25 @@
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <d:SimpleDialogPanel width="400px" height="190px">
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
+    <ui:style>
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="450px" height="260px">
         <d:content>
-            <b:Container>
+            <b:Container addStyleNames="{style.container}">
                 <b:Row>
-                    <ge:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" addStyleNames="hbpv_bondSuggestEditor_pfly_fix" />
+                    <ge:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" label="{constants.bondNameHostPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <e:ListModelListBoxEditor ui:field="bondingModeEditor" />
+                    <e:ListModelListBoxEditor ui:field="bondingModeEditor" label="{constants.bondingModeHostPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="customBondEditor" enabled="false" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="customBondEditor" label="{constants.customModeHostPopup}" enabled="false" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
             </b:Container>
         </d:content>

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -21,7 +22,7 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
     interface Driver extends UiCommonEditorDriver<CloneVmModel, CloneVmWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, CloneVmWidget> {
+    interface ViewUiBinder extends UiBinder<Container, CloneVmWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

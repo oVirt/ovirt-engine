@@ -23,15 +23,6 @@ public final class DialogOptions extends JsObjectWithProperties {
     }
 
     /**
-     * Controls whether the dialog can be resized with mouse.
-     * <p>
-     * Default return value: {@code false}
-     */
-    public Boolean getResizeEnabled() {
-        return getValueAsBoolean("resizeEnabled", false); //$NON-NLS-1$
-    }
-
-    /**
      * Controls whether the dialog close icon is visible.
      * <p>
      * Default return value: {@code true}

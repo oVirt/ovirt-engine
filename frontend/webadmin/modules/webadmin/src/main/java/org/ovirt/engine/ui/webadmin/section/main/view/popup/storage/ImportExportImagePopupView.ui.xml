@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.messagePanel {
-			color: #CD2127;
-			text-align: center;
-			padding: 10px;
-		}
-		.imageListPanel {
-			overflow: auto;
-			position: absolute;
-			width: 100%;
-		}
-	</ui:style>
-	
-	<d:SimpleDialogPanel width="540px" height="400px">
-		<d:content>
-			<g:FlowPanel>
-				<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
-				<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
-				<e:ListModelListBoxEditor ui:field="quotaEditor" />
-				<ge:EntityModelCheckBoxEditor ui:field="importAsTemplateEditor" />
-				<ge:StringEntityModelTextBoxEditor ui:field="templateNameEditor"/>
-				<e:ListModelListBoxEditor ui:field="clusterEditor" />
-				<g:FlowPanel ui:field="messagePanel" visible="false" addStyleNames="{style.messagePanel}" />
-				<g:SimplePanel ui:field="imageListPanel" addStyleNames="{style.imageListPanel}" />
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
-	
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+    <ui:style>
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="540px" height="400px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenter}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="storageDomainEditor" label="{constants.domainNameStorage}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="quotaEditor" label="{constants.quota}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="importAsTemplateEditor" label="{constants.importAsTemplate}" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="templateNameEditor" label="{constants.importTemplateName}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="clusterEditor" label="{constants.makeTemplateClusterLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <b:Alert type="WARNING" ui:field="messagePanel" visible="false" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:SimplePanel ui:field="imageListPanel" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
+
 </ui:UiBinder>

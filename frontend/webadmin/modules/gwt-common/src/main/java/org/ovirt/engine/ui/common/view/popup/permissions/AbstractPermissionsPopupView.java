@@ -56,7 +56,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     /**
      * This is the max width of a column in this dialogs
      */
-    private static final String MAX_COL_WIDTH = "267px"; //$NON-NLS-1$
+    private static final String MAX_COL_WIDTH = "260px"; //$NON-NLS-1$
 
     @UiField
     @WithElementId

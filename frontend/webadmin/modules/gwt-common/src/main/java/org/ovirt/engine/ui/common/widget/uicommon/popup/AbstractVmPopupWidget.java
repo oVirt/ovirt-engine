@@ -57,6 +57,7 @@ import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
@@ -948,7 +949,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
-    private final Map<TabName, DialogTab> tabMap = new HashMap<>();
+    private final Map<TabName, OvirtTabListItem> tabMap = new HashMap<>();
 
     public AbstractVmPopupWidget() {
 
@@ -1062,18 +1063,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected void populateTabMap() {
-        getTabNameMapping().put(TabName.GENERAL_TAB, generalTab);
-        getTabNameMapping().put(TabName.BOOT_OPTIONS_TAB, this.bootOptionsTab);
-        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
-        getTabNameMapping().put(TabName.CUSTOM_PROPERTIES_TAB, this.customPropertiesTab);
-        getTabNameMapping().put(TabName.HIGH_AVAILABILITY_TAB, this.highAvailabilityTab);
-        getTabNameMapping().put(TabName.HOST_TAB, this.hostTab);
-        getTabNameMapping().put(TabName.INITIAL_RUN_TAB, this.initialRunTab);
-        getTabNameMapping().put(TabName.POOL_TAB, this.poolTab);
-        getTabNameMapping().put(TabName.RESOURCE_ALLOCATION_TAB, this.resourceAllocationTab);
-        getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab);
-        getTabNameMapping().put(TabName.ICON_TAB, this.iconTab);
-        getTabNameMapping().put(TabName.FOREMAN_TAB, foremanTab);
+        getTabNameMapping().put(TabName.GENERAL_TAB, generalTab.getTabListItem());
+        getTabNameMapping().put(TabName.BOOT_OPTIONS_TAB, this.bootOptionsTab.getTabListItem());
+        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab.getTabListItem());
+        getTabNameMapping().put(TabName.CUSTOM_PROPERTIES_TAB, this.customPropertiesTab.getTabListItem());
+        getTabNameMapping().put(TabName.HIGH_AVAILABILITY_TAB, this.highAvailabilityTab.getTabListItem());
+        getTabNameMapping().put(TabName.HOST_TAB, this.hostTab.getTabListItem());
+        getTabNameMapping().put(TabName.INITIAL_RUN_TAB, this.initialRunTab.getTabListItem());
+        getTabNameMapping().put(TabName.POOL_TAB, this.poolTab.getTabListItem());
+        getTabNameMapping().put(TabName.RESOURCE_ALLOCATION_TAB, this.resourceAllocationTab.getTabListItem());
+        getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab.getTabListItem());
+        getTabNameMapping().put(TabName.ICON_TAB, this.iconTab.getTabListItem());
+        getTabNameMapping().put(TabName.FOREMAN_TAB, foremanTab.getTabListItem());
     }
 
     private void initDetachableFields() {
@@ -1917,17 +1918,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public int setTabIndexes(int nextTabIndex) {
         // ==General Tab==
         nextTabIndex = generalTab.setTabIndexes(nextTabIndex);
-        quotaEditor.setTabIndex(nextTabIndex++);
         oSTypeEditor.setTabIndex(nextTabIndex++);
         baseTemplateEditor.setTabIndex(nextTabIndex++);
         instanceTypesEditor.setTabIndexes(nextTabIndex++);
         templateWithVersionEditor.setTabIndexes(nextTabIndex++);
+        quotaEditor.setTabIndex(nextTabIndex++);
 
         nameEditor.setTabIndex(nextTabIndex++);
         templateVersionNameEditor.setTabIndex(nextTabIndex++);
-        vmIdEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         commentEditor.setTabIndex(nextTabIndex++);
+        vmIdEditor.setTabIndex(nextTabIndex++);
         labelEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
         isRunAndPauseEditor.setTabIndex(nextTabIndex++);
@@ -2094,7 +2095,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 newPoolEditVmsRow,
                 editPoolEditVmsRow,
                 editPoolIncreaseNumOfVmsRow,
-                poolTab,
+                poolTab.getTabListItem(),
                 prestartedVmsEditor,
                 poolNameIcon,
                 newPoolEditMaxAssignedVmsPerUserRow,
@@ -2107,18 +2108,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected List<Widget> allTabs() {
         return Arrays.<Widget> asList(
-                initialRunTab,
-                consoleTab,
-                hostTab,
-                resourceAllocationTab,
-                bootOptionsTab,
-                customPropertiesTab,
-                rngDeviceTab,
-                highAvailabilityTab,
-                poolTab,
-                systemTab,
-                iconTab,
-                foremanTab
+                initialRunTab.getTabListItem(),
+                consoleTab.getTabListItem(),
+                hostTab.getTabListItem(),
+                resourceAllocationTab.getTabListItem(),
+                bootOptionsTab.getTabListItem(),
+                customPropertiesTab.getTabListItem(),
+                rngDeviceTab.getTabListItem(),
+                highAvailabilityTab.getTabListItem(),
+                poolTab.getTabListItem(),
+                systemTab.getTabListItem(),
+                iconTab.getTabListItem(),
+                foremanTab.getTabListItem()
                 );
     }
 
@@ -2178,12 +2179,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 spiceProxyEditor,
 
                 // rest of the tabs
-                initialRunTab,
-                hostTab,
-                highAvailabilityTab,
-                resourceAllocationTab,
-                customPropertiesTab,
-                rngDeviceTab
+                initialRunTab.getTabListItem(),
+                hostTab.getTabListItem(),
+                highAvailabilityTab.getTabListItem(),
+                resourceAllocationTab.getTabListItem(),
+                customPropertiesTab.getTabListItem(),
+                rngDeviceTab.getTabListItem()
         );
     }
 
@@ -2293,7 +2294,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     @Override
-    public Map<TabName, DialogTab> getTabNameMapping() {
+    public Map<TabName, OvirtTabListItem> getTabNameMapping() {
         return tabMap;
     }
 

@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+    <ui:style>
+        .spinner {
+            top: 50%;
+            left: 50%;
+            position: fixed;
+            margin: -30px 0 0 -30px;
+        }
+    </ui:style>
 
-	<ui:style>
-		.wrapper {
-			width: 100%;
-			text-align: center;
-		}
-		
-		.label {
-			margin-left: 15px;
-			line-height: 32px;
-		}
-	</ui:style>
-
-	<g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.wrapper}">
-		<g:FlowPanel addStyleNames="{style.wrapper}">
-			<g:Image ui:field="progressImage" resource='{resources.dialogProgressImage}' />
-			<g:InlineLabel ui:field="progressLabel" addStyleNames="{style.label}" />
-		</g:FlowPanel>
-	</g:VerticalPanel>
+    <g:FlowPanel addStyleNames="spinner spinner-lg {style.spinner}" />
 
 </ui:UiBinder>

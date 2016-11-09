@@ -22,17 +22,13 @@
             margin-top:15px;
         }
 
-        .container {
-            width: 100%;
-        }
-
         .topElement {
             padding-top: 15px;
         }
     </ui:style>
 
     <g:FlowPanel>
-        <b:Container addStyleNames="{style.container}">
+        <b:Container fluid="true">
             <b:Row addStyleNames="{style.topElement}">
                 <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameNetworkInterfacePopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
             </b:Row>

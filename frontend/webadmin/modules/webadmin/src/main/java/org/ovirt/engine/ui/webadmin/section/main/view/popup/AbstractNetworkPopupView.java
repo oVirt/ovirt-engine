@@ -427,10 +427,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @Override
     protected void populateTabMap() {
-        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab);
-        getTabNameMapping().put(TabName.CLUSTERS_TAB, this.clusterTab);
-        getTabNameMapping().put(TabName.PROFILES_TAB, this.profilesTab);
-        getTabNameMapping().put(TabName.SUBNET_TAB, this.subnetTab);
+        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab.getTabListItem());
+        getTabNameMapping().put(TabName.CLUSTERS_TAB, this.clusterTab.getTabListItem());
+        getTabNameMapping().put(TabName.PROFILES_TAB, this.profilesTab.getTabListItem());
+        getTabNameMapping().put(TabName.SUBNET_TAB, this.subnetTab.getTabListItem());
     }
 
     @Override

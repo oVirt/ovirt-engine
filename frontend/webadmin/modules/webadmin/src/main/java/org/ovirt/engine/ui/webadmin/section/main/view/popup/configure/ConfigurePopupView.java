@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
-import org.gwtbootstrap3.client.ui.Button;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -16,7 +16,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
@@ -27,10 +26,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     }
 
     @UiField
-    Label titleLabel;
-
-    @UiField
-    Button closeButton;
+    SimpleDialogButton closeButton;
 
     @UiField
     DialogTab rolesTab;
@@ -93,7 +89,6 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     }
 
     void localize() {
-        titleLabel.setText(constants.configurePopupTitle());
         closeButton.setText(constants.closeButtonLabel());
 
         rolesTab.setLabel(constants.configureRoleTabLabel());

@@ -1,44 +1,56 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
+import org.gwtbootstrap3.client.ui.Anchor;
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleDialogPanel extends AbstractDialogPanel {
 
+    // 100 pixels is the height of the header and the footer combined. Excluding the margins
+    private static final int HEADER_FOOTER_HEIGHT = 100;
+
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    public static interface InfoIconStyle extends CssResource {
+        String infoIconColor();
+    }
+
+    public static interface InfoIconResources extends ClientBundle {
+        @Source("org/ovirt/engine/ui/common/css/InfoIcon.css")
+        InfoIconStyle iconStyle();
+    }
+
+    private static final InfoIconResources RESOURCES = GWT.create(InfoIconResources.class);
 
     interface WidgetUiBinder extends UiBinder<Widget, SimpleDialogPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
     protected interface Style extends CssResource {
-
         String footerButton();
-
-        String contentWidget();
-
-        String obrand_dialogHeaderTitleElement();
     }
-
-    @UiField
-    SimplePanel logoPanel;
-
-    @UiField
-    FlowPanel headerTitlePanel;
 
     @UiField
     SimplePanel contentPanel;
@@ -50,10 +62,16 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     FlowPanel footerStatusPanel;
 
     @UiField
-    ButtonBase helpIconButton;
+    ScrollPanel contentScrollPanel;
 
     @UiField
-    ButtonBase closeIconButton;
+    Button closeButton;
+
+    @UiField
+    FlowPanel header;
+
+    @UiField
+    Anchor infoAnchor;
 
     @UiField
     WidgetTooltip helpIconButtonTooltip;
@@ -61,32 +79,36 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     @UiField
     Style style;
 
+    private final InfoIconStyle infoIconStyle;
+
     private UICommand helpCommand;
 
     public SimpleDialogPanel() {
+        infoIconStyle = RESOURCES.iconStyle();
+        infoIconStyle.ensureInjected();
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        getElement().getStyle().setZIndex(1);
-        addHelpButtonHandler();
-        helpIconButtonTooltip.setText(constants.clickForHelp());
+        infoAnchor.addStyleName(infoIconStyle.infoIconColor());
     }
 
     @Override
     @UiChild(tagname = "header", limit = 1)
-    public void setHeader(Widget widget) {
-        widget.addStyleName(style.obrand_dialogHeaderTitleElement());
-        headerTitlePanel.insert(widget, 0); //Put the label at the front.
-    }
-
-    @UiChild(tagname = "logo", limit = 1)
-    public void setLogo(Widget widget) {
-        logoPanel.setWidget(widget);
+    public void setHeader(String headerTitle) {
+        HTMLPanel headerTitlePanel = new HTMLPanel("H4", headerTitle); //$NON-NLS-1$
+        headerTitlePanel.addStyleName(Styles.MODAL_TITLE);
+        headerTitlePanel.getElement().getStyle().setFloat(Float.LEFT);
+        // Close button and IconType makes 2 widgets
+        while (header.getWidgetCount() > 2) {
+            header.remove(header.getWidgetCount() - 1);
+        }
+        header.add(headerTitlePanel);
+        addHelpButtonHandler();
+        helpIconButtonTooltip.setText(constants.clickForHelp());
     }
 
     @Override
     @UiChild(tagname = "content", limit = 1)
     public void setContent(Widget widget) {
         contentPanel.setWidget(widget);
-        widget.addStyleName(style.contentWidget());
     }
 
     @Override
@@ -99,6 +121,21 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     public void addFooterButton(Widget button) {
         button.addStyleName(style.footerButton());
         footerButtonPanel.add(button);
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        contentScrollPanel.getElement().getStyle().setHeight(getOffsetHeight() - HEADER_FOOTER_HEIGHT, Unit.PX);
+        contentPanel.getElement().getStyle().setProperty("minHeight", getOffsetHeight() - HEADER_FOOTER_HEIGHT, Unit.PX); //$NON-NLS-1$
+    }
+
+    public void setNoScroll(boolean value) {
+        if (value) {
+            contentScrollPanel.getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        } else {
+            contentScrollPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
+        }
     }
 
     @Override
@@ -121,8 +158,18 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         contentPanel.addStyleName(styleName);
     }
 
+    @Override
+    public HasClickHandlers getCloseIconButton() {
+        return closeButton;
+    }
+
+    @Override
+    public void setCloseIconButtonVisible(boolean visible) {
+        closeButton.setVisible(visible);
+    }
+
     private void addHelpButtonHandler() {
-        helpIconButton.addClickHandler(new ClickHandler() {
+        infoAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 helpCommand.execute();
@@ -133,17 +180,6 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     @Override
     public void setHelpCommand(UICommand command) {
         helpCommand = command;
-        helpIconButton.setVisible(command != null);
+        infoAnchor.setVisible(command != null);
     }
-
-    @Override
-    public HasClickHandlers getCloseIconButton() {
-        return closeIconButton;
-    }
-
-    @Override
-    public void setCloseIconButtonVisible(boolean visible) {
-        closeIconButton.setVisible(visible);
-    }
-
 }

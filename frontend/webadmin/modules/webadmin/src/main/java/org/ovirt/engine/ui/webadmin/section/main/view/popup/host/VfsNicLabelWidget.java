@@ -14,18 +14,9 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class VfsNicLabelWidget extends AddRemoveRowWidget<VfsNicLabelModel, ListModel<String>, NicLabelEditor> implements HasValueChangeHandlers<Set<String>> {
-
-    private String labelEditorStyle;
-    private String editorWrapperStyle;
-
-    @UiField
-    @Ignore
-    Label titleLabel;
 
     public interface WidgetUiBinder extends UiBinder<Widget, VfsNicLabelWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -48,20 +39,11 @@ public class VfsNicLabelWidget extends AddRemoveRowWidget<VfsNicLabelModel, List
         return text == null || text.isEmpty();
     }
 
-    public void setLabelEditorStyle(String labelEditorStyle) {
-        this.labelEditorStyle = labelEditorStyle;
-    }
-
-    public void setEditorWrapperStyle(String editorWrapperStyle) {
-        this.editorWrapperStyle = editorWrapperStyle;
-    }
-
     @Override
     protected NicLabelEditor createWidget(ListModel<String> value) {
         NicLabelEditor editor = new NicLabelEditor();
+        editor.setUsePatternFly(true);
         editor.edit(value);
-        editor.suggestBoxEditor.addContentWidgetContainerStyleName(labelEditorStyle);
-        editor.suggestBoxEditor.addWrapperStyleName(editorWrapperStyle);
         return editor;
     }
 

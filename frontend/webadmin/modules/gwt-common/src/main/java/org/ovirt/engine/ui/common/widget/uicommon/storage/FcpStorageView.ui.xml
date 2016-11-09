@@ -10,13 +10,9 @@
         .errorMessageLabel {
             color: red;
         }
-
-        .container {
-            width: 100%;
-        }
     </ui:style>
 
-    <b:Container addStyleNames="{style.container}">
+    <b:Container fluid="true">
         <b:Row>
             <b:Column size="SM_12">
                 <g:Label ui:field="errorMessage" addStyleNames="{style.errorMessageLabel}" />

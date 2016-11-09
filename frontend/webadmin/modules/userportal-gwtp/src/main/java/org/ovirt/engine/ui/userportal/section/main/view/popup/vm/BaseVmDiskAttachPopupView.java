@@ -9,6 +9,5 @@ public class BaseVmDiskAttachPopupView extends AbstractModelBoundWidgetPopupView
 
     public BaseVmDiskAttachPopupView(EventBus eventBus, boolean allowMultipleSelection) {
         super(eventBus, new VmDiskAttachPopupWidget(false, allowMultipleSelection), "815px", "630px"); //$NON-NLS-1$ //$NON-NLS-2$
-        asWidget().enableResizeSupport(true);
     }
 }

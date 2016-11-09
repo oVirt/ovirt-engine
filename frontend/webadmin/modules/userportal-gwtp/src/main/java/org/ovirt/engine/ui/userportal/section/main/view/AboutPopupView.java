@@ -24,9 +24,6 @@ public class AboutPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     }
 
     @UiField
-    Label titleLabel;
-
-    @UiField
     InlineLabel versionLabel;
 
     @UiField
@@ -48,7 +45,6 @@ public class AboutPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     }
 
     void localize() {
-        titleLabel.setText(constants.aboutPopupCaption());
         closeButton.setText(constants.closeButtonLabel());
         copyrightNotice.setText(dynamicMessages.copyRightNotice());
     }

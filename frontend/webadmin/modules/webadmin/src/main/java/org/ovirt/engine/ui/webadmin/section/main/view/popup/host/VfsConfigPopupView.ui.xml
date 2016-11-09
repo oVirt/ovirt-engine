@@ -1,117 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:h="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host">
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:h="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigPopupView.WidgetStyle">
-        .valueWidth {
-            width: 60px;
-        }
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-        .numOfVfs {
-            width: 165px;
-        }
-
+    <ui:style>
         .maxVfsLabel {
-            display: block;
             font-size: 9px;
-            padding-left: 112px;
         }
 
          .expander {
             font-weight: bold;
         }
 
-        .expanderContent {
-            margin-left: 20px;
-            margin-bottom: 20px;
-        }
-
-        .allowedNetworksPanel {
-            margin-left: 15px;
-            display: inline-flex;
-        }
-
         .allAllowedLabel {
             font-weight: bold;
-            margin-left: 5px;
         }
 
-        .selectNetworksLabel {
-            margin-top: 10px;
+        .divider {
+            border-right: 1px solid #D1D1D1
         }
 
-        .allAllowedSelector {
-            float: left;
+        .container {
+            width: 100%;
         }
+    </ui:style>
 
-        .networksTableScrollPanel {
-            height: 370px;
-        }
-
-        .clear {
-            clear: both;
-        }
-
-        .labelWidget {
-            width: auto !important;
-        }
-
-        .networksPanel {
-            height: 100%;
-            width: 274px;
-            margin-right: 15px;
-        }
-
-        .labelsTitle {
-            font-weight: normal !important;
-            margin-top: 10px !important;
-            margin-left: 15px;
-        }
-
-        .labelEditorContent {
-            width: 120px;
-        }
-
-        .labelEditorWrapper {
-            margin-right: 0px !important;
-        }
-
-        .splitter {
-            background-color: grey;
-            width: 1px;
-            margin-top: 32px;
-        }
-
-	</ui:style>
-
-	<d:SimpleDialogPanel width="524px" height="600px">
-		<d:content>
-			<g:FlowPanel>
-				<d:AdvancedParametersExpander ui:field="numVfsExpander" addStyleNames="{style.expander}" />
-				<g:FlowPanel ui:field="numVfsExpanderContent" addStyleNames="{style.expanderContent}">
-					<ge:IntegerEntityModelTextBoxEditor ui:field="numOfVfs" addStyleNames="{style.numOfVfs}" />
-					<g:ValueLabel ui:field="maxVfsLabel" addStyleNames="{style.maxVfsLabel}" />
-				</g:FlowPanel>
-				<g:Label ui:field="allowedNetworksLabel" addStyleNames="{style.allAllowedLabel}" />
-				<e:ListModelRadioGroupEditor ui:field="allNetworksSelectorEditor" addStyleNames="{style.allAllowedSelector}" />
-				<g:SimplePanel addStyleNames="{style.clear}" />
-				<g:FlowPanel ui:field="allowedNetworksPanel" addStyleNames="{style.allowedNetworksPanel}" >
-					<g:FlowPanel addStyleNames="{style.networksPanel}" >
-						<g:Label ui:field="selectNetworksLabel" addStyleNames="{style.selectNetworksLabel}" />
-						<g:ScrollPanel addStyleNames="{style.networksTableScrollPanel}">
-							<e:EntityModelCellTable ui:field="networks" />
-						</g:ScrollPanel>
-					</g:FlowPanel>
-					<g:SimplePanel addStyleNames="{style.splitter}" />
-					<h:VfsNicLabelWidget ui:field="labelsWidget" addStyleNames="{style.labelWidget}" />
-				</g:FlowPanel>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="655px" height="450px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:FlowPanel>
+                            <d:AdvancedParametersExpander ui:field="numVfsExpander" addStyleNames="{style.expander}" />
+                            <g:FlowPanel ui:field="numVfsExpanderContent">
+                                <b:Row>
+                                    <b:Column size="SM_7">
+                                        <b:Row>
+                                            <ge:IntegerEntityModelTextBoxEditor ui:field="numOfVfs" label="{constants.numOfVfs}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                        </b:Row>
+                                    </b:Column>
+                                    <b:Column size="SM_4">
+                                        <g:ValueLabel ui:field="maxVfsLabel" addStyleNames="{style.maxVfsLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                            </g:FlowPanel>
+                        </g:FlowPanel>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="allowedNetworksLabel" text="{constants.allowedNetworks}" addStyleNames="{style.allAllowedLabel}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <e:ListModelRadioGroupEditor ui:field="allNetworksSelectorEditor" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <g:FlowPanel ui:field="allowedNetworksPanel">
+                    <b:Row>
+                        <b:Column size="SM_7">
+                            <g:Label ui:field="selectNetworksLabel" text="{constants.selectNetworks}" />
+                        </b:Column>
+                        <b:Column size="SM_5">
+                            <g:Label text="{constants.labelsVfsConfigPopup}" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_7" addStyleNames="{style.divider}">
+                            <e:EntityModelCellTable ui:field="networks" />
+                        </b:Column>
+                        <b:Column size="SM_5">
+                            <h:VfsNicLabelWidget ui:field="labelsWidget" />
+                        </b:Column>
+                    </b:Row>
+                </g:FlowPanel>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>
