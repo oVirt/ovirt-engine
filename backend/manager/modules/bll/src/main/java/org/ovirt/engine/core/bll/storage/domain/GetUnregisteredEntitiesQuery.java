@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -9,6 +11,9 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public abstract class GetUnregisteredEntitiesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private OvfHelper ovfHelper;
 
     public GetUnregisteredEntitiesQuery(P parameters) {
         super(parameters);
@@ -23,6 +28,6 @@ public abstract class GetUnregisteredEntitiesQuery<P extends IdQueryParameters> 
     }
 
     protected OvfHelper getOvfHelper() {
-        return new OvfHelper();
+        return ovfHelper;
     }
 }

@@ -57,6 +57,9 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     @Inject
     private ResourceManager resourceManager;
 
+    @Inject
+    private OvfHelper ovfHelper;
+
     private ConvertVmCallback cachedCallback;
 
     public ConvertVmCommand(Guid commandId) {
@@ -234,7 +237,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private VM readVmFromOvf(String ovf) {
         try {
-            return new OvfHelper().readVmFromOvf(ovf);
+            return ovfHelper.readVmFromOvf(ovf);
         } catch (OvfReaderException e) {
             log.debug("failed to parse a given ovf configuration: \n " + ovf, e);
             auditLog(this, AuditLogType.IMPORTEXPORT_INVALID_OVF);

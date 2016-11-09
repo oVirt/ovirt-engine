@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private OvfHelper ovfHelper;
 
     public GetVmOvfByVmIdQuery(P parameters) {
         super(parameters);
@@ -34,6 +39,6 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
     }
 
     protected String generateOvfConfig(VM vm) {
-        return new OvfHelper().generateOvfConfigurationForVm(vm);
+        return ovfHelper.generateOvfConfigurationForVm(vm);
     }
 }

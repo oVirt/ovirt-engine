@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -35,6 +37,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
+
+    @Inject
+    private OvfHelper ovfHelper;
 
     public ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -104,7 +109,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     }
 
     private void initVmTemplate() {
-        OvfHelper ovfHelper = new OvfHelper();
         List<OvfEntityData> ovfEntityList =
                 unregisteredOVFDataDao.getByEntityIdAndStorageDomain(getParameters().getContainerId(),
                         getParameters().getStorageDomainId());

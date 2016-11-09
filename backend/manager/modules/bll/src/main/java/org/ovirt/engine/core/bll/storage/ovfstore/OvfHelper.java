@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
@@ -21,7 +24,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
@@ -29,7 +34,18 @@ import org.ovirt.engine.core.utils.ovf.OvfReaderException;
  * OvfHelper is a helper class that encapsulates the bll logic that needs
  * to be done on the ovf read data before using it in the bll project.
  */
+@Singleton
 public class OvfHelper {
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+
     private OvfManager ovfManager;
 
     public OvfHelper() {
@@ -86,7 +102,7 @@ public class OvfHelper {
             DiskImagesValidator validator = new DiskImagesValidator(vm.getDiskList());
             if (validator.diskImagesNotLocked().isValid()) {
                 loadVmData(vm);
-                Long currentDbGeneration = getDbFacade().getVmStaticDao().getDbGeneration(vm.getId());
+                Long currentDbGeneration = vmStaticDao.getDbGeneration(vm.getId());
                 // currentDbGeneration can be null in case that the vm was deleted during the run of OvfDataUpdater.
                 if (currentDbGeneration != null && vm.getStaticData().getDbGeneration() == currentDbGeneration) {
                     return buildMetadataDictionaryForVm(vm);
@@ -115,20 +131,16 @@ public class OvfHelper {
 
     private void loadVmData(VM vm) {
         if (vm.getInterfaces().isEmpty()) {
-            vm.setInterfaces(getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
+            vm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(vm.getId()));
         }
         if (StringUtils.isEmpty(vm.getVmtName())) {
             if (!Guid.Empty.equals(vm.getVmtGuid())) {
-                VmTemplate t = getDbFacade().getVmTemplateDao().get(vm.getVmtGuid());
-                vm.setVmtName(t.getName());
+                VmTemplate template = vmTemplateDao.get(vm.getVmtGuid());
+                vm.setVmtName(template.getName());
             } else {
                 vm.setVmtName(VmTemplateHandler.BLANK_VM_TEMPLATE_NAME);
             }
         }
-    }
-
-    private DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     public boolean isOvfTemplate(String ovfstring) throws OvfReaderException {

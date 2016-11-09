@@ -32,6 +32,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -87,6 +88,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
+
+    @Spy
+    private OvfHelper ovfHelper;
 
     @BeforeClass
     public static void setUpInjections() {

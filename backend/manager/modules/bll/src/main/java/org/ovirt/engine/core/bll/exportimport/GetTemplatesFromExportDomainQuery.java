@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -19,6 +21,9 @@ import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQueryParameters>
         extends GetAllFromExportDomainQuery<Map<VmTemplate, List<DiskImage>>, P> {
 
+    @Inject
+    private OvfHelper ovfHelper;
+
     public GetTemplatesFromExportDomainQuery(P parameters) {
         super(parameters);
     }
@@ -31,7 +36,6 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
     protected Map<VmTemplate, List<DiskImage>> buildFromOVFs(List<String> ovfList) {
         OvfManager ovfManager = new OvfManager();
         Map<VmTemplate, List<DiskImage>> templateDisksMap = new HashMap<>();
-        OvfHelper ovfHelper = new OvfHelper();
         for (String ovf : ovfList) {
             try {
                 if (ovfManager.isOvfTemplate(ovf)) {

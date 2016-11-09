@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -37,6 +39,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
     VM vmFromConfiguration;
+
+    @Inject
+    private OvfHelper ovfHelper;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -86,7 +91,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     private void initUnregisteredVM() {
-        OvfHelper ovfHelper = new OvfHelper();
         List<OvfEntityData> ovfEntityDataList =
                 unregisteredOVFDataDao.getByEntityIdAndStorageDomain(getParameters().getContainerId(),
                         getParameters().getStorageDomainId());
