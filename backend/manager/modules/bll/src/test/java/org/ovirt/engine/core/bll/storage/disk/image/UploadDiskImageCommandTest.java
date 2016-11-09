@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -11,9 +12,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
@@ -122,7 +126,24 @@ public class UploadDiskImageCommandTest extends UploadImageCommandTest{
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
     }
 
-    private UploadDiskImageCommand getCommand() {
+    @Test
+    public void testPermissionSubjectOnProvidedImage() {
+        initializeSuppliedImage();
+        assertEquals(getCommand().getPermissionCheckSubjects().get(0),
+                new PermissionSubject(getCommand().getParameters().getImageId(),
+                        VdcObjectType.Disk,
+                        ActionGroup.EDIT_DISK_PROPERTIES));
+    }
+
+    @Test
+    public void testPermissionSubjectOnNewImage() {
+        assertEquals(getCommand().getPermissionCheckSubjects().get(0),
+                new PermissionSubject(getCommand().getParameters().getImageId(),
+                        VdcObjectType.Storage,
+                        ActionGroup.CREATE_DISK));
+    }
+
+    private UploadDiskImageCommand<UploadDiskImageParameters> getCommand() {
         return (UploadDiskImageCommand) uploadImageCommand;
     }
 }
