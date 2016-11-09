@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.storage.domain.GetUnregisteredEntitiesQuery;
-import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -17,15 +16,9 @@ public class GetUnregisteredVmTemplatesQuery<P extends IdQueryParameters> extend
     }
 
     @Override
-    protected OvfHelper getOvfHelper() {
-        return super.getOvfHelper();
-    }
-
-    @Override
     protected void executeQueryCommand() {
         List<OvfEntityData> entityList = getOvfEntityList(VmEntityType.TEMPLATE);
         List<VmTemplate> vmTemplates = new ArrayList<>();
-        OvfHelper ovfHelper = getOvfHelper();
         for (OvfEntityData ovf : entityList) {
             try {
                 vmTemplates.add(ovfHelper.readVmTemplateFromOvf(ovf.getOvfData()));

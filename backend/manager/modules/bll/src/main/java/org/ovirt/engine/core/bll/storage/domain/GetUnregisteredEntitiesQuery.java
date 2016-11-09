@@ -16,7 +16,7 @@ public abstract class GetUnregisteredEntitiesQuery<P extends IdQueryParameters> 
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
 
     @Inject
-    private OvfHelper ovfHelper;
+    protected OvfHelper ovfHelper;
 
     public GetUnregisteredEntitiesQuery(P parameters) {
         super(parameters);
@@ -26,7 +26,4 @@ public abstract class GetUnregisteredEntitiesQuery<P extends IdQueryParameters> 
         return unregisteredOVFDataDao.getAllForStorageDomainByEntityType(getParameters().getId(), vmEntityType);
     }
 
-    protected OvfHelper getOvfHelper() {
-        return ovfHelper;
-    }
 }

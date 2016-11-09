@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -29,6 +27,9 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
     VmEntityType entityType = VmEntityType.VM;
     Guid newVmGuid = Guid.newGuid();
     Guid newVmGuid2 = Guid.newGuid();
+
+    @Mock
+    private OvfHelper ovfHelperMock;
 
     @Before
     @Override
@@ -94,8 +95,6 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
         when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmGuid, storageDomainId)).thenReturn(expectedResultQuery1);
 
         // Mock OVF
-        OvfHelper ovfHelperMock = mock(OvfHelper.class);
-        doReturn(ovfHelperMock).when(getQuery()).getOvfHelper();
         when(ovfHelperMock.readVmFromOvf(ovfData)).thenReturn(vmReturnForOvf);
         when(ovfHelperMock.readVmFromOvf(ovfData2)).thenReturn(vmReturnForOvf2);
     }
