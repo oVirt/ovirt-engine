@@ -3336,4 +3336,11 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(
                 ConfigurationValues.PassDiscardSupported, dataCenterVersion.getValue());
     }
+
+    public void getGlusterVolumesForStorageDomain(AsyncQuery<List<GlusterVolumeEntity>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllGlusterVolumesForStorageDomain,
+                new VdcQueryParametersBase(),
+                aQuery);
+    }
 }

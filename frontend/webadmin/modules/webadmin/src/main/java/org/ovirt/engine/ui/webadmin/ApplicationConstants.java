@@ -316,6 +316,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String storagePopupPosixNfsWarningLabel();
 
+    String storagePopupLinkGlusterVolumeLabel();
+
+    String storagePopupGlusterVolume();
+
     String storageRemovePopupHostLabel();
 
     String storageRemovePopupFormatLabel();
@@ -1756,6 +1760,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String deviceName();
 
+    @Override
     String deviceType();
 
     String fileSystemType();
