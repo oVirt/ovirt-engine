@@ -1,14 +1,15 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -23,9 +24,12 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
@@ -103,6 +107,13 @@ public class TransferImageCommandTest extends BaseCommandTest{
         verify(transferImageCommand, times(1)).validateImageTransfer(imageId);
     }
 
+    @Test
+    public void testFailOnDownloadWithoutImage() {
+        transferImageCommand.getParameters().setTransferType(TransferType.Download);
+        ValidateTestUtils.runAndAssertValidateFailure(transferImageCommand,
+                EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
+    }
+
     /*****************
      Command execution
      *****************/
@@ -131,6 +142,15 @@ public class TransferImageCommandTest extends BaseCommandTest{
         verify(transferImageCommand, times(1)).handleImageIsReadyForTransfer(suppliedImageId);
     }
 
+    @Test
+    public void testFailsDownloadExecutionWithoutImage() {
+        transferImageCommand.getParameters().setTransferType(TransferType.Download);
+        transferImageCommand.executeCommand();
+
+        ValidateTestUtils.runAndAssertValidateFailure(transferImageCommand,
+                EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
+    }
+
     /*********************************
      * Handling ready image to upload
      ********************************/
@@ -149,7 +169,7 @@ public class TransferImageCommandTest extends BaseCommandTest{
     public void testCommandPersistedWithParamUpdates() {
         DiskImage readyImage = initReadyImageForUpload();
 
-        TransferDiskImageParameters params = mock(TransferDiskImageParameters.class);
+        TransferDiskImageParameters params = spy(new TransferDiskImageParameters());
         doReturn(params).when(transferImageCommand).getParameters();
 
         transferImageCommand.handleImageIsReadyForTransfer(readyImage.getImageId());
@@ -166,5 +186,13 @@ public class TransferImageCommandTest extends BaseCommandTest{
         inOrder = inOrder(params, transferImageCommand);
         inOrder.verify(params).setTransferSize(anyLong());
         inOrder.verify(transferImageCommand).persistCommand(any(), anyBoolean());
+    }
+
+    /**********
+     * Other
+     *********/
+    @Test
+    public void testUploadIsDefaultTransferType() {
+        assertEquals(transferImageCommand.getParameters().getTransferType(), TransferType.Upload);
     }
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TransferImageParameters extends ImagesActionsParametersBase {
@@ -8,6 +9,7 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
 
     private int keepaliveInterval;
     private long transferSize;
+    private TransferType transferType = TransferType.Upload;
 
     // Members used to persist data during command execution
     long sessionExpiration;
@@ -64,5 +66,13 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
 
     public void setLastPauseLogTime(long lastPauseLogTime) {
         this.lastPauseLogTime = lastPauseLogTime;
+    }
+
+    public TransferType getTransferType() {
+        return transferType;
+    }
+
+    public void setTransferType(TransferType transferType) {
+        this.transferType = transferType;
     }
 }

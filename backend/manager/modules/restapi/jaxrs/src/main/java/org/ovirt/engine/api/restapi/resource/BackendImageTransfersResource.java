@@ -5,12 +5,14 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ImageTransfer;
+import org.ovirt.engine.api.model.ImageTransferDirection;
 import org.ovirt.engine.api.model.ImageTransfers;
 import org.ovirt.engine.api.resource.ImageTransferResource;
 import org.ovirt.engine.api.resource.ImageTransfersResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -28,6 +30,10 @@ public class BackendImageTransfersResource
     @Override
     public Response add(ImageTransfer imageTransfer) {
         TransferDiskImageParameters params = new TransferDiskImageParameters();
+        if (imageTransfer.isSetDirection() && imageTransfer.getDirection() == ImageTransferDirection.DOWNLOAD) {
+            // Upload is the default direction, so we set the transfer type only if download was explicitly specified.
+            params.setTransferType(TransferType.Download);
+        }
         params.setImageId(GuidUtils.asGuid(imageTransfer.getImage().getId()));
         params.setKeepaliveInterval(ConfigurationValues.UploadImageUiInactivityTimeoutInSeconds.getValue());
         return performCreate(VdcActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(VdcQueryType.GetImageTransferById,

@@ -19,9 +19,11 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
@@ -85,6 +87,11 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
         // If an image was not created yet, create it.
         if (Guid.isNullOrEmpty(getParameters().getImageId())) {
+            if (getParameters().getTransferType() == TransferType.Download) {
+                failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
+                setSucceeded(false);
+                return;
+            }
             log.info("Creating {} image", getImageType());
             createImage();
         } else {
@@ -396,7 +403,6 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return false;
         }
 
-        String[] operations = { "write" };
         long timeout = getHostTicketLifetime();
         String imagePath;
         try {
@@ -410,9 +416,10 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return false;
         }
 
+        String[] transferOps = new String[] {getParameters().getTransferType().getOp()};
         AddImageTicketVDSCommandParameters
                 transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
-                        imagedTicketId, operations, timeout, getParameters().getTransferSize(), imagePath);
+                        imagedTicketId, transferOps, timeout, getParameters().getTransferSize(), imagePath);
 
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
@@ -467,9 +474,10 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         Guid imageId = getParameters().getImageId();
         if (!Guid.isNullOrEmpty(imageId)) {
             return validateImageTransfer(imageId);
-        } else {
-            return validateCreateImage();
+        } else if (getParameters().getTransferType() == TransferType.Download) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
         }
+        return validateCreateImage();
     }
 
     protected abstract boolean validateImageTransfer(Guid imageId);
@@ -644,6 +652,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("DiskAlias", getImageAlias());
+        addCustomValue("TransferType", getParameters().getTransferType().name());
         return getActionState() == CommandActionState.EXECUTE
                 ? AuditLogType.TRANSFER_IMAGE_INITIATED : getParameters().getAuditLogType();
     }
@@ -662,10 +671,9 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     // Return a string describing the transfer, safe for use before the new image
     // is successfully created; e.g. "disk 'NewDisk' (id '<uuid>')".
     protected String getTransferDescription() {
-        return String.format("%s '%s' (id '%s')",
-                getImageType(), getImageAlias(), getImageIdNullSafe());
+        return String.format("%s %s '%s' (id '%s')",
+                getParameters().getTransferType().name(), getImageType(), getImageAlias(), getImageIdNullSafe());
     }
-
 
     public void onSucceeded() {
         updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);

@@ -61,7 +61,7 @@ public class DiskUploadImageProgressColumn extends AbstractProgressBarColumn<Dis
                 return constants.imageUploadResuming();
             case TRANSFERRING:
                 if (disk.getImageTransferBytesTotal() == 0) {
-                    return constants.imageUploadTransferringViaAPI();
+                    return constants.imageTransferringViaAPI();
                 }
                 else if (disk.getImageTransferBytesSent() == null) {
                     return constants.imageUploadTransferring();
