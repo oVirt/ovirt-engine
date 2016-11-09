@@ -35,6 +35,7 @@ public class ValidationUtils {
                     IPV6_ADDRESS_BLOCK + "(?::" + IPV6_ADDRESS_BLOCK + ")*)?)";
     private static final String IPV6_STD_PATTERN = "(?:" + IPV6_ADDRESS_BLOCK + ":){7}" + IPV6_ADDRESS_BLOCK;
     public static final String IPV6_PATTERN = "(?:" + IPV6_STD_PATTERN + "|" + IPV6_HEX_COMPRESSED_PATTERN + ")";
+    public static final String IPV4_OR_IPV6_PATTERN = IPV4_PATTERN + "|" + IPV6_PATTERN;
     public static final String IPV6_FOR_URI = "\\[" + IPV6_PATTERN + "\\]";
     public static final String ANY_IP_PATTERN = "^(" + IPV4_PATTERN_NON_EMPTY + "|" + IPV6_PATTERN +")$";
     public static final String FQDN_PATTERN =
