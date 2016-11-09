@@ -426,6 +426,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 Collections.singletonMap(vm.getId().toString(),
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
-        getLockManager().acquireLockWait(snapshotsEngineLock);
+        lockManager.acquireLockWait(snapshotsEngineLock);
     }
 }

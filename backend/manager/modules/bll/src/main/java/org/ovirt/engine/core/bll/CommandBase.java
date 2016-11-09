@@ -131,7 +131,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     private Long sessionSeqId;
 
     @Inject
-    private LockManager lockManager;
+    protected LockManager lockManager;
 
     @Inject
     private QuotaManager quotaManager;
@@ -1914,7 +1914,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         if (context.getLock() == null) {
             EngineLock lock = buildLock();
             if (lock != null) {
-                Pair<Boolean, Set<String>> lockAcquireResult = getLockManager().acquireLock(lock);
+                Pair<Boolean, Set<String>> lockAcquireResult = lockManager.acquireLock(lock);
                 if (lockAcquireResult.getFirst()) {
                     log.info("Lock Acquired to object '{}'", lock);
                     context.withLock(lock);
@@ -1964,7 +1964,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             if (exclusiveLocks != null) {
                 EngineLock lock = new EngineLock(exclusiveLocks, null);
                 log.info("Before acquiring and wait lock '{}'", lock);
-                getLockManager().acquireLockWait(lock);
+                lockManager.acquireLockWait(lock);
                 context.withLock(lock);
                 log.info("Lock-wait acquired to object '{}'", lock);
             }
@@ -1991,7 +1991,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     protected void freeLock() {
         if (context.getLock() != null) {
-            getLockManager().releaseLock(context.getLock());
+            lockManager.releaseLock(context.getLock());
             log.info("Lock freed to object '{}'", context.getLock());
             context.withLock(null);
             // free other locks here to guarantee they will be freed only once
@@ -2001,10 +2001,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     /** hook for subclasses that hold additional custom locks */
     protected void freeCustomLocks() {
-    }
-
-    protected LockManager getLockManager() {
-        return lockManager;
     }
 
     /**

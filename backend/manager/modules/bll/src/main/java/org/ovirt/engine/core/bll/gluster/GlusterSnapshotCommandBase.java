@@ -53,7 +53,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(group,
                         EngineMessage.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS)), null);
-        getLockManager().acquireLockWait(lock);
+        lockManager.acquireLockWait(lock);
         return lock;
     }
 }

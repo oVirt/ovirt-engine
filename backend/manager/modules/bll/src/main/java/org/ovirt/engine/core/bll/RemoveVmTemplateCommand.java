@@ -207,7 +207,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
                         createSubTemplateLockMessage(baseTemplateSuccessor)));
         baseTemplateSuccessorLock = new EngineLock(null, lockSharedMap);
-        final Pair<Boolean, Set<String>> isLockedAndFailReason = getLockManager().acquireLock(baseTemplateSuccessorLock);
+        final Pair<Boolean, Set<String>> isLockedAndFailReason = lockManager.acquireLock(baseTemplateSuccessorLock);
         if (isLockedAndFailReason.getFirst()) {
             return true;
         }
@@ -294,7 +294,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private void freeSubTemplateLock() {
         if (baseTemplateSuccessorLock != null) {
-            getLockManager().releaseLock(baseTemplateSuccessorLock);
+            lockManager.releaseLock(baseTemplateSuccessorLock);
             baseTemplateSuccessorLock = null;
         }
     }

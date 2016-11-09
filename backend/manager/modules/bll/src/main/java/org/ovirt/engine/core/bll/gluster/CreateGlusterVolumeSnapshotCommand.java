@@ -246,7 +246,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
                         EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
-        getLockManager().acquireLockWait(lock);
+        lockManager.acquireLockWait(lock);
         return lock;
     }
 }

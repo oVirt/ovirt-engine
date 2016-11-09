@@ -148,7 +148,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
                             LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS,
                                     EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             snapshotsEngineLock.setExclusiveLocks(snapshotsExclusiveLockMap);
-            getLockManager().releaseLock(snapshotsEngineLock);
+            lockManager.releaseLock(snapshotsEngineLock);
         }
     }
 

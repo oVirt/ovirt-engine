@@ -186,7 +186,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     });
         } finally {
             if (getSnapshotsEngineLock() != null) {
-                getLockManager().releaseLock(getSnapshotsEngineLock());
+                lockManager.releaseLock(getSnapshotsEngineLock());
             }
         }
     }

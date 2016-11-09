@@ -189,7 +189,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             });
         } finally {
             if (getSnapshotsEngineLock() != null) {
-                getLockManager().releaseLock(getSnapshotsEngineLock());
+                lockManager.releaseLock(getSnapshotsEngineLock());
             }
         }
     }
@@ -206,7 +206,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             });
         } finally {
             if (getSnapshotsEngineLock() != null) {
-                getLockManager().releaseLock(getSnapshotsEngineLock());
+                lockManager.releaseLock(getSnapshotsEngineLock());
             }
         }
     }

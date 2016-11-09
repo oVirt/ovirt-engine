@@ -261,7 +261,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                     return getAddressMapForScsiDisk(address, vmDeviceUnitMap, vmDevice, sPaprVscsiIndex, true);
                 }
             } finally {
-                getLockManager().releaseLock(vmDiskHotPlugEngineLock);
+                lockManager.releaseLock(vmDiskHotPlugEngineLock);
             }
         }
         return null;
@@ -306,7 +306,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         vmDiskHotPlugEngineLock.setExclusiveLocks(Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_HOT_PLUG,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED)));
-        getLockManager().acquireLockWait(vmDiskHotPlugEngineLock);
+        lockManager.acquireLockWait(vmDiskHotPlugEngineLock);
         return vmDiskHotPlugEngineLock;
     }
 }

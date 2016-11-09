@@ -391,7 +391,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 }
                 snapshotDao.update(snapshotWithoutImage);
                 if (getSnapshotsEngineLock() != null) {
-                    getLockManager().releaseLock(getSnapshotsEngineLock());
+                    lockManager.releaseLock(getSnapshotsEngineLock());
                 }
                 endSuccessfully();
                 getParameters().setTaskGroupSuccess(true);

@@ -96,7 +96,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                     ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId());
             snapshotDao.update(snapshotWithoutImage);
             if (getSnapshotsEngineLock() != null) {
-                getLockManager().releaseLock(getSnapshotsEngineLock());
+                lockManager.releaseLock(getSnapshotsEngineLock());
             }
         }
 
