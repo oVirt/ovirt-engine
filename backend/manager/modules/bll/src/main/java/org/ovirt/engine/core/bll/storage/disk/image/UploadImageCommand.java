@@ -89,14 +89,18 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         log.info("Creating {} image", getUploadType());
 
         // If an image was not created yet, create it.
-        if (Guid.isNullOrEmpty(getParameters().getImageId())) {
-            createImage();
-        } else {
+        if (isImageProvided()) {
             handleImageIsReadyForUpload(getParameters().getImageId());
+        } else {
+            createImage();
         }
 
         setActionReturnValue(getCommandId());
         setSucceeded(true);
+    }
+
+    protected boolean isImageProvided() {
+        return !Guid.isNullOrEmpty(getParameters().getImageId());
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
@@ -468,7 +472,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     @Override
     protected boolean validate() {
         Guid imageId = getParameters().getImageId();
-        if (!Guid.isNullOrEmpty(imageId)) {
+        if (isImageProvided()) {
             return validateUploadToImage(imageId);
         } else {
             return validateCreateImage();
