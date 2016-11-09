@@ -7,6 +7,10 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetLatestTemplateInChainQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private VmHandler vmHandler;
+
     @Inject
     private VmTemplateDao vmTemplateDao;
 
@@ -20,7 +24,7 @@ public class GetLatestTemplateInChainQuery<P extends IdQueryParameters> extends 
         vmt = vmTemplateDao.getTemplateWithLatestVersionInChain(getParameters().getId());
         if (vmt != null) {
             VmTemplateHandler.updateDisksFromDb(vmt);
-            VmHandler.updateVmInitFromDB(vmt, true);
+            vmHandler.updateVmInitFromDB(vmt, true);
         }
         getQueryReturnValue().setReturnValue(vmt);
     }

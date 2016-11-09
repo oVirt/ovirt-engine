@@ -40,10 +40,12 @@ public class VmHandlerTest {
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
+    private VmHandler vmHandler = new VmHandler();
+
     @Before
     public void setUp() {
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        VmHandler.init();
+        vmHandler.init();
     }
 
     @Test
@@ -56,7 +58,7 @@ public class VmHandlerTest {
         dest.setName(RandomUtils.instance().nextString(10));
 
         assertTrue("Update should be valid for different names",
-                VmHandler.isUpdateValid(src, dest));
+                vmHandler.isUpdateValid(src, dest));
     }
 
     @Test
@@ -69,7 +71,7 @@ public class VmHandlerTest {
         disks.add(snapshotDisk1);
         disks.add(snapshotDisk2);
         populateVmWithDisks(disks, vm);
-        VmHandler.filterImageDisksForVM(vm);
+        vmHandler.filterImageDisksForVM(vm);
         assertTrue(vm.getDiskList().isEmpty());
         assertTrue(vm.getManagedVmDeviceMap().isEmpty());
     }
@@ -82,7 +84,7 @@ public class VmHandlerTest {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         populateVmWithDisks(Arrays.asList(snapshotDisk, regularDisk, lunDisk), vm);
-        VmHandler.filterImageDisksForVM(vm);
+        vmHandler.filterImageDisksForVM(vm);
         assertFalse(vm.getDiskList().contains(snapshotDisk));
         assertTrue(vm.getDiskList().contains(regularDisk));
         assertTrue(vm.getManagedVmDeviceMap().containsKey(regularDisk.getId()));
@@ -91,7 +93,7 @@ public class VmHandlerTest {
     }
 
     private void populateVmWithDisks(List<Disk> disks, VM vm) {
-        VmHandler.updateDisksForVm(vm, disks);
+        vmHandler.updateDisksForVm(vm, disks);
         for (Disk disk : disks) {
             VmDevice device = new VmDevice(new VmDeviceId(disk.getId(), vm.getId()),
                     VmDeviceGeneralType.DISK,
@@ -135,7 +137,7 @@ public class VmHandlerTest {
         dest.setId(Guid.newGuid());
 
         // When
-        boolean updateIsValid = VmHandler.isUpdateValid(src, dest);
+        boolean updateIsValid = vmHandler.isUpdateValid(src, dest);
 
         // Then
         assertFalse("Update should be invalid for different IDs",
@@ -151,7 +153,7 @@ public class VmHandlerTest {
         dest.setClusterId(Guid.newGuid());
 
         // When
-        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Down, false);
+        boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Down, false);
 
         // Then
         assertTrue("Update should be valid for different cluster IDs in the down state", updateIsValid);
@@ -166,7 +168,7 @@ public class VmHandlerTest {
         dest.setSingleQxlPci(false);
 
         // When
-        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
+        boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
 
         // Then
         assertFalse("Update should be invalid for different single QXL PCI statuses on a running VM", updateIsValid);
@@ -183,7 +185,7 @@ public class VmHandlerTest {
         dest.setDescription(RandomUtils.instance().nextString(10));
 
         // When
-        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
+        boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
 
         // Then
         assertTrue("Update should be valid for different descriptions on a running, hosted engine VM", updateIsValid);
@@ -200,7 +202,7 @@ public class VmHandlerTest {
         dest.setName(RandomUtils.instance().nextString(10));
 
         // When
-        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
+        boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
 
         // Then
         assertFalse("Update should be invalid for different names on a running, hosted engine VM", updateIsValid);
@@ -217,7 +219,7 @@ public class VmHandlerTest {
         dest.setNumOfSockets(destNumOfSockets);
 
         // When
-        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, true);
+        boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, true);
 
         // Then
         assertTrue("Update should be valid for different number of sockets on a running VM", updateIsValid);

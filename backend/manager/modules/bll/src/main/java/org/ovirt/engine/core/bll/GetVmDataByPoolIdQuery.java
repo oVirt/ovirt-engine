@@ -14,6 +14,10 @@ import org.ovirt.engine.core.dao.VmPoolDao;
 
 
 public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private VmHandler vmHandler;
+
     @Inject
     private VmPoolDao vmPoolDao;
 
@@ -62,8 +66,8 @@ public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends Queries
                 vm.setStaticData(temp);
             }
 
-            VmHandler.updateDisksFromDb(vm);
-            VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+            vmHandler.updateDisksFromDb(vm);
+            vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         }
 
         getQueryReturnValue().setReturnValue(vm);

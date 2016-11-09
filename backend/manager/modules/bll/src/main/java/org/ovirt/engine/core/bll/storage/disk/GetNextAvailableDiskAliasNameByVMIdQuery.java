@@ -18,6 +18,9 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends IdQueryParameter
     private VmDao vmDao;
 
 
+    @Inject
+    private VmHandler vmHandler;
+
     public GetNextAvailableDiskAliasNameByVMIdQuery(P parameters) {
         super(parameters);
     }
@@ -38,7 +41,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends IdQueryParameter
     }
 
     protected void updateDisksFromDb(VM vm) {
-        VmHandler.updateDisksFromDb(vm);
+        vmHandler.updateDisksFromDb(vm);
     }
 
     private String getSuggestedDiskName(VM vm) {

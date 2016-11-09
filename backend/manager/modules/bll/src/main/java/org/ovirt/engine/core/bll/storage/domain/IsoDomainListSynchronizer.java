@@ -101,6 +101,9 @@ public class IsoDomainListSynchronizer implements BackendService {
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
 
+    @Inject
+    private VmHandler vmHandler;
+
     private List<RepoImage> problematicRepoFileList = new ArrayList<>();
     private final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
     private int isoDomainRefreshRate;
@@ -724,7 +727,7 @@ public class IsoDomainListSynchronizer implements BackendService {
 
         return refreshVdsmFileList(repoStoragePoolId,
                 repoStorageDomainId,
-                ImageFileType.ISO, fileStats, VmHandler::refreshVmsToolsVersion);
+                ImageFileType.ISO, fileStats, vmHandler::refreshVmsToolsVersion);
     }
 
     private boolean refreshVdsmFileList(Guid repoStoragePoolId,

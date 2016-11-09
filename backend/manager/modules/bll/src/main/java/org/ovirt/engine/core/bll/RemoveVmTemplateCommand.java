@@ -268,7 +268,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         if (!diskImages.isEmpty() || !cinderDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(() -> {
                 if (!diskImages.isEmpty() && removeVmTemplateImages()) {
-                    VmHandler.removeVmInitFromDB(getVmTemplate());
+                    vmHandler.removeVmInitFromDB(getVmTemplate());
                     setSucceeded(true);
                 }
                 if (!cinderDisks.isEmpty()) {

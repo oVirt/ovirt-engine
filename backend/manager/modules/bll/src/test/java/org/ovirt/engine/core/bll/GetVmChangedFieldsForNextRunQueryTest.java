@@ -12,7 +12,9 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -33,10 +35,14 @@ public class GetVmChangedFieldsForNextRunQueryTest
     @Mock
     VmPropertiesUtils vmPropertiesUtils;
 
+    @Spy
+    @InjectMocks
+    VmHandler vmHandler;
+
     @Before
     public void init() {
         mockCpuFlagsManagerHandler();
-        VmHandler.init();
+        vmHandler.init();
         mockVmPropertiesUtils();
         doNothing().when(vmPropertiesUtils).separateCustomPropertiesToUserAndPredefined(any(Version.class), any(VmStatic.class));
     }

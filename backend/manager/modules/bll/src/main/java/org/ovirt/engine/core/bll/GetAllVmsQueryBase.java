@@ -13,6 +13,9 @@ public abstract class GetAllVmsQueryBase<P extends VdcQueryParametersBase> exten
     @Inject
     protected VmDao vmDao;
 
+    @Inject
+    private VmHandler vmHandler;
+
     public GetAllVmsQueryBase(P parameters) {
         super(parameters);
     }
@@ -25,8 +28,8 @@ public abstract class GetAllVmsQueryBase<P extends VdcQueryParametersBase> exten
     protected void executeQueryCommand() {
         List<VM> vmsList = getVMs();
         for (VM vm : vmsList) {
-            VmHandler.updateVmGuestAgentVersion(vm);
-            VmHandler.updateVmStatistics(vm);
+            vmHandler.updateVmGuestAgentVersion(vm);
+            vmHandler.updateVmStatistics(vm);
         }
         getQueryReturnValue().setReturnValue(vmsList);
     }

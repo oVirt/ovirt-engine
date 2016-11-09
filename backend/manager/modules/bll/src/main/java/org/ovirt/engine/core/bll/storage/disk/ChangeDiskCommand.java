@@ -5,7 +5,6 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmOperationCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -100,7 +99,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
         setActionReturnValue(runVdsCommand(VDSCommandType.ChangeDisk,
                 new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), iface, index, cdImagePath))
                         .getReturnValue());
-        VmHandler.updateCurrentCd(getVdsId(), getVm(), getParameters().getCdImagePath());
+        vmHandler.updateCurrentCd(getVdsId(), getVm(), getParameters().getCdImagePath());
         setSucceeded(true);
     }
 

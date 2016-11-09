@@ -16,6 +16,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -26,6 +30,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -67,6 +72,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -84,11 +90,16 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -98,31 +109,70 @@ import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VmHandler {
-
-    private static ObjectIdentityChecker updateVmsStatic;
-    private static OsRepository osRepository;
-    private static CpuFlagsManagerHandler cpuFlagsManagerHandler;
+@ApplicationScoped
+public class VmHandler implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(VmHandler.class);
-    private static VmDeviceUtils vmDeviceUtils;
+
+    @Inject
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
+
+    @Inject
+    private LockManager lockManager;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private ResourceManager resourceManager;
+
+    @Inject
+    private VDSBrokerFrontend vdsBrokerFrontend;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VmInitDao vmInitDao;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+
+    private ObjectIdentityChecker updateVmsStatic;
+    private OsRepository osRepository;
 
     /**
-     * Initialize static list containers, for identity and permission check. The initialization should be executed
+     * Initialize list containers, for identity and permission check. The initialization should be executed
      * before calling ObjectIdentityChecker.
      *
      * @see Backend#initHandlers
      */
-    public static void init() {
+    @PostConstruct
+    public void init() {
         Class<?>[] inspectedClassNames = new Class<?>[] {
                 VmBase.class,
                 VM.class,
                 VmStatic.class,
                 VmDynamic.class,
                 VmManagementParametersBase.class };
-
-        cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
-        vmDeviceUtils = Injector.get(VmDeviceUtils.class);
 
         osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
@@ -160,33 +210,33 @@ public class VmHandler {
         }
     }
 
-    public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
+    public boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
         return source.isManagedHostedEngine() ?
                 updateVmsStatic.isHostedEngineUpdateValid(source, destination)
                 : updateVmsStatic.isUpdateValid(source, destination, status);
     }
 
-    public static List<String> getChangedFieldsForStatus(VmStatic source, VmStatic destination, VMStatus status) {
+    public List<String> getChangedFieldsForStatus(VmStatic source, VmStatic destination, VMStatus status) {
         return updateVmsStatic.getChangedFieldsForStatus(source, destination, status);
     }
 
-    public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status, boolean hotsetEnabled) {
+    public boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status, boolean hotsetEnabled) {
         return source.isManagedHostedEngine() ?
                 updateVmsStatic.isHostedEngineUpdateValid(source, destination)
                 : updateVmsStatic.isUpdateValid(source, destination, status, hotsetEnabled);
     }
 
-    public static boolean isUpdateValid(VmStatic source, VmStatic destination) {
+    public boolean isUpdateValid(VmStatic source, VmStatic destination) {
         return source.isManagedHostedEngine() ?
                 updateVmsStatic.isHostedEngineUpdateValid(source, destination)
                 : updateVmsStatic.isUpdateValid(source, destination);
     }
 
-    public static boolean isUpdateValidForVmDevice(String fieldName, VMStatus status) {
+    public boolean isUpdateValidForVmDevice(String fieldName, VMStatus status) {
         return updateVmsStatic.isFieldUpdatable(status, fieldName, null);
     }
 
-    public static boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination, boolean hotSetEnabled) {
+    public boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination, boolean hotSetEnabled) {
         return updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
     }
 
@@ -252,7 +302,7 @@ public class VmHandler {
      * @param compensationContext
      *            Used to save the old VM status, for compensation purposes.
      */
-    public static void lockVm(final VmDynamic vm, final CompensationContext compensationContext) {
+    public void lockVm(final VmDynamic vm, final CompensationContext compensationContext) {
         TransactionSupport.executeInNewTransaction(() -> {
             compensationContext.snapshotEntityStatus(vm);
             lockVm(vm.getId());
@@ -280,8 +330,8 @@ public class VmHandler {
      * @param vmId
      *            - The ID of the VM.
      */
-    public static void checkStatusAndLockVm(Guid vmId) {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
+    public void checkStatusAndLockVm(Guid vmId) {
+        VmDynamic vmDynamic = vmDynamicDao.get(vmId);
         checkStatusBeforeLock(vmDynamic.getStatus());
         lockVm(vmId);
     }
@@ -294,17 +344,15 @@ public class VmHandler {
      * @param compensationContext
      *            - Used to save the old VM status for compensation purposes.
      */
-    public static void checkStatusAndLockVm(Guid vmId, CompensationContext compensationContext) {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
+    public void checkStatusAndLockVm(Guid vmId, CompensationContext compensationContext) {
+        VmDynamic vmDynamic = vmDynamicDao.get(vmId);
         checkStatusBeforeLock(vmDynamic.getStatus());
         lockVm(vmDynamic, compensationContext);
     }
 
-    public static void lockVm(Guid vmId) {
-        Backend.getInstance()
-                .getResourceManager()
-                .runVdsCommand(VDSCommandType.SetVmStatus,
-                        new SetVmStatusVDSCommandParameters(vmId, VMStatus.ImageLocked));
+    public void lockVm(Guid vmId) {
+        vdsBrokerFrontend.runVdsCommand(VDSCommandType.SetVmStatus,
+                new SetVmStatusVDSCommandParameters(vmId, VMStatus.ImageLocked));
     }
 
     /**
@@ -315,7 +363,7 @@ public class VmHandler {
      * @param compensationContext
      *            Used to save the old VM status, for compensation purposes.
      */
-    public static void unlockVm(final VM vm, final CompensationContext compensationContext) {
+    public void unlockVm(final VM vm, final CompensationContext compensationContext) {
         TransactionSupport.executeInNewTransaction(() -> {
             compensationContext.snapshotEntityStatus(vm.getDynamicData());
             unLockVm(vm);
@@ -324,22 +372,20 @@ public class VmHandler {
         });
     }
 
-    public static void unLockVm(VM vm) {
-        Backend.getInstance()
-                .getResourceManager()
-                .runVdsCommand(VDSCommandType.SetVmStatus,
-                        new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
+    public void unLockVm(VM vm) {
+        vdsBrokerFrontend.runVdsCommand(VDSCommandType.SetVmStatus,
+                new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
         vm.setStatus(VMStatus.Down);
     }
 
-    public static void updateDisksFromDb(VM vm) {
-        List<Disk> imageList = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
+    public void updateDisksFromDb(VM vm) {
+        List<Disk> imageList = diskDao.getAllForVm(vm.getId());
         vm.clearDisks();
         updateDisksForVm(vm, imageList);
-        VmHandler.updateDisksVmDataForVm(vm);
+        updateDisksVmDataForVm(vm);
     }
 
-    public static void updateDisksForVm(VM vm, Collection<? extends Disk> disks) {
+    public void updateDisksForVm(VM vm, Collection<? extends Disk> disks) {
         for (Disk disk : disks) {
             if (disk.isAllowSnapshot() && !disk.isDiskSnapshot()) {
                 DiskImage image = (DiskImage) disk;
@@ -351,9 +397,9 @@ public class VmHandler {
         }
     }
 
-    public static void updateDisksVmDataForVm(VM vm) {
+    public void updateDisksVmDataForVm(VM vm) {
         for (Disk disk : vm.getDiskMap().values()) {
-            DiskVmElement dve = DbFacade.getInstance().getDiskVmElementDao().get(new VmDeviceId(disk.getId(), vm.getId()));
+            DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(disk.getId(), vm.getId()));
             disk.setDiskVmElements(Collections.singletonList(dve));
         }
     }
@@ -366,9 +412,8 @@ public class VmHandler {
      * We want to set false only when running VM becase the VmInitDao
      * decrypt the password.
      */
-    public static void updateVmInitFromDB(VmBase vm, boolean secure) {
-        VmInitDao db = DbFacade.getInstance().getVmInitDao();
-        vm.setVmInit(db.get(vm.getId()));
+    public void updateVmInitFromDB(VmBase vm, boolean secure) {
+        vm.setVmInit(vmInitDao.get(vm.getId()));
         if (vm.getVmInit() != null) {
             if (secure) {
                 vm.getVmInit().setPasswordAlreadyStored(!StringUtils.isEmpty(vm.getVmInit().getRootPassword()));
@@ -379,13 +424,12 @@ public class VmHandler {
         }
     }
 
-    public static void addVmInitToDB(VmBase vm) {
+    public void addVmInitToDB(VmBase vm) {
         if (vm.getVmInit() != null) {
             vm.getVmInit().setId(vm.getId());
-            VmInitDao db = DbFacade.getInstance().getVmInitDao();
-            VmInit oldVmInit = db.get(vm.getId());
+            VmInit oldVmInit = vmInitDao.get(vm.getId());
             if (oldVmInit == null) {
-                db.save(vm.getVmInit());
+                vmInitDao.save(vm.getVmInit());
             } else {
                 if (vm.getVmInit().isPasswordAlreadyStored()) {
                     // since we are not always returning the password in
@@ -395,29 +439,27 @@ public class VmHandler {
                     // the password if the flag is on
                     vm.getVmInit().setRootPassword(oldVmInit.getRootPassword());
                 }
-                db.update(vm.getVmInit());
+                vmInitDao.update(vm.getVmInit());
             }
         }
     }
 
-    public static void updateVmInitToDB(VmBase vm) {
+    public void updateVmInitToDB(VmBase vm) {
         if (vm.getVmInit() != null) {
-            VmHandler.addVmInitToDB(vm);
+            addVmInitToDB(vm);
         } else {
-            VmHandler.removeVmInitFromDB(vm);
+            removeVmInitFromDB(vm);
         }
     }
 
-    public static void removeVmInitFromDB(VmBase vm) {
-        VmInitDao db = DbFacade.getInstance().getVmInitDao();
-        db.remove(vm.getId());
+    public void removeVmInitFromDB(VmBase vm) {
+        vmInitDao.remove(vm.getId());
     }
 
     // if secure is true we don't return the stored password, only
     // indicate that the password is set via the PasswordAlreadyStored property
-    public static List<VmInit> getVmInitByIds(List<Guid> ids, boolean secure) {
-        VmInitDao db = DbFacade.getInstance().getVmInitDao();
-        List<VmInit> all = db.getVmInitByIds(ids);
+    public List<VmInit> getVmInitByIds(List<Guid> ids, boolean secure) {
+        List<VmInit> all = vmInitDao.getVmInitByIds(ids);
 
         for (VmInit vmInit: all) {
             if (secure) {
@@ -435,7 +477,7 @@ public class VmHandler {
      * Filters the vm image disks/disk devices.<BR/>
      * note: luns will be filtered, only active image disks will be return.
      */
-    public static void filterImageDisksForVM(VM vm) {
+    public void filterImageDisksForVM(VM vm) {
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskMap().values(), ONLY_ACTIVE);
         List<CinderDisk> filteredCinderDisks = ImagesHandler.filterDisksBasedOnCinder(vm.getDiskMap().values());
         filteredDisks.addAll(filteredCinderDisks);
@@ -448,8 +490,8 @@ public class VmHandler {
         }
     }
 
-    public static void updateNetworkInterfacesFromDb(VM vm) {
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+    public void updateNetworkInterfacesFromDb(VM vm) {
+        List<VmNetworkInterface> interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
         vm.setInterfaces(interfaces);
     }
 
@@ -481,13 +523,12 @@ public class VmHandler {
      * @param vm
      *            the VM
      */
-    public static void updateVmGuestAgentVersion(final VM vm) {
+    public void updateVmGuestAgentVersion(final VM vm) {
         if (vm.getAppList() != null) {
             final String[] parts = vm.getAppList().split("[,]", -1);
             if (parts != null && parts.length != 0) {
-                final List<String> possibleAgentAppNames = Config.<List<String>> getValue(ConfigValues.AgentAppName);
-                final Map<String, String> spiceDriversInGuest =
-                        Config.<Map<String, String>> getValue(ConfigValues.SpiceDriverNameInGuest);
+                final List<String> possibleAgentAppNames = Config.getValue(ConfigValues.AgentAppName);
+                final Map<String, String> spiceDriversInGuest = Config.getValue(ConfigValues.SpiceDriverNameInGuest);
                 final String spiceDriverInGuest =
                         spiceDriversInGuest.get(osRepository.getOsFamily(vm.getOs()).toLowerCase());
 
@@ -505,12 +546,12 @@ public class VmHandler {
         }
     }
 
-    public static void updateVmLock(final VM vm) {
-        vm.setLockInfo(getLockManager().getLockInfo(String.format("%s%s", vm.getId(), LockingGroup.VM.name())));
+    public void updateVmLock(final VM vm) {
+        vm.setLockInfo(lockManager.getLockInfo(String.format("%s%s", vm.getId(), LockingGroup.VM.name())));
     }
 
-    public static void updateOperationProgress(final VM vm) {
-        VmManager vmManager = ResourceManager.getInstance().getVmManager(vm.getId(), false);
+    public void updateOperationProgress(final VM vm) {
+        VmManager vmManager = resourceManager.getVmManager(vm.getId(), false);
         if (vmManager != null) {
             vm.setBackgroundOperationDescription(vmManager.getConvertOperationDescription());
             vm.setBackgroundOperationProgress(vmManager.getConvertOperationProgress());
@@ -520,15 +561,11 @@ public class VmHandler {
         }
     }
 
-    public static void updateVmStatistics(final VM vm) {
-        VmManager vmManager = ResourceManager.getInstance().getVmManager(vm.getId(), false);
+    public void updateVmStatistics(final VM vm) {
+        VmManager vmManager = resourceManager.getVmManager(vm.getId(), false);
         if (vmManager != null) {
             vm.setStatisticsData(vmManager.getStatistics());
         }
-    }
-
-    protected static LockManager getLockManager() {
-        return Injector.get(LockManager.class);
     }
 
     /**
@@ -539,7 +576,7 @@ public class VmHandler {
      * @param clusterVersion
      *            the vm's cluster version.
      */
-    public static void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
+    public void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
         if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
             AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
             logable.setVmId(vm.getId());
@@ -550,7 +587,7 @@ public class VmHandler {
             logable.addCustomValue("VmMaxMemInMb",
                     String.valueOf(VmValidationUtils.getMaxMemorySizeInMb(vm.getOsId(), clusterVersion)));
 
-            new AuditLogDirector().log(logable, AuditLogType.VM_MEMORY_NOT_IN_RECOMMENDED_RANGE);
+            auditLogDirector.log(logable, AuditLogType.VM_MEMORY_NOT_IN_RECOMMENDED_RANGE);
         }
     }
 
@@ -564,9 +601,9 @@ public class VmHandler {
      * @param reasons
      *            The reasons.Cluster
      */
-    public static boolean isOsTypeSupported(int osId,
-                                            ArchitectureType architectureType,
-                                            List<String> reasons) {
+    public boolean isOsTypeSupported(int osId,
+                                     ArchitectureType architectureType,
+                                     List<String> reasons) {
         boolean result = VmValidationUtils.isOsTypeSupported(osId, architectureType);
         if (!result) {
             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE
@@ -589,11 +626,11 @@ public class VmHandler {
      * @param clusterVersion
      *            The cluster version.
      */
-    public static boolean isGraphicsAndDisplaySupported(int osId,
-                                                        Collection<GraphicsType> graphics,
-                                                        DisplayType displayType,
-                                                        List<String> reasons,
-                                                        Version clusterVersion) {
+    public boolean isGraphicsAndDisplaySupported(int osId,
+                                                 Collection<GraphicsType> graphics,
+                                                 DisplayType displayType,
+                                                 List<String> reasons,
+                                                 Version clusterVersion) {
         boolean result = VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType);
         if (!result) {
             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
@@ -655,7 +692,7 @@ public class VmHandler {
      * @param reasons
      *            Messages for Validate().
      */
-    public static boolean isNumOfMonitorsLegal(Collection<GraphicsType> graphicsTypes, int numOfMonitors, List<String> reasons) {
+    public boolean isNumOfMonitorsLegal(Collection<GraphicsType> graphicsTypes, int numOfMonitors, List<String> reasons) {
         boolean legal = false;
 
         if (graphicsTypes.contains(GraphicsType.VNC)) {
@@ -671,7 +708,7 @@ public class VmHandler {
         return legal;
     }
 
-    public static boolean isSingleQxlDeviceLegal(DisplayType displayType, int osId, List<String> reasons) {
+    public boolean isSingleQxlDeviceLegal(DisplayType displayType, int osId, List<String> reasons) {
         if (displayType != DisplayType.qxl) {
             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE.toString());
             return false;
@@ -726,16 +763,14 @@ public class VmHandler {
         return validationResult;
     }
 
-    public static void updateCurrentCd(Guid vdsId, VM vm, String currentCd) {
+    public void updateCurrentCd(Guid vdsId, VM vm, String currentCd) {
         VmDynamic vmDynamic = vm.getDynamicData();
         vmDynamic.setCurrentCd(currentCd);
-        Backend.getInstance()
-               .getResourceManager()
-               .runVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                       new UpdateVmDynamicDataVDSCommandParameters(vmDynamic));
+        vdsBrokerFrontend.runVdsCommand(VDSCommandType.UpdateVmDynamicData,
+                new UpdateVmDynamicDataVDSCommandParameters(vmDynamic));
     }
 
-    public static void updateDefaultTimeZone(VmBase vmBase) {
+    public void updateDefaultTimeZone(VmBase vmBase) {
         if (vmBase.getTimeZone() == null) {
             if (osRepository.isWindows(vmBase.getOsId())) {
                 vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
@@ -745,14 +780,14 @@ public class VmHandler {
         }
     }
 
-    public static boolean isUpdateValidForVmDevices(Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
+    public boolean isUpdateValidForVmDevices(Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
         if (objectWithEditableDeviceFields == null) {
             return true;
         }
         return getVmDevicesFieldsToUpdateOnNextRun(vmId, vmStatus, objectWithEditableDeviceFields).isEmpty();
     }
 
-    public static List<VmDeviceUpdate> getVmDevicesFieldsToUpdateOnNextRun(
+    public List<VmDeviceUpdate> getVmDevicesFieldsToUpdateOnNextRun(
             Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
         List<VmDeviceUpdate> fieldList = new ArrayList<>();
 
@@ -768,7 +803,7 @@ public class VmHandler {
             Field field = pair.getSecond();
             field.setAccessible(true);
 
-            if (VmHandler.isUpdateValidForVmDevice(field.getName(), vmStatus)) {
+            if (isUpdateValidForVmDevice(field.getName(), vmStatus)) {
                 // field may be updated on the current run, so not including for the next run
                 continue;
             }
@@ -806,13 +841,13 @@ public class VmHandler {
         return fieldList;
     }
 
-    private static boolean addDeviceUpdateOnNextRun(Guid vmId, EditableDeviceOnVmStatusField annotation,
+    private boolean addDeviceUpdateOnNextRun(Guid vmId, EditableDeviceOnVmStatusField annotation,
                                                 Object key, Object value, List<VmDeviceUpdate> updates) {
         return addDeviceUpdateOnNextRun(vmId, annotation.generalType(), annotation.type(), annotation.isReadOnly(),
                 annotation.name(), key, value, updates);
     }
 
-    private static boolean addDeviceUpdateOnNextRun(Guid vmId, VmDeviceGeneralType generalType, VmDeviceType type,
+    private boolean addDeviceUpdateOnNextRun(Guid vmId, VmDeviceGeneralType generalType, VmDeviceType type,
                 boolean readOnly, String name, Object key, Object value, List<VmDeviceUpdate> updates) {
 
         if (key != null) {
@@ -864,7 +899,7 @@ public class VmHandler {
         return true;
     }
 
-    public static boolean isCpuSupported(int osId, Version version, String cpuName, ArrayList<String> validationMessages) {
+    public boolean isCpuSupported(int osId, Version version, String cpuName, ArrayList<String> validationMessages) {
         String cpuId = cpuFlagsManagerHandler.getCpuId(cpuName, version);
         if (cpuId == null) {
             validationMessages.add(EngineMessage.CPU_TYPE_UNKNOWN.name());
@@ -882,9 +917,8 @@ public class VmHandler {
         return true;
     }
 
-    public static void updateNumaNodesFromDb(VM vm){
-        VmNumaNodeDao dao = DbFacade.getInstance().getVmNumaNodeDao();
-        List<VmNumaNode> nodes = dao.getAllVmNumaNodeByVmId(vm.getId());
+    public void updateNumaNodesFromDb(VM vm){
+        List<VmNumaNode> nodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
 
         vm.setvNumaNodeList(nodes);
     }
@@ -908,7 +942,7 @@ public class VmHandler {
      *
      * @return graphics types of devices VM/Template is supposed to have after adding/updating.
      */
-    public static Set<GraphicsType> getResultingVmGraphics(List<GraphicsType> srcEntityGraphics, Map<GraphicsType, GraphicsDevice> graphicsDevices) {
+    public Set<GraphicsType> getResultingVmGraphics(List<GraphicsType> srcEntityGraphics, Map<GraphicsType, GraphicsDevice> graphicsDevices) {
         Set<GraphicsType> result = new HashSet<>();
 
         for (GraphicsType type : GraphicsType.values()) {
@@ -942,11 +976,11 @@ public class VmHandler {
      * @param vm                  - the VM to check
      * @param validationMessages - Action messages - used for error reporting. null value indicates that no error messages are required.
      */
-    public static boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> validationMessages) {
+    public boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> validationMessages) {
         boolean result = true;
         for (Guid vdsId : vm.getDedicatedVmForVdsList()) {
             // get dedicated host, checks if exists and compare its cluster to the VM cluster
-            VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+            VDS vds = vdsDao.get(vdsId);
             if (vds == null) {
                 if (validationMessages != null) {
                     validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
@@ -968,12 +1002,10 @@ public class VmHandler {
     // if the name will be different.
     private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhev-toolssetup_(\\d\\.\\d\\_\\d).*");
 
-    private static void updateGuestAgentStatus(VM vm, GuestAgentStatus guestAgentStatus) {
+    private void updateGuestAgentStatus(VM vm, GuestAgentStatus guestAgentStatus) {
         if (vm.getGuestAgentStatus() != guestAgentStatus) {
             vm.setGuestAgentStatus(guestAgentStatus);
-            DbFacade.getInstance()
-                    .getVmDynamicDao()
-                    .updateGuestAgentStatus(vm.getId(), vm.getGuestAgentStatus());
+            vmDynamicDao.updateGuestAgentStatus(vm.getId(), vm.getGuestAgentStatus());
         }
     }
 
@@ -986,13 +1018,13 @@ public class VmHandler {
      * @param isoList
      *            list of iso file names
      */
-    public static void refreshVmsToolsVersion(Guid poolId, Set<String> isoList) {
+    public void refreshVmsToolsVersion(Guid poolId, Set<String> isoList) {
         String latestVersion = getLatestGuestToolsVersion(isoList);
         if (latestVersion == null) {
             return;
         }
 
-        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForStoragePool(poolId);
+        List<VM> vms = vmDao.getAllForStoragePool(poolId);
         for (VM vm : vms) {
             if (vm.getAppList() != null && vm.getAppList().toLowerCase().contains("rhev-tools")) {
                 Matcher m = TOOLS_PATTERN.matcher(vm.getAppList().toLowerCase());
@@ -1066,7 +1098,7 @@ public class VmHandler {
         return true;
     }
 
-    public static void autoSelectUsbPolicy(VmBase fromParams) {
+    public void autoSelectUsbPolicy(VmBase fromParams) {
         if (fromParams.getUsbPolicy() == null) {
             fromParams.setUsbPolicy(UsbPolicy.ENABLED_NATIVE);
         }
@@ -1078,7 +1110,7 @@ public class VmHandler {
      * This method preserves backward compatibility for REST API - legacy REST API doesn't allow to set display and
      * graphics separately.
      */
-    public static void autoSelectDefaultDisplayType(Guid srcEntityId,
+    public void autoSelectDefaultDisplayType(Guid srcEntityId,
                                                 VmBase parametersStaticData,
                                                 Cluster cluster,
                                                 Map<GraphicsType, GraphicsDevice> graphicsDevices) {
@@ -1129,7 +1161,7 @@ public class VmHandler {
         parametersStaticData.setDefaultDisplayType(defaultDisplayType);
     }
 
-    public static void autoSelectGraphicsDevice(Guid srcEntityId,
+    public void autoSelectGraphicsDevice(Guid srcEntityId,
                                                 VmStatic parametersStaticData,
                                                 Cluster cluster,
                                                 Map<GraphicsType, GraphicsDevice> graphicsDevices,

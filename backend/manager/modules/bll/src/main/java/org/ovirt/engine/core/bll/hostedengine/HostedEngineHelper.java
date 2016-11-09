@@ -56,6 +56,9 @@ public class HostedEngineHelper {
     @Inject
     private VDSBrokerFrontend vdsBroker;
 
+    @Inject
+    private VmHandler vmHandler;
+
     @PostConstruct
     private void init() {
         List<VmStatic> byName = vmStaticDao.getAllByName(
@@ -63,7 +66,7 @@ public class HostedEngineHelper {
         if (byName != null && !byName.isEmpty()) {
             VmStatic vmStatic = byName.get(0);
             hostedEngineVm = vmDao.get(vmStatic.getId());
-            VmHandler.updateDisksFromDb(hostedEngineVm);
+            vmHandler.updateDisksFromDb(hostedEngineVm);
         }
 
         initHostedEngineStorageDomain();

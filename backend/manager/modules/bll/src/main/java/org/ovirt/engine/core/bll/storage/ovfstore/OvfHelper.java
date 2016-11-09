@@ -46,6 +46,9 @@ public class OvfHelper {
     @Inject
     private VmStaticDao vmStaticDao;
 
+    @Inject
+    private VmHandler vmHandler;
+
     private OvfManager ovfManager;
 
     public OvfHelper() {
@@ -98,7 +101,7 @@ public class OvfHelper {
 
     public String generateOvfConfigurationForVm(VM vm) {
         if (VMStatus.ImageLocked != vm.getStatus()) {
-            VmHandler.updateDisksFromDb(vm);
+            vmHandler.updateDisksFromDb(vm);
             DiskImagesValidator validator = new DiskImagesValidator(vm.getDiskList());
             if (validator.diskImagesNotLocked().isValid()) {
                 loadVmData(vm);

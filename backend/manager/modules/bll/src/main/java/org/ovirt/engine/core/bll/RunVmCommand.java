@@ -572,7 +572,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected void updateCurrentCd(String cdPath) {
         cdPath = StringUtils.isEmpty(cdPath) ? null : cdPath;
-        VmHandler.updateCurrentCd(getVdsId(), getVm(), cdPath);
+        vmHandler.updateCurrentCd(getVdsId(), getVm(), cdPath);
     }
 
 
@@ -716,7 +716,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getVm().setConsoleUserId(null);
 
         if (getParameters().getInitializationType() == null) {
-            VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+            vmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
             if (!getVm().isInitialized() && getVm().getVmInit() != null) {
                 getVm().setInitializationType(InitializationType.None);
                 if (osRepository.isWindows(getVm().getVmOsId())) {
@@ -748,7 +748,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setVmPayload(null);
         }
 
-        VmHandler.updateVmGuestAgentVersion(getVm());
+        vmHandler.updateVmGuestAgentVersion(getVm());
 
         // update dynamic cluster-parameters
         if (getVm().getCpuName() == null) { // no run-once data -> use static field or inherit from cluster
@@ -809,7 +809,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected void fetchVmDisksFromDb() {
         if (getVm().getDiskMap().isEmpty()) {
-            VmHandler.updateDisksFromDb(getVm());
+            vmHandler.updateDisksFromDb(getVm());
         }
     }
 
@@ -992,7 +992,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
            }
         }
 
-        if (!VmHandler.isCpuSupported(
+        if (!vmHandler.isCpuSupported(
                 getVm().getVmOsId(),
                 getVm().getCompatibilityVersion(),
                 getCluster().getCpuName(),
@@ -1014,7 +1014,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected void loadVmInit() {
         if (getVm().getVmInit() == null) {
-            VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+            vmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
         }
     }
 

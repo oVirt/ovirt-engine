@@ -57,6 +57,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Inject
     private SnapshotsManager snapshotsManager;
 
+    @Inject
+    protected VmHandler vmHandler;
+
     protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
 
@@ -200,7 +203,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         setVm(null);
         if (getVm() != null) {
             if (getVm().getStatus() == VMStatus.ImageLocked) {
-                VmHandler.unlockVm(getVm(), getCompensationContext());
+                vmHandler.unlockVm(getVm(), getCompensationContext());
             }
         } else {
             setLoggingForCommand();
@@ -293,9 +296,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         log.info("Locking VM(id = '{}') {} compensation.", getVmId(), isInternalExecution() ? "without" : "with");
 
         if (isInternalExecution()) {
-            VmHandler.checkStatusAndLockVm(getVmId());
+            vmHandler.checkStatusAndLockVm(getVmId());
         } else {
-            VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
+            vmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
         }
     }
 

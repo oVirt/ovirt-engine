@@ -206,7 +206,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<>();
         }
-        VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
+        vmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
         // Fill the migration policy if it was omitted
         if (getParameters().getVmStaticData() != null &&
@@ -333,7 +333,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 return false;
             }
         }
-        return VmHandler.validateDedicatedVdsExistOnSameCluster(vmStaticFromParams,
+        return vmHandler.validateDedicatedVdsExistOnSameCluster(vmStaticFromParams,
                 getReturnValue().getValidationMessages());
     }
 
@@ -411,7 +411,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!getParameters().getVmStaticData().getSingleQxlPci()) {
             return true;
         }
-        return VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
+        return vmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
                         getReturnValue().getValidationMessages());
     }
@@ -548,12 +548,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // check if the OS type is supported
-        if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(), getCluster().getArchitecture(),
+        if (!vmHandler.isOsTypeSupported(vmFromParams.getOs(), getCluster().getArchitecture(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
 
-        if (!VmHandler.isCpuSupported(
+        if (!vmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
                 getCluster().getCpuName(),
@@ -562,8 +562,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // Check if the graphics and display from parameters are supported
-        if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getVmStaticData().getOsId(),
-                VmHandler.getResultingVmGraphics(
+        if (!vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmStaticData().getOsId(),
+                vmHandler.getResultingVmGraphics(
                         getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
@@ -855,7 +855,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected void executeVmCommand() {
-        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
+        vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
         List<String> errorMessages = new ArrayList<>();
         if (!canAddVm(errorMessages, destStorages.values())) {
@@ -1081,7 +1081,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void addVmInit() {
-        VmHandler.addVmInitToDB(getParameters().getVmStaticData());
+        vmHandler.addVmInitToDB(getParameters().getVmStaticData());
     }
 
     private void addVmStatic() {
@@ -1165,7 +1165,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void lockVM() {
-        VmHandler.lockVm(getVmId());
+        vmHandler.lockVm(getVmId());
     }
 
     protected CreateSnapshotFromTemplateParameters buildDiskCreationParameters(DiskImage image) {
@@ -1588,15 +1588,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         }
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
+        vmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
         // Choose a proper default display type according to the cluster architecture
-        VmHandler.autoSelectDefaultDisplayType(vmDevicesSourceId,
+        vmHandler.autoSelectDefaultDisplayType(vmDevicesSourceId,
             getParameters().getVmStaticData(),
             getCluster(),
             getParameters().getGraphicsDevices());
 
         // If not set by user, choose proper graphics device according to the cluster architecture
-        VmHandler.autoSelectGraphicsDevice(vmDevicesSourceId,
+        vmHandler.autoSelectGraphicsDevice(vmDevicesSourceId,
                 getParameters().getVmStaticData(),
                 getCluster(),
                 getParameters().getGraphicsDevices(),
@@ -1615,12 +1615,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
     protected boolean checkNumberOfMonitors() {
-        Collection<GraphicsType> graphicsTypes = VmHandler.getResultingVmGraphics(
+        Collection<GraphicsType> graphicsTypes = vmHandler.getResultingVmGraphics(
                 getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
                 getParameters().getGraphicsDevices());
         int numOfMonitors = getParameters().getVmStaticData().getNumOfMonitors();
 
-        return VmHandler.isNumOfMonitorsLegal(graphicsTypes,
+        return vmHandler.isNumOfMonitorsLegal(graphicsTypes,
                 numOfMonitors,
                 getReturnValue().getValidationMessages());
     }

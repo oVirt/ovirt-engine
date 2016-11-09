@@ -110,7 +110,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     @Override
     protected void executeVmCommand() {
         // load vm init from db
-        VmHandler.updateVmInitFromDB(getVmTemplate(), false);
+        vmHandler.updateVmInitFromDB(getVmTemplate(), false);
         if (!VmHandler.copyData(getVmTemplate(), getVm().getStaticData())) {
             return;
         }

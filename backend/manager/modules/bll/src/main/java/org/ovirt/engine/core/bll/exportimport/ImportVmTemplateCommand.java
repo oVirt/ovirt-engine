@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
@@ -339,7 +338,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             updateOriginalTemplateNameOnDerivedVms();
             addVmInterfaces();
             getCompensationContext().stateChanged();
-            VmHandler.addVmInitToDB(getVmTemplate());
+            vmHandler.addVmInitToDB(getVmTemplate());
             return null;
         });
 
@@ -426,7 +425,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setClusterId(getParameters().getClusterId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
-        if(!VmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate(), null)){
+        if(!vmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate(), null)){
             getVmTemplate().setDedicatedVmForVdsList(Collections.emptyList());
         }
 

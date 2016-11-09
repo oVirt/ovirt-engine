@@ -65,6 +65,8 @@ public class HostedEngineImporter {
     private OsRepository osRepository;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmHandler vmHandler;
 
     /**
      * Import the VM into ovirt engine by removing the old, un-managed VM
@@ -153,7 +155,7 @@ public class HostedEngineImporter {
                 .findFirst().get());
         vm.setPriority(1);
 
-        VmHandler.updateDefaultTimeZone(vm.getStaticData());
+        vmHandler.updateDefaultTimeZone(vm.getStaticData());
 
         return parameters;
     }

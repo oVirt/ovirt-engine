@@ -7,7 +7,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -62,9 +60,14 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     private static final int NUM_DISKS_STORAGE_DOMAIN_2 = 3;
     protected static final String CPU_ID = "0";
 
-    static CpuFlagsManagerHandler cpuFlagsManagerHandler;
-    static OsRepository osRepository;
-    static VmDeviceUtils vmDeviceUtils;
+    @Mock
+    CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
+    @Mock
+    OsRepository osRepository;
+
+    @Mock
+    VmDeviceUtils vmDeviceUtils;
 
     @Mock
     MacPoolPerCluster macPoolPerCluster;
@@ -97,6 +100,9 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     @Mock
     VmDeviceDao vmDeviceDao;
 
+    @Spy
+    @InjectMocks
+    VmHandler vmHandler;
 
     @Spy
     @InjectMocks
@@ -104,27 +110,21 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected abstract T createCommand();
 
-
-    @BeforeClass
-    public static void initInjections() {
-        vmDeviceUtils = mock(VmDeviceUtils.class);
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-
-        cpuFlagsManagerHandler = mock(CpuFlagsManagerHandler.class);
-        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
+    public void initInjections() {
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
 
-        osRepository = mock(OsRepository.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
         when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(false);
-
-        VmHandler.init();
     }
 
     @Before
     public void setUp() {
+        initInjections();
+
+        vmHandler.init();
+
         initVmTemplate();
         cmd.setVmTemplate(vmTemplate);
         cmd.setVmTemplateId(vmTemplate.getId());

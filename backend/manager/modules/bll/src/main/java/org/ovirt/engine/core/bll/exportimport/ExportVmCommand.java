@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -119,7 +118,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
 
         // load the disks of vm from database
-        VmHandler.updateDisksFromDb(getVm());
+        vmHandler.updateDisksFromDb(getVm());
         List<DiskImage> disksForExport = getDisksBasedOnImage();
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksForExport);
         if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
@@ -255,11 +254,11 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     @Override
     protected void executeCommand() {
-        VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
+        vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
         freeLock();
 
         // update vm init
-        VmHandler.updateVmInitFromDB(getVm().getStaticData(), true);
+        vmHandler.updateVmInitFromDB(getVm().getStaticData(), true);
 
         // Means that there are no asynchronous tasks to execute - so we can end the command
         // immediately after the execution of the previous steps
@@ -538,13 +537,13 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         } else {
             updateSnapshotOvf(vm);
         }
-        VmHandler.unLockVm(vm);
+        vmHandler.unLockVm(vm);
         setSucceeded(true);
     }
 
     private void populateVmData(VM vm) {
-        VmHandler.updateDisksFromDb(vm);
-        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+        vmHandler.updateDisksFromDb(vm);
+        vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         getVmDeviceUtils().setVmDevices(vm.getStaticData());
     }
 
@@ -580,7 +579,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     protected void endWithFailure() {
         endActionOnAllImageGroups();
         VM vm = getVm();
-        VmHandler.unLockVm(vm);
+        vmHandler.unLockVm(vm);
         setSucceeded(true);
     }
 

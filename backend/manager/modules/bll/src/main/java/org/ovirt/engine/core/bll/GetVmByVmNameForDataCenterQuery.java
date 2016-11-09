@@ -7,6 +7,10 @@ import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters
 import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmByVmNameForDataCenterQuery<P extends GetVmByVmNameForDataCenterParameters> extends QueriesCommandBase<GetVmByVmNameForDataCenterParameters> {
+
+    @Inject
+    private VmHandler vmHandler;
+
     @Inject
     private VmDao vmDao;
 
@@ -31,9 +35,9 @@ public class GetVmByVmNameForDataCenterQuery<P extends GetVmByVmNameForDataCente
     }
 
     protected void updateVMDetails(VM vm) {
-        VmHandler.updateDisksFromDb(vm);
-        VmHandler.updateVmGuestAgentVersion(vm);
-        VmHandler.updateNetworkInterfacesFromDb(vm);
-        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+        vmHandler.updateDisksFromDb(vm);
+        vmHandler.updateVmGuestAgentVersion(vm);
+        vmHandler.updateNetworkInterfacesFromDb(vm);
+        vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
     }
 }

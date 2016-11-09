@@ -66,6 +66,7 @@ public class VmDeviceUtils {
     private final DiskDao diskDao;
     private final ClusterDao clusterDao;
     private final VmTemplateDao vmTemplateDao;
+    private final VmHandler vmHandler;
 
     private OsRepository osRepository;
 
@@ -74,12 +75,14 @@ public class VmDeviceUtils {
             VmDeviceDao vmDeviceDao,
             DiskDao diskDao,
             ClusterDao clusterDao,
-            VmTemplateDao vmTemplateDao) {
+            VmTemplateDao vmTemplateDao,
+            VmHandler vmHandler) {
         this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
         this.diskDao = diskDao;
         this.clusterDao = clusterDao;
         this.vmTemplateDao = vmTemplateDao;
+        this.vmHandler = vmHandler;
         init();
     }
 
@@ -1007,9 +1010,9 @@ public class VmDeviceUtils {
             for (VmDevice device: devices) {
                 device.setBootOrder(0);
             }
-            VmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
-            VmHandler.updateDisksVmDataForVm(vm);
-            VmHandler.updateNetworkInterfacesFromDb(vm);
+            vmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
+            vmHandler.updateDisksVmDataForVm(vm);
+            vmHandler.updateNetworkInterfacesFromDb(vm);
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
             vmDeviceDao.updateBootOrderInBatch(devices);
         }
@@ -1618,7 +1621,7 @@ public class VmDeviceUtils {
         Map<Guid, VmDevice> vmManagedDeviceMap = vm.getManagedVmDeviceMap();
 
         List<VmDeviceUpdate> fieldList =
-                VmHandler.getVmDevicesFieldsToUpdateOnNextRun(vm.getId(), vm.getStatus(), objectWithEditableDeviceFields);
+                vmHandler.getVmDevicesFieldsToUpdateOnNextRun(vm.getId(), vm.getStatus(), objectWithEditableDeviceFields);
 
         // Add the enabled devices and remove the disabled ones
         for (VmDeviceUpdate update : fieldList) {

@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -93,6 +94,11 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private DiskHandler diskHandler;
 
+    @Spy
+    @InjectMocks
+    private VmHandler vmHandler;
+
+    @Spy
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
 
@@ -137,7 +143,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         vmDeviceUtils.init();
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        VmHandler.init();
+        vmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.getMinimumRam(vm.getVmOsId(), Version.getLast())).thenReturn(0);
         when(osRepository.getMaximumRam(vm.getVmOsId(), Version.getLast())).thenReturn(100);

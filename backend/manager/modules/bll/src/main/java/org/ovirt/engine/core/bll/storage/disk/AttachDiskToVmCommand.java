@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -206,7 +205,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         // update cached image
         List<Disk> imageList = new ArrayList<>();
         imageList.add(disk);
-        VmHandler.updateDisksForVm(getVm(), imageList);
+        vmHandler.updateDisksForVm(getVm(), imageList);
 
         if (!isOperationPerformedOnDiskSnapshot()) {
             if (disk.isAllowSnapshot()) {

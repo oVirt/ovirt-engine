@@ -40,6 +40,9 @@ public class ChangeVmClusterValidator {
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    private VmHandler vmHandler;
+
     private VmCommand parentCommand;
     private final Guid targetClusterId;
     private Version vmCompatibilityVersion;
@@ -96,7 +99,7 @@ public class ChangeVmClusterValidator {
             }
 
             // Check if the display type is supported
-            if (!VmHandler.isGraphicsAndDisplaySupported(
+            if (!vmHandler.isGraphicsAndDisplaySupported(
                     vm.getOs(),
                     vmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
                     vm.getDefaultDisplayType(),

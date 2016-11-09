@@ -163,15 +163,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             if (getParameters().isConsoleEnabled() == null) {
                 parameters.setConsoleEnabled(false);
             }
-            VmHandler.updateDefaultTimeZone(parameterMasterVm);
-            VmHandler.autoSelectUsbPolicy(getParameters().getMasterVm());
+            vmHandler.updateDefaultTimeZone(parameterMasterVm);
+            vmHandler.autoSelectUsbPolicy(getParameters().getMasterVm());
 
-            VmHandler.autoSelectDefaultDisplayType(getVmId(),
+            vmHandler.autoSelectDefaultDisplayType(getVmId(),
                     getParameters().getMasterVm(),
                     getCluster(),
                     getParameters().getGraphicsDevices());
 
-            VmHandler.autoSelectGraphicsDevice(getVmId(),
+            vmHandler.autoSelectGraphicsDevice(getVmId(),
                     parameterMasterVm,
                     getCluster(),
                     getParameters().getGraphicsDevices(),
@@ -236,8 +236,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected List<DiskImage> getVmDisksFromDB() {
-        VmHandler.updateDisksFromDb(getVm());
-        VmHandler.filterImageDisksForVM(getVm());
+        vmHandler.updateDisksFromDb(getVm());
+        vmHandler.filterImageDisksForVM(getVm());
         return getVm().getDiskList();
     }
 
@@ -293,7 +293,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
 
-            VmHandler.lockVm(vmDynamic, getCompensationContext());
+            vmHandler.lockVm(vmDynamic, getCompensationContext());
         }
         setActionReturnValue(Guid.Empty);
         setVmTemplateId(Guid.newGuid());
@@ -370,7 +370,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         });
 
         if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-            VmHandler.warnMemorySizeLegal(getVmTemplate(), getVm().getCompatibilityVersion());
+            vmHandler.warnMemorySizeLegal(getVmTemplate(), getVm().getCompatibilityVersion());
         }
 
         // means that there are no asynchronous tasks to execute and that we can
@@ -403,15 +403,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
-        if (!VmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
+        if (!vmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
                 getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
         // Check if the display type is supported
         Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
-        if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
-                VmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(srcId),
+        if (!vmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
+                vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(srcId),
                         getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
                 getReturnValue().getValidationMessages(),
@@ -420,7 +420,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (getParameters().getVm().getSingleQxlPci() &&
-                !VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
+                !vmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
                         getReturnValue().getValidationMessages())) {
             return false;
@@ -776,9 +776,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
         // Load Vm Init from DB and set it to the template
-        VmHandler.updateVmInitFromDB(getParameters().getMasterVm(), false);
+        vmHandler.updateVmInitFromDB(getParameters().getMasterVm(), false);
         getVmTemplate().setVmInit(getParameters().getMasterVm().getVmInit());
-        VmHandler.addVmInitToDB(getVmTemplate());
+        vmHandler.addVmInitToDB(getVmTemplate());
     }
 
     private void updateVmIcons() {
@@ -942,7 +942,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private void endUnlockOps() {
         if (isVmInDb) {
-            VmHandler.unLockVm(getVm());
+            vmHandler.unLockVm(getVm());
         }
         VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
     }
@@ -977,7 +977,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (!getVmId().equals(Guid.Empty) && getVm() != null) {
-            VmHandler.unLockVm(getVm());
+            vmHandler.unLockVm(getVm());
         }
 
         setSucceeded(true);

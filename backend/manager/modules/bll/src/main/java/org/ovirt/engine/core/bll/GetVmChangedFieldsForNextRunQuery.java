@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -16,6 +18,9 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 
 public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNextRunParameters>
         extends QueriesCommandBase<P>{
+
+    @Inject
+    private VmHandler vmHandler;
 
     public GetVmChangedFieldsForNextRunQuery(P parameters) {
         super(parameters);
@@ -58,10 +63,10 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
                 dstVm.getCompatibilityVersion(), dstStatic);
 
-        Set<String> result = new HashSet<>(VmHandler.getChangedFieldsForStatus(srcStatic, dstStatic, VMStatus.Up));
+        Set<String> result = new HashSet<>(vmHandler.getChangedFieldsForStatus(srcStatic, dstStatic, VMStatus.Up));
 
         for (VmDeviceUpdate device :
-                VmHandler.getVmDevicesFieldsToUpdateOnNextRun(srcVm.getId(), VMStatus.Up, getParameters().getUpdateVmParameters())) {
+                vmHandler.getVmDevicesFieldsToUpdateOnNextRun(srcVm.getId(), VMStatus.Up, getParameters().getUpdateVmParameters())) {
             if (!device.getName().isEmpty()) {
                 result.add(device.getName());
             } else {

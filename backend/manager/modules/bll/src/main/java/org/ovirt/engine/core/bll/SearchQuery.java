@@ -87,6 +87,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     @Inject
+    private VmHandler vmHandler;
+
+    @Inject
     private VmDao vmDao;
 
     @Inject
@@ -223,10 +226,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         List<VM> vms = vmDao.getAllUsingQuery(data.getQuery());
         for (VM vm : vms) {
-            VmHandler.updateVmGuestAgentVersion(vm);
-            VmHandler.updateVmLock(vm);
-            VmHandler.updateOperationProgress(vm);
-            VmHandler.updateVmStatistics(vm);
+            vmHandler.updateVmGuestAgentVersion(vm);
+            vmHandler.updateVmLock(vm);
+            vmHandler.updateOperationProgress(vm);
+            vmHandler.updateVmStatistics(vm);
         }
         return vms;
     }

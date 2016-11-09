@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -120,7 +119,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected void executeCommand() {
-        VmHandler.updateVmInitFromDB(getVmTemplate(), true);
+        vmHandler.updateVmInitFromDB(getVmTemplate(), true);
         if (!getTemplateDisks().isEmpty()) {
             moveOrCopyAllImageGroups();
         } else {

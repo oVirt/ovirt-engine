@@ -15,6 +15,9 @@ public class GetVmsRelatedToQuotaIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
 
     @Inject
+    private VmHandler vmHandler;
+
+    @Inject
     private VmDao vmDao;
 
     public GetVmsRelatedToQuotaIdQuery(P parameters) {
@@ -25,8 +28,8 @@ public class GetVmsRelatedToQuotaIdQuery<P extends IdQueryParameters>
     protected void executeQueryCommand() {
         List<VM> vms = vmDao.getAllVmsRelatedToQuotaId(getParameters().getId());
         for (VM vm : vms) {
-            VmHandler.updateDisksFromDb(vm);
-            VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+            vmHandler.updateDisksFromDb(vm);
+            vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
             Collections.sort(vm.getDiskList(), new DiskByDiskAliasComparator());
             ImagesHandler.fillImagesBySnapshots(vm);
         }

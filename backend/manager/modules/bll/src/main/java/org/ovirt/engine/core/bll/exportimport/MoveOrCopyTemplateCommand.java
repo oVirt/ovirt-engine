@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -31,6 +33,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Deprecated
 public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
+
+    @Inject
+    protected VmHandler vmHandler;
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
@@ -109,7 +114,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     protected final void endVmTemplateRelatedOps() {
         if (getVmTemplate() != null) {
             getVmDeviceUtils().setVmDevices(getVmTemplate());
-            VmHandler.updateVmInitFromDB(getVmTemplate(), true);
+            vmHandler.updateVmInitFromDB(getVmTemplate(), true);
             incrementDbGeneration();
             VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
         }

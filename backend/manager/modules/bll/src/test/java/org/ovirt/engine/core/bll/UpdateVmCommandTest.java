@@ -134,6 +134,10 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @InjectMocks
     private NumaValidator numaValidator;
 
+    @Spy
+    @InjectMocks
+    private VmHandler vmHandler;
+
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
@@ -176,7 +180,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         displayTypeMap.get(osId).put(version, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
 
-        VmHandler.init();
+        vmHandler.init();
         vm = new VM();
         vmStatic = command.getParameters().getVmStaticData();
         group = new Cluster();

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -92,7 +91,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         // update cached image
-        VmHandler.updateDisksFromDb(getVm());
+        vmHandler.updateDisksFromDb(getVm());
         // update vm device boot order
         getVmDeviceUtils().updateBootOrder(getVm().getId());
         vmStaticDao.incrementDbGeneration(getVm().getId());

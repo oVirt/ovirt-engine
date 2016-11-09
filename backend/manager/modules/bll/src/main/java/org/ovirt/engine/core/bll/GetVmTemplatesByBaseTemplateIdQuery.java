@@ -13,6 +13,9 @@ public class GetVmTemplatesByBaseTemplateIdQuery<P extends GetVmTemplateParamete
         extends QueriesCommandBase<P> {
 
     @Inject
+    private VmHandler vmHandler;
+
+    @Inject
     private VmTemplateDao vmTemplateDao;
 
     public GetVmTemplatesByBaseTemplateIdQuery(P parameters) {
@@ -29,7 +32,7 @@ public class GetVmTemplatesByBaseTemplateIdQuery<P extends GetVmTemplateParamete
             }
             // Load VmInit and disks
             for (VmTemplate template : templateList) {
-                VmHandler.updateVmInitFromDB(template, true);
+                vmHandler.updateVmInitFromDB(template, true);
                 VmTemplateHandler.updateDisksFromDb(template);
             }
         }

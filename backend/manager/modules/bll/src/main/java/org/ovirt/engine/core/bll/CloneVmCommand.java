@@ -159,10 +159,10 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         if (vm == null) {
             vm = vmDao.get(oldVmId);
             getVmDeviceUtils().setVmDevices(vm.getStaticData());
-            VmHandler.updateDisksFromDb(vm);
-            VmHandler.updateVmGuestAgentVersion(vm);
-            VmHandler.updateNetworkInterfacesFromDb(vm);
-            VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+            vmHandler.updateDisksFromDb(vm);
+            vmHandler.updateVmGuestAgentVersion(vm);
+            vmHandler.updateNetworkInterfacesFromDb(vm);
+            vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
 
             vm.setName(getParameters().getNewName());
             vm.setId(getVmId());

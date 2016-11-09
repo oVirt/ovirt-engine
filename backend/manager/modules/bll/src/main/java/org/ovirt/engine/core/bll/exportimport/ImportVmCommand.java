@@ -609,7 +609,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         processImages(!isImagesAlreadyOnTarget());
         // if there are no tasks, we can just unlock the VM
         if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
-            VmHandler.unLockVm(getVm());
+            vmHandler.unLockVm(getVm());
         }
     }
 
@@ -999,7 +999,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected void endSuccessfully() {
         checkTrustedService();
         endActionOnAllImageGroups();
-        VmHandler.unLockVm(getVm());
+        vmHandler.unLockVm(getVm());
         setSucceeded(true);
     }
 

@@ -130,10 +130,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(
                     compatibilityVersion, getVm().getStaticData());
         }
-        VmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
+        vmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
-        VmHandler.autoSelectDefaultDisplayType(getVmId(),
+        vmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
+        vmHandler.autoSelectDefaultDisplayType(getVmId(),
                 getParameters().getVmStaticData(),
                 getCluster(),
                 getParameters().getGraphicsDevices());
@@ -173,7 +173,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             createNextRunSnapshot();
         }
 
-        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
+        vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
         vmStaticDao.incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
@@ -203,7 +203,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (getVm().isRunningOrPaused() && !getVm().isHostedEngine()) {
-            if (!VmHandler.copyNonEditableFieldsToDestination(oldVm.getStaticData(), newVmStatic, isHotSetEnabled())) {
+            if (!vmHandler.copyNonEditableFieldsToDestination(oldVm.getStaticData(), newVmStatic, isHotSetEnabled())) {
                 // fail update vm if some fields could not be copied
                 throw new EngineException(EngineError.FAILED_UPDATE_RUNNING_VM);
             }
@@ -237,7 +237,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateDeviceAddresses();
         }
         IconUtils.removeUnusedIcons(oldIconIds);
-        VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
+        vmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
         checkTrustedService();
         liveUpdateCpuProfile();
@@ -700,12 +700,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(),
+        if (!vmHandler.isOsTypeSupported(vmFromParams.getOs(),
                 getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
-        if (!VmHandler.isCpuSupported(
+        if (!vmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
                 getCluster().getCpuName(),
@@ -714,7 +714,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (vmFromParams.getSingleQxlPci() &&
-                !VmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
+                !vmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
                         vmFromParams.getOs(),
                         getReturnValue().getValidationMessages())) {
             return false;
@@ -737,8 +737,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if number of monitors passed is legal
-        if (!VmHandler.isNumOfMonitorsLegal(
-                VmHandler.getResultingVmGraphics(
+        if (!vmHandler.isNumOfMonitorsLegal(
+                vmHandler.getResultingVmGraphics(
                         getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
                         getParameters().getGraphicsDevices()),
                 getParameters().getVmStaticData().getNumOfMonitors(),
@@ -782,8 +782,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if the graphics and display from parameters are supported
-        if (!VmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
-                VmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
+        if (!vmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
+                vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getValidationMessages(),
@@ -922,7 +922,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     protected boolean isDedicatedVdsExistOnSameCluster(VmBase vm,
             ArrayList<String> validationMessages) {
-        return VmHandler.validateDedicatedVdsExistOnSameCluster(vm, validationMessages);
+        return vmHandler.validateDedicatedVdsExistOnSameCluster(vm, validationMessages);
     }
 
     protected boolean isValidPciAndIdeLimit(VM vmFromParams) {
@@ -946,7 +946,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected boolean areUpdatedFieldsLegal() {
-        return VmHandler.isUpdateValid(getVm().getStaticData(),
+        return vmHandler.isUpdateValid(getVm().getStaticData(),
                 getParameters().getVmStaticData(),
                 VMStatus.Down);
     }
@@ -963,12 +963,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         return getVm().isNextRunConfigurationExists()
-                || !VmHandler.isUpdateValid(
+                || !vmHandler.isUpdateValid(
                         getVm().getStaticData(),
                         getParameters().getVmStaticData(),
                         getVm().getStatus(),
                         isHotSetEnabled())
-                || !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters())
+                || !vmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters())
                 || isClusterLevelChange();
     }
 

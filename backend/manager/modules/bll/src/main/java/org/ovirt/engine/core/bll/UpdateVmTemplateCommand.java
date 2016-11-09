@@ -92,9 +92,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData());
-        VmHandler.updateDefaultTimeZone(getParameters().getVmTemplateData());
-        VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
+        vmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData());
+        vmHandler.updateDefaultTimeZone(getParameters().getVmTemplateData());
+        vmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
                 getParameters().getVmTemplateData(),
                 getCluster(),
                 getParameters().getGraphicsDevices());
@@ -193,7 +193,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         // Check if the OS type is supported
         boolean returnValue =
-                VmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
+                vmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
                         getCluster().getArchitecture(),
                         getReturnValue().getValidationMessages());
 
@@ -207,8 +207,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         // Check if the display type is supported
         if (returnValue) {
-            returnValue = VmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
-                    VmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
+            returnValue = vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
+                    vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
                     getReturnValue().getValidationMessages(),
                     getVmTemplate().getCompatibilityVersion());
@@ -220,7 +220,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
-                !VmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
+                !vmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
                         getParameters().getVmTemplateData().getOsId(),
                         getReturnValue().getValidationMessages())) {
             returnValue = false;
@@ -323,7 +323,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     @Override
     protected void executeCommand() {
         if (!isInstanceType() && !isBlankTemplate()) {
-            VmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
+            vmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
                     getVmTemplate().getCompatibilityVersion());
         }
 
@@ -410,7 +410,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private void updateVmTemplate() {
-        VmHandler.updateVmInitToDB(getVmTemplate());
+        vmHandler.updateVmInitToDB(getVmTemplate());
         vmTemplateDao.update(getVmTemplate());
         // also update the smartcard device
         getVmDeviceUtils().updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());

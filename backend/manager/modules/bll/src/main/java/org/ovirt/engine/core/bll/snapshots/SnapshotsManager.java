@@ -110,6 +110,9 @@ public class SnapshotsManager {
     @Inject
     private QuotaDao quotaDao;
 
+    @Inject
+    private VmHandler vmHandler;
+
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
@@ -621,7 +624,7 @@ public class SnapshotsManager {
                 }
             }
             // if the required dedicated host is invalid -> use current VM dedicated host
-            if (!VmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData(), null)) {
+            if (!vmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData(), null)) {
                 vm.setDedicatedVmForVdsList(oldVmStatic.getDedicatedVmForVdsList());
             }
             validateQuota(vm);

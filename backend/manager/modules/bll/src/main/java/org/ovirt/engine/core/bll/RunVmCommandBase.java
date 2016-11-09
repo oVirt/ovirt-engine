@@ -242,7 +242,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected boolean connectLunDisks(Guid hostId) {
         if (getVm().getDiskMap().isEmpty()) {
-            VmHandler.updateDisksFromDb(getVm());
+            vmHandler.updateDisksFromDb(getVm());
         }
         List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values(), true);
         for (LunDisk lunDisk : lunDisks) {
@@ -262,7 +262,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected boolean updateCinderDisksConnections() {
         if (getVm().getDiskMap().isEmpty()) {
-            VmHandler.updateDisksFromDb(getVm());
+            vmHandler.updateDisksFromDb(getVm());
         }
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true);
         for (CinderDisk cinderDisk : cinderDisks) {

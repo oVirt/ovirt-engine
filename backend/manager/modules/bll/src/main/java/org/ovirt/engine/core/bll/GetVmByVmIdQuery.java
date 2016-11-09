@@ -8,6 +8,10 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    protected VmHandler vmHandler;
+
     @Inject
     private VmDao vmDao;
 
@@ -32,11 +36,11 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
     }
 
     protected void updateVMDetails(VM vm) {
-        VmHandler.updateDisksFromDb(vm);
-        VmHandler.updateVmGuestAgentVersion(vm);
-        VmHandler.updateNetworkInterfacesFromDb(vm);
-        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
-        VmHandler.updateNumaNodesFromDb(vm);
-        VmHandler.updateVmStatistics(vm);
+        vmHandler.updateDisksFromDb(vm);
+        vmHandler.updateVmGuestAgentVersion(vm);
+        vmHandler.updateNetworkInterfacesFromDb(vm);
+        vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+        vmHandler.updateNumaNodesFromDb(vm);
+        vmHandler.updateVmStatistics(vm);
     }
 }

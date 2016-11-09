@@ -116,7 +116,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
 
     @Override
     protected void lockVM() {
-        VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
+        vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
     }
 
     @Override

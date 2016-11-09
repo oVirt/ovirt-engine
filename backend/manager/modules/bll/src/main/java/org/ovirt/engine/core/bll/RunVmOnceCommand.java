@@ -69,7 +69,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             if (getParameters().getVmInit().isPasswordAlreadyStored()) {
                 VmBase temp = new VmBase();
                 temp.setId(getParameters().getVmId());
-                VmHandler.updateVmInitFromDB(temp, false);
+                vmHandler.updateVmInitFromDB(temp, false);
                 getParameters().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
             }
         }

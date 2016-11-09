@@ -12,6 +12,9 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
 
     @Inject
+    private VmHandler vmHandler;
+
+    @Inject
     private VmTemplateDao vmTemplateDao;
 
     public GetVmTemplatesByStoragePoolIdQuery(P parameters) {
@@ -23,11 +26,11 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
         List<VmTemplate> templateList = vmTemplateDao.getAllForStoragePool(getParameters().getId());
         // Load VmInit
         for (VmTemplate template : templateList) {
-            VmHandler.updateVmInitFromDB(template, true);
+            vmHandler.updateVmInitFromDB(template, true);
         }
         VmTemplate blank = vmTemplateDao.get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         if (!templateList.contains(blank)) {
-            VmHandler.updateVmInitFromDB(blank, true);
+            vmHandler.updateVmInitFromDB(blank, true);
             templateList.add(0, blank);
         }
         getQueryReturnValue().setReturnValue(templateList);

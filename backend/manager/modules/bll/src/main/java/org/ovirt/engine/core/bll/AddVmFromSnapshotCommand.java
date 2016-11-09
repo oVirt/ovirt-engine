@@ -66,7 +66,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     protected void init() {
         super.init();
         VM vm = vmDao.get(getVmIdFromSnapshot());
-        VmHandler.updateDisksFromDb(vm);
+        vmHandler.updateDisksFromDb(vm);
         boolean isCinderDisksExist = !ImagesHandler.filterDisksBasedOnCinder(vm.getDiskList()).isEmpty();
         getParameters().setUseCinderCommandCallback(isCinderDisksExist);
     }

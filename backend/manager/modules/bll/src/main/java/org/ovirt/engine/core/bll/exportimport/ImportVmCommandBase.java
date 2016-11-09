@@ -188,7 +188,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected boolean validateGraphicsAndDisplay() {
-        return VmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
+        return vmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
                 getGraphicsTypesForVm(),
                 getVm().getDefaultDisplayType(),
                 getReturnValue().getValidationMessages(),
@@ -410,7 +410,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         try {
             addVmToDb();
             processImages();
-            VmHandler.addVmInitToDB(getVm().getStaticData());
+            vmHandler.addVmInitToDB(getVm().getStaticData());
             logIfDisksHaveIllegalPassDiscard();
         } catch (RuntimeException e) {
             macPool.freeMacs(macsAdded);
@@ -458,7 +458,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
-        if (!VmHandler.validateDedicatedVdsExistOnSameCluster(getVm().getStaticData(), null)) {
+        if (!vmHandler.validateDedicatedVdsExistOnSameCluster(getVm().getStaticData(), null)) {
             getVm().setDedicatedVmForVdsList(Collections.emptyList());
         }
 

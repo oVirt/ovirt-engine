@@ -12,6 +12,10 @@ import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameter
 import org.ovirt.engine.core.dao.VmDao;
 
 public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGroupsParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private VmHandler vmHandler;
+
     @Inject
     private VmDao vmDao;
 
@@ -36,7 +40,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
     }
 
     protected void updateVmInit(VM vm) {
-        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+        vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
     }
 
     protected void fillImagesBySnapshots(VM vm) {
@@ -44,11 +48,11 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
     }
 
     protected void updateDisksFromDB(VM vm) {
-        VmHandler.updateDisksFromDb(vm);
+        vmHandler.updateDisksFromDb(vm);
     }
 
     protected void updateVmGuestAgentVersion(VM vm) {
-        VmHandler.updateVmGuestAgentVersion(vm);
+        vmHandler.updateVmGuestAgentVersion(vm);
     }
 
 }

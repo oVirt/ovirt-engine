@@ -43,6 +43,9 @@ public class SnapshotVmConfigurationHelper {
     @Inject
     private DiskImageDao diskImageDao;
 
+    @Inject
+    private VmHandler vmHandler;
+
     /**
      * Creates a VM by a specified OVF string.
      * If configuration is not specified, creates a VM according to the snapshotId
@@ -68,7 +71,7 @@ public class SnapshotVmConfigurationHelper {
             vm = getVmWithoutConfiguration(vmId, snapshotId);
         }
 
-        VmHandler.updateDisksForVm(vm, vm.getImages());
+        vmHandler.updateDisksForVm(vm, vm.getImages());
 
         return vm;
     }

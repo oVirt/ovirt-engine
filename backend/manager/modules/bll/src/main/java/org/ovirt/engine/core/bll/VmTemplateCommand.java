@@ -20,6 +20,9 @@ public abstract class VmTemplateCommand<T extends VmTemplateParameters> extends 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    protected VmHandler vmHandler;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */

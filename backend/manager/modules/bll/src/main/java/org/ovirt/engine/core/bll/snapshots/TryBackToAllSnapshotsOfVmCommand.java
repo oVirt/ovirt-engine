@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -119,7 +118,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         endActionOnDisks();
 
         if (getVm() != null) {
-            VmHandler.unlockVm(getVm(), getCompensationContext());
+            vmHandler.unlockVm(getVm(), getCompensationContext());
             restoreVmConfigFromSnapshot();
         } else {
             setCommandShouldBeLogged(false);
@@ -191,7 +190,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         });
 
         if (!filteredImages.isEmpty()) {
-            VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
+            vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             freeLock();
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
@@ -423,7 +422,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     protected void updateVmDisksFromDb() {
-        VmHandler.updateDisksFromDb(getVm());
+        vmHandler.updateDisksFromDb(getVm());
     }
 
     @Override

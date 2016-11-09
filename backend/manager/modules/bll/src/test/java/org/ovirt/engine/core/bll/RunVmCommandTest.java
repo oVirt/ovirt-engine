@@ -100,6 +100,10 @@ public class RunVmCommandTest extends BaseCommandTest {
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
+    @Spy
+    @InjectMocks
+    VmHandler vmHandler;
+
     private static final String ACTIVE_ISO_PREFIX =
             "/rhev/data-center/mnt/some_computer/f6bccab4-e2f5-4e02-bba0-5748a7bc07b6/images/11111111-1111-1111-1111-111111111111";
     private static final String INACTIVE_ISO_PREFIX = "";
@@ -306,7 +310,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        VmHandler.init();
+        vmHandler.init();
 
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();

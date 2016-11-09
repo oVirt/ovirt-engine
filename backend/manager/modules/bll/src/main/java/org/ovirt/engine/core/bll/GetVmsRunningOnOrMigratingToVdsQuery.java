@@ -9,6 +9,10 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmsRunningOnOrMigratingToVdsQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private VmHandler vmHandler;
+
     @Inject
     private VmDao vmDao;
 
@@ -27,7 +31,7 @@ public class GetVmsRunningOnOrMigratingToVdsQuery<P extends IdQueryParameters> e
 
     protected void updateStatistics(List<VM> allRunningOnOrMigratingToVds) {
         if (allRunningOnOrMigratingToVds != null) {
-            allRunningOnOrMigratingToVds.forEach(VmHandler::updateVmStatistics);
+            allRunningOnOrMigratingToVds.forEach(vmHandler::updateVmStatistics);
         }
     }
 

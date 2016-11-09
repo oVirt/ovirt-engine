@@ -80,6 +80,8 @@ public class VmPoolHandler implements BackendService {
     private ClusterDao clusterDao;
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
+    @Inject
+    private VmHandler vmHandler;
 
     public EngineLock createLock(Guid vmId) {
         return new EngineLock(
@@ -280,7 +282,7 @@ public class VmPoolHandler implements BackendService {
 
         // TODO: This is done to keep consistency with VmDao.getById.
         // It can probably be removed, but that requires some more research
-        VmHandler.updateNetworkInterfacesFromDb(vm);
+        vmHandler.updateNetworkInterfacesFromDb(vm);
 
         RunVmParams runVmParams = new RunVmParams(vmId);
 

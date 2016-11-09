@@ -185,7 +185,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     @Override
     protected void executeCommand() {
         updateVmInitPassword();
-        VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getEffectiveCompatibilityVersion());
+        vmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getEffectiveCompatibilityVersion());
 
         // Free exclusive VM_POOL lock, if taken. Further AddVmAndAttachToPool commands
         // require shared VM_POOL locks only.
@@ -304,7 +304,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
                 getParameters().getVmStaticData().getVmInit().isPasswordAlreadyStored()) {
             VmBase temp = new VmBase();
             temp.setId(getParameters().getVmStaticData().getVmtGuid());
-            VmHandler.updateVmInitFromDB(temp, false);
+            vmHandler.updateVmInitFromDB(temp, false);
             getParameters().getVmStaticData().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
         }
     }

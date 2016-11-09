@@ -94,7 +94,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     @Override
     protected void executeVmCommand() {
         if (getVm().getStatus() != VMStatus.ImageLocked) {
-            VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
+            vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
         }
         freeLock();
         setSucceeded(removeVm());
@@ -186,7 +186,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         }
 
-        VmHandler.updateDisksFromDb(getVm());
+        vmHandler.updateDisksFromDb(getVm());
         getParameters().setUseCinderCommandCallback(getParameters().isRemoveDisks() && !getCinderDisks().isEmpty());
 
         if (!getParameters().isRemoveDisks() && !canRemoveVmWithDetachDisks()) {

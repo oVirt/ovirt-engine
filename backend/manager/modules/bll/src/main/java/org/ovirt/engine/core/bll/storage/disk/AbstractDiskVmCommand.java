@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
@@ -144,7 +143,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     /** Updates the VM's disks from the database */
     protected void updateDisksFromDb() {
-        VmHandler.updateDisksFromDb(getVm());
+        vmHandler.updateDisksFromDb(getVm());
     }
 
     protected boolean isVolumeFormatSupportedForShareable(VolumeFormat volumeFormat) {

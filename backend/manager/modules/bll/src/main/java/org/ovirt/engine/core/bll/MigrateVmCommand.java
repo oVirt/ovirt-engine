@@ -142,7 +142,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getRunVdssList().add(vdsToRunOn.get());
         }
 
-        VmHandler.updateVmGuestAgentVersion(getVm());
+        vmHandler.updateVmGuestAgentVersion(getVm());
 
 
         if (!vdsToRunOn.isPresent()) {

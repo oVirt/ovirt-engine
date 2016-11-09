@@ -34,10 +34,10 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
                     snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
 
             // update information that is not saved in the config
-            VmHandler.updateDisksFromDb(vm);
-            VmHandler.updateVmGuestAgentVersion(vm);
-            VmHandler.updateNetworkInterfacesFromDb(vm);
-            VmHandler.updateVmStatistics(vm);
+            vmHandler.updateDisksFromDb(vm);
+            vmHandler.updateVmGuestAgentVersion(vm);
+            vmHandler.updateNetworkInterfacesFromDb(vm);
+            vmHandler.updateVmStatistics(vm);
 
             getQueryReturnValue().setReturnValue(vm);
         } else {
