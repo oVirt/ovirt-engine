@@ -42,10 +42,9 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             return false;
         }
 
-        ChangeVmClusterValidator validator = new ChangeVmClusterValidator(this,
+        ChangeVmClusterValidator validator = ChangeVmClusterValidator.create(this,
                 getParameters().getClusterId(),
-                getParameters().getVmCustomCompatibilityVersion(),
-                getVmDeviceUtils());
+                getParameters().getVmCustomCompatibilityVersion());
         return validator.validate();
     }
 

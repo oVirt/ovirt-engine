@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -15,9 +17,28 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class ChangeVmClusterValidator {
+
+    @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
+    private VmNicDao vmNicDao;
+
+    @Inject
+    private CpuProfileDao cpuProfileDao;
+
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     private VmCommand parentCommand;
     private final Guid targetClusterId;
@@ -25,16 +46,18 @@ public class ChangeVmClusterValidator {
 
     private Cluster targetCluster;
 
-    private final VmDeviceUtils vmDeviceUtils;
-
-    public ChangeVmClusterValidator(VmCommand parentCommand,
+    public static ChangeVmClusterValidator create(VmCommand parentCommand,
             Guid targetClusterId,
-            Version vmCustomCompatibilityVersion,
-            VmDeviceUtils vmDeviceUtils) {
+            Version vmCompatibilityVersion) {
+        return Injector.injectMembers(new ChangeVmClusterValidator(parentCommand, targetClusterId, vmCompatibilityVersion));
+    }
+
+    private ChangeVmClusterValidator(VmCommand parentCommand,
+            Guid targetClusterId,
+            Version vmCustomCompatibilityVersion) {
         this.parentCommand = parentCommand;
         this.targetClusterId = targetClusterId;
         this.vmCompatibilityVersion = vmCustomCompatibilityVersion;
-        this.vmDeviceUtils = vmDeviceUtils;
     }
 
     protected boolean validate() {
@@ -43,7 +66,7 @@ public class ChangeVmClusterValidator {
             parentCommand.addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         } else {
-            targetCluster = DbFacade.getInstance().getClusterDao().get(targetClusterId);
+            targetCluster = clusterDao.get(targetClusterId);
             if (targetCluster == null) {
                 parentCommand.addValidationMessage(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
                 return false;
@@ -59,7 +82,7 @@ public class ChangeVmClusterValidator {
                 vmCompatibilityVersion = targetCluster.getCompatibilityVersion();
             }
 
-            List<VmNic> interfaces = DbFacade.getInstance().getVmNicDao().getAllForVm(vm.getId());
+            List<VmNic> interfaces = vmNicDao.getAllForVm(vm.getId());
 
             if (!validateDestinationClusterContainsNetworks(interfaces)) {
                 return false;
@@ -100,7 +123,7 @@ public class ChangeVmClusterValidator {
             }
 
             // Cluster must have a cpu profile
-            List<CpuProfile> cpuProfiles = DbFacade.getInstance().getCpuProfileDao().getAllForCluster(
+            List<CpuProfile> cpuProfiles = cpuProfileDao.getAllForCluster(
                     targetClusterId, parentCommand.getUserId(), true, ActionGroup.ASSIGN_CPU_PROFILE);
 
             if (cpuProfiles.isEmpty()) {
@@ -119,8 +142,7 @@ public class ChangeVmClusterValidator {
      * @return Whether the destination cluster has all networks configured or not.
      */
     private boolean validateDestinationClusterContainsNetworks(List<VmNic> interfaces) {
-        List<Network> networks =
-                DbFacade.getInstance().getNetworkDao().getAllForCluster(targetClusterId);
+        List<Network> networks = networkDao.getAllForCluster(targetClusterId);
         StringBuilder missingNets = new StringBuilder();
         for (VmNic iface : interfaces) {
             Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
