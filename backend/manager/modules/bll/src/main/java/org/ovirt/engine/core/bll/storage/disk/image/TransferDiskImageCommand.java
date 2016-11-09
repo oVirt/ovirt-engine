@@ -150,9 +150,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> listPermissionSubjects = new ArrayList<>();
-        listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
+        if (isImageProvided()) {
+            listPermissionSubjects.add(new PermissionSubject(getParameters().getImageId(),
+                    VdcObjectType.Disk,
+                    ActionGroup.EDIT_DISK_PROPERTIES));
+        } else {
+            listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
                     VdcObjectType.Storage,
                     ActionGroup.CREATE_DISK));
+        }
 
         return listPermissionSubjects;
     }
