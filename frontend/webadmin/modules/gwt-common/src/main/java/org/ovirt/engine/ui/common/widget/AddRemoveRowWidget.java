@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -26,13 +28,10 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -245,13 +244,13 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     private AddRemoveRowPanel createAddRemoveRowPanel(boolean lastItem, V widget, Pair<T, V> item) {
         boolean shouldCreateAddButton = lastItem && showAddButton;
 
-        List<PushButton> buttons = new ArrayList<>(2);
+        List<Button> buttons = new ArrayList<>(2);
         buttons.add(createMinusButton(item));
         if (shouldCreateAddButton) {
             buttons.add(createPlusButton(item));
         }
 
-        return new AddRemoveRowPanel(widget, !usePatternFly, buttons.toArray(new PushButton[buttons.size()]));
+        return new AddRemoveRowPanel(widget, !usePatternFly, buttons.toArray(new Button[buttons.size()]));
     }
 
     private void toggleEnabled(T value, V widget) {
@@ -270,10 +269,8 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         removeWidget(item.getSecond());
     }
 
-    private PushButton createMinusButton(final Pair<T, V> item) {
-        final PushButton button = createPushButton(resources.decreaseIcon());
-
-        button.addClickHandler(new ClickHandler() {
+    private Button createMinusButton(final Pair<T, V> item) {
+        final Button button = createButton(IconType.MINUS, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final T value = item.getFirst();
@@ -289,10 +286,8 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         return button;
     }
 
-    private PushButton createPlusButton(final Pair<T, V> item) {
-        final PushButton button = createPushButton(resources.increaseIcon());
-
-        button.addClickHandler(new ClickHandler() {
+    private Button createPlusButton(final Pair<T, V> item) {
+        final Button button = createButton(IconType.PLUS, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 V widget = item.getSecond();
@@ -305,10 +300,9 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         return button;
     }
 
-    private PushButton createPushButton(ImageResource iconResource) {
-        final PushButton button = new PushButton(new Image(iconResource));
+    private Button createButton(IconType iconType, ClickHandler handler) {
+        final Button button = new Button("", iconType, handler);
         button.addStyleName(style.buttonStyle());
-        button.addStyleName("buttonStyle_pfly_fix"); //$NON-NLS-1$
         return button;
     }
 
@@ -377,13 +371,13 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     protected class AddRemoveRowPanel extends FlowPanel implements HasCleanup {
 
-        private List<PushButton> buttons = new LinkedList<>();
+        private List<Button> buttons = new LinkedList<>();
         private SimplePanel div = new SimplePanel();
 
-        public AddRemoveRowPanel(Widget widget, boolean floatLeft, PushButton... buttons) {
+        public AddRemoveRowPanel(Widget widget, boolean floatLeft, Button... buttons) {
             append(widget);
             this.buttons.clear();
-            for (PushButton button : buttons) {
+            for (Button button : buttons) {
                 append(button, floatLeft);
                 this.buttons.add(button);
             }
@@ -405,7 +399,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         }
 
         public void setButtonsEnabled(boolean enabled) {
-            for (PushButton button : buttons) {
+            for (Button button : buttons) {
                 button.setEnabled(enabled);
             }
         }
@@ -420,7 +414,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             remove(buttons.remove(buttons.size() - 1));
         }
 
-        public void appendButton(PushButton button) {
+        public void appendButton(Button button) {
             buttons.add(button);
             remove(div);
             append(button, !usePatternFly);

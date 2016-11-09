@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -44,7 +46,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitModel> implements IndexedPanel {
@@ -266,7 +267,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     Label networkSelectLabel;
 
     @UiField
-    PushButton networkAddButton;
+    Button networkAddButton;
 
     @UiField
     @Ignore
@@ -310,7 +311,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     Label networkLabelSepAddRemove;
 
     @UiField
-    PushButton networkRemoveButton;
+    Button networkRemoveButton;
 
     @UiField
     @Ignore
@@ -374,6 +375,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         customScriptEditor.hideLabel();
         initAdvancedParameterExpanders();
 
+        networkRemoveButton.setIcon(IconType.MINUS);
+        networkAddButton.setIcon(IconType.PLUS);
         localize();
         addStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);

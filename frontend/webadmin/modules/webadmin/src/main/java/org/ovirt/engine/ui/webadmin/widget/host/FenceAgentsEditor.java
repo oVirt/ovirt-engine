@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
@@ -21,7 +23,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -41,7 +42,7 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
     Label newAgentLabel;
 
     @UiField
-    PushButton newAgentButton;
+    Button newAgentButton;
 
     private HandlerRegistration addClickHandlerRegistration;
 
@@ -58,6 +59,7 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
         showAddButton = false;
         this.modelProvider = modelProvider;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        newAgentButton.setIcon(IconType.PLUS);
         addHandlers();
     }
 

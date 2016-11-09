@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -133,8 +134,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         final UiCommandButton loginButton = new UiCommandButton();
         loginButton.setCommand(rootModel.getLoginCommand());
         loginButton.setTitle(constants.storageIscsiPopupLoginButtonLabel());
-        loginButton.setImage(rootModel.getLoginCommand().getIsExecutionAllowed() ?
-                resources.loginIcon() : resources.loginDisabledIcon());
+        loginButton.setIcon(IconType.ARROW_RIGHT);
         loginButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

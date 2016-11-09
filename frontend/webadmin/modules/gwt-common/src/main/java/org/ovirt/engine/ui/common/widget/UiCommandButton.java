@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.common.widget;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,23 +34,23 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
         this(label, null);
     }
 
-    public UiCommandButton(ImageResource image) {
-        this("", image); //$NON-NLS-1$
+    public UiCommandButton(IconType iconType) {
+        this("", iconType); //$NON-NLS-1$
     }
 
-    public UiCommandButton(String label, ImageResource image) {
+    public UiCommandButton(String label, IconType iconType) {
         this();
         setLabel(label);
-        setImage(image);
+        getButtonWidget().setIcon(iconType);
     }
 
     @Override
-    protected ButtonBase getButtonWidget() {
+    protected Button getButtonWidget() {
         return button;
     }
 
-    public void setImage(ImageResource image) {
-        button.setImage(image);
+    public void setIcon(IconType iconType) {
+        button.setIcon(iconType);
     }
 
     public void setCustomContentStyle(String customStyle) {
@@ -97,6 +97,10 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
     protected void updateButton() {
         super.updateButton();
         tooltip.setHtml(buildTooltipHtml());
+    }
+
+    public void setAsPrimary() {
+        button.setAsPrimary();
     }
 
     /**

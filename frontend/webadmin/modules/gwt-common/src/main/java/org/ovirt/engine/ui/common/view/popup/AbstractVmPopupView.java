@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
@@ -64,10 +64,9 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     }
 
     @Override
-    protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
+    protected UiCommandButton createCommandButton(String label, String uniqueId) {
         if (VmBasedWidgetSwitchModeCommand.NAME.equals(uniqueId)) {
             LeftAlignedUiCommandButton leftAlignedUiCommandButton = new LeftAlignedUiCommandButton(label);
-            leftAlignedUiCommandButton.setCustomContentStyle(style.showAdvancedOptionsButton());
             return leftAlignedUiCommandButton;
         }
 

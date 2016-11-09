@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
+import org.gwtbootstrap3.client.ui.Button;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -16,7 +17,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
@@ -30,7 +30,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     Label titleLabel;
 
     @UiField
-    PushButton closeButton;
+    Button closeButton;
 
     @UiField
     DialogTab rolesTab;

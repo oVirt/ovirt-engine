@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -15,7 +17,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FenceProxyModel>
@@ -31,10 +32,10 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FencePr
     private final Driver driver = GWT.create(Driver.class);
 
     @UiField
-    PushButton up;
+    Button up;
 
     @UiField
-    PushButton down;
+    Button down;
 
     @UiField
     @Path(value = "entity.value")
@@ -48,6 +49,8 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FencePr
 
     public HostProxySourceWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        up.setIcon(IconType.ARROW_UP);
+        down.setIcon(IconType.ARROW_DOWN);
         driver.initialize(this);
     }
 

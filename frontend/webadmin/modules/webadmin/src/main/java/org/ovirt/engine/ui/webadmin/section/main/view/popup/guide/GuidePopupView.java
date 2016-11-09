@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.guide;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -24,7 +25,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -183,11 +183,11 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
         optionalActionsPanel.clear();
 
         for (final UICommand command : object.getCompulsoryActions()) {
-            addButton(command, compulsoryActionsPanel, resources.wrenchImage());
+            addButton(command, compulsoryActionsPanel, IconType.WRENCH);
         }
 
         for (final UICommand command : object.getOptionalActions()) {
-            addButton(command, optionalActionsPanel, resources.plusButtonImage());
+            addButton(command, optionalActionsPanel, IconType.PLUS);
         }
     }
 
@@ -199,7 +199,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
         optionalSection.add(optionalActionsPanel);
     }
 
-    private void addButton(final UICommand command, VerticalPanel buttonsPanel, ImageResource buttonImage) {
+    private void addButton(final UICommand command, VerticalPanel buttonsPanel, IconType buttonImage) {
         UiCommandButton guideButton = new UiCommandButton(command.getTitle(), buttonImage);
         guideButton.setCommand(command);
         guideButton.getElement().setId("UiCommandButton_guideButton_" + command.getTitle()); //$NON-NLS-1$

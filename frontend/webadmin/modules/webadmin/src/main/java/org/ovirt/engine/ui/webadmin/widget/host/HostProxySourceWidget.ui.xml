@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
@@ -32,16 +34,12 @@
             padding: 0px;
         }
 
-        .upDownButton {
-            width: 18px;
-            height: 18px;
-            padding-left: 4px;
-            padding-top: 0px;
-            line-height: 16px;
-        }
-
         .rowPadding {
             padding-top: 2px;
+        }
+
+        .downArrow {
+            left: 1px;
         }
     </ui:style>
 
@@ -60,10 +58,10 @@
         <b:Column size="LG_1" addStyleNames="{style.editColumn}">
           <b:Row addStyleNames="{style.noMargin}">
             <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
-              <g:PushButton ui:field="up" text="/\" addStyleNames="{style.upDownButton}" />
+              <b:Button ui:field="up" />
             </b:Column>
-            <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
-              <g:PushButton ui:field="down" text="\/" addStyleNames="{style.upDownButton}" />
+            <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding} {style.downArrow}">
+              <b:Button ui:field="down" />
             </b:Column>
           </b:Row>
         </b:Column>

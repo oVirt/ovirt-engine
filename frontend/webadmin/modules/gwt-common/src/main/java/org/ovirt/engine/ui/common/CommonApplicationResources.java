@@ -48,42 +48,6 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("css/DialogBox.css")
     CssResource dialogBoxStyle();
 
-    @Source("images/button/button_start.png")
-    ImageResource dialogButtonUpStart();
-
-    @Source("images/button/button_stretch.png")
-    ImageResource dialogButtonUpStretch();
-
-    @Source("images/button/button_end.png")
-    ImageResource dialogButtonUpEnd();
-
-    @Source("images/button/button_Over_start.png")
-    ImageResource dialogButtonOverStart();
-
-    @Source("images/button/button_Over_stretch.png")
-    ImageResource dialogButtonOverStretch();
-
-    @Source("images/button/button_Over_end.png")
-    ImageResource dialogButtonOverEnd();
-
-    @Source("images/button/button_Down_start.png")
-    ImageResource dialogButtonDownStart();
-
-    @Source("images/button/button_Down_stretch.png")
-    ImageResource dialogButtonDownStretch();
-
-    @Source("images/button/button_Down_end.png")
-    ImageResource dialogButtonDownEnd();
-
-    @Source("images/button/button_Disabled_start.png")
-    ImageResource dialogButtonUpDisabledStart();
-
-    @Source("images/button/button_Disabled_stretch.png")
-    ImageResource dialogButtonUpDisabledStretch();
-
-    @Source("images/button/button_Disabled_end.png")
-    ImageResource dialogButtonUpDisabledEnd();
-
     @Source("images/dialog/progress.gif")
     ImageResource dialogProgressImage();
 
@@ -261,12 +225,6 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/vms.png")
     ImageResource vmsImage();
-
-    @Source("images/login.png")
-    ImageResource loginIcon();
-
-    @Source("images/login_disabled.png")
-    ImageResource loginDisabledIcon();
 
     // Network
     @Source("images/network/icn_plugged.png")

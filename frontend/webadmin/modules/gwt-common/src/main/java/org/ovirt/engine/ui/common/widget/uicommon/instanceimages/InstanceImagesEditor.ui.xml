@@ -6,12 +6,9 @@
 
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.instanceimages.InstanceImagesEditor.InstanceImagesWidgetStyle">
         .buttonStyle {
-            padding-left: 2px;
-            padding-top: 2px;
-            margin-top: 6px;
-            margin-left: 10px;
+            margin-left: 2px;
             position: relative;
-            top: -24px;
+            top: -26px;
         }
 
         .titleStyle {

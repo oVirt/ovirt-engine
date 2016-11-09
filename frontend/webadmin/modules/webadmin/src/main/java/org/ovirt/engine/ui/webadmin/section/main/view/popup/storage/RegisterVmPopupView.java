@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
-import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
@@ -195,7 +195,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
     }
 
     @Override
-    protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
+    protected UiCommandButton createCommandButton(String label, String uniqueId) {
         if (RegisterVmModel.VNIC_PROFILE_MAPPING_COMMAND.equals(uniqueId)) {
             return new LeftAlignedUiCommandButton(label);
         } else {

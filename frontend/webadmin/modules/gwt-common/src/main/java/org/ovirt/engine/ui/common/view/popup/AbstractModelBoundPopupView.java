@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
-import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -62,7 +61,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         this.popupContent = widget.getContent();
     }
 
-    protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
+    protected UiCommandButton createCommandButton(String label, String uniqueId) {
         return new UiCommandButton(label);
     }
 
@@ -117,8 +116,8 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     }
 
     @Override
-    public HasUiCommandClickHandlers addFooterButton(String label, String uniqueId) {
-        AbstractUiCommandButton button = createCommandButton(label, uniqueId);
+    public HasUiCommandClickHandlers addFooterButton(String label, String uniqueId, boolean isPrimary) {
+        UiCommandButton button = createCommandButton(label, uniqueId);
         asWidget().addFooterButton(button);
         focusableButtons.add(0, button);
 
@@ -126,6 +125,9 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         button.asWidget().getElement().setId(
                 ElementIdUtils.createElementId(elementId, uniqueId));
 
+        if (isPrimary) {
+            button.setAsPrimary();
+        }
         return button;
     }
 

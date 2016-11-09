@@ -42,9 +42,7 @@
     }
 
     .bootSequenceButton {
-        font-size: 10px;
         font-weight: bold;
-        text-align: center;
         margin-bottom: 5px;
     }
 
@@ -113,12 +111,10 @@
                         <b:Column size="LG_10" ui:field="bootSequenceColumn">
                         </b:Column>
                         <b:Column size="LG_2">
-                            <g:PushButton ui:field="bootSequenceUpButton" addStyleNames="{style.bootSequenceButton}"
-                                enabled="false" text="{constants.bootSequenceUpButtonLabel}">
-                            </g:PushButton>
-                            <g:PushButton ui:field="bootSequenceDownButton" addStyleNames="{style.bootSequenceButton}"
-                                enabled="false" text="{constants.bootSequenceDownButtonLabel}">
-                            </g:PushButton>
+                            <b:Button ui:field="bootSequenceUpButton" addStyleNames="{style.bootSequenceButton}"
+                                enabled="false" text="{constants.bootSequenceUpButtonLabel}" />
+                            <b:Button ui:field="bootSequenceDownButton" addStyleNames="{style.bootSequenceButton}"
+                                enabled="false" text="{constants.bootSequenceDownButtonLabel}" />
                         </b:Column>
                     </b:Row>
                     <b:Row>

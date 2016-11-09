@@ -40,16 +40,18 @@
             margin-bottom: 5px;
             margin-left: 32px;
         }
+
         .labelSep {
             margin-left: 12px;
             margin-right: 12px;
         }
+
+        .labelHeight {
+            line-height: 26px;
+        }
+
         .buttonStyle {
-            margin-right: 7px;
-            width: 9px;
-            height: 10px;
-            padding-left: 2px;
-            padding-top: 2px;
+            margin-right: 5px;
         }
         .displayNone {
             display: none !important;
@@ -192,15 +194,11 @@
                   <g:Label ui:field="networkSelectLabel" />
                 </b:Column>
                 <b:Column size="LG_6">
-                  <g:PushButton ui:field="networkAddButton" addStyleNames="{style.buttonStyle} {style.floatLeft} buttonStyle_pfly_fix">
-                    <g:upFace image='{resources.increaseIcon}' />
-                  </g:PushButton>
-                  <g:Label ui:field="networkAddLabel" addStyleNames="{style.floatLeft}"/>
-                  <g:Label ui:field="networkLabelSepAddRemove" addStyleNames="{style.labelSep} {style.floatLeft}" />
-                  <g:PushButton ui:field="networkRemoveButton" addStyleNames="{style.buttonStyle} {style.floatLeft} buttonStyle_pfly_fix">
-                    <g:upFace image='{resources.decreaseIcon}' />
-                  </g:PushButton>
-                  <g:Label ui:field="networkRemoveLabel" addStyleNames="{style.floatLeft}"/>
+                  <b:Button ui:field="networkAddButton" addStyleNames="{style.buttonStyle} {style.floatLeft}" />
+                  <g:Label ui:field="networkAddLabel" addStyleNames="{style.labelHeight} {style.floatLeft}"/>
+                  <g:Label ui:field="networkLabelSepAddRemove" addStyleNames="{style.labelHeight} {style.labelSep} {style.floatLeft}" />
+                  <b:Button ui:field="networkRemoveButton" addStyleNames="{style.buttonStyle} {style.floatLeft}" />
+                  <g:Label ui:field="networkRemoveLabel" addStyleNames="{style.labelHeight} {style.floatLeft}"/>
                 </b:Column>
               </b:Row>
               <b:Row ui:field="networkOptions">

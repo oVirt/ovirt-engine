@@ -35,7 +35,7 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
             position: absolute;
             padding: 0px;
             top: 34px;
-            bottom: 35px;
+            bottom: 42px;
             left: 6px;
             right: 6px;
         }

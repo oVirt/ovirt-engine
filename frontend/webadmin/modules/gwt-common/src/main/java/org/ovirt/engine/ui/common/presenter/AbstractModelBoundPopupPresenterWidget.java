@@ -55,7 +55,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         void setHashName(String name);
 
-        HasUiCommandClickHandlers addFooterButton(String label, String uniqueId);
+        HasUiCommandClickHandlers addFooterButton(String label, String uniqueId, boolean isPrimary);
 
         void setHelpCommand(UICommand command);
 
@@ -348,7 +348,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         for (int i = model.getCommands().size() - 1; i >= 0; i--) {
             UICommand command = model.getCommands().get(i);
             final HasUiCommandClickHandlers button = getView().addFooterButton(
-                    command.getTitle(), command.getName());
+                    command.getTitle(), command.getName(),
+                    model.getDefaultCommand() != null && model.getDefaultCommand().equals(command));
             button.setCommand(command);
 
             // Register command execution handler

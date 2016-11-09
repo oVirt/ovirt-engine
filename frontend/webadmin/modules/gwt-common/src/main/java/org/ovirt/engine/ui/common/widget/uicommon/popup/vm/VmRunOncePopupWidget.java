@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -259,11 +260,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @UiField
     @WithElementId
-    ButtonBase bootSequenceUpButton;
+    Button bootSequenceUpButton;
 
     @UiField
     @WithElementId
-    ButtonBase bootSequenceDownButton;
+    Button bootSequenceDownButton;
 
     @UiField
     Column bootSequenceColumn;

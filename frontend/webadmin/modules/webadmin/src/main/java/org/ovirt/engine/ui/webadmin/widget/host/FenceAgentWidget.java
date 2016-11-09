@@ -3,9 +3,11 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -61,10 +63,10 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
     PushButton editFenceAgent;
 
     @UiField
-    PushButton up;
+    Button up;
 
     @UiField
-    PushButton down;
+    Button down;
 
     @UiField
     @Path(value = "managementIp.entity")
@@ -106,6 +108,8 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
         concurrentGroupLabel.setText(constants.concurrentAgentGroupLabel());
+        up.setIcon(IconType.ARROW_UP);
+        down.setIcon(IconType.ARROW_DOWN);
     }
 
     private void initEditors() {

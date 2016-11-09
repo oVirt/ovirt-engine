@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.popup.ErrorPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -13,7 +14,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.inject.Inject;
 
 public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> implements ErrorPopupPresenterWidget.ViewDef {
@@ -29,7 +29,7 @@ public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     HTML messageLabel;
 
     @UiField
-    PushButton closeButton;
+    SimpleDialogButton closeButton;
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
