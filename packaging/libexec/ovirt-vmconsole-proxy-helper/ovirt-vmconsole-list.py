@@ -254,6 +254,9 @@ def main():
                 'Content-Length': len(data),
             },
         )
+        logger.debug(
+            'will send %r to %r', req.get_method(), req.get_full_url()
+        )
 
         ca_certs = cfg_file.get('ENGINE_CA')
         if not ca_certs:
