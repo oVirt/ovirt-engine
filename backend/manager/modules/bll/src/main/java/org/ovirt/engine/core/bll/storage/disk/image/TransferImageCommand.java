@@ -85,8 +85,9 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         entity.setBytesTotal(getParameters().getTransferSize());
         imageTransferDao.save(entity);
 
-        // If an image was not created yet, create it.
-        if (Guid.isNullOrEmpty(getParameters().getImageId())) {
+        if (isImageProvided()) {
+            handleImageIsReadyForTransfer(getParameters().getImageId());
+        } else {
             if (getParameters().getTransferType() == TransferType.Download) {
                 failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
                 setSucceeded(false);
@@ -94,12 +95,14 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             }
             log.info("Creating {} image", getImageType());
             createImage();
-        } else {
-            handleImageIsReadyForTransfer(getParameters().getImageId());
         }
 
         setActionReturnValue(getCommandId());
         setSucceeded(true);
+    }
+
+    protected boolean isImageProvided() {
+        return !Guid.isNullOrEmpty(getParameters().getImageId());
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
@@ -472,7 +475,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     @Override
     protected boolean validate() {
         Guid imageId = getParameters().getImageId();
-        if (!Guid.isNullOrEmpty(imageId)) {
+        if (isImageProvided()) {
             return validateImageTransfer(imageId);
         } else if (getParameters().getTransferType() == TransferType.Download) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
