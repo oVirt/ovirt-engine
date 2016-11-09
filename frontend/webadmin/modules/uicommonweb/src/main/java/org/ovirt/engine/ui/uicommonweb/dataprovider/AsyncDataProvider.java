@@ -3354,4 +3354,11 @@ public class AsyncDataProvider {
                 new ValidateVmMacsParameters(vmsByCluster),
                 asyncQuery);
     }
+
+    public void getGlusterVolumesForStorageDomain(AsyncQuery<List<GlusterVolumeEntity>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllGlusterVolumesForStorageDomain,
+                new VdcQueryParametersBase(),
+                aQuery);
+    }
 }

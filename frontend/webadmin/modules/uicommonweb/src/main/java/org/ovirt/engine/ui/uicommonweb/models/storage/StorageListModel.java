@@ -1105,6 +1105,15 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         connection.setStorageType(posixModel.getType());
         connection.setVfsType(posixModel.getVfsType().getEntity());
         connection.setMountOptions(posixModel.getMountOptions().getEntity());
+        if (posixModel instanceof GlusterStorageModel) {
+            GlusterStorageModel glusterModel = (GlusterStorageModel) posixModel;
+            Guid glusterVolId = null;
+            if (glusterModel.getLinkGlusterVolume().getEntity()) {
+                glusterVolId = ((GlusterStorageModel) posixModel).getGlusterVolumes().getSelectedItem() != null
+                        ? ((GlusterStorageModel) posixModel).getGlusterVolumes().getSelectedItem().getId() : null;
+            }
+            connection.setGlusterVolumeId(glusterVolId);
+        }
         this.connection = connection;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<>();
@@ -1259,7 +1268,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         if (posixModel.getMountOptions().getEntity() != null) {
             connection.setMountOptions(posixModel.getMountOptions().getEntity().toString());
         }
-
+        if (posixModel.getType().equals(StorageType.GLUSTERFS)) {
+            //TBD: set gluster vol id only if managed glustervol selected
+            connection.setGlusterVolumeId(null);
+        }
     }
 
     public void saveNewNfsStorage() {
