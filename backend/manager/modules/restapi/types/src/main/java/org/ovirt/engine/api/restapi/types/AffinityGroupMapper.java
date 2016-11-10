@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 
 public class AffinityGroupMapper {
 
@@ -13,8 +14,8 @@ public class AffinityGroupMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
-        model.setPositive(entity.isPositive());
-        model.setEnforcing(entity.isEnforcing());
+        model.setPositive(entity.getVmPolarityBooleanObject());
+        model.setEnforcing(entity.isVmEnforcing());
         Cluster cluster = new Cluster();
         cluster.setId(entity.getClusterId().toString());
         model.setCluster(cluster);
@@ -40,10 +41,14 @@ public class AffinityGroupMapper {
             entity.setClusterId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetPositive()) {
-            entity.setPositive(model.isPositive());
+            if (model.isPositive()) {
+                entity.setVmAffinityRule(EntityAffinityRule.POSITIVE);
+            } else {
+                entity.setVmAffinityRule(EntityAffinityRule.NEGATIVE);
+            }
         }
         if (model.isSetEnforcing()) {
-            entity.setEnforcing(model.isEnforcing());
+            entity.setVmEnforcing(model.isEnforcing());
         }
 
         return entity;

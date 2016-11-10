@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -101,21 +102,24 @@ public class AffinityRulesEnforcerTest {
     public void shouldNotTryToMigrateWhenNotSchedulable() {
         when(schedulingManager.canSchedule(eq(cluster), any(VM.class), anyList(), anyList(),
                 anyList(), anyList())).thenReturn(false);
-        affinityGroups.add(createAffinityGroup(cluster, true, vm1, vm2, vm4));
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4));
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
     }
 
     @Test
     public void shouldMigrateFromHostWithLessHosts() {
-        AffinityGroup positiveGroup = createAffinityGroup(cluster, true, vm1, vm2, vm4);
+        AffinityGroup positiveGroup =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4);
         affinityGroups.add(positiveGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
     }
 
     @Test
     public void shouldMigrateCandidateFromNegativeGroup() {
-        AffinityGroup positiveSatisfiedGroup = createAffinityGroup(cluster, true, vm1, vm2);
-        AffinityGroup negativeUnsatisfiedGroup = createAffinityGroup(cluster, false, vm2, vm3, vm6);
+        AffinityGroup positiveSatisfiedGroup =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2);
+        AffinityGroup negativeUnsatisfiedGroup = createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE,
+                vm2, vm3, vm6);
         affinityGroups.add(negativeUnsatisfiedGroup);
         affinityGroups.add(positiveSatisfiedGroup);
         final VM candidate = enforcer.chooseNextVmToMigrate(cluster);
@@ -129,8 +133,8 @@ public class AffinityRulesEnforcerTest {
 
     @Test
     public void shouldDoNothingWhenSatisfied() {
-        AffinityGroup positiveGroup = createAffinityGroup(cluster, true, vm1, vm2);
-        AffinityGroup negativeGroup = createAffinityGroup(cluster, false, vm1, vm4);
+        AffinityGroup positiveGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2);
+        AffinityGroup negativeGroup = createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, vm1, vm4);
         affinityGroups.add(positiveGroup);
         affinityGroups.add(negativeGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
@@ -138,7 +142,8 @@ public class AffinityRulesEnforcerTest {
 
     @Test
     public void shouldMigrateMoreThanOneHost() {
-        affinityGroups.add(createAffinityGroup(cluster, true, vm1, vm2, vm3, vm4, vm5, vm6));
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3,
+                vm4, vm5, vm6));
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
         vm4.setRunOnVds(host1.getId());
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
@@ -146,8 +151,8 @@ public class AffinityRulesEnforcerTest {
 
     @Test
     public void shouldFixBiggerAffinityGroupFirst() {
-        AffinityGroup bigGroup = createAffinityGroup(cluster, true, vm1, vm4, vm6);
-        AffinityGroup smallGroup = createAffinityGroup(cluster, true, vm2, vm5);
+        AffinityGroup bigGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm4, vm6);
+        AffinityGroup smallGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm2, vm5);
         affinityGroups.add(bigGroup);
         affinityGroups.add(smallGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm4, vm6);
@@ -167,8 +172,10 @@ public class AffinityRulesEnforcerTest {
         vm5.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000004"));
         prepareVmDao(vm1, vm2, vm4, vm5, vm6);
 
-        final AffinityGroup lowIdGroup = createAffinityGroup(cluster, true, vm1, vm4);
-        final AffinityGroup highIdGroup = createAffinityGroup(cluster, true, vm2, vm5);
+        final AffinityGroup lowIdGroup =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm4);
+        final AffinityGroup highIdGroup =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm2, vm5);
         affinityGroups.add(lowIdGroup);
         affinityGroups.add(highIdGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm2, vm5);
@@ -180,7 +187,8 @@ public class AffinityRulesEnforcerTest {
 
         // Bigger groups should always come first
         affinityGroups.clear();
-        final AffinityGroup biggestIdGroup = createAffinityGroup(cluster, true, vm1, vm4,  vm6);
+        final AffinityGroup biggestIdGroup =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm4, vm6);
         affinityGroups.add(highIdGroup);
         affinityGroups.add(biggestIdGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm4, vm6);
@@ -190,7 +198,8 @@ public class AffinityRulesEnforcerTest {
     public void shouldSelectFirstSchedulableFromCandidatePool() {
         // Because three VMs are running on host1 and only two Vms (vm5 and vm6) are running on host3
         // the enforcer will detect vm5 and vm6 as possible candidates for migration
-        affinityGroups.add(createAffinityGroup(cluster, true, vm1, vm2, vm3, vm5, vm6));
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3,
+                vm5, vm6));
 
         // Say no to the first scheduling attempt and yes to the second one, to force the enforcer
         // to check every possible candidate
@@ -233,13 +242,15 @@ public class AffinityRulesEnforcerTest {
         return vm;
     }
 
-    private AffinityGroup createAffinityGroup(Cluster cluster, Boolean isPositive, final VM... vmList) {
-        AffinityGroup ag = new AffinityGroup();
+    private AffinityGroup createAffinityGroup(Cluster cluster, EntityAffinityRule vmAffinityRule, final
+    VM... vmList) {
+        AffinityGroup ag =
+                new AffinityGroup();
         ag.setId(Guid.newGuid());
-        ag.setPositive(isPositive);
+        ag.setVmAffinityRule(vmAffinityRule);
         ag.setClusterId(cluster.getId());
-        ag.setEnforcing(true);
-        ag.setEntityIds(Arrays.stream(vmList).map(VM::getId).collect(Collectors.toList()));
+        ag.setVmEnforcing(true);
+        ag.setVmIds(Arrays.stream(vmList).map(VM::getId).collect(Collectors.toList()));
         return ag;
     }
 

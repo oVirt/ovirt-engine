@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AffinityRulesUtils {
@@ -23,17 +24,15 @@ public class AffinityRulesUtils {
      */
     public static AffinityGroupConflict checkForAffinityGroupConflict(Iterable<AffinityGroup> affinityGroups,
             Set<Set<Guid>> unifiedPositiveGroups) {
-        for(AffinityGroup ag : affinityGroups) {
-            if(ag.isPositive()) {
-                continue;
-            }
+        for (AffinityGroup ag : affinityGroups) {
+            if (ag.isVmNegative()) {
+                for (Set<Guid> positiveGroup : unifiedPositiveGroups) {
+                    Set<Guid> intersection = new HashSet<>(ag.getVmIds());
+                    intersection.retainAll(positiveGroup);
 
-            for (Set<Guid> positiveGroup : unifiedPositiveGroups) {
-                Set<Guid> intersection = new HashSet<>(ag.getEntityIds());
-                intersection.retainAll(positiveGroup);
-
-                if(intersection.size() > 1) {
-                    return new AffinityGroupConflict(positiveGroup, ag.getEntityIds());
+                    if (intersection.size() > 1) {
+                        return new AffinityGroupConflict(positiveGroup, ag.getVmIds());
+                    }
                 }
             }
         }
@@ -63,7 +62,7 @@ public class AffinityRulesUtils {
         for(Iterator<AffinityGroup> it = affinityGroups.iterator(); it.hasNext();) {
             AffinityGroup ag = it.next();
 
-            for(Guid id : ag.getEntityIds()) {
+            for(Guid id : ag.getVmIds()) {
                 Set<Guid> temp = new HashSet<>();
                 temp.add(id);
                 uag.add(temp);
@@ -74,10 +73,10 @@ public class AffinityRulesUtils {
         // Go through each positive affinity group and merge all existing groups
         // that contain the referenced VMs into one.
         for(AffinityGroup ag : affinityGroups) {
-            if(ag.isPositive()) {
+            if(ag.isVmPositive()) {
                 Set<Guid> mergedGroup = new HashSet<>();
 
-                for(Guid id : ag.getEntityIds()) {
+                for(Guid id : ag.getVmIds()) {
                     // Get the current groups VM(id) belongs to
                     Set<Guid> existingGroup = vmIndex.get(id);
 
@@ -113,11 +112,11 @@ public class AffinityRulesUtils {
 
         for(Set<Guid> s : uag) {
             AffinityGroup temp = new AffinityGroup();
-            temp.setPositive(true);
+            temp.setVmAffinityRule(EntityAffinityRule.POSITIVE);
             List<Guid> entities = new ArrayList<>();
 
             entities.addAll(s);
-            temp.setEntityIds(entities);
+            temp.setVmIds(entities);
             output.add(temp);
         }
 

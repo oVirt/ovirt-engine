@@ -51,7 +51,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
 
             @Override
             protected Boolean getRawValue(AffinityGroup object) {
-                return object.isPositive();
+                return object.getVmPolarityBooleanObject();
             }
         };
         polarityColumn.makeSortable();
@@ -62,7 +62,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
 
                     @Override
                     protected Boolean getRawValue(AffinityGroup object) {
-                        return object.isEnforcing();
+                        return object.isVmEnforcing();
                     }
                 };
         enforceColumn.makeSortable();
@@ -104,7 +104,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
     }
 
     protected List<String> getEntityNames(AffinityGroup object) {
-        return object.getEntityNames();
+        return object.getVmEntityNames();
     }
 
     protected String join(List<String> strings, String separator) {

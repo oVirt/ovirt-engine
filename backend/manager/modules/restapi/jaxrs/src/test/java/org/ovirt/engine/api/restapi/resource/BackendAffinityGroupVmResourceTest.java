@@ -62,8 +62,8 @@ public class BackendAffinityGroupVmResourceTest
             vmIds.add(vm.getId());
             vmNames.add(vm.getName());
         }
-        group.setEntityIds(vmIds);
-        group.setEntityNames(vmNames);
+        group.setVmIds(vmIds);
+        group.setVmEntityNames(vmNames);
         return group;
     }
 }

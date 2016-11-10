@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -64,7 +65,7 @@ public abstract class AffinityGroupModel extends Model {
 
             @Override
             public void onSuccess(List<VM> vmList) {
-                List<Guid> vmIds = getAffinityGroup().getEntityIds();
+                List<Guid> vmIds = getAffinityGroup().getVmIds();
                 getVmsSelectionModel().init(vmList, vmIds != null ? vmIds : new ArrayList<Guid>());
                 stopProgress();
             }
@@ -138,9 +139,11 @@ public abstract class AffinityGroupModel extends Model {
         group.setName(getName().getEntity());
         group.setDescription(getDescription().getEntity());
         group.setClusterId(clusterId);
-        group.setEnforcing(getEnforcing().getEntity());
-        group.setPositive(getPositive().getEntity());
-        group.setEntityIds(getVmsSelectionModel().getSelectedVmIds());
+        group.setVmEnforcing(getEnforcing().getEntity());
+        group.setVmAffinityRule(getPositive().getEntity().booleanValue() ?
+                EntityAffinityRule.POSITIVE :
+                EntityAffinityRule.NEGATIVE);
+        group.setVmIds(getVmsSelectionModel().getSelectedVmIds());
 
         startProgress();
 

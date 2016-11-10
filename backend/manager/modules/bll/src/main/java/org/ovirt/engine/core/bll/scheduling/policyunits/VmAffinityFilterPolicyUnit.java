@@ -63,15 +63,15 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
 
         // Group by all vms in affinity groups per positive or negative
         for (AffinityGroup affinityGroup : affinityGroups) {
-            if (affinityGroup.isEnforcing() == enforcing) {
-                for (Guid entityId : affinityGroup.getEntityIds()) {
+            if (affinityGroup.isVmEnforcing() == enforcing) {
+                for (Guid entityId : affinityGroup.getVmIds()) {
                     // Skip current VM
                     if (entityId.equals(vm.getId())) {
                         continue;
                     }
-                    if (affinityGroup.isPositive()) {
+                    if (affinityGroup.isVmPositive()) {
                         allVmIdsPositive.add(entityId);
-                    } else {
+                    } else if (affinityGroup.isVmNegative()) {
                         allVmIdsNegative.add(entityId);
                     }
                 }

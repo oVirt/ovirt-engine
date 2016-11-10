@@ -75,32 +75,32 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     public void validate_vmNotExists_Test() {
         doReturn(null).when(vmStaticDao).get(any(Guid.class));
         ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
+                EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP);
     }
 
     @Test
     public void validate_vmNotInCluster_Test() {
         doReturn(Guid.newGuid()).when(command).getClusterId();
         ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
+                EngineMessage.ACTION_TYPE_FAILED_ENTITY_NOT_IN_AFFINITY_GROUP_CLUSTER);
     }
 
     @Test
     public void validate_duplicateVm_Test() {
-        affinityGroup.getEntityIds().add(vmId);
+        affinityGroup.getVmIds().add(vmId);
         ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP);
+                EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_ENTITY_IN_AFFINITY_GROUP);
     }
 
     @Test
     public void validate_nonEnforcing_Test() {
-        affinityGroup.setEnforcing(false);
+        affinityGroup.setVmEnforcing(false);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void validate_emptyAffinityGroup() {
-        affinityGroup.setEntityIds(null);
+        affinityGroup.setVmIds(null);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -111,8 +111,8 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     private AffinityGroup createAffinityGroup() {
         affinityGroup = new AffinityGroup();
-        affinityGroup.setEntityIds(new ArrayList<>());
-        affinityGroup.getEntityIds().add(vmId);
+        affinityGroup.setVmIds(new ArrayList<>());
+        affinityGroup.getVmIds().add(vmId);
         affinityGroup.setClusterId(clusterId);
         return affinityGroup;
     }

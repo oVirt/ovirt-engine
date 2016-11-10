@@ -26,7 +26,7 @@ public class BackendAffinityGroupVmResource
     @Override
     public Response remove() {
         AffinityGroup group = getGroup();
-        if (group == null || !group.getEntityIds().remove(asGuid(id))) {
+        if (group == null || !group.getVmIds().remove(asGuid(id))) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         return performAction(

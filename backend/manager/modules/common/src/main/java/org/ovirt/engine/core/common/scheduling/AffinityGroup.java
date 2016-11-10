@@ -42,32 +42,57 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
     @NotNull(message = "ACTION_TYPE_FAILED_AFFINITY_GROUP_INVALID_CLUSTER_ID")
     private Guid clusterId;
     /**
-     * affinity group polarity: positive(true)/negative(false- anti-affinity)
+     * affinity group vms polarity: positive/negative/disable(vm to vm affinity disabled)
      */
-    private boolean positive;
+    private EntityAffinityRule vmAffinityRule;
     /**
-     * affinity group enforcement mode: hard(true)/soft(false)<br>
+     * affinity group vms enforcement mode: hard(true)/soft(false)<br>
      * true: hard- filtering host that doesn't comply with affinity rule <br>
      * false: soft- best effort to comply with affinity rule
      */
-    private boolean enforcing;
+    private boolean vmEnforcing;
     /**
-     * list of entity uuids that are included in affinity group.<br>
-     * currently supported by vms
+     * list of vms uuids that are included in affinity group.<br>
      */
-    private List<Guid> entityIds;
+    private List<Guid> vmIds;
     /**
-     * list of entity names that are included in affinity group<br>
-     * each item index matches to entityIds index,<br>
-     * i.e. entityNames.get(5) is the name of the entity with entityIds.get(5) id.
+     * list of VM entity names that are included in affinity group<br>
+     * each item index matches to vmIds index,<br>
+     * i.e. vmEntityNames.get(5) is the name of the entity with vmIds.get(5) id.
      */
-    private List<String> entityNames;
+    //TODO remove this list and change it to a set of objects that contain ids and names
+    private List<String> vmEntityNames;
+    /**
+     * list of VDS entity names that are included in affinity group<br>
+     * each item index matches to vdsIds index,<br>
+     * i.e. vdsEntityNames.get(5) is the name of the entity with vdsIds.get(5) id.
+     */
+    //TODO remove this list and change it to a set of objects that contain ids and names
+    private List<String> vdsEntityNames;
+    /**
+     * affinity group vds polarity: positive(true)/negative(false- anti-affinity)
+     */
+    private EntityAffinityRule vdsAffinityRule;
+    /**
+     * affinity group vds enforcement mode: hard(true)/soft(false)<br>
+     * true: hard- filtering host that doesn't comply with affinity rule <br>
+     * false: soft- best effort to comply with affinity rule
+     */
+    private boolean vdsEnforcing;
+    /**
+     * list of vds uuids that are included in affinity group.<br>
+     */
+    private List<Guid> vdsIds;
 
     public AffinityGroup() {
-        this.positive = true;
-        this.enforcing = true;
-        this.entityIds = new ArrayList<>();
-        this.entityNames = new ArrayList<>();
+        this.vmAffinityRule = EntityAffinityRule.POSITIVE;
+        this.vmEnforcing = true;
+        this.vdsAffinityRule = EntityAffinityRule.POSITIVE;
+        this.vdsEnforcing = false;
+        this.vmIds = new ArrayList<>();
+        this.vdsIds = new ArrayList<>();
+        this.vmEntityNames = new ArrayList<>();
+        this.vdsEntityNames = new ArrayList<>();
     }
 
     @Override
@@ -105,41 +130,101 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
         this.clusterId = clusterId;
     }
 
-    public boolean isPositive() {
-        return positive;
+    public boolean isVmEnforcing() {
+        return vmEnforcing;
     }
 
-    public void setPositive(boolean positive) {
-        this.positive = positive;
+    public void setVmEnforcing(boolean vmEnforcing) {
+        this.vmEnforcing = vmEnforcing;
     }
 
-    public boolean isEnforcing() {
-        return enforcing;
+    public List<Guid> getVmIds() {
+        return vmIds;
     }
 
-    public void setEnforcing(boolean enforcing) {
-        this.enforcing = enforcing;
-    }
-
-    public List<Guid> getEntityIds() {
-        return entityIds;
-    }
-
-    public void setEntityIds(List<Guid> entityIds) {
-        this.entityIds = entityIds;
-        if (entityIds == null) {
-            this.entityIds = new ArrayList<>();
+    public void setVmIds(List<Guid> vmIds) {
+        this.vmIds = vmIds;
+        if (vmIds == null) {
+            this.vmIds = new ArrayList<>();
         }
     }
 
-    public List<String> getEntityNames() {
-        return entityNames;
+    public void setVmAffinityRule(EntityAffinityRule AffinityRule) {
+        vmAffinityRule = AffinityRule;
     }
 
-    public void setEntityNames(List<String> entityNames) {
-        this.entityNames = entityNames;
-        if (entityNames == null) {
-            this.entityNames = new ArrayList<>();
+    public EntityAffinityRule getVmAffinityRule() {
+        return this.vmAffinityRule;
+    }
+
+    public Boolean getVmPolarityBooleanObject() {
+        return vmAffinityRule == EntityAffinityRule.DISABLED ? null :
+                vmAffinityRule == EntityAffinityRule.POSITIVE;
+    }
+
+    public Boolean getVdsPolarityBooleanObject() {
+        return vdsAffinityRule == EntityAffinityRule.DISABLED ? null :
+                vdsAffinityRule == EntityAffinityRule.POSITIVE;
+    }
+
+    public boolean isVmPositive() {
+        return vmAffinityRule == EntityAffinityRule.POSITIVE;
+    }
+
+    public boolean isVmNegative() {
+        return vmAffinityRule == EntityAffinityRule.NEGATIVE;
+    }
+
+    public boolean isVmAffinityEnabled() {
+        return vmAffinityRule != EntityAffinityRule.DISABLED;
+    }
+
+    public EntityAffinityRule getVdsAffinityRule() {
+        return vdsAffinityRule;
+    }
+
+    public void setVdsAffinityRule(EntityAffinityRule vdsAffinityRule) {
+        this.vdsAffinityRule = vdsAffinityRule;
+    }
+
+    public boolean isVdsEnforcing() {
+        return vdsEnforcing;
+    }
+
+    public void setVdsEnforcing(boolean vdsEnforcing) {
+        this.vdsEnforcing = vdsEnforcing;
+    }
+
+    public List<Guid> getVdsIds() {
+        return vdsIds;
+    }
+
+    public void setVdsIds(List<Guid> vdsIds) {
+        this.vdsIds = vdsIds;
+        if (vdsIds == null) {
+            this.vdsIds = new ArrayList<>();
+        }
+    }
+
+    public List<String> getVmEntityNames() {
+        return vmEntityNames;
+    }
+
+    public void setVmEntityNames(List<String> vmEntityNames) {
+        this.vmEntityNames = vmEntityNames;
+        if (vmEntityNames == null) {
+            this.vmEntityNames = new ArrayList<>();
+        }
+    }
+
+    public List<String> getVdsEntityNames() {
+        return vdsEntityNames;
+    }
+
+    public void setVdsEntityNames(List<String> vdsEntityNames) {
+        this.vdsEntityNames = vdsEntityNames;
+        if (vdsEntityNames == null) {
+            this.vdsEntityNames = new ArrayList<>();
         }
     }
 
@@ -150,16 +235,11 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                clusterId,
-                description,
-                enforcing,
-                id,
-                name,
-                positive,
-                entityIds,
-                entityNames
-        );
+        if (id != null) {
+            return Objects.hash(id);
+        } else {
+            return super.hashCode();
+        }
     }
 
     @Override
@@ -171,13 +251,10 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
             return false;
         }
         AffinityGroup other = (AffinityGroup) obj;
-        return Objects.equals(clusterId, other.clusterId)
-                && Objects.equals(description, other.description)
-                && enforcing == other.enforcing
-                && Objects.equals(id, other.id)
-                && Objects.equals(name, other.name)
-                && positive == other.positive
-                && Objects.equals(entityIds, other.entityIds)
-                && Objects.equals(entityNames, other.entityNames);
+        // entity without id is always unique
+        if (id == null || other.id == null) {
+            return false;
+        }
+        return Objects.equals(id, other.id);
     }
 }

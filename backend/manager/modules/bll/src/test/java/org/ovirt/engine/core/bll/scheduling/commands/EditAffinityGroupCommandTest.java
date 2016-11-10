@@ -94,7 +94,7 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
         affinityGroup = new AffinityGroup();
         affinityGroup.setName(AFFINITY_GROUP_NAME);
         affinityGroup.setClusterId(clusterId);
-        affinityGroup.setEntityIds(new ArrayList<>());
+        affinityGroup.setVmIds(new ArrayList<>());
         return affinityGroup;
     }
 }

@@ -16,8 +16,8 @@ public class VmAffinityGroupListModel extends AffinityGroupListModel<VM> {
     @Override
     protected AffinityGroup getNewAffinityGroup() {
         AffinityGroup affinityGroup = super.getNewAffinityGroup();
-        affinityGroup.setEntityIds(new ArrayList<Guid>());
-        affinityGroup.getEntityIds().add(getEntity().getId());
+        affinityGroup.setVmIds(new ArrayList<Guid>());
+        affinityGroup.getVmIds().add(getEntity().getId());
         return affinityGroup;
     }
 

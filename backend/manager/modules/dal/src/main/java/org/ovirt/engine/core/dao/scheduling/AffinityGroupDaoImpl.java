@@ -1,16 +1,17 @@
 package org.ovirt.engine.core.dao.scheduling;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.DefaultGenericDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -64,6 +65,12 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
+    public void removeVdsFromAffinityGroups(Guid vdsId) {
+        getCallsHandler().executeModification("RemoveVdsFromAffinityGroups",
+                getCustomMapSqlParameterSource().addValue("vds_id", vdsId));
+    }
+
+    @Override
     public List<AffinityGroup> getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(Guid vdsId) {
         return getCallsHandler().executeReadList("getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId",
                 createEntityRowMapper(),
@@ -76,10 +83,13 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
                 .addValue("name", entity.getName())
                 .addValue("description", entity.getDescription())
                 .addValue("cluster_id", entity.getClusterId())
-                .addValue("positive", entity.isPositive())
-                .addValue("enforcing", entity.isEnforcing())
-                .addValue("vm_ids",
-                        entity.getEntityIds() == null ? StringUtils.EMPTY : StringUtils.join(entity.getEntityIds(), SEPARATOR));
+                .addValue("vm_positive", entity.getVmPolarityBooleanObject())
+                .addValue("vm_enforcing", entity.isVmEnforcing())
+                .addValue("vds_positive", entity.getVdsPolarityBooleanObject())
+                .addValue("vds_enforcing", entity.isVdsEnforcing())
+                .addValue("vms_affinity_enabled", entity.isVmAffinityEnabled())
+                .addValue("vm_ids", createArrayOf("uuid", entity.getVmIds().toArray()))
+                .addValue("vds_ids", createArrayOf("uuid", entity.getVdsIds().toArray()));
     }
 
     @Override
@@ -90,15 +100,42 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     @Override
     protected RowMapper<AffinityGroup> createEntityRowMapper() {
         return (rs, rowNum) -> {
+
             AffinityGroup affinityGroup = new AffinityGroup();
             affinityGroup.setId(getGuid(rs, "id"));
             affinityGroup.setName(rs.getString("name"));
             affinityGroup.setDescription(rs.getString("description"));
             affinityGroup.setClusterId(getGuid(rs, "cluster_id"));
-            affinityGroup.setPositive(rs.getBoolean("positive"));
-            affinityGroup.setEnforcing(rs.getBoolean("enforcing"));
-            affinityGroup.setEntityIds(GuidUtils.getGuidListFromString(rs.getString("vm_ids")));
-            affinityGroup.setEntityNames(split(rs.getString("vm_names")));
+            affinityGroup.setVmEnforcing(rs.getBoolean("vm_enforcing"));
+            affinityGroup.setVdsEnforcing(rs.getBoolean("vds_enforcing"));
+
+            if (rs.getBoolean("vds_positive")) {
+                affinityGroup.setVdsAffinityRule(EntityAffinityRule.POSITIVE);
+            } else {
+                affinityGroup.setVdsAffinityRule(EntityAffinityRule.NEGATIVE);
+            }
+
+            if (rs.getBoolean("vms_affinity_enabled")) {
+                if (rs.getBoolean("vm_positive")) {
+                    affinityGroup.setVmAffinityRule(EntityAffinityRule.POSITIVE);
+                } else {
+                    affinityGroup.setVmAffinityRule(EntityAffinityRule.NEGATIVE);
+                }
+            } else {
+                affinityGroup.setVmAffinityRule(EntityAffinityRule.DISABLED);
+            }
+
+            String[] rawUuids = (String[]) rs.getArray("vm_ids").getArray();
+            List<String> vms = Arrays.asList(rawUuids);
+            rawUuids = (String[]) rs.getArray("vds_ids").getArray();
+            List<String> hosts = Arrays.asList(rawUuids);
+            List<String> vmNames = Arrays.asList((String[]) rs.getArray("vm_names").getArray());
+            List<String> vdsNames = Arrays.asList((String[]) rs.getArray("vds_names").getArray());
+
+            affinityGroup.setVmIds(vms.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
+            affinityGroup.setVdsIds(hosts.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
+            affinityGroup.setVmEntityNames(vmNames.stream().filter(v -> v != null).collect(Collectors.toList()));
+            affinityGroup.setVdsEntityNames(vdsNames.stream().filter(v -> v != null).collect(Collectors.toList()));
 
             return affinityGroup;
         };

@@ -3576,19 +3576,26 @@ INNER JOIN supported_cluster_features
 CREATE OR REPLACE VIEW affinity_groups_view AS
 
 SELECT affinity_groups.*,
-    array_to_string(array_agg(affinity_group_members.vm_id), ',') AS vm_ids,
-    array_to_string(array_agg(vm_static.vm_name), ',') AS vm_names
+    array_agg(affinity_group_members.vm_id::text) AS vm_ids,
+    array_agg(vm_static.vm_name::text) AS vm_names,
+    array_agg(affinity_group_members.vds_id::text) AS vds_ids,
+    array_agg(vds_static.vds_name::text) AS vds_names
 FROM affinity_groups
 LEFT JOIN affinity_group_members
     ON affinity_group_members.affinity_group_id = affinity_groups.id
 LEFT JOIN vm_static
     ON vm_static.vm_guid = affinity_group_members.vm_id -- postgres 8.X issue, need to group by all fields.
+LEFT JOIN vds_static
+    ON vds_static.vds_id = affinity_group_members.vds_id
 GROUP BY affinity_groups.id,
     affinity_groups.name,
     affinity_groups.description,
     affinity_groups.cluster_id,
-    affinity_groups.positive,
-    affinity_groups.enforcing,
+    affinity_groups.vm_positive,
+    affinity_groups.vm_enforcing,
+    affinity_groups.vds_positive,
+    affinity_groups.vds_enforcing,
+    affinity_groups.vms_affinity_enabled,
     affinity_groups._create_date,
     affinity_groups._update_date;
 

@@ -28,6 +28,11 @@ public interface AffinityGroupDao extends GenericDao<AffinityGroup, Guid> {
     void removeVmFromAffinityGroups(Guid vmId);
 
     /**
+     * remove VDS from all affinity groups (when changing Vm's cluster)
+     */
+    void removeVdsFromAffinityGroups(Guid vdsId);
+
+    /**
      * get all positive enforcing affinity groups containing VMs running on given host
      */
     List<AffinityGroup> getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(Guid vdsId);

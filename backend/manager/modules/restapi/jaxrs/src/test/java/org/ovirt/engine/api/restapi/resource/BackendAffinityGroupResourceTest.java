@@ -104,8 +104,8 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
         when(entity.getName()).thenReturn(NAMES[index]);
         when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
         when(entity.getClusterId()).thenReturn(CLUSTER_ID);
-        when(entity.isEnforcing()).thenReturn((GUIDS[index].hashCode() & 1) == 0);
-        when(entity.isPositive()).thenReturn((GUIDS[index].hashCode() & 1) == 1);
+        when(entity.isVmEnforcing()).thenReturn((GUIDS[index].hashCode() & 1) == 0);
+        when(entity.isVmPositive()).thenReturn((GUIDS[index].hashCode() & 1) == 1);
         return entity;
     }
 

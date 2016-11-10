@@ -58,7 +58,7 @@ public class AffinityRulesEnforcer {
 
         // Add negative affinity groups
         for (AffinityGroup ag : allHardAffinityGroups) {
-            if (!ag.isPositive()) {
+            if (ag.isVmNegative()) {
                 unifiedAffinityGroups.add(ag);
             }
         }
@@ -66,7 +66,7 @@ public class AffinityRulesEnforcer {
         // Create a set of all VMs in affinity groups
         Set<Guid> allVms = new HashSet<>();
         for (AffinityGroup group : unifiedAffinityGroups) {
-            allVms.addAll(group.getEntityIds());
+            allVms.addAll(group.getVmIds());
         }
 
         Map<Guid, Guid> vmToHost = createMapOfVmToHost(allVms);
@@ -87,12 +87,14 @@ public class AffinityRulesEnforcer {
         for (AffinityGroup affinityGroup : affGroupsBySize) {
             final List<VM> candidateVms;
 
-            if (affinityGroup.isPositive()) {
+            if (affinityGroup.isVmPositive()) {
                 candidateVms = vmDao.getVmsByIds(findVmViolatingPositiveAg(affinityGroup, vmToHost));
                 log.info("Positive affinity group violation detected");
-            } else {
+            } else if (affinityGroup.isVmNegative()) {
                 candidateVms = vmDao.getVmsByIds(findVmViolatingNegativeAg(affinityGroup, vmToHost));
                 log.info("Negative affinity group violation detected");
+            } else {
+                continue;
             }
 
             while (!candidateVms.isEmpty()) {
@@ -147,7 +149,7 @@ public class AffinityRulesEnforcer {
 
         // When a VM runs on an already occupied host, report both
         // the vm and the previous occupant as candidates for migration
-        for (Guid vm : affinityGroup.getEntityIds()) {
+        for (Guid vm : affinityGroup.getVmIds()) {
             Guid host = vmToHost.get(vm);
 
             // Ignore stopped VMs
@@ -181,7 +183,7 @@ public class AffinityRulesEnforcer {
         Map<Guid, List<Guid>> hostCount = new HashMap<>();
 
         // Prepare affinity group related host counts
-        for (Guid vm : affinityGroup.getEntityIds()) {
+        for (Guid vm : affinityGroup.getVmIds()) {
             Guid host = vmToHost.get(vm);
 
             // Ignore stopped VMs
@@ -239,11 +241,11 @@ public class AffinityRulesEnforcer {
 
         for (AffinityGroup affinity : affinityGroups) {
             // Negative groups
-            if (!affinity.isPositive()) {
+            if (affinity.isVmNegative()) {
                 // Record all hosts that are already occupied by VMs from this group
                 Map<Guid, Guid> usedHosts = new HashMap<>();
 
-                for (Guid vm : affinity.getEntityIds()) {
+                for (Guid vm : affinity.getVmIds()) {
                     Guid host = vmToHost.get(vm);
                     if (host == null) {
                         continue;
@@ -264,11 +266,11 @@ public class AffinityRulesEnforcer {
                 }
 
                 // Positive groups
-            } else {
+            } else if (affinity.isVmPositive()) {
                 // All VMs from this group have to be running on a single host
                 Guid targetHost = null;
 
-                for (Guid vm : affinity.getEntityIds()) {
+                for (Guid vm : affinity.getVmIds()) {
                     Guid host = vmToHost.get(vm);
                     if (host == null) {
                         continue;
@@ -295,14 +297,14 @@ public class AffinityRulesEnforcer {
 
     public List<AffinityGroup> getAllHardAffinityGroups(Cluster cluster) {
         return affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId())
-                .stream().filter(AffinityGroup::isEnforcing).collect(Collectors.toList());
+                .stream().filter(AffinityGroup::isVmEnforcing).collect(Collectors.toList());
     }
 
     private static class AffinityGroupComparator implements Comparator<AffinityGroup>, Serializable {
         @Override
         public int compare(AffinityGroup thisAffinityGroup, AffinityGroup thatAffinityGroup) {
-            final List<Guid> thisEntityIds = thisAffinityGroup.getEntityIds();
-            final List<Guid> otherEntityIds = thatAffinityGroup.getEntityIds();
+            final List<Guid> thisEntityIds = thisAffinityGroup.getVmIds();
+            final List<Guid> otherEntityIds = thatAffinityGroup.getVmIds();
 
             // Avoid NoSuchElementExceptions from Collections.min()
             if (thisEntityIds.isEmpty() && otherEntityIds.isEmpty()) {

@@ -8677,14 +8677,20 @@
         <column>name</column>
         <column>description</column>
         <column>cluster_id</column>
-        <column>positive</column>
-        <column>enforcing</column>
+        <column>vm_positive</column>
+        <column>vm_enforcing</column>
+        <column>vds_positive</column>
+        <column>vds_enforcing</column>
+        <column>vms_affinity_enabled</column>
         <row>
             <value>6d849ebf-0ccc-4552-ad09-ccc90cda105d</value>
             <value>affinityGroup1</value>
             <value>desc</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>true</value>
+            <value>true</value>
+            <value>true</value>
+            <value>false</value>
             <value>true</value>
         </row>
         <row>
@@ -8694,6 +8700,9 @@
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>false</value>
             <value>false</value>
+            <value>true</value>
+            <value>false</value>
+            <value>true</value>
         </row>
         <row>
             <value>6d849ebf-0ccc-4552-ad09-ccc90cda105f</value>
@@ -8702,27 +8711,40 @@
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>false</value>
             <value>true</value>
+            <value>true</value>
+            <value>false</value>
+            <value>true</value>
         </row>
     </table>
 
     <table name="affinity_group_members">
         <column>affinity_group_id</column>
         <column>vm_id</column>
+        <column>vds_id</column>
         <row>
             <value>6d849ebf-0ccc-4552-ad09-ccc90cda105d</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <null/>
         </row>
         <row>
             <value>6d849ebf-0ccc-4552-ad09-ccc90cda105d</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <null/>
         </row>
         <row>
             <value>6d849ebf-0ccc-4552-ad09-ccc90cda105e</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <null/>
         </row>
         <row>
             <value>6d849ebf-0ccc-4552-ad09-ccc90cda105e</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <null/>
+        </row>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105d</value>
+            <null/>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
         </row>
     </table>
     <table name="iscsi_bonds">

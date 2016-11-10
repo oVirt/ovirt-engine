@@ -57,44 +57,63 @@ CREATE OR REPLACE FUNCTION InsertAffinityGroupWithMembers (
     v_name VARCHAR(255),
     v_description VARCHAR(4000),
     v_cluster_id UUID,
-    v_positive BOOLEAN,
-    v_enforcing BOOLEAN,
-    v_vm_ids VARCHAR(4000)
+    v_vm_positive BOOLEAN,
+    v_vm_enforcing BOOLEAN,
+    v_vds_positive BOOLEAN,
+    v_vds_enforcing BOOLEAN,
+    v_vms_affinity_enabled BOOLEAN,
+    v_vm_ids UUID[],
+    v_vds_ids UUID[]
     )
 RETURNS VOID AS $PROCEDURE$
-DECLARE iter_id UUID;
-
+DECLARE
+    o uuid;
 BEGIN
     INSERT INTO affinity_groups (
         id,
         name,
         description,
         cluster_id,
-        positive,
-        enforcing
+        vm_positive,
+        vm_enforcing,
+        vds_positive,
+        vds_enforcing,
+        vms_affinity_enabled
         )
     VALUES (
         v_id,
         v_name,
         v_description,
         v_cluster_id,
-        v_positive,
-        v_enforcing
+        v_vm_positive,
+        v_vm_enforcing,
+        v_vds_positive,
+        v_vds_enforcing,
+        v_vms_affinity_enabled
         );
-    FOR
-        iter_id IN (
-            SELECT *
-            FROM fnsplitteruuid(v_vm_ids)
-            )
+
+    FOREACH o IN ARRAY v_vm_ids
     LOOP
-        INSERT INTO affinity_group_members (
+        INSERT INTO affinity_group_members(
             affinity_group_id,
             vm_id
-            )
+        )
         VALUES (
             v_id,
-            iter_id
-            );
+            o
+        );
+    END LOOP;
+
+    FOREACH o IN ARRAY v_vds_ids
+    LOOP
+        INSERT INTO affinity_group_members(
+            affinity_group_id,
+            vds_id
+        )
+        VALUES (
+            v_id,
+            o
+        );
     END LOOP;
 
 END;$PROCEDURE$
@@ -116,9 +135,13 @@ CREATE OR REPLACE FUNCTION UpdateAffinityGroupWithMembers (
     v_name VARCHAR(255),
     v_description VARCHAR(4000),
     v_cluster_id UUID,
-    v_positive BOOLEAN,
-    v_enforcing BOOLEAN,
-    v_vm_ids VARCHAR(4000)
+    v_vm_positive BOOLEAN,
+    v_vm_enforcing BOOLEAN,
+    v_vds_positive BOOLEAN,
+    v_vds_enforcing BOOLEAN,
+    v_vms_affinity_enabled BOOLEAN,
+    v_vm_ids UUID[],
+    v_vds_ids UUID[]
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -129,9 +152,13 @@ BEGIN
         v_name,
         v_description,
         v_cluster_id,
-        v_positive,
-        v_enforcing,
-        v_vm_ids);
+        v_vm_positive,
+        v_vm_enforcing,
+        v_vds_positive,
+        v_vds_enforcing,
+        v_vms_affinity_enabled,
+        v_vm_ids,
+        v_vds_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -141,7 +168,19 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     DELETE
     FROM affinity_group_members
-    WHERE vm_id = v_vm_id;
+    WHERE vm_id IS NOT NULL
+          AND vm_id = v_vm_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Remove host from all Affinity Group
+CREATE OR REPLACE FUNCTION RemoveVdsFromAffinityGroups (v_vds_id UUID)
+    RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM affinity_group_members
+    WHERE vds_id IS NOT NULL
+          AND vds_id = v_vds_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -158,8 +197,8 @@ BEGIN
     INNER JOIN vm_dynamic
         ON affinity_group_members.vm_id = vm_dynamic.vm_guid
             AND vm_dynamic.run_on_vds = v_vds_id
-    WHERE positive
-        AND enforcing;
+    WHERE vms_affinity_enabled AND vm_positive
+        AND vm_enforcing;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

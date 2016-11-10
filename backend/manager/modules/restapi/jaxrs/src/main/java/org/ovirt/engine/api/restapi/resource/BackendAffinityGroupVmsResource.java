@@ -28,11 +28,11 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
         Vms vms = new Vms();
         AffinityGroup affinityGroup = getEntity();
 
-        if (affinityGroup.getEntityIds() != null) {
-            for (int i = 0; i < affinityGroup.getEntityIds().size(); i++) {
+        if (affinityGroup.getVmIds() != null) {
+            for (int i = 0; i < affinityGroup.getVmIds().size(); i++) {
                 Vm vm = new Vm();
-                vm.setId(affinityGroup.getEntityIds().get(i).toString());
-                vm.setName(affinityGroup.getEntityNames().get(i));
+                vm.setId(affinityGroup.getVmIds().get(i).toString());
+                vm.setName(affinityGroup.getVmEntityNames().get(i));
                 vm = addLinks(populate(vm, null));
                 // remove vm actions, not relevant to this context
                 vm.setActions(null);
@@ -47,7 +47,7 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     public Response add(Vm vm) {
         AffinityGroup affinityGroup = getEntity();
 
-        affinityGroup.getEntityIds().add(asGuid(vm.getId()));
+        affinityGroup.getVmIds().add(asGuid(vm.getId()));
         return performAction(VdcActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),
                 affinityGroup));
     }

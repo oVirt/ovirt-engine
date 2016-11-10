@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -19,6 +20,9 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroupCRUDParameters> {
+
+    private static final String Entity_VM = "VM";
+    private static final String Entity_VDS = "VDS";
 
     AffinityGroup affinityGroup = null;
 
@@ -39,21 +43,45 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
         if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
         }
-        if (getParameters().getAffinityGroup().getEntityIds() != null) {
+        if (getParameters().getAffinityGroup().getVmIds() != null) {
             VmStatic vmStatic = null;
             Set<Guid> vmSet = new HashSet<>();
-            for (Guid vmId : getParameters().getAffinityGroup().getEntityIds()) {
+            for (Guid vmId : getParameters().getAffinityGroup().getVmIds()) {
                 vmStatic = vmStaticDao.get(vmId);
                 if (vmStatic == null) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP, String
+                            .format("$entity %s", Entity_VM));
                 }
                 if (!Objects.equals(vmStatic.getClusterId(), getClusterId())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_ENTITY_NOT_IN_AFFINITY_GROUP_CLUSTER, String
+                            .format("$entity %s", Entity_VM));
                 }
                 if (vmSet.contains(vmStatic.getId())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_ENTITY_IN_AFFINITY_GROUP, String
+                            .format("$entity %s", Entity_VM));
                 } else {
                     vmSet.add(vmStatic.getId());
+                }
+            }
+        }
+        if (getParameters().getAffinityGroup().getVdsIds() != null) {
+            VdsStatic vdsStatic = null;
+            Set<Guid> vdsSet = new HashSet<>();
+            for (Guid vdsId : getParameters().getAffinityGroup().getVdsIds()) {
+                vdsStatic = vdsStaticDao.get(vdsId);
+                if (vdsStatic == null) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP, String
+                            .format("$entity %s", Entity_VDS));
+                }
+                if (!Objects.equals(vdsStatic.getClusterId(), getClusterId())) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_ENTITY_NOT_IN_AFFINITY_GROUP_CLUSTER, String
+                            .format("$entity %s", Entity_VDS));
+                }
+                if (vdsSet.contains(vdsStatic.getId())) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_ENTITY_IN_AFFINITY_GROUP, String
+                            .format("$entity %s", Entity_VDS));
+                } else {
+                    vdsSet.add(vdsStatic.getId());
                 }
             }
         }

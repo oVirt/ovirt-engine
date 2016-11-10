@@ -384,19 +384,19 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 List<Object> items = new ArrayList<>();
                 for (AffinityGroup affinityGroup : affinityGroups) {
                     // affinity group has less than 2 vms (trivial)
-                    if (affinityGroup.getEntityIds().size() < 2) {
+                    if (affinityGroup.getVmIds().size() < 2) {
                         continue;
                     }
                     int count = 0; // counter for running VMs in affinity group
                     for (VM vm : runningVms) {
-                        if (affinityGroup.getEntityIds().contains(vm.getId())) {
+                        if (affinityGroup.getVmIds().contains(vm.getId())) {
                             count++;
                         }
                     }
                     if (count > 1) {
                         items.add(String.format("%1$s (%2$s)",
                                 affinityGroup.getName(),
-                                StringUtils.join(affinityGroup.getEntityNames(), " ,")));
+                                StringUtils.join(affinityGroup.getVmEntityNames(), " ,")));
                     }
                 }
                 if (!items.isEmpty()) {
