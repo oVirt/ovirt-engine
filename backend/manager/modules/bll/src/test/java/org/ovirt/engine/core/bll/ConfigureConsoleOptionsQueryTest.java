@@ -124,8 +124,8 @@ public class ConfigureConsoleOptionsQueryTest extends
     public void shouldCallSetTicket() {
         when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.VNC));
         when(getQueryParameters().isSetTicket()).thenReturn(true);
-        mockSessionDataContainer(getQuery());
-        mockGetCaCertificate(getQuery());
+        mockSessionDataContainer();
+        mockGetCaCertificate();
         doReturn(mockVm(GraphicsType.VNC)).when(getQuery()).getCachedVm();
 
         VdcReturnValueBase result = new VdcReturnValueBase();
@@ -142,8 +142,8 @@ public class ConfigureConsoleOptionsQueryTest extends
     @Test
     public void failWhenCertEnforcedAndCANotFound() {
         when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.SPICE));
-        mockSessionDataContainer(getQuery());
-        mockGetVdsCertificateSubjectByVmId(getQuery());
+        mockSessionDataContainer();
+        mockGetVdsCertificateSubjectByVmId();
         doReturn(mockVm(GraphicsType.SPICE)).when(getQuery()).getCachedVm();
 
         mockSpiceRelatedConfig();
@@ -254,18 +254,18 @@ public class ConfigureConsoleOptionsQueryTest extends
         return vm;
     }
 
-    void mockSessionDataContainer(ConfigureConsoleOptionsQuery query) {
+    void mockSessionDataContainer() {
         doReturn(SSO_TOKEN).when(sessionDataContainer).getSsoAccessToken(anyString());
     }
 
-    void mockGetCaCertificate(ConfigureConsoleOptionsQuery query) {
+    void mockGetCaCertificate() {
         doReturn(caCertificateReturnValue).when(backend)
                 .runInternalQuery(eq(VdcQueryType.GetCACertificate), any(VdcQueryParametersBase.class));
         doReturn(true).when(caCertificateReturnValue).getSucceeded();
         doReturn(CA_CERTIFICATE).when(caCertificateReturnValue).getReturnValue();
     }
 
-    void mockGetVdsCertificateSubjectByVmId(ConfigureConsoleOptionsQuery query) {
+    void mockGetVdsCertificateSubjectByVmId() {
         doReturn(hostSubjectReturnValue).when(backend)
                 .runInternalQuery(eq(VdcQueryType.GetVdsCertificateSubjectByVmId), any(IdQueryParameters.class));
         doReturn(HOST_SUBJECT).when(hostSubjectReturnValue).getReturnValue();
