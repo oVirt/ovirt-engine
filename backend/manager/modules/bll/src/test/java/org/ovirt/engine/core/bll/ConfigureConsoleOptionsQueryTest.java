@@ -132,7 +132,6 @@ public class ConfigureConsoleOptionsQueryTest extends
         result.setSucceeded(true);
         result.setActionReturnValue("nbusr123");
         doReturn(result).when(backend).runAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
-        doReturn(backend).when(getQuery()).getBackend();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
@@ -151,7 +150,6 @@ public class ConfigureConsoleOptionsQueryTest extends
         VdcQueryReturnValue caResult = new VdcQueryReturnValue();
         caResult.setSucceeded(false);
         doReturn(caResult).when(backend).runInternalQuery(eq(VdcQueryType.GetCACertificate), any(VdcQueryParametersBase.class));
-        doReturn(backend).when(getQuery()).getBackend();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();

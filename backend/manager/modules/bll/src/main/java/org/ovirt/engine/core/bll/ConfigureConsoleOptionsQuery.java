@@ -288,7 +288,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         parameters.setSessionId(getEngineContext().getSessionId());
         parameters.setParametersCurrentUser(getUser());
 
-        VdcReturnValueBase result = getBackend().runAction(VdcActionType.SetVmTicket, parameters);
+        VdcReturnValueBase result = backend.runAction(VdcActionType.SetVmTicket, parameters);
 
         if (!result.getSucceeded()) {
             throw new TicketGenerationException(result);
@@ -308,14 +308,14 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
     }
 
     private String getVdsCertificateSubject() {
-        return getBackend().runInternalQuery(
+        return backend.runInternalQuery(
                 VdcQueryType.GetVdsCertificateSubjectByVmId,
                 new IdQueryParameters(getCachedVm().getId())).getReturnValue();
 
     }
 
     private VdcQueryReturnValue getCACertificate() {
-        return getBackend().runInternalQuery(VdcQueryType.GetCACertificate, new VdcQueryParametersBase());
+        return backend.runInternalQuery(VdcQueryType.GetCACertificate, new VdcQueryParametersBase());
     }
 
     private String determineHost() {
@@ -324,7 +324,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
         // if we don't have display ip, we try management network of host
         if (StringUtils.isBlank(result) || "0".equals(result)) {
-            VdcQueryReturnValue returnValue = getBackend().runInternalQuery(
+            VdcQueryReturnValue returnValue = backend.runInternalQuery(
                     VdcQueryType.GetManagementInterfaceAddressByVmId,
                     new IdQueryParameters(getCachedVm().getId()));
             result = returnValue.getReturnValue();
@@ -355,7 +355,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             IdQueryParameters params = new IdQueryParameters(getParameters().getOptions().getVmId());
             params.setFiltered(getParameters().isFiltered());
             params.setSessionId(getParameters().getSessionId());
-            cachedVm = getBackend().runInternalQuery(
+            cachedVm = backend.runInternalQuery(
                 VdcQueryType.GetVmByVmId,
                     params).getReturnValue();
         }

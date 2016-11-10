@@ -24,7 +24,7 @@ public class GetVmDataByPoolNameQuery<P extends NameQueryParameters> extends Que
         VM vm = null;
         VmPool vmpool = vmPoolDao.getByName(getParameters().getName());
         if (vmpool != null) {
-            VdcQueryReturnValue getVmRet = getBackend().runInternalQuery(VdcQueryType.GetVmDataByPoolId,
+            VdcQueryReturnValue getVmRet = backend.runInternalQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(vmpool.getVmPoolId()));
 
             if (getVmRet != null) {

@@ -45,7 +45,7 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Sto
     }
 
     protected VdcQueryReturnValue getExistingStorageDomainList(StorageServerConnections storageServerConnection) {
-        VdcQueryReturnValue returnValue = getBackend().runInternalQuery(VdcQueryType.GetExistingStorageDomainList,
+        VdcQueryReturnValue returnValue = backend.runInternalQuery(VdcQueryType.GetExistingStorageDomainList,
                 new GetExistingStorageDomainListParameters(
                         getVdsId(),
                         storageServerConnection.getStorageType(),

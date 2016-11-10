@@ -50,6 +50,9 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Inject
     private VDSBrokerFrontend vdsBroker;
 
+    @Inject
+    protected BackendInternal backend;
+
     public QueriesCommandBase(P parameters) {
         this(parameters, null);
     }
@@ -227,15 +230,11 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return getSessionDataContainer().getEngineSessionSeqId(engineContext.getSessionId());
     }
 
-    protected BackendInternal getBackend() {
-        return Backend.getInstance();
-    }
-
     protected VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         //All internal queries should have refresh set to false, since the decision to refresh the session should
         //be up to the client. All internal queries will not refresh the session.
         parameters.setRefresh(false);
-        return getBackend().runInternalQuery(actionType, parameters, getEngineContext());
+        return backend.runInternalQuery(actionType, parameters, getEngineContext());
     }
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)

@@ -30,7 +30,7 @@ public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends Queries
             boolean loadTemplateData = false;
             Guid vmtGuid = vm.getVmtGuid();
             if (vm.isNextRunConfigurationExists()) {
-                VdcQueryReturnValue nextRunRet = getBackend().runInternalQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(vm.getId()));
+                VdcQueryReturnValue nextRunRet = backend.runInternalQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(vm.getId()));
                 if (nextRunRet != null) {
                     VM nextRunVm = nextRunRet.getReturnValue();
                     if (nextRunVm != null) { // template version was changed -> load data from template
@@ -43,12 +43,12 @@ public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends Queries
 
             VmTemplate templateData = null;
             if (isLatestLoad) {
-                VdcQueryReturnValue latestRet = getBackend().runInternalQuery(VdcQueryType.GetLatestTemplateInChain, new IdQueryParameters(vmtGuid));
+                VdcQueryReturnValue latestRet = backend.runInternalQuery(VdcQueryType.GetLatestTemplateInChain, new IdQueryParameters(vmtGuid));
                 if (latestRet != null) {
                     templateData = latestRet.getReturnValue();
                 }
             } else if (loadTemplateData) {
-                VdcQueryReturnValue templateRet = getBackend().runInternalQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(vmtGuid));
+                VdcQueryReturnValue templateRet = backend.runInternalQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(vmtGuid));
                 if (templateRet != null) {
                     templateData = templateRet.getReturnValue();
                 }

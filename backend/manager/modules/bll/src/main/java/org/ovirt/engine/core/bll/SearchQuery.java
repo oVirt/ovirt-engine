@@ -431,7 +431,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     String prefix = m.group("prefix");
                     searchText =  m.group("content");
                     // get profile
-                    List<String> profiles = getBackend().runInternalQuery(VdcQueryType.GetDomainList,
+                    List<String> profiles = backend.runInternalQuery(VdcQueryType.GetDomainList,
                             new VdcQueryParametersBase(getParameters().getSessionId())).getReturnValue();
                     for (String profile : profiles) {
                         if (searchText.startsWith(profile + COLON)) {
@@ -445,7 +445,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     }
                     // get namespace
                     HashMap<String, List<String>> namespacesMap =
-                            getBackend().runInternalQuery(VdcQueryType.GetAvailableNamespaces,
+                            backend.runInternalQuery(VdcQueryType.GetAvailableNamespaces,
                                     new VdcQueryParametersBase(getParameters().getSessionId())).getReturnValue();
                     List<String> namespaces = namespacesMap.get(queryAuthz);
                     for (String namespace : namespaces) {

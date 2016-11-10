@@ -6,7 +6,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -32,11 +31,6 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
 
     public GetUnregisteredDisksQuery(P parameters) {
         super(parameters);
-    }
-
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
     }
 
     @Override

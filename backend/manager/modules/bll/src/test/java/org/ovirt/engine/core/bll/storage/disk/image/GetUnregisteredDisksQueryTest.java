@@ -49,6 +49,9 @@ public class GetUnregisteredDisksQueryTest
     @Mock
     private VDSBrokerFrontend vdsBroker;
 
+    @Mock
+    private BackendInternal backendMock;
+
     private Guid importDiskId;
     private Guid existingDiskId;
     private Guid storageDomainId;
@@ -90,8 +93,6 @@ public class GetUnregisteredDisksQueryTest
      * Mock the VDSBroker and the Daos
      */
     private void prepareMocks() {
-        BackendInternal backendMock = mock(BackendInternal.class);
-
         DiskImage existingDiskImage = mock(DiskImage.class);
         when(existingDiskImage.getId()).thenReturn(existingDiskId);
         List<DiskImage> existingDiskImages = Collections.singletonList(existingDiskImage);
@@ -122,8 +123,5 @@ public class GetUnregisteredDisksQueryTest
         when(diskImageDaoMock.getAllSnapshotsForStorageDomain(eq(storageDomainId))).thenReturn(existingDiskImages);
         StorageDomain storageDomain = new StorageDomain();
         when(storageDomainDaoMock.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
-
-        // Return the mocked backend when getBackend() is called on the query
-        doReturn(backendMock).when(getQuery()).getBackend();
     }
 }

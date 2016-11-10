@@ -273,11 +273,11 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
     /* Execute wrappers (for testing/mocking necessities) */
 
     protected VdcReturnValueBase executeConnectStorageToVds(StorageServerConnectionParametersBase parameters) {
-        return getBackend().runInternalAction(VdcActionType.ConnectStorageToVds, parameters);
+        return backend.runInternalAction(VdcActionType.ConnectStorageToVds, parameters);
     }
 
     protected VdcQueryReturnValue executeGetDeviceList(GetDeviceListQueryParameters parameters) {
-        return getBackend().runInternalQuery(VdcQueryType.GetDeviceList, parameters);
+        return backend.runInternalQuery(VdcQueryType.GetDeviceList, parameters);
     }
 
     protected VDSReturnValue executeGetVGInfo(GetVGInfoVDSCommandParameters parameters) {

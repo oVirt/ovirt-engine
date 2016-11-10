@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
@@ -75,10 +74,4 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     public GlusterUtil getGlusterUtils() {
         return GlusterUtil.getInstance();
     }
-
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
-    }
-
 }
