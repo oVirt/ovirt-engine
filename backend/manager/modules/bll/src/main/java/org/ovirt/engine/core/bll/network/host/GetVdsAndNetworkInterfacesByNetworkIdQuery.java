@@ -49,41 +49,25 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
         super(parameters);
     }
 
-    InterfaceDao getInterfaceDao() {
-        return interfaceDao;
-    }
-
-    NetworkDao getNetworkDao() {
-        return networkDao;
-    }
-
     @Override
     protected void executeQueryCommand() {
         List<VDS> vdsList = vdsDao.getAllForNetwork(getParameters().getId());
         List<VdsNetworkInterface> vdsNetworkInterfaceList =
-                getInterfaceDao().getVdsInterfacesByNetworkId(getParameters().getId());
+                interfaceDao.getVdsInterfacesByNetworkId(getParameters().getId());
         final Map<Guid, VDS> vdsById = Entities.businessEntitiesById(vdsList);
         List<PairQueryable<VdsNetworkInterface, VDS>> vdsInterfaceVdsPairs =
                 new ArrayList<>();
-        Network network = getNetworkDao().get(getParameters().getId());
+        Network network = networkDao.get(getParameters().getId());
         for (final VdsNetworkInterface vdsNetworkInterface : vdsNetworkInterfaceList) {
             vdsInterfaceVdsPairs.add(new PairQueryable<>(vdsNetworkInterface,
                 vdsById.get(vdsNetworkInterface.getVdsId())));
 
             NetworkImplementationDetails vdsInterfaceNetworkImplementationDetails =
-                getNetworkImplementationDetailsUtils().calculateNetworkImplementationDetails(vdsNetworkInterface,
+                networkImplementationDetailsUtils.calculateNetworkImplementationDetails(vdsNetworkInterface,
                     network);
             vdsNetworkInterface.setNetworkImplementationDetails(vdsInterfaceNetworkImplementationDetails);
         }
 
         getQueryReturnValue().setReturnValue(vdsInterfaceVdsPairs);
-    }
-
-    NetworkAttachmentDao getNetworkAttachmentDao() {
-        return networkAttachmentDao;
-    }
-
-    NetworkImplementationDetailsUtils getNetworkImplementationDetailsUtils() {
-        return networkImplementationDetailsUtils;
     }
 }

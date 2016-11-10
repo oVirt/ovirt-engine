@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -72,20 +71,9 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
         List<PairQueryable<VdsNetworkInterface, VDS>> expected = Collections.singletonList(vdsInterfaceVdsPair);
 
         // Run the query
-        GetVdsAndNetworkInterfacesByNetworkIdQuery<IdQueryParameters> query = getQuery();
-        setupQuerySpy();
-        query.executeQueryCommand();
+        getQuery().executeQueryCommand();
         // Assert the result
         assertEquals("Wrong result returned", expected, getQuery().getQueryReturnValue().getReturnValue());
-    }
-
-    private void setupQuerySpy(){
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMocked);
-        doReturn(interfaceDaoMocked).when(getQuery()).getInterfaceDao();
-        doReturn(networkDaoMocked).when(getQuery()).getNetworkDao();
-        doReturn(networkImplementationDetailsUtils).when(getQuery()).getNetworkImplementationDetailsUtils();
-        doReturn(networkAttachmentDao).when(getQuery()).getNetworkAttachmentDao();
-
     }
 
     private void setupVdsDao() {
@@ -99,14 +87,11 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     }
 
     private void setupHostNetworkQosDao() {
-        when(getDbFacadeMockInstance().getHostNetworkQosDao()).thenReturn(hostNetworkQosDaoMocked);
         when(networkMocked.getQosId()).thenReturn(qosId);
         when(hostNetworkQosDaoMocked.get(networkMocked.getQosId())).thenReturn(hostNetworkQos);
     }
 
     private void setupNetworkDao() {
-        when(getDbFacadeMockInstance().getNetworkDao()).thenReturn(networkDaoMocked);
         when(networkDaoMocked.get(networkId)).thenReturn(networkMocked);
     }
-
 }
