@@ -9,8 +9,13 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
 public class CorrelationIdValidationTest {
+
+    public void setUp() {
+        CorrelationIdTracker.setCorrelationId(null);
+    }
 
     @Test
     public void validCorrelationId() {
