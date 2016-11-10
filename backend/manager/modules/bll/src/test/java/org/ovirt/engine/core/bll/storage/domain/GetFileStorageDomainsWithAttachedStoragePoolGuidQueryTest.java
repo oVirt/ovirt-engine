@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -63,7 +62,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testAttachedStorageDomainWithStorageDomainsParameterQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -95,7 +93,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testUnattachedStorageDomainWithStorageDomainsParameterQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -125,7 +122,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testEmptyStorageDomainListQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -155,7 +151,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testNullStorageDomainListQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -184,7 +179,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testFetchUsingStorageServerConnectionWithEmptyListRetrieved() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -211,7 +205,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testFetchUsingStorageServerConnectionWithFailedInternalQuery() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -237,7 +230,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testFetchUsingStorageServerConnectionWithAttachedStorageDomain() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -270,7 +262,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Test
     public void testFetchUsingStorageServerConnectionWithUnattachedStorageDomain() {
-        mockVdsCommand();
         StoragePool storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
         mockStoragePoolDao(storagePool);
@@ -297,11 +288,6 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         // Assert the query's results
         List<StorageDomainStatic> returnedStorageDomainList = new ArrayList<>();
         assertEquals(returnedStorageDomainList, getQuery().getQueryReturnValue().getReturnValue());
-    }
-
-    private void mockVdsCommand() {
-        vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
     }
 
     private void mockStoragePoolDao(StoragePool storagePool) {

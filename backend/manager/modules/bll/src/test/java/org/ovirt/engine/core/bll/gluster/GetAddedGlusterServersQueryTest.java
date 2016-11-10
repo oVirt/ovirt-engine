@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -49,6 +50,9 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private static final Guid server_id2 = new Guid("6a697a38-cc82-4399-a6fb-0ec79c0ff1d5");
     private static final Guid server_id3 = new Guid("7a797a38-cb32-4399-b6fb-21c79c03a1d6");
     private static final String serverKeyFingerprint = "fingerprint";
+
+    @Mock
+    private VDSBrokerFrontend vdsBrokerFrontend;
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
@@ -92,12 +96,10 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     }
 
     private void setupMock() throws Exception {
-        VDSBrokerFrontend vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
         GlusterUtil glusterUtils = mock(GlusterUtil.class);
         GlusterDBUtils dbUtils = mock(GlusterDBUtils.class);
         BackendInternal backendInternal = mock(BackendInternal.class);
 
-        doReturn(vdsBrokerFrontend).when(getQuery()).getVdsBroker();
         doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         doReturn(dbUtils).when(getQuery()).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);

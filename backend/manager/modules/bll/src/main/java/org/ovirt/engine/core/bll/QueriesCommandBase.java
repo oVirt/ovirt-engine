@@ -238,12 +238,8 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return getBackend().runInternalQuery(actionType, parameters, getEngineContext());
     }
 
-    public VDSBrokerFrontend getVdsBroker() {
-        return vdsBroker;
-    }
-
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws EngineException {
-        return getVdsBroker().runVdsCommand(commandType, parameters);
+        return vdsBroker.runVdsCommand(commandType, parameters);
     }
 }
