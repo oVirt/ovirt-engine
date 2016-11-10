@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
+import org.ovirt.engine.core.utils.MockEngineLocalConfigRule.KeyValue;
 
 public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
 
@@ -43,36 +44,20 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
     private static final String HOST_SUBJECT = "O=Test,CN=192.168.122.229";
 
     @ClassRule
-    public static MockEngineLocalConfigRule mockEngineLocalConfigRule;
-
-    static {
-        try {
-            mockEngineLocalConfigRule = new MockEngineLocalConfigRule(
-                    new MockEngineLocalConfigRule.KeyValue(
-                            "ENGINE_PKI_TRUST_STORE",
-                            URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8")),
-                    new MockEngineLocalConfigRule.KeyValue(
-                            "ENGINE_HTTPS_PKI_TRUST_STORE",
-                            URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8")),
-                    new MockEngineLocalConfigRule.KeyValue(
-                            "ENGINE_FQDN",
-                            "engine-host"
-                    ),
-                    new MockEngineLocalConfigRule.KeyValue(
-                            "ENGINE_PROXY_ENABLED",
-                            "false"
-                    ),
-                    new MockEngineLocalConfigRule.KeyValue(
-                            "ENGINE_HTTPS_PORT",
-                            "8443"
-                    ),
-                    new MockEngineLocalConfigRule.KeyValue(
-                            "ENGINE_PROXY_HTTPS_PORT",
-                            "443"
-                    )
+    public static MockEngineLocalConfigRule mockEngineLocalConfigRule =
+            new MockEngineLocalConfigRule(
+                    new KeyValue("ENGINE_PKI_TRUST_STORE", loadKey()),
+                    new KeyValue("ENGINE_HTTPS_PKI_TRUST_STORE", loadKey()),
+                    new KeyValue("ENGINE_FQDN", "engine-host"),
+                    new KeyValue("ENGINE_PROXY_ENABLED", "false"),
+                    new KeyValue("ENGINE_HTTPS_PORT", "8443"),
+                    new KeyValue("ENGINE_PROXY_HTTPS_PORT", "443")
             );
-        }
-        catch (UnsupportedEncodingException e) {
+
+    private static String loadKey()  {
+        try {
+            return URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
