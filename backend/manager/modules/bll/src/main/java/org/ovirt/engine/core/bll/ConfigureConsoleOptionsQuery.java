@@ -122,10 +122,10 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         if (getParameters().isSetTicket()) {
             options.setTicket(generateTicket());
         }
-        options.setToggleFullscreenHotKey(getConfigValue(ConfigValues.ConsoleToggleFullScreenKeys));
-        options.setReleaseCursorHotKey(getConfigValue(ConfigValues.ConsoleReleaseCursorKeys));
-        options.setRemapCtrlAltDelete(getConfigValue(ConfigValues.RemapCtrlAltDelDefault));
-        options.setFullScreen(getConfigValue(ConfigValues.FullScreenWebadminDefault));
+        options.setToggleFullscreenHotKey(Config.getValue(ConfigValues.ConsoleToggleFullScreenKeys));
+        options.setReleaseCursorHotKey(Config.getValue(ConfigValues.ConsoleReleaseCursorKeys));
+        options.setRemapCtrlAltDelete(Config.getValue(ConfigValues.RemapCtrlAltDelDefault));
+        options.setFullScreen(Config.getValue(ConfigValues.FullScreenWebadminDefault));
 
         fillRemoteViewerVersions(options);
 
@@ -154,8 +154,8 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
     }
 
     private void fillRemoteViewerVersions(ConsoleOptions options) {
-        String remoteViewerSupportedVersions = getConfigValue(ConfigValues.RemoteViewerSupportedVersions);
-        String remoteViewerNewerVersionUrl = getConfigValue(ConfigValues.RemoteViewerNewerVersionUrl);
+        String remoteViewerSupportedVersions = Config.getValue(ConfigValues.RemoteViewerSupportedVersions);
+        String remoteViewerNewerVersionUrl = Config.getValue(ConfigValues.RemoteViewerNewerVersionUrl);
         if (StringUtils.isEmpty(remoteViewerSupportedVersions) || StringUtils.isEmpty(remoteViewerNewerVersionUrl)) {
             return;
         }
@@ -260,19 +260,19 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             options.setSecurePort(graphicsInfo.getTlsPort());
         }
 
-        if (this.<Boolean>getConfigValue(ConfigValues.SSLEnabled)) {
-            String spiceSecureChannels = getConfigValue(ConfigValues.SpiceSecureChannels);
+        if (Config.getValue(ConfigValues.SSLEnabled)) {
+            String spiceSecureChannels = Config.getValue(ConfigValues.SpiceSecureChannels);
             if (!StringUtils.isBlank(spiceSecureChannels)) {
                 options.setSslChanels(spiceSecureChannels);
             }
-            String cipherSuite = getConfigValue(ConfigValues.CipherSuite);
+            String cipherSuite = Config.getValue(ConfigValues.CipherSuite);
             if (!StringUtils.isBlank(cipherSuite)) {
                 options.setCipherSuite(cipherSuite);
             }
         }
 
         options.setHostSubject(
-                getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation)
+                Config.getValue(ConfigValues.EnableSpiceRootCertificateValidation)
                 ? getVdsCertificateSubject()
                 : null);
         options.setSpiceProxy(determineSpiceProxy());
@@ -342,7 +342,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             return getCachedVm().getClusterSpiceProxy();
         }
 
-        String globalSpiceProxy = getConfigValue(ConfigValues.SpiceProxyDefault);
+        String globalSpiceProxy = Config.getValue(ConfigValues.SpiceProxyDefault);
         if (StringUtils.isNotBlank(globalSpiceProxy)) {
             return globalSpiceProxy;
         }
@@ -361,10 +361,6 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         }
 
         return cachedVm;
-    }
-
-   <T> T getConfigValue(ConfigValues value) {
-        return Config.getValue(value);
     }
 
     private static class TicketGenerationException extends RuntimeException {

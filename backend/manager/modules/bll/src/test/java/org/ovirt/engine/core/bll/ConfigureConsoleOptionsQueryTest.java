@@ -127,10 +127,6 @@ public class ConfigureConsoleOptionsQueryTest extends
         mockSessionDataContainer(getQuery());
         mockGetCaCertificate(getQuery());
         doReturn(mockVm(GraphicsType.VNC)).when(getQuery()).getCachedVm();
-        doReturn(null).when(getQuery()).getConfigValue(any(ConfigValues.class));
-        doReturn(true).when(getQuery()).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
-        doReturn(false).when(getQuery()).getConfigValue(ConfigValues.FullScreenWebadminDefault);
-
 
         VdcReturnValueBase result = new VdcReturnValueBase();
         result.setSucceeded(true);
@@ -150,10 +146,7 @@ public class ConfigureConsoleOptionsQueryTest extends
         mockGetVdsCertificateSubjectByVmId(getQuery());
         doReturn(mockVm(GraphicsType.SPICE)).when(getQuery()).getCachedVm();
 
-        mockSpiceRelatedConfig(getQuery());
-        doReturn(true).when(getQuery()).getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation);
-        doReturn(true).when(getQuery()).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
-        doReturn(false).when(getQuery()).getConfigValue(ConfigValues.FullScreenWebadminDefault);
+        mockSpiceRelatedConfig();
 
         VdcQueryReturnValue caResult = new VdcQueryReturnValue();
         caResult.setSucceeded(false);
@@ -248,10 +241,9 @@ public class ConfigureConsoleOptionsQueryTest extends
         assertEquals(expected, options.getRemoteViewerNewerVersionUrl());
     }
 
-    private void mockSpiceRelatedConfig(ConfigureConsoleOptionsQuery query) {
-        doReturn(null).when(query).getConfigValue(any(ConfigValues.class));
-        doReturn(false).when(query).getConfigValue(ConfigValues.SSLEnabled);
-        doReturn(false).when(query).getConfigValue(ConfigValues.EnableUSBAsDefault);
+    private void mockSpiceRelatedConfig() {
+        mcr.mockConfigValue(ConfigValues.SSLEnabled, false);
+        mcr.mockConfigValue(ConfigValues.EnableUSBAsDefault, false);
     }
 
     private VM mockVm(GraphicsType graphicsType) {
