@@ -24,6 +24,10 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
         log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
         // NOTE: The 'uuidReturn' variable will contain the taskID and not
         // the created image id!
+        String imageInitSize = null;
+        if (getParameters().getImageInitialSizeInBytes() != 0) {
+            imageInitSize = String.valueOf(getParameters().getImageInitialSizeInBytes());
+        }
         uuidReturn = getIrsProxy().createVolume(getParameters().getStorageDomainId().toString(),
                                                 getParameters().getStoragePoolId().toString(),
                                                 getParameters().getImageGroupId().toString(),
@@ -34,7 +38,8 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
                                                 getParameters().getNewImageID().toString(),
                                                 getParameters().getNewImageDescription(),
                                                 getParameters().getSourceImageGroupId().toString(),
-                                                getParameters().getImageId().toString(), null);
+                                                getParameters().getImageId().toString(),
+                                                imageInitSize);
 
         proceedProxyReturnValue();
         Guid taskID = new Guid(uuidReturn.uuid);
