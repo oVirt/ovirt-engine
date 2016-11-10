@@ -7,9 +7,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -37,7 +37,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule.KeyValue;
 
-public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
+public class ConfigureConsoleOptionsQueryTest extends
+        AbstractQueryTest<ConfigureConsoleOptionsParams, ConfigureConsoleOptionsQuery<ConfigureConsoleOptionsParams>> {
 
     private static final String SSO_TOKEN = "C_K4s4ZDf-EmOqRuz7JiIdGZnCnC00Z9-bh2zR3WrBPs5jMbyT7srNkpInmVSGe3ir0bINWX5VUuEajBb-Wc2A";
     private static final String CA_CERTIFICATE = "-----BEGIN CERTIFICATE-----\\nMIIDijCCAnKgAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwNTELMAkGA1UEBhMCVVMxDTALBgNVBAoM\\nBFRlc3QxFzAVBgNVBAMMDmhhcHB5Ym94LjQ1NjM3MB4XDTE2MDgxNTE0NDk1OFoXDTI2MDgxNDE0\\nNDk1OFowNTELMAkGA1UEBhMCVVMxDTALBgNVBAoMBFRlc3QxFzAVBgNVBAMMDmhhcHB5Ym94LjQ1\\nNjM3MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA17DZocXTA3jWsT0IrVC4WYKAppqz\\nxCzcHgym6WSPBqlZqaPpfWiARIHps3oQfyLe7ys+ADvHYfb58Ntaor+SANvkvLd+ShOUGMFnsyZ6\\nY5h3+NVgQsHR2vt96IVIQ0L56HWHDsB5Z1qz3PnkpTOHW32rcjwf2CGKJcfWa5j1iFlidbX1Ztzx\\nNmn7uDZ5crJGaZrYwcF2BcazD35CKQRx5MiwQDoeZcBZQ+LoMzE1F1TpAT44HahsbY3IJ8kmPoxI\\ncwTjo0dSYAwpeLR51ba+nzSMXB3ldrooCjo2EyjmC6z9MCGQG3jtImAytTSlMNiSqnpJvkSIjLbs\\ntAm9SgyLqQIDAQABo4GjMIGgMB0GA1UdDgQWBBR12nbSeneEed3FST/aht0IiqrWBjBeBgNVHSME\\nVzBVgBR12nbSeneEed3FST/aht0IiqrWBqE5pDcwNTELMAkGA1UEBhMCVVMxDTALBgNVBAoMBFRl\\nc3QxFzAVBgNVBAMMDmhhcHB5Ym94LjQ1NjM3ggIQADAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB\\n/wQEAwIBBjANBgkqhkiG9w0BAQUFAAOCAQEAzQrHzdPdKYrl51iW3ETjx9OSNhwrj2/JWde2T1XG\\nCYX4kAFvlU8MRZrQAwll5hHkbIbCXxGr5wpgLWQGPbQ44n4rAdsvfGZoF7SIy31ihjhDB4OmSlG3\\n2U1FnisjPdsGioW8iu3TokRTpxVSIcYlyDUd4pWBncrclCCqpxAlm/K+lD2LgDgXIYUKp0DfVvUx\\n8NQMpXincdvCnmdyWPEG84rlHIRA5l/Qw+LsX6/HSzbL+4xEOLDDBa82WXsSyiUwf9URLwPY4cWQ\\nkK5G3KKKn5RQwjXZV2/OVXIikuX8aJopjOrBFtDrIW7P0tyT4diGRmDE1oUpBa2ZoO9tCfUqIQ==\\n-----END CERTIFICATE-----\\n";
@@ -76,47 +77,41 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
 
     @Test
     public void shouldFailtWhenNoId() {
-        ConsoleOptions options = new ConsoleOptions(GraphicsType.SPICE);
-        ConfigureConsoleOptionsQuery query =
-                new ConfigureConsoleOptionsQuery(new ConfigureConsoleOptionsParams(options, false));
-        assertFalse(query.validateInputs());
+        when(getQueryParameters().getOptions()).thenReturn(new ConsoleOptions(GraphicsType.SPICE));
+        assertFalse(getQuery().validateInputs());
     }
 
     @Test
     public void shouldFailtWhenNoGraphicsType() {
-        ConsoleOptions options = new ConsoleOptions();
-        ConfigureConsoleOptionsQuery query =
-                new ConfigureConsoleOptionsQuery(new ConfigureConsoleOptionsParams(options, false));
-        assertFalse(query.validateInputs());
+        when(getQueryParameters().getOptions()).thenReturn(new ConsoleOptions());
+        assertFalse(getQuery().validateInputs());
     }
 
     @Test
     public void testInputDataOk() {
-        ConfigureConsoleOptionsQuery query = spy(new ConfigureConsoleOptionsQuery(new ConfigureConsoleOptionsParams(getValidOptions(GraphicsType.SPICE), false)));
-        doReturn(mockVm(GraphicsType.SPICE)).when(query).getCachedVm();
-        assertTrue(query.validateInputs());
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.SPICE));
+        doReturn(mockVm(GraphicsType.SPICE)).when(getQuery()).getCachedVm();
+        assertTrue(getQuery().validateInputs());
     }
 
     @Test
     public void failOnStoppedVm() {
-        ConfigureConsoleOptionsParams params = new ConfigureConsoleOptionsParams(getValidOptions(GraphicsType.SPICE), false);
-        ConfigureConsoleOptionsQuery query = spy(new ConfigureConsoleOptionsQuery(params));
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.SPICE));
         VM mockVm = mockVm(GraphicsType.SPICE);
         mockVm.setStatus(VMStatus.Down);
-        doReturn(mockVm).when(query).getCachedVm();
+        doReturn(mockVm).when(getQuery()).getCachedVm();
 
-        query.validateInputs();
-        assertFalse(query.getQueryReturnValue().getSucceeded());
+        getQuery().validateInputs();
+        assertFalse(getQuery().getQueryReturnValue().getSucceeded());
     }
 
     @Test
     public void failGetSpiceOnVncVm() {
-        ConfigureConsoleOptionsParams params = new ConfigureConsoleOptionsParams(getValidOptions(GraphicsType.SPICE), false);
-        ConfigureConsoleOptionsQuery query = spy(new ConfigureConsoleOptionsQuery(params));
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.SPICE));
         VM mockVm = mockVm(GraphicsType.VNC);
-        doReturn(mockVm).when(query).getCachedVm();
-        query.validateInputs();
-        assertFalse(query.getQueryReturnValue().getSucceeded());
+        doReturn(mockVm).when(getQuery()).getCachedVm();
+        getQuery().validateInputs();
+        assertFalse(getQuery().getQueryReturnValue().getSucceeded());
     }
 
     private ConsoleOptions getValidOptions(GraphicsType graphicsType) {
@@ -127,48 +122,47 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
 
     @Test
     public void shouldCallSetTicket() {
-        ConfigureConsoleOptionsParams params = new ConfigureConsoleOptionsParams(getValidOptions(GraphicsType.VNC), true);
-        ConfigureConsoleOptionsQuery query = spy(new ConfigureConsoleOptionsQuery(params));
-        mockSessionDataContainer(query);
-        mockGetCaCertificate(query);
-        doReturn(mockVm(GraphicsType.VNC)).when(query).getCachedVm();
-        doReturn(null).when(query).getConfigValue(any(ConfigValues.class));
-        doReturn(true).when(query).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
-        doReturn(false).when(query).getConfigValue(ConfigValues.FullScreenWebadminDefault);
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.VNC));
+        when(getQueryParameters().isSetTicket()).thenReturn(true);
+        mockSessionDataContainer(getQuery());
+        mockGetCaCertificate(getQuery());
+        doReturn(mockVm(GraphicsType.VNC)).when(getQuery()).getCachedVm();
+        doReturn(null).when(getQuery()).getConfigValue(any(ConfigValues.class));
+        doReturn(true).when(getQuery()).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
+        doReturn(false).when(getQuery()).getConfigValue(ConfigValues.FullScreenWebadminDefault);
 
 
         VdcReturnValueBase result = new VdcReturnValueBase();
         result.setSucceeded(true);
         result.setActionReturnValue("nbusr123");
         doReturn(result).when(backend).runAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
-        doReturn(backend).when(query).getBackend();
+        doReturn(backend).when(getQuery()).getBackend();
 
-        query.getQueryReturnValue().setSucceeded(true);
-        query.executeQueryCommand();
+        getQuery().getQueryReturnValue().setSucceeded(true);
+        getQuery().executeQueryCommand();
         verify(backend, times(1)).runAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
     }
 
     @Test
     public void failWhenCertEnforcedAndCANotFound() {
-        ConfigureConsoleOptionsParams params = new ConfigureConsoleOptionsParams(getValidOptions(GraphicsType.SPICE), false);
-        ConfigureConsoleOptionsQuery query = spy(new ConfigureConsoleOptionsQuery(params));
-        mockSessionDataContainer(query);
-        mockGetVdsCertificateSubjectByVmId(query);
-        doReturn(mockVm(GraphicsType.SPICE)).when(query).getCachedVm();
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.SPICE));
+        mockSessionDataContainer(getQuery());
+        mockGetVdsCertificateSubjectByVmId(getQuery());
+        doReturn(mockVm(GraphicsType.SPICE)).when(getQuery()).getCachedVm();
 
-        mockSpiceRelatedConfig(query);
-        doReturn(true).when(query).getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation);
-        doReturn(true).when(query).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
-        doReturn(false).when(query).getConfigValue(ConfigValues.FullScreenWebadminDefault);
+        mockSpiceRelatedConfig(getQuery());
+        doReturn(true).when(getQuery()).getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation);
+        doReturn(true).when(getQuery()).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
+        doReturn(false).when(getQuery()).getConfigValue(ConfigValues.FullScreenWebadminDefault);
 
         VdcQueryReturnValue caResult = new VdcQueryReturnValue();
         caResult.setSucceeded(false);
         doReturn(caResult).when(backend).runInternalQuery(eq(VdcQueryType.GetCACertificate), any(VdcQueryParametersBase.class));
-        doReturn(backend).when(query).getBackend();
+        doReturn(backend).when(getQuery()).getBackend();
 
-        query.getQueryReturnValue().setSucceeded(true);
-        query.executeQueryCommand();
-        assertFalse(query.getQueryReturnValue().getSucceeded());
+        getQuery().getQueryReturnValue().setSucceeded(true);
+        getQuery().executeQueryCommand();
+        assertFalse(getQuery().getQueryReturnValue().getSucceeded());
     }
 
     @Test
@@ -243,9 +237,8 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
 
     private void testFillRemoteViewerUrl(String toRepalce, String baseUrl, String resourceUrl, String expected) {
         ConsoleOptions options = new ConsoleOptions();
-        ConfigureConsoleOptionsParams params = new ConfigureConsoleOptionsParams(getValidOptions(GraphicsType.SPICE), false);
-        ConfigureConsoleOptionsQuery query = new ConfigureConsoleOptionsQuery(params);
-        query.fillRemoteViewerUrl(
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.SPICE));
+        getQuery().fillRemoteViewerUrl(
                 options,
                 toRepalce,
                 baseUrl,
@@ -270,7 +263,6 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
     }
 
     void mockSessionDataContainer(ConfigureConsoleOptionsQuery query) {
-        doReturn(sessionDataContainer).when(query).getSessionDataContainer();
         doReturn(SSO_TOKEN).when(sessionDataContainer).getSsoAccessToken(anyString());
     }
 
