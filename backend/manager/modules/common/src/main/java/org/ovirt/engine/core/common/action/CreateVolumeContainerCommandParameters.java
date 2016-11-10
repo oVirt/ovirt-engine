@@ -13,8 +13,8 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
     public CreateVolumeContainerCommandParameters() {
     }
 
-    public CreateVolumeContainerCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-                                                  Guid imageId, Guid srcImageGroupId, Guid srcImageId,
+    public CreateVolumeContainerCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid srcImageGroupId,
+                                                  Guid srcImageId, Guid imageGroupId, Guid imageId,
                                                   VolumeFormat volumeFormat, String description, long size,
                                                   Long initialSize) {
         setStoragePoolId(storagePoolId);

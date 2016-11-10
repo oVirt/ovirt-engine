@@ -11,7 +11,7 @@ public class CopyDataCommandParameters extends StorageJobCommandParameters {
     public CopyDataCommandParameters() {
     }
 
-    public CopyDataCommandParameters(Guid storagePoolId, LocationInfo dstInfo, LocationInfo srcInfo, boolean collapse) {
+    public CopyDataCommandParameters(Guid storagePoolId, LocationInfo srcInfo, LocationInfo dstInfo, boolean collapse) {
         this.srcInfo = srcInfo;
         this.dstInfo = dstInfo;
         this.collapse = collapse;

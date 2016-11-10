@@ -80,10 +80,10 @@ public class CreateVolumeCommand<T extends CreateVolumeParameters> extends Comma
         CreateVolumeContainerCommandParameters parameters = new CreateVolumeContainerCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getStorageDomainId(),
-                getParameters().getNewImageGroupId(),
-                getParameters().getNewImageId(),
                 getParameters().getSrcImageGroupId(),
                 getParameters().getSrcImageId(),
+                getParameters().getNewImageGroupId(),
+                getParameters().getNewImageId(),
                 getParameters().getVolumeFormat(),
                 getParameters().getDescription(),
                 getParameters().getImageSizeInBytes(),

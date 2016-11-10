@@ -76,10 +76,10 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         CreateVolumeContainerCommandParameters parameters = new CreateVolumeContainerCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getDestDomain(),
-                getParameters().getImageGroupID(),
-                image.getImageId(),
                 determineSourceImageGroup(image),
                 image.getParentId(),
+                getParameters().getImageGroupID(),
+                image.getImageId(),
                 getParameters().getDestFormat(),
                 getParameters().getDescription(),
                 image.getSize(),
