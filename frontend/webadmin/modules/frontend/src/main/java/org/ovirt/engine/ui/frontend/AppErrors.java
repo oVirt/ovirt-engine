@@ -849,8 +849,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String USER_DOES_NOT_HAVE_A_VALID_EMAIL();
 
-    String USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS();
-
     String VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE();
 
     String VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND();

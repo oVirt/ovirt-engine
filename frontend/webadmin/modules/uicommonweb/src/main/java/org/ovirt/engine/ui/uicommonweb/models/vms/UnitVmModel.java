@@ -1933,7 +1933,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 getVmInitModel().osTypeChanged(getOSType().getSelectedItem());
                 updateDisplayAndGraphics();
                 getBehavior().updateMemoryBalloon();
-                initUsbPolicy();
 
                 getBehavior().activateInstanceTypeManager();
             }
@@ -2114,31 +2113,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void initUsbPolicy() {
-        Integer osType = getOSType().getSelectedItem();
-        DisplayType displayType = getDisplayType().getSelectedItem();
         GraphicsTypes graphicsTypes = getGraphicsType().getSelectedItem();
 
-        if (osType == null || displayType == null || graphicsTypes == null) {
+        if (graphicsTypes == null) {
             return;
         }
 
         getUsbPolicy().setIsChangeable(true);
 
         UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
-
-        if (AsyncDataProvider.getInstance().isLinuxOsType(osType)) {
-            getUsbPolicy().setItems(Arrays.asList(
-                    UsbPolicy.DISABLED,
-                    UsbPolicy.ENABLED_NATIVE
-            ));
-        } else {
-            getUsbPolicy().setItems(
-                    Arrays.asList(
-                            UsbPolicy.DISABLED,
-                            UsbPolicy.ENABLED_LEGACY,
-                            UsbPolicy.ENABLED_NATIVE
-                    ));
-        }
+        getUsbPolicy().setItems(Arrays.asList(
+                UsbPolicy.DISABLED,
+                UsbPolicy.ENABLED_NATIVE
+        ));
 
         if (!graphicsTypes.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
             getUsbPolicy().setIsChangeable(false);
