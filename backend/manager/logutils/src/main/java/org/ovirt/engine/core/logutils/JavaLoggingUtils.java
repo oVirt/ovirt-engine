@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 /**
  * Contains methods for runtime java.util.logging setup
@@ -40,7 +39,7 @@ public class JavaLoggingUtils {
     public static void addFileHandler(String fileName) {
         try {
             FileHandler fh = new FileHandler(fileName, true);
-            fh.setFormatter(new SimpleFormatter());
+            fh.setFormatter(new TimeZoneBasedFormatter());
             Logger.getLogger("").addHandler(fh);
         } catch (SecurityException | IOException ex) {
             throw new IllegalArgumentException(
