@@ -68,7 +68,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected VfScheduler vfScheduler;
 
     @Inject
-    private NetworkDeviceHelper networkDeviceHelper;
+    protected NetworkDeviceHelper networkDeviceHelper;
 
     @Inject
     protected SchedulingManager schedulingManager;

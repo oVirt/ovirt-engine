@@ -344,7 +344,7 @@ public class SchedulingManager implements BackendService {
 
             return bestHost;
         } catch (InterruptedException e) {
-            log.error("interrupted", e);
+            log.error(String.format("scheduling interrupted, correlation Id: %1$s", correlationId), e);
             return Optional.empty();
         } finally {
             releaseCluster(cluster.getId());
@@ -377,7 +377,14 @@ public class SchedulingManager implements BackendService {
 
         try {
             hostDeviceManager.acquireHostDevicesLock(bestHostId);
-            networkDeviceHelper.setVmIdOnVfs(bestHostId, vm.getId(), new HashSet<>(passthroughVnicToVfMap.values()));
+            Collection<String> virtualFunctions = passthroughVnicToVfMap.values();
+
+            log.debug("Marking following VF as used by VM({}) on selected host({}): {}",
+                    vm.getId(),
+                    bestHostId,
+                    virtualFunctions);
+
+            networkDeviceHelper.setVmIdOnVfs(bestHostId, vm.getId(), new HashSet<>(virtualFunctions));
         } finally {
             hostDeviceManager.releaseHostDevicesLock(bestHostId);
         }

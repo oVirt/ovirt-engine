@@ -127,8 +127,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 }
 
                 if (getParameters().getAction() == PlugAction.PLUG) {
-                    String vfToUse = findFreeVf();
-                    if (vfToUse == null) {
+                    if (getVfPreallocatedForNic() == null && findFreeVf() == null) {
                         return failValidationCannotPlugPassthroughVnicNoSuitableVf();
                     }
                 }
@@ -146,6 +145,17 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
 
         return true;
+    }
+
+    private String getVfPreallocatedForNic() {
+        Guid nicId = getParameters().getNic().getId();
+        Map<Guid, String> vnicToVfMap = vfScheduler.getVnicToVfMap(getVmId(), getVdsId());
+
+        if (vnicToVfMap == null) {
+            return null;
+        }
+
+        return vnicToVfMap.get(nicId);
     }
 
     private String findFreeVf() {
@@ -210,13 +220,20 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             String vfToUse = null;
             try {
                 if (isPassthrough()) {
-                    vfToUse = acquireVF();
-                    if (vfToUse == null) {
-                        failValidationCannotPlugPassthroughVnicNoSuitableVf();
-                        return;
+                    String preallocatedVfForNic = getVfPreallocatedForNic();
+                    boolean preallocatedVfExist = preallocatedVfForNic != null;
+                    if (preallocatedVfExist) {
+                        vfToUse = preallocatedVfForNic;
+                    } else {
+                        vfToUse = acquireVF();
+                        if (vfToUse == null) {
+                            failValidationCannotPlugPassthroughVnicNoSuitableVf();
+                            return;
+                        }
+
+                        networkDeviceHelper.setVmIdOnVfs(getVdsId(), getVmId(), Collections.singleton(vfToUse));
                     }
 
-                    networkDeviceHelper.setVmIdOnVfs(getVdsId(), getVmId(), Collections.singleton(vfToUse));
                     vmDevice.setHostDevice(vfToUse);
                 }
 
@@ -250,7 +267,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private boolean executePlugOrUnplug(PlugAction action) {
-        VDSReturnValue vdsReturnValue = runVdsCommand(action.getCommandType(),
+        VDSReturnValue vdsReturnValue = runVdsCommand(action.getvNicVdsCommandType(),
                 new VmNicDeviceVDSParameters(getVdsId(),
                         getVm(),
                         getParameters().getNic(),

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase {
 
@@ -43,4 +44,12 @@ public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase 
         this.newNic = newNic;
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("action", action)
+                .append("newNic", newNic)
+                .append("nic", nic)
+                .build();
+    }
 }

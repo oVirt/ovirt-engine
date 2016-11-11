@@ -639,12 +639,14 @@ public class VmDevicesMonitoring implements BackendService {
             Object specParams = device.get(VdsProperties.SpecParams);
             Guid newDeviceId = Guid.newGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
+            Object deviceReadonlyValue = device.get(VdsProperties.ReadOnly);
+            boolean isReadOnly = deviceReadonlyValue != null && Boolean.getBoolean((String) deviceReadonlyValue);
             newDevice = new VmDevice(id, VmDeviceGeneralType.forValue(typeName), deviceName, address,
                     0,
                     specParams == null ? new HashMap<>() : (Map<String, Object>) specParams,
                     false,
                     true,
-                    Boolean.getBoolean((String) device.get(VdsProperties.ReadOnly)),
+                    isReadOnly,
                     alias,
                     null,
                     null,

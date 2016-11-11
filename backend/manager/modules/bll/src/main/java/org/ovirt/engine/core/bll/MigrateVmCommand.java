@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTI
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -11,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,11 +33,14 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
+import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -47,6 +53,8 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -61,15 +69,23 @@ import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
+
+    private Logger log = LoggerFactory.getLogger(MigrateVmCommand.class);
 
     @Inject
     ConvergenceConfigProvider convergenceConfigProvider;
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;
@@ -78,6 +94,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private EngineError migrationErrorCode;
 
     private Integer actualDowntime;
+
+    /**
+     * all found passhthrough nics related to VM being migrated. We need to store them, so we can unplug them before
+     * migration and re-plug them back after migration.
+     */
+    private List<VmNetworkInterface> allVmPassthroughNics;
+    private String namesOfNotRepluggedNics;
 
     public MigrateVmCommand(T migrateVmParameters, CommandContext cmdContext) {
         super(migrateVmParameters, cmdContext);
@@ -180,24 +203,136 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void executeVmCommand() {
-        resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
-        setSucceeded(initVdss() && perform());
+        try {
+            resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
+            setSucceeded(initVdss() && perform());
+        } catch (Exception e) {
+            cleanupPassthroughVnics(getDestinationVdsId());
+            setSucceeded(false);
+        }
+    }
+
+    private List<VmNetworkInterface> getAllVmPassthroughNics() {
+        List<VmNetworkInterface> allForVm = vmNetworkInterfaceDao.getAllForVm(getVmId());
+
+        return allForVm.stream().filter(vnic -> vnic.isPassthrough() && vnic.isPlugged()).collect(Collectors.toList());
     }
 
     private boolean perform() {
-        getParameters().setStartTime(new Date());
-
         try {
+            getParameters().setStartTime(new Date());
+            allVmPassthroughNics = getAllVmPassthroughNics();
+            log.debug("Performing migration with following passthrough nics: {}", allVmPassthroughNics);
+
+            if (!unplugNics(allVmPassthroughNics)) {
+                return false;
+            }
+
             if (connectLunDisks(getDestinationVdsId()) && migrateVm()) {
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 return true;
             }
-        }
-        catch (EngineException e) {
+
+        } catch (Exception e) {
+            log.debug("Migration failed.", e);
+            //this will clean all VF reservations made in {@link #initVdss}.
+            cleanupPassthroughVnics(getDestinationVdsId());
         }
 
         runningFailed();
         return false;
+    }
+
+    /**
+     * When unplugging fails for any nic, we stop immediately. In that case we won't proceed with migration, and thus
+     * it makes sense to stop asap to create minimum problems which needs to be fixed manually.
+     *
+     * @param vmNics vmNics to unplug.
+     * @return false if unplugging failed.
+     */
+    private boolean unplugNics(List<VmNetworkInterface> vmNics) {
+        List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(vmNics,
+                PlugAction.UNPLUG);
+
+        log.debug("About to call {} with parameters: {}",
+                VdcActionType.ActivateDeactivateVmNic,
+                Arrays.toString(parametersList.toArray()));
+
+        for (ActivateDeactivateVmNicParameters parameter : parametersList) {
+            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
+
+
+            boolean succeeded = returnValue.getSucceeded();
+            if (!succeeded) {
+                returnValue.getValidationMessages().forEach(this::addValidationMessage);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * This method is called when migration succeeded, and we're plugging vmnics back. If there some error with plugging
+     * any of them back, we will create least problem, if we try to plug back each of them. Also for each such failure,
+     * we must release preallocated VF.
+     * @param vmNics vmNics to plug in
+     * @return false if any nic failed to be plugged back.
+     */
+    private boolean plugNics(List<VmNetworkInterface> vmNics) {
+        List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(vmNics,
+                PlugAction.PLUG);
+
+        boolean plugOfAllMacsSucceeded = true;
+        log.debug("About to call {} with parameters: {}",
+                VdcActionType.ActivateDeactivateVmNic,
+                Arrays.toString(parametersList.toArray()));
+        Map<Guid, String> vnicToVfMap = getVnicToVfMap(getDestinationVdsId());
+        List<VmNic> notRepluggedNics = new ArrayList<>();
+
+        for (ActivateDeactivateVmNicParameters parameter : parametersList) {
+            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
+
+            boolean nicPlugSucceeded = returnValue.getSucceeded();
+            plugOfAllMacsSucceeded &= nicPlugSucceeded;
+            if (!nicPlugSucceeded) {
+                notRepluggedNics.add(parameter.getNic());
+            }
+        }
+
+        if (!plugOfAllMacsSucceeded) {
+            Set<String> vfsToUnregister = notRepluggedNics.stream()
+                    .map(VmNic::getId)
+                    .map(vnicToVfMap::get)
+                    .collect(Collectors.toSet());
+            networkDeviceHelper.setVmIdOnVfs(getDestinationVdsId(), null, vfsToUnregister);
+
+            namesOfNotRepluggedNics = notRepluggedNics.stream().map(VmNic::getName).collect(Collectors.joining(","));
+            auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NOT_ALL_VM_NICS_WERE_PLUGGED_BACK);
+        }
+
+
+        return plugOfAllMacsSucceeded;
+    }
+
+    //this method is used by AuditLogDirector
+    @SuppressWarnings("unused")
+    public String getNamesOfNotRepluggedNics() {
+        return namesOfNotRepluggedNics;
+    }
+
+    private List<ActivateDeactivateVmNicParameters> createActivateDeactivateVmNicParameters(List<VmNetworkInterface> vmNics,
+            PlugAction plugAction) {
+        return vmNics
+                .stream()
+                .map(vmNic -> createActivateDeactivateVmNicParameters(vmNic, plugAction))
+                .collect(Collectors.toList());
+    }
+
+    private ActivateDeactivateVmNicParameters createActivateDeactivateVmNicParameters(VmNic nic,
+            PlugAction plugAction) {
+        ActivateDeactivateVmNicParameters parameters = new ActivateDeactivateVmNicParameters(nic, plugAction, false);
+        parameters.setVmId(getParameters().getVmId());
+        return parameters;
     }
 
     private boolean migrateVm() {
@@ -347,6 +482,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
         finally {
             super.runningSucceded();
+            try {
+                plugNics(allVmPassthroughNics);
+            } catch(Exception e) {
+                log.debug("Failed to plug nic back after migration", e);
+                log.error("Failed to plug nic back after migration");
+            }
         }
     }
 
@@ -616,7 +757,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
-                getReturnValue().getValidationMessages());
+                        getReturnValue().getValidationMessages());
     }
 
     @Override
@@ -729,4 +870,5 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected VmValidator getVmValidator() {
         return new VmValidator(getVm());
     }
+
 }
