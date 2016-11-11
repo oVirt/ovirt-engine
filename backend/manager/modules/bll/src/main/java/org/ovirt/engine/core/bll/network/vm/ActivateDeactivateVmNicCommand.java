@@ -129,9 +129,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 }
 
                 if (getParameters().getAction() == PlugAction.PLUG) {
-                    String vfToUse = updateFreeVf();
+                    String vfToUse = findFreeVf();
                     if (vfToUse == null) {
-                        return false;
+                        return failValidationCannotPlugPassthroughVnicNoSuitableVf();
                     }
                 }
             }
@@ -150,15 +150,13 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         return true;
     }
 
-    private String updateFreeVf() {
-        String vfToUse = vfScheduler.findFreeVfForVnic(getVdsId(), getNetwork(), getVmId());
+    private String findFreeVf() {
+        return vfScheduler.findFreeVfForVnic(getVdsId(), getNetwork(), getVmId());
+    }
 
-        if (vfToUse == null) {
-            failValidation(EngineMessage.CANNOT_PLUG_PASSTHROUGH_VNIC_NO_SUITABLE_VF,
-                    String.format("$vnicName %1$s", getInterfaceName()));
-        }
-
-        return vfToUse;
+    private boolean failValidationCannotPlugPassthroughVnicNoSuitableVf() {
+        return failValidation(EngineMessage.CANNOT_PLUG_PASSTHROUGH_VNIC_NO_SUITABLE_VF,
+                String.format("$vnicName %1$s", getInterfaceName()));
     }
 
     private boolean isPassthrough() {
@@ -206,8 +204,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                     if (isPassthrough()) {
                         try {
                             hostDeviceManager.acquireHostDevicesLock(getVdsId());
-                            vfToUse = updateFreeVf();
+                            vfToUse = findFreeVf();
                             if (vfToUse == null) {
+                                failValidationCannotPlugPassthroughVnicNoSuitableVf();
                                 return;
                             }
 
