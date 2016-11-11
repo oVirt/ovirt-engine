@@ -696,30 +696,6 @@ public class VmHandler {
         return null;
     }
 
-    /**
-     * Checks that the USB policy is legal for the VM. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
-     *
-     * @param messages
-     *            - Messages for validate()
-     */
-    public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy, int osId, List<String> messages) {
-        boolean retVal = true;
-        if (UsbPolicy.ENABLED_LEGACY.equals(usbPolicy)) {
-            if (osRepository.isLinux(osId)) {
-                messages.add(EngineMessage.USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS.toString());
-                retVal = false;
-            }
-        }
-        return retVal;
-    }
-
-    public static void updateImportedVmUsbPolicy(VmBase vmBase) {
-        // Enforce disabled USB policy for Linux OS with legacy policy.
-        if (osRepository.isLinux(vmBase.getOsId()) && vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
-            vmBase.setUsbPolicy(UsbPolicy.DISABLED);
-        }
-    }
-
     public static ValidationResult canRunActionOnNonManagedVm(VM vm, VdcActionType actionType) {
         ValidationResult validationResult = ValidationResult.VALID;
 

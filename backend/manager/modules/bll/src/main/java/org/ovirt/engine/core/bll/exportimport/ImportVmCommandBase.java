@@ -175,18 +175,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                         : true;
     }
 
-    /**
-     * Validates the USB policy.
-     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
-     */
-    protected boolean validateUsbPolicy() {
-        VM vm = getParameters().getVm();
-        VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
-        return VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
-                vm.getOs(),
-                getReturnValue().getValidationMessages());
-    }
-
     protected boolean validateGraphicsAndDisplay() {
         return VmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
                 getGraphicsTypesForVm(),

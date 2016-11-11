@@ -403,13 +403,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(),
-                getParameters().getVm().getOs(),
-                getReturnValue().getValidationMessages())) {
-            return false;
-        }
-
         // Check if the display type is supported
         Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
         if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),

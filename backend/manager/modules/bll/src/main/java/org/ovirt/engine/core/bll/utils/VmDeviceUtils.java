@@ -691,8 +691,8 @@ public class VmDeviceUtils {
                 addUsbControllers(newVm.getId(), getNeededNumberOfUsbControllers(usbSlots));
                 addUsbSlots(newVm.getId(), usbSlots);
             }
-        // Remove USB slots and controllers if the policy is to disable or legacy one
-        } else if (newUsbPolicy.equals(UsbPolicy.DISABLED) || newUsbPolicy.equals(UsbPolicy.ENABLED_LEGACY)) {
+        // Remove USB slots and controllers if the policy is to disable
+        } else if (newUsbPolicy.equals(UsbPolicy.DISABLED)) {
             removeUsbControllers(newVm.getId());
             removeUsbSlots(newVm.getId());
         // If the USB policy is to enable (and was enabled before), we need to update the number of slots

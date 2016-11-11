@@ -432,7 +432,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         getVmTemplate().setStatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
-        VmHandler.updateImportedVmUsbPolicy(getVmTemplate());
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;

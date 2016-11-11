@@ -107,7 +107,7 @@ public class GetVmChangedFieldsForNextRunQueryTest
         srcVm.setCustomProperties("prop=value");
         dstVm.setCustomProperties("prop=value2");
         srcVm.setUsbPolicy(UsbPolicy.DISABLED);
-        dstVm.setUsbPolicy(UsbPolicy.ENABLED_LEGACY);
+        dstVm.setUsbPolicy(UsbPolicy.ENABLED_NATIVE);
         srcVm.setStateless(true);
         dstVm.setStateless(false);
         srcVm.setUseHostCpuFlags(true);
@@ -140,8 +140,8 @@ public class GetVmChangedFieldsForNextRunQueryTest
         // changes for next run
         srcVm.setCustomProperties("prop=value");
         dstVm.setCustomProperties("prop=value");
-        srcVm.setUsbPolicy(UsbPolicy.ENABLED_LEGACY);
-        dstVm.setUsbPolicy(UsbPolicy.ENABLED_LEGACY);
+        srcVm.setUsbPolicy(UsbPolicy.ENABLED_NATIVE);
+        dstVm.setUsbPolicy(UsbPolicy.ENABLED_NATIVE);
         srcVm.setStateless(true);
         dstVm.setStateless(true);
         srcVm.setUseHostCpuFlags(true);

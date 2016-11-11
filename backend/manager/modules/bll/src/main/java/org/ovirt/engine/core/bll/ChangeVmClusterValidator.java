@@ -72,14 +72,6 @@ public class ChangeVmClusterValidator {
                 return parentCommand.validate(isCpuSocketsValid);
             }
 
-            // Check that the USB policy is legal
-            if (!VmHandler.isUsbPolicyLegal(
-                    vm.getUsbPolicy(),
-                    vm.getOs(),
-                    parentCommand.getReturnValue().getValidationMessages())) {
-                return false;
-            }
-
             // Check if the display type is supported
             if (!VmHandler.isGraphicsAndDisplaySupported(
                     vm.getOs(),

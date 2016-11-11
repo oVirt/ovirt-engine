@@ -229,7 +229,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cmd.getParameters().setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
-        doReturn(true).when(cmd).validateUsbPolicy();
         doReturn(true).when(cmd).validateUniqueVmName();
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
@@ -444,7 +443,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cmd.init();
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
-        doReturn(true).when(cmd).validateUsbPolicy();
         doReturn(true).when(cmd).validateUniqueVmName();
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();

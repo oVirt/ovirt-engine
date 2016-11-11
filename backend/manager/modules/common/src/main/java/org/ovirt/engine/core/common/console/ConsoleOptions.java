@@ -174,14 +174,6 @@ public class ConsoleOptions implements Serializable{
         this.numberOfMonitors = numberOfMonitors;
     }
 
-    public int getUsbListenPort() {
-        return usbListenPort;
-    }
-
-    public void setUsbListenPort(int usbListenPort) {
-        this.usbListenPort = usbListenPort;
-    }
-
     public boolean isUsbAutoShare() {
         return usbAutoShare;
     }

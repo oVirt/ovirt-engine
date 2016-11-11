@@ -427,10 +427,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             }
         }
 
-        if (!validateUsbPolicy()) {
-            return false;
-        }
-
         if (!validateGraphicsAndDisplay()) {
             return false;
         }

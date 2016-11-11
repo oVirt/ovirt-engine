@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -277,12 +276,6 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
                 ? getVdsCertificateSubject()
                 : null);
         options.setSpiceProxy(determineSpiceProxy());
-
-        // Update 'UsbListenPort' value
-        boolean getIsUsbEnabled = getConfigValue(ConfigValues.EnableUSBAsDefault);
-        options.setUsbListenPort(getIsUsbEnabled && getCachedVm().getUsbPolicy() == UsbPolicy.ENABLED_LEGACY
-                ? ConsoleOptions.SPICE_USB_DEFAULT_PORT
-                : ConsoleOptions.SET_SPICE_DISABLE_USB_LISTEN_PORT);
     }
 
     private String generateTicket() {

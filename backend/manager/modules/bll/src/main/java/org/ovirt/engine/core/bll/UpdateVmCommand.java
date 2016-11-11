@@ -768,13 +768,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(),
-                vmFromParams.getOs(),
-                getReturnValue().getValidationMessages())) {
-            return false;
-        }
-
         // Check if the graphics and display from parameters are supported
         if (!VmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
                 VmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),

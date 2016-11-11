@@ -547,12 +547,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         }
 
-        // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(), vmFromParams.getOs(),
-                getReturnValue().getValidationMessages())) {
-            return false;
-        }
-
         // check if the OS type is supported
         if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(), getCluster().getArchitecture(),
                 getReturnValue().getValidationMessages())) {

@@ -187,19 +187,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failValidation(EngineMessage.VM_TEMPLATE_IS_LOCKED);
         }
 
-        // Check that the USB policy is legal
-        boolean returnValue = VmHandler.isUsbPolicyLegal(
-                getParameters().getVmTemplateData().getUsbPolicy(),
-                getParameters().getVmTemplateData().getOsId(),
-                getReturnValue().getValidationMessages());
-
         // Check if the OS type is supported
-        if (returnValue) {
-            returnValue =
-                    VmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
-                            getCluster().getArchitecture(),
-                            getReturnValue().getValidationMessages());
-        }
+        boolean returnValue =
+                VmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
+                        getCluster().getArchitecture(),
+                        getReturnValue().getValidationMessages());
+
 
         // Check if the watchdog model is supported
         if (returnValue && getParameters().getWatchdog() != null) {
