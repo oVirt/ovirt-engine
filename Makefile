@@ -64,6 +64,7 @@ PKG_DOC_DIR=$(DOC_DIR)/$(ENGINE_NAME)
 PKG_HTML_DIR=$(PKG_DOC_DIR)
 PKG_EAR_DIR=$(DATA_DIR)/engine.ear
 PKG_JBOSS_MODULES=$(DATA_DIR)/modules
+PKG_LOGUTILS=$(DATA_DIR)/logutils
 PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
 PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
 PKG_STATE_DIR=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
@@ -372,6 +373,11 @@ install_artifacts:
 		unzip -q -o -d "$(DESTDIR)$(PKG_HTML_DIR)/$${comp}" "$${f}"; \
 	done
 
+	# logutils.jar is need only for tools and it's loaded from boot
+	# classpath -> we need to handle it differently than other jars
+	install -dm 0755 "$(DESTDIR)$(PKG_LOGUTILS)"
+	find "$(MAVEN_OUTPUT_DIR)" -name 'logutils.jar' -type f -exec install -m 644 {} "$(DESTDIR)$(PKG_LOGUTILS)" \;
+
 	# extract embedded artifacts as doc
 	# no need to relay on source tree for these
 	install -d -m 755 "$(DESTDIR)$(PKG_DOC_DIR)"
@@ -382,6 +388,7 @@ install_artifacts:
 install_poms:
 	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
 	install -m 644 backend/manager/extensions-tool/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-extensions-tool.pom"
+	install -m 644 backend/manager/logutils/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-logutils.pom"
 	install -m 644 backend/manager/modules/aaa/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-aaa.pom"
 	install -m 644 backend/manager/modules/bll/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-bll.pom"
 	install -m 644 backend/manager/modules/branding/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-branding.pom"

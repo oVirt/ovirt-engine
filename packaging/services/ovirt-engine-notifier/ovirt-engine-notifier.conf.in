@@ -51,12 +51,13 @@ ENGINE_USR="@ENGINE_USR@"
 #   -Dmy.param=my.value -Dmy.flag -Dyour.param=your.value
 #
 NOTIFIER_PROPERTIES=""
+NOTIFIER_PROPERTIES="${NOTIFIER_PROPERTIES} \"jboss.modules.system.pkgs=org.jboss.byteman,org.ovirt.engine.core.logutils\""
 NOTIFIER_PROPERTIES="${NOTIFIER_PROPERTIES} \"java.util.logging.config.file=${ENGINE_USR}/conf/notifier-logging.properties\""
 
 #
 # Extra Java arguments to be added to command-line.
 #
-NOTIFIER_JVM_ARGS=""
+NOTIFIER_JVM_ARGS="-Xbootclasspath/p:\"${ENGINE_USR}/logutils/logutils.jar\""
 
 #
 # Module path

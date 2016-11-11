@@ -39,6 +39,12 @@
     </dependency>
 
     <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>logutils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>

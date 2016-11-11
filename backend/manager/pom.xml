@@ -12,6 +12,7 @@
   <description>parent POM for all oVirt Manager</description>
   <modules>
     <module>dependencies</module>
+    <module>logutils</module>
     <module>modules</module>
     <module>tools</module>
     <module>extensions-tool</module>
