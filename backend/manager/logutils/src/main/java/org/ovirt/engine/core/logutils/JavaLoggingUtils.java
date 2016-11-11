@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.log;
+package org.ovirt.engine.core.logutils;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

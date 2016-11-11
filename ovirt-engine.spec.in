@@ -669,6 +669,7 @@ while read lib_path; do
 	rm -f "%{buildroot}/${lib_path}"
 	ln -s "${java_path}" "%{buildroot}${lib_path}"
 done << __EOF__
+%{engine_data}/logutils/logutils.jar
 %{engine_ear}/bll.jar
 %{engine_ear}/lib/vdsbroker.jar
 %{engine_ear}/lib/scheduler.jar
@@ -730,6 +731,7 @@ base %{name}-branding.pom
 base %{name}-common.pom
 base %{name}-compat.pom
 base %{name}-extensions-manager.pom
+base %{name}-logutils.pom
 base %{name}-root.pom
 base %{name}-utils.pom
 base %{name}-uutils.pom
@@ -924,6 +926,7 @@ fi
 %{engine_data}/conf/sysprep/
 %{engine_data}/files/
 %{engine_data}/icons/
+%{engine_data}/logutils/
 %{engine_doc}/AuditLogMessages.properties
 %{engine_doc}/mibs/
 %{engine_ear}/META-INF

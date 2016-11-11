@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.config;
 
-import org.ovirt.engine.core.utils.log.JavaLoggingUtils;
+import org.ovirt.engine.core.logutils.JavaLoggingUtils;
 import org.slf4j.LoggerFactory;
 
 /**

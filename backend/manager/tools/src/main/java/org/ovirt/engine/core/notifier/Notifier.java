@@ -2,10 +2,10 @@ package org.ovirt.engine.core.notifier;
 
 import static org.ovirt.engine.core.notifier.utils.NotificationProperties.LOG_LEVEL;
 
+import org.ovirt.engine.core.logutils.JavaLoggingUtils;
 import org.ovirt.engine.core.notifier.transport.smtp.Smtp;
 import org.ovirt.engine.core.notifier.transport.snmp.Snmp;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
-import org.ovirt.engine.core.utils.log.JavaLoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
