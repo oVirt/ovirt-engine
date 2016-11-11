@@ -105,7 +105,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
     }
 
     private void initAttachedInterfaces(final Collection<PairQueryable<VdsNetworkInterface, VDS>> items) {
-        if (StringUtils.isEmpty(getEntity().getLabel()) || items == null || items.isEmpty()) {
+        if (getEntity() == null || StringUtils.isEmpty(getEntity().getLabel()) || items == null || items.isEmpty()) {
             setItems(items);
             return;
         }
