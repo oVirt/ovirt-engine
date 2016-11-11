@@ -1256,7 +1256,6 @@ public class VmMapper extends VmBaseMapper {
     private static UsbPolicy getUsbPolicyAccordingToUsbType(UsbType usbType) {
         switch (usbType) {
         case LEGACY:
-            return UsbPolicy.ENABLED_LEGACY;
         case NATIVE:
             return UsbPolicy.ENABLED_NATIVE;
         default:

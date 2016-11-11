@@ -8,7 +8,7 @@ public class UsbMapperUtils {
     public static boolean getIsUsbEnabled(UsbPolicy usbPolicy) {
         boolean enabled = false;
         if (usbPolicy != null) {
-            enabled = usbPolicy.equals(UsbPolicy.ENABLED_LEGACY) || usbPolicy.equals(UsbPolicy.ENABLED_NATIVE);
+            enabled = usbPolicy.equals(UsbPolicy.ENABLED_NATIVE);
         }
         return enabled;
     }
@@ -17,11 +17,7 @@ public class UsbMapperUtils {
         UsbType usbType = null;
         if (usbPolicy != null) {
             if (getIsUsbEnabled(usbPolicy)) {
-                if (usbPolicy.equals(UsbPolicy.ENABLED_LEGACY)) {
-                    usbType = UsbType.LEGACY;
-                } else {
-                    usbType = UsbType.NATIVE;
-                }
+                usbType = UsbType.NATIVE;
             }
         }
         return usbType;

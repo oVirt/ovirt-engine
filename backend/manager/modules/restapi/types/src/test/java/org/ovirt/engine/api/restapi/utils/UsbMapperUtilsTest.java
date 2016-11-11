@@ -12,12 +12,6 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 public class UsbMapperUtilsTest {
 
     @Test
-    public void getIsUsbEnabledEnabledLegacy() {
-        UsbPolicy usbPolicy = UsbPolicy.ENABLED_LEGACY;
-        assertTrue(UsbMapperUtils.getIsUsbEnabled(usbPolicy));
-    }
-
-    @Test
     public void getIsUsbEnabledEnabledNative() {
         UsbPolicy usbPolicy = UsbPolicy.ENABLED_NATIVE;
         assertTrue(UsbMapperUtils.getIsUsbEnabled(usbPolicy));
@@ -27,12 +21,6 @@ public class UsbMapperUtilsTest {
     public void getIsUsbEnabledDisabled() {
         UsbPolicy usbPolicy = UsbPolicy.DISABLED;
         assertFalse(UsbMapperUtils.getIsUsbEnabled(usbPolicy));
-    }
-
-    @Test
-    public void getUsbTypeEnabledLegacy() {
-        UsbPolicy usbPolicy = UsbPolicy.ENABLED_LEGACY;
-        assertEquals(UsbType.LEGACY, UsbMapperUtils.getUsbType(usbPolicy));
     }
 
     @Test
