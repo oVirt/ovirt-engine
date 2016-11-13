@@ -477,6 +477,10 @@ public interface UIConstants extends Constants {
 
     String removeDisksTitle();
 
+    String sparsifyDisksTitle();
+
+    String sparsifyConfirmationPopupMessage();
+
     String moveDisksTitle();
 
     String importImagesTitle();
@@ -1050,6 +1054,8 @@ public interface UIConstants extends Constants {
     String allowToLiveMigrateDiskToAnotherStorageDomainRoleTreeTooltip();
 
     String allowToAttachDiskToVmRoleTreeTooltip();
+
+    String allowToSparsifyDiskToVmRoleTreeTooltip();
 
     String allowToChangePropertiesOfTheDiskRoleTreeTooltip();
 

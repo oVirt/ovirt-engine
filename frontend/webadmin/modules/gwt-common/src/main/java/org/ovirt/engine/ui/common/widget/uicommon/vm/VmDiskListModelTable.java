@@ -70,6 +70,13 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
         });
 
+        getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.sparsifyDisk()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getSparsifyCommand();
+            }
+        });
+
         plugButtonDefinition = new ImageUiCommandButtonDefinition<Disk>(getEventBus(), constants.activateDisk(),
                 resources.upImage(), resources.upDisabledImage(), true, false) {
             @Override

@@ -122,6 +122,7 @@ public class RoleTreeView {
                                 roleNode(ActionGroup.DELETE_DISK, getConstants().allowToDeleteDiskRoleTreeTooltip()),
                                 roleNode(ActionGroup.CONFIGURE_DISK_STORAGE, getConstants().allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip()),
                                 roleNode(ActionGroup.ATTACH_DISK, getConstants().allowToAttachDiskToVmRoleTreeTooltip()),
+                                roleNode(ActionGroup.SPARSIFY_DISK, getConstants().allowToSparsifyDiskToVmRoleTreeTooltip()),
                                 roleNode(ActionGroup.EDIT_DISK_PROPERTIES, getConstants().allowToChangePropertiesOfTheDiskRoleTreeTooltip()),
                                 roleNode(ActionGroup.CONFIGURE_SCSI_GENERIC_IO, getConstants().allowToChangeSGIORoleTreeTooltip()),
                                 roleNode(ActionGroup.ACCESS_IMAGE_STORAGE, getConstants().allowAccessImageDomainRoleTreeTooltip()),

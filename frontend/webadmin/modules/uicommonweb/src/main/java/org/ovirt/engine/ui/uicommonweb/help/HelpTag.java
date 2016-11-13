@@ -408,6 +408,8 @@ public enum HelpTag {
 
     remove_disk("remove_disk", HelpTagType.COMMON, "VMs Tab > Disks Sub-Tab > Remove Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    sparsify_disk("sparsify_disk", HelpTagType.COMMON, "VMs Tab > Disks Sub-Tab > Sparsify Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
     remove_external_subnet("remove_external_subnet", HelpTagType.WEBADMIN, "Networks main tab -> External Subnet sub tab -> Remove"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_host("remove_host", HelpTagType.WEBADMIN, "Host Tab > Remove Host(s)"), //$NON-NLS-1$ //$NON-NLS-2$

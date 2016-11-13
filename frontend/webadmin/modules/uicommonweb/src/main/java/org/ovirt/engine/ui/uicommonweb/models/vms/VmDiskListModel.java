@@ -86,6 +86,16 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         privateRemoveCommand = value;
     }
 
+    private UICommand sparsifyCommand;
+
+    public UICommand getSparsifyCommand() {
+        return sparsifyCommand;
+    }
+
+    private void setSparsifyCommand(UICommand value) {
+        sparsifyCommand = value;
+    }
+
     private UICommand privatePlugCommand;
 
     public UICommand getPlugCommand() {
@@ -160,6 +170,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         setAttachCommand(new UICommand("Attach", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setSparsifyCommand(new UICommand("Sparsify", this)); //$NON-NLS-1$
         setPlugCommand(new UICommand("Plug", this)); //$NON-NLS-1$
         setUnPlugCommand(new UICommand("Unplug", this)); //$NON-NLS-1$
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
@@ -323,6 +334,25 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.onRemove(this);
     }
 
+    private void sparsify() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        SparsifyDiskModel model = new SparsifyDiskModel();
+        setWindow(model);
+        model.initialize(getEntity(), getSelectedItems(), this);
+    }
+
+    private void onSparsify() {
+        SparsifyDiskModel model = (SparsifyDiskModel) getWindow();
+        if (!model.validate()) {
+            return;
+        }
+
+        model.onSparsify(this);
+    }
+
     private void plug() {
         Frontend.getInstance().runMultipleAction(VdcActionType.HotPlugDiskToVm, createPlugOrUnplugParams(true),
                 new IFrontendMultipleActionAsyncCallback() {
@@ -458,6 +488,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
         getRemoveCommand().setIsExecutionAllowed(atLeastOneDiskSelected() && isRemoveCommandAvailable());
 
+        getSparsifyCommand().setIsExecutionAllowed(atLeastOneDiskSelected() && isSparsifyCommandAvailable());
+
         getMoveCommand().setIsExecutionAllowed(atLeastOneDiskSelected()
                 && (isMoveCommandAvailable() || isLiveMoveCommandAvailable()));
 
@@ -583,6 +615,18 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         return true;
     }
 
+    private boolean isSparsifyCommandAvailable() {
+        List<Disk> disks = getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+
+        for (Disk disk : disks) {
+            if (isDiskLocked(disk) || (!isVmDown() && disk.getPlugged())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void updateScanAlignmentCommandAvailability() {
         boolean isExecutionAllowed = true;
         if (isVmDown() && getSelectedItems() != null && getEntity() != null) {
@@ -618,6 +662,9 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         else if (command == getRemoveCommand()) {
             remove();
         }
+        else if (command == getSparsifyCommand()) {
+            sparsify();
+        }
         else if (command == getMoveCommand()) {
             move();
         }
@@ -632,6 +679,12 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         }
         else if (RemoveDiskModel.ON_REMOVE.equals(command.getName())) {
             onRemove();
+        }
+        else if (SparsifyDiskModel.CANCEL_SPARSIFY.equals(command.getName())) {
+            cancel();
+        }
+        else if (SparsifyDiskModel.ON_SPARSIFY.equals(command.getName())) {
+            onSparsify();
         }
         else if (command == getPlugCommand()) {
             plug();

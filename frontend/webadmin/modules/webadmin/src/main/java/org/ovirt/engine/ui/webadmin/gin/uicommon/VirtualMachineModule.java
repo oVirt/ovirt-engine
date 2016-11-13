@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
@@ -198,6 +199,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
             final Provider<VmDiskAttachPopupPresenterWidget> attachPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<VmDiskSparsifyPopupPresenterWidget> sparsifyConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider,
             final Provider<VmListModel<Void>> mainModelProvider,
@@ -229,6 +231,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                             UICommand lastExecutedCommand) {
                         if (lastExecutedCommand == getModel().getRemoveCommand()) {
                             return removeConfirmPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getSparsifyCommand()) {
+                            return sparsifyConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }

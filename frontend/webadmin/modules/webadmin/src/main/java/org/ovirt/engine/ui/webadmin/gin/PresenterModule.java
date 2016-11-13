@@ -119,6 +119,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
@@ -393,6 +394,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskSparsifyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
@@ -1515,6 +1517,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskRemovePopupPresenterWidget.class,
                 VmDiskRemovePopupPresenterWidget.ViewDef.class,
                 VmDiskRemovePopupView.class);
+
+        // VM Sparsify Disk
+        bindPresenterWidget(VmDiskSparsifyPopupPresenterWidget.class,
+                VmDiskSparsifyPopupPresenterWidget.ViewDef.class,
+                VmDiskSparsifyPopupView.class);
 
         // Edit Template
         bindPresenterWidget(TemplateEditPresenterWidget.class,

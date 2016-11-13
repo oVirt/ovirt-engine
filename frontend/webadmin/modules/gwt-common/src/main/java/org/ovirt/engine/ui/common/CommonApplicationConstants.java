@@ -683,6 +683,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String removeDisk();
 
+    String sparsifyDisk();
+
     String activateDisk();
 
     String deactivateDisk();
