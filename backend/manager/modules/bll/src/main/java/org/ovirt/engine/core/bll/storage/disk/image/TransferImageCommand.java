@@ -284,7 +284,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
         // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
-            // We want to use the transferring vds for image actions for having a coherent log when transfering.
+            // We want to use the transferring vds for image actions for having a coherent log when transferring.
             Guid transferingVdsId = context.entity.getVdsId();
             if (verifyImage(transferingVdsId)) {
                 setVolumeLegalityInStorage(LEGAL_IMAGE);
