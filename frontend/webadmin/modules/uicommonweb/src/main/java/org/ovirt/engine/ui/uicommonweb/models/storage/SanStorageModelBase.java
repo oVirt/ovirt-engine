@@ -49,7 +49,6 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel {
 
     private boolean isGrouppedByTarget;
-    private VDS previousGetDeviceListHost;
     private VDS previousGetLunsByVGIdHost;
 
     private final List<LunModel> includedLUNs;
@@ -477,11 +476,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             proposeDiscover();
             return;
         }
-
-        if (Objects.equals(previousGetDeviceListHost, host)) {
-            return;
-        }
-        previousGetDeviceListHost = host;
 
         final Collection<EntityModel<?>> prevSelected = Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem());
         clearItems();
