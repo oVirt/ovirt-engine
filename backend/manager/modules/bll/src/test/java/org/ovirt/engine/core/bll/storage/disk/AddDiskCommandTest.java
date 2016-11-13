@@ -623,16 +623,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testIscsiLunCannotBeAddedIfAddingFloatingDisk() {
-        LunDisk disk = createISCSILunDisk(ScsiGenericIO.UNFILTERED);
-        command.getParameters().setDiskInfo(disk);
-        command.getParameters().getDiskVmElement().setUsingScsiReservation(true);
-        assertFalse("Floating disk with SCSI reservation set successfully added",
-                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        verifyValidationMessagesContainMessage(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK);
-    }
-
-    @Test
     public void testUnknownTypeLunCantBeAdded() {
         LunDisk disk = createISCSILunDisk();
         command.getParameters().setDiskInfo(disk);

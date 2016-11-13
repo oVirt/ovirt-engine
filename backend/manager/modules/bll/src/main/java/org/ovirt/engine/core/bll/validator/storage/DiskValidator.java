@@ -97,15 +97,12 @@ public class DiskValidator {
     }
 
     public ValidationResult isUsingScsiReservationValid(VM vm, DiskVmElement dve, LunDisk lunDisk) {
-        // this operation is valid only when attaching disk to VMs
-        if (vm == null && dve.isUsingScsiReservation()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK);
+        if (vm != null) {
+            // scsi reservation can be enabled only when sgio is unfiltered
+            if (dve.isUsingScsiReservation() && lunDisk.getSgio() == ScsiGenericIO.FILTERED) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
+            }
         }
-        // scsi reservation can be enabled only when sgio is unfiltered
-        if (dve.isUsingScsiReservation() && lunDisk.getSgio() == ScsiGenericIO.FILTERED) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
-        }
-
         return  ValidationResult.VALID;
     }
 

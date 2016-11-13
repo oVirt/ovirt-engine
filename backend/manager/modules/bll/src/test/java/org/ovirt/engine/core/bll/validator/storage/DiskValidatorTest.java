@@ -157,16 +157,6 @@ public class DiskValidatorTest {
     }
 
     @Test
-    public void testIsUsingScsiReservationValidWhenAddingFloatingDisk() {
-        setupForLun();
-
-        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED);
-
-        assertThat(lunValidator.isUsingScsiReservationValid(null, createDiskVmElementUsingScsiReserevation(), lunDisk1),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK));
-    }
-
-    @Test
     public void testDiskAttachedToVMValid() {
         VM vm = createVM();
         when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.singletonList(vm));
