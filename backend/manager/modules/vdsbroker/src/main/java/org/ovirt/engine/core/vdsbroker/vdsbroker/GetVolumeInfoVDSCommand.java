@@ -94,6 +94,10 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
                 newImage.getImage().setLeaseState(EnumUtils.valueOf(LeaseState.class, xmlRpcStruct.get("leaseState")
                         .toString(), true));
             }
+
+            if (xmlRpcStruct.containsKey("generation")) {
+                newImage.getImage().setGeneration(Integer.valueOf(xmlRpcStruct.get("generation").toString()));
+            }
         } catch (RuntimeException ex) {
             log.error("Failed building DiskImage: {}", ex.getMessage());
             printReturnValue();
