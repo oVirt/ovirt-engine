@@ -479,4 +479,6 @@ public interface IVdsServer {
     VolumeInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID);
 
     StatusOnlyReturnForXmlRpc glusterStopProcesses();
+
+    StatusOnlyReturnForXmlRpc sparsifyVolume(String jobId, Map<String, Object> volumeAddress);
 }

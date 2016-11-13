@@ -2088,4 +2088,10 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc sparsifyVolume(String jobId, Map<String, Object> volumeAddress) {
+        throw new UnsupportedOperationException();
+    }
+
 }

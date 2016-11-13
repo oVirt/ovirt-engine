@@ -175,6 +175,7 @@ public enum VdcActionType {
     MergeExtend(241, QuotaDependency.STORAGE),
     DestroyImageCheck(242, QuotaDependency.NONE),
     CreateVolume(243, QuotaDependency.STORAGE),
+    SparsifyImage(244, ActionGroup.SPARSIFY_DISK, QuotaDependency.NONE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),

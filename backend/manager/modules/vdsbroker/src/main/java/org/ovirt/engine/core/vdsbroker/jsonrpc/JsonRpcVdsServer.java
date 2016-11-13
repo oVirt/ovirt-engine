@@ -2164,4 +2164,16 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc sparsifyVolume(String jobId, Map<String, Object> volumeAddress) {
+        JsonRpcRequest request =
+                new RequestBuilder("SDM.sparsify_volume")
+                        .withParameter("job_id", jobId)
+                        .withParameter("vol_info", volumeAddress)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
 }

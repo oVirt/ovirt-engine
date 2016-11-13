@@ -20,6 +20,10 @@ public abstract class StorageJobCommand<T extends StorageJobCommandParameters> e
         }
     }
 
+    public StorageJobCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     public CommandCallback getCallback() {
         return new StorageJobCallback();
