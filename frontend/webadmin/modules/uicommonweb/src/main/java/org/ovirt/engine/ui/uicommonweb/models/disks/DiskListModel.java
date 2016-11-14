@@ -35,7 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ExportRepoImageModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
@@ -682,8 +682,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
     private void cancelConfirm() {
         AbstractDiskModel model = (AbstractDiskModel) getWindow();
-        SanStorageModel sanStorageModel = model.getSanStorageModel();
-        sanStorageModel.setForce(false);
+        SanStorageModelBase sanStorageModelBase = model.getSanStorageModelBase();
+        sanStorageModelBase.setForce(false);
         setConfirmWindow(null);
     }
 

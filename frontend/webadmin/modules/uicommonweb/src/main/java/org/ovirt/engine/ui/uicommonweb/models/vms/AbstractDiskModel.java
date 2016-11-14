@@ -47,7 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -81,7 +81,7 @@ public abstract class AbstractDiskModel extends DiskModel {
     private ListModel<StoragePool> dataCenter;
     private ListModel<String> cinderVolumeType;
 
-    private SanStorageModel sanStorageModel;
+    private SanStorageModelBase sanStorageModelBase;
     private boolean previousIsQuotaAvailable;
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -185,12 +185,12 @@ public abstract class AbstractDiskModel extends DiskModel {
         this.cinderVolumeType = cinderVolumeType;
     }
 
-    public SanStorageModel getSanStorageModel() {
-        return sanStorageModel;
+    public SanStorageModelBase getSanStorageModelBase() {
+        return sanStorageModelBase;
     }
 
-    public void setSanStorageModel(SanStorageModel sanStorageModel) {
-        this.sanStorageModel = sanStorageModel;
+    public void setSanStorageModelBase(SanStorageModelBase sanStorageModelBase) {
+        this.sanStorageModelBase = sanStorageModelBase;
     }
 
     public SystemTreeItemModel getSystemTreeSelectedItem() {
@@ -946,7 +946,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         }
         cancelConfirm();
 
-        getSanStorageModel().setForce(true);
+        getSanStorageModelBase().setForce(true);
         onSave();
     }
 

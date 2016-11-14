@@ -38,7 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavior;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -215,7 +215,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     StorageModel storageModel;
     IscsiStorageModel iscsiStorageModel;
     FcpStorageModel fcpStorageModel;
-    SanStorageModel sanStorageModel;
+    SanStorageModelBase sanStorageModelBase;
 
     public VmDiskPopupWidget(boolean isLunDiskEnabled) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
@@ -452,20 +452,20 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         // Set view and model by storage type
         if (storageType == StorageType.ISCSI) {
             storageView = iscsiStorageView;
-            sanStorageModel = iscsiStorageModel;
+            sanStorageModelBase = iscsiStorageModel;
         }
         else if (storageType == StorageType.FCP) {
             storageView = fcpStorageView;
-            sanStorageModel = fcpStorageModel;
+            sanStorageModelBase = fcpStorageModel;
         }
 
-        storageModel.setCurrentStorageItem(sanStorageModel);
-        diskModel.setSanStorageModel(sanStorageModel);
+        storageModel.setCurrentStorageItem(sanStorageModelBase);
+        diskModel.setSanStorageModelBase(sanStorageModelBase);
 
         // Execute 'UpdateCommand' to call 'GetDeviceList'
-        sanStorageModel.getUpdateCommand().execute();
+        sanStorageModelBase.getUpdateCommand().execute();
 
-        sanStorageModel.setWidgetModel(diskModel);
+        sanStorageModelBase.setWidgetModel(diskModel);
         externalDiskPanel.clear();
         externalDiskPanel.add(storageView);
     }

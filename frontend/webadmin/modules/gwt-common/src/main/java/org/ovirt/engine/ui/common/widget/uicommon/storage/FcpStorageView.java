@@ -6,11 +6,11 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -18,7 +18,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FcpStorageView extends AbstractStorageView<SanStorageModel> implements HasValidation {
+public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> implements HasValidation {
 
     @UiField
     @Path(value = "getLUNsFailure")
@@ -53,7 +53,7 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModel> impleme
     }
 
     @Override
-    public void edit(final SanStorageModel object) {
+    public void edit(final SanStorageModelBase object) {
         driver.edit(object);
 
         initLists(object);
@@ -94,7 +94,7 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModel> impleme
     }
 
     @Override
-    public SanStorageModel flush() {
+    public SanStorageModelBase flush() {
         return driver.flush();
     }
 
@@ -120,7 +120,7 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModel> impleme
         contentPanel.setWidget(sanStorageLunToTargetList);
     }
 
-    interface Driver extends UiCommonEditorDriver<SanStorageModel, FcpStorageView> {
+    interface Driver extends UiCommonEditorDriver<SanStorageModelBase, FcpStorageView> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, FcpStorageView> {

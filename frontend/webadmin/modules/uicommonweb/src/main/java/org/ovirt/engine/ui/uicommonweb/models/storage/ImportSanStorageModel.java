@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public abstract class ImportSanStorageModel extends SanStorageModel {
+public abstract class ImportSanStorageModel extends SanStorageModelBase {
 
     protected ListModel<StorageDomain> storageDomains;
 

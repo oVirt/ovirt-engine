@@ -723,21 +723,21 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     private void saveSanStorage() {
         StorageModel storageModel = (StorageModel) getWindow();
-        final SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
+        final SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
 
-        Guid hostId = sanStorageModel.getContainer().getHost().getSelectedItem().getId();
-        if (sanStorageModel.getAddedLuns().isEmpty()) {
+        Guid hostId = sanStorageModelBase.getContainer().getHost().getSelectedItem().getId();
+        if (sanStorageModelBase.getAddedLuns().isEmpty()) {
             onSaveSanStorage();
             return;
         }
         List<String> unkownStatusLuns = new ArrayList<>();
-        for (LunModel lunModel : sanStorageModel.getAddedLuns()) {
+        for (LunModel lunModel : sanStorageModelBase.getAddedLuns()) {
             unkownStatusLuns.add(lunModel.getLunId());
         }
         Frontend.getInstance()
                 .runQuery(VdcQueryType.GetDeviceList,
                         new GetDeviceListQueryParameters(hostId,
-                                sanStorageModel.getType(),
+                                sanStorageModelBase.getType(),
                                 true,
                                 unkownStatusLuns),
                         new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
@@ -745,9 +745,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                             public void onSuccess(VdcQueryReturnValue response) {
                                 if (response.getSucceeded()) {
                                     List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
-                                    postGetLunsMessages(sanStorageModel.getUsedLunsMessages(checkedLuns));
+                                    postGetLunsMessages(sanStorageModelBase.getUsedLunsMessages(checkedLuns));
                                 } else {
-                                    sanStorageModel.setGetLUNsFailure(
+                                    sanStorageModelBase.setGetLUNsFailure(
                                             ConstantsManager.getInstance()
                                                     .getConstants()
                                                     .couldNotRetrieveLUNsLunsFailure());
@@ -781,8 +781,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
         StorageModel storageModel = (StorageModel) getWindow();
-        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
-        sanStorageModel.setForce(true);
+        SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
+        sanStorageModelBase.setForce(true);
 
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
@@ -1351,7 +1351,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     public void saveNewSanStorage() {
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
+        SanStorageModelBase sanModel = (SanStorageModelBase) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
@@ -1519,7 +1519,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         this.context = context;
 
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
+        SanStorageModelBase sanModel = (SanStorageModelBase) model.getCurrentStorageItem();
         StorageDomain storage = getSelectedItem();
 
         boolean isNew = model.getStorage() == null;
@@ -1550,12 +1550,12 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     StorageModel storageModel = (StorageModel) getWindow();
-                    SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
-                    boolean force = sanStorageModel.isForce();
+                    SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
+                    boolean force = sanStorageModelBase.isForce();
                     StorageDomain storageDomain1 = storageListModel.getSelectedItem();
                     ArrayList<String> lunIds = new ArrayList<>();
 
-                    for (LunModel lun : sanStorageModel.getAddedLuns()) {
+                    for (LunModel lun : sanStorageModelBase.getAddedLuns()) {
                         lunIds.add(lun.getLunId());
                     }
 
@@ -1566,7 +1566,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     }
 
                     ArrayList<String> lunToRefreshIds = new ArrayList<>();
-                    for (LunModel lun : sanStorageModel.getLunsToRefresh()) {
+                    for (LunModel lun : sanStorageModelBase.getLunsToRefresh()) {
                         lunToRefreshIds.add(lun.getLunId());
                     }
 

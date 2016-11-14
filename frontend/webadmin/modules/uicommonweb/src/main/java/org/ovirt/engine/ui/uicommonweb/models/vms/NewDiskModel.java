@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -160,7 +160,7 @@ public class NewDiskModel extends AbstractDiskModel {
         switch (getDiskStorageType().getEntity()) {
             case LUN:
                 LunDisk lunDisk = (LunDisk) getDisk();
-                LUNs luns = getSanStorageModel().getAddedLuns().get(0).getEntity();
+                LUNs luns = getSanStorageModelBase().getAddedLuns().get(0).getEntity();
                 luns.setLunType(getStorageType().getSelectedItem());
                 lunDisk.setLun(luns);
                 break;
@@ -216,14 +216,14 @@ public class NewDiskModel extends AbstractDiskModel {
 
     @Override
     public boolean validate() {
-        if (getDiskStorageType().getEntity() == DiskStorageType.LUN && getSanStorageModel() != null) {
-            getSanStorageModel().validate();
-            if (!getSanStorageModel().getIsValid()) {
+        if (getDiskStorageType().getEntity() == DiskStorageType.LUN && getSanStorageModelBase() != null) {
+            getSanStorageModelBase().validate();
+            if (!getSanStorageModelBase().getIsValid()) {
                 return false;
             }
 
-            ArrayList<String> partOfSdLunsMessages = getSanStorageModel().getPartOfSdLunsMessages();
-            if (!partOfSdLunsMessages.isEmpty() && !getSanStorageModel().isForce()) {
+            ArrayList<String> partOfSdLunsMessages = getSanStorageModelBase().getPartOfSdLunsMessages();
+            if (!partOfSdLunsMessages.isEmpty() && !getSanStorageModelBase().isForce()) {
                 forceCreationWarning(partOfSdLunsMessages);
                 return false;
             }
@@ -253,11 +253,11 @@ public class NewDiskModel extends AbstractDiskModel {
     }
 
     @Override
-    public void setSanStorageModel(SanStorageModel sanStorageModel) {
-        super.setSanStorageModel(sanStorageModel);
+    public void setSanStorageModelBase(SanStorageModelBase sanStorageModelBase) {
+        super.setSanStorageModelBase(sanStorageModelBase);
 
-        if (!sanStorageModel.getLunSelectionChangedEvent().getListeners().contains(lunSelectionChangedEventListener)) {
-            sanStorageModel.getLunSelectionChangedEvent().addListener(lunSelectionChangedEventListener);
+        if (!sanStorageModelBase.getLunSelectionChangedEvent().getListeners().contains(lunSelectionChangedEventListener)) {
+            sanStorageModelBase.getLunSelectionChangedEvent().addListener(lunSelectionChangedEventListener);
         }
     }
 

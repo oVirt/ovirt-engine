@@ -60,7 +60,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -892,7 +892,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     private void saveSanStorage(final TaskContext context) {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
+        SanStorageModelBase sanModel = (SanStorageModelBase) model.getCurrentStorageItem();
 
         storageDomain = new StorageDomainStatic();
         storageDomain.setStorageType(sanModel.getType());
@@ -925,17 +925,17 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
     public void saveNewSanStorage() {
         StorageModel storageModel = (StorageModel) getWindow();
-        final SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
+        final SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
 
-        Guid hostId = sanStorageModel.getContainer().getHost().getSelectedItem().getId();
+        Guid hostId = sanStorageModelBase.getContainer().getHost().getSelectedItem().getId();
         List<String> unkownStatusLuns = new ArrayList<>();
-        for (LunModel lunModel : sanStorageModel.getAddedLuns()) {
+        for (LunModel lunModel : sanStorageModelBase.getAddedLuns()) {
             unkownStatusLuns.add(lunModel.getLunId());
         }
         Frontend.getInstance()
                 .runQuery(VdcQueryType.GetDeviceList,
                         new GetDeviceListQueryParameters(hostId,
-                                sanStorageModel.getType(),
+                                sanStorageModelBase.getType(),
                                 true,
                                 unkownStatusLuns),
                         new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
@@ -943,9 +943,9 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                             public void onSuccess(VdcQueryReturnValue response) {
                                 if (response.getSucceeded()) {
                                     List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
-                                    postGetLunsMessages(sanStorageModel.getUsedLunsMessages(checkedLuns));
+                                    postGetLunsMessages(sanStorageModelBase.getUsedLunsMessages(checkedLuns));
                                 } else {
-                                    sanStorageModel.setGetLUNsFailure(
+                                    sanStorageModelBase.setGetLUNsFailure(
                                             ConstantsManager.getInstance()
                                                     .getConstants()
                                                     .couldNotRetrieveLUNsLunsFailure());
@@ -975,7 +975,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         getWindow().startProgress();
 
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
+        SanStorageModelBase sanModel = (SanStorageModelBase) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
@@ -1011,8 +1011,8 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
     private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
         StorageModel storageModel = (StorageModel) getWindow();
-        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
-        sanStorageModel.setForce(true);
+        SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
+        sanStorageModelBase.setForce(true);
 
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
