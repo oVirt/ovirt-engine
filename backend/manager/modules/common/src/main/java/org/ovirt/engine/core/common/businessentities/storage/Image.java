@@ -45,6 +45,8 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     private LeaseState leaseState;
 
+    private Integer generation;
+
     public Image() {
         id = Guid.Empty;
         creationDate = new Date();
@@ -173,6 +175,14 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     public void setLeaseState(LeaseState leaseState) {
         this.leaseState = leaseState;
+    }
+
+    public Integer getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(Integer generation) {
+        this.generation = generation;
     }
 
     @Override
