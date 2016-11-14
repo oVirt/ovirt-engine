@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
-
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -67,13 +66,7 @@ public class DbUser implements IVdcQueryable {
     private Collection<Guid> groupIds;
 
     public DbUser() {
-        loginName = "";
-        firstName = "";
-        lastName = "";
-        department = "";
-        groupNames = Collections.emptyList();
-        groupIds = Collections.emptyList();
-        note = "";
+        this((DbUser)null);
     }
 
     public DbUser(DirectoryUser directoryUser) {
@@ -89,6 +82,32 @@ public class DbUser implements IVdcQueryable {
         groupNames = new HashSet<>();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             groupNames.add(directoryGroup.getName());
+        }
+    }
+
+    public DbUser(DbUser dbUser) {
+        if (dbUser == null) {
+            loginName = "";
+            firstName = "";
+            lastName = "";
+            department = "";
+            groupNames = Collections.emptyList();
+            groupIds = Collections.emptyList();
+            note = "";
+        } else {
+            id = dbUser.getId();
+            externalId = dbUser.getExternalId();
+            domain = dbUser.getDomain();
+            namespace = dbUser.getNamespace();
+            loginName = dbUser.getLoginName();
+            firstName = dbUser.getFirstName();
+            lastName = dbUser.getLastName();
+            department = dbUser.getDepartment();
+            email = dbUser.getEmail();
+            note = dbUser.getNote();
+            groupIds = new ArrayList<>(dbUser.getGroupIds());
+            groupNames = new ArrayList<>(dbUser.getGroupNames());
+            isAdmin = dbUser.isAdmin();
         }
     }
 
@@ -241,7 +260,8 @@ public class DbUser implements IVdcQueryable {
                 && Objects.equals(firstName, other.firstName)
                 && Objects.equals(note, other.note)
                 && Objects.equals(lastName, other.lastName)
-                && Objects.equals(loginName, other.loginName);
+                && Objects.equals(loginName, other.loginName)
+                && Objects.equals(isAdmin, other.isAdmin);
 
     }
 
