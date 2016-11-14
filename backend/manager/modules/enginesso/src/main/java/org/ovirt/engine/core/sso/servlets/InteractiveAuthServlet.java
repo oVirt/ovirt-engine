@@ -113,7 +113,10 @@ public class InteractiveAuthServlet extends HttpServlet {
         String password = SsoUtils.getFormParameter(request, PASSWORD);
         String profile = SsoUtils.getFormParameter(request, PROFILE);
         Credentials credentials;
-        if (StringUtils.isEmpty(username) || password == null || StringUtils.isEmpty(profile)) {
+        // The code is invoked from the login screen as well as when the user changes password.
+        // If the login form parameters are not present the code has been invoked from change password flow and
+        // we extract the credentials from the credentials saved to sso session.
+        if (username == null || password == null || profile == null) {
             credentials = SsoUtils.getSsoSession(request).getTempCredentials();
         } else {
             credentials = new Credentials(username, password, profile, ssoContext.getSsoProfiles().contains(profile));
