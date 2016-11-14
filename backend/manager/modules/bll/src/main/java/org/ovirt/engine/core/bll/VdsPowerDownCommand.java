@@ -119,7 +119,10 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
             }
         }
         catch(IOException e) {
-            log.error("IOException", e);
+            log.error("Error opening SSH connection to '{}': {}",
+                    getVds().getHostName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
         return ret;
     }

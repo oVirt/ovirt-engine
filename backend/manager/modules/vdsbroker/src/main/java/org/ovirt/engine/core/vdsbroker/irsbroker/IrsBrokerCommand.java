@@ -121,7 +121,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     getVDSReturnValue().setSucceeded(false);
                 } else {
                     log.error("IrsBroker::Failed::{}", getCommandName());
-                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
+                    log.debug(LoggedUtils.getObjectId(this), this, ex);
                     throw new IRSProtocolException(ex);
                 }
             } catch (IRSNoMasterDomainException ex) {

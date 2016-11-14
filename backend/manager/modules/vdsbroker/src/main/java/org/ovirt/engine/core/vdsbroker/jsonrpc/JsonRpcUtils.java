@@ -66,7 +66,10 @@ public class JsonRpcUtils {
             final Reactor reactor = ReactorFactory.getReactor(provider, type);
             return getJsonClient(reactor, hostname, port, connectionPolicy, clientPolicy, parallelism);
         } catch (ClientConnectionException e) {
-            log.error("Exception occured during building ssl context or obtaining selector", e);
+            log.error("Exception occurred during building ssl context or obtaining selector for '{}': {}",
+                    hostname,
+                    e.getMessage());
+            log.debug("Exception", e);
             throw new IllegalStateException(e);
         }
     }

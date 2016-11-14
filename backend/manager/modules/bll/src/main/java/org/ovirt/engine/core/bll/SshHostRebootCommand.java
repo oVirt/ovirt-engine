@@ -69,9 +69,11 @@ public class SshHostRebootCommand <T extends VdsActionParameters> extends VdsCom
                         cmdErr);
                 log.debug("Exception", ex);
             }
-        }
-        catch(IOException e) {
-            log.error("IOException", e);
+        } catch (IOException e) {
+            log.error("Error opening SSH connection to '{}': {}",
+                    getVds().getHostName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
         return false;
     }
