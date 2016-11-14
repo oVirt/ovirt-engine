@@ -207,10 +207,22 @@ public class VmAnalyzer {
     }
 
     void proceedVmReportedOnOtherHost() {
+        VmDynamic vmDynamic = dbVm.getDynamicData();
         switch(vdsmVm.getVmDynamic().getStatus()) {
         case MigratingTo:
-            log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
-                    vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+            if (vmDynamic.getRunOnVds() == null) {
+                log.info("VM '{}' is found as migrating on VDS '{}'({}) ",
+                        vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+                vmDynamic.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
+                saveDynamic(vmDynamic);
+                if (!vdsManager.isInitialized()) {
+                    resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
+                }
+            } else {
+                log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
+                        vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+            }
+
             break;
 
         case MigratingFrom:
@@ -218,7 +230,6 @@ public class VmAnalyzer {
             break;
 
         default:
-            VmDynamic vmDynamic = dbVm.getDynamicData();
             if (vmDynamic.getRunOnVds() != null && vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
                 log.info("RefreshVmList VM id '{}' status = '{}' on VDS '{}'({}) ignoring it in the refresh until migration is done",
                         vdsmVm.getVmDynamic().getId(), vdsmVm.getVmDynamic().getStatus(),
@@ -757,7 +768,7 @@ public class VmAnalyzer {
     }
 
     private boolean isVdsNonResponsive(Guid vdsId) {
-        return vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
+        return vdsId != null && vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
     }
 
     private void afterMigrationFrom(VmDynamic runningVm, VM vmToUpdate) {
