@@ -136,6 +136,9 @@ public class StorageJobCallback implements CommandCallback {
     private HostJobStatus handleUndeterminedJobStatus(CommandBase<?> cmd, boolean jobsReportedByHost) {
         // If the command supports entity polling, we can use it in order to determine the status.
         if (isEntityPollingSupported(cmd)) {
+            log.info("Command {} id: '{}': attempting to determine the job status by polling the entity.",
+                    cmd.getActionType(),
+                    cmd.getCommandId());
             return pollEntity(cmd);
         }
 
