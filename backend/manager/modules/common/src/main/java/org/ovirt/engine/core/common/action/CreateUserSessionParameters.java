@@ -11,6 +11,9 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
     private String principalName;
     private String principalId;
     private String email;
+    private String firstName;
+    private String lastName;
+    private String namespace;
     private String sourceIp;
     private Collection<? extends Map> groupIds;
     private boolean adminRequired;
@@ -23,6 +26,9 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
                                        String principalName,
                                        String principalId,
                                        String email,
+                                       String firstName,
+                                       String lastName,
+                                       String namespace,
                                        String sourceIp,
                                        Collection<? extends Map> groupIds,
                                        boolean adminRequired) {
@@ -31,6 +37,9 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
         setPrincipalName(principalName);
         setPrincipalId(principalId);
         setEmail(email);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setNamespace(namespace);
         setSourceIp(sourceIp);
         setGroupIds(groupIds);
         setAdminRequired(adminRequired);
@@ -98,5 +107,29 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
 
     public void setSourceIp(String sourceIp) {
         this.sourceIp = sourceIp;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 }

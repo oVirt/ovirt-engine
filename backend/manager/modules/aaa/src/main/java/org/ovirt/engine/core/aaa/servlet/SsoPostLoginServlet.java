@@ -85,6 +85,9 @@ public class SsoPostLoginServlet extends HttpServlet {
                                 username,
                                 (String) payload.get("principal_id"),
                                 (String) payload.get("email"),
+                                (String) payload.get("first_name"),
+                                (String) payload.get("last_name"),
+                                (String) payload.get("namespace"),
                                 request.getRemoteAddr(),
                                 (Collection<ExtMap>) payload.get("group_ids"),
                                 loginAsAdmin));
