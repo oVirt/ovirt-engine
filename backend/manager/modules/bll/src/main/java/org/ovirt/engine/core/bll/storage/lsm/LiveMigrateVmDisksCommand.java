@@ -29,6 +29,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -350,7 +352,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                     && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getTargetStorageDomainId())
                     && validateDestStorage(getStorageDomainById(parameters.getTargetStorageDomainId(), getStoragePoolId()))
-                    && isSameSourceAndDest(parameters));
+                    && isSameSourceAndDest(parameters)
+                    && validatePassDiscardSupportedOnDestinationStorageDomain(parameters));
 
             if (!getReturnValue().isValid()) {
                 return false;
@@ -378,6 +381,16 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         }
 
         return true;
+    }
+
+    protected boolean validatePassDiscardSupportedOnDestinationStorageDomain(LiveMigrateDiskParameters parameters) {
+        DiskVmElementValidator validator =
+                createDiskVmElementValidator(parameters.getImageGroupID(), parameters.getVmId());
+        return validate(validator.isPassDiscardSupported(parameters.getTargetStorageDomainId()));
+    }
+
+    protected DiskVmElementValidator createDiskVmElementValidator(Guid diskId, Guid vmId) {
+        return new DiskVmElementValidator(diskDao.get(diskId), diskVmElementDao.get(new VmDeviceId(diskId, vmId)));
     }
 
     private boolean isDiskNotShareable(Guid imageId) {

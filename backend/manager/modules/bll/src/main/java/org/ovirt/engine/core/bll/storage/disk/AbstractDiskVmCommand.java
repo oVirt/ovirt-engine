@@ -91,7 +91,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
         Map<String, String> diskAddressMap = getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
-                getVm(), disk, vmDevice, diskAddressMap, getDiskVmElement().getDiskInterface()));
+                getVm(), disk, vmDevice, diskAddressMap, getDiskVmElement().getDiskInterface(),
+                getDiskVmElement().isPassDiscard()));
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {

@@ -361,6 +361,9 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     bootDiskFound = true;
                     struct.put(VdsProperties.Index, getBootableDiskIndex(disk));
                 }
+                if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion())) {
+                    struct.put(VdsProperties.DISCARD, dve.isPassDiscard());
+                }
                 vmInfoBuildUtils.addAddress(vmDevice, struct);
                 switch (disk.getDiskStorageType()) {
                 case IMAGE:

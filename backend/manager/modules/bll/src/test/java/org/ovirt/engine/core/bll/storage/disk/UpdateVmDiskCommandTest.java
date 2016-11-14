@@ -17,11 +17,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -56,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -78,6 +81,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
@@ -131,6 +135,10 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false));
 
     /**
      * The command under test.
@@ -500,6 +508,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
         when(diskVmElementValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskUsedAsOvfStore()).thenReturn(ValidationResult.VALID);
+        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(ValidationResult.VALID);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(any(VM.class));
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).validateNotHostedEngineDisk();
@@ -645,6 +654,40 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private void mockToUpdateDiskVm(VM vm) {
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         when(diskVmElementDao.get(new VmDeviceId(command.getParameters().getDiskInfo().getId(), vm.getId()))).thenReturn(new DiskVmElement());
+    }
+
+    @Test
+    public void validateDiscardFailedNotSupportedByDiskInterface() {
+        initializeCommand();
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
+    }
+
+    @Test
+    public void validateDiscardFailedNotSupportedByDcVersion() {
+        initializeCommand();
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+
+        command.getParameters().getDiskVmElement().setPassDiscard(true);
+
+        DiskVmElement oldDiskVmElement = new DiskVmElement();
+        oldDiskVmElement.setPassDiscard(false);
+        doReturn(oldDiskVmElement).when(command).getOldDiskVmElement();
+        command.getStoragePool().setCompatibilityVersion(Version.v4_0);
+
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DC_VERSION);
+    }
+
+    @Test
+    public void validateDiscardSucceeded() {
+        initializeCommand();
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(ValidationResult.VALID);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     private void mockNullVm() {

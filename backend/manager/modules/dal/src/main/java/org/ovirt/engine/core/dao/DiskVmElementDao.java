@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -21,6 +22,22 @@ public interface DiskVmElementDao extends GenericDao<DiskVmElement, VmDeviceId> 
      * @return the disk VM element with the given id or null if none found
      */
     DiskVmElement get(VmDeviceId id, Guid userID, boolean isFiltered);
+
+    /**
+     * Retrieves all disk VM elements for the specified disk id.
+     * @param diskId
+     *          the disk id.
+     * @return the list of disk VM elements.
+     */
+    List<DiskVmElement> getAllDiskVmElementsByDiskId(Guid diskId);
+
+    /**
+     * Retrieves all disk VM elements for the specified disks ids.
+     * @param disksIds
+     *          the disks ids.
+     * @return the list of disk VM elements.
+     */
+    List<DiskVmElement> getAllDiskVmElementsByDisksIds(Collection<Guid> disksIds);
 
     /**
      * Retrieves all disk VM elements for the specified virtual machine id.

@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -53,6 +54,9 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.put(VdsProperties.Address, getParameters().getAddressMap() != null ?
                 getParameters().getAddressMap() : StringUtils.EMPTY);
         drive.put(VdsProperties.INTERFACE, getParameters().getDiskInterface().getName());
+        if (FeatureSupported.passDiscardSupported(getParameters().getVm().getCompatibilityVersion())) {
+            drive.put(VdsProperties.DISCARD, getParameters().isPassDiscard());
+        }
 
         int numOfIoThreads = getParameters().getVm().getNumOfIoThreads();
         if (numOfIoThreads != 0 && getParameters().getDiskInterface() == DiskInterface.VirtIO) {

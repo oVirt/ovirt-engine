@@ -37,6 +37,9 @@ public class DiskAttachmentMapper {
         if (model.isSetBootable()) {
             entity.setBoot(model.isBootable());
         }
+        if (model.isSetPassDiscard()) {
+            entity.setPassDiscard(model.isPassDiscard());
+        }
         if (model.isSetInterface()) {
             entity.setDiskInterface(DiskMapper.mapInterface(model.getInterface()));
         }
@@ -63,6 +66,7 @@ public class DiskAttachmentMapper {
         }
         model.setId(entity.getDiskId().toString());
         model.setBootable(entity.isBoot());
+        model.setPassDiscard(entity.isPassDiscard());
         model.setInterface(DiskMapper.mapInterface(entity.getDiskInterface()));
         model.setActive(entity.isPlugged());
         model.setLogicalName(entity.getLogicalName());

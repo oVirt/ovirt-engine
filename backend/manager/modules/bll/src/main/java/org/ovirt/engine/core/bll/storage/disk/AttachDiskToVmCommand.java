@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -162,6 +163,12 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (!validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()))) {
+            return false;
+        }
+
+        Guid storageDomainId = disk.getDiskStorageType() == DiskStorageType.IMAGE ?
+                ((DiskImage) disk).getStorageIds().get(0) : null;
+        if (!validate(diskVmElementValidator.isPassDiscardSupported(storageDomainId))) {
             return false;
         }
 

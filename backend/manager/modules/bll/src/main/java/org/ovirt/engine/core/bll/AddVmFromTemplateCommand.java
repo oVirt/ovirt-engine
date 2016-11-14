@@ -8,10 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -25,8 +30,10 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,6 +43,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCommand<T> {
     private Map<Guid, Guid> diskInfoSourceMap;
     private Map<Guid, Set<Guid>> validDisksDomains;
+
+    @Inject
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
+
+    @Inject
+    private DiskHandler diskHandler;
 
     public AddVmFromTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -75,6 +88,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
             endSuccessfully();
         }
         checkTrustedService();
+        logIfDisksHaveIllegalPassDiscard();
     }
 
     private void checkTrustedService() {
@@ -217,5 +231,14 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Override
     public CommandCallback getCallback() {
         return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+    }
+
+    private void logIfDisksHaveIllegalPassDiscard() {
+        Map<Disk, DiskVmElement> diskToDiskVmElement = diskHandler.getDiskToDiskVmElementMap(
+                getVmTemplate().getId(), diskInfoDestinationMap);
+        Map<Guid, Guid> diskIdToDestSdId = diskInfoDestinationMap.values().stream()
+                .collect(Collectors.toMap(DiskImage::getId, diskImage -> diskImage.getStorageIds().get(0)));
+
+        discardHelper.logIfDisksWithIllegalPassDiscardExist(diskToDiskVmElement, diskIdToDestSdId);
     }
 }

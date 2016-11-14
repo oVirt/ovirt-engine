@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
@@ -19,9 +21,11 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -41,6 +45,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -117,6 +123,7 @@ public class RunVmValidator {
                             filterReadOnlyAndPreallocatedDisks(getVmImageDisks())), messages)
                     &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
+                   validate(validateDisksPassDiscard(vm), messages) &&
                    getSchedulingManager().canSchedule(
                            cluster, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
         }
@@ -138,6 +145,7 @@ public class RunVmValidator {
                         filterReadOnlyAndPreallocatedDisks(getVmImageDisks())), messages)
                 &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
+                validate(validateDisksPassDiscard(vm), messages) &&
                 validate(validateMemorySize(vm), messages) &&
                 getSchedulingManager().canSchedule(
                         cluster, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
@@ -305,6 +313,25 @@ public class RunVmValidator {
 
         return !vm.isAutoStartup() ?
                 new DiskImagesValidator(vmDisks).diskImagesNotLocked() : ValidationResult.VALID;
+    }
+
+    protected ValidationResult validateDisksPassDiscard(VM vm) {
+        Map<Guid, Disk> disksMap = getVmDisks().stream().collect(Collectors.toMap(Disk::getId, Function.identity()));
+        Map<Disk, DiskVmElement> diskToDiskVmElement = Injector.get(DiskHandler.class).getDiskToDiskVmElementMap(
+                vm.getId(), disksMap);
+        Map<Guid, Guid> diskIdToDestSdId = getVmDisks().stream()
+                .collect(Collectors.toMap(Disk::getId,
+                        disk -> disk.getDiskStorageType() == DiskStorageType.IMAGE ?
+                                ((DiskImage) disk).getStorageIds().get(0) : Guid.Empty));
+
+        MultipleDiskVmElementValidator multipleDiskVmElementValidator =
+                createMultipleDiskVmElementValidator(diskToDiskVmElement);
+        return multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(diskIdToDestSdId);
+    }
+
+    protected MultipleDiskVmElementValidator createMultipleDiskVmElementValidator(
+            Map<Disk, DiskVmElement> diskToDiskVmElement) {
+        return new MultipleDiskVmElementValidator(diskToDiskVmElement);
     }
 
     protected ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath, Guid activeIsoDomainId) {
@@ -542,7 +569,7 @@ public class RunVmValidator {
         return getVdsDynamicDao().get(vdsId);
     }
 
-    private List<Disk> getVmDisks() {
+    protected List<Disk> getVmDisks() {
         if (cachedVmDisks == null) {
             cachedVmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         }

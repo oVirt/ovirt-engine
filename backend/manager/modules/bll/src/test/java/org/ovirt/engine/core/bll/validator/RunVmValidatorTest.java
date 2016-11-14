@@ -5,11 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -29,12 +31,15 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
+import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -44,6 +49,7 @@ import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,10 +67,15 @@ public class RunVmValidatorTest {
             mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
             );
 
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
     @Spy
     private RunVmValidator runVmValidator = new RunVmValidator();
     @Mock
     private SnapshotsValidator snapshotValidator;
+    @Mock
+    private DiskHandler diskHandler;
 
     @Before
     public void setup() throws InitializationException {
@@ -266,6 +277,38 @@ public class RunVmValidatorTest {
         vm.setVmMemSizeMb(MEMORY_LIMIT_64_BIT + 1);
         vm.setVmOs(_64_BIT_OS);
         validateResult(runVmValidator.validateMemorySize(vm), false, EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
+    }
+
+    @Test
+    public void validateDisksPassDiscardSucceeds() {
+        mockPassDiscardSupport(ValidationResult.VALID);
+        VM vm = new VM();
+        vm.setId(Guid.newGuid());
+        assertThat(runVmValidator.validateDisksPassDiscard(vm), isValid());
+    }
+
+    @Test
+    public void validateDisksPassDiscardFails() {
+        EngineMessage failureEngineMessage =
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE;
+        mockPassDiscardSupport(new ValidationResult(failureEngineMessage));
+        VM vm = new VM();
+        vm.setId(Guid.newGuid());
+        assertThat(runVmValidator.validateDisksPassDiscard(vm), failsWith(failureEngineMessage));
+    }
+
+    private void mockPassDiscardSupport(ValidationResult validationResult) {
+        doReturn(Collections.emptyList()).when(runVmValidator).getVmDisks();
+
+        injectorRule.bind(DiskHandler.class, diskHandler);
+        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMapOf(Guid.class, Disk.class)))
+                .thenReturn(Collections.emptyMap());
+
+        MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
+        doReturn(multipleDiskVmElementValidator).when(runVmValidator)
+                .createMultipleDiskVmElementValidator(anyMapOf(Disk.class, DiskVmElement.class));
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMapOf(Guid.class, Guid.class)))
+                .thenReturn(validationResult);
     }
 
     private void canRunVmAsStateless(boolean autoStartUp,

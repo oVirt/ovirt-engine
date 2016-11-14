@@ -377,6 +377,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
                     invocation.getArguments()[0] : Guid.newGuid())
                 .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
 
+        doReturn(ValidationResult.VALID).when(diskVmElementValidator).isPassDiscardSupported(any(Guid.class));
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
@@ -513,6 +514,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         StorageDomain sd = new StorageDomain();
         sd.setAvailableDiskSize(availableSize);
         sd.setUsedDiskSize(usedSize);
+        sd.setId(storageId);
         sd.setStoragePoolId(storagePoolId);
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStorageType(storageType);
@@ -990,6 +992,23 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doCallRealMethod().when(command).validateQuota();
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+    }
+
+    @Test
+    public void testValidateFailsForPassDiscard() {
+        initializeCommand(Guid.newGuid());
+        mockVm();
+        StoragePool storagePool = new StoragePool();
+        storagePool.setCompatibilityVersion(Version.v4_1);
+        command.setStoragePool(storagePool);
+        command.getParameters().getDiskVmElement().setPassDiscard(true);
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(
+                any(Disk.class), any(DiskVmElement.class));
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE))
+                .when(diskVmElementValidator).isPassDiscardSupported(any(Guid.class));
+
+        ValidateTestUtils.runAndAssertValidateFailure(
+                command, EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
     }
 
     private boolean verifyValidationMessagesContainMessage(EngineMessage message) {

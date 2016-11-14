@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -62,12 +63,20 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
                 checkCanPerformPlugUnPlugDisk() &&
                 isVmNotInPreviewSnapshot() &&
                 imageStorageValidation() &&
-                virtIoScsiDiskValidation();
+                virtIoScsiDiskValidation() &&
+                isPassDiscardSupported();
     }
 
     private boolean virtIoScsiDiskValidation() {
         DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(disk, getDiskVmElement());
         return validate(diskVmElementValidator.isVirtIoScsiValid(getVm()));
+    }
+
+    private boolean isPassDiscardSupported() {
+        Guid storageDomainId = getDisk().getDiskStorageType() == DiskStorageType.IMAGE ?
+                ((DiskImage) getDisk()).getStorageIds().get(0) : null;
+        return validate(getDiskVmElementValidator(getDisk(),
+                getDiskVmElement()).isPassDiscardSupported(storageDomainId));
     }
 
     private boolean interfaceDiskValidation() {

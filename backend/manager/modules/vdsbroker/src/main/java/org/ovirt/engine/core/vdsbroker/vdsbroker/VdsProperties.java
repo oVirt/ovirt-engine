@@ -66,6 +66,7 @@ public final class VdsProperties {
     public static final String SERIAL_NUMBER = "serial";
 
     public static final String INTERFACE = "iface";
+    public static final String DISCARD = "discard";
 
     // NUMA related properties
     public static final String NUMA_NODES = "numaNodes";

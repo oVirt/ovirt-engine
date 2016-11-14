@@ -2,12 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -21,9 +24,12 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -36,13 +42,16 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -79,6 +88,10 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     private DiskImagesValidator diskImagesValidator;
     @Mock
     private VmDeviceDao deviceDao;
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
+    @Mock
+    private DiskHandler diskHandler;
 
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
@@ -175,6 +188,28 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         assertFalse(cmd.imagesRelatedChecks());
     }
 
+    @Test
+    public void imagesRelatedChecksFailPassDiscardNotSupported() {
+        setupForStorageTests();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE))
+                .when(cmd).isPassDiscardSupportedForImagesDestSds();
+        assertFalse(cmd.imagesRelatedChecks());
+    }
+
+    @Test
+    public void passDiscardSupportedForDestSds() {
+        mockPassDiscardSupportedForDestSds(ValidationResult.VALID);
+        assertThat(cmd.isPassDiscardSupportedForImagesDestSds(), ValidationResultMatchers.isValid());
+    }
+
+    @Test
+    public void passDiscardNotSupportedForDestSds() {
+        mockPassDiscardSupportedForDestSds(new ValidationResult(
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
+        assertThat(cmd.isPassDiscardSupportedForImagesDestSds(), ValidationResultMatchers.failsWith(
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE
+        ));
+    }
 
     @Test
     public void testBeanValidations() {
@@ -283,6 +318,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotIllegal();
+        doReturn(ValidationResult.VALID).when(cmd).isPassDiscardSupportedForImagesDestSds();
 
         setupStoragePool();
     }
@@ -300,4 +336,14 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         return Collections.singletonList(disk);
     }
 
+    private void mockPassDiscardSupportedForDestSds(ValidationResult validationResult) {
+        cmd.diskInfoDestinationMap = Collections.emptyMap();
+        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMapOf(Guid.class, DiskImage.class)))
+                .thenReturn(Collections.emptyMap());
+        MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
+        doReturn(multipleDiskVmElementValidator).when(cmd)
+                .createMultipleDiskVmElementValidator(anyMapOf(Disk.class, DiskVmElement.class));
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMapOf(Guid.class, Guid.class)))
+                .thenReturn(validationResult);
+    }
 }

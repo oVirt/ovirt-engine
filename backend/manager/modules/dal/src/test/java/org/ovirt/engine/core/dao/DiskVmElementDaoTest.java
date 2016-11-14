@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -34,6 +35,13 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
     public void testGetFilteredWithoutPermissions() {
         DiskVmElement result = dao.get(getExistingEntityId(), UNPRIVILEGED_USER_ID, true);
         assertNull(result);
+    }
+
+    @Test
+    public void testGetAllDiskElementsByDisksIds() {
+        List<DiskVmElement> vmElements = dao.getAllDiskVmElementsByDisksIds(Arrays.asList(
+                FixturesTool.DISK_ID, FixturesTool.DISK_ID_2, FixturesTool.BOOTABLE_DISK_ID));
+        assertEquals(vmElements.size(), 2);
     }
 
     @Test

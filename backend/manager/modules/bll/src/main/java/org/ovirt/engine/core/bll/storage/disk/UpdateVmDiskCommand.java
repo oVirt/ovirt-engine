@@ -34,6 +34,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
@@ -225,7 +226,19 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 validateVmPoolProperties() && validateQuota() &&
                 validate(diskVmElementValidator.isVirtIoScsiValid(getVm())) &&
                 (!isDiskInterfaceUpdated || validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()))) &&
-                setAndValidateDiskProfiles();
+                setAndValidateDiskProfiles() &&
+                validatePassDiscardSupported(diskVmElementValidator);
+    }
+
+    private boolean validatePassDiscardSupported(DiskVmElementValidator diskVmElementValidator) {
+        if (!FeatureSupported.passDiscardSupported(getStoragePool().getCompatibilityVersion()) &&
+                getOldDiskVmElement().isPassDiscard() != getDiskVmElement().isPassDiscard()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DC_VERSION,
+                    String.format("$dataCenterVersion %s", getStoragePool().getCompatibilityVersion().toString()));
+        }
+        Guid storageDomainId = getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE ?
+                ((DiskImage) getNewDisk()).getStorageIds().get(0) : null;
+        return validate(diskVmElementValidator.isPassDiscardSupported(storageDomainId));
     }
 
     protected StorageDomainValidator getStorageDomainValidator(DiskImage diskImage) {
@@ -520,6 +533,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
         dveToUpdate.setBoot(getDiskVmElement().isBoot());
         dveToUpdate.setDiskInterface(getDiskVmElement().getDiskInterface());
+        dveToUpdate.setPassDiscard(getDiskVmElement().isPassDiscard());
         dveToUpdate.setUsingScsiReservation(getDiskVmElement().isUsingScsiReservation());
     }
 

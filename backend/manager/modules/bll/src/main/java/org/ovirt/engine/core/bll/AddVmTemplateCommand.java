@@ -29,6 +29,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -73,6 +75,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -105,6 +108,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Inject
     private CpuProfileHelper cpuProfileHelper;
 
+    @Inject
+    private DiskHandler diskHandler;
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
@@ -591,6 +596,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
+            if (!validate(isPassDiscardSupportedForImagesDestSds())) {
+                return false;
+            }
+
             List<DiskImage> diskImagesToCheck = DisksFilter.filterImageDisks(images, ONLY_NOT_SHAREABLE,
                     ONLY_ACTIVE);
             diskImagesToCheck.addAll(cinderDisks);
@@ -634,6 +643,22 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return validateSpaceRequirements();
         }
         return true;
+    }
+
+    protected ValidationResult isPassDiscardSupportedForImagesDestSds() {
+        Map<Disk, DiskVmElement> diskToDiskVmElement = diskHandler.getDiskToDiskVmElementMap(
+                getVm().getId(), diskInfoDestinationMap);
+        Map<Guid, Guid> diskIdToDestSdId = diskInfoDestinationMap.values().stream()
+                .collect(Collectors.toMap(DiskImage::getId, diskImage -> diskImage.getStorageIds().get(0)));
+
+        MultipleDiskVmElementValidator multipleDiskVmElementValidator =
+                createMultipleDiskVmElementValidator(diskToDiskVmElement);
+        return multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(diskIdToDestSdId);
+    }
+
+    protected MultipleDiskVmElementValidator createMultipleDiskVmElementValidator(
+            Map<Disk, DiskVmElement> diskToDiskVmElement) {
+        return new MultipleDiskVmElementValidator(diskToDiskVmElement);
     }
 
     protected boolean validateSpaceRequirements() {

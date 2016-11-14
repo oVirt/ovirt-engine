@@ -183,6 +183,11 @@ public abstract class OvfReader implements IOvfBuilder {
                     dve.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
                 }
             }
+            if (node.attributes.get("ovf:pass-discard") != null) {
+                if (!StringUtils.isEmpty(node.attributes.get("ovf:pass-discard").getValue())) {
+                    dve.setPassDiscard(Boolean.parseBoolean(node.attributes.get("ovf:pass-discard").getValue()));
+                }
+            }
             if (node.attributes.get("ovf:wipe-after-delete") != null) {
                 if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
                     image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")

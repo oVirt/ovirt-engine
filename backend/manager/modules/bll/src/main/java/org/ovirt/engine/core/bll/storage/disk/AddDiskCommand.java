@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -124,6 +125,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         VM vm = getVm();
 
         DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
+        DiskVmElementValidator diskVmElementValidator =
+                getDiskVmElementValidator(getParameters().getDiskInfo(), getDiskVmElement());
         if (vm != null) {
             if (!validateDiskVmData() || !canRunActionOnNonManagedVm()) {
                 return false;
@@ -132,6 +135,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             updateDisksFromDb();
 
             if (getDiskVmElement().isBoot() && !validate(diskValidator.isVmNotContainsBootDisk(vm))) {
+                return false;
+            }
+
+            if (!validatePassDiscardSupported(diskVmElementValidator)) {
                 return false;
             }
 
@@ -144,7 +151,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return failValidation(EngineMessage.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
         }
 
-        DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getParameters().getDiskInfo(), getDiskVmElement());
         if (!validate(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface())) {
             return false;
         }
@@ -753,5 +759,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected StorageDomainValidator createStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
+    }
+
+    private boolean validatePassDiscardSupported(DiskVmElementValidator diskVmElementValidator) {
+        if (getDiskVmElement().isPassDiscard() &&
+                !FeatureSupported.passDiscardSupported(getStoragePool().getCompatibilityVersion())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DC_VERSION,
+                    String.format("$dataCenterVersion %s", getStoragePool().getCompatibilityVersion().toString()));
+        }
+        return validate(diskVmElementValidator.isPassDiscardSupported(getStorageDomainId()));
     }
 }

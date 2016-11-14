@@ -41,6 +41,7 @@ import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -827,6 +828,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void saveDiskVmElement(Guid diskId, Guid vmId, DiskVmElement diskVmElement) {
         DiskVmElement dve = DiskVmElement.copyOf(diskVmElement, diskId, vmId);
+        updatePassDiscardForDiskVmElement(dve);
         diskVmElementDao.save(dve);
     }
 
@@ -1141,5 +1143,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     protected MacPool getMacPool() {
         return super.getMacPool();
+    }
+
+    private void updatePassDiscardForDiskVmElement(DiskVmElement diskVmElement) {
+        if (diskVmElement.isPassDiscard() &&
+                !FeatureSupported.passDiscardSupported(getStoragePool().getCompatibilityVersion())) {
+            diskVmElement.setPassDiscard(false);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +9,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -31,6 +35,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
+
+    @Inject
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
 
     protected final Consumer<List<LUNs>> updateExistingLuns = luns -> {
         lunDao.updateAll(luns);
@@ -151,8 +158,18 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     /**
      * Saves the new or updates the existing luns in the DB.
      */
-    protected void updateLunsInDb(Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDb) {
-        lunsToUpdateInDb.entrySet().stream().forEach(entry -> entry.getKey().accept(entry.getValue()));
+    protected void updateLunsInDb(Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDbMap) {
+        lunsToUpdateInDbMap.entrySet().stream().forEach(entry -> entry.getKey().accept(entry.getValue()));
+
+        if (lunsToUpdateInDbMap.containsKey(saveNewLuns) || lunsToUpdateInDbMap.containsKey(updateExistingLuns)) {
+            Collection<LUNs> lunsToUpdateInDb = lunsToUpdateInDbMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().equals(saveNewLuns) ||
+                            entry.getKey().equals(updateExistingLuns))
+                    .map(Map.Entry::getValue)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+            discardHelper.logIfLunsBreakStorageDomainDiscardFunctionality(lunsToUpdateInDb, getStorageDomainId());
+        }
     }
 
     private boolean isDummyLun(LUNs lun) {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Named;
@@ -26,6 +28,7 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
     protected MapSqlParameterSource createFullParametersMapper(DiskVmElement entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("is_boot", entity.isBoot())
+                .addValue("pass_discard", entity.isPassDiscard())
                 .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()))
                 .addValue("is_using_scsi_reservation", entity.isUsingScsiReservation());
     }
@@ -47,6 +50,7 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
 
         dve.setId(new VmDeviceId(getGuidDefaultEmpty(rs, "disk_id"), getGuidDefaultEmpty(rs, "vm_id")));
         dve.setBoot(rs.getBoolean("is_boot"));
+        dve.setPassDiscard(rs.getBoolean("pass_discard"));
         String diskInterfaceName = rs.getString("disk_interface");
         if (!StringUtils.isEmpty(diskInterfaceName)) {
             dve.setDiskInterface(DiskInterface.valueOf(diskInterfaceName));
@@ -69,6 +73,17 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
                 createIdParameterMapper(id)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered));
+    }
+
+    @Override
+    public List<DiskVmElement> getAllDiskVmElementsByDiskId(Guid diskId) {
+        return getAllDiskVmElementsByDisksIds(Collections.singleton(diskId));
+    }
+
+    @Override
+    public List<DiskVmElement> getAllDiskVmElementsByDisksIds(Collection<Guid> disksIds) {
+        return getCallsHandler().executeReadList("GetDiskVmElementsByDiskVmElementsIds", diskVmElementRowMapper,
+                getCustomMapSqlParameterSource().addValue("disks_ids", createArrayOfUUIDs(disksIds)));
     }
 
     public List<DiskVmElement> getAllForVm(Guid vmId) {

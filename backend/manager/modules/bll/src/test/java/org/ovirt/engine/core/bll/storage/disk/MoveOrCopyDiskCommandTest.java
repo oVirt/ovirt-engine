@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -62,6 +64,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private VmDao vmDao;
     @Mock
     private VmDeviceDao vmDeviceDao;
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
     @Mock
     private SnapshotsValidator snapshotsValidator;
 
@@ -281,6 +285,37 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
+    @Test
+    public void passDiscardSupportedForDestSdMoveOp() {
+        initializeCommand(new DiskImage());
+        mockPassDiscardSupportedForDestSd(ValidationResult.VALID, ImageOperation.Move);
+        assertTrue(command.validatePassDiscardSupportedForDestinationStorageDomain());
+    }
+
+    @Test
+    public void passDiscardSupportedForDestSdCopyTemplateDiskOp() {
+        initializeCommand(new DiskImage());
+        mockPassDiscardSupportedForDestSd(ValidationResult.VALID, ImageOperation.Copy);
+        initTemplateDiskImage();
+        assertTrue(command.validatePassDiscardSupportedForDestinationStorageDomain());
+    }
+
+    @Test
+    public void passDiscardSupportedForCopyFloatingDiskOp() {
+        initializeCommand(new DiskImage());
+        command.getParameters().setOperation(ImageOperation.Copy);
+        initTemplateDiskImage();
+        assertTrue(command.validatePassDiscardSupportedForDestinationStorageDomain());
+    }
+
+    @Test
+    public void passDiscardNotSupportedForDestSd() {
+        initializeCommand(new DiskImage());
+        mockPassDiscardSupportedForDestSd(new ValidationResult(
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE), ImageOperation.Move);
+        assertFalse(command.validatePassDiscardSupportedForDestinationStorageDomain());
+    }
+
     protected void initVmForSpace() {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
@@ -371,5 +406,13 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         diskImage.setVmEntityType(VmEntityType.VM);
         diskImage.setShareable(isShareable);
         when(diskImageDao.get(any(Guid.class))).thenReturn(diskImage);
+    }
+
+    private void mockPassDiscardSupportedForDestSd(ValidationResult validationResult, ImageOperation imageOperation) {
+        command.getParameters().setOperation(imageOperation);
+        MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
+        doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(any(Guid.class)))
+                .thenReturn(validationResult);
     }
 }

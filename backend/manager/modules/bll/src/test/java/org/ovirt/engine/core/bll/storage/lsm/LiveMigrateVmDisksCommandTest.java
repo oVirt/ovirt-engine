@@ -19,10 +19,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -80,6 +82,9 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     @Mock
     private DiskValidator diskValidator;
+
+    @Mock
+    private DiskVmElementValidator diskVmElementValidator;
 
     /**
      * The command under test
@@ -275,6 +280,34 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.name()));
     }
 
+    @Test
+    public void validateFailsOnPassDiscardSupport() {
+        createParameters();
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
+
+        StorageDomain srcSd = initStorageDomain(srcStorageId);
+        srcSd.setStatus(StorageDomainStatus.Active);
+
+        StorageDomain dstSd = initStorageDomain(dstStorageId);
+        dstSd.setStatus(StorageDomainStatus.Active);
+
+        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
+    }
+
+    @Test
+    public void passDiscardNotSupportedOnDestSd() {
+        Guid dstSd = Guid.newGuid();
+        when(diskVmElementValidator.isPassDiscardSupported(dstSd)).thenReturn(
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
+        assertFalse(command.validatePassDiscardSupportedOnDestinationStorageDomain(
+                new LiveMigrateDiskParameters(Guid.newGuid(), Guid.newGuid(), dstSd, Guid.newGuid(),
+                        Guid.newGuid(), Guid.newGuid(), Guid.newGuid())));
+    }
+
     /** Initialize Entities */
 
     private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId) {
@@ -329,9 +362,11 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         doReturn(vmValidator).when(command).createVmValidator();
         doReturn(snapshotsValidator).when(command).createSnapshotsValidator();
         doReturn(diskValidator).when(command).createDiskValidator(any(Disk.class));
+        doReturn(diskVmElementValidator).when(command).createDiskVmElementValidator(any(Guid.class), any(Guid.class));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
+        when(diskVmElementValidator.isPassDiscardSupported(dstStorageId)).thenReturn(ValidationResult.VALID);
     }
 }

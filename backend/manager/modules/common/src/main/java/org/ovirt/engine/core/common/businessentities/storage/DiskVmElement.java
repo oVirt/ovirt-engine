@@ -19,6 +19,8 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     private boolean boot;
 
+    private boolean passDiscard;
+
     private DiskInterface diskInterface;
 
     private boolean usingScsiReservation;
@@ -62,6 +64,14 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     public void setBoot(boolean boot) {
         this.boot = boot;
+    }
+
+    public boolean isPassDiscard() {
+        return passDiscard;
+    }
+
+    public void setPassDiscard(boolean passDiscard) {
+        this.passDiscard = passDiscard;
     }
 
     @NotNull(message = "VALIDATION_DISK_INTERFACE_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
@@ -119,6 +129,7 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     private static void copyProperties(DiskVmElement source, DiskVmElement dest) {
         dest.setBoot(source.isBoot());
+        dest.setPassDiscard(source.isPassDiscard());
         dest.setDiskInterface(source.getDiskInterface());
     }
 
@@ -134,6 +145,7 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
         DiskVmElement that = (DiskVmElement) o;
         return boot == that.boot &&
+                passDiscard == that.passDiscard &&
                 diskInterface == that.diskInterface &&
                 usingScsiReservation == that.usingScsiReservation &&
                 id != null ? id.equals(that.id) : that.id == null;
@@ -141,6 +153,6 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, boot, diskInterface, usingScsiReservation);
+        return Objects.hash(id, boot, passDiscard, diskInterface, usingScsiReservation);
     }
 }

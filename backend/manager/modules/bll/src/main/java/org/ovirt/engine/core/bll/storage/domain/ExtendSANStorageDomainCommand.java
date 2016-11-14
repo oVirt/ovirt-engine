@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -27,6 +30,9 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
+
+    @Inject
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
 
     public ExtendSANStorageDomainCommand(Guid commandId) {
         super(commandId);
@@ -117,6 +123,12 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         } else {
             // use luns list from connect command
             getParameters().setLunsList(connectResult.getActionReturnValue());
+        }
+
+        if (!discardHelper.isExistingDiscardFunctionalityPreserved(connectResult.getActionReturnValue(),
+                getStorageDomain())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_DISCARD_SUPPORT,
+                    String.format("$storageDomainName %1$s", getStorageDomainName()));
         }
         return true;
     }

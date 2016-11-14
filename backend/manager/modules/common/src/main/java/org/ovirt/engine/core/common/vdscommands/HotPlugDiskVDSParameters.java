@@ -16,17 +16,20 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
     private VM vm;
     private Map<String, String> addressMap;
     private DiskInterface diskInterface;
+    private boolean passDiscard;
 
     public HotPlugDiskVDSParameters() {
     }
 
-    public HotPlugDiskVDSParameters(Guid vdsId, VM vm, Disk disk, VmDevice vmDevice, Map<String, String> addressMap, DiskInterface diskInterface) {
+    public HotPlugDiskVDSParameters(Guid vdsId, VM vm, Disk disk, VmDevice vmDevice, Map<String, String> addressMap,
+            DiskInterface diskInterface, boolean passDiscard) {
         super(vdsId, vm.getId());
         this.disk = disk;
         this.vmDevice = vmDevice;
         this.vm = vm;
         this.addressMap = addressMap;
         this.diskInterface = diskInterface;
+        this.passDiscard = passDiscard;
     }
 
     public Disk getDisk() {
@@ -67,6 +70,14 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setDiskInterface(DiskInterface diskInterface) {
         this.diskInterface = diskInterface;
+    }
+
+    public boolean isPassDiscard() {
+        return passDiscard;
+    }
+
+    public void setPassDiscard(boolean passDiscard) {
+        this.passDiscard = passDiscard;
     }
 
     @Override

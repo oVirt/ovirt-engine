@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -124,7 +125,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && validateVmSnapshotStatus()
                 && checkCanBeMoveInVm()
                 && checkIfNeedToBeOverride()
-                && setAndValidateDiskProfiles();
+                && setAndValidateDiskProfiles()
+                && validatePassDiscardSupportedForDestinationStorageDomain();
     }
 
     protected boolean isSourceAndDestTheSame() {
@@ -532,6 +534,16 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 getParameters().getStorageDomainId()), getCurrentUser()));
     }
 
+    protected boolean validatePassDiscardSupportedForDestinationStorageDomain() {
+        if (ImageOperation.Move == getParameters().getOperation() ||
+                (ImageOperation.Copy == getParameters().getOperation() && isTemplate())) {
+            MultipleDiskVmElementValidator multipleDiskVmElementValidator = createMultipleDiskVmElementValidator();
+            return validate(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(
+                    getParameters().getStorageDomainId()));
+        }
+        return true;
+    }
+
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
@@ -588,5 +600,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected DiskValidator createDiskValidator() {
         return new DiskValidator(getImage());
+    }
+
+    protected MultipleDiskVmElementValidator createMultipleDiskVmElementValidator() {
+        return new MultipleDiskVmElementValidator(getImage(),
+                diskVmElementDao.getAllDiskVmElementsByDiskId(getParameters().getImageGroupID()));
     }
 }

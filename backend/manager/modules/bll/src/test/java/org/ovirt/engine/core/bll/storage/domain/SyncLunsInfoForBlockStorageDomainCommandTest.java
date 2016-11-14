@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.spy;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,24 +9,31 @@ import java.util.function.Consumer;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTest {
 
-    private SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase> command;
-    private StorageDomainParametersBase parameters;
+    private StorageDomainParametersBase parameters = createParameters();
+
+    @Spy
+    @InjectMocks
+    private SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase> command =
+            new SyncLunsInfoForBlockStorageDomainCommand<>(parameters, null);
     private LUNs lunFromVg;
     private LUNs lunFromDb;
 
+    @Mock
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
+
     @Before
     public void setUp() {
-        parameters = new StorageDomainParametersBase(Guid.newGuid());
-        parameters.setVdsId(Guid.newGuid());
-
-        command = spy(new SyncLunsInfoForBlockStorageDomainCommand<>(parameters, null));
         lunFromVg = new LUNs();
         lunFromDb = new LUNs();
     }
@@ -101,6 +107,12 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         lunFromVg.setDiscardZeroesData(true);
         lunFromDb.setDiscardZeroesData(false);
         assertLunShouldBeUpdatedDueToFieldChange();
+    }
+
+    private StorageDomainParametersBase createParameters() {
+        StorageDomainParametersBase params = new StorageDomainParametersBase(Guid.newGuid());
+        params.setVdsId(Guid.newGuid());
+        return params;
     }
 
     /**

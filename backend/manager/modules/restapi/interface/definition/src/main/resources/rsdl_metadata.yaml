@@ -4802,6 +4802,7 @@ actions:
       signatures:
       - mandatoryArguments:
           disk_attachment.bootable: xs:boolean
+          disk_attachment.pass_discard: xs:boolean
           disk_attachment.interface: xs:string
       - optionalArguments:
           disk_attachment.disk.id: xs:string

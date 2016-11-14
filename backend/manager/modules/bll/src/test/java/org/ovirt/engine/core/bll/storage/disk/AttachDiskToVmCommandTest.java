@@ -124,6 +124,14 @@ public class AttachDiskToVmCommandTest {
         verify(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
     }
 
+    @Test
+    public void testValidateFailsWhenDiscardIsNotSupported() {
+        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
+    }
+
     private AttachDetachVmDiskParameters createParameters() {
         AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(new DiskVmElement(diskId, vmId));
         parameters.setReadOnly(true);
@@ -151,6 +159,7 @@ public class AttachDiskToVmCommandTest {
         when(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskVmElementValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(diskVmElementValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(ValidationResult.VALID);
     }
 
     private void mockSnapshotsValidator() {
