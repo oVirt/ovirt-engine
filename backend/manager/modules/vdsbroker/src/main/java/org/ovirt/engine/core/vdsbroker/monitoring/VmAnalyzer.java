@@ -197,8 +197,19 @@ public class VmAnalyzer {
     void proceedVmReportedOnOtherHost() {
         switch(vdsmVm.getVmDynamic().getStatus()) {
         case MigratingTo:
-            log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
-                    vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+            if (dbVm.getRunOnVds() == null) {
+                log.info("VM '{}' is found as migrating on VDS '{}'({}) ",
+                        vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+                dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
+                saveDynamic(dbVm);
+                if (!vdsManager.isInitialized()) {
+                    resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
+                }
+            } else {
+                log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
+                        vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+            }
+
             break;
 
         case MigratingFrom:
@@ -761,7 +772,7 @@ public class VmAnalyzer {
     }
 
     private boolean isVdsNonResponsive(Guid vdsId) {
-        return vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
+        return vdsId != null && vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
     }
 
     private void logVmStatusTransionFromUnknown() {
