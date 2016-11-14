@@ -89,9 +89,9 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
                 newImage.setVolumeFormat(EnumUtils.valueOf(VolumeFormat.class, xmlRpcStruct.get("format")
                         .toString(), true));
             }
-            // TODO: change as leaseState is added to vdsm.
-            if (xmlRpcStruct.containsKey("leaseStateTemp")) {
-                newImage.getImage().setLeaseState(EnumUtils.valueOf(LeaseState.class, xmlRpcStruct.get("leaseState")
+
+            if (xmlRpcStruct.containsKey("lease")) {
+                newImage.getImage().setLeaseState(EnumUtils.valueOf(LeaseState.class, xmlRpcStruct.get("lease")
                         .toString(), true));
             }
 
