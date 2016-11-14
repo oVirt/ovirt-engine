@@ -232,8 +232,11 @@ public class VmAnalyzer {
                 succeededToRun = true;
             }
 
-            updateVmDynamicData();
+            dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
+            saveDynamic(dbVm);
+
             updateStatistics();
+
             if (!vdsManager.isInitialized()) {
                 resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
             }
@@ -574,6 +577,7 @@ public class VmAnalyzer {
 
         updateVmDynamicData();
         updateStatistics();
+
         if (!vdsManager.isInitialized()) {
             resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
         }
