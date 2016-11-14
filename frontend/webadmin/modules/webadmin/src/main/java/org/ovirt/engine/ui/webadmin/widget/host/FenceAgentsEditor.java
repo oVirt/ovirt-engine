@@ -184,6 +184,17 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
         return !model.hasAddress();
     }
 
+    @Override
+    protected void cleanupModelItems() {
+        //Don't clean up items on refresh, when the host dialog closes this gets cleaned up.
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        super.cleanupModelItems();
+    }
+
     public void setValue(FenceAgentListModel model) {
         listModel = model;
     }

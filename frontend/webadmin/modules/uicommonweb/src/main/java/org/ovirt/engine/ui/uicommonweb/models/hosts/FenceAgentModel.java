@@ -451,7 +451,9 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         } else {
             super.executeCommand(command);
         }
-        getHost().getFenceAgentListModel().notifyItemListeners();
+        if (getWindow() == null) {
+            getHost().getFenceAgentListModel().notifyItemListeners();
+        }
     }
 
     /**
