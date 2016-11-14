@@ -217,13 +217,6 @@ public class VmAnalyzer {
             break;
 
         default:
-            if (dbVm.getRunOnVds() != null && vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
-                log.info("RefreshVmList VM id '{}' status = '{}' on VDS '{}'({}) ignoring it in the refresh until migration is done",
-                        vdsmVm.getVmDynamic().getId(), vdsmVm.getVmDynamic().getStatus(),
-                        vdsManager.getVdsId(), vdsManager.getVdsName());
-                break;
-            }
-
             if (isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning()) {
                 succeededToRun = true;
             }
