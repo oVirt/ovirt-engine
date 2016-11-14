@@ -151,7 +151,7 @@ public class VmAnalyzer {
         }
 
         proceedWatchdogEvents();
-        updateRepository();
+        proceedVmReportedOnTheSameHost();
         prepareGuestAgentNetworkDevicesForUpdate();
     }
 
@@ -496,7 +496,7 @@ public class VmAnalyzer {
     }
 
 
-    private void updateRepository() {
+    private void proceedVmReportedOnTheSameHost() {
         if (vdsmVm.getVmDynamic().getStatus() == VMStatus.MigratingTo) {
             log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
                     vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
@@ -511,9 +511,8 @@ public class VmAnalyzer {
 
         logVmStatusTransition();
 
-        if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up
-                || dbVm.getStatus() != VMStatus.PoweringUp
-                && vdsmVmDynamic.getStatus() == VMStatus.PoweringUp) {
+        if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up ||
+                dbVm.getStatus() != VMStatus.PoweringUp && vdsmVmDynamic.getStatus() == VMStatus.PoweringUp) {
             poweringUp = true;
         }
 
@@ -524,7 +523,8 @@ public class VmAnalyzer {
         }
 
         // log vm recovered from error
-        if (dbVm.getStatus() == VMStatus.Paused && dbVm.getPauseStatus().isError()
+        if (dbVm.getStatus() == VMStatus.Paused
+                && dbVm.getPauseStatus().isError()
                 && vdsmVmDynamic.getStatus() == VMStatus.Up) {
             auditVmRecoveredFromError();
         }
@@ -756,15 +756,12 @@ public class VmAnalyzer {
     }
 
     private void handOverVm() {
-        Guid destinationHostId = dbVm.getMigratingToVds();
-        // when the destination VDS is NonResponsive put the VM to Uknown like the rest of its VMs, else MigratingTo
-        VMStatus newVmStatus = isVdsNonResponsive(destinationHostId) ? VMStatus.Unknown : VMStatus.MigratingTo;
-        // handing over the VM to the DST by marking it running on it. it will now be its SRC host.
-        dbVm.setRunOnVds(destinationHostId);
-        logVmHandOver(destinationHostId, newVmStatus);
-        // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
+        Guid dstHostId = dbVm.getMigratingToVds();
+        // when the destination VDS is NonResponsive put the VM to Unknown like the rest of its VMs
+        VMStatus newVmStatus = isVdsNonResponsive(dstHostId) ? VMStatus.Unknown : VMStatus.MigratingTo;
+        dbVm.setRunOnVds(dstHostId);
+        logVmHandOver(dstHostId, newVmStatus);
         resourceManager.internalSetVmStatus(dbVm, newVmStatus);
-        // save the VM state
         saveDynamic(dbVm);
     }
 
