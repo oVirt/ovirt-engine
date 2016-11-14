@@ -121,6 +121,7 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
         this.dynamicMessages = dynamicMessages;
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        fencingOptionsUrl.asWidget().addStyleName(style.fencingOptionsLink());
         asWidget().addStatusWidget(fencingOptionsUrl);
         localize();
         driver.initialize(this);
@@ -133,7 +134,6 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
         pmSecureEditor= new EntityModelCheckBoxEditor(Align.RIGHT);
         pmSecureEditor.setUsePatternFly(true);
         fencingOptionsUrl = new Anchor(dynamicMessages.fencingOptions());
-        fencingOptionsUrl.asWidget().addStyleName(style.fencingOptionsLink());
     }
 
     private void localize() {

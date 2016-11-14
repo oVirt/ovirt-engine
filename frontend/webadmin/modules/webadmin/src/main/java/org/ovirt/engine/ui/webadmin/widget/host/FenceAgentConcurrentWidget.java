@@ -62,15 +62,21 @@ public class FenceAgentConcurrentWidget extends AbstractModelBoundPopupWidget<Fe
 
     @Override
     public void edit(FenceAgentModel fenceAgentModel) {
-        driver.edit(fenceAgentModel);
-        this.model = fenceAgentModel;
-        determineLabelValue(fenceAgentModel);
-        fenceAgentModel.getManagementIp().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                determineLabelValue(model);
-            }
-        });
+        if (this.model != null && fenceAgentModel != null && !fenceAgentModel.equals(this.model)) {
+            // Clean up the model.
+            driver.cleanup();
+        }
+        if (fenceAgentModel != null) {
+            driver.edit(fenceAgentModel);
+            this.model = fenceAgentModel;
+            determineLabelValue(fenceAgentModel);
+            fenceAgentModel.getManagementIp().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+                @Override
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                    determineLabelValue(model);
+                }
+            });
+        }
     }
 
     private void determineLabelValue(FenceAgentModel model) {
@@ -84,7 +90,8 @@ public class FenceAgentConcurrentWidget extends AbstractModelBoundPopupWidget<Fe
 
     @Override
     public void cleanup() {
-        driver.cleanup();
+        // Don't cleanup the model here as it will stop the edit dialog from opening twice, the model gets cleaned
+        // up when the host dialog closes.
     }
 
     @UiHandler("editFenceAgent")

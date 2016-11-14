@@ -127,7 +127,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         }
     }
 
-    private void cleanupModelItems() {
+    protected void cleanupModelItems() {
         if (modelItems != null) {
             for (T item : modelItems) {
                 if (item instanceof HasCleanup) {
