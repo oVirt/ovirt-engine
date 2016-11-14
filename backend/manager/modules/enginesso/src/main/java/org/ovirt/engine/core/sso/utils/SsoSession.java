@@ -107,7 +107,7 @@ public class SsoSession implements Serializable {
         this.appUrl = appUrl;
     }
 
-    public long getValidTo() {
+    public Long getValidTo() {
         return validTo;
     }
 
