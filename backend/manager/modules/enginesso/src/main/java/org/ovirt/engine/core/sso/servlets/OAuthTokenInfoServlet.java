@@ -141,10 +141,13 @@ public class OAuthTokenInfoServlet extends HttpServlet {
 
         Map<String, Object> ovirt = new HashMap<>();
         ovirt.put("version", SsoConstants.OVIRT_SSO_VERSION);
-        ovirt.put("principal_id", ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID));
-        ovirt.put("email", ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.EMAIL));
+        ovirt.put("principal_id", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.ID));
+        ovirt.put("email", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.EMAIL));
+        ovirt.put("namespace", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.NAMESPACE));
+        ovirt.put("first_name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.FIRST_NAME));
+        ovirt.put("last_name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.LAST_NAME));
         ovirt.put("group_ids", ssoSession.getPrincipalRecord().<Collection>get(Authz.PrincipalRecord.GROUPS,
-                Collections.<ExtMap>emptyList()));
+            Collections.<ExtMap>emptyList()));
         if (password != null) {
             ovirt.put("password", password);
         }

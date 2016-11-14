@@ -37,11 +37,14 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
 
     private DbUser buildUser(T params, String authzName) {
         DbUser dbUser = dbUserDao.getByExternalId(authzName, params.getPrincipalId());
-        DbUser user = new DbUser();
+        DbUser user = new DbUser(dbUser);
         user.setId(dbUser == null ? Guid.newGuid() : dbUser.getId());
         user.setExternalId(params.getPrincipalId());
         user.setDomain(authzName);
         user.setEmail(params.getEmail());
+        user.setFirstName(params.getFirstName());
+        user.setLastName(params.getLastName());
+        user.setNamespace(params.getNamespace());
         user.setLoginName(params.getPrincipalName());
         List<Guid> groupIds = new ArrayList<>();
         List<String> groupRecordIds = new ArrayList<>();
@@ -53,6 +56,13 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
             }
         }
         user.setGroupIds(groupIds);
+        user.setAdmin(
+            !roleDao.getAnyAdminRoleForUserAndGroups(
+                user.getId(),
+                StringUtils.join(user.getGroupIds(), ",")
+            ).isEmpty()
+        );
+
         if (dbUser == null) {
             dbUserDao.save(user);
         } else if (!dbUser.equals(user)) {

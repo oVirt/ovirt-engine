@@ -47,6 +47,9 @@ public class SsoUtils {
                             username,
                             (String) payload.get("principal_id"),
                             (String) payload.get("email"),
+                            (String) payload.get("first_name"),
+                            (String) payload.get("last_name"),
+                            (String) payload.get("namespace"),
                             req == null ? "" : req.getRemoteAddr(),
                             (Collection<ExtMap>) payload.get("group_ids"),
                             loginAsAdmin));
