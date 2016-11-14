@@ -76,6 +76,20 @@ public class VnicProfileViewDaoImpl extends DefaultReadDao<VnicProfileView, Guid
     }
 
     @Override
+    public List<VnicProfileView> getAllForCluster(Guid id) {
+        return getAllForCluster(id, null, false);
+    }
+
+    @Override
+    public List<VnicProfileView> getAllForCluster(Guid id, Guid userId, boolean filtered) {
+        return getCallsHandler().executeReadList("GetVnicProfileViewsByClusterId",
+                VnicProfileViewRowMapper.INSTANCE,
+                getCustomMapSqlParameterSource().addValue("id", id)
+                        .addValue("user_id", userId)
+                        .addValue("is_filtered", filtered));
+    }
+
+    @Override
     protected VnicProfileViewRowMapper createEntityRowMapper() {
         return VnicProfileViewRowMapper.INSTANCE;
     }

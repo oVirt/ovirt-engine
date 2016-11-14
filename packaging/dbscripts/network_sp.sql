@@ -1799,6 +1799,35 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVnicProfileViewsByClusterId (
+    v_id UUID,
+    v_user_id uuid,
+    v_is_filtered boolean
+    )
+RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM vnic_profiles_view
+    WHERE EXISTS (
+        SELECT 1
+        FROM network_cluster
+        WHERE cluster_id = v_id
+        AND network_cluster.network_id = vnic_profiles_view.network_id
+    )
+    AND (
+      NOT v_is_filtered
+      OR EXISTS(
+          SELECT 1
+          FROM user_vnic_profile_permissions_view
+          WHERE user_id = v_user_id
+                AND entity_id = vnic_profiles_view.id
+      )
+    );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVnicProfileViewsByNetworkQosId (v_network_qos_id UUID)
 RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
 BEGIN

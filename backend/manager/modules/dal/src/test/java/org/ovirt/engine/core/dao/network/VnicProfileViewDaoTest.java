@@ -7,20 +7,29 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 public class VnicProfileViewDaoTest extends BaseDaoTestCase {
 
+    @Inject
     private VnicProfileViewDao dao;
+
+    @Inject
+    private NetworkDao networkDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getVnicProfileViewDao();
     }
 
     /**
@@ -35,6 +44,28 @@ public class VnicProfileViewDaoTest extends BaseDaoTestCase {
         for (VnicProfileView profile : result) {
             assertEquals(FixturesTool.DATA_CENTER_NAME, profile.getDataCenterName());
         }
+    }
+
+    /**
+     * Ensures the right set of vnic profiles is returned for the given cluster id.
+     */
+    @Test
+    public void testGetAllForCluster() {
+        List<VnicProfileView> result = dao.getAllForCluster(FixturesTool.CLUSTER);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+
+        final Set<Guid> clusterNetworkIds = findClusterNetworkIds(FixturesTool.CLUSTER);
+        for (VnicProfileView profile : result) {
+            assertTrue(clusterNetworkIds.contains(profile.getNetworkId()));
+        }
+    }
+
+    private Set<Guid> findClusterNetworkIds(Guid clusterId) {
+        return networkDao.getAllForCluster(clusterId)
+                .stream()
+                .map(Network::getId)
+                .collect(Collectors.toSet());
     }
 
     /**
