@@ -73,6 +73,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                                     filteredClusters,
                                                     template.getClusterId());
 
+                                            updateRngDevice(template.getId());
+
                                             AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(
                                                     new AsyncCallback<Boolean>() {
                                                         @Override
@@ -119,8 +121,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 }
             }
         }), template.getId());
-
-        updateRngDevice(template.getId());
 
         getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
 
