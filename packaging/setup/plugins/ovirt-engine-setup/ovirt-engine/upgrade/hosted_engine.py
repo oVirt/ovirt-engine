@@ -23,9 +23,9 @@ import gettext
 
 from otopi import plugin, util
 
-from ovirt_setup_lib import dialog
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 
@@ -48,23 +48,33 @@ class Plugin(plugin.PluginBase):
         )
 
     def _have_el6_hosted_engine_host(self):
+        el6hosts = []
         dbstatement = database.Statement(
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
+        try:
+            HostedEngineVmName = vdcoption.VdcOption(
+                statement=dbstatement,
+            ).getVdcOption(
+                'HostedEngineVmName',
+                ownConnection=True,
+            )
+        except RuntimeError:
+            HostedEngineVmName = 'HostedEngine'
         vm_rows = dbstatement.execute(
             statement="""
                 SELECT vds_group_id
                 FROM vm_static
-                WHERE vm_name='HostedEngine'
-            """,
+                WHERE vm_name='{vmname}'
+            """.format(vmname=HostedEngineVmName),
             ownConnection=True,
             transaction=False,
         )
         if not vm_rows:
             # We are not a self-hosted-engine, or engine vm
             # was renamed - probably already upgraded to 3.6.
-            return False
+            return el6hosts
 
         hosts = dbstatement.execute(
             statement="""
@@ -83,7 +93,7 @@ class Plugin(plugin.PluginBase):
         if not hosts:
             # Could not find hosts. Something is probably wrong, but do
             # not fail on this.
-            return False
+            return el6hosts
 
         # Check el6. Logic is partially copied from:
         # backend/manager/modules/vdsbroker/src/main/java/org/ovirt/engine/
@@ -103,8 +113,8 @@ class Plugin(plugin.PluginBase):
                         os_name,
                         os_release,
                     )
-                    return True
-        return False
+                    el6hosts.append(host['vds_name'])
+        return el6hosts
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -122,37 +132,26 @@ class Plugin(plugin.PluginBase):
     def _validate_hosted_engine(self):
         # Prevent upgrade to 3.6 if we are running as a self-hosted-engine
         # and we have el6 hosts.
-        have_el6_hosts = self._have_el6_hosted_engine_host()
+        el6_hosts = self._have_el6_hosted_engine_host()
 
         if self.environment[
             oenginecons.EngineDBEnv.UPGRADE_WITH_HE_EL6_HOSTS
-        ] is None and have_el6_hosts:
+        ] is None and el6_hosts:
             self.dialog.note(
                 text=_(
                     'It seems like this engine is self-hosted, '
                     'and the operating system of some of its hosts is '
-                    'el6 or a variant. Please upgrade the hosts to el7 '
+                    'el6 or a variant. Please upgrade {el6_hosts} to el7 '
                     'before upgrading the engine to 3.6.\n'
                     'Please check the log file for more details.\n'
+                ).format(
+                    el6_hosts=el6_hosts,
                 ),
-            )
-            self.environment[
-                oenginecons.EngineDBEnv.UPGRADE_WITH_HE_EL6_HOSTS
-            ] = dialog.queryBoolean(
-                dialog=self.dialog,
-                name='OVESETUP_PREVENT_HE_EL6_HOSTS',
-                note=_(
-                    'Replying "No" will abort Setup.\n'
-                    'Continue? '
-                    '(@VALUES@) [@DEFAULT@]: '
-                ),
-                prompt=True,
-                default=False,
             )
 
         if not self.environment[
             oenginecons.EngineDBEnv.UPGRADE_WITH_HE_EL6_HOSTS
-        ] and have_el6_hosts:
+        ] and el6_hosts:
             raise RuntimeError(_('self hosted engine uses el6 hosts'))
 
 

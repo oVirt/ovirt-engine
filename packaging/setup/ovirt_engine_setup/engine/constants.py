@@ -559,11 +559,7 @@ class EngineDBEnv(object):
     def FIX_DB_VIOLATIONS(self):
         return 'OVESETUP_DB/fixDbViolations'
 
-    @osetupattrs(
-        answerfile=True,
-    )
-    def UPGRADE_WITH_HE_EL6_HOSTS(self):
-        return 'OVESETUP_DB/upgradeWithHeEl6Hosts'
+    UPGRADE_WITH_HE_EL6_HOSTS = 'OVESETUP_DB/forceUpgradeWithHeEl6Hosts'
 
 
 @util.export
