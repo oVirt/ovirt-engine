@@ -1657,14 +1657,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 }
             }
         });
+
+        object.getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateUrandomLabel(object);
+            }
+        });
     }
 
     private void updateUrandomLabel(UnitVmModel model) {
-        final Cluster cluster = model.getSelectedCluster();
-        if (cluster == null) {
+        final Version effectiveVersion = model.getCompatibilityVersion();
+        if (effectiveVersion == null) {
             return;
         }
-        final String urandomSourceLabel = cluster.getCompatibilityVersion().greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
+        final String urandomSourceLabel = effectiveVersion.greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
                 ? constants.rngSourceUrandom()
                 : constants.rngSourceRandom();
         rngSourceUrandom.setLabel(urandomSourceLabel);

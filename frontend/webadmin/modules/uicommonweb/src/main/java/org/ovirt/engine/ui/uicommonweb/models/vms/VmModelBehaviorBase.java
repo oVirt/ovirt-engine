@@ -1599,7 +1599,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public VmRngDevice.Source getUrandomOrRandomRngSource() {
-        return VmRngDevice.Source.getUrandomOrRandomFor(getModel().getSelectedCluster().getCompatibilityVersion());
+        return VmRngDevice.Source.getUrandomOrRandomFor(getModel().getCompatibilityVersion());
     }
 
     protected abstract class UpdateTemplateWithVersionListener implements IEventListener<EventArgs> {
