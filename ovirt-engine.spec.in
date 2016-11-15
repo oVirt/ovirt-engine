@@ -487,6 +487,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	%{name}-tools-backup = %{version}-%{release}
+Requires:	%{name}-hosts-ansible-inventory = %{version}-%{release}
 Requires:	java
 Requires:	logrotate
 Requires:	python-psycopg2
@@ -525,6 +526,16 @@ Requires:	postgresql >= 9.2.15
 
 %description tools-backup
 %{ovirt_product_name_short} Tools (engine-backup)
+
+%package hosts-ansible-inventory
+Summary:	%{ovirt_product_name_short} Tools (hosts inventory for ansible)
+Group:		%{ovirt_product_group}
+Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine >= %{version}-%{release}
+Requires:	python-simplejson
+
+%description hosts-ansible-inventory
+%{ovirt_product_name_short} Tools (hosts inventory for ansible)
 
 %package websocket-proxy
 Summary:	%{ovirt_product_name_short} Websocket Proxy
@@ -1102,6 +1113,10 @@ fi
 %{_bindir}/engine-backup
 %{_mandir}/man8/engine-backup.*
 %{engine_data}/bin/engine-backup.sh
+
+%files hosts-ansible-inventory
+%license LICENSE
+%{engine_data}/setup/bin/ovirt-engine-hosts-ansible-inventory
 
 %changelog
 * Wed May 25 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.1.0
