@@ -109,7 +109,7 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
     }
 
     private LocationInfo buildImageLocationInfo(Guid domId, Guid imageGroupId, Guid imageId) {
-        return new VdsmImageLocationInfo(domId, imageGroupId, imageId);
+        return new VdsmImageLocationInfo(domId, imageGroupId, imageId, null);
     }
 }
 

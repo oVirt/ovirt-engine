@@ -7,17 +7,20 @@ public class VdsmImageLocationInfo extends LocationInfo {
     private Guid storageDomainId;
     private Guid imageGroupId;
     private Guid imageId;
+    private Integer generation;
 
-    public VdsmImageLocationInfo(Guid storageDomainId, Guid imageGroupId, Guid imageGuid) {
+    public VdsmImageLocationInfo(Guid storageDomainId, Guid imageGroupId, Guid imageGuid, Integer generation) {
         this.storageDomainId = storageDomainId;
         this.imageGroupId = imageGroupId;
         this.imageId = imageGuid;
+        this.generation = generation;
     }
 
     public VdsmImageLocationInfo(DiskImage diskImage) {
         this.storageDomainId = !diskImage.getStorageIds().isEmpty() ? diskImage.getStorageIds().get(0) : null;
         this.imageGroupId = diskImage.getId();
         this.imageId = diskImage.getImageId();
+        this.generation = diskImage.getImage().getGeneration();
     }
 
     public VdsmImageLocationInfo() {
@@ -47,12 +50,21 @@ public class VdsmImageLocationInfo extends LocationInfo {
         this.imageId = imageId;
     }
 
+    public Integer getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(Integer generation) {
+        this.generation = generation;
+    }
+
     @Override
     public String toString() {
         return "VdsmImageLocationInfo [" +
                 "storageDomainId=" + storageDomainId +
                 ", imageGroupId=" + imageGroupId +
                 ", imageId=" + imageId +
+                ", generation=" + generation +
                 ']';
     }
 }
