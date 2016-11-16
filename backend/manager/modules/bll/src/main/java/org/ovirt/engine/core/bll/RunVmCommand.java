@@ -941,7 +941,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getStoragePool(),
                 getRunVdssList(),
                 getVdsWhiteList(),
-                getPredefinedVdsIdListToRunOn(),
                 getCluster())) {
             return false;
         }

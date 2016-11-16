@@ -506,7 +506,6 @@ public class SchedulingManager implements BackendService {
             @NotNull VM vm,
             @NotNull List<Guid> vdsBlackList,
             @NotNull List<Guid> vdsWhiteList,
-            @NotNull List<Guid> destVdsIdList,
             @NotNull List<String> messages) {
         List<VDS> vdsList = getVdsDao()
                 .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);

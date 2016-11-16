@@ -608,8 +608,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
-                        getDestinationHostList(),
-                        getReturnValue().getValidationMessages());
+                getReturnValue().getValidationMessages());
     }
 
     @Override

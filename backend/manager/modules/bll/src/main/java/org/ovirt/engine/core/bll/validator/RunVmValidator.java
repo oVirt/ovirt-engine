@@ -106,7 +106,6 @@ public class RunVmValidator {
     public boolean canRunVm(List<String> messages, StoragePool storagePool,
             @NotNull List<Guid> vdsBlackList,
             @NotNull List<Guid> vdsWhiteList,
-            @NotNull List<Guid> destVdsList,
             @NotNull Cluster cluster) {
 
         if (vm.getStatus() == VMStatus.Paused) {
@@ -126,7 +125,7 @@ public class RunVmValidator {
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    validate(validateDisksPassDiscard(vm), messages) &&
                    getSchedulingManager().canSchedule(
-                           cluster, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
+                           cluster, vm, vdsBlackList, vdsWhiteList, messages);
         }
 
         return
@@ -149,7 +148,7 @@ public class RunVmValidator {
                 validate(validateDisksPassDiscard(vm), messages) &&
                 validate(validateMemorySize(vm), messages) &&
                 getSchedulingManager().canSchedule(
-                        cluster, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
+                        cluster, vm, vdsBlackList, vdsWhiteList, messages);
     }
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {
