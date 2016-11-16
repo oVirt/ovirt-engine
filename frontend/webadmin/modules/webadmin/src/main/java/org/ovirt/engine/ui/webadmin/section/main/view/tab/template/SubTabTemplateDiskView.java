@@ -18,6 +18,8 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.template.DisksTree;
+
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
@@ -48,6 +50,8 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
         });
 
         setIsActionTree(true);
+
+        treeContainer.getElement().getStyle().setTop(75, Style.Unit.PX);
     }
 
     @Override
