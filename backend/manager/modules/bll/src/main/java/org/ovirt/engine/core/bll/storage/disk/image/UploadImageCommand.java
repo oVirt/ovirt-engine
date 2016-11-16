@@ -83,10 +83,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         entity.setBytesTotal(getParameters().getUploadSize());
         imageTransferDao.save(entity);
 
-        log.info("Creating {} image", getUploadType());
-
         // If an image was not created yet, create it.
         if (Guid.isNullOrEmpty(getParameters().getImageId())) {
+            log.info("Creating {} image", getUploadType());
             createImage();
         } else {
             handleImageIsReadyForUpload(getParameters().getImageId());
