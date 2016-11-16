@@ -58,7 +58,11 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+    }
 
+    @Override
+    public void init() {
+        super.init();
         setStoragePoolId(getVm().getStoragePoolId());
         getParameters().setStoragePoolId(getStoragePoolId());
 
