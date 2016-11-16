@@ -18,6 +18,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -87,8 +89,11 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.RngUtils;
 
 public class BackendVmsResource extends
         AbstractBackendCollectionResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
@@ -358,7 +363,7 @@ public class BackendVmsResource extends
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDiskAttachments(), template.getId()));
         params.setVmPayload(getPayload(vm));
 
-        addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
+        addDevicesToParams(params, vm, template, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
@@ -370,7 +375,12 @@ public class BackendVmsResource extends
                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    private void addDevicesToParams(AddVmParameters params, Vm vm, VmTemplate template, InstanceType instanceType, int osId, Cluster cluster) {
+    private void addDevicesToParams(
+            AddVmParameters params,
+            Vm vm, VmTemplate template,
+            InstanceType instanceType,
+            VmStatic vmStatic,
+            Cluster cluster) {
         Guid templateId = template != null ? template.getId() : null;
         Guid instanceTypeId = instanceType != null ? instanceType.getId() : null;
 
@@ -389,7 +399,8 @@ public class BackendVmsResource extends
 
         if (vm.isSetMemoryPolicy()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        } else if (shouldCopyDevice(SimpleDependencyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(osId, cluster.getCompatibilityVersion()), templateId, instanceTypeId)) {
+        } else if (shouldCopyDevice(SimpleDependencyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(
+                vmStatic.getOsId(), cluster.getCompatibilityVersion()), templateId, instanceTypeId)) {
             // it is not defined on the template
             params.setBalloonEnabled(instanceTypeId != null ? !VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId) : null);
         }
@@ -404,13 +415,31 @@ public class BackendVmsResource extends
             params.setUpdateRngDevice(true);
             params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
         } else if (instanceTypeId != null || templateId != null) {
-            List<VmRngDevice> devices = VmHelper.getRngDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId);
-            if (devices != null && !devices.isEmpty()) {
-                boolean supported = cluster.getRequiredRngSources().contains(devices.get(0).getSource());
-                if (shouldCopyDevice(supported, templateId, instanceTypeId)) {
-                    params.setUpdateRngDevice(true);
-                    params.setRngDevice(!devices.isEmpty() ? devices.iterator().next() : null);
-                }
+            copyRngDeviceFromTemplateOrInstanceType(params, vmStatic, cluster, templateId, instanceTypeId);
+        }
+    }
+
+    // TODO: Move user input and template/instance-type merging code to backed
+    private void copyRngDeviceFromTemplateOrInstanceType(AddVmParameters params,
+            VmStatic vmStatic,
+            Cluster cluster,
+            Guid templateId,
+            Guid instanceTypeId) {
+        List<VmRngDevice> devices = VmHelper.getRngDevicesForEntity(
+                this, instanceTypeId != null ? instanceTypeId : templateId);
+        if (devices != null && !devices.isEmpty()) {
+            final VmRngDevice rngDevice = devices.get(0);
+            final Version effectiveVersion =
+                    CommonCompatibilityVersionUtils.getEffective(vmStatic.getCustomCompatibilityVersion(),
+                            cluster.getCompatibilityVersion(),
+                            null);
+            rngDevice.updateSourceByVersion(effectiveVersion);
+            boolean supported = EnumSet.of(
+                    RngUtils.RngValidationResult.VALID, RngUtils.RngValidationResult.UNSUPPORTED_URANDOM_OR_RANDOM)
+                    .contains(RngUtils.validate(cluster, rngDevice, effectiveVersion));
+            if (shouldCopyDevice(supported, templateId, instanceTypeId)) {
+                params.setUpdateRngDevice(true);
+                params.setRngDevice(rngDevice);
             }
         }
     }
@@ -485,7 +514,7 @@ public class BackendVmsResource extends
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDiskAttachments(), template.getId()));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(params);
-        addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
+        addDevicesToParams(params, vm, template, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
@@ -505,7 +534,7 @@ public class BackendVmsResource extends
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        addDevicesToParams(params, vm, null, instanceType, staticVm.getOsId(), cluster);
+        addDevicesToParams(params, vm, null, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 

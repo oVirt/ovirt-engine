@@ -1,15 +1,11 @@
 package org.ovirt.engine.core.bll.validator;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.RngUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +24,7 @@ public class VirtIoRngValidator {
      * @param effectiveVersion of vm-like entity the rng device will be assigned to
      */
     public ValidationResult canAddRngDevice(Cluster cluster, VmRngDevice rngDevice, Version effectiveVersion) {
-        final RngValidationResult rngValidationResult = validate(cluster, rngDevice, effectiveVersion);
+        final RngUtils.RngValidationResult rngValidationResult = RngUtils.validate(cluster, rngDevice, effectiveVersion);
         switch (rngValidationResult) {
             case VALID:
                 return ValidationResult.VALID;
@@ -43,35 +39,5 @@ public class VirtIoRngValidator {
             default:
                 throw new RuntimeException("Unknown enum constant " + rngValidationResult);
         }
-    }
-
-    @SafeVarargs
-    private static <T> boolean containsAtLeastOne(Set<T> collection, T... requiredItems) {
-        final Set<T> requiredSet = new HashSet<>(Arrays.asList(requiredItems));
-        requiredSet.retainAll(collection);
-        return !requiredSet.isEmpty();
-    }
-
-    public static RngValidationResult validate(Cluster cluster, VmRngDevice rngDevice, Version effectiveVersion) {
-        VmRngDevice.Source source = rngDevice.getSource();
-
-        // This can be dropped when we stop to support 4.0 compatibility level
-        if (cluster.getCompatibilityVersion() != null
-                && !cluster.getCompatibilityVersion().equals(effectiveVersion)
-                && EnumSet.of(VmRngDevice.Source.URANDOM, VmRngDevice.Source.RANDOM).contains(source)
-                && containsAtLeastOne(cluster.getRequiredRngSources(), VmRngDevice.Source.URANDOM, VmRngDevice.Source.RANDOM)
-                && !cluster.getRequiredRngSources().contains(source)) {
-            return RngValidationResult.UNSUPPORTED_URANDOM_OR_RANDOM;
-        }
-
-        final boolean valid = cluster.getRequiredRngSources().contains(source);
-        return valid ? RngValidationResult.VALID : RngValidationResult.INVALID;
-    }
-
-    public enum RngValidationResult {
-        VALID,
-        /** basically invalid, but we treat it as valid to allow users to preview urandom/random change */
-        UNSUPPORTED_URANDOM_OR_RANDOM,
-        INVALID
     }
 }

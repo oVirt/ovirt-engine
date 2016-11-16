@@ -347,7 +347,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().isVirtioScsiEnabled(),
                         getVmDeviceUtils().hasMemoryBalloon(getVmId()),
                         graphicsToSkip,
-                        false);
+                        false,
+                        getEffectiveVersion());
             } else {
                 // for instance type and new template without a VM
                 getVmDeviceUtils().copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,
@@ -358,7 +359,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().isVirtioScsiEnabled(),
                         Boolean.TRUE.equals(getParameters().isBalloonEnabled()),
                         graphicsToSkip,
-                        false);
+                        false,
+                        getEffectiveVersion());
             }
 
             updateWatchdog(getVmTemplateId());
@@ -380,6 +382,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (!pendingAsyncTasks) {
             endSuccessfullySynchronous();
         }
+    }
+
+    private Version getEffectiveVersion() {
+        return CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), this::getCluster);
     }
 
     /**

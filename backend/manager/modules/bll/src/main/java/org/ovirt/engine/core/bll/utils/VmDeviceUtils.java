@@ -1135,7 +1135,8 @@ public class VmDeviceUtils {
                                      boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,
                                      boolean copySnapshotDevices,
-                                     boolean copyHostDevices) {
+                                     boolean copyHostDevices,
+                                     Version versionToUpdateRngDeviceWith) {
         if (graphicsToSkip == null) {
             graphicsToSkip = Collections.emptySet();
         }
@@ -1230,7 +1231,11 @@ public class VmDeviceUtils {
                             cluster, new VmRngDevice(device), dstVmBase.getCustomCompatibilityVersion()).isValid()) {
                         continue;
                     }
-                    specParams.putAll(device.getSpecParams());
+                    final VmRngDevice rngDevice = new VmRngDevice(device);
+                    if (versionToUpdateRngDeviceWith != null) {
+                        rngDevice.updateSourceByVersion(versionToUpdateRngDeviceWith);
+                    }
+                    specParams.putAll(rngDevice.getSpecParams());
                     break;
 
                 case CONSOLE:
@@ -1321,7 +1326,8 @@ public class VmDeviceUtils {
                                      Boolean isVirtioScsiEnabled,
                                      boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,
-                                     boolean copySnapshotDevices) {
+                                     boolean copySnapshotDevices,
+                                     Version versionToUpdateRndDeviceWith) {
 
         VmBase srcVmBase = getVmBase(srcId);
         VmBase dstVmBase = getVmBase(dstId);
@@ -1329,7 +1335,8 @@ public class VmDeviceUtils {
 
         copyVmDevices(srcId, dstId, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
                 isSoundEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, graphicsToSkip,
-                copySnapshotDevices, canCopyHostDevices(srcVmBase, dstVmBase));
+                copySnapshotDevices, canCopyHostDevices(srcVmBase, dstVmBase),
+                versionToUpdateRndDeviceWith);
     }
 
 

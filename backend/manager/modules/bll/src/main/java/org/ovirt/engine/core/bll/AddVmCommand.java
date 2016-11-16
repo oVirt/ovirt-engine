@@ -993,7 +993,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 isVirtioScsiEnabled(),
                 isBalloonEnabled(),
                 getParameters().getGraphicsDevices().keySet(),
-                false);
+                false,
+                getEffectiveCompatibilityVersion());
 
         if (getInstanceTypeId() != null) {
             copyDiskDevicesFromTemplate();

@@ -33,7 +33,6 @@ import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
-import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -85,6 +84,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.RngUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1036,8 +1036,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         VmRngDevice rngDevice = new VmRngDevice(rngDevs.get(0));
-        final VirtIoRngValidator.RngValidationResult rngValidationResult =
-                VirtIoRngValidator.validate(getCluster(), rngDevice, getVm().getCompatibilityVersion());
+        final RngUtils.RngValidationResult rngValidationResult =
+                RngUtils.validate(getCluster(), rngDevice, getVm().getCompatibilityVersion());
         switch (rngValidationResult) {
             case VALID:
                 return true;

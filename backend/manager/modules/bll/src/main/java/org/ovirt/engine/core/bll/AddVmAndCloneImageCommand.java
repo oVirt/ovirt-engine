@@ -431,7 +431,8 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 isBalloonEnabled(),
                 getParameters().getGraphicsDevices().keySet(),
                 false,
-                getVmDeviceUtils().canCopyHostDevices(getSourceVmId(), getVm().getStaticData()));
+                getVmDeviceUtils().canCopyHostDevices(getSourceVmId(), getVm().getStaticData()),
+                getEffectiveCompatibilityVersion());
     }
 
     @Override
