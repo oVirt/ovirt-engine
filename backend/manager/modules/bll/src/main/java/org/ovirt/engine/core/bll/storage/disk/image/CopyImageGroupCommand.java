@@ -95,10 +95,16 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         }
     }
 
+    private boolean isUsingSPDMFlow() {
+        return isDataOperationsByHSM() && !getParameters().getUseCopyCollapse()
+                && getParameters().getParentCommand() == VdcActionType.MoveOrCopyDisk
+                && getParameters().getOperation() == ImageOperation.Move;
+    }
+
     private boolean performStorageOperation() {
         Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                 : getDiskImage().getStorageIds().get(0);
-        if (isDataOperationsByHSM()) {
+        if (isUsingSPDMFlow()) {
             CopyImageGroupWithDataCommandParameters p = new CopyImageGroupWithDataCommandParameters(
                     getStorageDomain().getStoragePoolId(),
                     sourceDomainId,
@@ -171,7 +177,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public CommandCallback getCallback() {
-        if (isDataOperationsByHSM()){
+        if (isUsingSPDMFlow()){
             return new ConcurrentChildCommandsExecutionCallback();
         }
 
@@ -219,7 +225,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected AsyncTaskType getTaskType() {
-        if (isDataOperationsBySpm()) {
+        if (!isUsingSPDMFlow()) {
             return AsyncTaskType.moveImage;
         }
 
