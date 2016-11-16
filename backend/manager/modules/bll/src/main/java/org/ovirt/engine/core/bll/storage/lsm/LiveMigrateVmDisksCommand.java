@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,12 +23,11 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
-import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -345,8 +341,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     protected boolean validate() {
         setStoragePoolId(getVm().getStoragePoolId());
 
-        if (!isValidParametersList() || !checkImagesStatus() || !validateSpaceRequirements()
-                || !performVmRelatedChecks()) {
+        if (!isValidParametersList() || !validateDestDomainsSpaceRequirements()) {
             return false;
         }
 
@@ -354,7 +349,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             getReturnValue().setValid(isDiskNotShareable(parameters.getImageId())
                     && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getTargetStorageDomainId())
-                    && performStorageDomainsChecks(parameters)
+                    && validateDestStorage(getStorageDomainById(parameters.getTargetStorageDomainId(), getStoragePoolId()))
                     && isSameSourceAndDest(parameters));
 
             if (!getReturnValue().isValid()) {
@@ -366,20 +361,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             return false;
         }
 
-        return true;
-    }
-
-    private boolean performStorageDomainsChecks(LiveMigrateDiskParameters parameters) {
-        StorageDomain sourceDomain = getImageSourceDomain(parameters.getImageId());
-        StorageDomain destDomain = getStorageDomainById(parameters.getTargetStorageDomainId(), getStoragePoolId());
-
-        return validateSourceStorageDomain(sourceDomain) && validateDestStorage(destDomain);
-    }
-
-    private StorageDomain getImageSourceDomain(Guid imageId) {
-        DiskImage diskImage = getDiskImageByImageId(imageId);
-        Guid domainId = diskImage.getStorageIds().get(0);
-        return getStorageDomainById(domainId, getStoragePoolId());
+        return validateCreateAllSnapshotsFromVmCommand();
     }
 
     private boolean isValidParametersList() {
@@ -388,14 +370,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         }
 
         return true;
-    }
-
-    protected boolean checkImagesStatus() {
-        List<DiskImage> disksToCheck = DisksFilter.filterImageDisks(diskDao.getAllForVm(getVmId()),
-                ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
-        return validate(diskImagesValidator.diskImagesNotLocked())
-                && validate(diskImagesValidator.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain());
     }
 
     private boolean isSameSourceAndDest(LiveMigrateDiskParameters parameters) {
@@ -430,19 +404,9 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return true;
     }
 
-    private boolean validateSourceStorageDomain(StorageDomain sourceDomain) {
-        StorageDomainValidator validator = new StorageDomainValidator(sourceDomain);
-        return validate(validator.isDomainExistAndActive());
-    }
-
     private boolean validateDestStorage(StorageDomain destDomain) {
         StorageDomainValidator validator = new StorageDomainValidator(destDomain);
         return validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination());
-    }
-
-    protected boolean validateSpaceRequirements() {
-        return validateDestDomainsSpaceRequirements()
-            && validateSourceDomainsSpaceRequirements();
     }
 
     protected boolean validateDestDomainsSpaceRequirements() {
@@ -480,46 +444,12 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return true;
     }
 
-    protected boolean validateSourceDomainsSpaceRequirements() {
-        Map<Guid, List<DiskImage>> storageDomainsActiveImagesMap = new HashMap<>();
-
-        for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
-            DiskImage diskImage = getDiskImageByImageId(parameters.getImageId());
-            MultiValueMapUtils.addToMap(parameters.getSourceStorageDomainId(),
-                    diskImage,
-                    storageDomainsActiveImagesMap);
-        }
-
-        for (Map.Entry<Guid, List<DiskImage>> entry : storageDomainsActiveImagesMap.entrySet()) {
-            Guid sourceDomainId = entry.getKey();
-            List<DiskImage> disksList = entry.getValue();
-            Guid storagePoolId = disksList.get(0).getStoragePoolId();
-            StorageDomain sourceDomain = getStorageDomainById(sourceDomainId, storagePoolId);
-
-            StorageDomainValidator storageDomainValidator = createStorageDomainValidator(sourceDomain);
-            List<DiskImage> dummyDisksList = ImagesHandler.getDisksDummiesForStorageAllocations(disksList);
-            if (!validate(storageDomainValidator.hasSpaceForNewDisks(dummyDisksList))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     protected boolean isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(Guid imageId) {
         return validate(createDiskValidator(getDiskImageByImageId(imageId)).isDiskPluggedToVmsThatAreNotDown(true, null));
     }
 
     protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {
         return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
-    }
-
-    private boolean performVmRelatedChecks() {
-        VmValidator vmValidator = createVmValidator();
-        SnapshotsValidator snapshotValidator = createSnapshotsValidator();
-        return validate(vmValidator.vmNotRunningStateless()) &&
-               validate(snapshotValidator.vmNotDuringSnapshot(getVmId())) &&
-               isVmNotInPreview();
     }
 
     protected VmValidator createVmValidator() {
@@ -540,5 +470,15 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
         return new StorageDomainValidator(storageDomain);
+    }
+
+    protected boolean validateCreateAllSnapshotsFromVmCommand() {
+        VdcReturnValueBase returnValue = CommandHelper.validate(VdcActionType.CreateAllSnapshotsFromVm,
+                getCreateSnapshotParameters(), getContext().clone());
+        if (!returnValue.isValid()) {
+            getReturnValue().setValidationMessages(returnValue.getValidationMessages());
+            return false;
+        }
+        return true;
     }
 }

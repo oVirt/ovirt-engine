@@ -19,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -98,9 +97,9 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     private void initSpyCommand() {
-        doReturn(true).when(command).validateSpaceRequirements();
-        doReturn(true).when(command).checkImagesStatus();
+        doReturn(true).when(command).validateDestDomainsSpaceRequirements();
         doReturn(true).when(command).setAndValidateDiskProfiles();
+        doReturn(true).when(command).validateCreateAllSnapshotsFromVmCommand();
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters() {
@@ -131,6 +130,23 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     private void createParameters(Guid srcStorageId, Guid dstStorageId) {
         command.getParameters().setParametersList(createLiveMigrateVmDisksParameters(srcStorageId, dstStorageId));
         command.getParameters().setVmId(vmId);
+    }
+
+    @Test
+    public void validateFailsWhenCreateAllSnapshotFromVmValidationFails() {
+        createParameters(srcStorageId, dstStorageId);
+
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+
+        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
+        dstStorageDomain.setStatus(StorageDomainStatus.Active);
+
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
+
+        doReturn(false).when(command).validateCreateAllSnapshotsFromVmCommand();
+        assertFalse(command.validate());
     }
 
     @Test
@@ -172,22 +188,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN.toString()));
-    }
-
-    @Test
-    public void validateInvalidSourceDomain() {
-        createParameters();
-
-        StorageDomain storageDomain = initStorageDomain(srcStorageId);
-        storageDomain.setStatus(StorageDomainStatus.Locked);
-
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
-
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
     }
 
     @Test
@@ -258,49 +258,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         assertTrue(command.validate());
-    }
-
-    @Test
-    public void validateVmRunningStateless() {
-        createParameters();
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
-
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
-                .vmNotRunningStateless();
-
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS.name()));
-    }
-
-    @Test
-    public void validateVmInPreview() {
-        createParameters();
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, null, diskImageId);
-        setVmInPreview(true);
-
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW)).when(snapshotsValidator)
-                .vmNotInPreview(any(Guid.class));
-
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
-    }
-
-    @Test
-    public void validateVmDuringSnapshot() {
-        createParameters();
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, null, diskImageId);
-        when(snapshotDao.exists(any(Guid.class), eq(Snapshot.SnapshotStatus.LOCKED))).thenReturn(true);
-
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT)).when(snapshotsValidator)
-                .vmNotDuringSnapshot(any(Guid.class));
-
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
     }
 
     @Test
