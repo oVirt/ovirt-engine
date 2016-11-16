@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -60,10 +61,10 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
     @UiField
     PushButton editFenceAgent;
 
-    @UiField
+    @UiField(provided = true)
     PushButton up;
 
-    @UiField
+    @UiField(provided = true)
     PushButton down;
 
     @UiField
@@ -103,6 +104,7 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
 
     public FenceAgentWidget() {
         initEditors();
+        initPushButton();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
         concurrentGroupLabel.setText(constants.concurrentAgentGroupLabel());
@@ -112,6 +114,13 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
         concurrentList = new ListModelListBoxEditor<>(new StringRenderer<String>());
         concurrentList.setUsePatternFly(true);
         concurrentList.hideLabel();
+    }
+
+    private void initPushButton(){
+        up = new PushButton();
+        up.setHTML("<span class='fa fa-angle-up' aria-hidden='true'></span>");//$NON-NLS-1$
+        down = new PushButton();
+        down.setHTML("<span class='fa fa-angle-down' aria-hidden='true'></span>");//$NON-NLS-1$
     }
 
     @Override

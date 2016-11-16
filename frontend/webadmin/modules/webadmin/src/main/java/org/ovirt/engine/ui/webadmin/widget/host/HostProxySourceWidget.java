@@ -30,10 +30,10 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FencePr
 
     private final Driver driver = GWT.create(Driver.class);
 
-    @UiField
+    @UiField(provided = true)
     PushButton up;
 
-    @UiField
+    @UiField(provided = true)
     PushButton down;
 
     @UiField
@@ -47,8 +47,16 @@ public class HostProxySourceWidget extends AbstractModelBoundPopupWidget<FencePr
     FenceProxyModel model;
 
     public HostProxySourceWidget() {
+        initPushButton();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
+    }
+
+    private void initPushButton(){
+        up = new PushButton();
+        up.setHTML("<span class='fa fa-angle-up' aria-hidden='true'></span>");//$NON-NLS-1$
+        down = new PushButton();
+        down.setHTML("<span class='fa fa-angle-down' aria-hidden='true'></span>");//$NON-NLS-1$
     }
 
     @Override

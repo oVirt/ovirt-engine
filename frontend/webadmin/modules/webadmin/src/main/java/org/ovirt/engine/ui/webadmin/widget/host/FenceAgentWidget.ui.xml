@@ -83,10 +83,10 @@
         <b:Column size="LG_1" addStyleNames="{style.editColumn}">
           <b:Row addStyleNames="{style.noMargin}">
             <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
-              <g:PushButton ui:field="up" text="/\" addStyleNames="{style.upDownButton}" />
+              <g:PushButton ui:field="up" addStyleNames="{style.upDownButton}" />
             </b:Column>
             <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
-              <g:PushButton ui:field="down" text="\/" addStyleNames="{style.upDownButton}" />
+              <g:PushButton ui:field="down" addStyleNames="{style.upDownButton}" />
             </b:Column>
           </b:Row>
         </b:Column>
