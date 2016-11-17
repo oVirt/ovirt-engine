@@ -61,4 +61,6 @@ public class GlusterConstants {
     public static final String VOLUME_SNAPSHOT_MAX_HARD_LIMIT = "snap-max-hard-limit";
     public static final String VOLUME_SNAPSHOT_NAME = "snapname";
     public static final String CLUSTER_NAME = "ClusterName";
+    public static final String GEOREP_CHECKPOINT_OPTION = "checkpoint";
+    public static final String GEOREP_CHECKPOINT_VALUE = "now";
 }

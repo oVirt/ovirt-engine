@@ -565,6 +565,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_CLI_SNAPSHOT_SCHEDULE_DISABLED();
 
+    String AuditLogType___GLUSTER_STORAGE_DOMAIN_SYNC_FAILED();
+
+    String AuditLogType___GLUSTER_STORAGE_DOMAIN_SYNCED();
+
+    String AuditLogType___GLUSTER_STORAGE_DOMAIN_SYNC_STARTED();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();

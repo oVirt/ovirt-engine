@@ -22,6 +22,8 @@ public enum LockingGroup {
     GLUSTER_GEOREP,
     /** this group is used for gluster volume snapshot purpose */
     GLUSTER_SNAPSHOT,
+    /** this group is used to ensure there are no parallel runs of storage sync*/
+    GLUSTER_STORAGE_DOMAIN_SYNC,
     /** this group is used to lock Network Manipulations in a host */
     HOST_NETWORK,
     /** this group is used to lock Storage Devices in the host */
