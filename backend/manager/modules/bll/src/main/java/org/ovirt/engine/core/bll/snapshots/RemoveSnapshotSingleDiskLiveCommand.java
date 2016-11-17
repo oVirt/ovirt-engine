@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
-import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskLiveStep;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -57,7 +57,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     @Override
     public boolean ignoreChildCommandFailure() {
-        if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
+        if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.DESTROY_IMAGE) {
             // It's possible that the image was destroyed already if this is retry of Live
             // Merge for the given volume.  Proceed to check if the image is present.
             log.warn("Child command '{}' failed, proceeding to verify", getParameters().getCommandStep());
@@ -81,8 +81,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         }
 
         // Upon recovery or after invoking a new child command, our map may be missing an entry
-        syncChildCommandList();
-        Guid currentChildId = getCurrentChildId();
+        syncChildCommandList(getParameters());
+        Guid currentChildId = getCurrentChildId(getParameters());
         VdcReturnValueBase vdcReturnValue = null;
 
         if (currentChildId != null) {
@@ -96,16 +96,16 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         switch (getParameters().getCommandStep()) {
         case EXTEND:
             nextCommand = new Pair<>(VdcActionType.MergeExtend, buildMergeParameters());
-            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE);
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.MERGE);
             break;
         case MERGE:
             nextCommand = new Pair<>(VdcActionType.Merge, buildMergeParameters());
-            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE_STATUS);
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.MERGE_STATUS);
             break;
         case MERGE_STATUS:
             getParameters().setMergeCommandComplete(true);
             nextCommand = new Pair<>(VdcActionType.MergeStatus, buildMergeParameters());
-            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE);
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
             break;
         case DESTROY_IMAGE:
             if (vdcReturnValue != null) {
@@ -115,11 +115,11 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 getParameters().setMergeStatusReturnValue(synthesizeMergeStatusReturnValue());
             }
             nextCommand = new Pair<>(VdcActionType.DestroyImage, buildDestroyImageParameters());
-            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE_CHECK);
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK);
             break;
         case DESTROY_IMAGE_CHECK:
             nextCommand = new Pair<>(VdcActionType.DestroyImageCheck, buildDestroyImageParameters());
-            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.COMPLETE);
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
             break;
         case COMPLETE:
             getParameters().setDestroyImageCommandComplete(true);
@@ -137,29 +137,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         }
     }
 
-    /**
-     * Updates (but does not persist) the parameters.childCommands list to ensure the current
-     * child command is present.  This is necessary in various entry points called externally
-     * (e.g. by endAction()), which can be called after a child command is started but before
-     * the main proceedCommandExecution() loop has persisted the updated child list.
-     */
-    private void syncChildCommandList() {
-        List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
-        if (childCommandIds.size() != getParameters().getChildCommands().size()) {
-            for (Guid id : childCommandIds) {
-                if (!getParameters().getChildCommands().containsValue(id)) {
-                    getParameters().getChildCommands().put(getParameters().getCommandStep(), id);
-                    break;
-                }
-            }
-        }
-    }
-
-    private Guid getCurrentChildId() {
-        return getParameters().getChildCommands().get(getParameters().getCommandStep());
-    }
-
-    private RemoveSnapshotSingleDiskLiveStep getInitialMergeStepForImage(Guid imageId) {
+    private RemoveSnapshotSingleDiskStep getInitialMergeStepForImage(Guid imageId) {
         Image image = imageDao.get(imageId);
         if (image.getStatus() == ImageStatus.ILLEGAL
                 && image.getParentId().equals(Guid.Empty)) {
@@ -167,16 +145,16 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             if (children.isEmpty()) {
                 // An illegal, orphaned image means its contents have been merged
                 log.info("Image has been previously merged, proceeding with deletion");
-                return RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE;
+                return RemoveSnapshotSingleDiskStep.DESTROY_IMAGE;
             }
         }
-        return RemoveSnapshotSingleDiskLiveStep.EXTEND;
+        return RemoveSnapshotSingleDiskStep.EXTEND;
     }
 
     private boolean completedMerge() {
-        return getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE
-                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE_CHECK
-                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.COMPLETE;
+        return getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.DESTROY_IMAGE
+                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK
+                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.COMPLETE;
     }
 
     private MergeParameters buildMergeParameters() {

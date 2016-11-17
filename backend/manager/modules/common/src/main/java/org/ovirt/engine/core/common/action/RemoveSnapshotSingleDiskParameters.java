@@ -9,9 +9,9 @@ public class RemoveSnapshotSingleDiskParameters extends ImagesContainterParamete
     private static final long serialVersionUID = -7100810356843417368L;
 
     // Members used to persist data during command execution
-    private RemoveSnapshotSingleDiskLiveStep commandStep;
-    private RemoveSnapshotSingleDiskLiveStep nextCommandStep;
-    private Map<RemoveSnapshotSingleDiskLiveStep, Guid> childCommands;
+    private RemoveSnapshotSingleDiskStep commandStep;
+    private RemoveSnapshotSingleDiskStep nextCommandStep;
+    private Map<RemoveSnapshotSingleDiskStep, Guid> childCommands;
     private boolean mergeCommandComplete;
     private MergeStatusReturnValue mergeStatusReturnValue;
     private boolean destroyImageCommandComplete;
@@ -28,27 +28,27 @@ public class RemoveSnapshotSingleDiskParameters extends ImagesContainterParamete
         super(imageId, containerId);
     }
 
-    public RemoveSnapshotSingleDiskLiveStep getCommandStep() {
+    public RemoveSnapshotSingleDiskStep getCommandStep() {
         return commandStep;
     }
 
-    public void setCommandStep(RemoveSnapshotSingleDiskLiveStep commandStep) {
+    public void setCommandStep(RemoveSnapshotSingleDiskStep commandStep) {
         this.commandStep = commandStep;
     }
 
-    public RemoveSnapshotSingleDiskLiveStep getNextCommandStep() {
+    public RemoveSnapshotSingleDiskStep getNextCommandStep() {
         return nextCommandStep;
     }
 
-    public void setNextCommandStep(RemoveSnapshotSingleDiskLiveStep nextCommandStep) {
+    public void setNextCommandStep(RemoveSnapshotSingleDiskStep nextCommandStep) {
         this.nextCommandStep = nextCommandStep;
     }
 
-    public Map<RemoveSnapshotSingleDiskLiveStep, Guid> getChildCommands() {
+    public Map<RemoveSnapshotSingleDiskStep, Guid> getChildCommands() {
         return childCommands;
     }
 
-    public void setChildCommands(Map<RemoveSnapshotSingleDiskLiveStep, Guid> childCommands) {
+    public void setChildCommands(Map<RemoveSnapshotSingleDiskStep, Guid> childCommands) {
         this.childCommands = childCommands;
     }
 

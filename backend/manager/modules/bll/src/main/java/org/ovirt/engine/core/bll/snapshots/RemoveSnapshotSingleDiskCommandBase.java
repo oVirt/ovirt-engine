@@ -8,8 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -68,6 +70,28 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             log.warn("Could not update DiskImage's size with ID '{}'",
                     targetImage.getImageId());
         }
+    }
+
+    /**
+     * Updates (but does not persist) the parameters.childCommands list to ensure the current
+     * child command is present.  This is necessary in various entry points called externally
+     * (e.g. by endAction()), which can be called after a child command is started but before
+     * the main proceedCommandExecution() loop has persisted the updated child list.
+     */
+    protected void syncChildCommandList(RemoveSnapshotSingleDiskParameters parameters) {
+        List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
+        if (childCommandIds.size() != parameters.getChildCommands().size()) {
+            for (Guid id : childCommandIds) {
+                if (!parameters.getChildCommands().containsValue(id)) {
+                    parameters.getChildCommands().put(parameters.getCommandStep(), id);
+                    break;
+                }
+            }
+        }
+    }
+
+    protected Guid getCurrentChildId(RemoveSnapshotSingleDiskParameters parameters) {
+        return parameters.getChildCommands().get(parameters.getCommandStep());
     }
 
     /**

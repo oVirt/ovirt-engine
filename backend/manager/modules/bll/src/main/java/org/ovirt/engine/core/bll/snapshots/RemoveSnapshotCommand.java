@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -189,18 +190,17 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 dest = images.get(0);
             }
 
-            if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDisk) {
-                VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
-                        getSnapshotActionType(),
-                        buildRemoveSnapshotSingleDiskParameters(source, dest));
-                if (vdcReturnValue != null && vdcReturnValue.getInternalVdsmTaskIdList() != null) {
-                    getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-                }
-            } else {
+            if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
                 CommandCoordinatorUtil.executeAsyncCommand(
                         getSnapshotActionType(),
-                        buildRemoveSnapshotSingleDiskParameters(source, dest),
+                        buildRemoveSnapshotSingleDiskParameters(source, dest, getSnapshotActionType()),
                         cloneContextAndDetachFromParent());
+            } else {
+                RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskParameters(
+                        source, dest, VdcActionType.ColdMergeSnapshotSingleDisk);
+                runInternalActionWithTasksContext(
+                        getSnapshotActionType(),
+                        parameters);
             }
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<>();
@@ -237,17 +237,17 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private RemoveSnapshotSingleDiskParameters buildRemoveSnapshotSingleDiskParameters(final DiskImage source,
-            DiskImage dest) {
+            DiskImage dest, VdcActionType snapshotActionType) {
         RemoveSnapshotSingleDiskParameters parameters =
                 new RemoveSnapshotSingleDiskParameters(source.getImageId(), getVmId());
+        parameters.setStorageDomainId(source.getStorageIds().get(0));
         parameters.setDestinationImageId(dest != null ? dest.getImageId() : null);
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
         parameters.setParentCommand(getActionType());
-        parameters.setCommandType(getSnapshotActionType());
+        parameters.setCommandType(snapshotActionType);
         parameters.setVdsId(getVm().getRunOnVds());
-        parameters.setEndProcedure(getVm().isQualifiedForLiveSnapshotMerge() ? EndProcedure.COMMAND_MANAGED :
-                EndProcedure.PARENT_MANAGED);
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
 
@@ -473,7 +473,13 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private VdcActionType getSnapshotActionType() {
-        return getVm().isQualifiedForLiveSnapshotMerge() ? VdcActionType.RemoveSnapshotSingleDiskLive : VdcActionType.RemoveSnapshotSingleDisk;
+        if (getVm().isQualifiedForLiveSnapshotMerge()) {
+            return VdcActionType.RemoveSnapshotSingleDiskLive;
+        }
+        if (isQemuimgCommitSupported()) {
+            return VdcActionType.ColdMergeSnapshotSingleDisk;
+        }
+        return VdcActionType.RemoveSnapshotSingleDisk;
     }
 
     @Override
@@ -492,9 +498,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     public CommandCallback getCallback() {
-        if (getVm().isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback()) {
+        if (getVm().isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback() ||
+                isQemuimgCommitSupported()) {
             return new ConcurrentChildCommandsExecutionCallback();
         }
         return null;
+    }
+
+    private boolean isQemuimgCommitSupported() {
+        return FeatureSupported.isQemuimgCommitSupported(getStoragePool().getCompatibilityVersion());
     }
 }

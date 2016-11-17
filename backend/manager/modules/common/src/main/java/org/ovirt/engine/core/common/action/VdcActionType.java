@@ -179,6 +179,7 @@ public enum VdcActionType {
     CreateVolume(243, QuotaDependency.STORAGE),
     SparsifyImage(244, ActionGroup.SPARSIFY_DISK, QuotaDependency.NONE),
     AmendImageGroupVolumes(245,  ActionGroup.EDIT_DISK_PROPERTIES, QuotaDependency.NONE),
+    ColdMergeSnapshotSingleDisk(246, QuotaDependency.STORAGE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
