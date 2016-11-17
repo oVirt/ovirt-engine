@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
@@ -28,6 +29,8 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
 
     public CreateVolumeContainerCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+        setStorageDomainId(getParameters().getStorageDomainId());
+        setStoragePoolId(getParameters().getStoragePoolId());
     }
 
     public CreateVolumeContainerCommand(T parameters) {
@@ -49,11 +52,23 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
                 new CreateSnapshotVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(), getParameters().getImageGroupID(), getParameters()
                         .getSrcImageId(), getParameters().getSize(),
-                        VolumeType.Sparse, getParameters().getVolumeFormat(), getParameters().getSrcImageGroupId(),
+                        getType(), getParameters().getVolumeFormat(), getParameters().getSrcImageGroupId(),
                         getParameters().getImageId(),
                         getParameters().getDescription());
-        parameters.setImageInitialSizeInBytes(Optional.ofNullable(getParameters().getInitialSize()).orElse(0L));
+        if (getType() != VolumeType.Preallocated &&
+                ImagesHandler.isImageInitialSizeSupported(getStorageDomain().getStorageType())) {
+            parameters.setImageInitialSizeInBytes(Optional.ofNullable(getParameters().getInitialSize()).orElse(0L));
+        }
+
         return parameters;
+    }
+
+    private VolumeType getType() {
+        if (getStorageDomain().getStorageType().isBlockDomain() &&
+                getParameters().getVolumeFormat() == VolumeFormat.RAW) {
+            return VolumeType.Preallocated;
+        }
+        return VolumeType.Sparse;
     }
 
     @Override
