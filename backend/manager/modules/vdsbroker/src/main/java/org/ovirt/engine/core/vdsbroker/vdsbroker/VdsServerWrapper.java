@@ -2080,6 +2080,16 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public QemuImageInfoReturnForXmlRpc getQemuImageInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+        try {
+            Map<String, Object> xmpRpcReturnValue = vdsServer.getQemuImageInfo(sdUUID, spUUID, imgUUID, volUUID);
+            return new QemuImageInfoReturnForXmlRpc(xmpRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterStopProcesses() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterProcessesStop();

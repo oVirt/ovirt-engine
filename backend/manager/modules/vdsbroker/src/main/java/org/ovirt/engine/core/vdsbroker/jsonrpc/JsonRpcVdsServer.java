@@ -56,6 +56,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVmReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OvfReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.QemuImageInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.SpmStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
@@ -2155,6 +2156,19 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new VolumeInfoReturnForXmlRpc(response);
+    }
+
+    @Override
+    public QemuImageInfoReturnForXmlRpc getQemuImageInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.getQemuImageInfo")
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imgUUID)
+                        .withParameter("volumeID", volUUID)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new QemuImageInfoReturnForXmlRpc(response);
     }
 
     @Override
