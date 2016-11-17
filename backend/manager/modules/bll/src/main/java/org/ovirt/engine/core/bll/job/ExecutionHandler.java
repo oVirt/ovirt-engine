@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.job;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
@@ -328,7 +331,7 @@ public class ExecutionHandler {
                 } else {
                     Step contextStep = context.getStep();
                     if (context.getExecutionMethod() == ExecutionMethod.AsStep && contextStep != null) {
-                        step = addSubStep(contextStep, stepName, description);
+                        step = addSubStep(contextStep, stepName, description, Collections.emptyList());
                         step.setExternal(isExternal);
                     }
                 }
@@ -352,7 +355,9 @@ public class ExecutionHandler {
      *            {@code stepName}.
      * @return The created instance of the step or {@code null}.
      */
-    public Step addTaskStep(ExecutionContext context, StepEnum stepName, String description) {
+    public Step addTaskStep(ExecutionContext context, StepEnum stepName,
+                            String description,
+                            Collection<StepSubjectEntity> stepSubjectEntities) {
         if (context == null) {
             return null;
         }
@@ -361,14 +366,17 @@ public class ExecutionHandler {
         if (context.isTasksMonitored()) {
             Step parentTaskStep = context.getParentTasksStep();
             if (parentTaskStep != null) {
-                step = addSubStep(parentTaskStep, stepName, description);
+                step = addSubStep(parentTaskStep, stepName, description, stepSubjectEntities);
             }
         }
 
         return step;
     }
 
-    private Step addSubStep(Step parentStep, StepEnum stepName, String description) {
+    private Step addSubStep(Step parentStep,
+                            StepEnum stepName,
+                            String description,
+                            Collection<StepSubjectEntity> stepSubjectEntities) {
         Step step = null;
 
         if (parentStep != null) {
@@ -378,7 +386,7 @@ public class ExecutionHandler {
             step = parentStep.addStep(stepName, description);
 
             try {
-                jobRepository.saveStep(step);
+                jobRepository.saveStep(step, stepSubjectEntities);
             } catch (Exception e) {
                 log.error("Failed to save new step '{}' for step '{}', '{}': {}",
                         stepName.name(),

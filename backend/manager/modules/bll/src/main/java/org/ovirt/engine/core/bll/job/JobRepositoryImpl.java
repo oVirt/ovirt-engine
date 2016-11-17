@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.job;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +18,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.StepSubjectEntityDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -36,20 +40,30 @@ public class JobRepositoryImpl implements JobRepository {
     private final JobDao jobDao;
     private final JobSubjectEntityDao jobSubjectEntityDao;
     private final StepDao stepDao;
+    private final StepSubjectEntityDao stepSubjectEntityDao;
 
     @Inject
-    public JobRepositoryImpl(JobDao jobDao, JobSubjectEntityDao jobSubjectEntityDao, StepDao stepDao) {
+    public JobRepositoryImpl(JobDao jobDao, JobSubjectEntityDao jobSubjectEntityDao, StepDao stepDao,
+                             StepSubjectEntityDao stepSubjectEntityDao) {
         this.jobDao = jobDao;
         this.jobSubjectEntityDao = jobSubjectEntityDao;
         this.stepDao = stepDao;
+        this.stepSubjectEntityDao = stepSubjectEntityDao;
     }
 
     @Override
     public void saveStep(final Step step) {
+        saveStep(step, Collections.emptyList());
+    }
+
+    @Override
+    public void saveStep(final Step step, Collection<StepSubjectEntity> stepSubjectEntities) {
+        stepSubjectEntities.forEach(x -> x.setStepId(step.getId()));
         TransactionSupport.executeInNewTransaction(() -> {
             try {
                 jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
                 stepDao.save(step);
+                stepSubjectEntityDao.saveAll(stepSubjectEntities);
             } catch (Exception e) {
                 log.error("Failed to save step '{}', '{}': {}",
                         step.getId(),

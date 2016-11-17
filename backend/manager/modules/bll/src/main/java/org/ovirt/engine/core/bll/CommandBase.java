@@ -536,6 +536,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
     }
 
+    /**
+     * Returns whether the command updates the progress on its added {@link Step}.
+     * @return boolean
+     */
+    public boolean shouldUpdateStepProgress() {
+        return false;
+    }
+
     @Override
     public VdcReturnValueBase endAction() {
         boolean shouldEndAction = handleCommandExecutionEnded();
@@ -1410,11 +1418,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             Step taskStep =
                     executionHandler.addTaskStep(getExecutionContext(),
                             getCommandStep(),
-                            null);
+                            null,
+                            getCommandStepSubjectEntities());
             if (taskStep != null) {
+                if (shouldUpdateStepProgress()) {
+                    stepDao.updateStepProgress(taskStep.getId(), 0);
+                }
                 getExecutionContext().setStep(taskStep);
                 persistCommandIfNeeded();
-                subjectEntityDao.saveAll(getCommandStepSubjectEntities());
             }
         }
     }
@@ -1783,7 +1794,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return null;
     }
 
-    protected List<StepSubjectEntity> getCommandStepSubjectEntities() {
+    public List<StepSubjectEntity> getCommandStepSubjectEntities() {
         return Collections.emptyList();
     }
 

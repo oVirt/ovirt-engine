@@ -23,6 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.StepSubjectEntityDao;
 
 public class JobRepositoryTest {
 
@@ -38,6 +39,9 @@ public class JobRepositoryTest {
     @Mock
     private StepDao stepDao;
 
+    @Mock
+    private StepSubjectEntityDao stepSubjectEntityDao;
+
     private JobRepository jobRepository;
 
     private Job job;
@@ -45,7 +49,7 @@ public class JobRepositoryTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        jobRepository = new JobRepositoryImpl(jobDao, jobSubjectEntityDao, stepDao);
+        jobRepository = new JobRepositoryImpl(jobDao, jobSubjectEntityDao, stepDao, stepSubjectEntityDao);
         job = createJob();
         mockDaos(job);
     }

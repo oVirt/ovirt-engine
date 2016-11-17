@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,8 @@ public class CoCoAsyncTaskHelper {
         Step taskStep =
                 ExecutionHandler.getInstance().addTaskStep(command.getExecutionContext(),
                         StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
-                        description);
+                        description,
+                        Collections.emptyList());
         if (taskStep != null) {
             asyncTaskCreationInfo.setStepId(taskStep.getId());
         }

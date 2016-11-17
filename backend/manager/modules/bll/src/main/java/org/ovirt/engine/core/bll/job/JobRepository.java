@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.job;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -21,6 +23,17 @@ public interface JobRepository {
      *            The {@link Step} entity to persist (can't be <code>null</code>).
      */
     void saveStep(Step step);
+
+    /**
+     * Persists a new instance of {@link Step} entity with the provided {@link StepSubjectEntity} list and updates the
+     * {@link Job} modification date.
+     *
+     * @param step
+     *            The {@link Step} entity to persist (can't be <code>null</code>).
+     * @param stepSubjectEntities
+     *            The {@link StepSubjectEntity} list to persist (can't be <code>null</code>).
+     */
+    void saveStep(Step step, Collection<StepSubjectEntity> stepSubjectEntities);
 
     /**
      * Updates an existing {@link Step} entity with data from the given instance.

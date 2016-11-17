@@ -11,6 +11,10 @@ public class StepSubjectEntity extends SubjectEntity {
     private Integer stepEntityWeight;
     private Guid stepId;
 
+    public StepSubjectEntity(VdcObjectType vdcObjectType, Guid entityId, Integer stepEntityWeight) {
+        this(null, vdcObjectType, entityId, stepEntityWeight);
+    }
+
     public StepSubjectEntity(Guid stepId, VdcObjectType vdcObjectType, Guid entityId, Integer stepEntityWeight) {
         super(vdcObjectType, entityId);
         this.stepEntityWeight = stepEntityWeight;

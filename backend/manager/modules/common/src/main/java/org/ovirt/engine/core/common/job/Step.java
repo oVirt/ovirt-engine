@@ -21,6 +21,16 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 3711656756401350600L;
 
     /**
+     * Maximum step progress
+     */
+    public static final int MAX_PROGRESS = 100;
+
+    /**
+     * Minimum step progress
+     */
+    public static final int MIN_PROGRESS = 0;
+
+    /**
      * The Step ID uniquely identifies a disk in the system.
      */
     private Guid id;

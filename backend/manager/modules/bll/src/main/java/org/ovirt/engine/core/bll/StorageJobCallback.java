@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.job.Step.MAX_PROGRESS;
+
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +86,12 @@ public class StorageJobCallback implements CommandCallback {
         log.info("Command {} id: '{}': job '{}' execution was completed with VDSM job status '{}'",
                 commandEntity.getCommandType(), cmdId, job, jobStatus);
         CommandBase<?> command = getCommand(cmdId);
+
+
+        if (command.shouldUpdateStepProgress() && jobStatus == HostJobStatus.done) {
+            updateStepProgress(commandEntity.getStepId(), MAX_PROGRESS);
+        }
+
         CommandExecutionStatus status = CommandCoordinatorUtil.getCommandExecutionStatus(cmdId);
         command.getParameters().setTaskGroupSuccess(status == CommandExecutionStatus.EXECUTED
                 && jobStatus == HostJobStatus.done);

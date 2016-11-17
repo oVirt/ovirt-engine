@@ -146,22 +146,54 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         assertEquals("New progress should be the same as the current", newProgress, s.getProgress());
     }
 
-    @Test
-    public void diskStepProgress() {
+    private void prepareProgressTest(Guid entityId) {
         VdcObjectType type = VdcObjectType.Disk;
-        Guid entityId = FixturesTool.FLOATING_DISK_ID;
 
         BaseDisk diskImage = getDiskDao().get(entityId);
         assertProgress(null, diskImage);
 
         getStepSubjectEntityDao().saveAll(Arrays.asList(new StepSubjectEntity(FixturesTool.STEP_ID, type, entityId, 30),
                 new StepSubjectEntity(FixturesTool.STEP_ID_2, type, entityId, 50)));
+    }
+
+    @Test
+    public void diskStepProgress() {
+        Guid entityId = FixturesTool.FLOATING_DISK_ID;
+        prepareProgressTest(entityId);
 
         updateStepProgress(FixturesTool.STEP_ID, 10);
         updateStepProgress(FixturesTool.STEP_ID_2, 80);
 
-        diskImage = getDiskDao().get(entityId);
+        BaseDisk diskImage = getDiskDao().get(entityId);
         assertProgress(43, diskImage);
+    }
+
+    @Test
+    public void diskNullStepProgress() {
+        Guid entityId = FixturesTool.FLOATING_DISK_ID;
+        prepareProgressTest(entityId);
+
+        updateStepProgress(FixturesTool.STEP_ID, null);
+        updateStepProgress(FixturesTool.STEP_ID_2, null);
+
+        BaseDisk diskImage = getDiskDao().get(entityId);
+        assertProgress(0, diskImage);
+    }
+
+    @Test
+    public void diskNullFinishedStepProgress() {
+        Guid entityId = FixturesTool.FLOATING_DISK_ID;
+        prepareProgressTest(entityId);
+        List<Guid> stepIds = Arrays.asList(FixturesTool.STEP_ID, FixturesTool.STEP_ID_2);
+        stepIds.stream().forEach(x -> {
+            Step s = dao.get(x);
+            s.setProgress(null);
+            s.setStatus(JobExecutionStatus.FINISHED);
+            dao.update(s);
+        });
+
+        BaseDisk diskImage = getDiskDao().get(entityId);
+        assertProgress(80, diskImage);
     }
 
     private void updateStepProgress(Guid stepId, Integer progress) {

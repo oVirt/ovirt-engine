@@ -35,10 +35,15 @@ WHERE device = 'disk'
 GROUP BY device_id,
     entity_type;
 
+
+CREATE OR REPLACE VIEW step_progress AS
+   SELECT s.step_id, s.job_id, COALESCE(s.progress, CASE s.status WHEN 'FINISHED' THEN 100 END, 0) as progress
+   FROM step s;
+
 CREATE OR REPLACE VIEW entity_step_progress AS
 SELECT sse.entity_id, SUM(s.progress*sse.step_entity_weight/100) AS progress
 FROM step_subject_entity sse
-INNER JOIN step s
+INNER JOIN step_progress s
     ON s.step_id = sse.step_id
 INNER JOIN job j
     ON s.job_id = j.job_id
