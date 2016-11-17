@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SparsifyImageVDSCommandParameters extends StorageJobVdsCommandParameters {
@@ -30,6 +31,13 @@ public class SparsifyImageVDSCommandParameters extends StorageJobVdsCommandParam
 
     public void setVolumeId(Guid volumeId) {
         this.volumeId = volumeId;
+    }
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("imageId", imageId)
+                .append("volumeId", volumeId);
     }
 
 }
