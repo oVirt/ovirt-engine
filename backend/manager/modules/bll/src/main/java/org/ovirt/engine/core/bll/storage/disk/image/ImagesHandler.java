@@ -468,9 +468,9 @@ public final class ImagesHandler {
 
     private static DiskImage isImageExist(Guid storagePoolId, DiskImage image) {
         DiskImage fromIrs = null;
+        Guid storageDomainId = image.getStorageIds().get(0);
+        Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
         try {
-            Guid storageDomainId = image.getStorageIds().get(0);
-            Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
             fromIrs = (DiskImage) Backend
                     .getInstance()
                     .getResourceManager()
@@ -479,7 +479,7 @@ public final class ImagesHandler {
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                                     image.getImageId())).getReturnValue();
         } catch (Exception e) {
-            log.debug("Unable to get image info from from storage", e);
+            log.debug("Unable to get image info from storage", e);
         }
         return fromIrs;
     }
