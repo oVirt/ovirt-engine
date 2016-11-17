@@ -2686,5 +2686,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD();
 
     String NETWORK_OUT_OF_RANGE_MACS();
+
+    String ERROR_STORAGE_DOMAIN_SYNC_EXISTS();
 }
 

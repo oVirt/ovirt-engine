@@ -115,6 +115,15 @@ public class GlusterGeoRepSession implements IVdcQueryable, BusinessEntityWithSt
         this.sessionDetails = sessionDetails;
     }
 
+    public boolean isCheckPointCompleted(){
+        for (GlusterGeoRepSessionDetails details : getSessionDetails()) {
+            if (details.getStatus() == GeoRepSessionStatus.ACTIVE && !details.isCheckpointCompleted()) {
+                return false;
+            }
+        }
+        return this.status != GeoRepSessionStatus.FAULTY;
+    }
+
     @Override
     public Object getQueryableId() {
         return sessionId;
