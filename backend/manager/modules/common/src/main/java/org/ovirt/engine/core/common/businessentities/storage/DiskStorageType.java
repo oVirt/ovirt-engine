@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
@@ -15,7 +16,7 @@ public enum DiskStorageType implements Identifiable {
 
     private int value;
 
-    private static final HashMap<Integer, DiskStorageType> mappings = new HashMap<>();
+    private static final Map<Integer, DiskStorageType> mappings = new HashMap<>();
     static {
         for (DiskStorageType storageType : values()) {
             mappings.put(storageType.getValue(), storageType);
