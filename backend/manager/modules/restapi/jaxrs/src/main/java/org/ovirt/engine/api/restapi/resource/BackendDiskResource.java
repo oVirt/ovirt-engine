@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -174,7 +175,10 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
 
     @Override
     public Response sparsify(Action action) {
-        // TODO: Implement this.
-        return null;
+        Disk disk = get();
+        Guid imageId = getDiskImageId(disk.getImageId());
+        StorageJobCommandParameters params = new StorageJobCommandParameters(imageId);
+        return doAction(VdcActionType.SparsifyImage, params, action);
     }
+
 }
