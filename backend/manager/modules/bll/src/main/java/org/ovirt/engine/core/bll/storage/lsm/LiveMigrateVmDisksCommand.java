@@ -456,10 +456,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return new VmValidator(getVm());
     }
 
-    private boolean isVmNotInPreview() {
-        return validate(createSnapshotsValidator().vmNotInPreview(getVmId()));
-    }
-
     protected SnapshotsValidator createSnapshotsValidator() {
         return new SnapshotsValidator();
     }
