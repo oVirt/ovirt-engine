@@ -854,7 +854,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
                 && VdcActionUtils.canExecute(vmList, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
-        getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCustomPreviewCommand().setIsExecutionAllowed(getPreviewCommand().getIsExecutionAllowed());
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
