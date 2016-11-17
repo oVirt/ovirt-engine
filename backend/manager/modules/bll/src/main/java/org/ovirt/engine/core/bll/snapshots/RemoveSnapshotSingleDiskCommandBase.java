@@ -10,8 +10,10 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -72,6 +75,21 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         }
     }
 
+    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList, VdcActionType actionType) {
+        DestroyImageParameters parameters = new DestroyImageParameters(
+                getVdsId(),
+                getVmId(),
+                getDiskImage().getStoragePoolId(),
+                getDiskImage().getStorageIds().get(0),
+                imageGroupId,
+                imageList,
+                getDiskImage().isWipeAfterDelete(),
+                false);
+        parameters.setParentCommand(actionType);
+        parameters.setParentParameters(getParameters());
+        return parameters;
+    }
+
     /**
      * Updates (but does not persist) the parameters.childCommands list to ensure the current
      * child command is present.  This is necessary in various entry points called externally
@@ -92,6 +110,11 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
     protected Guid getCurrentChildId(RemoveSnapshotSingleDiskParameters parameters) {
         return parameters.getChildCommands().get(parameters.getCommandStep());
+    }
+
+    protected DiskImage getActiveDiskImage() {
+        Guid snapshotId = snapshotDao.getId(getVmId(), Snapshot.SnapshotType.ACTIVE);
+        return diskImageDao.getDiskSnapshotForVmSnapshot(getDiskImage().getId(), snapshotId);
     }
 
     /**
@@ -136,6 +159,13 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             }
             return null;
         });
+    }
+
+    protected Pair<VdcActionType, DestroyImageParameters> buildDestroyCommand(VdcActionType actionToRun,
+                                                                              VdcActionType parentCommand,
+                                                                              List<Guid> images) {
+        return new Pair<>(actionToRun, buildDestroyImageParameters(getActiveDiskImage().getId(),
+                images, parentCommand));
     }
 
     private void handleForwardMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {

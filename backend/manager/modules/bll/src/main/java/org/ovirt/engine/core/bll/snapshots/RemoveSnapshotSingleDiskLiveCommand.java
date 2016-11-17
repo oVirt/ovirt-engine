@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -114,11 +112,13 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 // If the images were already merged, just add the orphaned image
                 getParameters().setMergeStatusReturnValue(synthesizeMergeStatusReturnValue());
             }
-            nextCommand = new Pair<>(VdcActionType.DestroyImage, buildDestroyImageParameters());
+            nextCommand = buildDestroyCommand(VdcActionType.DestroyImage, getActionType(),
+                    new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()));
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK);
             break;
         case DESTROY_IMAGE_CHECK:
-            nextCommand = new Pair<>(VdcActionType.DestroyImageCheck, buildDestroyImageParameters());
+            nextCommand = buildDestroyCommand(VdcActionType.DestroyImageCheck, getActionType(),
+                    new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()));
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
             break;
         case COMPLETE:
@@ -168,26 +168,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         parameters.setParentCommand(VdcActionType.RemoveSnapshotSingleDiskLive);
         parameters.setParentParameters(getParameters());
         return parameters;
-    }
-
-    private DestroyImageParameters buildDestroyImageParameters() {
-        DestroyImageParameters parameters = new DestroyImageParameters(
-                getVdsId(),
-                getVmId(),
-                getDiskImage().getStoragePoolId(),
-                getDiskImage().getStorageIds().get(0),
-                getActiveDiskImage().getId(),
-                new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()),
-                getDiskImage().isWipeAfterDelete(),
-                false);
-        parameters.setParentCommand(VdcActionType.RemoveSnapshotSingleDiskLive);
-        parameters.setParentParameters(getParameters());
-        return parameters;
-    }
-
-    private DiskImage getActiveDiskImage() {
-        Guid snapshotId = snapshotDao.getId(getVmId(), Snapshot.SnapshotType.ACTIVE);
-        return diskImageDao.getDiskSnapshotForVmSnapshot(getDiskImage().getId(), snapshotId);
     }
 
     /**

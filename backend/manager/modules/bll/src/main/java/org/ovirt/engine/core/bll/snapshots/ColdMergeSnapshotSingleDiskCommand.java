@@ -10,15 +10,22 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ColdMergeCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
+import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDiskParameters>
@@ -75,8 +82,14 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
                 break;
             case DESTROY_IMAGE:
+                nextCommand = buildDestroyCommand(VdcActionType.DestroyImage, getActionType(),
+                        Collections.singletonList(getDestinationImageId()));
+                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK);
                 break;
             case DESTROY_IMAGE_CHECK:
+                nextCommand = buildDestroyCommand(VdcActionType.DestroyImageCheck, getActionType(),
+                        Collections.singletonList(getDestinationImageId()));
+                setCommandStatus(CommandStatus.SUCCEEDED);
                 break;
         }
 
@@ -88,6 +101,41 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void endSuccessfully() {
+        syncDbRecords(VmBlockJobType.COMMIT,
+                getImageInfoFromVdsm(getDiskImage()),
+                Collections.singleton(getDestinationImageId()),
+                true);
+
+        if (getParameters().getVmSnapshotId() != null) {
+            lockVmSnapshotsWithWait(getVm());
+            Snapshot snapshot = snapshotDao.get(getParameters().getVmSnapshotId());
+            Snapshot snapshotWithoutImage =
+                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId());
+            snapshotDao.update(snapshotWithoutImage);
+            if (getSnapshotsEngineLock() != null) {
+                lockManager.releaseLock(getSnapshotsEngineLock());
+            }
+        }
+
+        setSucceeded(true);
+    }
+
+    @Override
+    public void endWithFailure() {
+        setSucceeded(true);
+        TransactionSupport.executeInNewTransaction(() -> {
+            if (!getParameters().isLeaveLocked()) {
+                DiskImage diskImage = getDestinationDiskImage();
+                if (diskImage != null) {
+                    imageDao.updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
+                }
+            }
+            return null;
+        });
     }
 
     @Override
