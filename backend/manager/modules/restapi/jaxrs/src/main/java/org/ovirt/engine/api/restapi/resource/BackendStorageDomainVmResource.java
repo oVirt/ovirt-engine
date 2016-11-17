@@ -80,7 +80,9 @@ public class BackendStorageDomainVmResource
                 params.getVm().setName(action.getVm().getName());
             }
         }
-
+        if (action.isSetAllowPartialImport()) {
+            params.setAllowPartialImport(action.isAllowPartialImport());
+        }
         return doAction(VdcActionType.ImportVmFromConfiguration, params, action);
     }
 
