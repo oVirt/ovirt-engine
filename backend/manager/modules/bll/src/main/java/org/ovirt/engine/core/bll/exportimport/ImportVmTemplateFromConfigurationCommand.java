@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -22,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -83,8 +83,29 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
         }
 
-        if (!ImagesHandler.isImagesExists(getImages(), getStoragePool().getId())) {
-            return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
+        for (DiskImage image : new ArrayList<>(getImages())) {
+            DiskImage fromIrs = null;
+            Guid storageDomainId = image.getStorageIds().get(0);
+            Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
+            try {
+                fromIrs = (DiskImage) runVdsCommand(VDSCommandType.GetImageInfo,
+                        new GetImageInfoVDSCommandParameters(getStoragePool().getId(),
+                                storageDomainId,
+                                imageGroupId,
+                                image.getImageId())).getReturnValue();
+            } catch (Exception e) {
+                log.debug("Unable to get image info from storage", e);
+            }
+            if (fromIrs == null) {
+                if (!getParameters().isAllowPartialImport()) {
+                    return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
+                }
+                log.warn("Disk image '{}/{}' doesn't exist on storage domain '{}'. Ignoring since force flag in on",
+                        imageGroupId,
+                        image.getImageId(),
+                        storageDomainId);
+                getImages().remove(image);
+            }
         }
 
         for (DiskImage image : getImages()) {

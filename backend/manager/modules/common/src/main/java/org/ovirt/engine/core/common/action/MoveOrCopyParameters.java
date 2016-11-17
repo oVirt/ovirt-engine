@@ -10,6 +10,7 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
 
     private Map<Guid, Guid> imageToDestinationDomainMap;
     private boolean importAsNewEntity;
+    private boolean allowPartialImport;
     private boolean imagesExistOnTargetStorageDomain;
     private Guid cpuProfileId;
 
@@ -78,6 +79,14 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
 
     public void setImportAsNewEntity(boolean importAsNewEntity) {
         this.importAsNewEntity = importAsNewEntity;
+    }
+
+    public boolean isAllowPartialImport() {
+        return allowPartialImport;
+    }
+
+    public void setAllowPartialImport(boolean allowPartialImport) {
+        this.allowPartialImport = allowPartialImport;
     }
 
     public boolean isImagesExistOnTargetStorageDomain() {
