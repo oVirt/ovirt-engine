@@ -1563,6 +1563,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String guestTimezoneDiffers();
 
+    String guestAgentNotAvailable();
+
     String ExternalStatus();
 
     String foremanLabel();

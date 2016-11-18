@@ -83,12 +83,18 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
                 tooltip += "<br/><br/>" + translator.translate(vm.getVmPauseStatus()); //$NON-NLS-1$
             }
 
-            if (hasDifferentTimezone(vm)) {
-                tooltip += "<br/><br/>" + constants.guestTimezoneDiffers(); //$NON-NLS-1$
-            }
+            if (vm.getStatus() == VMStatus.Up) {
+                if (hasGuestAgent(vm)) {
+                    if (hasDifferentTimezone(vm)) {
+                        tooltip += "<br/><br/>" + constants.guestTimezoneDiffers(); //$NON-NLS-1$
+                    }
 
-            if (hasDifferentOSType(vm)) {
-                tooltip += "<br/><br/>" + constants.guestOSDiffers(); //$NON-NLS-1$
+                    if (hasDifferentOSType(vm)) {
+                        tooltip += "<br/><br/>" + constants.guestOSDiffers(); //$NON-NLS-1$
+                    }
+                } else {
+                    tooltip += "<br/><br/>" + constants.guestAgentNotAvailable(); //$NON-NLS-1$
+                }
             }
         }
 
@@ -99,9 +105,16 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
         return null;
     }
 
+    public static boolean hasGuestAgent(VM vm) {
+        return vm.getTimeZone() != null && vm.getGuestOsType() != null && vm.getGuestOsType() != OsType.Other;
+    }
+
     public static boolean needsAlert(VM vm) {
-        return hasDifferentTimezone(vm) || hasDifferentOSType(vm) || isUpdateNeeded(vm) ||
-            hasPauseError(vm);
+        boolean alertRequired = false;
+        if (vm.getStatus() == VMStatus.Up) {
+            alertRequired = !hasGuestAgent(vm) || hasDifferentTimezone(vm) || hasDifferentOSType(vm);
+        }
+        return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm);
     }
 
     private static boolean hasDifferentOSType(VM vm) {
