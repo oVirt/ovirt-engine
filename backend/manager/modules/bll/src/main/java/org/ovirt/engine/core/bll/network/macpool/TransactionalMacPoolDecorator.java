@@ -156,7 +156,9 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
             CompensationContext compensationContext = this.commandContext.getCompensationContext();
 
             compensationContext.addListener(compensationListener);
-            compensationContext.snapshotObject(new ReleaseMacsTransientCompensation(Guid.newGuid(), macPoolId, macs));
+            compensationContext.snapshotObject(new ReleaseMacsTransientCompensation(Guid.newGuid(),
+                    macPool.getId(),
+                    macs));
         }
 
         @Override

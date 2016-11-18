@@ -132,7 +132,7 @@ public class MacPoolPerCluster {
             throw new IllegalStateException(INEXISTENT_POOL_EXCEPTION_MESSAGE);
         }
 
-        return decoratedMacPoolFactory.createDecoratedPool(macPoolId, poolById, decorators);
+        return decoratedMacPoolFactory.createDecoratedPool(poolById, decorators);
     }
 
     /**

@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.commons.lang.math.LongRange;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -41,7 +43,10 @@ public class DecoratedMacPoolFactoryTest {
     @Mock
     private LockedObjectFactory lockedObjectFactory;
 
-    private Guid poolId = Guid.newGuid();
+    @Before
+    public void setUp() {
+        when(macPool.getId()).thenReturn(Guid.newGuid());
+    }
 
     @Test
     public void testCreateDecoratedPoolWhenNoDecoratorsAreRequested() {
@@ -63,7 +68,7 @@ public class DecoratedMacPoolFactoryTest {
         DecoratedMacPoolFactory factory = new DecoratedMacPoolFactory(lockedObjectFactory);
 
         Arrays.stream(decorators)
-                .forEach(decorator -> factory.createDecoratedPool(poolId, macPool, singletonList(decorator)));
+                .forEach(decorator -> factory.createDecoratedPool(macPool, singletonList(decorator)));
 
         ArgumentCaptor<ReentrantReadWriteLock> captor = ArgumentCaptor.forClass(ReentrantReadWriteLock.class);
         verify(lockedObjectFactory, times(2))
@@ -76,29 +81,26 @@ public class DecoratedMacPoolFactoryTest {
     @Test
     public void verifyDecoratorOrder() {
         DecoratedMacPoolFactory factory = createDecoratedMacPoolFactoryWithDisabledLocking();
-        MacPool decoratedPool = factory.createDecoratedPool(poolId,
-                macPool,
+        MacPool decoratedPool = factory.createDecoratedPool(macPool,
                 Arrays.asList(macPoolDecoratorA, macPoolDecoratorB));
 
         assertThat(decoratedPool, is(macPoolDecoratorB));
 
         ArgumentCaptor<MacPool> firstDecoratorMacPoolArgumentCaptor = ArgumentCaptor.forClass(MacPool.class);
         verify(macPoolDecoratorB).setMacPool(firstDecoratorMacPoolArgumentCaptor.capture());
-        verify(macPoolDecoratorB).setMacPoolId(any());
         assertThat(firstDecoratorMacPoolArgumentCaptor.getValue(), is(macPoolDecoratorA));
 
         ArgumentCaptor<MacPool> secondDecoratorMacPoolArgumentCaptor = ArgumentCaptor.forClass(MacPool.class);
         verify(macPoolDecoratorA).setMacPool(secondDecoratorMacPoolArgumentCaptor.capture());
-        verify(macPoolDecoratorA).setMacPoolId(any());
         assertThat(secondDecoratorMacPoolArgumentCaptor.getValue(), is(macPool));
 
+        verify(macPool).getId();
         Mockito.verifyNoMoreInteractions(macPoolDecoratorA, macPoolDecoratorB, macPool);
     }
 
     @Test
     public void testTwoDifferentPoolsShouldUsesDifferentLock() {
         List<MacPoolDecorator> noDecorators = Collections.emptyList();
-        Guid anotherPooldId = Guid.newGuid();
         MacPool anotherMacPool = mock(MacPool.class);
 
         /*
@@ -115,8 +117,8 @@ public class DecoratedMacPoolFactoryTest {
 
         DecoratedMacPoolFactory factory = new DecoratedMacPoolFactory(lockedObjectFactory);
 
-        assertThat(factory.createDecoratedPool(poolId, macPool, noDecorators), is(dummyLockedMacPool1));
-        assertThat(factory.createDecoratedPool(anotherPooldId, anotherMacPool, noDecorators), is(dummyLockedMacPool2));
+        assertThat(factory.createDecoratedPool(macPool, noDecorators), is(dummyLockedMacPool1));
+        assertThat(factory.createDecoratedPool(anotherMacPool, noDecorators), is(dummyLockedMacPool2));
 
         ArgumentCaptor<ReentrantReadWriteLock> captor1 = ArgumentCaptor.forClass(ReentrantReadWriteLock.class);
         verify(lockedObjectFactory).createLockingInstance(eq(macPool), eq(MacPool.class), captor1.capture());
@@ -128,7 +130,11 @@ public class DecoratedMacPoolFactoryTest {
     }
 
     private MacPool decoratePoolWhileNotUsingLocking(List<MacPoolDecorator> decorators) {
-        return createDecoratedMacPoolFactoryWithDisabledLocking().createDecoratedPool(poolId, macPool, decorators);
+        return decoratePoolWhileNotUsingLocking(this.macPool, decorators);
+    }
+
+    private MacPool decoratePoolWhileNotUsingLocking(MacPool pool, List<MacPoolDecorator> decorators) {
+        return createDecoratedMacPoolFactoryWithDisabledLocking().createDecoratedPool(pool, decorators);
     }
 
     private DecoratedMacPoolFactory createDecoratedMacPoolFactoryWithDisabledLocking() {
@@ -136,5 +142,27 @@ public class DecoratedMacPoolFactoryTest {
                 .when(lockedObjectFactory).createLockingInstance(any(), eq(MacPool.class), any());
 
         return new DecoratedMacPoolFactory(lockedObjectFactory);
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        Guid underlyingPoolId = Guid.newGuid();
+        MacPoolUsingRanges underlyingPool =
+                new MacPoolUsingRanges(underlyingPoolId, Collections.singletonList(new LongRange(1, 2)), false);
+
+        DelegatingMacPoolDecorator decoratorA = new DelegatingMacPoolDecorator();
+        DelegatingMacPoolDecorator decoratorB = new DelegatingMacPoolDecorator();
+
+        MacPool decoratedPool = decoratePoolWhileNotUsingLocking(underlyingPool, Arrays.asList(decoratorA, decoratorB));
+
+        String expectedToStringResult = String.format(
+                "%1$s:{macPool='%2$s:{macPool='%3$s:{id='%4$s'}'}'}",
+                decoratorA.getClass().getSimpleName(),
+                decoratorB.getClass().getSimpleName(),
+                underlyingPool.getClass().getSimpleName(),
+                underlyingPoolId
+                );
+
+        assertThat(decoratedPool.toString(), is(expectedToStringResult));
     }
 }

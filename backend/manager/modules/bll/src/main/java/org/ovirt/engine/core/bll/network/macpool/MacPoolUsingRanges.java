@@ -9,6 +9,8 @@ import org.apache.commons.lang.math.LongRange;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
@@ -16,15 +18,17 @@ import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MacPoolUsingRanges implements MacPool {
+public final class MacPoolUsingRanges implements MacPool {
 
     private static final Logger log = LoggerFactory.getLogger(MacPoolUsingRanges.class);
 
+    private final Guid id;
     private final boolean allowDuplicates;
     private MacsStorage macsStorage;
     private Collection<LongRange> rangesBoundaries;
 
-    public MacPoolUsingRanges(Collection<LongRange> rangesBoundaries, boolean allowDuplicates) {
+    public MacPoolUsingRanges(Guid id, Collection<LongRange> rangesBoundaries, boolean allowDuplicates) {
+        this.id = id;
         this.allowDuplicates = allowDuplicates;
         this.rangesBoundaries = rangesBoundaries;
         initialize();
@@ -60,6 +64,11 @@ public class MacPoolUsingRanges implements MacPool {
             AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
             new AuditLogDirector().log(logable, AuditLogType.MAC_POOL_EMPTY);
         }
+    }
+
+    @Override
+    public Guid getId() {
+        return id;
     }
 
     @Override
@@ -140,5 +149,12 @@ public class MacPoolUsingRanges implements MacPool {
     @Override
     public boolean isDuplicateMacAddressesAllowed() {
         return this.allowDuplicates;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("id", id)
+                .build();
     }
 }

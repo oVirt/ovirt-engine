@@ -8,7 +8,8 @@ import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 public class MacPoolFactory {
 
     public MacPool createMacPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
-        return new MacPoolUsingRanges(MacAddressRangeUtils.macPoolToRanges(macPool),
+        return new MacPoolUsingRanges(macPool.getId(),
+                MacAddressRangeUtils.macPoolToRanges(macPool),
                 macPool.isAllowDuplicateMacAddresses());
     }
 }
