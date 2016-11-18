@@ -106,7 +106,7 @@ parseArgs "$@"
 # Add this option to the java command line to enable remote debugging in
 # all IP addresses and port 8787:
 #
-# -Xrunjdwp:transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=y
+# -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=y
 #
 # Note that the "suspend=y" options is needed to suspend the execution
 # of the JVM till you connect with the debugger, otherwise it is

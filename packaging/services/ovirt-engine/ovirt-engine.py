@@ -423,7 +423,7 @@ class Daemon(service.Daemon):
                 args=(
                     ['ovirt-engine'] +
                     ([(
-                        '-Xrunjdwp:transport=dt_socket,address=%s,'
+                        '-agentlib:jdwp=transport=dt_socket,address=%s,'
                         'server=y,suspend=n'
                     ) % (
                         self._config.get('ENGINE_DEBUG_ADDRESS')
