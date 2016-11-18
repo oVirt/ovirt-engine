@@ -25,11 +25,11 @@ public class DecoratedMacPoolFactory {
         this.lockedObjectFactory = lockedObjectFactory;
     }
 
-    public MacPool createDecoratedPool(Guid macPoolId, MacPool macPool, List<MacPoolDecorator> decorators) {
+    public MacPool createDecoratedPool(MacPool macPool, List<MacPoolDecorator> decorators) {
         MacPool lockedPool =
-                lockedObjectFactory.createLockingInstance(macPool, MacPool.class, lockForMacPool(macPoolId));
+                lockedObjectFactory.createLockingInstance(macPool, MacPool.class, lockForMacPool(macPool.getId()));
 
-        MacPool decoratedPool = decoratePool(macPoolId, lockedPool, decorators);
+        MacPool decoratedPool = decoratePool(lockedPool, decorators);
 
         return decoratedPool;
     }
@@ -48,17 +48,15 @@ public class DecoratedMacPoolFactory {
      * Decorates actual pool with given decorators, applying first passed decorator on actual pool,
      * next on decorated object from previous step etc.
      *
-     * @param macPoolId id of mac pool passed in second parameter
-     * @param poolById actual pool instance
+     * @param macPool actual pool instance
      * @param decorators collection of decorators  @return decorated pool.
      */
-    private MacPool decoratePool(Guid macPoolId, MacPool poolById, List<MacPoolDecorator> decorators) {
-        MacPool result = poolById;
+    private MacPool decoratePool(MacPool macPool, List<MacPoolDecorator> decorators) {
+        MacPool result = macPool;
 
         if (decorators != null) {
             for (MacPoolDecorator decorator : decorators) {
                 decorator.setMacPool(result);
-                decorator.setMacPoolId(macPoolId);
                 result = decorator;
             }
         }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.AcquireReadLock;
 
 /**
@@ -22,4 +23,10 @@ public interface ReadMacPool {
     boolean isDuplicateMacAddressesAllowed();
 
     boolean isMacInRange(String mac);
+
+    /**
+     *
+     * @return ID of this MacPool. Most often this should return ID of underlying DB record representing mac pool.
+     */
+    Guid getId();
 }

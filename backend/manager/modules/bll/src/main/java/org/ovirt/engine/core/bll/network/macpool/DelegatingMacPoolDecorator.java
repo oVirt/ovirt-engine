@@ -2,11 +2,11 @@ package org.ovirt.engine.core.bll.network.macpool;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     protected MacPool macPool;
-    protected Guid macPoolId;
 
     public DelegatingMacPoolDecorator() {
     }
@@ -67,7 +67,18 @@ public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     }
 
     @Override
-    public final void setMacPoolId(Guid macPoolId) {
-        this.macPoolId = macPoolId;
+    public Guid getId() {
+        return macPool.getId();
+    }
+
+    @Override
+    public final String toString() {
+        ToStringBuilder result = ToStringBuilder.forInstance(this);
+
+        if (macPool != null) {
+            result.append("macPool", macPool.toString());
+        }
+
+        return result.build();
     }
 }
