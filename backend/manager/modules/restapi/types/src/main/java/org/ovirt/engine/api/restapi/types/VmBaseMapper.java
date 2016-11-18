@@ -99,6 +99,10 @@ public class VmBaseMapper {
             Long memGuaranteed = model.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
             entity.setMinAllocatedMem(memGuaranteed.intValue());
         }
+        if (model.isSetMemoryPolicy() && model.getMemoryPolicy().isSetMax()) {
+            Long maxMemory = model.getMemoryPolicy().getMax() / BYTES_PER_MB;
+            entity.setMaxMemorySizeMb(maxMemory.intValue());
+        }
         if (model.isSetOs()) {
             Boot boot = model.getOs().getBoot();
             if (boot != null && boot.isSetDevices() && boot.getDevices().isSetDevices()) {
@@ -278,6 +282,7 @@ public class VmBaseMapper {
 
         MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
+        policy.setMax((long)entity.getMaxMemorySizeMb() * (long)BYTES_PER_MB);
         model.setMemoryPolicy(policy);
 
         if (entity.getCustomCompatibilityVersion() != null) {

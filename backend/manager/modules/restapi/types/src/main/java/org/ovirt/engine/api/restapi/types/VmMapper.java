@@ -139,6 +139,7 @@ public class VmMapper extends VmBaseMapper {
 
     private static VmStatic doMapVmBaseHwPartToVmStatic(VmBase entity, VmStatic staticVm, Version version) {
         staticVm.setMemSizeMb(entity.getMemSizeMb());
+        staticVm.setMaxMemorySizeMb(entity.getMaxMemorySizeMb());
         staticVm.setAutoStartup(entity.isAutoStartup());
         staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
         staticVm.setDefaultBootSequence(entity.getDefaultBootSequence());
