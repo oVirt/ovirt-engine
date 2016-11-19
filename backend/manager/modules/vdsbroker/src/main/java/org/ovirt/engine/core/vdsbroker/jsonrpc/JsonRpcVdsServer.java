@@ -199,6 +199,17 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturn mergeSubchain(String jobId, Map<String, String> subchainInfo) {
+        JsonRpcRequest request =
+                new RequestBuilder("SDM.merge")
+                        .withParameter("job_id", jobId)
+                        .withParameter("subchain_info", subchainInfo)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
     public StatusOnlyReturn destroy(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.destroy").withParameter("vmID", vmId).build();
         Map<String, Object> response = new FutureMap(this.client, request);
