@@ -65,6 +65,10 @@ public class BackendStorageDomainTemplateResource
                 params.getVmTemplate().setName(action.getTemplate().getName());
             }
         }
+        if (action.isSetAllowPartialImport()) {
+            params.setAllowPartialImport(action.isAllowPartialImport());
+        }
+
         return doAction(VdcActionType.ImportVmTemplateFromConfiguration, params, action);
     }
 
