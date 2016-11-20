@@ -52,6 +52,8 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -993,5 +995,34 @@ public final class ImagesHandler {
                     imageInfoFromStorage.getActualSizeInBytes();
         }
         return null;
+    }
+
+    public static void prepareImage(Guid storagePoolId,
+                                    Guid newStorageDomainID,
+                                    Guid newImageGroupId,
+                                    Guid newImageId,
+                                    Guid vdsId) {
+        Backend.getInstance()
+                .getResourceManager()
+                .runVdsCommand(VDSCommandType.PrepareImage, new PrepareImageVDSCommandParameters(vdsId,
+                        storagePoolId,
+                        newStorageDomainID,
+                        newImageGroupId,
+                        newImageId, true));
+    }
+
+    public static void teardownImage(Guid storagePoolId,
+                                     Guid newStorageDomainID,
+                                     Guid newImageGroupId,
+                                     Guid newImageId,
+                                     Guid vdsId) {
+        Backend.getInstance()
+                .getResourceManager()
+                .runVdsCommand(VDSCommandType.TeardownImage,
+                        new ImageActionsVDSCommandParameters(vdsId,
+                                storagePoolId,
+                                newStorageDomainID,
+                                newImageGroupId,
+                                newImageId));
     }
 }
