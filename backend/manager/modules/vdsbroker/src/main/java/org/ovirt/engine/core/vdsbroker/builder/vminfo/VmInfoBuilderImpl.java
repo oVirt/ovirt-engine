@@ -1168,7 +1168,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     Boolean.toString(vm.isSpiceCopyPasteEnabled()));
 
             if (Config.getValue(ConfigValues.SSLEnabled)) {
-                params.put(VdsProperties.spiceSslCipherSuite, Config.getValue(ConfigValues.CipherSuite));
                 params.put(VdsProperties.SpiceSecureChannels, Config.getValue(
                         ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString()));
             }
