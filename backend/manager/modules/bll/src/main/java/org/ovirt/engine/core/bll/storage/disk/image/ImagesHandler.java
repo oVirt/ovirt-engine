@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -901,6 +902,29 @@ public final class ImagesHandler {
                 VDSCommandType.GetVolumeInfo,
                 new GetVolumeInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
                         newImageId), storagePoolId, null).getReturnValue();
+    }
+
+    protected static QemuImageInfo getQemuImageInfoFromVdsm(Guid storagePoolId,
+            Guid newStorageDomainID,
+            Guid newImageGroupId,
+            Guid newImageId,
+            boolean shouldPrepareAndTeardown) {
+        Guid vdsId = VdsCommandsHelper.getHostForExecution(storagePoolId, Collections.emptyList());
+        if (shouldPrepareAndTeardown) {
+            prepareImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
+        }
+        QemuImageInfo qemuImageInfo = (QemuImageInfo) Backend.getInstance()
+                .getResourceManager()
+                .runVdsCommand(VDSCommandType.GetQemuImageInfo,
+                        new GetVolumeInfoVDSCommandParameters(vdsId,
+                                storagePoolId,
+                                newStorageDomainID,
+                                newImageGroupId,
+                                newImageId)).getReturnValue();
+        if (shouldPrepareAndTeardown) {
+            teardownImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
+        }
+        return qemuImageInfo;
     }
 
     public static DiskImage cloneDiskImage(Guid storageDomainId,
