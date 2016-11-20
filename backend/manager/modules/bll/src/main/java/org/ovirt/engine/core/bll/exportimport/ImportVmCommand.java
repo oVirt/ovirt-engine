@@ -585,7 +585,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected boolean checkImagesGUIDsLegal() {
-        for (DiskImage image : getImages()) {
+        for (DiskImage image : new ArrayList<>(getImages())) {
             Guid imageGUID = image.getImageId();
             Guid storagePoolId = image.getStoragePoolId() != null ? image.getStoragePoolId()
                     : Guid.Empty;
@@ -598,7 +598,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                             imageGUID));
 
             if (!retValue.getSucceeded()) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+                if (!getParameters().getAllowPartialImport()) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+                }
+                log.warn("Disk image '{}/{}' doesn't exist on storage domain '{}'. Ignoring since force flag in on",
+                        imageGroupId,
+                        imageGUID,
+                        storageDomainId);
+                getVm().getImages().remove(image);
             }
         }
         return true;

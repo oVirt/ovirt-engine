@@ -29,6 +29,7 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
     private Guid cpuProfileId;
     private boolean copyCollapse;
     private boolean forceOverride;
+    private boolean allowPartialImport;
     private Guid containerId;
     private Guid storageDomainId;
     private boolean importAsNewEntity;
@@ -159,6 +160,14 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
 
     public void setForceOverride(boolean forceOverride) {
         this.forceOverride = forceOverride;
+    }
+
+    public boolean getAllowPartialImport() {
+        return allowPartialImport;
+    }
+
+    public void setAllowPartialImport(boolean allowPartialImport) {
+        this.allowPartialImport = allowPartialImport;
     }
 
     public Guid getContainerId() {
