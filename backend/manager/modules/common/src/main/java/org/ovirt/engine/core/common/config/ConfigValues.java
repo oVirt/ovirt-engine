@@ -1930,5 +1930,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     ReduceDeviceFromStorageDomain,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    QemuimgCommitSupported,
+
     Invalid
 }

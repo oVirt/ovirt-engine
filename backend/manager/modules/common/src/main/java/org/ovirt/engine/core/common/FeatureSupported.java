@@ -161,4 +161,8 @@ public class FeatureSupported {
     public static boolean reduceDeviceFromStorageDomain(Version version) {
         return supportedInConfig(ConfigValues.ReduceDeviceFromStorageDomain, version);
     }
+
+    public static boolean isQemuimgCommitSupported(Version version) {
+        return supportedInConfig(ConfigValues.QemuimgCommitSupported, version);
+    }
 }

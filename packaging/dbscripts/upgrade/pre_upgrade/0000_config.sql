@@ -179,6 +179,7 @@ select fn_db_add_config_value('HotPlugMemorySupported', '{"x86_64":"true","ppc64
 select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86_64":"false","ppc64":"false"}', '4.1');
 select fn_db_add_config_value('MaxMemorySlots','16','general');
 select fn_db_add_config_value('HotPlugMemoryMultiplicationSizeMb','256','general');
+select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'false', '4.1');
 
 -- migration support per architecture
 select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
