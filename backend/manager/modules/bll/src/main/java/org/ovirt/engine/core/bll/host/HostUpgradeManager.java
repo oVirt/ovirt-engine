@@ -52,8 +52,13 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
                 AuditLogableBase auditLog = new AuditLogableBase();
                 auditLog.setVds(host);
-                auditLog.addCustomValue("Packages", StringUtils.join(filterPackages(packages, availablePackages), ","));
-                auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
+                Set<String> relevantPackages = filterPackages(packages, availablePackages);
+                if (relevantPackages.isEmpty()) {
+                    auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
+                } else {
+                    auditLog.addCustomValue("Packages", StringUtils.join(relevantPackages, ","));
+                    auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE_WITH_PACKAGES);
+                }
             }
             return updatesAvailable;
         } catch (final Exception e) {

@@ -29,7 +29,7 @@ public final class VdcEventNotificationUtils {
         addEventNotificationEntry(EventNotificationEntity.Cluster, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN);
         // VDS
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_FAILURE);
-        addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
+        addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_UPDATES_ARE_AVAILABLE_WITH_PACKAGES);
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.USER_VDS_MAINTENANCE);
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA);
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.USER_VDS_MAINTENANCE_MIGRATION_FAILED);

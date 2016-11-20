@@ -36,7 +36,7 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
         if (updateAvailable) {
             AuditLogableBase auditLog = new AuditLogableBase();
             auditLog.setVds(host);
-            auditLogDirector.log(auditLog, AuditLogType.OVIRT_NODE_UPDATES_ARE_AVAILABLE);
+            auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
         }
 
         return updateAvailable;
