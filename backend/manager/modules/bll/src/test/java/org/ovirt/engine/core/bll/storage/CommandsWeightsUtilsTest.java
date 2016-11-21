@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +31,6 @@ public class CommandsWeightsUtilsTest {
     }
 
     public void adjustWeights(List<Double> weightParts, List<Integer> expectedWeightsSorted, int totalWeight) {
-        assertFalse(weightsUtils == null);
         Map<String, Double> map = new HashMap<>();
         IntStream.range(0, weightParts.size()).forEach(i -> map.put(String.valueOf(i), weightParts.get(i)));
         Map<String, Integer> res = weightsUtils.adjust(map, totalWeight);
