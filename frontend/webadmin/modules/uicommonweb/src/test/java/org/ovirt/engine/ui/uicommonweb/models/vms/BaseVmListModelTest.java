@@ -55,6 +55,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getEmulatedMachine().getSelectedItem()).thenReturn(EMULATED_MACHINE);
         when(model.getCustomCpu().getSelectedItem()).thenReturn(CUSTOM_CPU_NAME);
         when(model.getMemSize().getEntity()).thenReturn(MEM_SIZE);
+        when(model.getMaxMemorySize().getEntity()).thenReturn(MAX_MEMORY_SIZE);
         when(model.getMinAllocatedMemory().getEntity()).thenReturn(MIN_MEM);
         when(model.getSelectedCluster().getId()).thenReturn(CLUSTER_ID);
         ListModel<TimeZoneModel> timeZoneModelListModel = mockTimeZoneListModel();

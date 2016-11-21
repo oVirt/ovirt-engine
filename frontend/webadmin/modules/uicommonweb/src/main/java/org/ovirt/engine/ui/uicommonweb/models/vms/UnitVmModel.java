@@ -94,6 +94,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public static final int VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
+    /**
+     * Default ratio {@link #maxMemorySize}/{@link #privateMemSize}
+     *
+     * <p>Value suggested by QEMU team.</p>
+     */
+    public static final int DEFAULT_MAX_MEMORY_RATIO = 4;
 
     final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
@@ -264,6 +270,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getTemplateWithVersion().setIsChangeable(false);
             getInstanceTypes().setIsChangeable(false);
             getMemSize().setIsChangeable(false);
+            getMaxMemorySize().setIsChangeable(false);
             getTotalCPUCores().setIsChangeable(false);
 
             getCustomCpu().setIsChangeable(false);
@@ -582,6 +589,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void setMemSize(NotChangableForVmInPoolEntityModel<Integer> value) {
         privateMemSize = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> maxMemorySize;
+
+    public EntityModel<Integer> getMaxMemorySize() {
+        return maxMemorySize;
+    }
+
+    public void setMaxMemorySize(NotChangableForVmInPoolEntityModel<Integer> maxMemorySize) {
+        this.maxMemorySize = maxMemorySize;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> privateMinAllocatedMemory;
@@ -1613,6 +1630,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setMemSize(new NotChangableForVmInPoolEntityModel<Integer>());
         getMemSize().getEntityChangedEvent().addListener(this);
 
+        setMaxMemorySize(new NotChangableForVmInPoolEntityModel<Integer>());
+        getMaxMemorySize().getEntityChangedEvent().addListener(this);
+
         setTotalCPUCores(new NotChangableForVmInPoolEntityModel<String>());
         getTotalCPUCores().getEntityChangedEvent().addListener(this);
 
@@ -1834,6 +1854,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         getMemSize().setEntity(256);
         getMinAllocatedMemory().setEntity(256);
+        getMaxMemorySize().setEntity(256 * DEFAULT_MAX_MEMORY_RATIO);
         getIsStateless().setEntity(false);
         getIsRunAndPause().setEntity(false);
         getIsSmartcardEnabled().setEntity(false);
@@ -2490,6 +2511,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void memSize_EntityChanged(Object sender, EventArgs args) {
         behavior.updateMinAllocatedMemory();
+        if (getMemSize().getEntity() != null) {
+            maxMemorySize.setEntity(getMemSize().getEntity() * DEFAULT_MAX_MEMORY_RATIO);
+        }
     }
 
     private void totalCPUCores_EntityChanged(Object sender, EventArgs args) {
@@ -2913,6 +2937,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (getMemSize().getIsValid()) {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
+        validateMaxMemorySize();
         validateMemoryAlignment(getMemSize());
 
         if (getIoThreadsEnabled().getEntity()) {
@@ -3032,6 +3057,30 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         model.setIsValid(isValid);
+    }
+
+    private void validateMaxMemorySize() {
+        final int maxMemSize = getMaxMemorySize().getEntity();
+
+        if (maxMemSize < getMemSize().getEntity()) {
+            getMaxMemorySize().setIsValid(false);
+            getMaxMemorySize().getInvalidityReasons().add(
+                    ConstantsManager.getInstance().getConstants().maxMemoryHasToBeLargerThanMemorySize());
+            return;
+        }
+
+        final int maxMaxMemorySize = AsyncDataProvider.getInstance()
+                .getMaxMaxMemorySize(getOSType().getSelectedItem(), getCompatibilityVersion());
+        if (maxMemSize > maxMaxMemorySize) {
+            getMaxMemorySize().setIsValid(false);
+            final String errorMessage = getOSType().getSelectedItem() != null
+                    ? ConstantsManager.getInstance().getMessages().maxMaxMemoryForSelectedOsIs(maxMaxMemorySize)
+                    : ConstantsManager.getInstance().getMessages().maxMaxMemoryIs(maxMaxMemorySize);
+            getMaxMemorySize().getInvalidityReasons().add(errorMessage);
+            return;
+        }
+
+        getMaxMemorySize().setIsValid(true);
     }
 
     private void validateMemoryAlignment(EntityModel<Integer> model) {

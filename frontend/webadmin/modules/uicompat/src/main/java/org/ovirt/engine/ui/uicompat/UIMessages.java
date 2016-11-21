@@ -69,6 +69,10 @@ public interface UIMessages extends Messages {
 
     String minMemSizeIs(int minMemSize);
 
+    String maxMaxMemoryForSelectedOsIs(int maxMaxMemorySize);
+
+    String maxMaxMemoryIs(int maxMaxMemorySize);
+
     String memSizeMultipleOf(String architectureName, int multiplier);
 
     String nameMustConataionOnlyAlphanumericChars(int maxLen);

@@ -12,6 +12,7 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBui
     @Override
     protected void build(UnitVmModel model, T vm) {
         vm.setMemSizeMb(model.getMemSize().getEntity());
+        vm.setMaxMemorySizeMb(model.getMaxMemorySize().getEntity());
         if (model.getIoThreadsEnabled().getEntity()) {
             vm.setNumOfIoThreads(model.getNumOfIoThreads().getEntity());
         } else {

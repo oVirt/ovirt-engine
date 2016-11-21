@@ -251,6 +251,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public MemorySizeEntityModelTextBoxEditor memSizeEditor;
 
     @UiField(provided = true)
+    public EntityModelDetachableWidgetWithInfo detachableMaxMemorySizeEditor;
+
+    @Path(value = "maxMemorySize.entity")
+    @WithElementId("maxMemorySize")
+    @UiField(provided = true)
+    public MemorySizeEntityModelTextBoxEditor maxMemorySizeEditor;
+
+    @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
     @WithElementId("totalCPUCores")
     public StringEntityModelTextBoxOnlyEditor totalvCPUsEditor;
@@ -925,7 +933,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initListBoxEditors();
         // Contains a special parser/renderer
         memSizeEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        memSizeEditor.setLabel(constants.memSizeVmPopup());
 
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor<>(
                 new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
@@ -1045,6 +1052,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         detachableInstanceTypesEditor = new EntityModelDetachableWidgetWithLabel(instanceTypesEditor);
 
         detachableMemSizeEditor = new EntityModelDetachableWidgetWithLabel(memSizeEditor);
+        final EnableableFormLabel maxMemoryLabel = new EnableableFormLabel(constants.maxMemorySizePopup());
+        maxMemorySizeEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        detachableMaxMemorySizeEditor = new EntityModelDetachableWidgetWithInfo(maxMemoryLabel, maxMemorySizeEditor);
         isHighlyAvailableEditorWithDetachable = new EntityModelDetachableWidget(isHighlyAvailableEditor, Align.IGNORE);
 
         detachablePriorityEditor = new EntityModelDetachableWidgetWithLabel(priorityEditor);
@@ -1895,6 +1905,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // ==System Tab==
         nextTabIndex = systemTab.setTabIndexes(nextTabIndex);
         memSizeEditor.setTabIndex(nextTabIndex++);
+        maxMemorySizeEditor.setTabIndex(nextTabIndex++);
         totalvCPUsEditor.setTabIndex(nextTabIndex++);
 
         nextTabIndex = vcpusAdvancedParameterExpander.setTabIndexes(nextTabIndex);
@@ -2071,6 +2082,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected List<Widget> advancedFieldsFromGeneralTab() {
         return Arrays.<Widget> asList(
                 memSizeEditor,
+                maxMemorySizeEditor,
                 totalvCPUsEditor,
                 vcpusAdvancedParameterExpander,
                 copyTemplatePermissionsEditor,
@@ -2091,6 +2103,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 migrationModeEditorWithDetachable,
                 detachableMinAllocatedMemoryEditor,
                 detachableMemSizeEditor,
+                detachableMaxMemorySizeEditor,
                 detachableInstanceTypesEditor,
                 overrideMigrationDowntimeEditorWithDetachable,
                 overrideMigrationPolicyEditorWithDetachable
@@ -2104,6 +2117,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
                 // system tab
                 detachableMemSizeEditor,
+                detachableMaxMemorySizeEditor,
                 totalvCPUsEditorWithInfoIcon,
                 vcpusAdvancedParameterExpander,
                 serialNumberPolicyEditor,

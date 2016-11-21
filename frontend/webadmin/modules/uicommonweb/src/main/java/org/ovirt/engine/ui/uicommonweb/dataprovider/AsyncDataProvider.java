@@ -272,6 +272,9 @@ public class AsyncDataProvider {
     // default OS per architecture
     private HashMap<ArchitectureType, Integer> defaultOSes;
 
+    // default OS per architecture
+    private Set<Integer> oses64bit;
+
     // cached os's support for graphics and display types (given compatibility version)
     private Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> graphicsAndDisplays;
 
@@ -335,6 +338,7 @@ public class AsyncDataProvider {
         initDiskHotpluggableInterfacesMap();
         initOsArchitecture();
         initDefaultOSes();
+        initGet64BitOss();
         initMigrationSupportMap();
         initMemorySnapshotSupportMap();
         initSuspendSupportMap();
@@ -435,6 +439,17 @@ public class AsyncDataProvider {
                     @Override
                     public void onSuccess(VdcQueryReturnValue returnValue) {
                         defaultOSes = returnValue.getReturnValue();
+                    }
+                }));
+    }
+
+    private void initGet64BitOss() {
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.Get64BitOss),
+                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onSuccess(VdcQueryReturnValue returnValue) {
+                        oses64bit = Collections.unmodifiableSet(
+                                new HashSet<>(returnValue.<List<Integer>>getReturnValue()));
                     }
                 }));
     }
@@ -1211,6 +1226,49 @@ public class AsyncDataProvider {
 
     public HashMap<Integer, String> getOsUniqueOsNames() {
         return uniqueOsNames;
+    }
+
+    /**
+     * Upper bound of maximum memory size for given OS and compatibilityVersion.
+     * If {@code osId} is null then minimum of all configuration values is returned.
+     *
+     * <p>Inspired by {@link VmCommonUtils#maxMemorySizeWithHotplugInMb(int, Version)}</p>
+     *
+     * @param osId operating system id, may be null
+     * @param compatVersion compatibility version, may be null
+     * @return upper bound of maximum memory size for given OS and compatibilityVersion,
+     */
+    public int getMaxMaxMemorySize(Integer osId, Version compatVersion) {
+        if (osId == null) {
+            return getMaxMaxMemoryForAllOss();
+        }
+
+        final ConfigurationValues maxMaxMemoryConfigValue = getMaxMaxMemoryConfigValue(osId);
+        return (Integer) getConfigValuePreConvertedOptionalVersion(maxMaxMemoryConfigValue, compatVersion);
+    }
+
+    private int getMaxMaxMemoryForAllOss() {
+        final int x86_32MaxMaxMemory =
+                (Integer) getConfigValuePreConverted(ConfigurationValues.VM32BitMaxMemorySizeInMB);
+        final int x86_64MaxMaxMemory =
+                (Integer) getConfigValuePreConverted(ConfigurationValues.VM64BitMaxMemorySizeInMB);
+        final int ppc64MaxMaxMemory =
+                (Integer) getConfigValuePreConverted(ConfigurationValues.VMPpc64BitMaxMemorySizeInMB);
+        return Math.max(Math.max(x86_32MaxMaxMemory, x86_64MaxMaxMemory), ppc64MaxMaxMemory);
+    }
+
+    private ConfigurationValues getMaxMaxMemoryConfigValue(int osId) {
+        return oses64bit.contains(osId)
+                ? (osArchitectures.get(osId).getFamily() == ArchitectureType.ppc
+                        ? ConfigurationValues.VMPpc64BitMaxMemorySizeInMB
+                        : ConfigurationValues.VM64BitMaxMemorySizeInMB)
+                : ConfigurationValues.VM32BitMaxMemorySizeInMB;
+    }
+
+    private Object getConfigValuePreConvertedOptionalVersion(ConfigurationValues configValue, Version version) {
+        return version != null
+                ? getConfigValuePreConverted(configValue, version.toString())
+                : getConfigValuePreConverted(configValue);
     }
 
     public void getAuthzExtensionsNames(AsyncQuery<List<String>> aQuery) {

@@ -31,6 +31,7 @@ public class BaseVmTest {
     protected static final String EMULATED_MACHINE = "rhel_version"; //$NON-NLS-1$
     protected static final String CUSTOM_CPU_NAME = "proc"; //$NON-NLS-1$
     protected static final int MEM_SIZE = 1024;
+    protected static final int MAX_MEMORY_SIZE = 4096;
     protected static final int MIN_MEM = 100;
     protected static final Guid CLUSTER_ID = Guid.newGuid();
     protected static final String TIMEZONE = "Europe/Berlin"; //$NON-NLS-1$

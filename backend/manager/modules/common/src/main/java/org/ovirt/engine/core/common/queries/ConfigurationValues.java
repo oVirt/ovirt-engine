@@ -97,8 +97,12 @@ public enum ConfigurationValues {
     AdPartnerMacSupported,
     OvsSupported,
     GetNamesOfVmsFromExternalProviderSupported,
-    PassDiscardSupported(ConfigAuthType.User),
-    DiscardAfterDeleteSupported;
+    DiscardAfterDeleteSupported,
+    VM32BitMaxMemorySizeInMB(ConfigAuthType.User),
+    VM64BitMaxMemorySizeInMB(ConfigAuthType.User),
+    VMPpc64BitMaxMemorySizeInMB(ConfigAuthType.User),
+    PassDiscardSupported(ConfigAuthType.User);
+
 
     public static enum ConfigAuthType {
         Admin,

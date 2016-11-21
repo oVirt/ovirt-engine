@@ -411,6 +411,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String memSizeVmPopup();
 
+    String maxMemorySizePopup();
+
     String totalCoresVmPopup();
 
     String cpuSocketsVmPopup();

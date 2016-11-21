@@ -1067,6 +1067,8 @@ public interface UIConstants extends Constants {
 
     String noAlerts();
 
+    String maxMemoryHasToBeLargerThanMemorySize();
+
     String storageDomainMustBeSpecifiedInvalidReason();
 
     String theFieldMustContainTimeValueInvalidReason();

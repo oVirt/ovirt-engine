@@ -78,6 +78,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetSoundDeviceSupportMap:
                 setReturnValue(osRepository.getSoundDeviceSupportMap());
                 break;
+            case Get64BitOss:
+                setReturnValue(osRepository.get64bitOss());
+                break;
         }
     }
 }

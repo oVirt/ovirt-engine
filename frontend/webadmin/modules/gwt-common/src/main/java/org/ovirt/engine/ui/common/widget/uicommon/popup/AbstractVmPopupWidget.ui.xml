@@ -197,6 +197,10 @@
                       <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableMemSizeEditor" label="{constants.memSizeVmPopup}" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_6" />
                     </b:Row>
                     <b:Row>
+                      <w:EntityModelDetachableWidgetWithInfo ui:field="detachableMaxMemorySizeEditor" explanation="{templates.maxMemoryInfoIcon}" usePatternFly="true" labelColSize="LG_5"/>
+                      <ge:MemorySizeEntityModelTextBoxEditor ui:field="maxMemorySizeEditor" usePatternFly="true" widgetColSize="LG_6" />
+                    </b:Row>
+                    <b:Row>
                       <w:EntityModelDetachableWidgetWithInfo ui:field="totalvCPUsEditorWithInfoIcon" usePatternFly="true" labelColSize="LG_5"/>
                       <ge:StringEntityModelTextBoxOnlyEditor ui:field="totalvCPUsEditor" label="{constants.numOfVCPUs}" removeFormGroup="true" usePatternFly="true" widgetColSize="LG_6" />
                     </b:Row>

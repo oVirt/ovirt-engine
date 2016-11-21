@@ -58,6 +58,7 @@ public class OsQueryParameters extends VdcQueryParametersBase {
         GetOsNames,
         GetOsArchitectures,
         GetDefaultOSes,
-        GetSoundDeviceSupportMap
+        GetSoundDeviceSupportMap,
+        Get64BitOss
     }
 }
