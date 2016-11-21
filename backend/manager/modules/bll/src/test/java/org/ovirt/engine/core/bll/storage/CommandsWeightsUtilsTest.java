@@ -22,12 +22,12 @@ public class CommandsWeightsUtilsTest {
 
     @Test
     public void adjustWeightWithoutRound() {
-        adjustWeights(Arrays.<Double> asList(0.2, 0.5, 0.3), Arrays.<Integer> asList(2, 3, 5), 10);
+        adjustWeights(Arrays.asList(0.2, 0.5, 0.3), Arrays.asList(2, 3, 5), 10);
     }
 
     @Test
     public void adjustWeightWithRound() {
-        adjustWeights(Arrays.<Double> asList(0.33, 0.37, 0.3), Arrays.<Integer> asList(3, 3, 4), 10);
+        adjustWeights(Arrays.asList(0.33, 0.37, 0.3), Arrays.asList(3, 3, 4), 10);
     }
 
     public void adjustWeights(List<Double> weightParts, List<Integer> expectedWeightsSorted, int totalWeight) {
