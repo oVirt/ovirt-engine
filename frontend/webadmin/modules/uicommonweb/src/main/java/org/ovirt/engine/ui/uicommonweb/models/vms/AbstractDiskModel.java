@@ -414,7 +414,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                         filteredHosts.add(host);
                     }
                 }
-
+                Collections.sort(filteredHosts, new NameableComparator());
                 getHost().setItems(filteredHosts);
             }
         }), datacenter.getId());
