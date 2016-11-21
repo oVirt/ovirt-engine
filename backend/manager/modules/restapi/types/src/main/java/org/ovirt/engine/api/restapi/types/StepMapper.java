@@ -32,6 +32,7 @@ public class StepMapper {
         model.setDescription(entity.getDescription());
         model.setNumber(entity.getStepNumber());
         model.setStatus(mapStepStatus(entity.getStatus()));
+        model.setProgress(entity.getProgress());
         model.setStartTime(DateMapper.map(entity.getStartTime(), null));
         if (entity.getEndTime() != null) {
             model.setEndTime(TypeConversionHelper.toXMLGregorianCalendar(entity.getEndTime(), null));
@@ -65,6 +66,9 @@ public class StepMapper {
         }
         if (step.isSetStatus()) {
             target.setStatus(mapStepStatus(step.getStatus()));
+        }
+        if (step.isSetProgress()) {
+            target.setProgress(step.getProgress());
         }
         target.setStartTime(step.isSetStartTime() ? step.getStartTime().toGregorianCalendar().getTime()
                 : new Date(Calendar.getInstance().getTimeInMillis()));

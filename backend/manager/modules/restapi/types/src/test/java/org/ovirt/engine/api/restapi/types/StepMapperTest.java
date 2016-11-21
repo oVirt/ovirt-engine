@@ -21,6 +21,7 @@ public class StepMapperTest extends AbstractInvertibleMappingTest<Step, org.ovir
         if (model.getParentStep() != null) {
             assertEquals(model.getParentStep().getId(), transform.getParentStep().getId());
         }
+        assertEquals("unexpected progress", model.getProgress(), transform.getProgress());
     }
 
     @Override
