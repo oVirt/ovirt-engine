@@ -707,7 +707,7 @@ public enum AuditLogType {
     MAC_ADDRESS_IS_IN_USE_UNPLUG(838, AuditLogSeverity.WARNING),
     HOST_AVAILABLE_UPDATES_STARTED(884),
     HOST_AVAILABLE_UPDATES_FINISHED(885),
-    HOST_AVAILABLE_UPDATES_FAILED(839, AuditLogSeverity.ERROR, AuditLogTimeInterval.HOUR.getValue() * 12),
+    HOST_AVAILABLE_UPDATES_FAILED(839, AuditLogSeverity.ERROR),
     HOST_CERTIFICATION_HAS_EXPIRED(877, AuditLogSeverity.ALERT, AuditLogTimeInterval.DAY.getValue()),
     HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE(845, AuditLogSeverity.WARNING, AuditLogTimeInterval.DAY.getValue()),
     HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT(879, AuditLogSeverity.ALERT, AuditLogTimeInterval.DAY.getValue()),
