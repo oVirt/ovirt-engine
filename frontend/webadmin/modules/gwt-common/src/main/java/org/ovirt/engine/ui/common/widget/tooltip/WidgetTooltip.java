@@ -76,7 +76,9 @@ public class WidgetTooltip extends WidgetDecorator implements HasCleanup {
     }
 
     public void setHtml(SafeHtml html) {
-        assert html != null : "Tooltip HTML content cannot be null"; //$NON-NLS-1$
+        if (html == null) {
+            return;
+        }
 
         if (tooltip == null || !tooltip.asString().equals(html.asString())) {
             tooltip = html;

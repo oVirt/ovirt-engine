@@ -69,7 +69,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         getElement().getStyle().setZIndex(1);
     }
 
-    public String getTooltipContent(NetworkItemModel<?> item, NetworkItemPanel panel) {
+    public final SafeHtml getTooltipContent(NetworkItemModel<?> item) {
         if (item instanceof LogicalNetworkModel) {
             showNetwork((LogicalNetworkModel) item);
         } else if (item instanceof NetworkInterfaceModel) {
@@ -78,7 +78,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             return null;
         }
 
-        return this.getElement().getInnerHTML();
+        return SafeHtmlUtils.fromTrustedString(this.getElement().getInnerHTML());
 
     }
 
